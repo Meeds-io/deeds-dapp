@@ -1,0 +1,20 @@
+<template>
+  <v-app>
+    <v-card flat>
+      <deeds-topbar />
+      <div v-if="!loading" class="pa-4">
+        <deeds-navbar v-if="address" />
+        <deeds-page v-if="address" class="mt-8" />
+        <deeds-metamask />
+      </div>
+    </v-card>
+  </v-app>
+</template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    address: state => state.address,
+    loading: state => state.appLoading,
+  }),
+};
+</script>

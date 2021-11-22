@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "eslint-config-meedsio"
+  ],
+  "globals": {
+    "ethers": true,
+    "BigNumber": true,
+    "echarts": true,
+    "Vuex": true
+  }
+}
