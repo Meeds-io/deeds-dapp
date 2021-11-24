@@ -35,7 +35,11 @@
     "legendary": "Legendary",
     "yourAssets": "Your assets",
     "transactionSent": "Transaction Sent.",
-    "viewOnEtherscan": "View on etherscan"
+    "viewOnEtherscan": "View on etherscan",
+    "insufficientTransactionFee": "Insufficient ether funds to send a transaction",
+    "insufficientFunds": "Insufficient funds",
+    "valueMustBeNumeric": "Value must be numeric",
+    "valueMustBeLessThan": "Value must be less than {0}"
   },
   "fr": {
     "dao": "DAO",
@@ -72,6 +76,10 @@
     "legendary": "Legendary",
     "yourAssets": "Vos actifs",
     "transactionSent": "Transaction envoyée.",
-    "viewOnEtherscan": "Ouvrir dans etherscan"
+    "viewOnEtherscan": "Ouvrir dans etherscan",
+    "insufficientTransactionFee": "Fonds en ether insuffisants pour envoyer une transaction",
+    "insufficientFunds": "Fonds insuffisants",
+    "valueMustBeNumeric": "La valeur doit être numérique",
+    "valueMustBeLessThan": "La valeur doit être inférieur à {0}"
   }
 }

@@ -64,6 +64,7 @@ const store = new Vuex.Store({
     // Cuurent Gas Price 
     gasPrice: 0,
     gasPriceGwei: 0,
+    transactionGas: 0,
     exchangeRate: 1,
     meedsPrice: 0,
     ethPrice: 0,
@@ -170,6 +171,7 @@ const store = new Vuex.Store({
         state.provider.getGasPrice().then(gasPrice => {
           state.gasPriceGwei = gasPrice && ethers.utils.formatUnits(gasPrice, 'gwei') || 0;
           state.gasPrice = gasPrice && gasPrice.toNumber() || 0;
+          state.transactionGas = gasPrice.mul(state.gasLimit);
         });
       }
     },

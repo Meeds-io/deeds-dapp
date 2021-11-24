@@ -12,8 +12,9 @@
         <v-text-field
           v-model="fromValue"
           :loading="loadingAmount"
+          :rules="fromValueValidator"
+          :hide-details="isFromValueValid"
           placeholder="0.0"
-          hide-details
           large
           outlined
           dense>
@@ -31,7 +32,7 @@
           <v-icon size="48">mdi-autorenew</v-icon>
         </v-btn>
         <v-text-field
-          v-model="toValue"
+          v-model="toValueDisplay"
           placeholder="0.0"
           hide-details
           large
@@ -59,7 +60,6 @@
     </div>
   </v-card>
 </template>
-
 <script>
 export default {
   data: () => ({
@@ -76,8 +76,6 @@ export default {
     typing: false,
   }),
   computed: Vuex.mapState({
-    gasLimit: state => state.gasLimit,
-    gasPrice: state => state.gasPrice,
     address: state => state.address,
     routerAddress: state => state.routerAddress,
     routerContract: state => state.routerContract,
@@ -85,6 +83,9 @@ export default {
     wethContract: state => state.wethContract,
     meedAddress: state => state.meedAddress,
     wethAddress: state => state.wethAddress,
+    etherBalance: state => state.etherBalance,
+    meedsBalance: state => state.meedsBalance,
+    transactionGas: state => state.transactionGas,
     provider: state => state.provider,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
@@ -99,7 +100,81 @@ export default {
       return this.buy && this.$t('buyMeeds') || this.$t('sellMeeds');
     },
     disabledButton() {
-      return !this.toValue;
+      return !this.toValue || !this.isFromValueValid;
+    },
+    toValueDisplay() {
+      return this.toValue && this.$ethUtils.toFixed(this.toValue, 8) || null;
+    },
+    fromValueValidator() {
+      return [
+        () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
+        () => !!this.isFromValueNumeric || this.$t('valueMustBeNumeric'),
+        () => !!this.hasSufficientFunds || this.$t('insufficientFunds'),
+        () => !!this.isFromValueLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxFromValueLabel}),
+      ];
+    },
+    maxMeed() {
+      if (this.meedsBalance) {
+        const maxMeed = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+        return Number(maxMeed);
+      }
+      return 0;
+    },
+    maxEther() {
+      if (this.etherBalance && this.transactionGas) {
+        const maxEther = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+        return Number(maxEther) > 0 && Number(maxEther) || 0;
+      }
+      return 0;
+    },
+    maxFromValueLabel() {
+      if (this.buy) {
+        return this.$ethUtils.toFixed(this.maxEther, 8);
+      } else {
+        return this.$ethUtils.toFixed(this.maxMeed, 2);
+      }
+    },
+    isFromValueValid() {
+      return !this.fromValue || (this.isFromValueNumeric && this.isFromValueLessThanMax && this.hasSufficientGas);
+    },
+    hasSufficientGas() {
+      if (!this.fromValue) {
+        return true;
+      }
+      if (this.etherBalance && this.transactionGas) {
+        const maxEther = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+        return Number(maxEther) > 0;
+      }
+      return false;
+    },
+    hasSufficientFunds() {
+      if (!this.fromValue) {
+        return true;
+      }
+      if (this.buy) {
+        return this.maxEther > 0;
+      } else {
+        return this.maxMeed > 0;
+      }
+    },
+    isFromValueLessThanMax() {
+      if (!this.fromValue) {
+        return true;
+      }
+      if (this.buy) {
+        return Number(this.fromValue) <= this.maxEther;
+      } else {
+        return Number(this.fromValue) <= this.maxMeed;
+      }
+    },
+    isFromValueNumeric() {
+      if (!this.fromValue) {
+        return true;
+      }
+      return this.fromValue && Number.isFinite(Number(this.fromValue));
+    },
+    canComputeValue() {
+      return this.fromValue && this.isFromValueNumeric;
     },
     swapMethod() {
       if (this.provider && this.routerContract) {
@@ -140,7 +215,7 @@ export default {
     },
     computeValue() {
       this.typing = false;
-      if (!this.fromValue) {
+      if (!this.canComputeValue) {
         this.toValue = null;
       } else {
         this.computingAmount = true;

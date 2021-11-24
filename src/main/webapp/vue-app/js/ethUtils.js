@@ -50,12 +50,23 @@ export function toCurrencyDisplay(value, currency, lang) {
   return new Intl.NumberFormat(lang, {
     style: 'currency',
     currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: currency === 'eth' && 8 || 2,
   }).format(value);
 }
 
 export function fractionsToDisplay(value, fractions) {
   if (value && fractions) {
-    return new BigNumber(value.toString && value.toString() || value).toFixed(fractions);
+    const result = new BigNumber(value.toString && value.toString() || value).toString();
+    return toFixed(result, fractions);
+  } else {
+    return value;
+  }
+}
+
+export function toFixed(value, fractions) {
+  if (value) {
+    return Number.parseFloat(value).toFixed(fractions).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
   } else {
     return value;
   }

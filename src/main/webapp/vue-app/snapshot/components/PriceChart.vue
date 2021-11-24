@@ -212,17 +212,10 @@ export default {
     currencyFormat(price) {
       const value = price && price.value || price;
       if (this.selectedFiatCurrency === 'eth') {
-        return `${this.toFixed(value, 8)} ${this.$t(`fiat.currency.${this.selectedFiatCurrency}`)}`;
+        return `${this.$ethUtils.toFixed(value, 8)} ${this.$t(`fiat.currency.${this.selectedFiatCurrency}`)}`;
       } else {
-        const price = this.toFixed(value, 2);
+        const price = this.$ethUtils.toFixed(value, 2);
         return this.$ethUtils.toCurrencyDisplay(price, this.selectedFiatCurrency, this.language);
-      }
-    },
-    toFixed(value, decimals) {
-      if (value) {
-        return Number.parseFloat(value).toFixed(decimals).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
-      } else {
-        return value;
       }
     },
     dateFormat(timestamp) {

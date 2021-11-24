@@ -75,7 +75,7 @@ export default {
           const meedsBalanceUsd = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice), 3);
           return this.$ethUtils.toCurrencyDisplay(meedsBalanceUsd, selectedFiatCurrency, language);
         } else if (selectedFiatCurrency === 'eth') {
-          const meedsBalanceEth = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice), 3);
+          const meedsBalanceEth = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice), 8);
           return this.$ethUtils.toCurrencyDisplay(meedsBalanceEth, selectedFiatCurrency, language);
         }
       }
