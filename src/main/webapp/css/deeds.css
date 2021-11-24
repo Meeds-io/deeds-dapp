@@ -24,3 +24,7 @@ html {
   right: 48px;
   z-index: 12;
 }
+
+.v-alert__icon {
+  margin: auto;
+}

@@ -49,6 +49,7 @@ export default {
     chart: null,
   }),
   computed: Vuex.mapState({
+    language: state => state.language,
     address: state => state.address,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     pairHistoryData: state => state.pairHistoryData,
@@ -150,11 +151,11 @@ export default {
           axisLabel: {
             interval: 0,
             rotate: 30,
-            formatter: this.dateFormat,
+            formatter: this.dateFormatI18N,
           },
           axisPointer: {
             label: {
-              formatter: this.dateFormat,
+              formatter: this.dateFormatI18N,
             }
           },
         },
@@ -181,12 +182,8 @@ export default {
   }),
   watch: {
     selectedFiatCurrency() {
-      if (this.needsExchangeRate) {
-        this.retrieveCurrencyExchangeRate().then(() => {
-          if (this.chart && this.chartOptions && this.meedsPriceData.length) {
-            this.chart.setOption(this.chartOptions);
-          }
-        });
+      if (this.chart && this.chartOptions && this.meedsPriceData.length) {
+        this.chart.setOption(this.chartOptions);
       }
     },
     currencyExchangeRate() {
@@ -217,7 +214,8 @@ export default {
       if (this.selectedFiatCurrency === 'eth') {
         return `${this.toFixed(value, 8)} ${this.$t(`fiat.currency.${this.selectedFiatCurrency}`)}`;
       } else {
-        return `${this.toFixed(value, 2)} ${this.$t(`fiat.currency.${this.selectedFiatCurrency}`)}`;
+        const price = this.toFixed(value, 2);
+        return this.$ethUtils.toCurrencyDisplay(price, this.selectedFiatCurrency, this.language);
       }
     },
     toFixed(value, decimals) {
@@ -231,10 +229,14 @@ export default {
       const value = parseInt(timestamp && timestamp.value || timestamp);
       return new Date(value).toISOString().substring(0, 10);
     },
+    dateFormatI18N(timestamp) {
+      timestamp = parseInt(timestamp && timestamp.value || timestamp);
+      return this.$ethUtils.formatDate(new Date(timestamp), this.language);
+    },
     labelFormatter(item) {
       const date = item[0].value[0];
       const price = item[0].value[1];
-      return `${this.dateFormat(date)}: <strong>${this.currencyFormat(price)}</strong>`;
+      return `${this.dateFormatI18N(date)}: <strong>${this.currencyFormat(price)}</strong>`;
     },
   },
 };

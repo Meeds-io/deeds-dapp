@@ -22,9 +22,20 @@
     "clickToChangeCurrency": "Click to change currency",
     "connectMetamaskLabel": "Please connect an address from your Metamask",
     "installMetamaskLabel": "Please install Metamask to access your wallet",
+    "switchMetamaskNetworkLabel": "Please choose Mainnet in Metamask to access your wallet",
     "fiat.currency.eth": "ETH",
     "fiat.currency.usd": "USD",
-    "fiat.currency.eur": "EUR"
+    "fiat.currency.eur": "EUR",
+    "fiat.amount.usd": "$ {0}",
+    "fiat.amount.eur": "€ {0}",
+    "tokens": "Tokens",
+    "common": "Common",
+    "uncommon": "Uncommon",
+    "rare": "Rare",
+    "legendary": "Legendary",
+    "yourAssets": "Your assets",
+    "transactionSent": "Transaction Sent.",
+    "viewOnEtherscan": "View on etherscan"
   },
   "fr": {
     "dao": "DAO",
@@ -49,7 +60,18 @@
     "clickToChangeCurrency": "Cliquer pour changer la monnaie",
     "connectMetamaskLabel": "Please connect an address from your Metamask",
     "installMetamaskLabel": "Please install Metamask to access your wallet",
+    "switchMetamaskNetworkLabel": "Please choose Mainnet in Metamask to access your wallet",
     "fiat.currency.usd": "USD",
-    "fiat.currency.eur": "EUR"
+    "fiat.currency.eur": "EUR",
+    "fiat.amount.usd": "{0} $",
+    "fiat.amount.eur": "{0} €",
+    "tokens": "Tokens",
+    "common": "Common",
+    "uncommon": "Uncommon",
+    "rare": "Rare",
+    "legendary": "Legendary",
+    "yourAssets": "Vos actifs",
+    "transactionSent": "Transaction envoyée.",
+    "viewOnEtherscan": "Ouvrir dans etherscan"
   }
 }

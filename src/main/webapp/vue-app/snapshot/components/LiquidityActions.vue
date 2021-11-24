@@ -1,5 +1,5 @@
 <template>
-  <div class="liquidityActions">
+  <div class="liquidityActions d-flex flex-nowrap">
     <v-btn
       :href="addLiquidityLink"
       link
@@ -9,18 +9,6 @@
       small>
       <span class="text-capitalize">
         {{ $t('addLiquidity') }}
-      </span>
-      <v-icon class="ms-2">mdi-open-in-new</v-icon>
-    </v-btn>
-    <v-btn
-      :href="sellLiquidityLink"
-      link
-      text
-      target="_blank"
-      color="primary"
-      small>
-      <span class="text-capitalize">
-        {{ $t('sellLiquidity') }}
       </span>
       <v-icon class="ms-2">mdi-open-in-new</v-icon>
     </v-btn>

@@ -10,6 +10,7 @@ import Metamask from './components/Metamask.vue';
 import Navbar from './components/Navbar.vue';
 // Page selector components
 import Page from './components/Page.vue';
+import Notifications from './components/Notifications.vue';
 
 const components = {
   'deeds-site': Site,
@@ -20,6 +21,7 @@ const components = {
   'deeds-metamask': Metamask,
   'deeds-navbar': Navbar,
   'deeds-page': Page,
+  'deeds-notifications': Notifications,
 };
 
 for (const key in components) {

@@ -103,14 +103,14 @@ public class CurrencyExchangeServlet extends HttpServlet {
     }
     String dateString = DATE_FORMATTER.format(date);
     try {
-      URL apiUrl = new URL("https://api.m3o.com/v1/currency/History");
+      URL apiUrl = new URL("https://api.m3o.com/v1/currency/Rates");
       HttpsURLConnection con = (HttpsURLConnection) apiUrl.openConnection();
 
       // add reuqest header
       con.setRequestMethod("GET");
       con.setRequestProperty("Content-Type", "application/json");
       con.setRequestProperty("Authorization", "Bearer " + apiKey);
-      String parameters = "{\"code\": \"USD\", \"date\": \"" + dateString + "\"}";
+      String parameters = "{\"code\": \"USD\"}";
 
       // Send post request
       con.setDoOutput(true);
@@ -122,7 +122,7 @@ public class CurrencyExchangeServlet extends HttpServlet {
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
         try (InputStream inputStream = con.getInputStream()) {
-          return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+          return IOUtils.toString(con.getInputStream(), StandardCharsets.UTF_8);
         }
       }
       return null;

@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.*;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -53,7 +54,7 @@ public class MeedsExchangeServlet extends HttpServlet {
 
   @Override
   public void init() throws ServletException {
-    scheduledExecutorService.scheduleWithFixedDelay(() -> computeExchangeRate(), 0, 1, TimeUnit.HOURS);
+    scheduledExecutorService.scheduleWithFixedDelay(() -> computeExchangeRate(), 0, 15, TimeUnit.MINUTES);
   }
 
   @Override
@@ -112,6 +113,23 @@ public class MeedsExchangeServlet extends HttpServlet {
 
   private void addEthPrice(JSONObject exchangeRateResult, ZonedDateTime date) {
     String blockNumber = getBlockNumber(date);
+    boolean added = addEthPrice(exchangeRateResult, blockNumber);
+    if (!added) {
+      // If the computing is about the same day computing, attempt the previous
+      // block
+      if (ChronoUnit.DAYS.between(date, ZonedDateTime.now(ZoneOffset.UTC)) == 0) {
+        int previousBlock = Integer.parseInt(blockNumber) - 10;
+        added = addEthPrice(exchangeRateResult, String.valueOf(previousBlock));
+      }
+    }
+    if (!added) {
+      // Force to recompute in case of error
+      LOG.warn("Error computing Eth Price for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
+      exchangeRateResult.put("volatile", true);
+    }
+  }
+
+  private boolean addEthPrice(JSONObject exchangeRateResult, String blockNumber) {
     if (StringUtils.isBlank(blockNumber)) {
       exchangeRateResult.put("volatile", true);
     }
@@ -123,19 +141,35 @@ public class MeedsExchangeServlet extends HttpServlet {
           && !ethPriceDataJson.getJSONObject("data").isNull("bundle")) {
         String ethPrice = ethPriceDataJson.getJSONObject("data").getJSONObject("bundle").getString("ethPrice");
         exchangeRateResult.put("ethPrice", ethPrice);
-        return;
+        return true;
       }
     }
-    // Force to recompute in case of error
-    LOG.warn("Error computing Eth Price for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
-    exchangeRateResult.put("volatile", true);
+    return false;
   }
 
   private void addPairData(JSONObject exchangeRateResult, ZonedDateTime date) {
     String blockNumber = getBlockNumber(date);
+    boolean added = addPairData(exchangeRateResult, blockNumber);
+    if (!added) {
+      // If the computing is about the same day computing, attempt the previous
+      // block
+      if (ChronoUnit.DAYS.between(date, ZonedDateTime.now(ZoneOffset.UTC)) == 0) {
+        int previousBlock = Integer.parseInt(blockNumber) - 10;
+        added = addPairData(exchangeRateResult, String.valueOf(previousBlock));
+      }
+    }
+    if (!added) {
+      // Force to recompute in case of error
+      LOG.warn("Error computing Pair Data for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
+      exchangeRateResult.put("volatile", true);
+    }
+  }
+
+  private boolean addPairData(JSONObject exchangeRateResult, String blockNumber) {
     if (StringUtils.isNotBlank(blockNumber)) {
       String body = "{\"query\":\"{pair(id: \\\""
-          + PAIR_ADDRESS + "\\\", block: {number:" + blockNumber + "}) {id,token1Price,reserve0,reserve1}}\"}";
+          + PAIR_ADDRESS + "\\\", block: {number:" + blockNumber
+          + "}) {id,token1Price,reserve0,reserve1}}\"}";
       String pairDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/sushiswap/exchange", body);
       if (StringUtils.isNotBlank(pairDataJsonString)) {
         JSONObject pairDataJson = new JSONObject(pairDataJsonString);
@@ -148,13 +182,11 @@ public class MeedsExchangeServlet extends HttpServlet {
           exchangeRateResult.put("meedsReserve", meedsReserve);
           String wethReserve = pairJsonObject.getString("reserve0");
           exchangeRateResult.put("wethReserve", wethReserve);
-          return;
+          return true;
         }
       }
     }
-    // Force to recompute in case of error
-    LOG.warn("Error computing Pair Data for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
-    exchangeRateResult.put("volatile", true);
+    return false;
   }
 
   private String getBlockNumber(ZonedDateTime date) {

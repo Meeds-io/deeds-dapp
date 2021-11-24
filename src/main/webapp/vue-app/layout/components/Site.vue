@@ -3,10 +3,11 @@
     <v-card flat>
       <deeds-topbar />
       <div v-if="!loading" class="pa-4">
+        <deeds-metamask />
         <deeds-navbar v-if="address" />
         <deeds-page v-if="address" class="mt-8" />
-        <deeds-metamask />
       </div>
+      <deeds-notifications />
     </v-card>
   </v-app>
 </template>

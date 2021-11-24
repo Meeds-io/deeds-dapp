@@ -11,7 +11,7 @@
       <v-card-text class="d-flex flex-column">
         <v-text-field
           v-model="fromValue"
-          :loading="!!computingAmount || typing"
+          :loading="loadingAmount"
           placeholder="0.0"
           hide-details
           large
@@ -46,7 +46,10 @@
           </template>
         </v-text-field>
         <v-card-actions>
-          <v-btn :disabled="disabledButton" class="mx-auto mt-4">
+          <v-btn
+            :disabled="disabledButton"
+            class="mx-auto mt-4"
+            @click="sendTransaction">
             <span class="text-capitalize">
               {{ buttonLabel }}
             </span>
@@ -58,60 +61,52 @@
 </template>
 
 <script>
-import { ChainId, Token, TokenAmount, Pair } from '@sushiswap/sdk';
-
 export default {
   data: () => ({
+    slippage: 0.05,
+    deadlineMinutes: 30,
     computingAmount: false,
+    sendingTransaction: 0,
     buy: true,
     fromValue: null,
     toValue: null,
-    meedsToken: new Token(
-      ChainId.MAINNET,
-      '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7',
-      18,
-      'MEED',
-      'Meeds Token'
-    ),
-    wethToken: new Token(
-      ChainId.MAINNET,
-      '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-      18,
-      'WETH',
-      'Wrapped Ether'
-    ),
     startSearchAfterInMilliseconds: 600,
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
     typing: false,
   }),
   computed: Vuex.mapState({
-    pairHistoryData: state => state.pairHistoryData,
-    todayDate() {
-      return this.dateFormat(Date.now());
+    gasLimit: state => state.gasLimit,
+    gasPrice: state => state.gasPrice,
+    address: state => state.address,
+    routerAddress: state => state.routerAddress,
+    routerContract: state => state.routerContract,
+    meedContract: state => state.meedContract,
+    wethContract: state => state.wethContract,
+    meedAddress: state => state.meedAddress,
+    wethAddress: state => state.wethAddress,
+    provider: state => state.provider,
+    loadingAmount() {
+      return !!this.computingAmount || this.typing;
     },
-    meedsReserve() {
-      const meedsReserve = this.pairHistoryData && this.pairHistoryData[this.todayDate] && this.pairHistoryData[this.todayDate].meedsReserve;
-      return this.toDecimal(meedsReserve, 18);
+    fromContract() {
+      return this.buy && this.meedContract || this.wethContract;
     },
-    wethReserve() {
-      const wethReserve = this.pairHistoryData && this.pairHistoryData[this.todayDate] && this.pairHistoryData[this.todayDate].wethReserve;
-      return this.toDecimal(wethReserve, 18);
-    },
-    pairToken() {
-      return new Pair(
-        new TokenAmount(this.meedsToken, this.meedsReserve),
-        new TokenAmount(this.wethToken, this.wethReserve)
-      );
-    },
-    fromToken() {
-      return this.buy && this.meedsToken || this.wethToken;
+    tokenAdresses() {
+      return this.buy && [this.wethAddress, this.meedAddress] || [this.meedAddress, this.wethAddress];
     },
     buttonLabel() {
       return this.buy && this.$t('buyMeeds') || this.$t('sellMeeds');
     },
     disabledButton() {
       return !this.toValue;
+    },
+    swapMethod() {
+      if (this.provider && this.routerContract) {
+        const routerContractSigner = this.routerContract.connect(this.provider.getSigner());
+        return this.buy && routerContractSigner.swapExactETHForTokens || routerContractSigner.swapExactTokensForETH;
+      }
+      return null;
     },
   }),
   watch: {
@@ -127,44 +122,74 @@ export default {
       }
     },
   },
-  created() {
-    window.setTimeout(this.initBot, 100);
-  },
   methods: {
     switchInputs() {
       this.buy = !this.buy;
+      this.fromValue = this.toValue;
+      this.toValue = null;
       this.computeValue();
-    },
-    computeValue() {
-      if (!this.fromValue) {
-        this.toValue = null;
-      }
-      this.computingAmount = true;
-      try {
-        const result = this.pairToken.getOutputAmount(new TokenAmount(this.fromToken, this.toDecimal(this.fromValue, 18)));
-        this.toValue = result && result.length && result[0] && result[0].toSignificant && result[0].toSignificant() || null;
-      } finally {
-        this.computingAmount = false;
-      }
     },
     waitForEndTyping() {
       window.setTimeout(() => {
         if (Date.now() > this.startTypingKeywordTimeout) {
           this.computeValue();
-          this.typing = false;
         } else {
           this.waitForEndTyping();
         }
       }, this.endTypingKeywordTimeout);
     },
-    toDecimal(amount, decimals) {
-      return new BigNumber(amount).multipliedBy(new BigNumber(10).pow(decimals)).toFixed(0);
+    computeValue() {
+      this.typing = false;
+      if (!this.fromValue) {
+        this.toValue = null;
+      } else {
+        this.computingAmount = true;
+        this.toValue = null;
+        const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
+        return this.routerContract.getAmountsOut(amountIn, this.tokenAdresses)
+          .then(amounts =>  this.toValue = this.$ethUtils.fromDecimals(amounts[1], 18))
+          .finally(() => this.computingAmount = false);
+      }
     },
-    dateFormat(timestamp) {
-      const value = parseInt(timestamp && timestamp.value || timestamp);
-      return new Date(value).toISOString().substring(0, 10);
+    sendTransaction() {
+      this.sendingTransaction++;
+      const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
+      const amountOutMin = this.$ethUtils.toDecimals(this.toValue, 18)
+        .mul((1 - this.slippage) * 1000)
+        .div(1000);
+      const options = {
+        gasLimit: this.gasLimit,
+      };
+      return new Promise((resolve, reject) => {
+        if (this.buy) {
+          options.value = amountIn.toHexString();
+          return this.swapMethod(
+            amountOutMin.toHexString(),
+            this.tokenAdresses,
+            this.address,
+            this.getTransactionDeadline(),
+            options,
+          ).then(resolve).catch(reject);
+        } else {
+          return this.swapMethod(
+            amountIn,
+            amountOutMin.toHexString(),
+            this.tokenAdresses,
+            this.address,
+            this.getTransactionDeadline(),
+            options,
+          ).then(resolve).catch(reject);
+        }
+      })
+        .then(receipt => {
+          const transactionHash = receipt.hash;
+          this.$root.$emit('transaction-sent', transactionHash);
+        })
+        .finally(() => this.sendingTransaction--);
+    },
+    getTransactionDeadline() {
+      return Date.now() + this.deadlineMinutes * 60 * 1000;
     },
   },
 };
 </script>
-
