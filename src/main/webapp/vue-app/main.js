@@ -34,6 +34,9 @@ const store = new Vuex.Store({
     managedNetworkIds: [1, 5],
     provider: null,
     erc20ApproveABI: [
+      'event Transfer(address indexed from, address indexed to, uint256 value)',
+      'event Approval(address indexed owner, address indexed spender, uint256 value)',
+      'function allowance(address owner, address spender) external view returns (uint256)',
       'function approve(address spender, uint256 amount) external returns (bool)',
       'function balanceOf(address owner) view returns (uint256)',
     ],
@@ -46,6 +49,7 @@ const store = new Vuex.Store({
     routerAddress: null,
     wethAddress: null,
     meedAddress: null,
+    pairAddress: null,
     // Contracts objects
     routerContract: null,
     wethContract: null,
@@ -71,6 +75,7 @@ const store = new Vuex.Store({
     // User balances
     etherBalance: 0,
     meedsBalance: 0,
+    meedsAllowance: 0,
     xMeedsBalance: 0,
     selectedFiatCurrency,
   },
@@ -98,15 +103,17 @@ const store = new Vuex.Store({
             if (state.networkId === 1) {
               // Mainnet
               state.etherscanBaseLink = 'https://etherscan.io/';
-              state.routerAddress= '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
-              state.wethAddress= '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
-              state.meedAddress= '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
+              state.routerAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
+              state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+              state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
+              state.pairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
             } else if (state.networkId === 5) {
               // Goerli
               state.etherscanBaseLink = 'https://goerli.etherscan.io/';
-              state.routerAddress= '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
-              state.wethAddress= '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
-              state.meedAddress= '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
+              state.routerAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
+              state.wethAddress = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
+              state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
+              state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
             }
             this.commit('setAddress');
           } else {
@@ -135,11 +142,15 @@ const store = new Vuex.Store({
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
     },
+    setMeedsAllowance(state, meedsAllowance) {
+      state.meedsAllowance = meedsAllowance;
+    },
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
     },
     loadBalances(state) {
       if (state.meedContract && state.address) {
+        state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsAllowance = balance);
         state.meedContract.balanceOf(state.address).then(balance => state.meedsBalance = balance);
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
       }
@@ -162,6 +173,25 @@ const store = new Vuex.Store({
           state.erc20ApproveABI,
           state.provider
         );
+
+        // eslint-disable-next-line new-cap
+        const transferFilter = state.meedContract.filters.Transfer();
+        state.meedContract.on(transferFilter, (from, to) => {
+          const address = state.address.toUpperCase();
+          if (from.toUpperCase() === address || to.toUpperCase() === address) {
+            this.commit('loadBalances');
+          }
+        });
+
+        // eslint-disable-next-line new-cap
+        const approveFilter = state.meedContract.filters.Approval();
+        state.meedContract.on(approveFilter, (from, to) => {
+          const address = state.address.toUpperCase();
+          if (from.toUpperCase() === address || to.toUpperCase() === address) {
+            this.commit('loadBalances');
+          }
+        });
+
         this.commit('loadBalances');
         this.commit('loadGasPrice');
       }

@@ -26,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
@@ -39,18 +41,20 @@ import org.slf4j.LoggerFactory;
 
 public class MeedsExchangeServlet extends HttpServlet {
 
-  private static final long             serialVersionUID         = -4130223673549168957L;
+  private static final long             serialVersionUID                  = -4130223673549168957L;
 
-  private static final Logger           LOG                      = LoggerFactory.getLogger(MeedsExchangeServlet.class);
+  private static final Logger           LOG                               = LoggerFactory.getLogger(MeedsExchangeServlet.class);
 
-  private static final String           PAIR_ADDRESS             = "0x960bd61d0b960b107ff5309a2dcced4705567070";
+  private static final String           PAIR_ADDRESS                      = "0x960bd61d0b960b107ff5309a2dcced4705567070";
 
-  public static final DateTimeFormatter DATE_FORMATTER           = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                                                                                    .withResolverStyle(ResolverStyle.LENIENT);
+  private static final Pattern          LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
 
-  private static final LocalDate        MEEDS_TOKEN_FIRST_DATE   = LocalDate.of(2021, 11, 6);
+  public static final DateTimeFormatter DATE_FORMATTER                    = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                                                                             .withResolverStyle(ResolverStyle.LENIENT);
 
-  private ScheduledExecutorService      scheduledExecutorService = Executors.newScheduledThreadPool(1);
+  private static final LocalDate        MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
+
+  private ScheduledExecutorService      scheduledExecutorService          = Executors.newScheduledThreadPool(1);
 
   @Override
   public void init() throws ServletException {
@@ -70,7 +74,7 @@ public class MeedsExchangeServlet extends HttpServlet {
         String exchangeRateObjectString = IOUtils.toString(exchangeRate, StandardCharsets.UTF_8);
         JSONObject exchangeRateObject = new JSONObject(exchangeRateObjectString);
         LocalDate localDate = MEEDS_TOKEN_FIRST_DATE;
-        LocalDate today = LocalDate.now().plusDays(1);
+        LocalDate today = LocalDate.now();
         while (localDate.isBefore(today)) {
           ZonedDateTime date = localDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).minusSeconds(1);
           addExchangeRateForDate(exchangeRateObject, date, false);
@@ -86,17 +90,17 @@ public class MeedsExchangeServlet extends HttpServlet {
     }
   }
 
-  private void addExchangeRateForDate(JSONObject exchangeRateObject, ZonedDateTime date, boolean volatileValue) {
+  private void addExchangeRateForDate(JSONObject exchangeRateObject, ZonedDateTime date, boolean todayValue) {
     String dateString = DATE_FORMATTER.format(date);
     if (!exchangeRateObject.has(dateString)
         || exchangeRateObject.getJSONObject(dateString).has("volatile")
-        || volatileValue) {
-      JSONObject exchangeRateResult = getExchangeRateForDate(date);
+        || todayValue) {
+      JSONObject exchangeRateResult = getExchangeRateForDate(date, todayValue);
       if (exchangeRateResult == null) {
         LOG.warn("ETH and Meeds prices for date {} are empty, stop computing.", dateString);
         return;
       }
-      if (volatileValue) {
+      if (todayValue) {
         // Keep updating the date until
         exchangeRateResult.put("volatile", true);
       }
@@ -104,15 +108,15 @@ public class MeedsExchangeServlet extends HttpServlet {
     }
   }
 
-  private JSONObject getExchangeRateForDate(ZonedDateTime date) {
+  private JSONObject getExchangeRateForDate(ZonedDateTime date, boolean todayValue) {
     JSONObject exchangeRateResult = new JSONObject();
-    addEthPrice(exchangeRateResult, date);
-    addPairData(exchangeRateResult, date);
+    addEthPrice(exchangeRateResult, date, todayValue);
+    addPairData(exchangeRateResult, date, todayValue);
     return exchangeRateResult;
   }
 
-  private void addEthPrice(JSONObject exchangeRateResult, ZonedDateTime date) {
-    String blockNumber = getBlockNumber(date);
+  private void addEthPrice(JSONObject exchangeRateResult, ZonedDateTime date, boolean todayValue) {
+    String blockNumber = todayValue ? getLastBlockNumber() : getBlockNumber(date);
     boolean added = addEthPrice(exchangeRateResult, blockNumber);
     if (!added) {
       // If the computing is about the same day computing, attempt the previous
@@ -142,13 +146,28 @@ public class MeedsExchangeServlet extends HttpServlet {
         String ethPrice = ethPriceDataJson.getJSONObject("data").getJSONObject("bundle").getString("ethPrice");
         exchangeRateResult.put("ethPrice", ethPrice);
         return true;
+      } else if (ethPriceDataJson.has("errors")
+          && !ethPriceDataJson.isNull("errors")
+          && ethPriceDataJson.getJSONArray("errors").length() > 0
+          && ethPriceDataJson.getJSONArray("errors").getJSONObject(0).has("message")
+          && !ethPriceDataJson.getJSONArray("errors").getJSONObject(0).isNull("message")) {
+        String message = ethPriceDataJson.getJSONArray("errors").getJSONObject(0).getString("message");
+        LOG.warn(message);
+        if (message.contains("up to block number")) {
+          Matcher matcher = LATEST_BLOCK_NUMBER_ERROR_PATTERN.matcher(message);
+          if (matcher.find()) {
+            blockNumber = matcher.group(1);
+            LOG.info("Attempt to retrieve data with block number {}", blockNumber);
+            return addEthPrice(exchangeRateResult, blockNumber);
+          }
+        }
       }
     }
     return false;
   }
 
-  private void addPairData(JSONObject exchangeRateResult, ZonedDateTime date) {
-    String blockNumber = getBlockNumber(date);
+  private void addPairData(JSONObject exchangeRateResult, ZonedDateTime date, boolean todayValue) {
+    String blockNumber = todayValue ? getLastBlockNumber() : getBlockNumber(date);
     boolean added = addPairData(exchangeRateResult, blockNumber);
     if (!added) {
       // If the computing is about the same day computing, attempt the previous
@@ -183,6 +202,21 @@ public class MeedsExchangeServlet extends HttpServlet {
           String wethReserve = pairJsonObject.getString("reserve0");
           exchangeRateResult.put("wethReserve", wethReserve);
           return true;
+        } else if (pairDataJson.has("errors")
+            && !pairDataJson.isNull("errors")
+            && pairDataJson.getJSONArray("errors").length() > 0
+            && pairDataJson.getJSONArray("errors").getJSONObject(0).has("message")
+            && !pairDataJson.getJSONArray("errors").getJSONObject(0).isNull("message")) {
+          String message = pairDataJson.getJSONArray("errors").getJSONObject(0).getString("message");
+          LOG.warn(message);
+          if (message.contains("up to block number")) {
+            Matcher matcher = LATEST_BLOCK_NUMBER_ERROR_PATTERN.matcher(message);
+            if (matcher.find()) {
+              blockNumber = matcher.group(1);
+              LOG.info("Attempt to retrieve data with block number {}", blockNumber);
+              return addPairData(exchangeRateResult, blockNumber);
+            }
+          }
         }
       }
     }
@@ -192,6 +226,19 @@ public class MeedsExchangeServlet extends HttpServlet {
   private String getBlockNumber(ZonedDateTime date) {
     String body = "{\"query\":\"{blocks(first:1,orderBy:timestamp,orderDirection: desc,where:{timestamp_lte:"
         + date.toEpochSecond() + "}){number}}\"}";
+    String blockNumberDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks", body);
+    if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
+      JSONObject blockNumberDataJson = new JSONObject(blockNumberDataJsonString);
+      if (blockNumberDataJson.has("data") && blockNumberDataJson.getJSONObject("data").has("blocks")
+          && !blockNumberDataJson.getJSONObject("data").isNull("blocks")) {
+        return blockNumberDataJson.getJSONObject("data").getJSONArray("blocks").getJSONObject(0).getString("number");
+      }
+    }
+    return null;
+  }
+
+  private String getLastBlockNumber() {
+    String body = "{\"query\":\"{blocks(first:1,orderBy:number,orderDirection:desc){number}}\"}";
     String blockNumberDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks", body);
     if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
       JSONObject blockNumberDataJson = new JSONObject(blockNumberDataJsonString);

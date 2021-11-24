@@ -48,13 +48,27 @@
         </v-text-field>
         <v-card-actions>
           <v-btn
+            v-if="hasSufficientAllowedTokens"
+            :loading="!!sendingTransaction"
             :disabled="disabledButton"
             class="mx-auto mt-4"
-            @click="sendTransaction">
+            @click="sendSwapTransaction">
             <span class="text-capitalize">
-              {{ buttonLabel }}
+              {{ swapButtonLabel }}
             </span>
           </v-btn>
+          <div v-else class="d-flex flex-column mx-auto mt-4">
+            <div class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
+            <v-btn
+              :loading="!!sendingTransaction"
+              :disabled="disabledButton"
+              class="mx-auto mt-4"
+              @click="sendApproveTransaction">
+              <span class="text-capitalize">
+                {{ approveButtonLabel }}
+              </span>
+            </v-btn>
+          </div>
         </v-card-actions>
       </v-card-text>
     </div>
@@ -66,7 +80,9 @@ export default {
     slippage: 0.05,
     deadlineMinutes: 30,
     computingAmount: false,
+    approvalInProgress: false,
     sendingTransaction: 0,
+    step: 1,
     buy: true,
     fromValue: null,
     toValue: null,
@@ -86,6 +102,7 @@ export default {
     etherBalance: state => state.etherBalance,
     meedsBalance: state => state.meedsBalance,
     transactionGas: state => state.transactionGas,
+    meedsAllowance: state => state.meedsAllowance,
     provider: state => state.provider,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
@@ -96,11 +113,14 @@ export default {
     tokenAdresses() {
       return this.buy && [this.wethAddress, this.meedAddress] || [this.meedAddress, this.wethAddress];
     },
-    buttonLabel() {
+    swapButtonLabel() {
       return this.buy && this.$t('buyMeeds') || this.$t('sellMeeds');
     },
+    approveButtonLabel() {
+      return this.sendingTransaction > 0 && this.$t('sellMeeds') || this.$t('approveMeeds');
+    },
     disabledButton() {
-      return !this.toValue || !this.isFromValueValid;
+      return !this.toValue || !this.isFromValueValid || !!this.sendingTransaction;
     },
     toValueDisplay() {
       return this.toValue && this.$ethUtils.toFixed(this.toValue, 8) || null;
@@ -136,6 +156,15 @@ export default {
     },
     isFromValueValid() {
       return !this.fromValue || (this.isFromValueNumeric && this.isFromValueLessThanMax && this.hasSufficientGas);
+    },
+    hasSufficientAllowedTokens() {
+      if (this.buy || !this.isFromValueNumeric || !this.fromValue) {
+        return true;
+      } else {
+        const meedsAllowance = this.meedsAllowance;
+        const meedsToSend = this.$ethUtils.toDecimals(this.fromValue, 18);
+        return meedsToSend.lte(meedsAllowance);
+      }
     },
     hasSufficientGas() {
       if (!this.fromValue) {
@@ -173,6 +202,9 @@ export default {
       }
       return this.fromValue && Number.isFinite(Number(this.fromValue));
     },
+    step() {
+      return this.sendingTransaction + 1;
+    },
     canComputeValue() {
       return this.fromValue && this.isFromValueNumeric;
     },
@@ -183,8 +215,21 @@ export default {
       }
       return null;
     },
+    approveMethod() {
+      if (this.provider && this.routerContract) {
+        const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
+        return meedContractSigner.approve;
+      }
+      return null;
+    },
   }),
   watch: {
+    meedsAllowance() {
+      if (this.meedsAllowance && this.approvalInProgress && !this.meedsAllowance.isZero()) {
+        this.step = 2;
+        this.sendingTransaction = 0;
+      }
+    },
     fromValue() {
       if (!this.fromValue) {
         this.computeValue();
@@ -226,7 +271,7 @@ export default {
           .finally(() => this.computingAmount = false);
       }
     },
-    sendTransaction() {
+    sendSwapTransaction() {
       this.sendingTransaction++;
       const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
       const amountOutMin = this.$ethUtils.toDecimals(this.toValue, 18)
@@ -261,6 +306,26 @@ export default {
           this.$root.$emit('transaction-sent', transactionHash);
         })
         .finally(() => this.sendingTransaction--);
+    },
+    sendApproveTransaction() {
+      this.sendingTransaction++;
+      const amount = this.$ethUtils.toDecimals(this.fromValue, 18);
+      const options = {
+        gasLimit: this.gasLimit,
+      };
+      return this.approveMethod(
+        this.routerAddress,
+        amount,
+        options
+      ).then(receipt => {
+        const transactionHash = receipt.hash;
+        this.$root.$emit('transaction-sent', transactionHash);
+        this.approvalInProgress = true;
+      })
+        .catch(() => {
+          this.sendingTransaction--;
+          this.step = 1;
+        });
     },
     getTransactionDeadline() {
       return Date.now() + this.deadlineMinutes * 60 * 1000;

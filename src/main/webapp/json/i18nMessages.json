@@ -38,6 +38,8 @@
     "viewOnEtherscan": "View on etherscan",
     "insufficientTransactionFee": "Insufficient ether funds to send a transaction",
     "insufficientFunds": "Insufficient funds",
+    "approveMeeds": "Approve Meeds",
+    "step": "Step",
     "valueMustBeNumeric": "Value must be numeric",
     "valueMustBeLessThan": "Value must be less than {0}"
   },
@@ -79,6 +81,8 @@
     "viewOnEtherscan": "Ouvrir dans etherscan",
     "insufficientTransactionFee": "Fonds en ether insuffisants pour envoyer une transaction",
     "insufficientFunds": "Fonds insuffisants",
+    "approveMeeds": "Approuver les Meeds",
+    "step": "Étape",
     "valueMustBeNumeric": "La valeur doit être numérique",
     "valueMustBeLessThan": "La valeur doit être inférieur à {0}"
   }
