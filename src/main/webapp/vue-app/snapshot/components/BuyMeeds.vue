@@ -93,6 +93,7 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
+    language: state => state.language,
     routerAddress: state => state.routerAddress,
     routerContract: state => state.routerContract,
     meedContract: state => state.meedContract,
@@ -149,9 +150,9 @@ export default {
     },
     maxFromValueLabel() {
       if (this.buy) {
-        return this.$ethUtils.toFixed(this.maxEther, 8);
+        return this.$ethUtils.toFixedDisplay(this.maxEther, 8, this.language);
       } else {
-        return this.$ethUtils.toFixed(this.maxMeed, 2);
+        return this.$ethUtils.toFixedDisplay(this.maxMeed, 2, this.language);
       }
     },
     isFromValueValid() {

@@ -60,7 +60,8 @@ export default {
     computeMeedsBalanceNoDecimals(meedsBalance, fractions) {
       if (meedsBalance) {
         const meedsBalanceNoDecimals = this.$ethUtils.fromDecimals(meedsBalance, 18);
-        return this.$ethUtils.fractionsToDisplay(meedsBalanceNoDecimals, fractions);
+        const meedsBalanceWithFractions = this.$ethUtils.fractionsToDisplay(meedsBalanceNoDecimals, fractions);
+        return this.$ethUtils.toCurrencyDisplay(meedsBalanceWithFractions, 'eur', this.language).replace('€', '');
       } else {
         return '-';
       }

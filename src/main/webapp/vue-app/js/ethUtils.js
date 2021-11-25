@@ -56,7 +56,7 @@ export function toCurrencyDisplay(value, currency, lang) {
 }
 
 export function fractionsToDisplay(value, fractions) {
-  if (value && fractions) {
+  if (value && (value.length || value > 0)) {
     const result = new BigNumber(value.toString && value.toString() || value).toString();
     return toFixed(result, fractions);
   } else {
@@ -65,8 +65,20 @@ export function fractionsToDisplay(value, fractions) {
 }
 
 export function toFixed(value, fractions) {
-  if (value) {
+  if (value && (value.length || value > 0)) {
     return Number.parseFloat(value).toFixed(fractions).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
+  } else {
+    return value;
+  }
+}
+
+export function toFixedDisplay(value, fractions, lang) {
+  if (value && (value.length || value > 0)) {
+    return new Intl.NumberFormat(lang, {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: fractions,
+    }).format(value);
   } else {
     return value;
   }
