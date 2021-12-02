@@ -47,19 +47,20 @@
           </template>
         </v-text-field>
         <v-card-actions>
-          <v-btn
-            v-if="hasSufficientAllowedTokens"
-            :loading="!!sendingTransaction"
-            :disabled="disabledButton"
-            class="mx-auto mt-4"
-            @click="sendSwapTransaction">
-            <span class="text-capitalize">
-              {{ swapButtonLabel }}
-            </span>
-          </v-btn>
-          <div v-else class="d-flex flex-column mx-auto mt-4">
-            <div class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
+          <div class="d-flex flex-column mx-auto mt-4">
+            <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
             <v-btn
+              v-if="hasSufficientAllowedTokens"
+              :loading="!!sendingTransaction"
+              :disabled="disabledButton"
+              class="mx-auto mt-4"
+              @click="sendSwapTransaction">
+              <span class="text-capitalize">
+                {{ swapButtonLabel }}
+              </span>
+            </v-btn>
+            <v-btn
+              v-else
               :loading="!!sendingTransaction"
               :disabled="disabledButton"
               class="mx-auto mt-4"
@@ -80,7 +81,7 @@ export default {
     slippage: 0.05,
     deadlineMinutes: 30,
     computingAmount: false,
-    approvalInProgress: false,
+    swapInToSteps: false,
     sendingTransaction: 0,
     step: 1,
     buy: true,
@@ -226,7 +227,7 @@ export default {
   }),
   watch: {
     meedsAllowance() {
-      if (this.meedsAllowance && this.approvalInProgress && !this.meedsAllowance.isZero()) {
+      if (this.swapInToSteps && this.meedsAllowance && !this.meedsAllowance.isZero()) {
         this.step = 2;
         this.sendingTransaction = 0;
       }
@@ -244,6 +245,11 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.fromValue = null;
+      this.toValue = null;
+      this.computeValue();
+    },
     switchInputs() {
       this.buy = !this.buy;
       this.fromValue = this.toValue;
@@ -305,8 +311,12 @@ export default {
         .then(receipt => {
           const transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', transactionHash);
+          this.reset();
         })
-        .finally(() => this.sendingTransaction--);
+        .finally(() => {
+          this.sendingTransaction--;
+          this.swapInToSteps = false;
+        });
     },
     sendApproveTransaction() {
       this.sendingTransaction++;
@@ -321,7 +331,7 @@ export default {
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);
-        this.approvalInProgress = true;
+        this.swapInToSteps = true;
       })
         .catch(() => {
           this.sendingTransaction--;

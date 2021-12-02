@@ -2,6 +2,11 @@ html {
   overflow: auto;
 }
 
+.mainPageLayout {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
 .copyToClipboardInput {
   position: fixed;
   left: -9999px;

@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar elevation="2">
+  <v-toolbar elevation="0">
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"

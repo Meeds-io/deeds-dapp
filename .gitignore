@@ -47,3 +47,4 @@ build
 npm-debug.log
 node_modules
 /bin/
+/build/

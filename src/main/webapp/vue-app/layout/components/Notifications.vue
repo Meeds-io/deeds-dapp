@@ -63,13 +63,13 @@ export default {
   }),
   created() {
     this.$root.$on('transaction-sent', transactionHash => {
+      this.snackbar = false;
       this.alertLink = `${this.etherscanBaseLink}/tx/${transactionHash}`;
       this.alertLinkIcon = 'mdi-open-in-new';
       this.alertType = 'success';
       this.alertMessage = this.$t('transactionSent');
       this.alertLinkTooltip = this.$t('viewOnEtherscan');
-      this.snackbar = false;
-      this.$nextTick().then(() => this.snackbar = true);
+      window.setTimeout(() => this.snackbar = true, 500);
     });
   },
 };

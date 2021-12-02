@@ -22,11 +22,11 @@
           max-width="57px" />
       </v-btn>
       <v-btn
-        v-else-if="!isMainNetwork"
+        v-else-if="!isMetamaskConnected"
         height="168px"
         width="168px"
         class="rounded-lg elevation-1"
-        @click="switchMetamaskNetwork">
+        @click="connectToMetamask">
         <span class="py-2">Metamask</span>
         <v-img
           src="../images/metamask.svg"
@@ -34,11 +34,11 @@
           max-width="57px" />
       </v-btn>
       <v-btn
-        v-else-if="!isMetamaskConnected"
+        v-else-if="!isMainNetwork"
         height="168px"
         width="168px"
         class="rounded-lg elevation-1"
-        @click="connectToMetamask">
+        @click="switchMetamaskNetwork">
         <span class="py-2">Metamask</span>
         <v-img
           src="../images/metamask.svg"
@@ -66,10 +66,10 @@ export default {
     connectionLabel() {
       if (!this.isMetamaskInstalled) {
         return this.$t('installMetamaskLabel');
-      } else if (!this.isMainNetwork) {
-        return this.$t('switchMetamaskNetworkLabel');
       } else if (!this.isMetamaskConnected) {
         return this.$t('connectMetamaskLabel');
+      } else if (!this.isMainNetwork) {
+        return this.$t('switchMetamaskNetworkLabel');
       }
       return this.isMetamaskInstalled && this.$t('connectMetamaskLabel') || this.$t('installMetamaskLabel');
     },

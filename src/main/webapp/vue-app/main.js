@@ -114,6 +114,9 @@ const store = new Vuex.Store({
               state.wethAddress = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
               state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
               state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
+              state.nftAddress = '0x1d8ecd8698ce319a79d328cc86a2b0b6a28d3ea3';
+              state.nftAddress = '0x1d8ecd8698ce319a79d328cc86a2b0b6a28d3ea3';
+              state.xMeedAddress = '0xfdf3056186f8441c2299fdcf114d9925140f151b';
             }
             this.commit('setAddress');
           } else {
