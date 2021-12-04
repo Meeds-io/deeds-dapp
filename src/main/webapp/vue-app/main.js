@@ -1,6 +1,7 @@
 import './initComponents';
 import i18nMessages from '../json/i18nMessages.json';
 import * as ethUtils from './js/ethUtils.js';
+import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
@@ -33,17 +34,50 @@ const store = new Vuex.Store({
     etherscanBaseLink: null,
     managedNetworkIds: [1, 5],
     provider: null,
-    erc20ApproveABI: [
+    erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
       'function allowance(address owner, address spender) external view returns (uint256)',
       'function approve(address spender, uint256 amount) external returns (bool)',
       'function balanceOf(address owner) view returns (uint256)',
+      'function totalSupply() public view returns (uint256)',
     ],
     routerABI: [
       'function getAmountsOut(uint amountIn, address[] memory path) public view returns(uint[] memory amounts)',
       'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
       'function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
+    ],
+    xMeedRewardingABI: [
+      'event Redeemed(address indexed user, string city, string cardType, uint256 id)',
+      'event Staked(address indexed user, uint256 amount)',
+      'event Withdrawn(address indexed user, uint256 amount)',
+      'function transfer(address recipient, uint256 amount) public returns (bool)',
+      'function transferFrom(address sender, address recipient, uint256 amount) public returns (bool)',
+      'function allowance(address owner, address spender) external view returns (uint256)',
+      'function approve(address spender, uint256 amount) external returns (bool)',
+      'function balanceOf(address owner) view returns (uint256)',
+      'function totalSupply() public view returns (uint256)',
+      'function stake(uint256 amount) public',
+      'function withdraw(uint256 amount) public',
+      'function exit() external',
+      'function isCurrentCityMintable() public view returns (bool)',
+      'function cityMintingStartDate() public view returns (uint256)',
+      'function redeem(uint8 cardTypeId) public returns (uint256 tokenId)',
+      'function earned(address account) public view returns (uint256)',
+      'function currentCityIndex() public view returns (uint8)',
+      'function cityInfo(uint256 index) public view returns (string name, uint32 population, uint32 maxPopulation, uint256 availability)',
+      'function cardTypeInfo(uint256 index) public view returns (string name, string uri, uint8 cityIndex, uint8 cardType, uint32 supply, uint32 maxSupply, uint256 amount)',
+    ],
+    nftABI: [
+      'function totalSupply() public view returns (uint256)',
+      'function totalSupply(uint256 _id) public view returns (uint256)',
+      'function uri(uint256 _id) public view returns (string)',
+      'function maxSupply(uint256 _id) public view returns (uint256)',
+      'function cityIndex(uint256 _id) public view returns (uint256)',
+      'function cardType(uint256 _id) public view returns (uint256)',
+      'function balanceOf(address _owner, uint256 _id) public view returns (uint256)',
+      'function balanceOfBatch(address[] _owners, uint256[] _ids) public view returns (uint256[])',
+      'function nftsOf(address account) public view returns (uint256[])',
     ],
     // Contracts addresses
     routerAddress: null,
@@ -54,6 +88,8 @@ const store = new Vuex.Store({
     routerContract: null,
     wethContract: null,
     meedContract: null,
+    xMeedContract: null,
+    nftContract: null,
     // User preferred language
     language,
     // Metamask status
@@ -75,9 +111,21 @@ const store = new Vuex.Store({
     // User balances
     etherBalance: 0,
     meedsBalance: 0,
-    meedsAllowance: 0,
+    meedsBalanceNoDecimals: 0,
+    meedsRouteAllowance: 0,
+    meedsStakeAllowance: 0,
+    meedsTotalSupply: 0,
+    xMeedsTotalSupply: 0,
+    meedsBalanceOfXMeeds: 0,
+    meedsBalanceOfXMeedsNoDecimals: 0,
     xMeedsBalance: 0,
+    xMeedsBalanceNoDecimals: 0,
+    pointsBalance: 0,
+    pointsBalanceNoDecimals: 0,
+    ownedNfts: null,
     selectedFiatCurrency,
+    currentCity: null,
+    currentCardTypes: null,
   },
   mutations: {
     setMetamaskInstalled(state) {
@@ -104,19 +152,18 @@ const store = new Vuex.Store({
               // Mainnet
               state.etherscanBaseLink = 'https://etherscan.io/';
               state.routerAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
+              state.pairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
-              state.pairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
             } else if (state.networkId === 5) {
               // Goerli
               state.etherscanBaseLink = 'https://goerli.etherscan.io/';
               state.routerAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
+              state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
               state.wethAddress = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
               state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
-              state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
-              state.nftAddress = '0x1d8ecd8698ce319a79d328cc86a2b0b6a28d3ea3';
-              state.nftAddress = '0x1d8ecd8698ce319a79d328cc86a2b0b6a28d3ea3';
-              state.xMeedAddress = '0xfdf3056186f8441c2299fdcf114d9925140f151b';
+              state.nftAddress = '0xb26cCD76748Fa79bF242Cfaca6687184CaF48093';
+              state.xMeedAddress = '0x36e19bB29573F5Dc5d6A124444e81646A59b6702';
             }
             this.commit('setAddress');
           } else {
@@ -144,18 +191,42 @@ const store = new Vuex.Store({
     },
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
+      state.meedsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.meedsBalance, 3, state.language);
     },
-    setMeedsAllowance(state, meedsAllowance) {
-      state.meedsAllowance = meedsAllowance;
+    setMeedsRouteAllowance(state, meedsRouteAllowance) {
+      state.meedsRouteAllowance = meedsRouteAllowance;
     },
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
+      state.xMeedsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
+    },
+    loadPointsBalance(state) {
+      tokenUtils.getPointsBalance(state.xMeedContract, state.address)
+        .then(balance => {
+          state.pointsBalance = balance;
+          state.pointsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.pointsBalance, 3, state.language);
+        });
+    },
+    loadCurrentCity(state) {
+      tokenUtils.getCurrentCity(state.xMeedContract)
+        .then(currentCity => state.currentCity = currentCity)
+        .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
+        .then(currentCardTypes => state.currentCardTypes = currentCardTypes);
+    },
+    loadOwnedNfts(state) {
+      tokenUtils.getNftsOfWallet(state.nftContract, state.xMeedContract, state.address)
+        .then(nfts => state.ownedNfts = nfts);
     },
     loadBalances(state) {
       if (state.meedContract && state.address) {
-        state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsAllowance = balance);
-        state.meedContract.balanceOf(state.address).then(balance => state.meedsBalance = balance);
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
+        state.meedContract.balanceOf(state.address).then(balance => this.commit('setMeedsBalance', balance));
+        state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
+        state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsRouteAllowance = balance);
+        state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
+        state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
+        state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
+        state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
       }
     },
     setProvider(state) {
@@ -168,12 +239,22 @@ const store = new Vuex.Store({
         );
         state.meedContract = new ethers.Contract(
           state.meedAddress,
-          state.erc20ApproveABI,
+          state.erc20ABI,
           state.provider
         );
         state.wethContract = new ethers.Contract(
           state.meedAddress,
-          state.erc20ApproveABI,
+          state.erc20ABI,
+          state.provider
+        );
+        state.xMeedContract = new ethers.Contract(
+          state.xMeedAddress,
+          state.xMeedRewardingABI,
+          state.provider
+        );
+        state.nftContract = new ethers.Contract(
+          state.nftAddress,
+          state.nftABI,
           state.provider
         );
 
@@ -195,8 +276,20 @@ const store = new Vuex.Store({
           }
         });
 
+        // eslint-disable-next-line new-cap
+        const redeemFilter = state.xMeedContract.filters.Redeemed();
+        state.xMeedContract.on(redeemFilter, (address) => {
+          if (address.toUpperCase() === state.address.toUpperCase()) {
+            this.commit('loadPointsBalance');
+            this.commit('loadCurrentCity');
+          }
+        });
+
         this.commit('loadBalances');
         this.commit('loadGasPrice');
+        this.commit('loadOwnedNfts');
+        this.commit('loadPointsBalance');
+        this.commit('loadCurrentCity');
       }
     },
     loadGasPrice(state) {

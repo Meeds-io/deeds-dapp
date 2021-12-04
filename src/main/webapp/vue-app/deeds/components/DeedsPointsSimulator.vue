@@ -1,0 +1,77 @@
+<template>
+  <v-card elevation="2" class="px-4">
+    <v-card-title class="ps-0 pb-0 mx-1 text-capitalize">
+      {{ $t('pointsSimulator') }}
+    </v-card-title>
+    <v-card-text class="ps-0">
+      <v-slider
+        v-model="xMeedAmount"
+        min="0"
+        max="100000"
+        step="10"
+        class="align-center"
+        hide-details>
+        <template v-slot:append>
+          <div class="font-weight-bold d-flex flex-nowrap">
+            <v-text-field
+              v-model="xMeedAmount"
+              class="mt-0 pt-0 me-2"
+              hide-details
+              outlined
+              dense
+              style="max-width: 145px"
+              dir="rtl" />
+            <div class="my-auto">xMEED</div>
+          </div>
+        </template>
+      </v-slider>
+      <div class="mx-1">
+        {{ pointsSimulationRate }}
+      </div>
+    </v-card-text>
+  </v-card>
+</template>
+<script>
+export default {
+  data: () => ({
+    xMeedAmount: 0,
+    cardPrice: 8000,
+    dayInSeconds: 24 * 60 * 60,
+  }),
+  computed: Vuex.mapState({
+    language: state => state.language,
+    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
+    dailyPoints() {
+      if (!this.xMeedAmount) {
+        return 0;
+      }
+      const amount = new BigNumber(this.xMeedAmount);
+      const ratePerSecond = amount.dividedBy(amount.plus(12000)).dividedBy(240);
+      return ratePerSecond.multipliedBy(this.dayInSeconds).toNumber();
+    },
+    days() {
+      if (!this.dailyPoints) {
+        return 0;
+      }
+      return this.cardPrice / this.dailyPoints;
+    },
+    pointsSimulationRate() {
+      return this.$t('pointsSimulationRate', {
+        0: this.$ethUtils.toFixedDisplay(this.dailyPoints, 1, this.language),
+        1: this.$ethUtils.toFixedDisplay(this.days, 1, this.language),
+        2: this.$ethUtils.toFixedDisplay(this.cardPrice, 0, this.language),
+      });
+    },
+  }),
+  watch: {
+    xMeedsBalanceNoDecimals: {
+      immediate: true,
+      handler() {
+        if (!this.xMeedAmount && this.xMeedsBalanceNoDecimals) {
+          this.xMeedAmount = parseInt(this.xMeedsBalanceNoDecimals);
+        }
+      },
+    },
+  },
+};
+</script>

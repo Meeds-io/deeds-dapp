@@ -104,7 +104,7 @@ export default {
     etherBalance: state => state.etherBalance,
     meedsBalance: state => state.meedsBalance,
     transactionGas: state => state.transactionGas,
-    meedsAllowance: state => state.meedsAllowance,
+    meedsRouteAllowance: state => state.meedsRouteAllowance,
     provider: state => state.provider,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
@@ -163,9 +163,9 @@ export default {
       if (this.buy || !this.isFromValueNumeric || !this.fromValue) {
         return true;
       } else {
-        const meedsAllowance = this.meedsAllowance;
+        const meedsRouteAllowance = this.meedsRouteAllowance;
         const meedsToSend = this.$ethUtils.toDecimals(this.fromValue, 18);
-        return meedsToSend.lte(meedsAllowance);
+        return meedsToSend.lte(meedsRouteAllowance);
       }
     },
     hasSufficientGas() {
@@ -218,7 +218,7 @@ export default {
       return null;
     },
     approveMethod() {
-      if (this.provider && this.routerContract) {
+      if (this.provider && this.meedContract) {
         const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
         return meedContractSigner.approve;
       }
@@ -226,8 +226,8 @@ export default {
     },
   }),
   watch: {
-    meedsAllowance() {
-      if (this.swapInToSteps && this.meedsAllowance && !this.meedsAllowance.isZero()) {
+    meedsRouteAllowance() {
+      if (this.swapInToSteps && this.meedsRouteAllowance && !this.meedsRouteAllowance.isZero()) {
         this.step = 2;
         this.sendingTransaction = 0;
       }

@@ -26,14 +26,11 @@ export default {
     ethPrice: state => state.ethPrice,
     exchangeRate: state => state.exchangeRate,
     meedsBalance: state => state.meedsBalance,
+    meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     xMeedsBalance: state => state.xMeedsBalance,
-    xMeedsBalanceNoDecimals() {
-      return this.computeMeedsBalanceNoDecimals(
-        this.xMeedsBalance,
-        3);
-    },
+    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     xMeedsBalanceFiat() {
-      return this.computeFiatBalance(
+      return this.$ethUtils.computeFiatBalance(
         this.xMeedsBalance,
         this.meedsPrice,
         this.ethPrice,
@@ -41,13 +38,8 @@ export default {
         this.selectedFiatCurrency,
         this.language);
     },
-    meedsBalanceNoDecimals() {
-      return this.computeMeedsBalanceNoDecimals(
-        this.meedsBalance,
-        3);
-    },
     meedsBalanceFiat() {
-      return this.computeFiatBalance(
+      return this.$ethUtils.computeFiatBalance(
         this.meedsBalance,
         this.meedsPrice,
         this.ethPrice,
@@ -56,32 +48,5 @@ export default {
         this.language);
     },
   }),
-  methods: {
-    computeMeedsBalanceNoDecimals(meedsBalance, fractions) {
-      if (meedsBalance) {
-        const meedsBalanceNoDecimals = this.$ethUtils.fromDecimals(meedsBalance, 18);
-        const meedsBalanceWithFractions = this.$ethUtils.fractionsToDisplay(meedsBalanceNoDecimals, fractions);
-        return this.$ethUtils.toCurrencyDisplay(meedsBalanceWithFractions, 'eur', this.language).replace('€', '');
-      } else {
-        return '-';
-      }
-    },
-    computeFiatBalance(meedsBalance, meedsPrice, ethPrice, exchangeRate, selectedFiatCurrency, language) {
-      if (meedsPrice && meedsBalance) {
-        const meedsBalanceNoDecimals = this.$ethUtils.fromDecimals(meedsBalance, 18);
-        if (selectedFiatCurrency === 'eur') {
-          const meedsBalanceEur = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice).multipliedBy(new BigNumber(exchangeRate)), 3);
-          return this.$ethUtils.toCurrencyDisplay(meedsBalanceEur, selectedFiatCurrency, language);
-        } else if (selectedFiatCurrency === 'usd' && ethPrice) {
-          const meedsBalanceUsd = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice), 3);
-          return this.$ethUtils.toCurrencyDisplay(meedsBalanceUsd, selectedFiatCurrency, language);
-        } else if (selectedFiatCurrency === 'eth') {
-          const meedsBalanceEth = this.$ethUtils.fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice), 8);
-          return this.$ethUtils.toCurrencyDisplay(meedsBalanceEth, selectedFiatCurrency, language);
-        }
-      }
-      return '-';
-    },
-  },
 };
 </script>
