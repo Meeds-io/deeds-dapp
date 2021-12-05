@@ -34,7 +34,7 @@
           max-width="57px" />
       </v-btn>
       <v-btn
-        v-else-if="!isMainNetwork"
+        v-else-if="!isKnownNetwork"
         height="168px"
         width="168px"
         class="rounded-lg elevation-1"
@@ -54,21 +54,21 @@ export default {
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
     address: state => state.address,
-    isMainNetwork() {
-      return this.networkId === 1;
+    isKnownNetwork() {
+      return this.networkId === 1 || this.networkId === 5;
     },
     isMetamaskConnected() {
       return !!this.address;
     },
     showMetamaskButton() {
-      return !this.isMetamaskInstalled || !this.isMetamaskConnected || !this.isMainNetwork;
+      return !this.isMetamaskInstalled || !this.isMetamaskConnected || !this.isKnownNetwork;
     },
     connectionLabel() {
       if (!this.isMetamaskInstalled) {
         return this.$t('installMetamaskLabel');
       } else if (!this.isMetamaskConnected) {
         return this.$t('connectMetamaskLabel');
-      } else if (!this.isMainNetwork) {
+      } else if (!this.isKnownNetwork) {
         return this.$t('switchMetamaskNetworkLabel');
       }
       return this.isMetamaskInstalled && this.$t('connectMetamaskLabel') || this.$t('installMetamaskLabel');

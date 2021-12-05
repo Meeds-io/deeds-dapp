@@ -1,16 +1,16 @@
 <template>
   <v-card
-    class="mx-auto elevation-2"
-    width="340px"
-    height="400"
+    width="340"
+    height="350"
+    class="elevation-2"
     flat>
     <v-card-title class="d-flex flex-column justify-center pb-2">
       <v-icon>mdi-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
     <v-card-text>
-      <v-list-item two-line>
-        <v-list-item-content>
+      <v-list-item>
+        <v-list-item-content class="pb-0">
           <v-list-item-title>
             {{ $t('apy') }}
           </v-list-item-title>
@@ -19,7 +19,10 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item two-line class="mb-8">
+      <v-list-item
+        two-line
+        dense
+        class="mb-2">
         <v-list-item-content>
           <v-list-item-title>
             {{ $t('totalHoldings') }}

@@ -1,8 +1,7 @@
 <template>
   <v-card
-    class="mx-auto"
-    width="240"
-    height="200"
+    width="340"
+    height="350"
     flat>
     <v-card-title class="justify-center pb-2">
       {{ $t('buyOrSell') }}

@@ -1,12 +1,15 @@
 <template>
   <v-app>
     <v-card flat>
-      <deeds-topbar class="mainPageLayout" />
+      <deeds-topbar class="mainPageLayout" role="banner" />
       <v-divider />
       <div v-if="!loading" class="mainPageLayout pa-4">
         <deeds-metamask />
-        <deeds-navbar v-if="address" />
-        <deeds-page v-if="address" class="mt-8" />
+        <deeds-navbar v-if="address" role="navigation" />
+        <deeds-page
+          v-if="address"
+          class="mt-8"
+          role="main" />
       </div>
       <deeds-notifications />
     </v-card>

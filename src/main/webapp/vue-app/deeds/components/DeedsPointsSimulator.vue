@@ -1,5 +1,8 @@
 <template>
-  <v-card elevation="2" class="px-4">
+  <v-card
+    elevation="2"
+    width="530"
+    class="px-4">
     <v-card-title class="ps-0 pb-0 mx-1 text-capitalize">
       {{ $t('pointsSimulator') }}
     </v-card-title>

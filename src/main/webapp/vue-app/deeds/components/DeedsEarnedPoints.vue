@@ -1,8 +1,8 @@
 <template>
   <v-card
-    class="mx-auto elevation-2"
-    width="340px"
-    height="325px"
+    width="340"
+    height="350"
+    class="elevation-2"
     flat>
     <v-card-title class="d-flex flex-column justify-center">
       <v-icon>mdi-office-building-outline</v-icon>
