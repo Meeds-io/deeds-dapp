@@ -46,28 +46,28 @@ export function formatDate(date, lang) {
   }).format(date);
 }
 
-export function computeMeedsBalanceNoDecimals(meedsBalance, fractions, language) {
-  if (meedsBalance) {
-    const meedsBalanceNoDecimals = fromDecimals(meedsBalance, 18);
-    const meedsBalanceWithFractions = fractionsToDisplay(meedsBalanceNoDecimals, fractions);
-    return toCurrencyDisplay(meedsBalanceWithFractions, 'eur', language).replace('€', '');
+export function computeTokenBalanceNoDecimals(tokenBalance, fractions, language) {
+  if (tokenBalance) {
+    const tokenBalanceNoDecimals = fromDecimals(tokenBalance, 18);
+    const tokenBalanceWithFractions = fractionsToDisplay(tokenBalanceNoDecimals, fractions);
+    return toCurrencyDisplay(tokenBalanceWithFractions, 'eur', language).replace('€', '');
   } else {
     return '-';
   }
 }
 
-export function computeFiatBalance(meedsBalance, meedsPrice, ethPrice, exchangeRate, selectedFiatCurrency, language) {
-  if (meedsPrice && meedsBalance) {
-    const meedsBalanceNoDecimals = fromDecimals(meedsBalance, 18);
+export function computeFiatBalance(tokenBalance, meedsPrice, ethPrice, exchangeRate, selectedFiatCurrency, language) {
+  if (meedsPrice && tokenBalance) {
+    const tokenBalanceNoDecimals = fromDecimals(tokenBalance, 18);
     if (selectedFiatCurrency === 'eur') {
-      const meedsBalanceEur = fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice).multipliedBy(new BigNumber(exchangeRate)), 3);
-      return toCurrencyDisplay(meedsBalanceEur, selectedFiatCurrency, language);
+      const tokenBalanceEur = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice).multipliedBy(new BigNumber(exchangeRate)), 3);
+      return toCurrencyDisplay(tokenBalanceEur, selectedFiatCurrency, language);
     } else if (selectedFiatCurrency === 'usd' && ethPrice) {
-      const meedsBalanceUsd = fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice), 3);
-      return toCurrencyDisplay(meedsBalanceUsd, selectedFiatCurrency, language);
+      const tokenBalanceUsd = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice), 3);
+      return toCurrencyDisplay(tokenBalanceUsd, selectedFiatCurrency, language);
     } else if (selectedFiatCurrency === 'eth') {
-      const meedsBalanceEth = fractionsToDisplay(new BigNumber(meedsBalanceNoDecimals).multipliedBy(meedsPrice), 8);
-      return toCurrencyDisplay(meedsBalanceEth, selectedFiatCurrency, language);
+      const tokenBalanceEth = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice), 8);
+      return toCurrencyDisplay(tokenBalanceEth, selectedFiatCurrency, language);
     }
   }
   return '-';

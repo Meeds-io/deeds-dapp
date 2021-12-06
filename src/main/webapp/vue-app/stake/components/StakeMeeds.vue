@@ -85,7 +85,7 @@ export default {
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeedsNoDecimals() {
-      return this.$ethUtils.computeMeedsBalanceNoDecimals(
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
         this.meedsBalanceOfXMeeds,
         3,
         this.language);

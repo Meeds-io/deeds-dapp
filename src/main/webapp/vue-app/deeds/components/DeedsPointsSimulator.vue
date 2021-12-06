@@ -10,14 +10,14 @@
       <v-slider
         v-model="xMeedAmount"
         min="0"
-        max="100000"
-        step="10"
+        max="999999"
         class="align-center"
         hide-details>
         <template v-slot:append>
           <div class="font-weight-bold d-flex flex-nowrap">
             <v-text-field
               v-model="xMeedAmount"
+              max="999999"
               class="mt-0 pt-0 me-2"
               hide-details
               outlined
@@ -43,7 +43,10 @@ export default {
   }),
   computed: Vuex.mapState({
     language: state => state.language,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
+    xMeedsBalance: state => state.xMeedsBalance,
+    xMeedsBalanceNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
+    },
     dailyPoints() {
       if (!this.xMeedAmount) {
         return 0;

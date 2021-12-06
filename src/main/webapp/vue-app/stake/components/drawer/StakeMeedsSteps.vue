@@ -24,8 +24,6 @@
         flat>
         <v-card-text>
           {{ $t('approveMeedsDescription', {0: meedsBalanceNoDecimals}) }}
-        </v-card-text>
-        <v-card-text>
           <v-text-field
             v-model="allowance"
             :rules="allowanceValueValidator"
@@ -35,13 +33,20 @@
             outlined
             dense>
             <template #append>
+              <v-chip
+                outlined
+                x-small
+                class="mt-1 me-1"
+                @click="setMaxAllowance">
+                {{ $t('max') }}
+              </v-chip>
               <div class="mt-1">
                 MEED
               </div>
             </template>
           </v-text-field>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="ms-2">
           <v-btn
             :disabled="disabledApproveButton"
             :loading="sendingApproval"
@@ -59,8 +64,6 @@
       <v-card class="mb-12" flat>
         <v-card-text>
           {{ $t('stakeMeedsDescription', {0: meedsStakeAllowanceNoDecimals}) }}
-        </v-card-text>
-        <v-card-text>
           <v-text-field
             v-model="stakeAmount"
             :rules="stakeAmountValidator"
@@ -70,13 +73,20 @@
             outlined
             dense>
             <template #append>
+              <v-chip
+                outlined
+                x-small
+                class="mt-1 me-1"
+                @click="setMaxStakeAmount">
+                {{ $t('max') }}
+              </v-chip>
               <div class="mt-1">
                 MEED
               </div>
             </template>
           </v-text-field>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="ms-2">
           <v-btn
             :disabled="disabledStakeButton"
             :loading="sendingStake"
@@ -113,7 +123,7 @@ export default {
     transactionGas: state => state.transactionGas,
     gasLimit: state => state.gasLimit,
     meedsStakeAllowanceNoDecimals() {
-      return this.$ethUtils.computeMeedsBalanceNoDecimals(
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
         this.meedsStakeAllowance,
         3,
         this.language);
@@ -173,18 +183,24 @@ export default {
     isStakeAmountValid() {
       return !this.stakeAmount || (this.isStakeAmountNumeric && this.isStakeAmountLessThanMax && this.hasSufficientGas);
     },
+    maxMeedsBalanceNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+    },
+    maxMeedsAllowanceNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+    },
     allowanceValueValidator() {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
         () => !!this.isAllowanceValueNumeric || this.$t('valueMustBeNumeric'),
-        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.meedsBalanceNoDecimals}),
+        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsBalanceNoDecimals}),
       ];
     },
     stakeAmountValidator() {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
         () => !!this.isStakeAmountNumeric || this.$t('valueMustBeNumeric'),
-        () => !!this.isStakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.meedsStakeAllowanceNoDecimals}),
+        () => !!this.isStakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsAllowanceNoDecimals}),
       ];
     },
     approveMethod() {
@@ -230,6 +246,12 @@ export default {
       }).catch(() => {
         this.sendingApproval = false;
       });
+    },
+    setMaxAllowance() {
+      this.allowance = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+    },
+    setMaxStakeAmount() {
+      this.stakeAmount = this.$ethUtils.fromDecimals(this.meedsStakeAllowance, 18);
     },
     stake() {
       this.sendingStake = true;

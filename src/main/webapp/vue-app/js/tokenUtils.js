@@ -60,6 +60,14 @@ export function getCurrentCity(xMeedContract) {
     });
 }
 
+export function isCurrentCityMintable(xMeedContract) {
+  return xMeedContract.isCurrentCityMintable();
+}
+
+export function getLastCityMintingCompleteDate(xMeedContract) {
+  return xMeedContract.lastCityMintingCompleteDate();
+}
+
 export function getCityCardTypes(xMeedContract, cityIndex) {
   const promises = [];
   for (let i =0; i < 4; i++) {

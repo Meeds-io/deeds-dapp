@@ -18,6 +18,13 @@
           outlined
           dense>
           <template #append>
+            <v-chip
+              outlined
+              x-small
+              class="mt-1 me-1"
+              @click="setMaxValue">
+              {{ $t('max') }}
+            </v-chip>
             <div class="mt-1">
               {{ buy && 'ETH' || 'MEED' }}
             </div>
@@ -150,9 +157,9 @@ export default {
     },
     maxFromValueLabel() {
       if (this.buy) {
-        return this.$ethUtils.toFixedDisplay(this.maxEther, 8, this.language);
+        return this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
       } else {
-        return this.$ethUtils.toFixedDisplay(this.maxMeed, 2, this.language);
+        return this.$ethUtils.fromDecimals(this.meedsBalance, 18);
       }
     },
     isFromValueValid() {
@@ -339,6 +346,13 @@ export default {
     },
     getTransactionDeadline() {
       return Date.now() + this.deadlineMinutes * 60 * 1000;
+    },
+    setMaxValue() {
+      if (this.buy) {
+        this.fromValue = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+      } else {
+        this.fromValue = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+      }
     },
   },
 };

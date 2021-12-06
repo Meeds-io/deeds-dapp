@@ -67,6 +67,7 @@ const store = new Vuex.Store({
       'function currentCityIndex() public view returns (uint8)',
       'function cityInfo(uint256 index) public view returns (string name, uint32 population, uint32 maxPopulation, uint256 availability)',
       'function cardTypeInfo(uint256 index) public view returns (string name, string uri, uint8 cityIndex, uint8 cardType, uint32 supply, uint32 maxSupply, uint256 amount)',
+      'function lastCityMintingCompleteDate() public view returns (uint256)',
     ],
     nftABI: [
       'function totalSupply() public view returns (uint256)',
@@ -100,7 +101,7 @@ const store = new Vuex.Store({
     // Euro/USD historical exchange rate data
     currencyExchangeRate: null,
     // Default Gas limit for sent transactions
-    gasLimit: 250000,
+    gasLimit: 500000,
     // Cuurent Gas Price 
     gasPrice: 0,
     gasPriceGwei: 0,
@@ -126,6 +127,8 @@ const store = new Vuex.Store({
     selectedFiatCurrency,
     currentCity: null,
     currentCardTypes: null,
+    currentCityMintable: null,
+    lastCityMintingCompleteDate: null,
   },
   mutations: {
     setMetamaskInstalled(state) {
@@ -176,6 +179,15 @@ const store = new Vuex.Store({
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
+      if (state.meedsBalance) {
+        state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
+      }
+      if (state.xMeedsBalance) {
+        state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
+      }
+      if (state.pointsBalance) {
+        state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
+      }
     },
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;
@@ -191,25 +203,35 @@ const store = new Vuex.Store({
     },
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
-      state.meedsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.meedsBalance, 3, state.language);
+      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
     },
     setMeedsRouteAllowance(state, meedsRouteAllowance) {
       state.meedsRouteAllowance = meedsRouteAllowance;
     },
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
-      state.xMeedsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
+      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
     },
     loadPointsBalance(state) {
       tokenUtils.getPointsBalance(state.xMeedContract, state.address)
         .then(balance => {
           state.pointsBalance = balance;
-          state.pointsBalanceNoDecimals = ethUtils.computeMeedsBalanceNoDecimals(state.pointsBalance, 3, state.language);
+          state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
         });
     },
     loadCurrentCity(state) {
       tokenUtils.getCurrentCity(state.xMeedContract)
-        .then(currentCity => state.currentCity = currentCity)
+        .then(currentCity => {
+          state.currentCity = currentCity;
+          return tokenUtils.isCurrentCityMintable(state.xMeedContract);
+        })
+        .then(currentCityMintable => {
+          state.currentCityMintable = currentCityMintable;
+          if (!currentCityMintable) {
+            return tokenUtils.getLastCityMintingCompleteDate(state.xMeedContract)
+              .then(lastCityMintingCompleteDate => state.lastCityMintingCompleteDate = lastCityMintingCompleteDate);
+          }
+        })
         .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
         .then(currentCardTypes => state.currentCardTypes = currentCardTypes);
     },

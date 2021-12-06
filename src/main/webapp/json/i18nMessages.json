@@ -12,6 +12,7 @@
     "month": "Month",
     "year": "Year",
     "all": "All",
+    "max": "Max",
     "buyMeeds": "Buy Meeds",
     "sellMeeds": "Sell Meeds",
     "buyOrSell": "Buy / Sell",
@@ -59,7 +60,8 @@
     "unstake": "Unstake",
     "approveMeedsDescription": "Approve up to {0} MEEDs to be able to stake",
     "stakeMeedsDescription": "Stake up to {0} MEEDs",
-    "unstakeMeedsDescription": "Unstake up to {0} MEEDs",
+    "unstakeXMeedsDescription": "Unstake up to {0} xMEEDs",
+    "unstakeMeedsEstimation": "Receive approximately {0} MEEDs",
     "approvalTransactionInProgress": "Approval transaction in progress, please wait until the transaction finishes to be able to stake.",
     "deedsNfts": "Deeds NFTs",
     "deedPointsIntroduction": "Stake your xMEEDs and earn points to redeem Deeds",
@@ -73,7 +75,9 @@
     "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (<a href='#'>see whitepaper</a>) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
     "cityPopulation": "City population",
     "redeem": "Redeem",
-    "cardSupply": "Redeemed"
+    "cardSupply": "Redeemed",
+    "cityMintingStartDate": "City minting will begin within",
+    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
   },
   "fr": {
     "dao": "DAO",
@@ -88,6 +92,7 @@
     "month": "Mois",
     "year": "Année",
     "all": "Tout",
+    "max": "Max",
     "buyMeeds": "Acheter du Meeds",
     "sellMeeds": "Vendre du Meeds",
     "buyOrSell": "Acheter / Vendre",
@@ -136,7 +141,8 @@
     "unstake": "Unstake",
     "approveMeedsDescription": "Approve up to {0} MEEDs to be able to stake",
     "stakeMeedsDescription": "Stake up to {0} MEEDs",
-    "unstakeMeedsDescription": "Unstake up to {0} MEEDs",
+    "unstakeXMeedsDescription": "Unstake up to {0} xMEEDs",
+    "unstakeMeedsEstimation": "Receive approximately {0} MEEDs",
     "approvalTransactionInProgress": "Approval transaction in progress, please wait until the transaction finishes to be able to stake.",
     "deedsNfts": "Deeds NFTs",
     "deedPointsIntroduction": "Stake your xMEEDs and earn points to redeem Deeds",
@@ -150,6 +156,8 @@
     "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (<a href='#'>see whitepaper</a>) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
     "cityPopulation": "City population",
     "redeem": "Redeem",
-    "cardSupply": "Redeemed"
+    "cardSupply": "Redeemed",
+    "cityMintingStartDate": "City minting will begin within",
+    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
   }
 }

@@ -1,9 +1,7 @@
 <template>
   <v-card class="mb-12" flat>
     <v-card-text>
-      {{ $t('unstakeMeedsDescription', {0: xMeedsBalanceNoDecimals}) }}
-    </v-card-text>
-    <v-card-text>
+      {{ $t('unstakeXMeedsDescription', {0: xMeedsBalanceNoDecimals}) }}
       <v-text-field
         v-model="unstakeAmount"
         :rules="unstakeAmountValidator"
@@ -13,11 +11,21 @@
         outlined
         dense>
         <template #append>
+          <v-chip
+            outlined
+            x-small
+            class="mt-1 me-1"
+            @click="setMaxXMeeds">
+            {{ $t('max') }}
+          </v-chip>
           <div class="mt-1">
-            MEED
+            xMEED
           </div>
         </template>
       </v-text-field>
+      <small v-if="unstakedMeedsAmountNoDecimals">
+        {{ $t('unstakeMeedsEstimation', {0: unstakedMeedsAmountNoDecimals}) }}
+      </small>
     </v-card-text>
     <v-card-actions class="px-4">
       <v-btn
@@ -50,6 +58,8 @@ export default {
     xMeedContract: state => state.xMeedContract,
     transactionGas: state => state.transactionGas,
     gasLimit: state => state.gasLimit,
+    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
+    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     disabledUnstakeButton() {
       return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
     },
@@ -80,6 +90,23 @@ export default {
     isUnstakeAmountValid() {
       return !this.unstakeAmount || (this.isUnstakeAmountNumeric && this.isUnstakeAmountLessThanMax && this.hasSufficientGas);
     },
+    unstakedMeedsAmount() {
+      if (this.isUnstakeAmountValid && Number(this.unstakeAmount) && this.meedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
+        return new BigNumber(this.meedsBalanceOfXMeeds.toString()).multipliedBy(this.unstakeAmount).dividedBy(this.xMeedsTotalSupply.toString()).toString();
+      } else {
+        return 0;
+      }
+    },
+    unstakedMeedsAmountNoDecimals() {
+      if (this.unstakedMeedsAmount) {
+        return this.$ethUtils.toFixedDisplay(
+          this.unstakedMeedsAmount,
+          3,
+          this.language);
+      } else {
+        return 0;
+      }
+    },
     unstakeAmountValidator() {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
@@ -96,6 +123,9 @@ export default {
     },
   }),
   methods: {
+    setMaxXMeeds() {
+      this.unstakeAmount = this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
+    },
     unstake() {
       this.sendingUnstake = true;
       const amount = this.$ethUtils.toDecimals(this.unstakeAmount, 18);

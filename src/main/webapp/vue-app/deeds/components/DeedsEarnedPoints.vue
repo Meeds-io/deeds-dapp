@@ -55,13 +55,13 @@ export default {
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     xMeedsTotalSupplyNoDecimals() {
-      return this.$ethUtils.computeMeedsBalanceNoDecimals(
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
         this.xMeedsTotalSupply,
         3,
         this.language);
     },
     pointsBalanceNoDecimals() {
-      return this.$ethUtils.computeMeedsBalanceNoDecimals(
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
         this.pointsBalance,
         3,
         this.language);

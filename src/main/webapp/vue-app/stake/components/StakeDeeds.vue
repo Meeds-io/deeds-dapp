@@ -9,7 +9,8 @@
     <v-card-actions class="ps-0 justify-center">
       <v-btn
         outlined
-        text>
+        text
+        @click="$root.$emit('switch-page', 'deeds')">
         <span class="text-none">{{ $t('myDeeds') }}</span>
       </v-btn>
     </v-card-actions>

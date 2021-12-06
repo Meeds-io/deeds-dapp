@@ -29,14 +29,21 @@ export default {
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
+    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
+    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     xMeedsBalanceFiat() {
-      return this.$ethUtils.computeFiatBalance(
-        this.xMeedsBalance,
-        this.meedsPrice,
-        this.ethPrice,
-        this.exchangeRate,
-        this.selectedFiatCurrency,
-        this.language);
+      if (this.xMeedsBalance && this.xMeedsTotalSupply && this.meedsBalanceOfXMeeds) {
+        const meedsBalance = this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
+        return this.$ethUtils.computeFiatBalance(
+          meedsBalance,
+          this.meedsPrice,
+          this.ethPrice,
+          this.exchangeRate,
+          this.selectedFiatCurrency,
+          this.language);
+      } else {
+        return 0;
+      }
     },
     meedsBalanceFiat() {
       return this.$ethUtils.computeFiatBalance(

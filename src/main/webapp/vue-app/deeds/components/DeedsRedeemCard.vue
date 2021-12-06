@@ -59,6 +59,7 @@ export default {
     xMeedContract: state => state.xMeedContract,
     pointsBalance: state => state.pointsBalance,
     gasLimit: state => state.gasLimit,
+    currentCityMintable: state => state.currentCityMintable,
     cardName() {
       return this.card && this.card.name;
     },
@@ -75,13 +76,14 @@ export default {
       return this.card && this.card.amount;
     },
     cardAmountNoDecimals() {
-      return this.$ethUtils.computeMeedsBalanceNoDecimals(
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
         this.cardAmount,
         3,
         this.language);
     },
     disableRedeemButton() {
       return this.sendingRedeem
+        || !this.currentCityMintable
         || !this.pointsBalance
         || this.cardAmount.gt(this.pointsBalance)
         || this.cardSupply >= this.cardMaxSupply;

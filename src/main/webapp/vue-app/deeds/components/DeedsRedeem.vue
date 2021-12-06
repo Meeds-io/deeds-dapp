@@ -9,6 +9,13 @@
     <small>
       {{ $t('cityPopulation') }}:
       <v-chip class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
+      <template v-if="!currentCityMintable && currentCityMintingStartDate">.</template>
+    </small>
+    <small v-if="!currentCityMintable && currentCityMintingStartDate">
+      {{ $t('cityMintingStartDate') }}:
+      <span class="ms-2 red--text">
+        {{ $t('cityMintingTimer', {0: days, 1: hours, 2: minutes, 3: seconds}) }}
+      </span>
     </small>
     <template v-if="currentCardTypes">
       <v-container class="grey lighten-5 mt-2">
@@ -25,9 +32,28 @@
 </template>
 <script>
 export default {
+  data: () => ({
+    interval: 0,
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  }),
   computed: Vuex.mapState({
     currentCity: state => state.currentCity,
     currentCardTypes: state => state.currentCardTypes,
+    currentCityMintable: state => state.currentCityMintable,
+    lastCityMintingCompleteDate: state => state.lastCityMintingCompleteDate,
+    currentCityMintingStartDate() {
+      if (!this.currentCityMintable && this.currentCityAvailability && this.lastCityMintingCompleteDate) {
+        return 3;
+      } else {
+        return 0;
+      }
+    },
+    currentCityAvailability() {
+      return this.currentCity && this.currentCity.availability;
+    },
     currentCityName() {
       return this.currentCity && this.currentCity.name;
     },
@@ -38,5 +64,32 @@ export default {
       return this.currentCity && this.currentCity.maxPopulation;
     },
   }),
+  watch: {
+    currentCityMintingStartDate() {
+      if (this.currentCityMintable === false && !this.interval) {
+        this.setCountDown();
+      }
+    },
+  },
+  methods: {
+    setCountDown() {
+      if (!this.currentCityMintingStartDate) {
+        return;
+      }
+      this.interval = setInterval(() => {
+        const distance = this.currentCityMintingStartDate - Date.now();
+        if (distance <= 0) {
+          this.$store.commit('loadCurrentCity');
+          clearInterval(this.interval);
+        } else {
+          // Time calculations for days, hours, minutes and seconds
+          this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          this.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        }
+      }, 1000);
+    },
+  },
 };
 </script>
