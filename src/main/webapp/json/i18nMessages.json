@@ -72,10 +72,11 @@
     "earned": "Earned",
     "xMeedsStakes": "xMeeds Stakes",
     "deedsToRedeem": "Deeds to Redeem",
-    "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (<a href='#'>see whitepaper</a>) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
+    "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (see whitepaper) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
     "cityPopulation": "City population",
     "redeem": "Redeem",
     "cardSupply": "Redeemed",
+    "myAssets": "My Assets",
     "cityMintingStartDate": "City minting will begin within",
     "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
   },
@@ -153,10 +154,11 @@
     "earned": "Earned",
     "xMeedsStakes": "xMeeds Stakes",
     "deedsToRedeem": "Deeds to Redeem",
-    "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (<a href='#'>see whitepaper</a>) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
+    "deedsToRedeemIntroduction": "Spend your points to redeema Deed. Each deed is a unique spot in a city of the Digital Office Metaverse (see whitepaper) which in turns lets you run digital offices for your own organization. You will also be able to let them.",
     "cityPopulation": "City population",
     "redeem": "Redeem",
     "cardSupply": "Redeemed",
+    "myAssets": "My Assets",
     "cityMintingStartDate": "City minting will begin within",
     "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
   }

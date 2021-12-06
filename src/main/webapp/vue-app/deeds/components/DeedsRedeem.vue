@@ -5,10 +5,19 @@
       <v-divider class="my-auto ms-4" />
     </h3>
     <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
-    <h4>{{ currentCityName }}</h4>
-    <small>
+    <v-skeleton-loader
+      v-if="currentCityName === null"
+      type="chip"
+      max-height="17"
+      tile />
+    <h4 v-else>{{ currentCityName }}</h4>
+    <small class="d-flex flex-nowrap align-center">
       {{ $t('cityPopulation') }}:
-      <v-chip class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
+      <v-skeleton-loader
+        v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
+        type="chip"
+        class="ms-2" />
+      <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
       <template v-if="!currentCityMintable && currentCityMintingStartDate">.</template>
     </small>
     <small v-if="!currentCityMintable && currentCityMintingStartDate">
@@ -24,6 +33,17 @@
             v-for="card in currentCardTypes"
             :key="card.name">
             <deeds-redeem-card :card="card" />
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+    <template v-else>
+      <v-container class="grey lighten-5 mt-2">
+        <v-row class="mx-auto" no-gutters>
+          <v-col
+            v-for="i in 4"
+            :key="i">
+            <v-skeleton-loader type="card" class="mx-2" />
           </v-col>
         </v-row>
       </v-container>

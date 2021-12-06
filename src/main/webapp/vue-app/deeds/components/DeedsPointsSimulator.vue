@@ -28,7 +28,12 @@
           </div>
         </template>
       </v-slider>
-      <div class="mx-1">
+      <v-skeleton-loader
+        v-if="xMeedsBalance === null"
+        type="chip"
+        max-height="17"
+        tile />
+      <div v-else class="mx-1">
         {{ pointsSimulationRate }}
       </div>
     </v-card-text>
@@ -45,7 +50,7 @@ export default {
     language: state => state.language,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals() {
-      return this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
+      return this.xMeedsBalance && this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
     },
     dailyPoints() {
       if (!this.xMeedAmount) {

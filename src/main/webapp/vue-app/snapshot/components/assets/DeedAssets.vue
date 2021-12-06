@@ -1,5 +1,5 @@
 <template>
-  <v-list dense>
+  <v-list dense v-if="ownedNfts && ownedNfts.length">
     <v-list-item>
       <h4>{{ $t('deeds') }}</h4>
     </v-list-item>

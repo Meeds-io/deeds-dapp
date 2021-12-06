@@ -6,14 +6,50 @@
     <v-list-item class="ps-8">
       <v-list-item-content>Meeds</v-list-item-content>
       <v-list-item-content />
-      <v-list-item-content class="align-end">{{ meedsBalanceNoDecimals }} MEED</v-list-item-content>
-      <v-list-item-content class="align-end">{{ meedsBalanceFiat }}</v-list-item-content>
+      <v-list-item-content class="align-end">
+        <v-skeleton-loader
+          v-if="meedsBalance === null"
+          type="chip"
+          max-height="17"
+          tile />
+        <template v-else>
+          {{ meedsBalanceNoDecimals }} MEED
+        </template>
+      </v-list-item-content>
+      <v-list-item-content class="align-end">
+        <v-skeleton-loader
+          v-if="meedsBalance === null"
+          type="chip"
+          max-height="17"
+          tile />
+        <template v-else>
+          {{ meedsBalanceFiat }}
+        </template>
+      </v-list-item-content>
     </v-list-item>
     <v-list-item class="ps-8">
       <v-list-item-content>xMeeds</v-list-item-content>
       <v-list-item-content>-</v-list-item-content>
-      <v-list-item-content class="align-end">{{ xMeedsBalanceNoDecimals }} xMEED</v-list-item-content>
-      <v-list-item-content class="align-end">{{ xMeedsBalanceFiat }}</v-list-item-content>
+      <v-list-item-content class="align-end">
+        <v-skeleton-loader
+          v-if="xMeedsBalance === null"
+          type="chip"
+          max-height="17"
+          tile />
+        <template v-else>
+          {{ xMeedsBalanceNoDecimals }} xMEED
+        </template>
+      </v-list-item-content>
+      <v-list-item-content class="align-end">
+        <v-skeleton-loader
+          v-if="xMeedsBalance === null"
+          type="chip"
+          max-height="17"
+          tile />
+        <template v-else>
+          {{ xMeedsBalanceFiat }}
+        </template>
+      </v-list-item-content>
     </v-list-item>
   </v-list>
 </template>

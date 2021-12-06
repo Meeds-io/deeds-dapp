@@ -19,26 +19,42 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item
-        two-line
-        dense
-        class="mb-2">
+      <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-title>
             {{ $t('totalHoldings') }}
           </v-list-item-title>
           <v-list-item-subtitle class="font-weight-bold ms-2">
-            {{ meedsBalanceOfXMeedsNoDecimals }} MEED
+            <v-skeleton-loader
+              v-if="meedsBalanceOfXMeeds === null"
+              type="chip"
+              max-height="17"
+              tile />
+            <template v-else>
+              {{ meedsBalanceOfXMeedsNoDecimals }} MEED
+            </template>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+      <strong class="d-flex flex-row">
+        <v-divider class="ms-8 me-2 my-auto" />
+        <h6>{{ $t('myAssets') }}</h6>
+        <v-divider class="me-8 ms-2 my-auto" />
+      </strong>
       <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-title>
             {{ $t('availableToStake') }}
           </v-list-item-title>
           <v-list-item-subtitle class="font-weight-bold ms-2">
-            {{ meedsBalanceNoDecimals }} MEED
+            <v-skeleton-loader
+              v-if="meedsBalance === null"
+              type="chip"
+              max-height="17"
+              tile />
+            <template v-else>
+              {{ meedsBalanceNoDecimals }} MEED
+            </template>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -56,7 +72,14 @@
             {{ $t('balance') }}
           </v-list-item-title>
           <v-list-item-subtitle class="font-weight-bold ms-2">
-            {{ xMeedsBalanceNoDecimals }} xMEED
+            <v-skeleton-loader
+              v-if="xMeedsBalance === null"
+              type="chip"
+              max-height="17"
+              tile />
+            <template v-else>
+              {{ xMeedsBalanceNoDecimals }} xMEED
+            </template>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -85,7 +108,7 @@ export default {
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeedsNoDecimals() {
-      return this.$ethUtils.computeTokenBalanceNoDecimals(
+      return this.meedsBalanceOfXMeeds && this.$ethUtils.computeTokenBalanceNoDecimals(
         this.meedsBalanceOfXMeeds,
         3,
         this.language);
