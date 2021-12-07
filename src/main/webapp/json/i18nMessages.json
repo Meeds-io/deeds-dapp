@@ -81,7 +81,16 @@
     "cardSupply": "Redeemed",
     "myAssets": "My Assets",
     "cityMintingStartDate": "City minting will begin within",
-    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
+    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds",
+    "yourDeeds": "Your DEEDs",
+    "yourDeedsIntroduction": "This is the list of all your Deeds and their status. Move in with your team, let it for rent or resell it on [Opensea]. Claim your additional user engagment Meeds rewards earned while the tenant is used.",
+    "details": "Details",
+    "vacant": "Vacant",
+    "comingSoon": "Coming Soon...",
+    "moveIn": "Move in",
+    "listRentalOffer": "List rental offer",
+    "sellOnOpenSea": "Sell On OpenSea",
+    "claimRewards": "Claim Rewards"
   },
   "fr": {
     "dao": "DAO",
@@ -164,6 +173,15 @@
     "cardSupply": "Redeemed",
     "myAssets": "My Assets",
     "cityMintingStartDate": "City minting will begin within",
-    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds"
+    "cityMintingTimer": "{0} days {1} hours {2} minutes {3} seconds",
+    "yourDeeds": "Your DEEDs",
+    "yourDeedsIntroduction": "This is the list of all your Deeds and their status. Move in with your team, let it for rent or resell it on [Opensea]. Claim your additional user engagment Meeds rewards earned while the tenant is used.",
+    "details": "Details",
+    "vacant": "Vacant",
+    "comingSoon": "Coming Soon",
+    "moveIn": "Move in",
+    "listRentalOffer": "List rental offer",
+    "sellOnOpenSea": "Sell On OpenSea",
+    "claimRewards": "Claim Rewards"
   }
 }

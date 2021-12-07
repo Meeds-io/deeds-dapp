@@ -8,6 +8,6 @@
       <deeds-earned-points class="ms-auto flex-shrink-0 flex-grow-0" />
     </div>
     <deeds-redeem />
-    <deeds-owned />
+    <deeds-owned class="mt-8" />
   </div>
 </template>

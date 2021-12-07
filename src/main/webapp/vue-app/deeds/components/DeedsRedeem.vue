@@ -11,7 +11,7 @@
       max-height="17"
       tile />
     <h4 v-else>{{ currentCityName }}</h4>
-    <small class="d-flex flex-nowrap align-center">
+    <small class="align-center">
       {{ $t('cityPopulation') }}:
       <v-skeleton-loader
         v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
@@ -66,7 +66,7 @@ export default {
     lastCityMintingCompleteDate: state => state.lastCityMintingCompleteDate,
     currentCityMintingStartDate() {
       if (!this.currentCityMintable && this.currentCityAvailability && this.lastCityMintingCompleteDate) {
-        return 3;
+        return (this.currentCityAvailability.toNumber() + this.lastCityMintingCompleteDate.toNumber()) * 1000;
       } else {
         return 0;
       }
@@ -90,25 +90,31 @@ export default {
         this.setCountDown();
       }
     },
+    currentCityMintable() {
+      if (this.currentCityMintable && this.interval) {
+        window.clearInterval(this.interval);
+      }
+    },
   },
   methods: {
     setCountDown() {
       if (!this.currentCityMintingStartDate) {
         return;
       }
-      this.interval = setInterval(() => {
-        const distance = this.currentCityMintingStartDate - Date.now();
-        if (distance <= 0) {
-          this.$store.commit('loadCurrentCity');
-          clearInterval(this.interval);
-        } else {
-          // Time calculations for days, hours, minutes and seconds
-          this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          this.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        }
-      }, 1000);
+      this.updateCountDown();
+      this.interval = setInterval(this.updateCountDown, 1000);
+    },
+    updateCountDown() {
+      const distance = this.currentCityMintingStartDate - Date.now();
+      if (distance <= 0) {
+        this.$store.commit('loadCurrentCity');
+      } else {
+        // Time calculations for days, hours, minutes and seconds
+        this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        this.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      }
     },
   },
 };

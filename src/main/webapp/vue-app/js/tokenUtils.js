@@ -1,3 +1,5 @@
+const cardTypes = {};
+
 export function getNftsOfWallet(nftContract, xMeedContract, address) {
   if (nftContract && xMeedContract && address) {
     return nftContract.nftsOf(address).then(nftIds => {
@@ -16,22 +18,26 @@ export function getNftsOfWallet(nftContract, xMeedContract, address) {
 }
 
 export function getNftInfo(nftContract, xMeedContract, nftId) {
-  if (localStorage.getItem(`nft-info-${nftId}`)) {
-    return Promise.resolve(JSON.parse(localStorage.getItem(`nft-info-${nftId}`)));
+  if (localStorage.getItem(`nft-info-${nftContract.address}-${nftId}`)) {
+    return Promise.resolve(JSON.parse(localStorage.getItem(`nft-info-${nftContract.address}-${nftId}`)));
   } else {
     return nftContract.cardType(nftId)
-      .then(cardTypeIndex => {
-        return xMeedContract.cardTypeInfo(cardTypeIndex)
-          .then(nftInfo => {
-            if (nftInfo) {
-              const card = {};
-              Object.keys(nftInfo).forEach(key => {
-                if (Number.isNaN(Number(key))) {
-                  card[key] = nftInfo[key];
-                }
-              });
-              card.id = nftId;
-              localStorage.setItem(`nft-info-${nftId}`, JSON.stringify(card));
+      .then(cardType => {
+        return nftContract.cityIndex(nftId)
+          .then(cityIndex => {
+            const cardTypeIndex = cityIndex.toNumber() * 4 + cardType.toNumber();
+            return getCityCardType(xMeedContract, cardTypeIndex);
+          })
+          .then(cardTypeInfo => {
+            if (cardTypeInfo) {
+              const card = {
+                id: nftId && nftId.toNumber(),
+                name: cardTypeInfo.name,
+                uri: cardTypeInfo.uri,
+                cardType: Number(cardTypeInfo.cardType),
+                cityIndex: Number(cardTypeInfo.cityIndex),
+              };
+              localStorage.setItem(`nft-info-${nftContract.address}-${nftId}`, JSON.stringify(card));
               return card;
             }
           });
@@ -73,18 +79,26 @@ export function getCityCardTypes(xMeedContract, cityIndex) {
   for (let i =0; i < 4; i++) {
     const cardType = cityIndex * 4 + i;
     promises.push(
-      xMeedContract.cardTypeInfo(cardType)
-        .then(cardInfo => {
-          const card = {};
-          Object.keys(cardInfo).forEach(key => {
-            if (Number.isNaN(Number(key))) {
-              card[key] = cardInfo[key];
-            }
-          });
-          card.cardType = cardType;
-          return card;
-        })
+      getCityCardType(xMeedContract, cardType, true)
     );
   }
   return Promise.all(promises);
+}
+
+export function getCityCardType(xMeedContract, cardType, forceReload) {
+  if (!forceReload && cardTypes[cardType]) {
+    return Promise.resolve(cardTypes[cardType]);
+  } else {
+    return xMeedContract.cardTypeInfo(cardType)
+      .then(cardInfo => {
+        const card = {};
+        Object.keys(cardInfo).forEach(key => {
+          if (Number.isNaN(Number(key))) {
+            card[key] = cardInfo[key];
+          }
+        });
+        card.cardType = cardType && cardType.toString && cardType.toString() || cardType;
+        return cardTypes[cardType] = card;
+      });
+  }
 }

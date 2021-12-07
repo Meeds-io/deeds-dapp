@@ -32,7 +32,8 @@ const store = new Vuex.Store({
     networkId: null,
     validNetwork: false,
     etherscanBaseLink: null,
-    managedNetworkIds: [1, 5],
+    openSeaBaseLink: null,
+    managedNetworkIds: [1, 4, 5],
     provider: null,
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
@@ -164,6 +165,8 @@ const store = new Vuex.Store({
               // TODO replace with real addresses
               state.nftAddress = null;
               state.xMeedAddress = null;
+
+              state.openSeaBaseLink = `https://opensea.io/assets/${state.nftAddress}`;
             } else if (state.networkId === 5) {
               state.validNetwork = true;
 
@@ -175,6 +178,21 @@ const store = new Vuex.Store({
               state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
               state.nftAddress = '0xb26cCD76748Fa79bF242Cfaca6687184CaF48093';
               state.xMeedAddress = '0x36e19bB29573F5Dc5d6A124444e81646A59b6702';
+
+              state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.nftAddress}`;
+            } else if (state.networkId === 4) {
+              state.validNetwork = true;
+
+              // Rinkeby
+              state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
+              state.routerAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+              state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
+              state.pairAddress = '0x4075ce43b041579f31b358e982b0dbaaa7f7ad4e';
+              state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
+              state.nftAddress = '0x4Ea5335BAEFD8B52905a888b708E9542edbCA5DD';
+              state.xMeedAddress = '0x2C80E440A60889CaBe5C2A6208a14aCE77B99664';
+
+              state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
             }
           }
           this.commit('setAddress');
@@ -312,9 +330,10 @@ const store = new Vuex.Store({
           const redeemFilter = state.xMeedContract.filters.Redeemed();
           state.xMeedContract.on(redeemFilter, (address) => {
             if (address.toUpperCase() === state.address.toUpperCase()) {
+              this.commit('loadOwnedNfts');
               this.commit('loadPointsBalance');
-              this.commit('loadCurrentCity');
             }
+            this.commit('loadCurrentCity');
           });
         }
 

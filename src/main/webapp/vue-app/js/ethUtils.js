@@ -49,7 +49,7 @@ export function formatDate(date, lang) {
 export function computeTokenBalanceNoDecimals(tokenBalance, fractions, language) {
   const tokenBalanceNoDecimals = fromDecimals(tokenBalance || 0, 18);
   const tokenBalanceWithFractions = fractionsToDisplay(tokenBalanceNoDecimals, fractions);
-  return toCurrencyDisplay(tokenBalanceWithFractions, 'eur', language).replace('€', '');
+  return toFixedDisplay(tokenBalanceWithFractions, fractions, language);
 }
 
 export function computeFiatBalance(tokenBalance, meedsPrice, ethPrice, exchangeRate, selectedFiatCurrency, language) {
@@ -75,7 +75,7 @@ export function toCurrencyDisplay(value, currency, lang) {
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: currency === 'eth' && 8 || 2,
-  }).format(value || 0);
+  }).format(value || 0).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
 }
 
 export function fractionsToDisplay(value, fractions) {

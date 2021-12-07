@@ -77,16 +77,17 @@ export default {
     },
     cardAmountNoDecimals() {
       return this.$ethUtils.computeTokenBalanceNoDecimals(
-        this.cardAmount,
-        3,
+        this.cardAmount || 0,
+        6,
         this.language);
     },
     disableRedeemButton() {
       return this.sendingRedeem
         || !this.currentCityMintable
         || !this.pointsBalance
+        || !this.cardAmount
         || this.cardAmount.gt(this.pointsBalance)
-        || this.cardSupply >= this.cardMaxSupply;
+        || (this.cardSupply || 0) >= this.cardMaxSupply;
     },
     redeemMethod() {
       if (this.provider && this.xMeedContract) {
