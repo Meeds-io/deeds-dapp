@@ -141,7 +141,9 @@ const store = new Vuex.Store({
       ethUtils.getSelectedAddress()
         .then(addresses => {
           state.address = addresses && addresses.length && addresses[0] || null;
-          this.commit('setProvider');
+          if (state.address && state.validNetwork) {
+            this.commit('setProvider');
+          }
         })
         .finally(() => this.commit('loaded'));
     },
@@ -150,16 +152,22 @@ const store = new Vuex.Store({
         .then(networkId => {
           state.networkId = new BigNumber(networkId).toNumber();
           if (state.managedNetworkIds.indexOf(state.networkId) >= 0) {
-            state.validNetwork = true;
             if (state.networkId === 1) {
+              state.validNetwork = false; // TODO coming soon
+
               // Mainnet
               state.etherscanBaseLink = 'https://etherscan.io/';
               state.routerAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
               state.pairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
+              // TODO replace with real addresses
+              state.nftAddress = null;
+              state.xMeedAddress = null;
             } else if (state.networkId === 5) {
-              // Goerli
+              state.validNetwork = true;
+
+              // Goërli
               state.etherscanBaseLink = 'https://goerli.etherscan.io/';
               state.routerAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
               state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
@@ -168,26 +176,17 @@ const store = new Vuex.Store({
               state.nftAddress = '0xb26cCD76748Fa79bF242Cfaca6687184CaF48093';
               state.xMeedAddress = '0x36e19bB29573F5Dc5d6A124444e81646A59b6702';
             }
-            this.commit('setAddress');
-          } else {
-            state.address = null;
-            this.commit('loaded');
           }
+          this.commit('setAddress');
         });
     },
     selectLanguage(state, language) {
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
-      if (state.meedsBalance) {
-        state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
-      }
-      if (state.xMeedsBalance) {
-        state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
-      }
-      if (state.pointsBalance) {
-        state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
-      }
+      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
+      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
+      state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
     },
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;
@@ -236,19 +235,25 @@ const store = new Vuex.Store({
         .then(currentCardTypes => state.currentCardTypes = currentCardTypes);
     },
     loadOwnedNfts(state) {
-      tokenUtils.getNftsOfWallet(state.nftContract, state.xMeedContract, state.address)
-        .then(nfts => state.ownedNfts = nfts);
+      if (state.nftContract && state.xMeedContract) {
+        tokenUtils.getNftsOfWallet(state.nftContract, state.xMeedContract, state.address)
+          .then(nfts => state.ownedNfts = nfts);
+      }
     },
     loadBalances(state) {
-      if (state.meedContract && state.address) {
+      if (state.address && state.provider) {
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
-        state.meedContract.balanceOf(state.address).then(balance => this.commit('setMeedsBalance', balance));
-        state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
-        state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsRouteAllowance = balance);
-        state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
-        state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
-        state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
-        state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
+        if (state.meedContract) {
+          state.meedContract.balanceOf(state.address).then(balance => this.commit('setMeedsBalance', balance));
+          state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
+          state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsRouteAllowance = balance);
+          state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
+          state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
+        }
+        if (state.xMeedContract) {
+          state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
+          state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
+        }
       }
     },
     setProvider(state) {
@@ -269,16 +274,20 @@ const store = new Vuex.Store({
           state.erc20ABI,
           state.provider
         );
-        state.xMeedContract = new ethers.Contract(
-          state.xMeedAddress,
-          state.xMeedRewardingABI,
-          state.provider
-        );
-        state.nftContract = new ethers.Contract(
-          state.nftAddress,
-          state.nftABI,
-          state.provider
-        );
+        if (state.xMeedAddress) {
+          state.xMeedContract = new ethers.Contract(
+            state.xMeedAddress,
+            state.xMeedRewardingABI,
+            state.provider
+          );
+        }
+        if (state.nftAddress) {
+          state.nftContract = new ethers.Contract(
+            state.nftAddress,
+            state.nftABI,
+            state.provider
+          );
+        }
 
         // eslint-disable-next-line new-cap
         const transferFilter = state.meedContract.filters.Transfer();
@@ -298,14 +307,16 @@ const store = new Vuex.Store({
           }
         });
 
-        // eslint-disable-next-line new-cap
-        const redeemFilter = state.xMeedContract.filters.Redeemed();
-        state.xMeedContract.on(redeemFilter, (address) => {
-          if (address.toUpperCase() === state.address.toUpperCase()) {
-            this.commit('loadPointsBalance');
-            this.commit('loadCurrentCity');
-          }
-        });
+        if (state.xMeedContract) {
+          // eslint-disable-next-line new-cap
+          const redeemFilter = state.xMeedContract.filters.Redeemed();
+          state.xMeedContract.on(redeemFilter, (address) => {
+            if (address.toUpperCase() === state.address.toUpperCase()) {
+              this.commit('loadPointsBalance');
+              this.commit('loadCurrentCity');
+            }
+          });
+        }
 
         this.commit('loadBalances');
         this.commit('loadGasPrice');

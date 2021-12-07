@@ -68,7 +68,7 @@ export default {
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     xMeedsBalanceFiat() {
-      if (this.xMeedsBalance && this.xMeedsTotalSupply && this.meedsBalanceOfXMeeds) {
+      if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
         const meedsBalance = this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
         return this.$ethUtils.computeFiatBalance(
           meedsBalance,
@@ -78,12 +78,18 @@ export default {
           this.selectedFiatCurrency,
           this.language);
       } else {
-        return 0;
+        return this.$ethUtils.computeFiatBalance(
+          0,
+          this.meedsPrice,
+          this.ethPrice,
+          this.exchangeRate,
+          this.selectedFiatCurrency,
+          this.language);
       }
     },
     meedsBalanceFiat() {
       return this.$ethUtils.computeFiatBalance(
-        this.meedsBalance,
+        this.meedsBalance || 0,
         this.meedsPrice,
         this.ethPrice,
         this.exchangeRate,

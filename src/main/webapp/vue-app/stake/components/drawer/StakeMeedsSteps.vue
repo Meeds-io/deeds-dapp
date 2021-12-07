@@ -45,6 +45,9 @@
               </div>
             </template>
           </v-text-field>
+          <small v-if="stakedMeedsAmountNoDecimals">
+            {{ $t('stakeMeedsEstimation', {0: stakedMeedsAmountNoDecimals}) }}
+          </small>
         </v-card-text>
         <v-card-actions class="ms-2">
           <v-btn
@@ -57,7 +60,9 @@
         </v-card-actions>
       </v-card>
     </v-stepper-content>
-    <v-stepper-step step="2">
+    <v-stepper-step
+      step="2"
+      :editable="hasMeedsStakeAllowance">
       {{ $t('stakeMeeds') }}
     </v-stepper-step>
     <v-stepper-content step="2">
@@ -85,6 +90,9 @@
               </div>
             </template>
           </v-text-field>
+          <small v-if="stakedMeedsAmountNoDecimals">
+            {{ $t('stakeMeedsEstimation', {0: stakedMeedsAmountNoDecimals}) }}
+          </small>
         </v-card-text>
         <v-card-actions class="ms-2">
           <v-btn
@@ -116,6 +124,8 @@ export default {
     meedsBalance: state => state.meedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     meedsStakeAllowance: state => state.meedsStakeAllowance,
+    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
+    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     provider: state => state.provider,
     meedContract: state => state.meedContract,
     xMeedContract: state => state.xMeedContract,
@@ -127,6 +137,28 @@ export default {
         this.meedsStakeAllowance,
         3,
         this.language);
+    },
+    stakedMeedsAmount() {
+      const stakeAmount = Number(this.step) === 1 && this.allowance || this.stakeAmount;
+      if (this.isStakeAmountValid && Number(stakeAmount) && this.meedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
+        if (this.xMeedsTotalSupply.isZero() || this.meedsBalanceOfXMeeds.isZero()) {
+          return stakeAmount;
+        } else {
+          return new BigNumber(this.xMeedsTotalSupply.toString()).multipliedBy(stakeAmount).dividedBy(this.meedsBalanceOfXMeeds.toString()).toString();
+        }
+      } else {
+        return 0;
+      }
+    },
+    stakedMeedsAmountNoDecimals() {
+      if (this.stakedMeedsAmount) {
+        return this.$ethUtils.toFixedDisplay(
+          this.stakedMeedsAmount,
+          3,
+          this.language);
+      } else {
+        return 0;
+      }
     },
     disabledApproveButton() {
       return !this.allowance || !Number(this.allowance) || !this.isAllowanceValueValid || this.sendingApproval || this.approvalInProgress;
@@ -203,6 +235,9 @@ export default {
         () => !!this.isStakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsAllowanceNoDecimals}),
       ];
     },
+    hasMeedsStakeAllowance() {
+      return this.meedsStakeAllowance && !this.meedsStakeAllowance.isZero();
+    },
     approveMethod() {
       if (this.provider && this.meedContract) {
         const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
@@ -220,7 +255,7 @@ export default {
   }),
   watch: {
     meedsStakeAllowance() {
-      if (!this.meedsStakeAllowance.isZero()) {
+      if (this.hasMeedsStakeAllowance) {
         this.step = 2;
         this.approvalInProgress = false;
       }

@@ -92,7 +92,11 @@ export default {
     },
     unstakedMeedsAmount() {
       if (this.isUnstakeAmountValid && Number(this.unstakeAmount) && this.meedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
-        return new BigNumber(this.meedsBalanceOfXMeeds.toString()).multipliedBy(this.unstakeAmount).dividedBy(this.xMeedsTotalSupply.toString()).toString();
+        if (this.xMeedsTotalSupply.isZero() || this.meedsBalanceOfXMeeds.isZero()) {
+          return this.unstakeAmount;
+        } else {
+          return new BigNumber(this.meedsBalanceOfXMeeds.toString()).multipliedBy(this.unstakeAmount).dividedBy(this.xMeedsTotalSupply.toString()).toString();
+        }
       } else {
         return 0;
       }

@@ -22,7 +22,7 @@
           max-width="57px" />
       </v-btn>
       <v-btn
-        v-else-if="!isMetamaskConnected"
+        v-else-if="!hasMetamashConnectedAddress"
         height="168px"
         width="168px"
         class="rounded-lg elevation-1"
@@ -34,7 +34,7 @@
           max-width="57px" />
       </v-btn>
       <v-btn
-        v-else-if="!isKnownNetwork"
+        v-else-if="!validNetwork"
         height="168px"
         width="168px"
         class="rounded-lg elevation-1"
@@ -52,26 +52,23 @@
 export default {
   computed: Vuex.mapState({
     isMetamaskInstalled: state => state.isMetamaskInstalled,
-    networkId: state => state.networkId,
+    validNetwork: state => state.validNetwork,
     address: state => state.address,
-    isKnownNetwork() {
-      return this.networkId === 1 || this.networkId === 5;
-    },
-    isMetamaskConnected() {
+    hasMetamashConnectedAddress() {
       return !!this.address;
     },
     showMetamaskButton() {
-      return !this.isMetamaskInstalled || !this.isMetamaskConnected || !this.isKnownNetwork;
+      return !this.isMetamaskInstalled || !this.hasMetamashConnectedAddress || !this.validNetwork;
     },
     connectionLabel() {
       if (!this.isMetamaskInstalled) {
         return this.$t('installMetamaskLabel');
-      } else if (!this.isMetamaskConnected) {
+      } else if (!this.hasMetamashConnectedAddress) {
         return this.$t('connectMetamaskLabel');
-      } else if (!this.isKnownNetwork) {
+      } else if (!this.validNetwork) {
         return this.$t('switchMetamaskNetworkLabel');
       }
-      return this.isMetamaskInstalled && this.$t('connectMetamaskLabel') || this.$t('installMetamaskLabel');
+      return '';
     },
   }),
   methods: {

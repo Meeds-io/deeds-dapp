@@ -75,14 +75,10 @@ export default {
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     xMeedsTotalSupplyNoDecimals() {
-      if (this.xMeedsTotalSupply) {
-        return this.$ethUtils.computeTokenBalanceNoDecimals(
-          this.xMeedsTotalSupply,
-          3,
-          this.language);
-      } else {
-        return '-';
-      }
+      return this.$ethUtils.computeTokenBalanceNoDecimals(
+        this.xMeedsTotalSupply || 0,
+        3,
+        this.language);
     },
     pointsBalanceNoDecimals() {
       return this.$ethUtils.computeTokenBalanceNoDecimals(
