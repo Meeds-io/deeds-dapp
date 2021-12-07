@@ -32,6 +32,7 @@
         <v-btn
           :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}#inventory`"
           target="_blank"
+          rel="noreferrer"
           color="primary"
           text
           link>
@@ -61,7 +62,10 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title class="text-capitalize">
-                <a :href="`${openSeaBaseLink}/${item.id}/sell`" target="_blank">
+                <a
+                  :href="`${openSeaBaseLink}/${item.id}/sell`"
+                  target="_blank"
+                  rel="noreferrer">
                   {{ $t('sellOnOpenSea') }}
                 </a>
               </v-list-item-title>

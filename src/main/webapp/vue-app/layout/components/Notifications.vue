@@ -42,6 +42,7 @@
         v-if="alertLink"
         :href="alertLink"
         :title="alertLinkTooltip"
+        rel="noreferrer"
         target="_blank"
         class="primary--text"
         icon

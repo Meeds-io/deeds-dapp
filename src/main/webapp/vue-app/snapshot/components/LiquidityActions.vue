@@ -20,6 +20,7 @@
   <div class="liquidityActions d-flex flex-nowrap">
     <v-btn
       :href="addLiquidityLink"
+      rel="noreferrer"
       link
       text
       target="_blank"
