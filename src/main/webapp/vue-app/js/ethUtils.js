@@ -52,7 +52,7 @@ export function toDecimals(value, decimals) {
 }
 
 export function fromDecimals(value, decimals) {
-  return ethers.utils.formatUnits(new BigNumber(value.toString && value.toString() || value).toFixed(0), decimals);
+  return ethers.utils.formatUnits(new BigNumber(value.toString && value.toString() || value).toFixed(0), decimals).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
 }
 
 export function formatDate(date, lang) {

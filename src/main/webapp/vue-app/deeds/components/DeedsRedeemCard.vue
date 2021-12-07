@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card
-    :loading="sendingRedeem"
+    :loading="sendingRedeem || loading"
     class="mx-auto my-2"
     max-width="250px">
     <v-card-text class="d-flex">
@@ -65,6 +65,10 @@ export default {
     card: {
       type: Object,
       default: null,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({

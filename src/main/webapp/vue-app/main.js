@@ -207,8 +207,8 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.pairAddress = '0x4075ce43b041579f31b358e982b0dbaaa7f7ad4e';
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
-              state.nftAddress = '0x4Ea5335BAEFD8B52905a888b708E9542edbCA5DD';
-              state.xMeedAddress = '0x2C80E440A60889CaBe5C2A6208a14aCE77B99664';
+              state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
+              state.xMeedAddress = '0x9bBa2C273E80Cd88B51582BDB163D7178AB135dd';
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
             }

@@ -50,7 +50,7 @@
           <v-col
             v-for="card in currentCardTypes"
             :key="card.name">
-            <deeds-redeem-card :card="card" />
+            <deeds-redeem-card :card="card" :loading="loadingCityDetails" />
           </v-col>
         </v-row>
       </v-container>
@@ -71,6 +71,7 @@
 <script>
 export default {
   data: () => ({
+    loadingCityDetails: false,
     interval: 0,
     days: 0,
     hours: 0,
@@ -111,6 +112,8 @@ export default {
     currentCityMintable() {
       if (this.currentCityMintable && this.interval) {
         window.clearInterval(this.interval);
+        this.loadingCityDetails = false;
+        this.interval = null;
       }
     },
   },
@@ -125,7 +128,8 @@ export default {
     updateCountDown() {
       const distance = this.currentCityMintingStartDate - Date.now();
       if (distance <= 0) {
-        this.$store.commit('loadCurrentCity');
+        this.loadingCityDetails = true;
+        window.setTimeout(() => this.$store.commit('loadCurrentCity'), 1000);
       } else {
         // Time calculations for days, hours, minutes and seconds
         this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
