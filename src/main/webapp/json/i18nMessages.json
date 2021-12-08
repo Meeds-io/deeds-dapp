@@ -90,7 +90,9 @@
     "moveIn": "Move in",
     "listRentalOffer": "List rental offer",
     "sellOnOpenSea": "Sell On OpenSea",
-    "claimRewards": "Claim Rewards"
+    "claimRewards": "Claim Rewards",
+    "tooltipClaimReward": "You will be able to earn and claim MEEDs when you will use or let your DEED",
+    "tooltipClaimRewardedMeeds": "You earned {0} Meeds while using your office. You have to claim them to see them in your wallet."
   },
   "fr": {
     "dao": "DAO",
@@ -182,6 +184,8 @@
     "moveIn": "Move in",
     "listRentalOffer": "List rental offer",
     "sellOnOpenSea": "Sell On OpenSea",
-    "claimRewards": "Claim Rewards"
+    "claimRewards": "Claim Rewards",
+    "tooltipClaimReward": "You will be able to earn and claim MEEDs when you will use or let your DEED",
+    "tooltipClaimRewardedMeeds": "You earned {0} Meeds while using your office. You have to claim them to see them in your wallet."
   }
 }

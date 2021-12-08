@@ -46,6 +46,7 @@ const isMetamaskConnected = ethUtils.isMetamaskConnected();
 const store = new Vuex.Store({
   state: {
     appLoading: true,
+    ens: null,
     address: null,
     networkId: null,
     validNetwork: false,
@@ -360,6 +361,9 @@ const store = new Vuex.Store({
         this.commit('loadOwnedNfts');
         this.commit('loadPointsBalance');
         this.commit('loadCurrentCity');
+
+        state.provider.lookupAddress(state.address)
+          .then(name => state.ens = name);
       }
     },
     loadGasPrice(state) {
@@ -446,5 +450,12 @@ new Vue({
     dark: true,
     silent: true,
     iconfont: 'mdi',
+    theme: {
+      themes: {
+        light: {
+          primary: '#E25D5D',
+        },
+      },
+    },
   }),
 });

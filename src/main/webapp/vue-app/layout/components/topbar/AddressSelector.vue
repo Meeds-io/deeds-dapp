@@ -26,10 +26,8 @@
     <v-tooltip bottom>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          :ripple="false"
-          elevation="1"
-          active-class="none"
-          color="grey lighten-5"
+          outlined
+          text
           class="px-2"
           v-bind="attrs"
           v-on="on"
@@ -48,11 +46,14 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
+    ens: state => state.ens,
     title() {
       return this.copied && this.$t('copied') || this.address;
     },
     addressPart() {
-      if (this.address) {
+      if (this.ens) {
+        return this.ens;
+      } else if (this.address) {
         return `${this.address.substring(0, 10)}...${this.address.substring(39)}`;
       }
       return null;

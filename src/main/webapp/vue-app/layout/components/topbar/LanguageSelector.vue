@@ -20,8 +20,8 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
-        elevation="1"
-        color="grey lighten-5"
+        outlined
+        text
         class="ps-2 pe-0"
         v-bind="attrs"
         v-on="on">

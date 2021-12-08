@@ -17,47 +17,51 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    :loading="sendingRedeem || loading"
-    class="mx-auto my-2"
-    max-width="250px">
-    <v-card-text class="d-flex">
-      <v-icon size="72" class="mx-auto">mdi-image-size-select-actual</v-icon>
-    </v-card-text>
-    <v-card-title class="justify-center pt-0">
-      {{ cardName }}
-    </v-card-title>
-    <v-card-text class="pt-0">
-      <div class="text-subtitle-1">
-        {{ $t('cardSupply') }}:
-        <v-chip class="ms-2">{{ cardSupply }} / {{ cardMaxSupply }}</v-chip>
-      </div>
-    </v-card-text>
-    <v-divider class="mx-4" />
-    <v-card-text>
-      <div>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-      </div>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        :disabled="disableRedeemButton"
-        :loading="sendingRedeem"
-        outlined
-        text
-        @click="redeem">
-        <span class="text-none">{{ $t('redeem') }}</span>
-      </v-btn>
-      <v-chip
-        class="ms-2 primary"
-        dark
-        small>
-        {{ cardAmountNoDecimals }} {{ $t('points') }}
-      </v-chip>
-      <v-spacer />
-    </v-card-actions>
-  </v-card>
+  <v-hover v-slot="{hover}">
+    <v-card
+      :elevation="hover ? 3 : 0"
+      :loading="sendingRedeem || loading"
+      class="mx-auto my-2"
+      max-width="250px"
+      outlined>
+      <v-card-text class="d-flex">
+        <v-icon size="72" class="mx-auto">mdi-image-size-select-actual</v-icon>
+      </v-card-text>
+      <v-card-title class="justify-center pt-0">
+        {{ cardName }}
+      </v-card-title>
+      <v-card-text class="pt-0">
+        <div class="text-subtitle-1">
+          {{ $t('cardSupply') }}:
+          <v-chip class="ms-2">{{ cardSupply }} / {{ cardMaxSupply }}</v-chip>
+        </div>
+      </v-card-text>
+      <v-divider class="mx-4" />
+      <v-card-text>
+        <div>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          :disabled="disableRedeemButton"
+          :loading="sendingRedeem"
+          outlined
+          text
+          @click="redeem">
+          <span class="text-none">{{ $t('redeem') }}</span>
+        </v-btn>
+        <v-chip
+          class="ms-2 primary"
+          dark
+          small>
+          {{ cardAmountNoDecimals }} {{ $t('points') }}
+        </v-chip>
+        <v-spacer />
+      </v-card-actions>
+    </v-card>
+  </v-hover>
 </template>
 <script>
 export default {

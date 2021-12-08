@@ -20,83 +20,85 @@
   <v-card
     width="340"
     height="350"
-    flat>
-    <v-card-title class="justify-center pb-2">
-      {{ $t('buyOrSell') }}
+    class="d-flex flex-column"
+    outlined>
+    <v-card-title class="d-flex flex-column justify-center pb-2">
+      <v-icon>mdi-cash-multiple</v-icon>
+      <span>{{ $t('buyOrSell') }}</span>
     </v-card-title>
-    <div class="elevation-2">
-      <v-card-text class="d-flex flex-column">
-        <v-text-field
-          v-model="fromValue"
-          :loading="loadingAmount"
-          :rules="fromValueValidator"
-          :hide-details="isFromValueValid"
-          placeholder="0.0"
-          large
-          outlined
-          dense>
-          <template #append>
-            <v-chip
-              outlined
-              x-small
-              class="mt-1 me-1"
-              @click="setMaxValue">
-              {{ $t('max') }}
-            </v-chip>
-            <div class="mt-1">
-              {{ buy && 'ETH' || 'MEED' }}
-            </div>
-          </template>
-        </v-text-field>
-        <v-btn
-          icon
-          class="mx-auto my-3"
-          @click="switchInputs"
-          x-large>
-          <v-icon size="48">mdi-autorenew</v-icon>
-        </v-btn>
-        <v-text-field
-          v-model="toValueDisplay"
-          placeholder="0.0"
-          hide-details
-          large
-          outlined
-          dense
-          disabled
-          filled>
-          <template #append>
-            <div class="mt-1">
-              {{ buy && 'MEED' || 'ETH' }}
-            </div>
-          </template>
-        </v-text-field>
-        <v-card-actions>
-          <div class="d-flex flex-column mx-auto mt-4">
-            <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
-            <v-btn
-              v-if="hasSufficientAllowedTokens"
-              :loading="!!sendingTransaction"
-              :disabled="disabledButton"
-              class="mx-auto mt-4"
-              @click="sendSwapTransaction">
-              <span class="text-capitalize">
-                {{ swapButtonLabel }}
-              </span>
-            </v-btn>
-            <v-btn
-              v-else
-              :loading="!!sendingTransaction"
-              :disabled="disabledButton"
-              class="mx-auto mt-4"
-              @click="sendApproveTransaction">
-              <span class="text-capitalize">
-                {{ approveButtonLabel }}
-              </span>
-            </v-btn>
+    <v-card-text class="d-flex flex-column flex-grow-1 pt-2">
+      <v-text-field
+        v-model="fromValue"
+        :loading="loadingAmount"
+        :rules="fromValueValidator"
+        :hide-details="isFromValueValid"
+        class="align-center"
+        placeholder="0.0"
+        large
+        outlined
+        dense>
+        <template #append>
+          <v-chip
+            outlined
+            x-small
+            class="mt-1 me-1"
+            @click="setMaxValue">
+            {{ $t('max') }}
+          </v-chip>
+          <div class="mt-1">
+            {{ buy && 'ETH' || 'MEED' }}
           </div>
-        </v-card-actions>
-      </v-card-text>
-    </div>
+        </template>
+      </v-text-field>
+      <v-btn
+        icon
+        class="mx-auto my-2"
+        @click="switchInputs"
+        x-large>
+        <v-icon size="48">mdi-autorenew</v-icon>
+      </v-btn>
+      <v-text-field
+        v-model="toValueDisplay"
+        placeholder="0.0"
+        class="align-center"
+        hide-details
+        large
+        outlined
+        dense
+        disabled
+        filled>
+        <template #append>
+          <div class="mt-1">
+            {{ buy && 'MEED' || 'ETH' }}
+          </div>
+        </template>
+      </v-text-field>
+      <v-card-actions>
+        <div class="d-flex flex-column mx-auto mt-4">
+          <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
+          <v-btn
+            v-if="hasSufficientAllowedTokens"
+            :loading="!!sendingTransaction"
+            :disabled="disabledButton"
+            class="ma-auto"
+            @click="sendSwapTransaction">
+            <span class="text-capitalize">
+              {{ swapButtonLabel }}
+            </span>
+          </v-btn>
+          <v-btn
+            v-else
+            :loading="!!sendingTransaction"
+            :disabled="disabledButton"
+            class="ma-auto"
+            @click="sendApproveTransaction">
+            <span class="text-capitalize">
+              {{ approveButtonLabel }}
+            </span>
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card-text>
   </v-card>
 </template>
 <script>

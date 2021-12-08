@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 pt-0">
       {{ $t('yields') }}
     </v-card-title>
     <v-card-text class="ps-0">

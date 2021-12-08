@@ -26,7 +26,7 @@
         <deeds-navbar v-if="address" role="navigation" />
         <deeds-page
           v-if="address"
-          class="mt-8"
+          class="mt-10"
           role="main" />
       </div>
       <deeds-notifications />

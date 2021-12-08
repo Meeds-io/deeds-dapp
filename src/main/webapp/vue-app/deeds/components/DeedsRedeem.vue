@@ -45,7 +45,7 @@
       </span>
     </small>
     <template v-if="currentCardTypes">
-      <v-container class="grey lighten-5 mt-2">
+      <v-container class="mt-2">
         <v-row class="mx-auto" no-gutters>
           <v-col
             v-for="card in currentCardTypes"

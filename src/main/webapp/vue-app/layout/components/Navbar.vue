@@ -17,52 +17,43 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-bottom-navigation
-    v-model="selectedTab"
-    width="fit-content"
-    height="38px"
-    class="elevation-1 my-4 rounded-lg justify-start text-truncate">
-    <v-btn
+  <v-tabs v-model="selectedTab">
+    <v-tab
       ref="snapshot"
-      :class="selectedTab === 'snapshot' && 'primary white--text' || ''"
-      link
+      link 
       href="./snapshot"
-      value="snapshot"
+      class="px-0 me-2"
       @click="openPage">
-      <h3 class="px-2">{{ $t('page.snapshot') }}</h3>
-    </v-btn>
-    <v-btn
+      <h3 class="text-capitalize">{{ $t('page.snapshot') }}</h3>
+    </v-tab>
+    <v-tab
       ref="stake"
-      :class="selectedTab === 'stake' && 'primary white--text' || ''"
-      link
+      link 
       href="./stake"
-      value="stake"
-      revert
+      class="px-0 me-2"
       @click="openPage">
-      <h3 class="px-2">{{ $t('page.stake') }}</h3>
-    </v-btn>
-    <v-btn
+      <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
+    </v-tab>
+    <v-tab
       ref="deeds"
-      :class="selectedTab === 'deeds' && 'primary white--text' || ''"
-      link
+      link 
       href="./deeds"
-      value="deeds"
-      revert
+      class="px-0 me-2"
       @click="openPage">
-      <h3 class="px-2">{{ $t('page.deeds') }}</h3>
-    </v-btn>
-  </v-bottom-navigation>
+      <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
+    </v-tab>
+  </v-tabs>
 </template>
 <script>
 export default {
   data: () => ({
-    defaultTab: 'snapshot',
+    defaultTab: './snapshot',
     selectedTab: null,
   }),
   created() {
     const href = window.location.pathname;
     const hrefParts = href.split('/');
-    let selectedTab = hrefParts[hrefParts.length - 1];
+    let selectedTab = `./${hrefParts[hrefParts.length - 1]}`;
     if (!selectedTab || !selectedTab.length) {
       selectedTab = this.defaultTab;
     }
@@ -71,20 +62,15 @@ export default {
   },
   methods: {
     switchPage(tab) {
-      this.selectedTab = tab;
-      this.openPage();
+      if (tab && this.$refs[tab]) {
+        this.$refs[tab].$el.click();
+      }
     },
     openPage(event) {
       if (event) {
         event.preventDefault();
         event.stopPropagation();
         const link = event.target.href || event.target.parentElement && (event.target.parentElement.href || (event.target.parentElement.parentElement && event.target.parentElement.parentElement.href));
-        if (link) {
-          window.history.pushState({}, '', link);
-          this.$root.$emit('location-change');
-        }
-      } else if (this.selectedTab && this.$refs[this.selectedTab]) {
-        const link = this.$refs[this.selectedTab].href;
         if (link) {
           window.history.pushState({}, '', link);
           this.$root.$emit('location-change');

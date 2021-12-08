@@ -39,6 +39,18 @@
           #{{ item.id }}
         </v-btn>
       </template>
+      <template v-slot:item.earnedRewards="{item}">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <div
+              v-bind="attrs"
+              v-on="on">
+              {{ item.earnedRewardsNoDecimals }} MEED
+            </div>
+          </template>
+          <span>{{ item.hasEarnedMeeds && $t('tooltipClaimRewardedMeeds', {0: item.earnedRewardsNoDecimals}) || $t('tooltipClaimReward') }}</span>
+        </v-tooltip>
+      </template>
       <template v-slot:item.actions="{item}">
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
@@ -99,8 +111,8 @@ export default {
         value: 'statusLabel',
       },
       {
-        text: 'earnedReward',
-        value: 'earnedRewardNoDecimals',
+        text: 'earnedRewards',
+        value: 'earnedRewards',
       },
       {
         text: 'actions',
@@ -118,7 +130,8 @@ export default {
         return Object.assign({
           cityName: this.cities[nft.cityIndex],
           statusLabel: this.$t('vacant'),
-          earnedRewardNoDecimals: '0 MEED',
+          hasEarnedMeeds: false,
+          earnedRewardsNoDecimals: 0,
         }, nft);
       }) || [];
     },

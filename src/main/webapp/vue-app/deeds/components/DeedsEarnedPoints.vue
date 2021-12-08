@@ -20,8 +20,7 @@
   <v-card
     width="340"
     height="350"
-    class="elevation-2"
-    flat>
+    outlined>
     <v-card-title class="d-flex flex-column justify-center">
       <v-icon>mdi-office-building-outline</v-icon>
       <span>{{ $t('xMeedsStakes') }}</span>
