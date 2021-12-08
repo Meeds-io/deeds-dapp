@@ -26,12 +26,18 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
+        href="https://discord.gg/7d9Byf4Fz6"
+        target="_blank"
+        rel="noreferrer"
         outlined
         text
         class="me-4">
-        <span class="text-none">{{ $t('discuss') }}</span>
+        <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
+        href="https://snapshot.org/#/meedsdao.eth"
+        target="_blank"
+        rel="noreferrer"
         outlined
         text
         class="ms-4">

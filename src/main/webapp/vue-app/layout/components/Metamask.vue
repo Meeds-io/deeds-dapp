@@ -27,12 +27,14 @@
       class="elevation-0 mt-4">
       <v-btn
         v-if="!isMetamaskInstalled"
+        href="https://metamask.io/"
+        target="_blank"
+        rel="noreferrer"
         height="168px"
         width="168px"
-        class="rounded-lg elevation-1"
-        link
-        href="https://metamask.io/"
-        target="_blank">
+        class="rounded-lg"
+        outlined
+        text>
         <span class="py-2">Metamask</span>
         <v-img
           src="../images/metamask.svg"
@@ -43,7 +45,9 @@
         v-else-if="!hasMetamashConnectedAddress"
         height="168px"
         width="168px"
-        class="rounded-lg elevation-1"
+        class="rounded-lg"
+        outlined
+        text
         @click="connectToMetamask">
         <span class="py-2">Metamask</span>
         <v-img
@@ -55,7 +59,9 @@
         v-else-if="!validNetwork"
         height="168px"
         width="168px"
-        class="rounded-lg elevation-1"
+        class="rounded-lg"
+        outlined
+        text
         @click="switchMetamaskNetwork">
         <span class="py-2">Metamask</span>
         <v-img
