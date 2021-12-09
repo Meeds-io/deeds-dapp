@@ -16,17 +16,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-const basePath = window.location.pathname.split('/')[1];
-
 export function retrieveMeedsData() {
-  return fetch(`/${basePath}/json/exchangeRate-meeds.json`, {
+  return fetch('/dapp/json/exchangeRate-meeds.json', {
     cache: 'reload',
     method: 'GET',
   }).then(resp => resp && resp.ok && resp.json());
 }
 
 export function retrieveCurrencyExchangeRate() {
-  return fetch(`/${basePath}/json/exchangeRate-eur.json`, {
+  return fetch('/dapp/json/exchangeRate-eur.json', {
     cache: 'reload',
     method: 'GET'
   }).then(resp => resp && resp.ok && resp.json());

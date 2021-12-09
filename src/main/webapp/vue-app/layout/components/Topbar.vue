@@ -22,7 +22,7 @@
       <v-img
         max-height="64px"
         max-width="64px"
-        src="../images/meeds.png"
+        src="/dapp/images/meeds.png"
         contain />
       <div class="ps-2 pb-1">{{ $t('dao') }}</div>
       <v-chip
