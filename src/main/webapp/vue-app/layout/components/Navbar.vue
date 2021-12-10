@@ -20,24 +20,24 @@
   <v-tabs v-model="selectedTab">
     <v-tab
       ref="snapshot"
+      :href="`/${parentLocation}/snapshot`"
       link 
-      href="./snapshot"
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.snapshot') }}</h3>
     </v-tab>
     <v-tab
       ref="stake"
+      :href="`/${parentLocation}/stake`"
       link 
-      href="./stake"
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
     </v-tab>
     <v-tab
       ref="deeds"
+      :href="`/${parentLocation}/deeds`"
       link 
-      href="./deeds"
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
@@ -47,17 +47,18 @@
 <script>
 export default {
   data: () => ({
-    defaultTab: './snapshot',
     selectedTab: null,
+  }),
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+    defaultTab() {
+      return `/${this.parentLocation}/snapshot`;
+    }
   }),
   created() {
     const href = window.location.pathname;
     const hrefParts = href.split('/');
-    let selectedTab = `./${hrefParts[hrefParts.length - 1]}`;
-    if (!selectedTab || !selectedTab.length) {
-      selectedTab = this.defaultTab;
-    }
-    this.selectedTab = selectedTab;
+    this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
     this.$root.$on('switch-page', this.switchPage);
   },
   methods: {

@@ -45,6 +45,7 @@ const isMetamaskConnected = ethUtils.isMetamaskConnected();
 
 const store = new Vuex.Store({
   state: {
+    parentLocation: window.location.pathname.split('/')[1],
     appLoading: true,
     ens: null,
     address: null,

@@ -21,19 +21,20 @@ import routes from './../routes';
 
 export default {
   data: () => ({
+    regex: /(\/)([a-zA-Z]+)(\/?)([a-zA-Z]*)/,
     currentRoute: window.location.pathname || '/',
   }),
   computed: Vuex.mapState({
+    address: state => state.address,
     viewComponent(state) {
       if (state.address) {
-        const pathParts = this.currentRoute.split('/');
-        const route = pathParts[pathParts.length - 1];
+        const pathParts = this.currentRoute.match(this.regex);
+        const route = pathParts.length > 4 && pathParts[4].length && pathParts[4] || '';
         return routes[`/${route}`] || {template: '<p>Not Found</p>'};
       } else {
         return {template: '<deeds-wallet-connect />'};
       }
     },
-    address: state => state.address,
   }),
   created() {
     this.$root.$on('location-change', () => this.currentRoute = window.location.pathname || '/');
