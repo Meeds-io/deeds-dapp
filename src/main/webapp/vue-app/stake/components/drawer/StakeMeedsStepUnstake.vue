@@ -56,7 +56,6 @@
     </v-card-actions>
   </v-card>
 </template>
-
 <script>
 export default {
   data: () => ({
@@ -78,6 +77,10 @@ export default {
     gasLimit: state => state.gasLimit,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
+    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
+    totalMeedsBalanceOfXMeeds() {
+      return this.meedsBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds.add(this.meedsBalanceOfXMeeds) || 0;
+    },
     disabledUnstakeButton() {
       return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
     },
@@ -109,11 +112,11 @@ export default {
       return !this.unstakeAmount || (this.isUnstakeAmountNumeric && this.isUnstakeAmountLessThanMax && this.hasSufficientGas);
     },
     unstakedMeedsAmount() {
-      if (this.isUnstakeAmountValid && Number(this.unstakeAmount) && this.meedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
-        if (this.xMeedsTotalSupply.isZero() || this.meedsBalanceOfXMeeds.isZero()) {
+      if (this.isUnstakeAmountValid && Number(this.unstakeAmount) && this.totalMeedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
+        if (this.xMeedsTotalSupply.isZero() || this.totalMeedsBalanceOfXMeeds.isZero()) {
           return this.unstakeAmount;
         } else {
-          return new BigNumber(this.meedsBalanceOfXMeeds.toString()).multipliedBy(this.unstakeAmount).dividedBy(this.xMeedsTotalSupply.toString()).toString();
+          return new BigNumber(this.totalMeedsBalanceOfXMeeds.toString()).multipliedBy(this.unstakeAmount).dividedBy(this.xMeedsTotalSupply.toString()).toString();
         }
       } else {
         return 0;

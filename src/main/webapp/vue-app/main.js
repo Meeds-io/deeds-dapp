@@ -101,17 +101,28 @@ const store = new Vuex.Store({
       'function balanceOfBatch(address[] _owners, uint256[] _ids) public view returns (uint256[])',
       'function nftsOf(address account) public view returns (uint256[])',
     ],
+    masterChefABI: [
+      'function startRewardsTime() public view returns (uint256)',
+      'function fundsLength() public view returns (uint256)',
+      'function fundAddresses(uint256 _index) public view returns (address)',
+      'function fundInfos(address _fundAddress) public view returns (uint256 allocationPoint, uint256 fixedPercentage, uint256 lastRewardTime, uint256 lpTokenPrice, bool isLPToken)',
+      'function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256)',
+    ],
     // Contracts addresses
     routerAddress: null,
     wethAddress: null,
     meedAddress: null,
     pairAddress: null,
+    xMeedAddress: null,
+    nftAddress: null,
+    masterChefAddress: null,
     // Contracts objects
     routerContract: null,
     wethContract: null,
     meedContract: null,
     xMeedContract: null,
     nftContract: null,
+    masterChefContract: null,
     // User preferred language
     language,
     // Metamask status
@@ -139,7 +150,8 @@ const store = new Vuex.Store({
     meedsTotalSupply: null,
     xMeedsTotalSupply: null,
     meedsBalanceOfXMeeds: null,
-    meedsBalanceOfXMeedsNoDecimals: null,
+    meedsPendingBalanceOfXMeeds: null,
+    meedsStartRewardsTime: null,
     xMeedsBalance: null,
     xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
@@ -208,9 +220,11 @@ const store = new Vuex.Store({
               state.routerAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.pairAddress = '0x4075ce43b041579f31b358e982b0dbaaa7f7ad4e';
+              state.univ2PairAddress = '0xD651d694cd4eFFD8CD9435bb1075eC18842af2AF';
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
               state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
-              state.xMeedAddress = '0x9bBa2C273E80Cd88B51582BDB163D7178AB135dd';
+              state.xMeedAddress = '0x1A6e3146Be827213778aBbB76f06a20e7516e6B3';
+              state.masterChefAddress = '0xc03cc672118B1cA2161e95Dcb6a37fD5D674Fa94';
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
             }
@@ -256,7 +270,7 @@ const store = new Vuex.Store({
           state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
         });
     },
-    loadCurrentCity(state) {
+    loadCurrentCity(state, reloadOnNotMintable) {
       tokenUtils.getCurrentCity(state.xMeedContract)
         .then(currentCity => {
           state.currentCity = currentCity;
@@ -265,12 +279,22 @@ const store = new Vuex.Store({
         .then(currentCityMintable => {
           state.currentCityMintable = currentCityMintable;
           if (!currentCityMintable) {
-            return tokenUtils.getLastCityMintingCompleteDate(state.xMeedContract)
-              .then(lastCityMintingCompleteDate => state.lastCityMintingCompleteDate = lastCityMintingCompleteDate);
+            if (reloadOnNotMintable) {
+              throw new Error('City not mintable yet');
+            } else {
+              return tokenUtils.getLastCityMintingCompleteDate(state.xMeedContract)
+                .then(lastCityMintingCompleteDate => state.lastCityMintingCompleteDate = lastCityMintingCompleteDate);
+            }
           }
         })
         .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
-        .then(currentCardTypes => state.currentCardTypes = currentCardTypes);
+        .then(currentCardTypes => state.currentCardTypes = currentCardTypes)
+        .catch(error => console.error('Error while loading current city', error))
+        .finally(() => {
+          if (reloadOnNotMintable && !state.currentCityMintable) {
+            window.setTimeout(() => this.commit('loadCurrentCity', true), 1000);
+          }
+        });
     },
     loadOwnedNfts(state) {
       if (state.nftContract && state.xMeedContract) {
@@ -291,6 +315,10 @@ const store = new Vuex.Store({
         if (state.xMeedContract) {
           state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
+        }
+        if (state.masterChefContract) {
+          state.masterChefContract.pendingRewardBalanceOf(state.xMeedAddress).then(balance => state.meedsPendingBalanceOfXMeeds = balance);
+          state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
         }
       }
     },
@@ -323,6 +351,13 @@ const store = new Vuex.Store({
           state.nftContract = new ethers.Contract(
             state.nftAddress,
             state.nftABI,
+            state.provider
+          );
+        }
+        if (state.masterChefAddress) {
+          state.masterChefContract = new ethers.Contract(
+            state.masterChefAddress,
+            state.masterChefABI,
             state.provider
           );
         }

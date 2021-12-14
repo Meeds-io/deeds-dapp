@@ -23,6 +23,7 @@ import DeedsEarnedPoints from './components/DeedsEarnedPoints.vue';
 import DeedsRedeem from './components/DeedsRedeem.vue';
 import DeedsRedeemCard from './components/DeedsRedeemCard.vue';
 import DeedsOwned from './components/DeedsOwned.vue';
+import DeedsTimer from './components/DeedsTimer.vue';
 
 const components = {
   'deeds-deeds': Deeds,
@@ -32,6 +33,7 @@ const components = {
   'deeds-redeem': DeedsRedeem,
   'deeds-redeem-card': DeedsRedeemCard,
   'deeds-owned': DeedsOwned,
+  'deeds-timer': DeedsTimer,
 };
 
 for (const key in components) {

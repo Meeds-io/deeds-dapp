@@ -7,22 +7,14 @@ import './Context.sol';
 import './SafeMath.sol';
 import './Address.sol';
 import './Ownable.sol';
+import './FundDistribution.sol';
 
 abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
     using SafeMath for uint256;
     IERC20 public meed;
-    address public rewardDistribution;
+    FundDistribution public rewardDistribution;
 
     event RewardDistributorSet(address indexed newRewardDistributor);
-    event MeedFeeReceived(address indexed from, uint256 meedAmount);
-
-    modifier onlyRewardDistribution() {
-        require(
-            _msgSender() == rewardDistribution,
-            "Caller is not reward distribution"
-        );
-        _;
-    }
 
     constructor(IERC20 _Meed) {
         meed = _Meed;
@@ -31,16 +23,14 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
     function setRewardDistribution(address _rewardDistribution)
         external
         onlyOwner {
-        rewardDistribution = _rewardDistribution;
+        rewardDistribution = FundDistribution(_rewardDistribution);
         emit RewardDistributorSet(_rewardDistribution);
     }
 
-    function notifyRewardAmount(uint256 _balance) external onlyRewardDistribution {
-        meed.transferFrom(_msgSender(), address(this), _balance);
-        emit MeedFeeReceived(_msgSender(), _balance);
-    }
-
     function _stake(uint256 _amount) internal {
+        // Retrieve MEEDs from Reserve Fund
+        rewardDistribution.updateFundReward(address(this));
+
         uint256 totalMeed = meed.balanceOf(address(this));
         uint256 totalShares = totalSupply();
         if (totalShares == 0 || totalMeed == 0) {
@@ -53,6 +43,9 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
     }
 
     function _withdraw(uint256 _share) internal {
+        // Retrieve MEEDs from Reserve Fund
+        rewardDistribution.updateFundReward(address(this));
+
         uint256 totalMeed = meed.balanceOf(address(this));
         uint256 totalShares = totalSupply();
         uint256 what = _share.mul(totalMeed).div(totalShares);

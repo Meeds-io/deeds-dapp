@@ -37,7 +37,7 @@
               type="chip"
               max-height="17"
               tile />
-            <template v-else>{{ xMeedsTotalSupplyNoDecimals }} xMEED</template>
+            <deeds-number-format v-else :value="xMeedsTotalSupply" />
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -72,7 +72,9 @@
               type="chip"
               max-height="17"
               tile />
-            <template v-else>{{ pointsBalanceNoDecimals }} {{ $t('points') }}</template>
+            <deeds-number-format v-else :value="pointsBalance">
+              {{ $t('points') }}
+            </deeds-number-format>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -91,18 +93,6 @@ export default {
     xMeedsBalance: state => state.xMeedsBalance,
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
-    xMeedsTotalSupplyNoDecimals() {
-      return this.$ethUtils.computeTokenBalanceNoDecimals(
-        this.xMeedsTotalSupply || 0,
-        3,
-        this.language);
-    },
-    pointsBalanceNoDecimals() {
-      return this.$ethUtils.computeTokenBalanceNoDecimals(
-        this.pointsBalance,
-        3,
-        this.language);
-    },
   }),
 };
 </script>

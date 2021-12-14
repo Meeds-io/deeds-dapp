@@ -16,24 +16,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import Stake from './components/Stake.vue';
-import StakeDeeds from './components/StakeDeeds.vue';
-import StakeGovernance from './components/StakeGovernance.vue';
-import StakeYield from './components/StakeYield.vue';
-import StakeMeeds from './components/StakeMeeds.vue';
-import StakeMeedsDrawer from './components/drawer/StakeMeedsDrawer.vue';
-import StakeMeedsSteps from './components/drawer/StakeMeedsSteps.vue';
-import StakeMeedsStepUnstake from './components/drawer/StakeMeedsStepUnstake.vue';
+import Drawer from './components/Drawer.vue';
+import NumberFormat from './components/NumberFormat.vue';
 
 const components = {
-  'deeds-stake': Stake,
-  'deeds-stake-deeds': StakeDeeds,
-  'deeds-stake-governance': StakeGovernance,
-  'deeds-stake-yield': StakeYield,
-  'deeds-stake-meeds': StakeMeeds,
-  'deeds-stake-meeds-drawer': StakeMeedsDrawer,
-  'deeds-stake-meeds-steps': StakeMeedsSteps,
-  'deeds-stake-meeds-step-unstake': StakeMeedsStepUnstake,
+  'deeds-drawer': Drawer,
+  'deeds-number-format': NumberFormat,
 };
 
 for (const key in components) {

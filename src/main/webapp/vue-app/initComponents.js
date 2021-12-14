@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import './common/initComponents';
 import './layout/initComponents';
 import './snapshot/initComponents';
 import './deeds/initComponents';

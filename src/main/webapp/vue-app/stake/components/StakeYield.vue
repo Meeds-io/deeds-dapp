@@ -18,9 +18,18 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 pt-0">
-      {{ $t('yields') }}
-    </v-card-title>
+    <flex class="d-flex flex-nowrap">
+      <v-card-title class="ps-0 py-0">
+        {{ $t('yields') }}
+      </v-card-title>
+      <small v-if="!rewardsStarted" class="d-flex">
+        <span class="my-auto">{{ $t('startsAfter') }}</span>
+        <deeds-timer
+          :end-time="meedsStartRewardsTime"
+          class="my-auto"
+          @end="endCountDown = true" />
+      </small>
+    </flex>
     <v-card-text class="ps-0">
       {{ $t('yieldsIntroduction1') }}
       <br>
@@ -28,3 +37,16 @@
     </v-card-text>
   </v-card>
 </template>
+<script>
+export default {
+  data: () => ({
+    endCountDown: false,
+  }),
+  computed: Vuex.mapState({
+    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    rewardsStarted() {
+      return !this.endCountDown && this.meedsStartRewardsTime < Date.now();
+    },
+  }),
+};
+</script>

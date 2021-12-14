@@ -56,7 +56,9 @@
           class="ms-2 primary"
           dark
           small>
-          {{ cardAmountNoDecimals }} {{ $t('points') }}
+          <deeds-number-format :value="cardAmount" :fractions="6">
+            {{ $t('points') }}
+          </deeds-number-format>
         </v-chip>
         <v-spacer />
       </v-card-actions>
@@ -100,12 +102,6 @@ export default {
     },
     cardAmount() {
       return this.card && this.card.amount;
-    },
-    cardAmountNoDecimals() {
-      return this.$ethUtils.computeTokenBalanceNoDecimals(
-        this.cardAmount || 0,
-        6,
-        this.language);
     },
     disableRedeemButton() {
       return this.sendingRedeem

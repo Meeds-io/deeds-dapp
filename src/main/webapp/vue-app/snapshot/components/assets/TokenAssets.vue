@@ -40,9 +40,10 @@
           type="chip"
           max-height="17"
           tile />
-        <template v-else>
-          {{ meedsBalanceFiat }}
-        </template>
+        <deeds-number-format
+          v-else
+          :value="meedsBalance"
+          currency />
       </v-list-item-content>
     </v-list-item>
     <v-list-item class="ps-8">
@@ -64,9 +65,10 @@
           type="chip"
           max-height="17"
           tile />
-        <template v-else>
-          {{ xMeedsBalanceFiat }}
-        </template>
+        <deeds-number-format
+          v-else
+          :value="xMeedsBalanceInMeeds"
+          currency />
       </v-list-item-content>
     </v-list-item>
   </v-list>
@@ -85,34 +87,12 @@ export default {
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    xMeedsBalanceFiat() {
+    xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
-        const meedsBalance = this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
-        return this.$ethUtils.computeFiatBalance(
-          meedsBalance,
-          this.meedsPrice,
-          this.ethPrice,
-          this.exchangeRate,
-          this.selectedFiatCurrency,
-          this.language);
+        return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
       } else {
-        return this.$ethUtils.computeFiatBalance(
-          0,
-          this.meedsPrice,
-          this.ethPrice,
-          this.exchangeRate,
-          this.selectedFiatCurrency,
-          this.language);
+        return 0;
       }
-    },
-    meedsBalanceFiat() {
-      return this.$ethUtils.computeFiatBalance(
-        this.meedsBalance || 0,
-        this.meedsPrice,
-        this.ethPrice,
-        this.exchangeRate,
-        this.selectedFiatCurrency,
-        this.language);
     },
   }),
 };

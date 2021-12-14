@@ -22,7 +22,10 @@
       <h4>{{ title }}</h4>
     </template>
     <template #content>
-      <deeds-stake-meeds-steps v-if="stake" />
+      <deeds-stake-meeds-steps
+        v-if="stake"
+        @start-loading="$refs.drawer.startLoading()"
+        @end-loading="$refs.drawer.endLoading()" />
       <deeds-stake-meeds-step-unstake v-else />
     </template>
   </deeds-drawer>

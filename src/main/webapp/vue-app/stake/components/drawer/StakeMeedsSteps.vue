@@ -63,8 +63,11 @@
               </div>
             </template>
           </v-text-field>
-          <small v-if="stakedMeedsAmountNoDecimals">
-            {{ $t('stakeMeedsEstimation', {0: stakedMeedsAmountNoDecimals}) }}
+          <small>
+            <deeds-number-format
+              :value="stakedMeedsAmount"
+              label="stakeMeedsEstimation"
+              hide-zero />
           </small>
         </v-card-text>
         <v-card-actions class="ms-2">
@@ -86,7 +89,9 @@
     <v-stepper-content step="2">
       <v-card class="mb-12" flat>
         <v-card-text>
-          {{ $t('stakeMeedsDescription', {0: meedsStakeAllowanceNoDecimals}) }}
+          <deeds-number-format
+            :value="meedsStakeAllowance"
+            label="stakeMeedsDescription" />
           <v-text-field
             v-model="stakeAmount"
             :rules="stakeAmountValidator"
@@ -108,8 +113,11 @@
               </div>
             </template>
           </v-text-field>
-          <small v-if="stakedMeedsAmountNoDecimals">
-            {{ $t('stakeMeedsEstimation', {0: stakedMeedsAmountNoDecimals}) }}
+          <small>
+            <deeds-number-format
+              :value="stakedMeedsAmount"
+              label="stakeMeedsEstimation"
+              hide-zero />
           </small>
         </v-card-text>
         <v-card-actions class="ms-2">
@@ -149,31 +157,23 @@ export default {
     xMeedContract: state => state.xMeedContract,
     xMeedAddress: state => state.xMeedAddress,
     transactionGas: state => state.transactionGas,
+    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     gasLimit: state => state.gasLimit,
-    meedsStakeAllowanceNoDecimals() {
-      return this.$ethUtils.computeTokenBalanceNoDecimals(
-        this.meedsStakeAllowance,
-        3,
-        this.language);
+    totalMeedsBalanceOfXMeeds() {
+      return this.meedsBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds.add(this.meedsBalanceOfXMeeds) || 0;
     },
     stakedMeedsAmount() {
       const stakeAmount = Number(this.step) === 1 && this.allowance || this.stakeAmount;
-      if (this.isStakeAmountValid && Number(stakeAmount) && this.meedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
-        if (this.xMeedsTotalSupply.isZero() || this.meedsBalanceOfXMeeds.isZero()) {
-          return stakeAmount;
+      if (this.isStakeAmountValid && Number(stakeAmount) && this.totalMeedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
+        if (this.xMeedsTotalSupply.isZero() || this.totalMeedsBalanceOfXMeeds.isZero()) {
+          return new BigNumber(stakeAmount).multipliedBy(new BigNumber(10).pow(18));
         } else {
-          return new BigNumber(this.xMeedsTotalSupply.toString()).multipliedBy(stakeAmount).dividedBy(this.meedsBalanceOfXMeeds.toString()).toString();
+          return new BigNumber(stakeAmount)
+            .multipliedBy(new BigNumber(10).pow(18))
+            .multipliedBy(this.xMeedsTotalSupply.toString())
+            .dividedBy(this.totalMeedsBalanceOfXMeeds.toString())
+            .toString();
         }
-      } else {
-        return 0;
-      }
-    },
-    stakedMeedsAmountNoDecimals() {
-      if (this.stakedMeedsAmount) {
-        return this.$ethUtils.toFixedDisplay(
-          this.stakedMeedsAmount,
-          3,
-          this.language);
       } else {
         return 0;
       }
@@ -272,6 +272,13 @@ export default {
     },
   }),
   watch: {
+    approvalInProgress() {
+      if (this.approvalInProgress) {
+        this.$emit('start-loading');
+      } else {
+        this.$emit('end-loading');
+      }
+    },
     meedsStakeAllowance() {
       if (this.hasMeedsStakeAllowance) {
         this.step = 2;

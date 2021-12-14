@@ -21,7 +21,8 @@
     <v-card flat>
       <deeds-topbar class="mainPageLayout" role="banner" />
       <v-divider />
-      <div v-if="!loading" class="mainPageLayout pa-4">
+      <v-progress-linear v-if="loading" indeterminate />
+      <div v-else class="mainPageLayout pa-4">
         <deeds-metamask />
         <deeds-navbar v-if="address" role="navigation" />
         <deeds-page

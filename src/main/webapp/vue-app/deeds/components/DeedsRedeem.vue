@@ -29,20 +29,17 @@
       max-height="17"
       tile />
     <h4 v-else>{{ currentCityName }}</h4>
-    <small class="align-center">
+    <small class="d-flex flex-nowrap align-center">
       {{ $t('cityPopulation') }}:
       <v-skeleton-loader
         v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
         type="chip"
         class="ms-2" />
       <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
-      <template v-if="!currentCityMintable && currentCityMintingStartDate">.</template>
-    </small>
-    <small v-if="!currentCityMintable && currentCityMintingStartDate">
-      {{ $t('cityMintingStartDate') }}:
-      <span class="ms-2 red--text">
-        {{ $t('cityMintingTimer', {0: days, 1: hours, 2: minutes, 3: seconds}) }}
-      </span>
+      <div v-if="!currentCityMintable && currentCityMintingStartDate">
+        . {{ $t('cityMintingStartDate') }}:
+        <deeds-timer :end-time="currentCityMintingStartDate" @end="endCountDown" />
+      </div>
     </small>
     <template v-if="currentCardTypes">
       <v-container class="mt-2">
@@ -104,16 +101,9 @@ export default {
     },
   }),
   watch: {
-    currentCityMintingStartDate() {
-      if (this.currentCityMintable === false && !this.interval) {
-        this.setCountDown();
-      }
-    },
     currentCityMintable() {
-      if (this.currentCityMintable && this.interval) {
-        window.clearInterval(this.interval);
+      if (this.currentCityMintable) {
         this.loadingCityDetails = false;
-        this.interval = null;
       }
     },
   },
@@ -125,18 +115,9 @@ export default {
       this.updateCountDown();
       this.interval = setInterval(this.updateCountDown, 1000);
     },
-    updateCountDown() {
-      const distance = this.currentCityMintingStartDate - Date.now();
-      if (distance <= 0) {
-        this.loadingCityDetails = true;
-        window.setTimeout(() => this.$store.commit('loadCurrentCity'), 1000);
-      } else {
-        // Time calculations for days, hours, minutes and seconds
-        this.days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        this.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      }
+    endCountDown() {
+      this.loadingCityDetails = true;
+      window.setTimeout(() => this.$store.commit('loadCurrentCity', true), 1000);
     },
   },
 };
