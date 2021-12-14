@@ -26,3 +26,10 @@
     <deeds-stake-meeds class="ms-auto flex-shrink-0 flex-grow-1" />
   </div>
 </template>
+<script>
+export default {
+  created() {
+    this.$store.commit('loadRewardedFunds');
+  },
+};
+</script>

@@ -95,7 +95,10 @@
     "sellOnOpenSea": "Sell On OpenSea",
     "claimRewards": "Claim Rewards",
     "tooltipClaimReward": "You will be able to earn and claim MEEDs when you will use or let your DEED",
-    "tooltipClaimRewardedMeeds": "You earned {0} MEEDs while using your office. You have to claim them to see them in your wallet."
+    "tooltipClaimRewardedMeeds": "You earned {0} MEEDs while using your office. You have to claim them to see them in your wallet.",
+    "yearlyRewardedMeeds": "Yearly rewarded MEEDs: {0} MEED",
+    "meedsTotalBalanceOfXMeeds": "Total balance of staked MEEDs: {0} MEED",
+    "meedsRewardingDidntStarted": "MEEDs rewarding didn't started yet"
   },
   "fr": {
     "dao": "DAO",
@@ -192,6 +195,9 @@
     "sellOnOpenSea": "Vendre sur OpenSea",
     "claimRewards": "Réclamer les récompenses",
     "tooltipClaimReward": "Vous pourrez gagner et réclamer des MEEDs lorsque vous utiliserez ou laisserez votre DEEDs",
-    "tooltipClaimRewardedMeeds": "Vous avez gagné {0} MEEDs en utilisant votre bureau. Vous devez les réclamer pour les voir dans votre portefeuille."
+    "tooltipClaimRewardedMeeds": "Vous avez gagné {0} MEEDs en utilisant votre bureau. Vous devez les réclamer pour les voir dans votre portefeuille.",
+    "yearlyRewardedMeeds": "Apport annuel total en MEEDs: {0} MEED",
+    "meedsTotalBalanceOfXMeeds": "Somme totale des MEEDs fournis: {0} MEED",
+    "meedsRewardingDidntStarted": "Les récompenses en MEEDs n'ont pas encore commencé"
   }
 }

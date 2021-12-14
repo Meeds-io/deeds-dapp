@@ -20,9 +20,7 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
         meed = _Meed;
     }
 
-    function setRewardDistribution(address _rewardDistribution)
-        external
-        onlyOwner {
+    function setRewardDistribution(address _rewardDistribution) external onlyOwner {
         rewardDistribution = FundDistribution(_rewardDistribution);
         emit RewardDistributorSet(_rewardDistribution);
     }

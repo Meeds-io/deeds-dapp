@@ -25,6 +25,10 @@ export default {
       type: Number,
       default: 2,
     },
+    noDecimals: {
+      type: Boolean,
+      default: false,
+    },
     currency: {
       type: Boolean,
       default: false,
@@ -52,6 +56,8 @@ export default {
           this.exchangeRate,
           this.selectedFiatCurrency,
           this.language);
+      } else if (this.noDecimals) {
+        return this.$ethUtils.toFixedDisplay(this.value, this.fractions, this.language);
       } else {
         return this.$ethUtils.computeTokenBalanceNoDecimals(
           this.value || 0,

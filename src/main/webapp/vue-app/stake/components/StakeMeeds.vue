@@ -31,8 +31,36 @@
           <v-list-item-title>
             {{ $t('apy') }}
           </v-list-item-title>
-          <v-list-item-subtitle>
-            -
+          <v-list-item-subtitle class="font-weight-bold ms-2">
+            <v-skeleton-loader
+              v-if="apyLoading"
+              type="chip"
+              max-height="17"
+              tile />
+            <v-tooltip v-else bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  v-bind="attrs"
+                  v-on="on">
+                  <deeds-number-format
+                    :value="apy"
+                    no-decimals>
+                    %
+                  </deeds-number-format>
+                </div>
+              </template>
+              <ul v-if="rewardsStarted">
+                <li>
+                  <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
+                </li>
+                <li>
+                  <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
+                </li>
+              </ul>
+              <div v-else>
+                {{ $t('meedsRewardingDidntStarted') }}
+              </div>
+            </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -132,15 +160,24 @@
 export default {
   data: () => ({
     stake: true,
+    yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
-    language: state => state.language,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     meedsBalance: state => state.meedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
+    rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
+    rewardedFunds: state => state.rewardedFunds,
+    rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
+    rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
+    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    xMeedRewardInfo() {
+      return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
+    },
     meedsTotalBalanceOfXMeeds() {
       return this.meedsBalanceOfXMeeds
         && this.meedsPendingBalanceOfXMeeds
@@ -148,8 +185,37 @@ export default {
         || 0;
     },
     yearlyRewardedMeeds() {
-      // TDOD
-      return 0;
+      if (this.xMeedRewardInfo) {
+        if (this.xMeedRewardInfo.fixedPercentage) {
+          return new BigNumber(this.rewardedMeedPerMinute.toString())
+            .multipliedBy(this.yearInMinutes)
+            .multipliedBy(this.xMeedRewardInfo.fixedPercentage.toString())
+            .dividedBy(100);
+        } else if (this.xMeedRewardInfo.allocationPoint) {
+          return new BigNumber(this.rewardedMeedPerMinute.toString())
+            .multipliedBy(this.yearInMinutes)
+            .multipliedBy(this.xMeedRewardInfo.allocationPoint.toString())
+            .dividedBy(this.rewardedTotalAllocationPoints.toString())
+            .dividedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
+        }
+      }
+      return new BigNumber(0);
+    },
+    rewardsStarted() {
+      return this.meedsStartRewardsTime < Date.now();
+    },
+    apyLoading() {
+      return !this.meedsBalanceOfXMeeds || !this.rewardedFunds || !this.meedsPendingBalanceOfXMeeds;
+    },
+    apy() {
+      if (!this.meedsTotalBalanceOfXMeeds
+          || !this.yearlyRewardedMeeds
+          || this.meedsTotalBalanceOfXMeeds.isZero()
+          || this.yearlyRewardedMeeds.isZero()
+          || !this.rewardsStarted) {
+        return 0;
+      }
+      return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
   }),
   methods: {

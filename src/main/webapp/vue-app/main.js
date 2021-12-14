@@ -103,6 +103,9 @@ const store = new Vuex.Store({
     ],
     masterChefABI: [
       'function startRewardsTime() public view returns (uint256)',
+      'function meedPerMinute() public view returns (uint256)',
+      'function totalAllocationPoints() public view returns (uint256)',
+      'function totalFixedPercentage() public view returns (uint256)',
       'function fundsLength() public view returns (uint256)',
       'function fundAddresses(uint256 _index) public view returns (address)',
       'function fundInfos(address _fundAddress) public view returns (uint256 allocationPoint, uint256 fixedPercentage, uint256 lastRewardTime, uint256 lpTokenPrice, bool isLPToken)',
@@ -162,6 +165,11 @@ const store = new Vuex.Store({
     currentCardTypes: null,
     currentCityMintable: null,
     lastCityMintingCompleteDate: null,
+    rewardedMeedPerMinute: null,
+    rewardedFundsLength: null,
+    rewardedFunds: null,
+    rewardedTotalFixedPercentage: null,
+    rewardedTotalAllocationPoints: null,
   },
   mutations: {
     setMetamaskInstalled(state) {
@@ -302,6 +310,39 @@ const store = new Vuex.Store({
           .then(nfts => state.ownedNfts = nfts);
       }
     },
+    loadRewardedFunds(state) {
+      if (state.masterChefContract && !state.rewardedFundsLength) {
+        state.masterChefContract.fundsLength()
+          .then(length => {
+            state.rewardedFundsLength = length;
+            const promises = [];
+            for (let i = 0; i < length; i++) {
+              promises.push(
+                state.masterChefContract.fundAddresses(i)
+                  .then(fundAddress => {
+                    return state.masterChefContract.fundInfos(fundAddress)
+                      .then(fundInfo => {
+                        const fund = {};
+                        Object.keys(fundInfo).forEach(key => {
+                          if (Number.isNaN(Number(key))) {
+                            fund[key] = fundInfo[key];
+                          }
+                        });
+                        return Object.assign({
+                          index: i,
+                          address: fundAddress,
+                        }, fund || {});
+                      });
+                  })
+              );
+            }
+            return Promise.all(promises);
+          })
+          .then(fundInfos => state.rewardedFunds = fundInfos);
+        state.masterChefContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
+        state.masterChefContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
+      }
+    },
     loadBalances(state) {
       if (state.address && state.provider) {
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
@@ -319,6 +360,8 @@ const store = new Vuex.Store({
         if (state.masterChefContract) {
           state.masterChefContract.pendingRewardBalanceOf(state.xMeedAddress).then(balance => state.meedsPendingBalanceOfXMeeds = balance);
           state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
+          state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
+          state.masterChefContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
         }
       }
     },
