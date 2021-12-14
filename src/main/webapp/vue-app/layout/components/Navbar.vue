@@ -42,6 +42,14 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
     </v-tab>
+    <v-tab
+      ref="farm"
+      :href="`/${parentLocation}/farm`"
+      link 
+      class="px-0 me-2"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
+    </v-tab>
   </v-tabs>
 </template>
 <script>

@@ -16,42 +16,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-html {
-  overflow: auto;
-}
+import Farm from './components/Farm.vue';
+import AddLiquidity from './components/AddLiquidity.vue';
+import SellLiquidity from './components/SellLiquidity.vue';
+import RentLiquidity from './components/RentLiquidity.vue';
+import LiquidityPools from './components/LiquidityPools.vue';
 
-.mainPageLayout {
-  max-width: 72rem;
-  margin: 0 auto;
-}
+const components = {
+  'deeds-farm': Farm,
+  'deeds-add-liquidity': AddLiquidity,
+  'deeds-sell-liquidity': SellLiquidity,
+  'deeds-rent-liquidity': RentLiquidity,
+  'deeds-liquidity-pools': LiquidityPools,
+};
 
-.copyToClipboardInput {
-  position: fixed;
-  left: -9999px;
-}
-
-#priceChart, .priceChartParent {
-  max-width: 100%;
-  width: 600px;
-  max-height: 100%;
-  height: 400px;
-}
-
-.priceChartParent {
-  position: relative;
-}
-
-.priceChartPeriodSelector {
-  position: absolute;
-  top: 0;
-  right: 48px;
-  z-index: 12;
-}
-
-.v-alert__icon {
-  margin: auto;
-}
-
-.link--color {
-  color: #0000ee;
+for (const key in components) {
+  Vue.component(key, components[key]);
 }

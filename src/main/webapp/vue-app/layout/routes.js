@@ -19,10 +19,12 @@
 const Snapshot = { template: '<deeds-snapshot />' };
 const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
+const Farm = { template: '<deeds-farm />' };
 
 export default {
   '/': Snapshot,
   '/snapshot': Snapshot,
   '/stake': Stake,
   '/deeds': Deeds,
+  '/farm': Farm,
 };

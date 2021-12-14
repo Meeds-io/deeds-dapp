@@ -53,7 +53,6 @@
       </v-btn>
     </div>
     <div id="priceChart" ref="priceChart"></div>
-    <deeds-liquidity-actions class="mx-auto" />
   </div>
 </template>
 

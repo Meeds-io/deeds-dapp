@@ -7,6 +7,7 @@
     "page.snapshot": "Snapshot",
     "page.stake": "Stake",
     "page.deeds": "Deeds",
+    "page.farm": "Farm",
     "copied": "Copied",
     "week": "Week",
     "month": "Month",
@@ -19,6 +20,10 @@
     "meedsPrice": "Meeds Price",
     "addLiquidity": "Add liquidity",
     "sellLiquidity": "Sell liquidity",
+    "sellLiquidityIntroduction": "Want to increase our Meeds position ? Sell your SLPs to get more MEEDs at a discounted price!",
+    "buyBondsOnOlympusPro": "Buy Bonds on Olympus Pro",
+    "rentLiquidity": "Rent liquidity",
+    "rentLiquidityIntroduction": "As a liquidity provider, we'll mint extra MEEDs for you if you stake your SLP or UNI LP tokens with us. The longer you stake, the more you'll earn!  Claim your MEEDs at any time.",
     "clickToChangeAddress": "Click to change address",
     "clickToChangeCurrency": "Click to change currency",
     "connectMetamaskLabel": "Please connect a wallet from your Metamask",
@@ -98,7 +103,8 @@
     "tooltipClaimRewardedMeeds": "You earned {0} MEEDs while using your office. You have to claim them to see them in your wallet.",
     "yearlyRewardedMeeds": "Yearly rewarded MEEDs: {0} MEED",
     "meedsTotalBalanceOfXMeeds": "Total balance of staked MEEDs: {0} MEED",
-    "meedsRewardingDidntStarted": "MEEDs rewarding didn't started yet"
+    "meedsRewardingDidntStarted": "MEEDs rewarding didn't started yet",
+    "addLiquidityIntroduction": "Do you own Meeds and want to help the project to strive?  Help sustaining the Meeds economy by adding  MEEDs and ETH in our pool on:"
   },
   "fr": {
     "dao": "DAO",
@@ -108,6 +114,7 @@
     "page.snapshot": "Acceuil",
     "page.stake": "Staker",
     "page.deeds": "Deeds",
+    "page.farm": "Farm",
     "copied": "Copié",
     "week": "Semaine",
     "month": "Mois",
@@ -120,6 +127,10 @@
     "meedsPrice": "Prix du MEED",
     "addLiquidity": "Ajouter de la liquidité",
     "sellLiquidity": "Vendre de la liquidité",
+    "sellLiquidityIntroduction": "Envie d'augmenter notre position de MEEDs ? Vendez vos SLP pour obtenir plus de MEEDs à un prix réduit !",
+    "buyBondsOnOlympusPro": "Acheter des obligations sur Olympus Pro",
+    "rentLiquidity": "Louer de la liquidité",
+    "rentLiquidityIntroduction": "En tant que fournisseur de liquidités, nous créerons des MEEDs supplémentaires pour vous si vous staker avec nous vos jetons SLP ou UNI LP. Plus vous misez longtemps, plus vous gagnerez ! Réclamez vos MEEDs à tout moment.",
     "clickToChangeAddress": "Cliquer pour changer l'adresse",
     "clickToChangeCurrency": "Cliquer pour changer la monnaie",
     "connectMetamaskLabel": "Veuillez connecter un portefeuille à partir de votre Metamask",
@@ -198,6 +209,7 @@
     "tooltipClaimRewardedMeeds": "Vous avez gagné {0} MEEDs en utilisant votre bureau. Vous devez les réclamer pour les voir dans votre portefeuille.",
     "yearlyRewardedMeeds": "Apport annuel total en MEEDs: {0} MEED",
     "meedsTotalBalanceOfXMeeds": "Somme totale des MEEDs fournis: {0} MEED",
-    "meedsRewardingDidntStarted": "Les récompenses en MEEDs n'ont pas encore commencé"
+    "meedsRewardingDidntStarted": "Les récompenses en MEEDs n'ont pas encore commencé",
+    "addLiquidityIntroduction": "Possédez-vous des MEEDs et souhaitez-vous aider le projet à se développer ? Aidez à soutenir l'économie des MEEDs en ajoutant des MEED et des ETH dans notre pool sur:"
   }
 }
