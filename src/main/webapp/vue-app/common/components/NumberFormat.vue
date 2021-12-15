@@ -19,7 +19,7 @@
 <template>
   <div v-if="display">
     <template v-if="label">
-      {{ $t(label, {0: formattedValue}) }}
+      {{ $t(label, labelComputedParams) }}
     </template>
     <template v-else>
       {{ formattedValue }}
@@ -37,6 +37,10 @@ export default {
     },
     label: {
       type: Number,
+      default: null,
+    },
+    labelParams: {
+      type: Object,
       default: null,
     },
     fractions: {
@@ -64,6 +68,9 @@ export default {
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     display() {
       return !this.hideZero || (this.value && (!this.value.isZero || !this.value.isZero()));
+    },
+    labelComputedParams() {
+      return this.labelParams && Object.assign({0: this.formattedValue}, this.labelParams) || {0: this.formattedValue};
     },
     formattedValue() {
       if (this.currency) {

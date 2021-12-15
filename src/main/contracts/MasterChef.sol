@@ -101,8 +101,6 @@ contract MasterChef is Ownable, FundDistribution {
     function addFund(address _fundAddress, uint256 _value, bool _fixedPercentage, bool _isLPToken) external onlyOwner {
         uint256 lastRewardTime = block.timestamp > startRewardsTime ? block.timestamp : startRewardsTime;
 
-        totalAllocationPoints = totalAllocationPoints.add(_value);
-
         fundAddresses.push(_fundAddress);
         fundInfos[_fundAddress] = FundInfo({
           lastRewardTime: lastRewardTime,
@@ -156,7 +154,7 @@ contract MasterChef is Ownable, FundDistribution {
         }
     }
 
-    function updateFundReward(address _fundAddress) public {
+    function updateFundReward(address _fundAddress) public override {
         // Minting didn't started yet
         if (block.timestamp <= startRewardsTime) {
             return;
@@ -274,12 +272,18 @@ contract MasterChef is Ownable, FundDistribution {
     }
 
     function pendingRewardBalanceOf(address _fundAddress, address _user) public view returns (uint256) {
+        if (block.timestamp < startRewardsTime) {
+            return 0;
+        }
         uint256 lpTokenPrice = getLpTokenPrice(_fundAddress);
         UserInfo storage user = userLpInfos[_fundAddress][_user];
         return user.amount.mul(lpTokenPrice).div(1e12).sub(user.rewardDebt);
     }
 
     function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256) {
+        if (block.timestamp < startRewardsTime) {
+            return 0;
+        }
         FundInfo storage fund = fundInfos[_fundAddress];
         uint256 periodTotalMeedRewards = getPeriodMeedRewards(fund.lastRewardTime, block.timestamp);
         uint256 meedRewardAmount = 0;

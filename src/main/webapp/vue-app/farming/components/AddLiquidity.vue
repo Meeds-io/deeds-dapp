@@ -40,7 +40,20 @@
         <span class="text-none">Sushiswap</span>
         <img src="/dapp/images/sushiswap.ico" class="my-3">
       </v-btn>
-      <v-tooltip bottom>
+      <v-btn
+        v-if="addUniswapLiquidityLink"
+        :href="addUniswapLiquidityLink"
+        target="_blank"
+        rel="noreferrer"
+        height="90px"
+        width="90px"
+        outlined
+        text
+        class="rounded-lg me-4">
+        <span class="text-none">Uniswap</span>
+        <div class="my-3 headline">🦄</div>
+      </v-btn>
+      <v-tooltip v-else bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             height="90px"
@@ -61,8 +74,9 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    addSushiswapLiquidityLink: 'https://app.sushi.com/add/ETH/0x8503a7b00B4b52692cC6c14e5b96F142E30547b7',
+  computed: Vuex.mapState({
+    addSushiswapLiquidityLink: state => state.addSushiswapLiquidityLink,
+    addUniswapLiquidityLink: state => state.addUniswapLiquidityLink,
   }),
 };
 </script>

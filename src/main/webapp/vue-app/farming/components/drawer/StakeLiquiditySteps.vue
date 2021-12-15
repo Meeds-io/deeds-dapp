@@ -22,10 +22,9 @@
     vertical
     flat>
     <v-stepper-step
-      :complete="meedsBalanceNoDecimals > 0"
       editable
       step="1">
-      {{ $t('approveMeeds') }}
+      {{ $t('approveLiquidity', {0: lpSymbol}) }}
     </v-stepper-step>
     <v-stepper-content step="1">
       <v-card
@@ -41,7 +40,11 @@
         class="mb-12"
         flat>
         <v-card-text>
-          {{ $t('approveMeedsDescription', {0: meedsBalanceNoDecimals}) }}
+          <deeds-number-format
+            :value="lpBalance"
+            :label-params="{1: lpSymbol}"
+            label="approveLPDescription"
+            hide-zero />
           <v-text-field
             v-model="allowance"
             :rules="allowanceValueValidator"
@@ -58,17 +61,11 @@
                 @click="setMaxAllowance">
                 {{ $t('max') }}
               </v-chip>
-              <div class="mt-1">
-                MEED
+              <div class="mt-1 text-no-wrap">
+                {{ lpSymbol }}
               </div>
             </template>
           </v-text-field>
-          <small>
-            <deeds-number-format
-              :value="stakedMeedsAmount"
-              label="stakeMeedsEstimation"
-              hide-zero />
-          </small>
         </v-card-text>
         <v-card-actions class="ms-2">
           <v-btn
@@ -83,15 +80,17 @@
     </v-stepper-content>
     <v-stepper-step
       step="2"
-      :editable="hasMeedsStakeAllowance">
-      {{ $t('stakeMeeds') }}
+      :editable="hasStakeAllowance">
+      {{ $t('stakeLiquidity', {0: lpSymbol}) }}
     </v-stepper-step>
     <v-stepper-content step="2">
       <v-card class="mb-12" flat>
         <v-card-text>
           <deeds-number-format
-            :value="meedsStakeAllowance"
-            label="stakeMeedsDescription" />
+            :value="lpAllowance"
+            :label-params="{1: lpSymbol}"
+            label="stakeLPDescription"
+            hide-zero />
           <v-text-field
             v-model="stakeAmount"
             :rules="stakeAmountValidator"
@@ -108,17 +107,11 @@
                 @click="setMaxStakeAmount">
                 {{ $t('max') }}
               </v-chip>
-              <div class="mt-1">
-                MEED
+              <div class="mt-1 text-no-wrap">
+                {{ lpSymbol }}
               </div>
             </template>
           </v-text-field>
-          <small>
-            <deeds-number-format
-              :value="stakedMeedsAmount"
-              label="stakeMeedsEstimation"
-              hide-zero />
-          </small>
         </v-card-text>
         <v-card-actions class="ms-2">
           <v-btn
@@ -136,6 +129,28 @@
 
 <script>
 export default {
+  props: {
+    lpSymbol: {
+      type: String,
+      default: null,
+    },
+    lpAddress: {
+      type: Object,
+      default: null,
+    },
+    lpBalance: {
+      type: Object,
+      default: null,
+    },
+    lpAllowance: {
+      type: Object,
+      default: null,
+    },
+    lpContract: {
+      type: Object,
+      default: null,
+    },
+  },
   data: () => ({
     step: 1,
     allowance: 0,
@@ -146,48 +161,22 @@ export default {
   }),
   computed: Vuex.mapState({
     language: state => state.language,
-    etherBalance: state => state.etherBalance,
-    meedsBalance: state => state.meedsBalance,
-    meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
-    meedsStakeAllowance: state => state.meedsStakeAllowance,
-    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     provider: state => state.provider,
-    meedContract: state => state.meedContract,
-    xMeedContract: state => state.xMeedContract,
-    xMeedAddress: state => state.xMeedAddress,
+    etherBalance: state => state.etherBalance,
+    masterChefAddress: state => state.masterChefAddress,
+    masterChefContract: state => state.masterChefContract,
     transactionGas: state => state.transactionGas,
-    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     gasLimit: state => state.gasLimit,
-    totalMeedsBalanceOfXMeeds() {
-      return this.meedsBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds.add(this.meedsBalanceOfXMeeds) || 0;
-    },
-    stakedMeedsAmount() {
-      const stakeAmount = Number(this.step) === 1 && this.allowance || this.stakeAmount;
-      if (this.isStakeAmountValid && Number(stakeAmount) && this.totalMeedsBalanceOfXMeeds && this.xMeedsTotalSupply) {
-        if (this.xMeedsTotalSupply.isZero() || this.totalMeedsBalanceOfXMeeds.isZero()) {
-          return new BigNumber(stakeAmount).multipliedBy(new BigNumber(10).pow(18));
-        } else {
-          return new BigNumber(stakeAmount)
-            .multipliedBy(new BigNumber(10).pow(18))
-            .multipliedBy(this.xMeedsTotalSupply.toString())
-            .dividedBy(this.totalMeedsBalanceOfXMeeds.toString())
-            .toString();
-        }
-      } else {
-        return 0;
-      }
-    },
     disabledApproveButton() {
       return !this.allowance || !Number(this.allowance) || !this.isAllowanceValueValid || this.sendingApproval || this.approvalInProgress;
     },
     disabledStakeButton() {
       return !this.stakeAmount || !Number(this.stakeAmount) || !this.isStakeAmountValid || this.sendingStake;
     },
-    maxMeed() {
-      if (this.meedsBalance && !this.meedsBalance.isZero()) {
-        const maxMeed = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
-        return Number(maxMeed);
+    maxLpAmount() {
+      if (this.lpBalance && !this.lpBalance.isZero()) {
+        const max = this.$ethUtils.fromDecimals(this.lpBalance, 18);
+        return Number(max);
       }
       return 0;
     },
@@ -205,15 +194,15 @@ export default {
       if (!this.allowance) {
         return true;
       }
-      return Number(this.allowance) <= this.maxMeed;
+      return Number(this.allowance) <= this.maxLpAmount;
     },
     isStakeAmountLessThanMax() {
       if (!this.stakeAmount || !this.isStakeAmountNumeric) {
         return true;
       }
-      const meedsStakeAllowance = this.meedsStakeAllowance;
+      const lpAllowance = this.lpAllowance;
       const stakeAmountToSend = this.$ethUtils.toDecimals(this.stakeAmount, 18);
-      return stakeAmountToSend.lte(meedsStakeAllowance);
+      return stakeAmountToSend.lte(lpAllowance);
     },
     isAllowanceValueNumeric() {
       if (!this.allowance) {
@@ -233,40 +222,40 @@ export default {
     isStakeAmountValid() {
       return !this.stakeAmount || (this.isStakeAmountNumeric && this.isStakeAmountLessThanMax && this.hasSufficientGas);
     },
-    maxMeedsBalanceNoDecimals() {
-      return this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+    maxLpAmountBalanceNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.lpBalance, 18);
     },
-    maxMeedsAllowanceNoDecimals() {
-      return this.$ethUtils.fromDecimals(this.meedsStakeAllowance, 18);
+    maxLpAmountAllowanceNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.lpAllowance, 18);
     },
     allowanceValueValidator() {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
         () => !!this.isAllowanceValueNumeric || this.$t('valueMustBeNumeric'),
-        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsBalanceNoDecimals}),
+        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxLpAmountBalanceNoDecimals}),
       ];
     },
     stakeAmountValidator() {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
         () => !!this.isStakeAmountNumeric || this.$t('valueMustBeNumeric'),
-        () => !!this.isStakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsAllowanceNoDecimals}),
+        () => !!this.isStakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxLpAmountAllowanceNoDecimals}),
       ];
     },
-    hasMeedsStakeAllowance() {
-      return this.meedsStakeAllowance && !this.meedsStakeAllowance.isZero();
+    hasStakeAllowance() {
+      return this.lpAllowance && !this.lpAllowance.isZero();
     },
     approveMethod() {
-      if (this.provider && this.meedContract) {
-        const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
-        return meedContractSigner.approve;
+      if (this.provider && this.lpContract) {
+        const signer = this.lpContract.connect(this.provider.getSigner());
+        return signer.approve;
       }
       return null;
     },
     stakeMethod() {
-      if (this.provider && this.xMeedContract) {
-        const xMeedContractSigner = this.xMeedContract.connect(this.provider.getSigner());
-        return xMeedContractSigner.stake;
+      if (this.provider && this.masterChefContract) {
+        const signer = this.masterChefContract.connect(this.provider.getSigner());
+        return signer.deposit;
       }
       return null;
     },
@@ -279,8 +268,8 @@ export default {
         this.$emit('end-loading');
       }
     },
-    meedsStakeAllowance() {
-      if (this.hasMeedsStakeAllowance) {
+    lpAllowance() {
+      if (this.hasStakeAllowance) {
         this.step = 2;
         this.approvalInProgress = false;
       }
@@ -294,7 +283,7 @@ export default {
         gasLimit: this.gasLimit,
       };
       return this.approveMethod(
-        this.xMeedAddress,
+        this.masterChefAddress,
         amount,
         options
       ).then(receipt => {
@@ -308,10 +297,10 @@ export default {
       });
     },
     setMaxAllowance() {
-      this.allowance = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+      this.allowance = this.$ethUtils.fromDecimals(this.lpBalance, 18);
     },
     setMaxStakeAmount() {
-      this.stakeAmount = this.$ethUtils.fromDecimals(this.meedsStakeAllowance, 18);
+      this.stakeAmount = this.$ethUtils.fromDecimals(this.lpAllowance, 18);
     },
     stake() {
       this.sendingStake = true;
@@ -320,6 +309,7 @@ export default {
         gasLimit: this.gasLimit,
       };
       return this.stakeMethod(
+        this.lpAddress,
         amount,
         options
       ).then(receipt => {

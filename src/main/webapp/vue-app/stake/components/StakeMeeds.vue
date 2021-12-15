@@ -186,16 +186,17 @@ export default {
     },
     yearlyRewardedMeeds() {
       if (this.xMeedRewardInfo) {
-        if (this.xMeedRewardInfo.fixedPercentage) {
+        if (this.xMeedRewardInfo.fixedPercentage && !this.xMeedRewardInfo.fixedPercentage.isZero()) {
           return new BigNumber(this.rewardedMeedPerMinute.toString())
             .multipliedBy(this.yearInMinutes)
             .multipliedBy(this.xMeedRewardInfo.fixedPercentage.toString())
             .dividedBy(100);
-        } else if (this.xMeedRewardInfo.allocationPoint) {
+        } else if (this.xMeedRewardInfo.allocationPoint && !this.xMeedRewardInfo.allocationPoint.isZero()) {
           return new BigNumber(this.rewardedMeedPerMinute.toString())
             .multipliedBy(this.yearInMinutes)
             .multipliedBy(this.xMeedRewardInfo.allocationPoint.toString())
             .dividedBy(this.rewardedTotalAllocationPoints.toString())
+            .multipliedBy(100)
             .dividedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
         }
       }

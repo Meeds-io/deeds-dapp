@@ -121,8 +121,8 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     language: state => state.language,
-    routerAddress: state => state.routerAddress,
-    routerContract: state => state.routerContract,
+    sushiswapRouterAddress: state => state.routerAddress,
+    sushiswapRouterContract: state => state.sushiswapRouterContract,
     meedContract: state => state.meedContract,
     wethContract: state => state.wethContract,
     meedAddress: state => state.meedAddress,
@@ -237,16 +237,16 @@ export default {
       return this.fromValue && this.isFromValueNumeric;
     },
     swapMethod() {
-      if (this.provider && this.routerContract) {
-        const routerContractSigner = this.routerContract.connect(this.provider.getSigner());
-        return this.buy && routerContractSigner.swapExactETHForTokens || routerContractSigner.swapExactTokensForETH;
+      if (this.provider && this.sushiswapRouterContract) {
+        const signer = this.sushiswapRouterContract.connect(this.provider.getSigner());
+        return this.buy && signer.swapExactETHForTokens || signer.swapExactTokensForETH;
       }
       return null;
     },
     approveMethod() {
       if (this.provider && this.meedContract) {
-        const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
-        return meedContractSigner.approve;
+        const signer = this.meedContract.connect(this.provider.getSigner());
+        return signer.approve;
       }
       return null;
     },
@@ -299,7 +299,7 @@ export default {
         this.computingAmount = true;
         this.toValue = null;
         const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
-        return this.routerContract.getAmountsOut(amountIn, this.tokenAdresses)
+        return this.sushiswapRouterContract.getAmountsOut(amountIn, this.tokenAdresses)
           .then(amounts =>  this.toValue = this.$ethUtils.fromDecimals(amounts[1], 18))
           .finally(() => this.computingAmount = false);
       }
@@ -351,7 +351,7 @@ export default {
         gasLimit: this.gasLimit,
       };
       return this.approveMethod(
-        this.routerAddress,
+        this.sushiswapRouterAddress,
         amount,
         options
       ).then(receipt => {

@@ -1,0 +1,161 @@
+<!--
+ This file is part of the Meeds project (https://meeds.io/).
+ 
+ Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <v-card class="mb-12" flat>
+    <v-card-text>
+      {{ $t('unstakeLPDescription', {0: stakedLp}) }}
+      <v-text-field
+        v-model="unstakeAmount"
+        :rules="unstakeAmountValidator"
+        :hide-details="isUnstakeAmountValid"
+        placeholder="0.0"
+        large
+        outlined
+        dense>
+        <template #append>
+          <v-chip
+            outlined
+            x-small
+            class="mt-1 me-1"
+            @click="setMaxLPAmount">
+            {{ $t('max') }}
+          </v-chip>
+          <div class="mt-1 text-no-wrap">
+            {{ lpSymbol }}
+          </div>
+        </template>
+      </v-text-field>
+    </v-card-text>
+    <v-card-actions class="px-4">
+      <v-btn
+        :disabled="disabledUnstakeButton"
+        :loading="sendingUnstake"
+        color="primary"
+        @click="unstake">
+        {{ $t('unstake') }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</template>
+<script>
+export default {
+  props: {
+    lpSymbol: {
+      type: String,
+      default: null,
+    },
+    lpAddress: {
+      type: Object,
+      default: null,
+    },
+    lpStaked: {
+      type: Object,
+      default: null,
+    },
+  },
+  data: () => ({
+    step: 1,
+    allowance: 0,
+    unstakeAmount: 0,
+    sendingApproval: false,
+    approvalInProgress: false,
+    sendingUnstake: false,
+  }),
+  computed: Vuex.mapState({
+    language: state => state.language,
+    etherBalance: state => state.etherBalance,
+    provider: state => state.provider,
+    transactionGas: state => state.transactionGas,
+    gasLimit: state => state.gasLimit,
+    masterChefContract: state => state.masterChefContract,
+    disabledUnstakeButton() {
+      return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
+    },
+    hasSufficientGas() {
+      if (!this.unstakeAmount) {
+        return true;
+      }
+      if (this.etherBalance && this.transactionGas) {
+        const maxEther = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+        return Number(maxEther) > 0;
+      }
+      return false;
+    },
+    isUnstakeAmountLessThanMax() {
+      if (!this.unstakeAmount || !this.isUnstakeAmountNumeric) {
+        return true;
+      }
+      const lpStaked = this.lpStaked;
+      const unstakeAmountToSend = this.$ethUtils.toDecimals(this.unstakeAmount, 18);
+      return unstakeAmountToSend.lte(lpStaked);
+    },
+    isUnstakeAmountNumeric() {
+      if (!this.unstakeAmount) {
+        return true;
+      }
+      return this.unstakeAmount && Number.isFinite(Number(this.unstakeAmount));
+    },
+    isUnstakeAmountValid() {
+      return !this.unstakeAmount || (this.isUnstakeAmountNumeric && this.isUnstakeAmountLessThanMax && this.hasSufficientGas);
+    },
+    lpStakedNoDecimals() {
+      return this.$ethUtils.fromDecimals(this.lpStaked, 18);
+    },
+    unstakeAmountValidator() {
+      return [
+        () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
+        () => !!this.isUnstakeAmountNumeric || this.$t('valueMustBeNumeric'),
+        () => !!this.isUnstakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.lpStakedNoDecimals}),
+      ];
+    },
+    withdrawMethod() {
+      if (this.provider && this.masterChefContract) {
+        const signer = this.masterChefContract.connect(this.provider.getSigner());
+        return signer.withdraw;
+      }
+      return null;
+    },
+  }),
+  methods: {
+    setMaxLPAmount() {
+      this.unstakeAmount = this.$ethUtils.fromDecimals(this.lpStaked, 18);
+    },
+    unstake() {
+      this.sendingUnstake = true;
+      const amount = this.$ethUtils.toDecimals(this.unstakeAmount, 18);
+      const options = {
+        gasLimit: this.gasLimit,
+      };
+      return this.withdrawMethod(
+        this.lpAddress,
+        amount,
+        options
+      ).then(receipt => {
+        const transactionHash = receipt.hash;
+        this.$root.$emit('transaction-sent', transactionHash);
+        this.unstakeAmount = 0;
+        this.sendingUnstake = false;
+        this.$root.$emit('close-drawer');
+      }).catch(() => {
+        this.sendingUnstake = false;
+      });
+    },
+  },
+};
+</script>

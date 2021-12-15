@@ -62,6 +62,7 @@ const store = new Vuex.Store({
       'function approve(address spender, uint256 amount) external returns (bool)',
       'function balanceOf(address owner) view returns (uint256)',
       'function totalSupply() public view returns (uint256)',
+      'function symbol() public view returns (string)',
     ],
     routerABI: [
       'function getAmountsOut(uint amountIn, address[] memory path) public view returns(uint[] memory amounts)',
@@ -110,17 +111,21 @@ const store = new Vuex.Store({
       'function fundAddresses(uint256 _index) public view returns (address)',
       'function fundInfos(address _fundAddress) public view returns (uint256 allocationPoint, uint256 fixedPercentage, uint256 lastRewardTime, uint256 lpTokenPrice, bool isLPToken)',
       'function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256)',
+      'function userLpInfos(address _fundAddress, address _userAddress) public view returns (uint256 amount, uint256 rewardDebt)',
+      'function deposit(address _fundAddress, uint256 _amount) public',
+      'function withdraw(address _fundAddress, uint256 _amount) public',
     ],
     // Contracts addresses
-    routerAddress: null,
+    sushiswapRouterAddress: null,
     wethAddress: null,
     meedAddress: null,
-    pairAddress: null,
+    sushiswapPairAddress: null,
+    univ2PairAddress: null,
     xMeedAddress: null,
     nftAddress: null,
     masterChefAddress: null,
     // Contracts objects
-    routerContract: null,
+    sushiswapRouterContract: null,
     wethContract: null,
     meedContract: null,
     xMeedContract: null,
@@ -170,6 +175,8 @@ const store = new Vuex.Store({
     rewardedFunds: null,
     rewardedTotalFixedPercentage: null,
     rewardedTotalAllocationPoints: null,
+    addSushiswapLiquidityLink: null,
+    addUniswapLiquidityLink: null,
   },
   mutations: {
     setMetamaskInstalled(state) {
@@ -198,13 +205,15 @@ const store = new Vuex.Store({
 
               // Mainnet
               state.etherscanBaseLink = 'https://etherscan.io/';
-              state.routerAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
-              state.pairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
+              state.sushiswapRouterAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
+              state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
               // TODO replace with real addresses
               state.nftAddress = null;
               state.xMeedAddress = null;
+
+              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://opensea.io/assets/${state.nftAddress}`;
             } else if (state.networkId === 5) {
@@ -212,12 +221,14 @@ const store = new Vuex.Store({
 
               // Goërli
               state.etherscanBaseLink = 'https://goerli.etherscan.io/';
-              state.routerAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
-              state.pairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
+              state.sushiswapRouterAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
+              state.sushiswapPairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
               state.wethAddress = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
               state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
               state.nftAddress = '0xb26cCD76748Fa79bF242Cfaca6687184CaF48093';
               state.xMeedAddress = '0x36e19bB29573F5Dc5d6A124444e81646A59b6702';
+
+              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.nftAddress}`;
             } else if (state.networkId === 4) {
@@ -225,14 +236,17 @@ const store = new Vuex.Store({
 
               // Rinkeby
               state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
-              state.routerAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
-              state.pairAddress = '0x4075ce43b041579f31b358e982b0dbaaa7f7ad4e';
+              state.sushiswapPairAddress = '0x4075ce43b041579f31b358e982b0dbaaa7f7ad4e';
               state.univ2PairAddress = '0xD651d694cd4eFFD8CD9435bb1075eC18842af2AF';
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
               state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
               state.xMeedAddress = '0x1A6e3146Be827213778aBbB76f06a20e7516e6B3';
-              state.masterChefAddress = '0xc03cc672118B1cA2161e95Dcb6a37fD5D674Fa94';
+              state.masterChefAddress = '0x4c0Db42702c4e65E666179b36B8E1B99127522BF';
+
+              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
+              state.addUniswapLiquidityLink = 'https://app.uniswap.org/#/increase/0x25bc45E51a3D9446029733614B009B0d7b5920Db/ETH/500/11459';
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
             }
@@ -349,7 +363,7 @@ const store = new Vuex.Store({
         if (state.meedContract) {
           state.meedContract.balanceOf(state.address).then(balance => this.commit('setMeedsBalance', balance));
           state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
-          state.meedContract.allowance(state.address, state.routerAddress).then(balance => state.meedsRouteAllowance = balance);
+          state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
           state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
           state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
         }
@@ -358,18 +372,20 @@ const store = new Vuex.Store({
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
         }
         if (state.masterChefContract) {
-          state.masterChefContract.pendingRewardBalanceOf(state.xMeedAddress).then(balance => state.meedsPendingBalanceOfXMeeds = balance);
-          state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
           state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
           state.masterChefContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
+          state.masterChefContract
+            .pendingRewardBalanceOf(state.xMeedAddress)
+            .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
+            .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
         }
       }
     },
     setProvider(state) {
       if (state.address) {
         state.provider = new ethers.providers.Web3Provider(window.ethereum);
-        state.routerContract = new ethers.Contract(
-          state.routerAddress,
+        state.sushiswapRouterContract = new ethers.Contract(
+          state.sushiswapRouterAddress,
           state.routerABI,
           state.provider,
         );
