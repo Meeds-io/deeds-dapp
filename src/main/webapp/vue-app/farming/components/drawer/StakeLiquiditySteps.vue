@@ -163,8 +163,8 @@ export default {
     language: state => state.language,
     provider: state => state.provider,
     etherBalance: state => state.etherBalance,
-    masterChefAddress: state => state.masterChefAddress,
-    masterChefContract: state => state.masterChefContract,
+    tokenFactoryAddress: state => state.tokenFactoryAddress,
+    tokenFactoryContract: state => state.tokenFactoryContract,
     transactionGas: state => state.transactionGas,
     gasLimit: state => state.gasLimit,
     disabledApproveButton() {
@@ -253,8 +253,8 @@ export default {
       return null;
     },
     stakeMethod() {
-      if (this.provider && this.masterChefContract) {
-        const signer = this.masterChefContract.connect(this.provider.getSigner());
+      if (this.provider && this.tokenFactoryContract) {
+        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
         return signer.deposit;
       }
       return null;
@@ -283,7 +283,7 @@ export default {
         gasLimit: this.gasLimit,
       };
       return this.approveMethod(
-        this.masterChefAddress,
+        this.tokenFactoryAddress,
         amount,
         options
       ).then(receipt => {

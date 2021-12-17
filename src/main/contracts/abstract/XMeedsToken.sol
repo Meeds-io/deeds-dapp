@@ -40,14 +40,14 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
         meed.transferFrom(_msgSender(), address(this), _amount);
     }
 
-    function _withdraw(uint256 _share) internal {
+    function _withdraw(uint256 _amount) internal {
         // Retrieve MEEDs from Reserve Fund
         rewardDistribution.updateFundReward(address(this));
 
         uint256 totalMeed = meed.balanceOf(address(this));
         uint256 totalShares = totalSupply();
-        uint256 what = _share.mul(totalMeed).div(totalShares);
-        _burn(_msgSender(), _share);
+        uint256 what = _amount.mul(totalMeed).div(totalShares);
+        _burn(_msgSender(), _amount);
         meed.transfer(_msgSender(), what);
     }
 }

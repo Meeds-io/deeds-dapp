@@ -72,10 +72,6 @@ export default {
       type: Boolean,
       default: () => false,
     },
-    claim: {
-      type: Boolean,
-      default: () => false,
-    },
   },
   computed: Vuex.mapState({
     title() {

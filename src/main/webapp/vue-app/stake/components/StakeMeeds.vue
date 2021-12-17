@@ -40,6 +40,7 @@
             <v-tooltip v-else bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
+                  class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format
@@ -47,6 +48,13 @@
                     no-decimals>
                     %
                   </deeds-number-format>
+                  <v-icon
+                    v-if="!rewardsStarted"
+                    size="15px"
+                    color="primary"
+                    class="ms-2">
+                    mdi-alert-circle-outline
+                  </v-icon>
                 </div>
               </template>
               <ul v-if="rewardsStarted">
@@ -160,6 +168,8 @@
 export default {
   data: () => ({
     stake: true,
+    refreshInterval: null,
+    now: Date.now(),
     yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
@@ -203,7 +213,7 @@ export default {
       return new BigNumber(0);
     },
     rewardsStarted() {
-      return this.meedsStartRewardsTime < Date.now();
+      return this.meedsStartRewardsTime < this.now;
     },
     apyLoading() {
       return !this.meedsBalanceOfXMeeds || !this.rewardedFunds || !this.meedsPendingBalanceOfXMeeds;
@@ -219,6 +229,20 @@ export default {
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
   }),
+  watch: {
+    rewardsStarted() {
+      if (this.rewardsStarted && this.refreshInterval) {
+        window.clearInterval(this.refreshInterval);
+      }
+    },
+  },
+  created() {
+    if (!this.rewardsStarted) {
+      this.refreshInterval = window.setInterval(() => {
+        this.now = Date.now();
+      }, 1000);
+    }
+  },
   methods: {
     openStakeDrawer(stake) {
       this.stake = stake;

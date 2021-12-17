@@ -55,3 +55,12 @@ html {
 .link--color {
   color: #0000ee;
 }
+
+.original-primary {
+  background-color: #1867c0 !important;
+  border-color: #1867c0 !important;
+}
+
+.original-primary--text {
+  color: #1867c0 !important;
+}

@@ -102,18 +102,21 @@ const store = new Vuex.Store({
       'function balanceOfBatch(address[] _owners, uint256[] _ids) public view returns (uint256[])',
       'function nftsOf(address account) public view returns (uint256[])',
     ],
-    masterChefABI: [
+    tokenFactoryABI: [
+      'event Harvest(address indexed user, address indexed fundAddress, uint256 amount)',
       'function startRewardsTime() public view returns (uint256)',
       'function meedPerMinute() public view returns (uint256)',
       'function totalAllocationPoints() public view returns (uint256)',
       'function totalFixedPercentage() public view returns (uint256)',
       'function fundsLength() public view returns (uint256)',
       'function fundAddresses(uint256 _index) public view returns (address)',
-      'function fundInfos(address _fundAddress) public view returns (uint256 allocationPoint, uint256 fixedPercentage, uint256 lastRewardTime, uint256 lpTokenPrice, bool isLPToken)',
-      'function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256)',
+      'function fundInfos(address _fundAddress) public view returns (uint256 fixedPercentage, uint256 allocationPoint, uint256 lastRewardTime, uint256 accMeedPerShare, bool isLPToken)',
       'function userLpInfos(address _fundAddress, address _userAddress) public view returns (uint256 amount, uint256 rewardDebt)',
       'function deposit(address _fundAddress, uint256 _amount) public',
       'function withdraw(address _fundAddress, uint256 _amount) public',
+      'function harvest(address _fundAddress) public',
+      'function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256)',
+      'function pendingRewardBalanceOf(address _fundAddress, address _userAddress) public view returns (uint256)',
     ],
     // Contracts addresses
     sushiswapRouterAddress: null,
@@ -123,14 +126,14 @@ const store = new Vuex.Store({
     univ2PairAddress: null,
     xMeedAddress: null,
     nftAddress: null,
-    masterChefAddress: null,
+    tokenFactoryAddress: null,
     // Contracts objects
     sushiswapRouterContract: null,
     wethContract: null,
     meedContract: null,
     xMeedContract: null,
     nftContract: null,
-    masterChefContract: null,
+    tokenFactoryContract: null,
     // User preferred language
     language,
     // Metamask status
@@ -243,7 +246,7 @@ const store = new Vuex.Store({
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
               state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
               state.xMeedAddress = '0x1A6e3146Be827213778aBbB76f06a20e7516e6B3';
-              state.masterChefAddress = '0x4c0Db42702c4e65E666179b36B8E1B99127522BF';
+              state.tokenFactoryAddress = '0x2FE92B4FDDC227E3866CcA460b403B85B5bE603f';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               state.addUniswapLiquidityLink = 'https://app.uniswap.org/#/increase/0x25bc45E51a3D9446029733614B009B0d7b5920Db/ETH/500/11459';
@@ -325,16 +328,16 @@ const store = new Vuex.Store({
       }
     },
     loadRewardedFunds(state) {
-      if (state.masterChefContract && !state.rewardedFundsLength) {
-        state.masterChefContract.fundsLength()
+      if (state.tokenFactoryContract && !state.rewardedFundsLength) {
+        state.tokenFactoryContract.fundsLength()
           .then(length => {
-            state.rewardedFundsLength = length;
+            state.rewardedFundsLength = length.toNumber();
             const promises = [];
             for (let i = 0; i < length; i++) {
               promises.push(
-                state.masterChefContract.fundAddresses(i)
+                state.tokenFactoryContract.fundAddresses(i)
                   .then(fundAddress => {
-                    return state.masterChefContract.fundInfos(fundAddress)
+                    return state.tokenFactoryContract.fundInfos(fundAddress)
                       .then(fundInfo => {
                         const fund = {};
                         Object.keys(fundInfo).forEach(key => {
@@ -353,8 +356,8 @@ const store = new Vuex.Store({
             return Promise.all(promises);
           })
           .then(fundInfos => state.rewardedFunds = fundInfos);
-        state.masterChefContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
-        state.masterChefContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
+        state.tokenFactoryContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
+        state.tokenFactoryContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
       }
     },
     loadBalances(state) {
@@ -371,11 +374,10 @@ const store = new Vuex.Store({
           state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
         }
-        if (state.masterChefContract) {
-          state.masterChefContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
-          state.masterChefContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
-          state.masterChefContract
-            .pendingRewardBalanceOf(state.xMeedAddress)
+        if (state.tokenFactoryContract) {
+          state.tokenFactoryContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
+          state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
+          state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
             .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
             .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
         }
@@ -413,10 +415,10 @@ const store = new Vuex.Store({
             state.provider
           );
         }
-        if (state.masterChefAddress) {
-          state.masterChefContract = new ethers.Contract(
-            state.masterChefAddress,
-            state.masterChefABI,
+        if (state.tokenFactoryAddress) {
+          state.tokenFactoryContract = new ethers.Contract(
+            state.tokenFactoryAddress,
+            state.tokenFactoryABI,
             state.provider
           );
         }

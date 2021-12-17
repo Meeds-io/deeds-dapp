@@ -83,7 +83,7 @@ export default {
     provider: state => state.provider,
     transactionGas: state => state.transactionGas,
     gasLimit: state => state.gasLimit,
-    masterChefContract: state => state.masterChefContract,
+    tokenFactoryContract: state => state.tokenFactoryContract,
     disabledUnstakeButton() {
       return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
     },
@@ -125,8 +125,8 @@ export default {
       ];
     },
     withdrawMethod() {
-      if (this.provider && this.masterChefContract) {
-        const signer = this.masterChefContract.connect(this.provider.getSigner());
+      if (this.provider && this.tokenFactoryContract) {
+        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
         return signer.withdraw;
       }
       return null;

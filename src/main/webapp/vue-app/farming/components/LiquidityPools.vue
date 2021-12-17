@@ -23,14 +23,18 @@
         <v-col
           v-for="pool in rewardedPools"
           :key="pool.address">
-          <deeds-liquidity-pool :pool="pool" class="mx-2" />
+          <deeds-liquidity-pool :pool="pool" />
         </v-col>
       </template>
       <template v-else>
         <v-col
-          v-for="i in 4"
+          v-for="i in 2"
           :key="i">
-          <v-skeleton-loader type="card" class="mx-2" />
+          <v-skeleton-loader
+            type="card"
+            class="mx-auto ma-2"
+            width="400px"
+            max-width="100%" />
         </v-col>
       </template>
     </v-row>

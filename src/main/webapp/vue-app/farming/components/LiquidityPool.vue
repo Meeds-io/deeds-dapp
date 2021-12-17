@@ -20,7 +20,7 @@
   <v-hover v-slot="{hover}">
     <v-card
       :elevation="hover ? 3 : 0"
-      class="mx-auto my-2"
+      class="mx-auto ma-2"
       width="400px"
       max-width="100%"
       outlined>
@@ -49,6 +49,7 @@
             <v-tooltip v-else bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
+                  class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format
@@ -56,6 +57,13 @@
                     no-decimals>
                     %
                   </deeds-number-format>
+                  <v-icon
+                    v-if="!rewardsStarted"
+                    size="15px"
+                    color="primary"
+                    class="ms-2">
+                    mdi-alert-circle-outline
+                  </v-icon>
                 </div>
               </template>
               <ul v-if="rewardsStarted">
@@ -84,7 +92,7 @@
               type="chip"
               max-height="17"
               tile />
-            <deeds-number-format v-else :value="lpBalanceOfMasterChef">
+            <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
               {{ lpSymbol }}
             </deeds-number-format>
           </v-list-item-subtitle>
@@ -145,6 +153,47 @@
           </v-btn>
         </v-list-item-action>
       </v-list-item>
+      <v-list-item two-line>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ $t('earned') }}
+          </v-list-item-title>
+          <v-list-item-subtitle class="font-weight-bold ms-2">
+            <v-skeleton-loader
+              v-if="loadingUserReward"
+              type="chip"
+              max-height="17"
+              tile />
+            <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
+              MEED
+            </deeds-number-format>
+            <v-tooltip v-else bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  v-bind="attrs"
+                  v-on="on">
+                  <deeds-number-format :value="meedsPendingUserReward">
+                    MEED
+                  </deeds-number-format>
+                </div>
+              </template>
+              <div>
+                {{ $t('meedsRewardingDidntStarted') }}
+              </div>
+            </v-tooltip>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-btn
+            :loading="sendingClaim"
+            :disabled="sendingClaim"
+            outlined
+            text
+            @click="claimReward()">
+            <span class="text-capitalize">{{ $t('claim') }}</span>
+          </v-btn>
+        </v-list-item-action>
+      </v-list-item>
       <deeds-stake-liquidity-drawer
         ref="stakeDrawer"
         :lp-address="lpAddress"
@@ -153,8 +202,7 @@
         :lp-staked="lpStaked"
         :lp-allowance="lpAllowance"
         :lp-contract="lpContract"
-        :stake="stake"
-        :claim="claim" />
+        :stake="stake" />
     </v-card>
   </v-hover>
 </template>
@@ -167,33 +215,37 @@ export default {
     },
   },
   data: () => ({
+    refreshInterval: null,
+    now: Date.now(),
     loading: false,
     loadingBalance: 0,
     loadingUserInfo: false,
+    loadingUserReward: false,
+    sendingClaim: false,
     meedsBalanceOfPool: null,
-    lpBalanceOfMasterChef: null,
+    meedsPendingUserReward: null,
+    lpBalanceOfTokenFactory: null,
     lpTotalSupply: null,
     stake: true,
-    claim: true,
     lpSymbol: null,
     lpBalance: null,
-    lpAllowance: null,
     userInfo: null,
+    lpAllowance: null,
     yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
     provider: state => state.provider,
     address: state => state.address,
-    masterChefAddress: state => state.masterChefAddress,
+    tokenFactoryAddress: state => state.tokenFactoryAddress,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
     erc20ABI: state => state.erc20ABI,
     meedContract: state => state.meedContract,
-    masterChefContract: state => state.masterChefContract,
     meedsStartRewardsTime: state => state.meedsStartRewardsTime,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
+    tokenFactoryContract: state => state.tokenFactoryContract,
     lpAddress() {
       return this.pool && this.pool.address;
     },
@@ -233,9 +285,22 @@ export default {
       }
       return null;
     },
-    masterChefUserLpInfos() {
-      if (this.provider && this.masterChefContract) {
-        return this.masterChefContract.userLpInfos;
+    tokenFactoryUserLpInfos() {
+      if (this.provider && this.tokenFactoryContract) {
+        return this.tokenFactoryContract.userLpInfos;
+      }
+      return null;
+    },
+    tokenFactoryClaimReward() {
+      if (this.provider && this.tokenFactoryContract) {
+        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
+        return signer.harvest;
+      }
+      return null;
+    },
+    tokenFactoryUserPendingReward() {
+      if (this.provider && this.tokenFactoryContract) {
+        return this.tokenFactoryContract['pendingRewardBalanceOf(address,address)'];
       }
       return null;
     },
@@ -243,7 +308,7 @@ export default {
       return this.userInfo && this.userInfo.amount || 0;
     },
     rewardsStarted() {
-      return this.meedsStartRewardsTime < Date.now();
+      return this.meedsStartRewardsTime < this.now;
     },
     yearlyRewardedMeeds() {
       if (this.pool) {
@@ -265,10 +330,10 @@ export default {
     },
     stakedEquivalentMeedsBalanceOfPool() {
       return this.meedsBalanceOfPool
-        && this.lpBalanceOfMasterChef
+        && this.lpBalanceOfTokenFactory
         && this.lpTotalSupply
         && !this.lpTotalSupply.isZero()
-        && this.meedsBalanceOfPool.mul(this.lpBalanceOfMasterChef).div(this.lpTotalSupply);
+        && this.meedsBalanceOfPool.mul(this.lpBalanceOfTokenFactory).mul(2).div(this.lpTotalSupply);
     },
     apy() {
       if (!this.stakedEquivalentMeedsBalanceOfPool
@@ -295,9 +360,9 @@ export default {
       handler() {
         if (this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPBalance();
-          if (this.masterChefAddress) {
-            this.refreshMasterChefBalance();
-            this.refreshMasterChefAllowance();
+          if (this.tokenFactoryAddress) {
+            this.refreshTokenFactoryBalance();
+            this.refreshTokenFactoryAllowance();
           }
         }
       },
@@ -318,13 +383,26 @@ export default {
         }
       },
     },
-    masterChefUserLpInfos: {
+    tokenFactoryUserLpInfos: {
       immadiate: true,
       handler() {
-        if (this.masterChefUserLpInfos && !this.userInfo) {
+        if (this.tokenFactoryUserLpInfos && !this.lpStaked) {
           this.refreshUserInfo();
         }
       },
+    },
+    tokenFactoryUserPendingReward: {
+      immadiate: true,
+      handler() {
+        if (this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
+          this.refreshPendingReward();
+        }
+      },
+    },
+    rewardsStarted() {
+      if (this.rewardsStarted && this.refreshInterval) {
+        window.clearInterval(this.refreshInterval);
+      }
     },
   },
   created() {
@@ -333,9 +411,9 @@ export default {
     }
     if (this.lpContractBalanceOf && !this.lpBalance) {
       this.refreshLPBalance();
-      if (this.masterChefAddress) {
-        this.refreshMasterChefBalance();
-        this.refreshMasterChefAllowance();
+      if (this.tokenFactoryAddress) {
+        this.refreshTokenFactoryBalance();
+        this.refreshTokenFactoryAllowance();
       }
     }
     if (this.lpContractSymbol && !this.lpBalance) {
@@ -344,8 +422,11 @@ export default {
     if (this.lpContractTotalSupply && !this.lpTotalSupply) {
       this.refreshLPTotalSupply();
     }
-    if (this.masterChefUserLpInfos && !this.userInfo) {
+    if (this.tokenFactoryUserLpInfos && !this.lpStaked) {
       this.refreshUserInfo();
+    }
+    if (this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
+      this.refreshPendingReward();
     }
 
     // eslint-disable-next-line new-cap
@@ -353,8 +434,9 @@ export default {
       const address = this.address.toUpperCase();
       if (from.toUpperCase() === address || to.toUpperCase() === address) {
         this.refreshLPBalance();
-        this.refreshMasterChefBalance();
+        this.refreshTokenFactoryBalance();
         this.refreshUserInfo();
+        this.refreshPendingReward();
       }
     });
 
@@ -362,9 +444,21 @@ export default {
     this.lpContract.on(this.lpContract.filters.Approval(), (from, to) => {
       const address = this.address.toUpperCase();
       if (from.toUpperCase() === address || to.toUpperCase() === address) {
-        this.refreshMasterChefAllowance();
+        this.refreshTokenFactoryAllowance();
       }
     });
+
+    this.tokenFactoryContract.on(
+      // eslint-disable-next-line new-cap
+      this.tokenFactoryContract.filters.Harvest(this.address, this.lpAddress), 
+      () => this.refreshPendingReward()
+    );
+
+    if (!this.rewardsStarted) {
+      this.refreshInterval = window.setInterval(() => {
+        this.now = Date.now();
+      }, 1000);
+    }
   },
   methods: {
     refreshMeedsBalanceOfPool() {
@@ -385,15 +479,15 @@ export default {
         .then(totalSupply => this.lpTotalSupply = totalSupply)
         .finally(() => this.loadingBalance--);
     },
-    refreshMasterChefBalance() {
+    refreshTokenFactoryBalance() {
       this.loadingBalance++;
-      this.lpContractBalanceOf(this.masterChefAddress)
-        .then(balance => this.lpBalanceOfMasterChef = balance)
+      this.lpContractBalanceOf(this.tokenFactoryAddress)
+        .then(balance => this.lpBalanceOfTokenFactory = balance)
         .finally(() => this.loadingBalance--);
     },
-    refreshMasterChefAllowance() {
+    refreshTokenFactoryAllowance() {
       this.loadingBalance++;
-      this.lpContractAllowance(this.address, this.masterChefAddress)
+      this.lpContractAllowance(this.address, this.tokenFactoryAddress)
         .then(balance => this.lpAllowance = balance)
         .finally(() => this.loadingBalance--);
     },
@@ -403,9 +497,16 @@ export default {
         .then(balance => this.lpBalance = balance)
         .finally(() => this.loadingBalance--);
     },
+    refreshPendingReward() {
+      this.loadingUserReward = true;
+      this.tokenFactoryUserPendingReward(this.lpAddress, this.address)
+        .then(balance => this.meedsPendingUserReward = balance)
+        .catch(() => this.meedsPendingUserReward = 0)
+        .finally(() => this.loadingUserReward = false);
+    },
     refreshUserInfo() {
       this.loadingUserInfo = true;
-      this.masterChefUserLpInfos(this.lpAddress, this.address)
+      this.tokenFactoryUserLpInfos(this.lpAddress, this.address)
         .then(userInfo => {
           const user = {};
           Object.keys(userInfo).forEach(key => {
@@ -418,12 +519,30 @@ export default {
         })
         .finally(() => this.loadingUserInfo = false);
     },
-    openStakeDrawer(stake, claim) {
+    openStakeDrawer(stake) {
       this.stake = stake;
-      this.claim = claim;
       if (this.$refs && this.$refs.stakeDrawer) {
         this.$refs.stakeDrawer.open();
       }
+    },
+    claimReward() {
+      this.sendingClaim = true;
+      const options = {
+        gasLimit: this.gasLimit,
+      };
+      return this.tokenFactoryClaimReward(
+        this.lpAddress,
+        options
+      )
+        .then(receipt => {
+          const transactionHash = receipt.hash;
+          this.$root.$emit('transaction-sent', transactionHash);
+          this.stakeAmount = 0;
+          this.sendingStake = false;
+          this.$root.$emit('close-drawer');
+          this.step = 1;
+        })
+        .finally(() => this.sendingClaim = false);
     },
   },
 };

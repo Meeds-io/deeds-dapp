@@ -28,7 +28,7 @@ import "./abstract/FundDistribution.sol";
  * - Fund contract : which will receive a proportion of minted MEED (unlike LP Token contract)
  *  to make the distribution switch its internal algorithm.
  */
-contract MasterChef is Ownable, FundDistribution {
+contract TokenFactory is Ownable, FundDistribution {
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -40,18 +40,23 @@ contract MasterChef is Ownable, FundDistribution {
     }
 
     // Info of each fund
+    // A fund can be either a Fund that will receive Minted MEED
+    // to use its own rewarding distribution strategy or a Liquidity Pool.
     struct FundInfo {
-        uint256 allocationPoint; // How many allocation points assigned to this pool comparing to other pools
         uint256 fixedPercentage; // How many fixed percentage of minted MEEDs will be sent to this fund contract
+        uint256 allocationPoint; // How many allocation points assigned to this pool comparing to other pools
         uint256 lastRewardTime; // Last block timestamp that MEEDs distribution has occurred
-        uint256 lpTokenPrice; // Accumulated MEEDs per share: price of LP Token comparing to 1 MEED (multiplied by 10^12 to make the computation more precise)
-        bool isLPToken;
+        uint256 accMeedPerShare; // Accumulated MEEDs per share: price of LP Token comparing to 1 MEED (multiplied by 10^12 to make the computation more precise)
+        bool isLPToken; // // The Liquidity Pool rewarding distribution will be handled by this contract
+        // in contrary to a simple Fund Contract which will manage distribution by its own and thus, receive directly minted MEEDs.
     }
 
     // Since, the minting privilege is exclusively hold
     // by the current contract and it's not transferable,
     // this will be the absolute Maximum Supply of all MEED Token.
     uint256 public constant MAX_MEED_SUPPLY = 1e26;
+
+    uint256 public constant MEED_REWARDING_PRECISION = 1e12;
 
     // The MEED TOKEN!
     MeedToken public meed;
@@ -76,20 +81,28 @@ contract MasterChef is Ownable, FundDistribution {
     // The block time when MEED mining starts
     uint256 public startRewardsTime;
 
-    // Events
-    event Recovered(address token, uint256 amount);
-    event Deposit(address indexed user, address indexed fundAddress, uint256 amount);
-    event Withdraw(address indexed user, address indexed fundAddress, uint256 amount);
-    event ClaimReward(address indexed user, address indexed fundAddress, uint256 amount);
-    event EmergencyWithdraw(address indexed user, address indexed fundAddress, uint256 amount);
+    // LP Operations Events
+    event Deposit(address indexed user, address indexed lpAddress, uint256 amount);
+    event Withdraw(address indexed user, address indexed lpAddress, uint256 amount);
+    event EmergencyWithdraw(address indexed user, address indexed lpAddress, uint256 amount);
+    event Harvest(address indexed user, address indexed lpAddress, uint256 amount);
+
+    // Fund Events
+    event FundAdded(address indexed fundAddress, uint256 allocation, bool fixedPercentage, bool isLPToken);
+    event FundAllocationChanged(address indexed fundAddress, uint256 allocation, bool fixedPercentage);
 
     constructor (
         MeedToken _meed,
         uint256 _meedPerMinute,
-        uint256 _startRewardsTime
+        uint256 _startRewardsDelay
     ) {
         meed = _meed;
         meedPerMinute = _meedPerMinute;
+        startRewardsTime = block.timestamp + _startRewardsDelay;
+    }
+
+    function setStartRewardsTime(uint256 _startRewardsTime) external onlyOwner {
+        require(startRewardsTime < block.timestamp, "Rewarding already started");
         startRewardsTime = _startRewardsTime;
     }
 
@@ -107,7 +120,7 @@ contract MasterChef is Ownable, FundDistribution {
           isLPToken: _isLPToken,
           allocationPoint: 0,
           fixedPercentage: 0,
-          lpTokenPrice: 0
+          accMeedPerShare: 0
         });
 
         if (_fixedPercentage) {
@@ -118,6 +131,7 @@ contract MasterChef is Ownable, FundDistribution {
             totalAllocationPoints = totalAllocationPoints.add(_value);
             fundInfos[_fundAddress].allocationPoint = _value;
         }
+        emit FundAdded(_fundAddress, _value, _fixedPercentage, _isLPToken);
     }
 
     function setFundAllocation(address _fundAddress, uint256 _value, bool _fixedPercentage) external onlyOwner {
@@ -125,7 +139,7 @@ contract MasterChef is Ownable, FundDistribution {
 
         FundInfo storage fund = fundInfos[_fundAddress];
         if (_fixedPercentage) {
-            require(fund.lpTokenPrice == 0, "#setFundAllocation Error: can't change fund percentage from variable to fixed");
+            require(fund.accMeedPerShare == 0, "#setFundAllocation Error: can't change fund percentage from variable to fixed");
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage).add(_value);
             require(totalFixedPercentage <= 100, "#setFundAllocation: total percentage can't be greater than 100%");
             fund.fixedPercentage = _value;
@@ -138,6 +152,7 @@ contract MasterChef is Ownable, FundDistribution {
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage);
             fund.fixedPercentage = 0;
         }
+        emit FundAllocationChanged(_fundAddress, _value, _fixedPercentage);
     }
 
     function updateAllFundRewards() external {
@@ -161,139 +176,123 @@ contract MasterChef is Ownable, FundDistribution {
         }
 
         FundInfo storage fund = fundInfos[_fundAddress];
-        uint256 periodTotalMeedRewards = getPeriodMeedRewards(fund.lastRewardTime, block.timestamp);
-        uint256 meedRewardAmount = 0;
-        if (fund.fixedPercentage > 0) {
-          meedRewardAmount = periodTotalMeedRewards
-            .mul(fund.fixedPercentage)
-            .div(100);
-        } else if (fund.allocationPoint > 0) {
-          meedRewardAmount = periodTotalMeedRewards
-            .mul(fund.allocationPoint)
-            .div(totalAllocationPoints)
-            .mul(100)
-            .div(100 - totalFixedPercentage);
-        }
-
+        uint256 pendingRewardAmount = _pendingRewardBalanceOf(fund);
         if (fund.isLPToken) {
-          uint256 lpSupply = IERC20(_fundAddress).balanceOf(address(this));
-          if (lpSupply > 0) {
-            fund.lpTokenPrice = fund.lpTokenPrice.add(meedRewardAmount.mul(1e12).div(lpSupply));
-            _mint(address(this), meedRewardAmount);
-          }
+          fund.accMeedPerShare = _getAccMeedPerShare(_fundAddress, pendingRewardAmount);
+          _mint(address(this), pendingRewardAmount);
         } else {
-          _mint(_fundAddress, meedRewardAmount);
+          _mint(_fundAddress, pendingRewardAmount);
         }
         fund.lastRewardTime = block.timestamp;
     }
 
-    function deposit(address _fundAddress, uint256 _amount) public {
-        FundInfo storage fund = fundInfos[_fundAddress];
+    function deposit(address _lpAddress, uint256 _amount) public {
+        FundInfo storage fund = fundInfos[_lpAddress];
         require(fund.isLPToken, "#deposit Error: Liquidity Pool doesn't exist");
 
-        UserInfo storage user = userLpInfos[_fundAddress][msg.sender];
-        updateFundReward(_fundAddress);
+        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
+        updateFundReward(_lpAddress);
         if (user.amount > 0) {
             uint256 pending = user
                 .amount
-                .mul(fund.lpTokenPrice).div(1e12)
+                .mul(fund.accMeedPerShare).div(MEED_REWARDING_PRECISION)
                 .sub(user.rewardDebt);
             _safeMeedTransfer(msg.sender, pending);
         }
-        IERC20(_fundAddress).safeTransferFrom(address(msg.sender), address(this), _amount);
+        IERC20(_lpAddress).safeTransferFrom(address(msg.sender), address(this), _amount);
         user.amount = user.amount.add(_amount);
-        user.rewardDebt = user.amount.mul(fund.lpTokenPrice).div(1e12);
-        emit Deposit(msg.sender, _fundAddress, _amount);
+        user.rewardDebt = user.amount.mul(fund.accMeedPerShare).div(MEED_REWARDING_PRECISION);
+        emit Deposit(msg.sender, _lpAddress, _amount);
     }
 
-    function withdraw(address _fundAddress, uint256 _amount) public {
-        FundInfo storage fund = fundInfos[_fundAddress];
+    function withdraw(address _lpAddress, uint256 _amount) public {
+        FundInfo storage fund = fundInfos[_lpAddress];
         require(fund.isLPToken, "#withdraw Error: Liquidity Pool doesn't exist");
 
-        UserInfo storage user = userLpInfos[_fundAddress][msg.sender];
-        require(user.amount >= _amount, "#withdraw: not enough funds");
+        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
 
         // Update & Mint MEED for the designated pool
         // to ensure systematically to have enough
         // MEEDs balance in current contract
-        updateFundReward(_fundAddress);
+        updateFundReward(_lpAddress);
 
         // Send pending MEED Reward to user
-        uint256 oldRewardDebt = user.rewardDebt;
-        user.rewardDebt = user.amount.mul(fund.lpTokenPrice).div(1e12);
-        uint256 pending = user.rewardDebt.sub(oldRewardDebt);
-        _safeMeedTransfer(msg.sender, pending);
+        uint256 pendingUserReward = user.amount.mul(fund.accMeedPerShare).div(1e12).sub(
+            user.rewardDebt
+        );
+        _safeMeedTransfer(msg.sender, pendingUserReward);
+        user.amount = user.amount.sub(_amount);
+        user.rewardDebt = user.amount.mul(fund.accMeedPerShare).div(1e12);
 
         if (_amount > 0) {
           // Send pending Reward
-          user.amount = user.amount.sub(_amount);
-          IERC20(_fundAddress).safeTransfer(address(msg.sender), _amount);
+          IERC20(_lpAddress).safeTransfer(address(msg.sender), _amount);
+          emit Withdraw(msg.sender, _lpAddress, _amount);
+        } else {
+          emit Harvest(msg.sender, _lpAddress, pendingUserReward);
         }
-        emit Withdraw(msg.sender, _fundAddress, _amount);
     }
 
-    // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(address _fundAddress) public {
-        FundInfo storage fund = fundInfos[_fundAddress];
+    /**
+     * @dev Withdraw without caring about rewards. EMERGENCY ONLY.
+     */
+    function emergencyWithdraw(address _lpAddress) public {
+        FundInfo storage fund = fundInfos[_lpAddress];
         require(fund.isLPToken, "#emergencyWithdraw Error: Liquidity Pool doesn't exist");
 
-        UserInfo storage user = userLpInfos[_fundAddress][msg.sender];
-        IERC20(_fundAddress).safeTransfer(address(msg.sender), user.amount);
-        emit EmergencyWithdraw(msg.sender, _fundAddress, user.amount);
+        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
+        IERC20(_lpAddress).safeTransfer(address(msg.sender), user.amount);
+        emit EmergencyWithdraw(msg.sender, _lpAddress, user.amount);
         user.amount = 0;
         user.rewardDebt = 0;
     }
 
-    function claimReward(address _fundAddress, uint256 _amount) public {
-        FundInfo storage fund = fundInfos[_fundAddress];
-        if (fund.isLPToken) {
-          UserInfo storage user = userLpInfos[_fundAddress][msg.sender];
-          require(user.amount >= _amount, "#withdraw: not enough funds");
-  
-          // Update & Mint MEED for the designated pool
-          // to ensure systematically to have enough
-          // MEEDs balance in current contract
-          updateFundReward(_fundAddress);
-  
-          // Send pending MEED Reward to user
-          uint256 oldRewardDebt = user.rewardDebt;
-          user.rewardDebt = user.amount.mul(fund.lpTokenPrice).div(1e12);
-          uint256 pending = user.rewardDebt.sub(oldRewardDebt);
-          _safeMeedTransfer(msg.sender, pending);
-        } else {
-          // Mint Rewards for the designated Fund Address
-          updateFundReward(_fundAddress);
-        }
-        emit ClaimReward(msg.sender, _fundAddress, _amount);
+    /**
+     * @dev Claim reward for current wallet from designated Liquidity Pool
+     */
+    function harvest(address _lpAddress) public {
+        withdraw(_lpAddress, 0);
     }
 
     function fundsLength() public view returns (uint256) {
         return fundAddresses.length;
     }
 
-    function pendingRewardBalanceOf(address _fundAddress, address _user) public view returns (uint256) {
+    function pendingRewardBalanceOf(address _lpAddress, address _user) public view returns (uint256) {
         if (block.timestamp < startRewardsTime) {
             return 0;
         }
-        uint256 lpTokenPrice = getLpTokenPrice(_fundAddress);
-        UserInfo storage user = userLpInfos[_fundAddress][_user];
-        return user.amount.mul(lpTokenPrice).div(1e12).sub(user.rewardDebt);
+        FundInfo storage fund = fundInfos[_lpAddress];
+        if (!fund.isLPToken) {
+            return 0;
+        }
+        uint256 pendingRewardAmount = _pendingRewardBalanceOf(fund);
+        uint256 accMeedPerShare = _getAccMeedPerShare(_lpAddress, pendingRewardAmount);
+        UserInfo storage user = userLpInfos[_lpAddress][_user];
+        return user.amount.mul(accMeedPerShare).div(MEED_REWARDING_PRECISION).sub(user.rewardDebt);
     }
 
     function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256) {
         if (block.timestamp < startRewardsTime) {
             return 0;
         }
-        FundInfo storage fund = fundInfos[_fundAddress];
-        uint256 periodTotalMeedRewards = getPeriodMeedRewards(fund.lastRewardTime, block.timestamp);
+        return _pendingRewardBalanceOf(fundInfos[_fundAddress]);
+    }
+
+    function _getMultiplier(uint256 _fromTimestamp, uint256 _toTimestamp) internal view returns (uint256) {
+        return _toTimestamp.sub(_fromTimestamp).mul(meedPerMinute).div(1 minutes);
+    }
+
+    function _pendingRewardBalanceOf(FundInfo memory _fund) internal view returns (uint256) {
+        uint256 periodTotalMeedRewards = _getMultiplier(_fund.lastRewardTime, block.timestamp);
         uint256 meedRewardAmount = 0;
-        if (fund.fixedPercentage > 0) {
+        if (_fund.fixedPercentage > 0) {
           meedRewardAmount = periodTotalMeedRewards
-            .mul(fund.fixedPercentage)
+            .mul(_fund.fixedPercentage)
             .div(100);
-        } else if (fund.allocationPoint > 0) {
+        } else if (_fund.allocationPoint > 0) {
           meedRewardAmount = periodTotalMeedRewards
-            .mul(fund.allocationPoint)
+            .mul(_fund.allocationPoint)
             .div(totalAllocationPoints)
             .mul(100)
             .div(100 - totalFixedPercentage);
@@ -301,21 +300,15 @@ contract MasterChef is Ownable, FundDistribution {
         return meedRewardAmount;
     }
 
-    function getPeriodMeedRewards(uint256 _fromTimestamp, uint256 _toTimestamp) public view returns (uint256) {
-        return _toTimestamp.sub(_fromTimestamp).mul(meedPerMinute).div(1 minutes);
-    }
-
-    function getLpTokenPrice(address _fundAddress) public view returns (uint256) {
-        FundInfo storage fund = fundInfos[_fundAddress];
+    function _getAccMeedPerShare(address _lpAddress, uint256 pendingRewardAmount) internal view returns (uint256) {
+        FundInfo memory fund = fundInfos[_lpAddress];
         if (block.timestamp > fund.lastRewardTime) {
-            uint256 lpSupply = IERC20(_fundAddress).balanceOf(address(this));
+            uint256 lpSupply = IERC20(_lpAddress).balanceOf(address(this));
             if (lpSupply != 0) {
-              uint256 periodTotalMeedRewards = getPeriodMeedRewards(fund.lastRewardTime, block.timestamp);
-              uint256 lpMeedReward = periodTotalMeedRewards.mul(fund.allocationPoint).div(totalAllocationPoints);
-              return fund.lpTokenPrice.add(lpMeedReward.mul(1e12).div(lpSupply));
+              return fund.accMeedPerShare.add(pendingRewardAmount.mul(MEED_REWARDING_PRECISION).div(lpSupply));
             }
         }
-        return fund.lpTokenPrice;
+        return fund.accMeedPerShare;
     }
 
     function _safeMeedTransfer(address _to, uint256 _amount) internal {
