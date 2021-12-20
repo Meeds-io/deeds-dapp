@@ -121,6 +121,7 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     language: state => state.language,
+    gasLimit: state => state.gasLimit,
     sushiswapRouterAddress: state => state.sushiswapRouterAddress,
     sushiswapRouterContract: state => state.sushiswapRouterContract,
     meedContract: state => state.meedContract,

@@ -190,8 +190,12 @@ contract TokenFactory is Ownable, FundDistribution {
         FundInfo storage fund = fundInfos[_lpAddress];
         require(fund.isLPToken, "#deposit Error: Liquidity Pool doesn't exist");
 
-        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
+        // Update & Mint MEED for the designated pool
+        // to ensure systematically to have enough
+        // MEEDs balance in current contract
         updateFundReward(_lpAddress);
+
+        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
         if (user.amount > 0) {
             uint256 pending = user
                 .amount
@@ -209,13 +213,12 @@ contract TokenFactory is Ownable, FundDistribution {
         FundInfo storage fund = fundInfos[_lpAddress];
         require(fund.isLPToken, "#withdraw Error: Liquidity Pool doesn't exist");
 
-        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
-
         // Update & Mint MEED for the designated pool
         // to ensure systematically to have enough
         // MEEDs balance in current contract
         updateFundReward(_lpAddress);
 
+        UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
         // Send pending MEED Reward to user
         uint256 pendingUserReward = user.amount.mul(fund.accMeedPerShare).div(1e12).sub(
             user.rewardDebt

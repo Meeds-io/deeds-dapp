@@ -7,6 +7,9 @@ import './SafeMath.sol';
 contract MeedsPointsRewarding is XMeedsToken {
     using SafeMath for uint256;
 
+    // The block time when Points rewarding will starts
+    uint256 public startRewardsTime;
+
     mapping(address => uint256) internal points;
     mapping(address => uint256) internal pointsLastUpdateTime;
 
@@ -21,16 +24,26 @@ contract MeedsPointsRewarding is XMeedsToken {
         _;
     }
 
-    constructor (IERC20 _meed) XMeedsToken(_meed) {
+    constructor (IERC20 _meed, uint256 _startRewardsDelay) XMeedsToken(_meed) {
+        startRewardsTime = block.timestamp + _startRewardsDelay;
+    }
+
+    function setStartRewardsTime(uint256 _startRewardsTime) external onlyOwner {
+        require(startRewardsTime < block.timestamp, "Rewarding already started");
+        startRewardsTime = _startRewardsTime;
     }
 
     function earned(address account) public view returns (uint256) {
-        uint256 timeDifference = block.timestamp.sub(pointsLastUpdateTime[account]);
-        uint256 balance = balanceOf(account);
-        uint256 decimals = 1e18;
-        uint256 x = balance / decimals;
-        uint256 ratePerSecond = decimals.mul(x).div(x.add(12000)).div(240);
-        return points[account].add(ratePerSecond.mul(timeDifference));
+        if (block.timestamp < startRewardsTime) {
+          return 0;
+        } else {
+          uint256 timeDifference = block.timestamp.sub(pointsLastUpdateTime[account]);
+          uint256 balance = balanceOf(account);
+          uint256 decimals = 1e18;
+          uint256 x = balance / decimals;
+          uint256 ratePerSecond = decimals.mul(x).div(x.add(12000)).div(240);
+          return points[account].add(ratePerSecond.mul(timeDifference));
+        }
     }
 
     function stake(uint256 amount) public updateReward(msg.sender) {
