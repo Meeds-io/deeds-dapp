@@ -18,19 +18,19 @@ contract MeedsPointsRewarding is XMeedsToken {
 
     modifier updateReward(address account) {
         if (account != address(0)) {
+          if (block.timestamp < startRewardsTime) {
+            points[account] = 0;
+            pointsLastUpdateTime[account] = startRewardsTime;
+          } else {
             points[account] = earned(account);
             pointsLastUpdateTime[account] = block.timestamp;
+          }
         }
         _;
     }
 
     constructor (IERC20 _meed, uint256 _startRewardsDelay) XMeedsToken(_meed) {
         startRewardsTime = block.timestamp + _startRewardsDelay;
-    }
-
-    function setStartRewardsTime(uint256 _startRewardsTime) external onlyOwner {
-        require(startRewardsTime < block.timestamp, "Rewarding already started");
-        startRewardsTime = _startRewardsTime;
     }
 
     function earned(address account) public view returns (uint256) {

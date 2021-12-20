@@ -101,11 +101,6 @@ contract TokenFactory is Ownable, FundDistribution {
         startRewardsTime = block.timestamp + _startRewardsDelay;
     }
 
-    function setStartRewardsTime(uint256 _startRewardsTime) external onlyOwner {
-        require(startRewardsTime < block.timestamp, "Rewarding already started");
-        startRewardsTime = _startRewardsTime;
-    }
-
     function setMeedPerMinute(uint256 _meedPerMinute) external onlyOwner {
         require(_meedPerMinute > 0, "!meedPerMinute-0");
         meedPerMinute = _meedPerMinute;
@@ -170,12 +165,13 @@ contract TokenFactory is Ownable, FundDistribution {
     }
 
     function updateFundReward(address _fundAddress) public override {
+        FundInfo storage fund = fundInfos[_fundAddress];
+
         // Minting didn't started yet
-        if (block.timestamp <= startRewardsTime) {
+        if (block.timestamp < startRewardsTime) {
             return;
         }
 
-        FundInfo storage fund = fundInfos[_fundAddress];
         uint256 pendingRewardAmount = _pendingRewardBalanceOf(fund);
         if (fund.isLPToken) {
           fund.accMeedPerShare = _getAccMeedPerShare(_fundAddress, pendingRewardAmount);
