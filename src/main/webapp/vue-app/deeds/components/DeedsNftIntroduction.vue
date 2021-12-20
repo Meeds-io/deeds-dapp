@@ -18,11 +18,33 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 pt-0">
-      {{ $t('deedsNfts') }}
-    </v-card-title>
+    <flex class="d-flex flex-nowrap">
+      <v-card-title class="ps-0 py-0">
+        {{ $t('deedsNfts') }}
+      </v-card-title>
+      <small v-if="!rewardsStarted" class="d-flex">
+        <span class="mt-auto mb-1">{{ $t('startsAfter') }}</span>
+        <deeds-timer
+          :end-time="pointsStartRewardsTime"
+          class="mt-auto mb-1"
+          @end="endCountDown = true" />
+      </small>
+    </flex>
     <v-card-text class="ps-0">
       {{ $t('deedPointsIntroduction') }}
     </v-card-text>
   </v-card>
 </template>
+<script>
+export default {
+  data: () => ({
+    endCountDown: false,
+  }),
+  computed: Vuex.mapState({
+    pointsStartRewardsTime: state => state.pointsStartRewardsTime,
+    rewardsStarted() {
+      return !this.endCountDown && this.pointsStartRewardsTime < Date.now();
+    },
+  }),
+};
+</script>

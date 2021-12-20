@@ -39,12 +39,12 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
 
     constructor (
         IERC20 _meed,
-        uint256 _startRewardsDelay,
         ERC1155Tradable _nftAddress,
+        uint256 _startRewardsDelay,
         string[] memory _cityNames,
         string[] memory _cardNames,
         uint256[] memory _cardPrices,
-        uint32[] memory _cardSupplyProportions,
+        uint32[] memory _cardSupply,
         string[] memory _uris
     ) MeedsPointsRewarding(_meed, _startRewardsDelay) {
         nft = _nftAddress;
@@ -52,10 +52,12 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
 
         uint256 citiesLength = _cityNames.length;
         uint256 cardsLength = _cardNames.length;
-        require(uint32(_uris.length) == uint32(citiesLength * cardsLength), "Provided URIs length must equal to Card Type length");
+        uint32 citiesCardsLength = uint32(citiesLength * cardsLength);
+        require(uint32(_uris.length) == citiesCardsLength, "Provided URIs length must equal to Card Type length");
+        require(uint32(_cardSupply.length) == citiesCardsLength, "Provided Supply list per card per city must equal to Card Type length");
 
         uint256 _month = 30 days;
-        uint256 _uriIndex = 0;
+        uint256 _index = 0;
         for (uint8 i = 0; i < citiesLength; i++) {
             uint32 _maxPopulation = uint32(1000 * (10 ** i));
             uint256 _availability = i > 0 ? ((2 ** i) * _month) : 0;
@@ -68,10 +70,10 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
             }));
 
             for (uint8 j = 0; j < cardsLength; j++) {
-                uint32 _maxSupply = uint32(_cardSupplyProportions[j] * (10 ** i));
                 string memory _cardName = _cardNames[j];
                 uint256 _cardPrice = _cardPrices[j];
-                string memory _uri = _uris[_uriIndex++];
+                string memory _uri = _uris[_index];
+                uint32 _maxSupply = _cardSupply[_index];
                 cardTypeInfo.push(CardTypeDetail({
                     name: _cardName,
                     cityIndex: i,
@@ -81,6 +83,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
                     maxSupply: _maxSupply,
                     uri: _uri
                 }));
+                _index++;
             }
         }
     }

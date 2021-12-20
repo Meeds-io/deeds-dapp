@@ -85,6 +85,7 @@ const store = new Vuex.Store({
       'function isCurrentCityMintable() public view returns (bool)',
       'function cityMintingStartDate() public view returns (uint256)',
       'function redeem(uint8 cardTypeId) public returns (uint256 tokenId)',
+      'function startRewardsTime() public view returns (uint256)',
       'function earned(address account) public view returns (uint256)',
       'function currentCityIndex() public view returns (uint8)',
       'function cityInfo(uint256 index) public view returns (string name, uint32 population, uint32 maxPopulation, uint256 availability)',
@@ -163,6 +164,7 @@ const store = new Vuex.Store({
     meedsBalanceOfXMeeds: null,
     meedsPendingBalanceOfXMeeds: null,
     meedsStartRewardsTime: null,
+    pointsStartRewardsTime: null,
     xMeedsBalance: null,
     xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
@@ -245,7 +247,7 @@ const store = new Vuex.Store({
               state.univ2PairAddress = '0xD651d694cd4eFFD8CD9435bb1075eC18842af2AF';
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
               state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
-              state.xMeedAddress = '0x1A6e3146Be827213778aBbB76f06a20e7516e6B3';
+              state.xMeedAddress = '0xf8bD762B170Aab2bAE65FfD6e007D00d52527FC9';
               state.tokenFactoryAddress = '0x2FE92B4FDDC227E3866CcA460b403B85B5bE603f';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
@@ -371,6 +373,7 @@ const store = new Vuex.Store({
           state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
         }
         if (state.xMeedContract) {
+          state.xMeedContract.startRewardsTime().then(timestamp => state.pointsStartRewardsTime = timestamp * 1000);
           state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
         }
