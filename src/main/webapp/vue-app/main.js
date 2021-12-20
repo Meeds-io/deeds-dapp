@@ -249,7 +249,7 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0x2FE92B4FDDC227E3866CcA460b403B85B5bE603f';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-              state.addUniswapLiquidityLink = 'https://app.uniswap.org/#/increase/0x25bc45E51a3D9446029733614B009B0d7b5920Db/ETH/500/11459';
+              state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
             }
