@@ -247,7 +247,7 @@ const store = new Vuex.Store({
               state.univ2PairAddress = '0xD651d694cd4eFFD8CD9435bb1075eC18842af2AF';
               state.meedAddress = '0x25bc45E51a3D9446029733614B009B0d7b5920Db';
               state.nftAddress = '0x58478d3dD69F19FddBC2b2d983d49aE50d02a57a';
-              state.xMeedAddress = '0x99AeD2DD9b9163b93ACF8D4136922eb4194f47cA';
+              state.xMeedAddress = '0x12C220Afc276ED528C20Cfc2BcE61FDffD03770B';
               state.tokenFactoryAddress = '0x2FE92B4FDDC227E3866CcA460b403B85B5bE603f';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;

@@ -59,15 +59,9 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         uint256 _month = 30 days;
         uint256 _index = 0;
         for (uint8 i = 0; i < citiesLength; i++) {
-            uint32 _maxPopulation = uint32(1000 * (10 ** i));
-            uint256 _availability = i > 0 ? ((2 ** i) * _month) : 0;
+            uint32 _maxPopulation = 0;
+            uint256 _availability = i > 0 ? ((2 ** (i + 1)) * _month) : 0;
             string memory _cityName = _cityNames[i];
-            cityInfo.push(CityDetail({
-                name: _cityName,
-                population: 0,
-                maxPopulation: _maxPopulation,
-                availability: _availability
-            }));
 
             for (uint8 j = 0; j < cardsLength; j++) {
                 string memory _cardName = _cardNames[j];
@@ -83,8 +77,16 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
                     maxSupply: _maxSupply,
                     uri: _uri
                 }));
+                _maxPopulation += _maxSupply;
                 _index++;
             }
+
+            cityInfo.push(CityDetail({
+                name: _cityName,
+                population: 0,
+                maxPopulation: _maxPopulation,
+                availability: _availability
+            }));
         }
     }
 
