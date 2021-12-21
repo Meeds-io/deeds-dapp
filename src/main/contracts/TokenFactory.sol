@@ -106,7 +106,7 @@ contract TokenFactory is Ownable, FundDistribution {
         meedPerMinute = _meedPerMinute;
     }
 
-    function addFund(address _fundAddress, uint256 _value, bool _fixedPercentage, bool _isLPToken) external onlyOwner {
+    function addFund(address _fundAddress, uint256 _value, bool _isFixedPercentage, bool _isLPToken) external onlyOwner {
         uint256 lastRewardTime = block.timestamp > startRewardsTime ? block.timestamp : startRewardsTime;
 
         fundAddresses.push(_fundAddress);
@@ -118,7 +118,7 @@ contract TokenFactory is Ownable, FundDistribution {
           accMeedPerShare: 0
         });
 
-        if (_fixedPercentage) {
+        if (_isFixedPercentage) {
             totalFixedPercentage = totalFixedPercentage.add(_value);
             fundInfos[_fundAddress].fixedPercentage = _value;
             require(totalFixedPercentage <= 100, "#addFund: total percentage can't be greater than 100%");
@@ -126,14 +126,14 @@ contract TokenFactory is Ownable, FundDistribution {
             totalAllocationPoints = totalAllocationPoints.add(_value);
             fundInfos[_fundAddress].allocationPoint = _value;
         }
-        emit FundAdded(_fundAddress, _value, _fixedPercentage, _isLPToken);
+        emit FundAdded(_fundAddress, _value, _isFixedPercentage, _isLPToken);
     }
 
-    function setFundAllocation(address _fundAddress, uint256 _value, bool _fixedPercentage) external onlyOwner {
+    function setFundAllocation(address _fundAddress, uint256 _value, bool _isFixedPercentage) external onlyOwner {
         updateFundReward(_fundAddress);
 
         FundInfo storage fund = fundInfos[_fundAddress];
-        if (_fixedPercentage) {
+        if (_isFixedPercentage) {
             require(fund.accMeedPerShare == 0, "#setFundAllocation Error: can't change fund percentage from variable to fixed");
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage).add(_value);
             require(totalFixedPercentage <= 100, "#setFundAllocation: total percentage can't be greater than 100%");
@@ -147,7 +147,7 @@ contract TokenFactory is Ownable, FundDistribution {
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage);
             fund.fixedPercentage = 0;
         }
-        emit FundAllocationChanged(_fundAddress, _value, _fixedPercentage);
+        emit FundAllocationChanged(_fundAddress, _value, _isFixedPercentage);
     }
 
     function updateAllFundRewards() external {
