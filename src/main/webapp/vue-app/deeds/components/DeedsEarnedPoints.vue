@@ -78,11 +78,18 @@
             <v-tooltip v-else bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
+                  class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format :value="pointsBalance">
                     {{ $t('points') }}
                   </deeds-number-format>
+                  <v-icon
+                    size="15px"
+                    color="primary"
+                    class="ms-2">
+                    mdi-alert-circle-outline
+                  </v-icon>
                 </div>
               </template>
               <div>

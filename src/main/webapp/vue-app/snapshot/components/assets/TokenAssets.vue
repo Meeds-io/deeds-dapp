@@ -26,7 +26,7 @@
       <v-list-item-content />
       <v-list-item-content class="align-end">
         <v-skeleton-loader
-          v-if="meedsBalance === null"
+          v-if="loadingMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -36,7 +36,7 @@
       </v-list-item-content>
       <v-list-item-content class="align-end">
         <v-skeleton-loader
-          v-if="meedsBalance === null"
+          v-if="loadingMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -48,10 +48,48 @@
     </v-list-item>
     <v-list-item class="ps-8">
       <v-list-item-content>xMeeds</v-list-item-content>
-      <v-list-item-content>-</v-list-item-content>
+      <v-list-item-content>
+        <v-skeleton-loader
+          v-if="apyLoading"
+          type="chip"
+          max-height="17"
+          tile />
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <div
+              class="d-flex flex-nowrap"
+              v-bind="attrs"
+              v-on="on">
+              <deeds-number-format
+                :value="apy"
+                no-decimals>
+                %
+              </deeds-number-format>
+              <v-icon
+                v-if="!rewardsStarted"
+                size="15px"
+                color="primary"
+                class="ms-2">
+                mdi-alert-circle-outline
+              </v-icon>
+            </div>
+          </template>
+          <ul v-if="rewardsStarted">
+            <li>
+              <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
+            </li>
+            <li>
+              <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
+            </li>
+          </ul>
+          <div v-else>
+            {{ $t('meedsRewardingDidntStarted') }}
+          </div>
+        </v-tooltip>
+      </v-list-item-content>
       <v-list-item-content class="align-end">
         <v-skeleton-loader
-          v-if="xMeedsBalance === null"
+          v-if="loadingXMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -61,7 +99,7 @@
       </v-list-item-content>
       <v-list-item-content class="align-end">
         <v-skeleton-loader
-          v-if="xMeedsBalance === null"
+          v-if="loadingXMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -75,6 +113,11 @@
 </template>
 <script>
 export default {
+  data: () => ({
+    refreshInterval: null,
+    now: Date.now(),
+    yearInMinutes: 365 * 24 * 60,
+  }),
   computed: Vuex.mapState({
     language: state => state.language,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
@@ -82,11 +125,20 @@ export default {
     ethPrice: state => state.ethPrice,
     exchangeRate: state => state.exchangeRate,
     meedsBalance: state => state.meedsBalance,
+    loadingMeedsBalance: state => state.loadingMeedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
+    rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
+    rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
+    rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
+    loadingXMeedsBalance: state => state.loadingXMeedsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
+    rewardedFunds: state => state.rewardedFunds,
+    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
+    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
         return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
@@ -94,6 +146,64 @@ export default {
         return 0;
       }
     },
+    xMeedRewardInfo() {
+      return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
+    },
+    meedsTotalBalanceOfXMeeds() {
+      return this.meedsBalanceOfXMeeds
+        && this.meedsPendingBalanceOfXMeeds
+        && this.meedsBalanceOfXMeeds.add(this.meedsPendingBalanceOfXMeeds)
+        || 0;
+    },
+    yearlyRewardedMeeds() {
+      if (this.xMeedRewardInfo) {
+        if (this.xMeedRewardInfo.fixedPercentage && !this.xMeedRewardInfo.fixedPercentage.isZero()) {
+          return new BigNumber(this.rewardedMeedPerMinute.toString())
+            .multipliedBy(this.yearInMinutes)
+            .multipliedBy(this.xMeedRewardInfo.fixedPercentage.toString())
+            .dividedBy(100);
+        } else if (this.xMeedRewardInfo.allocationPoint && !this.xMeedRewardInfo.allocationPoint.isZero()) {
+          return new BigNumber(this.rewardedMeedPerMinute.toString())
+            .multipliedBy(this.yearInMinutes)
+            .multipliedBy(this.xMeedRewardInfo.allocationPoint.toString())
+            .dividedBy(this.rewardedTotalAllocationPoints.toString())
+            .multipliedBy(100)
+            .dividedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
+        }
+      }
+      return new BigNumber(0);
+    },
+    rewardsStarted() {
+      return this.meedsStartRewardsTime < this.now;
+    },
+    apyLoading() {
+      return !this.meedsBalanceOfXMeeds || !this.rewardedFunds || !this.meedsPendingBalanceOfXMeeds;
+    },
+    apy() {
+      if (!this.meedsTotalBalanceOfXMeeds
+          || !this.yearlyRewardedMeeds
+          || this.meedsTotalBalanceOfXMeeds.isZero()
+          || this.yearlyRewardedMeeds.isZero()
+          || !this.rewardsStarted) {
+        return 0;
+      }
+      return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
+    },
   }),
+  watch: {
+    rewardsStarted() {
+      if (this.rewardsStarted && this.refreshInterval) {
+        window.clearInterval(this.refreshInterval);
+      }
+    },
+  },
+  created() {
+    this.$store.commit('loadRewardedFunds');
+    if (!this.rewardsStarted) {
+      this.refreshInterval = window.setInterval(() => {
+        this.now = Date.now();
+      }, 1000);
+    }
+  },
 };
 </script>

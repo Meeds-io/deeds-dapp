@@ -163,6 +163,7 @@ const store = new Vuex.Store({
     ethPrice: 0,
     // User balances
     etherBalance: null,
+    loadingMeedsBalance: true,
     meedsBalance: null,
     meedsBalanceNoDecimals: null,
     meedsRouteAllowance: null,
@@ -174,6 +175,7 @@ const store = new Vuex.Store({
     meedsStartRewardsTime: null,
     pointsStartRewardsTime: null,
     xMeedsBalance: null,
+    loadingXMeedsBalance: true,
     xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
     pointsBalanceNoDecimals: null,
@@ -370,24 +372,33 @@ const store = new Vuex.Store({
         state.tokenFactoryContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
       }
     },
+    loadMeedsBalances(state) {
+      state.loadingMeedsBalance = true;
+      state.meedContract.balanceOf(state.address)
+        .then(balance => this.commit('setMeedsBalance', balance))
+        .finally(() => state.loadingMeedsBalance = false);
+    },
+    loadXMeedsBalances(state) {
+      state.loadingXMeedsBalance = true;
+      state.xMeedContract.balanceOf(state.address)
+        .then(balance => this.commit('setXMeedsBalance', balance))
+        .finally(() => state.loadingXMeedsBalance = false);
+    },
     loadBalances(state) {
       if (state.address && state.provider) {
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
         if (state.meedContract) {
-          state.meedContract.balanceOf(state.address).then(balance => this.commit('setMeedsBalance', balance));
+          this.commit('loadMeedsBalances');
           state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
           state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
           state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
           state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
         }
         if (state.xMeedContract) {
-          state.xMeedContract.startRewardsTime().then(timestamp => state.pointsStartRewardsTime = timestamp * 1000);
-          state.xMeedContract.balanceOf(state.address).then(balance => this.commit('setXMeedsBalance', balance));
+          this.commit('loadXMeedsBalances');
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
         }
         if (state.tokenFactoryContract) {
-          state.tokenFactoryContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
-          state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
           state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
             .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
             .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
@@ -432,6 +443,14 @@ const store = new Vuex.Store({
             state.tokenFactoryABI,
             state.provider
           );
+        }
+
+        if (state.xMeedContract) {
+          state.xMeedContract.startRewardsTime().then(timestamp => state.pointsStartRewardsTime = timestamp * 1000);
+        }
+        if (state.tokenFactoryContract) {
+          state.tokenFactoryContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
+          state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
         }
 
         // eslint-disable-next-line new-cap
