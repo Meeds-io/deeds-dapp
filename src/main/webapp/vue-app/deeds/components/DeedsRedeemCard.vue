@@ -86,7 +86,7 @@ export default {
     provider: state => state.provider,
     xMeedContract: state => state.xMeedContract,
     pointsBalance: state => state.pointsBalance,
-    gasLimit: state => state.gasLimit,
+    redeemGasLimit: state => state.redeemGasLimit,
     currentCityMintable: state => state.currentCityMintable,
     cardName() {
       return this.card && this.card.name;
@@ -123,7 +123,7 @@ export default {
     redeem() {
       this.sendingRedeem = true;
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.redeemGasLimit,
       };
       return this.redeemMethod(
         this.cardType,

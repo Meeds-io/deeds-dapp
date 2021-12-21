@@ -166,7 +166,8 @@ export default {
     tokenFactoryAddress: state => state.tokenFactoryAddress,
     tokenFactoryContract: state => state.tokenFactoryContract,
     transactionGas: state => state.transactionGas,
-    gasLimit: state => state.gasLimit,
+    approvalGasLimit: state => state.approvalGasLimit,
+    depositGasLimit: state => state.depositGasLimit,
     disabledApproveButton() {
       return !this.allowance || !Number(this.allowance) || !this.isAllowanceValueValid || this.sendingApproval || this.approvalInProgress;
     },
@@ -252,7 +253,7 @@ export default {
       }
       return null;
     },
-    stakeMethod() {
+    depositMethod() {
       if (this.provider && this.tokenFactoryContract) {
         const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
         return signer.deposit;
@@ -280,7 +281,7 @@ export default {
       this.sendingApproval = true;
       const amount = this.$ethUtils.toDecimals(this.allowance, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.approvalGasLimit,
       };
       return this.approveMethod(
         this.tokenFactoryAddress,
@@ -306,9 +307,9 @@ export default {
       this.sendingStake = true;
       const amount = this.$ethUtils.toDecimals(this.stakeAmount, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.depositGasLimit,
       };
-      return this.stakeMethod(
+      return this.depositMethod(
         this.lpAddress,
         amount,
         options

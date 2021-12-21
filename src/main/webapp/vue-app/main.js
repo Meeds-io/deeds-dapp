@@ -145,7 +145,15 @@ const store = new Vuex.Store({
     // Euro/USD historical exchange rate data
     currencyExchangeRate: null,
     // Default Gas limit for sent transactions
-    gasLimit: 500000,
+    approvalGasLimit: 50000,
+    stakeGasLimit: 200000,
+    unstakeGasLimit: 200000,
+    redeemGasLimit: 300000,
+    harvestGasLimit: 150000,
+    depositGasLimit: 150000,
+    withdrawGasLimit: 150000,
+    tradeGasLimit: 150000,
+    maxGasLimit: 300000,
     // Cuurent Gas Price 
     gasPrice: 0,
     gasPriceGwei: 0,
@@ -471,7 +479,7 @@ const store = new Vuex.Store({
         state.provider.getGasPrice().then(gasPrice => {
           state.gasPriceGwei = gasPrice && ethers.utils.formatUnits(gasPrice, 'gwei') || 0;
           state.gasPrice = gasPrice && gasPrice.toNumber() || 0;
-          state.transactionGas = gasPrice.mul(state.gasLimit);
+          state.transactionGas = gasPrice.mul(state.maxGasLimit);
         });
       }
     },

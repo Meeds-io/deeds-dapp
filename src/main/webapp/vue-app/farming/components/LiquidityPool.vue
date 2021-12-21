@@ -236,7 +236,7 @@ export default {
   computed: Vuex.mapState({
     provider: state => state.provider,
     address: state => state.address,
-    gasLimit: state => state.gasLimit,
+    harvestGasLimit: state => state.harvestGasLimit,
     tokenFactoryAddress: state => state.tokenFactoryAddress,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
@@ -529,7 +529,7 @@ export default {
     claimReward() {
       this.sendingClaim = true;
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.harvestGasLimit,
       };
       return this.tokenFactoryClaimReward(
         this.lpAddress,

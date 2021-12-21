@@ -74,7 +74,7 @@ export default {
     provider: state => state.provider,
     xMeedContract: state => state.xMeedContract,
     transactionGas: state => state.transactionGas,
-    gasLimit: state => state.gasLimit,
+    unstakeGasLimit: state => state.unstakeGasLimit,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
@@ -155,7 +155,7 @@ export default {
       this.sendingUnstake = true;
       const amount = this.$ethUtils.toDecimals(this.unstakeAmount, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.unstakeGasLimit,
       };
       return this.withdrawMethod(
         amount,

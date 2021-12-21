@@ -121,7 +121,8 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     language: state => state.language,
-    gasLimit: state => state.gasLimit,
+    tradeGasLimit: state => state.tradeGasLimit,
+    approvalGasLimit: state => state.approvalGasLimit,
     sushiswapRouterAddress: state => state.sushiswapRouterAddress,
     sushiswapRouterContract: state => state.sushiswapRouterContract,
     meedContract: state => state.meedContract,
@@ -312,7 +313,7 @@ export default {
         .mul((1 - this.slippage) * 1000)
         .div(1000);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.tradeGasLimit,
       };
       return new Promise((resolve, reject) => {
         if (this.buy) {
@@ -349,7 +350,7 @@ export default {
       this.sendingTransaction++;
       const amount = this.$ethUtils.toDecimals(this.fromValue, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.approvalGasLimit,
       };
       return this.approveMethod(
         this.sushiswapRouterAddress,

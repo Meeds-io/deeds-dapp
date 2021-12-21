@@ -82,7 +82,7 @@ export default {
     etherBalance: state => state.etherBalance,
     provider: state => state.provider,
     transactionGas: state => state.transactionGas,
-    gasLimit: state => state.gasLimit,
+    withdrawGasLimit: state => state.withdrawGasLimit,
     tokenFactoryContract: state => state.tokenFactoryContract,
     disabledUnstakeButton() {
       return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
@@ -140,7 +140,7 @@ export default {
       this.sendingUnstake = true;
       const amount = this.$ethUtils.toDecimals(this.unstakeAmount, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.withdrawGasLimit,
       };
       return this.withdrawMethod(
         this.lpAddress,

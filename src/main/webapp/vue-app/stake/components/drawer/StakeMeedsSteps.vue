@@ -158,7 +158,8 @@ export default {
     xMeedAddress: state => state.xMeedAddress,
     transactionGas: state => state.transactionGas,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
-    gasLimit: state => state.gasLimit,
+    approvalGasLimit: state => state.approvalGasLimit,
+    stakeGasLimit: state => state.stakeGasLimit,
     totalMeedsBalanceOfXMeeds() {
       return this.meedsBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds && this.meedsPendingBalanceOfXMeeds.add(this.meedsBalanceOfXMeeds) || 0;
     },
@@ -291,7 +292,7 @@ export default {
       this.sendingApproval = true;
       const amount = this.$ethUtils.toDecimals(this.allowance, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.approvalGasLimit,
       };
       return this.approveMethod(
         this.xMeedAddress,
@@ -317,7 +318,7 @@ export default {
       this.sendingStake = true;
       const amount = this.$ethUtils.toDecimals(this.stakeAmount, 18);
       const options = {
-        gasLimit: this.gasLimit,
+        gasLimit: this.stakeGasLimit,
       };
       return this.stakeMethod(
         amount,
