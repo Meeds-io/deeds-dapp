@@ -226,13 +226,12 @@ contract TokenFactory is Ownable, FundDistribution {
      * to manage Reward distribution to wallets switch its specific algorithm outside this contract.
      */
     function updateFundReward(address _fundAddress) public override {
-        FundInfo storage fund = fundInfos[_fundAddress];
-
         // Minting didn't started yet
         if (block.timestamp < startRewardsTime) {
             return;
         }
 
+        FundInfo storage fund = fundInfos[_fundAddress];
         uint256 pendingRewardAmount = _pendingRewardBalanceOf(fund);
         if (fund.isLPToken) {
           fund.accMeedPerShare = _getAccMeedPerShare(_fundAddress, pendingRewardAmount);

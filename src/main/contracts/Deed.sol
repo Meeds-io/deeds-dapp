@@ -8,9 +8,9 @@ import "./abstract/ERC1155Tradable.sol";
 /**
  * @title NFT Contract for Meeds DAO
  */
-contract MeedsNFT is ERC1155Tradable {
+contract Deed is ERC1155Tradable {
 
-    constructor (address _proxyRegistryAddress) ERC1155Tradable("Meeds DAO NFT", "DEED", _proxyRegistryAddress) {
+    constructor (address _proxyRegistryAddress) ERC1155Tradable("Meeds Deed Token", "DEED", _proxyRegistryAddress) {
     }
 
     /**
