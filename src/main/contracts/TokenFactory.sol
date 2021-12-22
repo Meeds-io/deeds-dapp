@@ -91,6 +91,9 @@ contract TokenFactory is Ownable, FundDistribution {
     event FundAdded(address indexed fundAddress, uint256 allocation, bool fixedPercentage, bool isLPToken);
     event FundAllocationChanged(address indexed fundAddress, uint256 allocation, bool fixedPercentage);
 
+    // Max MEED Supply Reached
+    event MaxSupplyReached(uint256 timestamp);
+
     constructor (
         MeedsToken _meed,
         uint256 _meedPerMinute,
@@ -410,9 +413,11 @@ contract TokenFactory is Ownable, FundDistribution {
     function _mint(address _to, uint256 _amount) internal {
         uint256 totalSupply = meed.totalSupply();
         if (totalSupply.add(_amount) > MAX_MEED_SUPPLY) {
-            uint256 remainingAmount = totalSupply.sub(_amount);
-            require(remainingAmount > 0, "#_mint: max MEED Supply reached!");
-            meed.mint(_to, remainingAmount);
+            if (MAX_MEED_SUPPLY > totalSupply) {
+              uint256 remainingAmount = MAX_MEED_SUPPLY.sub(totalSupply);
+              meed.mint(_to, remainingAmount);
+              emit MaxSupplyReached(block.timestamp);
+            }
         } else {
             meed.mint(_to, _amount);
         }
