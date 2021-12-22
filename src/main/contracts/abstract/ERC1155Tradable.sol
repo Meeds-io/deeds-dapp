@@ -18,14 +18,17 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
     using SafeMath for uint256;
     using Address for address;
 
-    address proxyRegistryAddress;
-    uint256 internal _currentTokenID = 0;
+    // OpenSea proxy registry to ease selling NFTs on OpenSea
+    address public proxyRegistryAddress;
+
     mapping(uint256 => string) public tokenUri;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
     mapping(uint256 => uint8) public tokenCityIndex;
     mapping(uint256 => uint8) public tokenType;
+
+    uint256 internal _currentTokenID = 0;
 
     // Contract name
     string public name;
@@ -68,19 +71,30 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         return tokenMaxSupply[_id];
     }
 
+    /**
+     * @dev return city index of designated NFT with its identifier
+     */
     function cityIndex(uint256 _id) public view returns (uint256) {
         return tokenCityIndex[_id];
     }
 
+    /**
+     * @dev return card type of designated NFT with its identifier
+     */
     function cardType(uint256 _id) public view returns (uint256) {
         return tokenType[_id];
     }
 
     /**
      * @dev Creates a new token type and assigns _initialSupply to an address
-     * @param _maxSupply max supply allowed
-     * @param _initialSupply Optional amount to supply the first owner
+     * @param _initialOwner the first owner of the Token
+     * @param _initialSupply Optional amount to supply the first owner (1 for NFT)
+     * @param _maxSupply max supply allowed (1 for NFT)
      * @param _uri Optional URI for this token type
+     * @param _cityIndex city index of NFT
+     *    (0 = Tanit, 1 = Reshef, 2 = Ashtarte, 3 = Melqart, 4 = Eshmun, 5 = Kushor, 6 = Hammon)
+     * @param _type card type of NFT
+     *    (0 = Common, 1 = Uncommon, 2 = Rare, 3 = Legendary)
      * @param _data Optional data to pass if receiver is contract
      * @return The newly created token ID
      */
