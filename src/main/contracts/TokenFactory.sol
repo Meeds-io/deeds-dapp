@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./abstract/Ownable.sol";
 import "./abstract/SafeMath.sol";
 import "./abstract/SafeERC20.sol";
-import "./abstract/MeedToken.sol";
+import "./abstract/MeedsToken.sol";
 import "./abstract/FundDistribution.sol";
 
 /**
@@ -59,7 +59,7 @@ contract TokenFactory is Ownable, FundDistribution {
     uint256 public constant MEED_REWARDING_PRECISION = 1e12;
 
     // The MEED TOKEN!
-    MeedToken public meed;
+    MeedsToken public meed;
 
     // MEEDs minted per minute
     uint256 public meedPerMinute;
@@ -92,7 +92,7 @@ contract TokenFactory is Ownable, FundDistribution {
     event FundAllocationChanged(address indexed fundAddress, uint256 allocation, bool fixedPercentage);
 
     constructor (
-        MeedToken _meed,
+        MeedsToken _meed,
         uint256 _meedPerMinute,
         uint256 _startRewardsDelay
     ) {
