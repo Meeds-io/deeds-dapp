@@ -90,20 +90,33 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         }
     }
 
+    /**
+     * @dev Set MEED NFT address
+     */
     function setNFT(ERC1155Tradable _nftAddress) public onlyOwner {
         nft = _nftAddress;
         emit NFTSet(_nftAddress);
     }
 
+    /**
+     * @dev Checks if current city is mintable
+     */
     function isCurrentCityMintable() public view returns (bool) {
         return block.timestamp > cityMintingStartDate();
     }
 
+    /**
+     * @dev returns current city minting start date
+     */
     function cityMintingStartDate() public view returns (uint256) {
         CityDetail memory city = cityInfo[currentCityIndex];
         return city.availability.add(lastCityMintingCompleteDate);
     }
 
+    /**
+     * @dev Redeem an NFT by minting it and substracting the amount af Points (Card Type price)
+     * from caller balance of points.
+     */
     function redeem(uint8 cardTypeId) public updateReward(msg.sender) returns (uint256 tokenId) {
         CardTypeDetail storage cardType = cardTypeInfo[cardTypeId];
         require(points[msg.sender] >= cardType.amount, "Not enough points to redeem for card");

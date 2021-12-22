@@ -13,6 +13,9 @@ contract MeedsNFT is ERC1155Tradable {
     constructor (address _proxyRegistryAddress) ERC1155Tradable("Meeds DAO NFT", "DEED", _proxyRegistryAddress) {
     }
 
+    /**
+     * @dev return the list of NFTs owned by an address
+     */
     function nftsOf(address _account) public view returns (uint256[] memory) {
         uint256 len = 0;
         for (uint256 i = 1; i <= _currentTokenID; i++) {
@@ -30,6 +33,9 @@ contract MeedsNFT is ERC1155Tradable {
         return nfts;
     }
 
+    /**
+     * @dev return the total supply of NFTs (Token Types)
+     */
     function totalSupply() public view returns (uint256) {
         return _currentTokenID;
     }

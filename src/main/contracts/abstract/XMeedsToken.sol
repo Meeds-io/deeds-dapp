@@ -25,8 +25,13 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
         emit RewardDistributorSet(_rewardDistribution);
     }
 
+    /**
+     * @dev This method will:
+     * 1/ retrieve staked amount of MEEDs that should already been approved on ERC20 MEED Token
+     * 2/ Send back some xMEED ERC20 Token for staker
+     */
     function _stake(uint256 _amount) internal {
-        // Retrieve MEEDs from Reserve Fund
+        // Retrieve MEEDs from Reserve Fund (TokenFactory)
         rewardDistribution.updateFundReward(address(this));
 
         uint256 totalMeed = meed.balanceOf(address(this));
@@ -40,8 +45,14 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
         meed.transferFrom(_msgSender(), address(this), _amount);
     }
 
+    /**
+     * @dev This method will:
+     * 1/ Withdraw staked amount of MEEDs that wallet has already staked in this contract
+     *  plus a proportion of Rewarded MEEDs sent from TokenFactory/MasterChef
+     * 2/ Burn equivalent amount of xMEED from caller account
+     */
     function _withdraw(uint256 _amount) internal {
-        // Retrieve MEEDs from Reserve Fund
+        // Retrieve MEEDs from Reserve Fund (TokenFactory)
         rewardDistribution.updateFundReward(address(this));
 
         uint256 totalMeed = meed.balanceOf(address(this));
