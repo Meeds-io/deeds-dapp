@@ -145,13 +145,13 @@ const store = new Vuex.Store({
     // Euro/USD historical exchange rate data
     currencyExchangeRate: null,
     // Default Gas limit for sent transactions
-    approvalGasLimit: 50000,
+    approvalGasLimit: 60000,
     stakeGasLimit: 200000,
     unstakeGasLimit: 200000,
     redeemGasLimit: 300000,
-    harvestGasLimit: 150000,
-    depositGasLimit: 150000,
-    withdrawGasLimit: 150000,
+    harvestGasLimit: 170000,
+    depositGasLimit: 170000,
+    withdrawGasLimit: 170000,
     tradeGasLimit: 150000,
     maxGasLimit: 300000,
     // Cuurent Gas Price 
@@ -169,6 +169,8 @@ const store = new Vuex.Store({
     meedsRouteAllowance: null,
     meedsStakeAllowance: null,
     meedsTotalSupply: null,
+    maxMeedSupplyReached: null,
+    remainingMeedSupply: null,
     xMeedsTotalSupply: null,
     meedsBalanceOfXMeeds: null,
     meedsPendingBalanceOfXMeeds: null,
@@ -181,6 +183,7 @@ const store = new Vuex.Store({
     pointsBalanceNoDecimals: null,
     ownedNfts: null,
     selectedFiatCurrency,
+    noCityLeft: false,
     currentCity: null,
     currentCardTypes: null,
     currentCityMintable: null,
@@ -311,11 +314,16 @@ const store = new Vuex.Store({
       tokenUtils.getCurrentCity(state.xMeedContract)
         .then(currentCity => {
           state.currentCity = currentCity;
-          return tokenUtils.isCurrentCityMintable(state.xMeedContract);
+          state.noCityLeft = !currentCity;
+          if (currentCity) {
+            return tokenUtils.isCurrentCityMintable(state.xMeedContract);
+          } else {
+            return false;
+          }
         })
         .then(currentCityMintable => {
           state.currentCityMintable = currentCityMintable;
-          if (!currentCityMintable) {
+          if (!currentCityMintable && state.currentCity) {
             if (reloadOnNotMintable) {
               throw new Error('City not mintable yet');
             } else {
@@ -325,7 +333,7 @@ const store = new Vuex.Store({
           }
         })
         .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
-        .then(currentCardTypes => state.currentCardTypes = currentCardTypes)
+        .then(currentCardTypes => state.currentCardTypes = currentCardTypes || [])
         .catch(error => console.error('Error while loading current city', error))
         .finally(() => {
           if (reloadOnNotMintable && !state.currentCityMintable) {
@@ -392,7 +400,11 @@ const store = new Vuex.Store({
           state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
           state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
           state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
-          state.meedContract.totalSupply().then(totalSupply => state.meedsTotalSupply = totalSupply);
+          state.meedContract.totalSupply().then(totalSupply => {
+            state.meedsTotalSupply = totalSupply;
+            state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
+            state.remainingMeedSupply = totalSupply.sub('100000000000000000000000000').abs();
+          });
         }
         if (state.xMeedContract) {
           this.commit('loadXMeedsBalances');

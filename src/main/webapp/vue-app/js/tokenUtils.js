@@ -70,6 +70,9 @@ export function getPointsBalance(xMeedContract, address) {
 export function getCurrentCity(xMeedContract) {
   return xMeedContract.currentCityIndex()
     .then(cityIndex => {
+      if (cityIndex > 6) {
+        return null;
+      }
       return xMeedContract.cityInfo(cityIndex)
         .then(cityInfo => {
           const city = {};

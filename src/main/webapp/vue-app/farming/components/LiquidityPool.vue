@@ -236,6 +236,7 @@ export default {
   computed: Vuex.mapState({
     provider: state => state.provider,
     address: state => state.address,
+    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     harvestGasLimit: state => state.harvestGasLimit,
     tokenFactoryAddress: state => state.tokenFactoryAddress,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
@@ -340,6 +341,7 @@ export default {
       if (!this.stakedEquivalentMeedsBalanceOfPool
           || !this.yearlyRewardedMeeds
           || this.stakedEquivalentMeedsBalanceOfPool.isZero()
+          || this.maxMeedSupplyReached
           || this.yearlyRewardedMeeds.isZero()
           || !this.rewardsStarted) {
         return 0;
@@ -499,6 +501,9 @@ export default {
         .finally(() => this.loadingBalance--);
     },
     refreshPendingReward() {
+      if (this.maxMeedSupplyReached) {
+        this.meedsPendingUserReward = 0;
+      }
       this.loadingUserReward = true;
       this.tokenFactoryUserPendingReward(this.lpAddress, this.address)
         .then(balance => this.meedsPendingUserReward = balance)
