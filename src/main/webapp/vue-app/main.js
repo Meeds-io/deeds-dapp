@@ -235,21 +235,6 @@ const store = new Vuex.Store({
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://opensea.io/assets/${state.nftAddress}`;
-            } else if (state.networkId === 5) {
-              state.validNetwork = true;
-
-              // Goërli
-              state.etherscanBaseLink = 'https://goerli.etherscan.io/';
-              state.sushiswapRouterAddress = '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506';
-              state.sushiswapPairAddress = '0x157144DBc40469c3d2dbB2EAA58b7b40E0b0249c';
-              state.wethAddress = '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6';
-              state.meedAddress = '0x62aae5c3648617e6f6542d3a457eca3a00da7e03';
-              state.nftAddress = '0xb26cCD76748Fa79bF242Cfaca6687184CaF48093';
-              state.xMeedAddress = '0x36e19bB29573F5Dc5d6A124444e81646A59b6702';
-
-              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-
-              state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.nftAddress}`;
             } else if (state.networkId === 4) {
               state.validNetwork = true;
 

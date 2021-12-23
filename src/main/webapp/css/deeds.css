@@ -64,3 +64,9 @@ html {
 .original-primary--text {
   color: #1867c0 !important;
 }
+
+.testnet-chip {
+  position: absolute;
+  top: 35px;
+  left: 55px;
+}

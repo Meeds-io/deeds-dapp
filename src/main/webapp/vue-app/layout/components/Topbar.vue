@@ -27,11 +27,11 @@
       <div class="ps-2 pb-1">{{ $t('dao') }}</div>
       <v-chip
         v-if="isTestNetwork"
-        color="purple"
+        color="orange"
         dark
         small
-        class="mt-1 ms-2">
-        Göerli
+        class="testnet-chip mt-1 ms-2">
+        Rinkeby
       </v-chip>
     </v-toolbar-title>
     <v-spacer />
@@ -53,7 +53,7 @@ export default {
     networkId: state => state.networkId,
     address: state => state.address,
     isTestNetwork() {
-      return this.networkId === 5;
+      return this.networkId === 4;
     },
   }),
 };
