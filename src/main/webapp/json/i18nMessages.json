@@ -114,7 +114,8 @@
     "meedsBalanceOfPool": "Liquidity Pool Balance: {0} MEED",
     "pointsRewardingDidntStarted": "Points rewarding didn't started yet",
     "meedsRewardingDidntStarted": "MEEDs rewarding didn't started yet",
-    "addLiquidityIntroduction": "Do you own Meeds and want to help the project to strive?  Help sustaining the Meeds economy by adding  MEEDs and ETH in our pool on:"
+    "addLiquidityIntroduction": "Do you own Meeds and want to help the project to strive?  Help sustaining the Meeds economy by adding  MEEDs and ETH in our pool on:",
+    "maxMeedsSupplyReached": "Maximum Meed Supply Reached!"
   },
   "fr": {
     "dao": "DAO",
@@ -231,6 +232,7 @@
     "meedsBalanceOfPool": "Balance de la pool de liquidité: {0} MEED",
     "pointsRewardingDidntStarted": "Points rewarding didn't started yet",
     "meedsRewardingDidntStarted": "Les récompenses en MEEDs n'ont pas encore commencé",
-    "addLiquidityIntroduction": "Possédez-vous des MEEDs et souhaitez-vous aider le projet à se développer ? Aidez à soutenir l'économie des MEEDs en ajoutant des MEED et des ETH dans notre pool sur:"
+    "addLiquidityIntroduction": "Possédez-vous des MEEDs et souhaitez-vous aider le projet à se développer ? Aidez à soutenir l'économie des MEEDs en ajoutant des MEED et des ETH dans notre pool sur:",
+    "maxMeedsSupplyReached": "Maximum des MEEDs atteint!"
   }
 }

@@ -57,7 +57,10 @@
                   </v-icon>
                 </div>
               </template>
-              <ul v-if="rewardsStarted">
+              <span v-if="maxMeedSupplyReached">
+                {{ $t('maxMeedsSupplyReached') }}
+              </span>
+              <ul v-else-if="rewardsStarted">
                 <li>
                   <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
                 </li>
@@ -97,7 +100,7 @@
                 <li>
                   <deeds-number-format :value="meedsBalanceOfXMeeds" label="xMeedCurrentBalance" />
                 </li>
-                <li>
+                <li v-if="!maxMeedSupplyReached">
                   <deeds-number-format :value="meedsPendingBalanceOfXMeeds" label="xMeedPendingRewards" />
                 </li>
               </ul>
@@ -185,13 +188,15 @@ export default {
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
     meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     xMeedRewardInfo() {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
     },
     meedsTotalBalanceOfXMeeds() {
+      const meedsPendingBalanceOfXMeeds = this.maxMeedSupplyReached && '0' || this.meedsPendingBalanceOfXMeeds;
       return this.meedsBalanceOfXMeeds
         && this.meedsPendingBalanceOfXMeeds
-        && this.meedsBalanceOfXMeeds.add(this.meedsPendingBalanceOfXMeeds)
+        && this.meedsBalanceOfXMeeds.add(meedsPendingBalanceOfXMeeds)
         || 0;
     },
     yearlyRewardedMeeds() {
@@ -223,6 +228,7 @@ export default {
           || !this.yearlyRewardedMeeds
           || this.meedsTotalBalanceOfXMeeds.isZero()
           || this.yearlyRewardedMeeds.isZero()
+          || this.maxMeedSupplyReached
           || !this.rewardsStarted) {
         return 0;
       }

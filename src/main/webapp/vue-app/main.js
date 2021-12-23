@@ -170,6 +170,7 @@ const store = new Vuex.Store({
     meedsStakeAllowance: null,
     meedsTotalSupply: null,
     maxMeedSupplyReached: null,
+    noMeedSupplyForLPRemaining: null,
     remainingMeedSupply: null,
     xMeedsTotalSupply: null,
     meedsBalanceOfXMeeds: null,
@@ -403,7 +404,11 @@ const store = new Vuex.Store({
           state.meedContract.totalSupply().then(totalSupply => {
             state.meedsTotalSupply = totalSupply;
             state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
-            state.remainingMeedSupply = totalSupply.sub('100000000000000000000000000').abs();
+            if (totalSupply.gte('100000000000000000000000000')) {
+              state.meedContract.balanceOf(state.tokenFactoryAddress).then(balance => {
+                state.noMeedSupplyForLPRemaining = !balance || balance.isZero();
+              });
+            }
           });
         }
         if (state.xMeedContract) {

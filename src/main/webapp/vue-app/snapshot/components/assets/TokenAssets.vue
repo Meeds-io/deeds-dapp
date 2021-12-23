@@ -74,7 +74,10 @@
               </v-icon>
             </div>
           </template>
-          <ul v-if="rewardsStarted">
+          <span v-if="maxMeedSupplyReached">
+            {{ $t('maxMeedsSupplyReached') }}
+          </span>
+          <ul v-else-if="rewardsStarted">
             <li>
               <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
             </li>
@@ -139,6 +142,7 @@ export default {
     rewardedFunds: state => state.rewardedFunds,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
         return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
@@ -184,6 +188,7 @@ export default {
           || !this.yearlyRewardedMeeds
           || this.meedsTotalBalanceOfXMeeds.isZero()
           || this.yearlyRewardedMeeds.isZero()
+          || this.maxMeedSupplyReached
           || !this.rewardsStarted) {
         return 0;
       }

@@ -66,7 +66,10 @@
                   </v-icon>
                 </div>
               </template>
-              <ul v-if="rewardsStarted">
+              <span v-if="noMeedSupplyForLPRemaining">
+                {{ $t('maxMeedsSupplyReached') }}
+              </span>
+              <ul v-else-if="rewardsStarted">
                 <li>
                   <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
                 </li>
@@ -164,6 +167,7 @@
               type="chip"
               max-height="17"
               tile />
+            <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
             <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
               MEED
             </deeds-number-format>
@@ -236,7 +240,7 @@ export default {
   computed: Vuex.mapState({
     provider: state => state.provider,
     address: state => state.address,
-    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    noMeedSupplyForLPRemaining: state => state.noMeedSupplyForLPRemaining,
     harvestGasLimit: state => state.harvestGasLimit,
     tokenFactoryAddress: state => state.tokenFactoryAddress,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
@@ -341,7 +345,7 @@ export default {
       if (!this.stakedEquivalentMeedsBalanceOfPool
           || !this.yearlyRewardedMeeds
           || this.stakedEquivalentMeedsBalanceOfPool.isZero()
-          || this.maxMeedSupplyReached
+          || this.noMeedSupplyForLPRemaining
           || this.yearlyRewardedMeeds.isZero()
           || !this.rewardsStarted) {
         return 0;
@@ -501,9 +505,6 @@ export default {
         .finally(() => this.loadingBalance--);
     },
     refreshPendingReward() {
-      if (this.maxMeedSupplyReached) {
-        this.meedsPendingUserReward = 0;
-      }
       this.loadingUserReward = true;
       this.tokenFactoryUserPendingReward(this.lpAddress, this.address)
         .then(balance => this.meedsPendingUserReward = balance)
