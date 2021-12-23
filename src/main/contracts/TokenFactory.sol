@@ -205,7 +205,7 @@ contract TokenFactory is Ownable, FundDistribution {
     /**
      * @dev update designated fund allocation and send minted MEED.
      * 
-     * @param address The address can be an LP Token or another contract
+     * @param _fundAddress The address can be an LP Token or another contract
      * that will receive funds and distribute MEED earnings switch a specific algorithm
      * (User and/or Employee Engagement Program, DAO, xMEED staking...)
      * 
