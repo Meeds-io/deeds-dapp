@@ -100,7 +100,7 @@ export default {
       this.$ethUtils.connectToMetamask();
     },
     switchMetamaskNetwork() {
-      this.$ethUtils.switchMetamaskNetwork();
+      this.$ethUtils.switchMetamaskNetwork('0x4');
     },
   },
 };

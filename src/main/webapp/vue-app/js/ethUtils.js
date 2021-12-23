@@ -40,10 +40,10 @@ export function connectToMetamask() {
   });
 }
 
-export function switchMetamaskNetwork() {
+export function switchMetamaskNetwork(networkId) {
   return window.ethereum.request({
     method: 'wallet_switchEthereumChain',
-    params: [{ chainId: '0x1' }],
+    params: [{ chainId: networkId }],
   });
 }
 

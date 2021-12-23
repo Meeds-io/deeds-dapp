@@ -229,8 +229,13 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
               // TODO replace with real addresses
+              state.univ2PairAddress = null;
               state.nftAddress = null;
               state.xMeedAddress = null;
+              state.tokenFactoryAddress = null;
+
+              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
+              state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
 
@@ -241,10 +246,10 @@ const store = new Vuex.Store({
               // Rinkeby
               state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
               state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-              state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.sushiswapPairAddress = '0x891de584b8f5ae31ac24a69dd59016646dd6db45';
-              state.univ2PairAddress = '0xd6b2a483d74578a95a2f7095fb5955a15c87904b';
+              state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xD1E45d26976881F0B8f523c22D35Ba62bbcA8836';
+              state.univ2PairAddress = '0xd6b2a483d74578a95a2f7095fb5955a15c87904b';
               state.nftAddress = '0x687689C315E96dd6b5F13b5F2B7BA2aA6b66255A';
               state.xMeedAddress = '0x99e300801b43169B5dC19c21E83830A1c1B2F02F';
               state.tokenFactoryAddress = '0x7c3Ab1e1b6af2e97470229186280E15a8e9463f3';
