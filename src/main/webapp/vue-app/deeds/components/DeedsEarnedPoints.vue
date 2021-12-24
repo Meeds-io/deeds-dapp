@@ -37,7 +37,9 @@
               type="chip"
               max-height="17"
               tile />
-            <deeds-number-format v-else :value="xMeedsTotalSupply" />
+            <deeds-number-format v-else :value="xMeedsTotalSupply">
+              xMEED
+            </deeds-number-format>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
