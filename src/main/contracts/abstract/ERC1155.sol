@@ -88,7 +88,7 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
      *   |    Internal Transfer Functions    |
      |__________________________________*/
     /**
-     * @notice Transfers amount amount of an _id from the _from address to the _to address specified
+     * @dev Transfers amount amount of an _id from the _from address to the _to address specified
      * @param _from    Source address
      * @param _to      Target address
      * @param _id      ID of the token type
@@ -112,7 +112,7 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
     }
 
     /**
-     * @notice Verifies if receiver is contract and if so, calls (_to).onERC1155Received(...)
+     * @dev Verifies if receiver is contract and if so, calls (_to).onERC1155Received(...)
      */
     function _callonERC1155Received(
         address _from,
@@ -131,7 +131,7 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
     }
 
     /**
-     * @notice Send multiple types of Tokens from the _from address to the _to address (with safety call)
+     * @dev Send multiple types of Tokens from the _from address to the _to address (with safety call)
      * @param _from     Source addresses
      * @param _to       Target addresses
      * @param _ids      IDs of each token type
@@ -164,7 +164,7 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
     }
 
     /**
-     * @notice Verifies if receiver is contract and if so, calls (_to).onERC1155BatchReceived(...)
+     * @dev Verifies if receiver is contract and if so, calls (_to).onERC1155BatchReceived(...)
      */
     function _callonERC1155BatchReceived(
         address _from,
@@ -194,7 +194,7 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
     }
 
     /**
-     * @notice Queries the approval status of an operator for a given owner
+     * @dev Queries the approval status of an operator for a given owner
      * @param _owner      The owner of the Tokens
      * @param _operator   Address of authorized operator
      * @return isOperator true if the operator is approved, false if not
@@ -243,12 +243,12 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
         return batchBalances;
     }
 
-    /**
+    /*
      * INTERFACE_SIGNATURE_ERC165 = bytes4(keccak256("supportsInterface(bytes4)"));
      */
     bytes4 private constant INTERFACE_SIGNATURE_ERC165 = 0x01ffc9a7;
 
-    /**
+    /*
      * INTERFACE_SIGNATURE_ERC1155 =
      * bytes4(keccak256("safeTransferFrom(address,address,uint256,uint256,bytes)")) ^
      * bytes4(keccak256("safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)")) ^

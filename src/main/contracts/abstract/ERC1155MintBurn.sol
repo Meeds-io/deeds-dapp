@@ -15,7 +15,7 @@ abstract contract ERC1155MintBurn is ERC1155 {
      *   |            Minting Functions           |
      |_______________________________________*/
     /**
-     * @notice Mint _amount of tokens of a given id
+     * @dev Mint _amount of tokens of a given id
      * @param _to      The address to mint tokens to
      * @param _id      Token id to mint
      * @param _amount  The amount to be minted
@@ -33,7 +33,7 @@ abstract contract ERC1155MintBurn is ERC1155 {
     }
 
     /**
-     * @notice Mint tokens for each ids in _ids
+     * @dev Mint tokens for each ids in _ids
      * @param _to       The address to mint tokens to
      * @param _ids      Array of ids to mint
      * @param _amounts  Array of amount of tokens to mint per id
@@ -71,7 +71,7 @@ abstract contract ERC1155MintBurn is ERC1155 {
      *   |            Burning Functions           |
      |_______________________________________*/
     /**
-     * @notice Burn _amount of tokens of a given token id
+     * @dev Burn _amount of tokens of a given token id
      * @param _from    The address to burn tokens from
      * @param _id      Token id to burn
      * @param _amount  The amount to be burned
@@ -86,7 +86,7 @@ abstract contract ERC1155MintBurn is ERC1155 {
     }
 
     /**
-     * @notice Burn tokens of given token id for each (_ids[i], _amounts[i]) pair
+     * @dev Burn tokens of given token id for each (_ids[i], _amounts[i]) pair
      * @param _from     The address to burn tokens from
      * @param _ids      Array of token ids to burn
      * @param _amounts  Array of the amount to be burned
