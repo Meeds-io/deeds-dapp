@@ -8,7 +8,7 @@ const app = 'deeds-dapp';
 const config = merge(webpackCommonConfig, {
   output: {
     path: path.resolve(__dirname, `./target/${app}/`),
-    filename: 'js/[name].js',
+    filename: 'static/js/[name].js',
   }
 });
 

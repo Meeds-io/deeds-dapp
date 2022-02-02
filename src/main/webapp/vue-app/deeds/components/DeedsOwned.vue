@@ -52,38 +52,7 @@
         </v-tooltip>
       </template>
       <template v-slot:item.actions="{item}">
-        <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              text
-              icon
-              v-bind="attrs"
-              v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item disabled>
-              <v-list-item-title class="text-capitalize">{{ $t('claimRewards') }} ({{ $t('comingSoon') }})</v-list-item-title>
-            </v-list-item>
-            <v-list-item disabled>
-              <v-list-item-title class="text-capitalize">{{ $t('moveIn') }} ({{ $t('comingSoon') }})</v-list-item-title>
-            </v-list-item>
-            <v-list-item disabled>
-              <v-list-item-title class="text-capitalize">{{ $t('listRentalOffer') }} ({{ $t('comingSoon') }})</v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title class="text-capitalize">
-                <a
-                  :href="`${openSeaBaseLink}/${item.id}/sell`"
-                  target="_blank"
-                  rel="noreferrer">
-                  {{ $t('sellOnOpenSea') }}
-                </a>
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <deeds-owned-actions :nft="item" />
       </template>
     </v-data-table>
   </v-card>
@@ -125,11 +94,13 @@ export default {
     openSeaBaseLink: state => state.openSeaBaseLink,
     nftAddress: state => state.nftAddress,
     ownedNfts: state => state.ownedNfts,
+    address: state => state.address,
+    provider: state => state.provider,
     nfts() {
       return this.ownedNfts && this.ownedNfts.length && this.ownedNfts.slice().reverse().map(nft => {
         return Object.assign({
+          id: nft.id,
           cityName: this.cities[nft.cityIndex],
-          statusLabel: this.$t('vacant'),
           hasEarnedMeeds: false,
           earnedRewardsNoDecimals: 0,
         }, nft);

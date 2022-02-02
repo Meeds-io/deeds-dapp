@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,34 +16,42 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds;
+package io.meeds.deeds.task;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonWriter;
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 
-public class MeedsExchangeServlet extends HttpServlet {
+public class MeedsExchangeTask {
 
-  private static final long             serialVersionUID                  = -4130223673549168957L;
+  private static final Logger           LOG                               = LoggerFactory.getLogger(MeedsExchangeTask.class);
 
-  private static final Logger           LOG                               = LoggerFactory.getLogger(MeedsExchangeServlet.class);
+  private static final String           EXCHANGE_RATE_FILE_PATH           = "/static/json/exchangeRate-meeds.json";
 
   private static final String           PAIR_ADDRESS                      = "0x960bd61d0b960b107ff5309a2dcced4705567070";
 
@@ -54,111 +62,111 @@ public class MeedsExchangeServlet extends HttpServlet {
 
   private static final LocalDate        MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
 
-  private ScheduledExecutorService      scheduledExecutorService          = Executors.newScheduledThreadPool(1);
+  private ServletContext                servletContext;
 
-  @Override
-  public void init() throws ServletException {
-    scheduledExecutorService.scheduleWithFixedDelay(() -> computeExchangeRate(), 0, 15, TimeUnit.MINUTES);
+  public MeedsExchangeTask(ServletContext servletContext) {
+    this.servletContext = servletContext;
   }
 
-  @Override
-  public void destroy() {
-    scheduledExecutorService.shutdownNow();
-    super.destroy();
-  }
-
-  private void computeExchangeRate() {
+  @Scheduled(fixedDelay = 15, timeUnit = TimeUnit.MINUTES)
+  public synchronized void computeExchangeRate() {
+    LOG.info("Start Computing MEED exchange rates");
+    long start = System.currentTimeMillis();
     try {
-      URL exchangeRate = getServletContext().getResource("/json/exchangeRate-meeds.json");
+      URL exchangeRate = servletContext.getResource(EXCHANGE_RATE_FILE_PATH);
       if (exchangeRate != null) {
         String exchangeRateObjectString = IOUtils.toString(exchangeRate, StandardCharsets.UTF_8);
-        JSONObject exchangeRateObject = new JSONObject(exchangeRateObjectString);
+        JsonObject exchangeRateObject = Json.createReader(new StringReader(exchangeRateObjectString)).readObject();
+        JsonObjectBuilder exchangeRateObjectBuilder = Json.createObjectBuilder(exchangeRateObject);
         LocalDate localDate = MEEDS_TOKEN_FIRST_DATE;
         LocalDate today = LocalDate.now();
         while (localDate.isBefore(today)) {
           ZonedDateTime date = localDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).minusSeconds(1);
-          addExchangeRateForDate(exchangeRateObject, date, false);
+          addExchangeRateForDate(exchangeRateObjectBuilder, exchangeRateObject, date, false);
           localDate = localDate.plusDays(1);
         }
-        addExchangeRateForDate(exchangeRateObject, ZonedDateTime.now(ZoneOffset.UTC), true);
+        addExchangeRateForDate(exchangeRateObjectBuilder, exchangeRateObject, ZonedDateTime.now(ZoneOffset.UTC), true);
         try (FileOutputStream outputStream = new FileOutputStream(exchangeRate.getPath())) {
-          IOUtils.write(exchangeRateObject.toString(), outputStream, StandardCharsets.UTF_8);
+          JsonWriter writer = Json.createWriter(outputStream);
+          writer.writeObject(exchangeRateObjectBuilder.build());
         }
+        LOG.info("End Computing MEED exchange rates in {}ms", System.currentTimeMillis() - start);
+      } else {
+        LOG.warn("Can't compute MEED exchange rates because file '{}' doesn't exists", EXCHANGE_RATE_FILE_PATH);
       }
     } catch (Exception e) {
       LOG.error("An error occurred while computing Meeds exchange rates", e);
     }
   }
 
-  private void addExchangeRateForDate(JSONObject exchangeRateObject, ZonedDateTime date, boolean todayValue) {
+  private void addExchangeRateForDate(JsonObjectBuilder exchangeRateObjectBuilder,
+                                      JsonObject exchangeRateObject,
+                                      ZonedDateTime date,
+                                      boolean todayValue) {
     String dateString = DATE_FORMATTER.format(date);
-    if (!exchangeRateObject.has(dateString)
-        || exchangeRateObject.getJSONObject(dateString).has("volatile")
+    if (!exchangeRateObject.containsKey(dateString)
+        || exchangeRateObject.getJsonObject(dateString).containsKey("volatile")
         || todayValue) {
-      JSONObject exchangeRateResult = getExchangeRateForDate(date, todayValue);
-      if (exchangeRateResult == null) {
-        LOG.warn("ETH and Meeds prices for date {} are empty, stop computing.", dateString);
-        return;
-      }
-      if (todayValue) {
-        // Keep updating the date until
-        exchangeRateResult.put("volatile", true);
-      }
-      exchangeRateObject.put(dateString, exchangeRateResult);
+      JsonObjectBuilder exchangeRateResultBuilder = getExchangeRateForDate(date, todayValue);
+      exchangeRateObjectBuilder.add(dateString, exchangeRateResultBuilder);
     }
   }
 
-  private JSONObject getExchangeRateForDate(ZonedDateTime date, boolean todayValue) {
-    JSONObject exchangeRateResult = new JSONObject();
-    addEthPrice(exchangeRateResult, date, todayValue);
-    addPairData(exchangeRateResult, date, todayValue);
-    return exchangeRateResult;
+  private JsonObjectBuilder getExchangeRateForDate(ZonedDateTime date, boolean todayValue) {
+    JsonObjectBuilder exchangeRateResultBuilder = Json.createObjectBuilder();
+    addEthPrice(exchangeRateResultBuilder, date, todayValue);
+    addPairData(exchangeRateResultBuilder, date, todayValue);
+    if (todayValue) {
+      // Keep updating the date until
+      exchangeRateResultBuilder.add("volatile", true);
+    }
+    return exchangeRateResultBuilder;
   }
 
-  private void addEthPrice(JSONObject exchangeRateResult, ZonedDateTime date, boolean todayValue) {
+  private void addEthPrice(JsonObjectBuilder exchangeRateObjectBuilder, ZonedDateTime date, boolean todayValue) {
     String blockNumber = todayValue ? getLastBlockNumber() : getBlockNumber(date);
-    boolean added = addEthPrice(exchangeRateResult, blockNumber);
+    boolean added = addEthPrice(exchangeRateObjectBuilder, blockNumber);
     if (!added) {
       // If the computing is about the same day computing, attempt the previous
       // block
       if (ChronoUnit.DAYS.between(date, ZonedDateTime.now(ZoneOffset.UTC)) == 0) {
         int previousBlock = Integer.parseInt(blockNumber) - 10;
-        added = addEthPrice(exchangeRateResult, String.valueOf(previousBlock));
+        added = addEthPrice(exchangeRateObjectBuilder, String.valueOf(previousBlock));
       }
     }
     if (!added) {
       // Force to recompute in case of error
       LOG.warn("Error computing Eth Price for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
-      exchangeRateResult.put("volatile", true);
+      exchangeRateObjectBuilder.add("volatile", true);
     }
   }
 
-  private boolean addEthPrice(JSONObject exchangeRateResult, String blockNumber) {
+  private boolean addEthPrice(JsonObjectBuilder exchangeRateObjectBuilder, String blockNumber) {
     if (StringUtils.isBlank(blockNumber)) {
-      exchangeRateResult.put("volatile", true);
+      exchangeRateObjectBuilder.add("volatile", true);
     }
     String body = "{\"query\":\"{bundle(id: 1, block:{number:" + blockNumber + "}){ethPrice}}\"}";
     String ethPriceDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/sushiswap/exchange", body);
     if (StringUtils.isNotBlank(ethPriceDataJsonString)) {
-      JSONObject ethPriceDataJson = new JSONObject(ethPriceDataJsonString);
-      if (ethPriceDataJson.has("data") && ethPriceDataJson.getJSONObject("data").has("bundle")
-          && !ethPriceDataJson.getJSONObject("data").isNull("bundle")) {
-        String ethPrice = ethPriceDataJson.getJSONObject("data").getJSONObject("bundle").getString("ethPrice");
-        exchangeRateResult.put("ethPrice", ethPrice);
+      JsonObject ethPriceDataJson = Json.createReader(new StringReader(ethPriceDataJsonString)).readObject();
+      if (ethPriceDataJson.containsKey("data") && ethPriceDataJson.getJsonObject("data").containsKey("bundle")
+          && !ethPriceDataJson.getJsonObject("data").isNull("bundle")) {
+        String ethPrice = ethPriceDataJson.getJsonObject("data").getJsonObject("bundle").getString("ethPrice");
+        exchangeRateObjectBuilder.add("ethPrice", ethPrice);
         return true;
-      } else if (ethPriceDataJson.has("errors")
+      } else if (ethPriceDataJson.containsKey("errors")
           && !ethPriceDataJson.isNull("errors")
-          && ethPriceDataJson.getJSONArray("errors").length() > 0
-          && ethPriceDataJson.getJSONArray("errors").getJSONObject(0).has("message")
-          && !ethPriceDataJson.getJSONArray("errors").getJSONObject(0).isNull("message")) {
-        String message = ethPriceDataJson.getJSONArray("errors").getJSONObject(0).getString("message");
+          && ethPriceDataJson.getJsonArray("errors").size() > 0
+          && ethPriceDataJson.getJsonArray("errors").getJsonObject(0).containsKey("message")
+          && !ethPriceDataJson.getJsonArray("errors").getJsonObject(0).isNull("message")) {
+        String message = ethPriceDataJson.getJsonArray("errors").getJsonObject(0).getString("message");
         LOG.warn(message);
         if (message.contains("up to block number")) {
           Matcher matcher = LATEST_BLOCK_NUMBER_ERROR_PATTERN.matcher(message);
           if (matcher.find()) {
             blockNumber = matcher.group(1);
             LOG.info("Attempt to retrieve data with block number {}", blockNumber);
-            return addEthPrice(exchangeRateResult, blockNumber);
+            return addEthPrice(exchangeRateObjectBuilder, blockNumber);
           }
         }
       }
@@ -166,55 +174,55 @@ public class MeedsExchangeServlet extends HttpServlet {
     return false;
   }
 
-  private void addPairData(JSONObject exchangeRateResult, ZonedDateTime date, boolean todayValue) {
+  private void addPairData(JsonObjectBuilder exchangeRateResultBuilder, ZonedDateTime date, boolean todayValue) {
     String blockNumber = todayValue ? getLastBlockNumber() : getBlockNumber(date);
-    boolean added = addPairData(exchangeRateResult, blockNumber);
+    boolean added = addPairData(exchangeRateResultBuilder, blockNumber);
     if (!added) {
       // If the computing is about the same day computing, attempt the previous
       // block
       if (ChronoUnit.DAYS.between(date, ZonedDateTime.now(ZoneOffset.UTC)) == 0) {
         int previousBlock = Integer.parseInt(blockNumber) - 10;
-        added = addPairData(exchangeRateResult, String.valueOf(previousBlock));
+        added = addPairData(exchangeRateResultBuilder, String.valueOf(previousBlock));
       }
     }
     if (!added) {
       // Force to recompute in case of error
       LOG.warn("Error computing Pair Data for date {}. Retrieve empty result.", DATE_FORMATTER.format(date));
-      exchangeRateResult.put("volatile", true);
+      exchangeRateResultBuilder.add("volatile", true);
     }
   }
 
-  private boolean addPairData(JSONObject exchangeRateResult, String blockNumber) {
+  private boolean addPairData(JsonObjectBuilder exchangeRateResultBuilder, String blockNumber) {
     if (StringUtils.isNotBlank(blockNumber)) {
       String body = "{\"query\":\"{pair(id: \\\""
           + PAIR_ADDRESS + "\\\", block: {number:" + blockNumber
           + "}) {id,token1Price,reserve0,reserve1}}\"}";
       String pairDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/sushiswap/exchange", body);
       if (StringUtils.isNotBlank(pairDataJsonString)) {
-        JSONObject pairDataJson = new JSONObject(pairDataJsonString);
-        if (pairDataJson.has("data") && pairDataJson.getJSONObject("data").has("pair")
-            && !pairDataJson.getJSONObject("data").isNull("pair")) {
-          JSONObject pairJsonObject = pairDataJson.getJSONObject("data").getJSONObject("pair");
+        JsonObject pairDataJson = Json.createReader(new StringReader(pairDataJsonString)).readObject();
+        if (pairDataJson.containsKey("data") && pairDataJson.getJsonObject("data").containsKey("pair")
+            && !pairDataJson.getJsonObject("data").isNull("pair")) {
+          JsonObject pairJsonObject = pairDataJson.getJsonObject("data").getJsonObject("pair");
           String meedsPrice = pairJsonObject.getString("token1Price");
-          exchangeRateResult.put("meedsPrice", meedsPrice);
+          exchangeRateResultBuilder.add("meedsPrice", meedsPrice);
           String meedsReserve = pairJsonObject.getString("reserve1");
-          exchangeRateResult.put("meedsReserve", meedsReserve);
+          exchangeRateResultBuilder.add("meedsReserve", meedsReserve);
           String wethReserve = pairJsonObject.getString("reserve0");
-          exchangeRateResult.put("wethReserve", wethReserve);
+          exchangeRateResultBuilder.add("wethReserve", wethReserve);
           return true;
-        } else if (pairDataJson.has("errors")
+        } else if (pairDataJson.containsKey("errors")
             && !pairDataJson.isNull("errors")
-            && pairDataJson.getJSONArray("errors").length() > 0
-            && pairDataJson.getJSONArray("errors").getJSONObject(0).has("message")
-            && !pairDataJson.getJSONArray("errors").getJSONObject(0).isNull("message")) {
-          String message = pairDataJson.getJSONArray("errors").getJSONObject(0).getString("message");
+            && pairDataJson.getJsonArray("errors").size() > 0
+            && pairDataJson.getJsonArray("errors").getJsonObject(0).containsKey("message")
+            && !pairDataJson.getJsonArray("errors").getJsonObject(0).isNull("message")) {
+          String message = pairDataJson.getJsonArray("errors").getJsonObject(0).getString("message");
           LOG.warn(message);
           if (message.contains("up to block number")) {
             Matcher matcher = LATEST_BLOCK_NUMBER_ERROR_PATTERN.matcher(message);
             if (matcher.find()) {
               blockNumber = matcher.group(1);
               LOG.info("Attempt to retrieve data with block number {}", blockNumber);
-              return addPairData(exchangeRateResult, blockNumber);
+              return addPairData(exchangeRateResultBuilder, blockNumber);
             }
           }
         }
@@ -228,10 +236,10 @@ public class MeedsExchangeServlet extends HttpServlet {
         + date.toEpochSecond() + "}){number}}\"}";
     String blockNumberDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks", body);
     if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
-      JSONObject blockNumberDataJson = new JSONObject(blockNumberDataJsonString);
-      if (blockNumberDataJson.has("data") && blockNumberDataJson.getJSONObject("data").has("blocks")
-          && !blockNumberDataJson.getJSONObject("data").isNull("blocks")) {
-        return blockNumberDataJson.getJSONObject("data").getJSONArray("blocks").getJSONObject(0).getString("number");
+      JsonObject blockNumberDataJson = Json.createReader(new StringReader(blockNumberDataJsonString)).readObject();
+      if (blockNumberDataJson.containsKey("data") && blockNumberDataJson.getJsonObject("data").containsKey("blocks")
+          && !blockNumberDataJson.getJsonObject("data").isNull("blocks")) {
+        return blockNumberDataJson.getJsonObject("data").getJsonArray("blocks").getJsonObject(0).getString("number");
       }
     }
     return null;
@@ -241,10 +249,10 @@ public class MeedsExchangeServlet extends HttpServlet {
     String body = "{\"query\":\"{blocks(first:1,orderBy:number,orderDirection:desc){number}}\"}";
     String blockNumberDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks", body);
     if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
-      JSONObject blockNumberDataJson = new JSONObject(blockNumberDataJsonString);
-      if (blockNumberDataJson.has("data") && blockNumberDataJson.getJSONObject("data").has("blocks")
-          && !blockNumberDataJson.getJSONObject("data").isNull("blocks")) {
-        return blockNumberDataJson.getJSONObject("data").getJSONArray("blocks").getJSONObject(0).getString("number");
+      JsonObject blockNumberDataJson = Json.createReader(new StringReader(blockNumberDataJsonString)).readObject();
+      if (blockNumberDataJson.containsKey("data") && blockNumberDataJson.getJsonObject("data").containsKey("blocks")
+          && !blockNumberDataJson.getJsonObject("data").isNull("blocks")) {
+        return blockNumberDataJson.getJsonObject("data").getJsonArray("blocks").getJsonObject(0).getString("number");
       }
     }
     return null;
@@ -281,5 +289,4 @@ public class MeedsExchangeServlet extends HttpServlet {
       return null;
     }
   }
-
 }
