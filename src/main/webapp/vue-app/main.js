@@ -17,10 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents';
-import i18nMessages from '../json/i18nMessages.json';
+import i18nMessages from './json/i18nMessages.json';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
+import * as authentication from './js/authentication.js';
+import * as tenantManagement from './js/tenantManagement.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
@@ -28,6 +30,14 @@ window.Object.defineProperty(Vue.prototype, '$ethUtils', {
 
 window.Object.defineProperty(Vue.prototype, '$exchange', {
   value: exchange,
+});
+
+window.Object.defineProperty(Vue.prototype, '$authentication', {
+  value: authentication,
+});
+
+window.Object.defineProperty(Vue.prototype, '$tenantManagement', {
+  value: tenantManagement,
 });
 
 Vue.use(Vuex);
@@ -228,16 +238,14 @@ const store = new Vuex.Store({
               state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
+              state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
               // TODO replace with real addresses
-              state.univ2PairAddress = null;
               state.nftAddress = null;
               state.xMeedAddress = null;
               state.tokenFactoryAddress = null;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
-
-              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://opensea.io/assets/${state.nftAddress}`;
             } else if (state.networkId === 4) {
@@ -418,7 +426,7 @@ const store = new Vuex.Store({
         state.sushiswapRouterContract = new ethers.Contract(
           state.sushiswapRouterAddress,
           state.routerABI,
-          state.provider,
+          state.provider
         );
         state.meedContract = new ethers.Contract(
           state.meedAddress,
@@ -563,7 +571,13 @@ if (isMetamaskInstalled) {
 
   window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
   window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
-  window.ethereum.on('accountsChanged', () => window.location.reload());
+  window.ethereum.on('accountsChanged', () => {
+    if (authentication.hasAuthenticatedLogin()) {
+      authentication.logout().finally(() => window.location.reload());
+    } else {
+      window.location.reload();
+    }
+  });
   window.ethereum.on('chainChanged', () => window.location.reload());
 
   window.setInterval(() => store.commit('loadGasPrice'), 30000);
@@ -584,12 +598,6 @@ new Vue({
     dark: true,
     silent: true,
     iconfont: 'mdi',
-    theme: {
-      themes: {
-        light: {
-          primary: '#E25D5D',
-        },
-      },
-    },
+    theme: { disable: true },
   }),
 });
