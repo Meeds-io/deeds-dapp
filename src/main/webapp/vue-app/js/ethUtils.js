@@ -47,6 +47,11 @@ export function switchMetamaskNetwork(networkId) {
   });
 }
 
+export function signMessage(provider, address, message) {
+  const data = ethers.utils.toUtf8Bytes(message);
+  return provider.send('personal_sign', [ethers.utils.hexlify(data), address]);
+}
+
 export function toDecimals(value, decimals) {
   return ethers.utils.parseUnits(new BigNumber(value.toString && value.toString() || value).toFixed(decimals), decimals);
 }
