@@ -2,7 +2,7 @@ name: eXo PR Task Webhook
 
 on:
   pull_request:
-    types: [opened, reopened, closed]
+    types: [opened, reopened, closed, review_requested]
   pull_request_review:
     types: [submitted]
 
@@ -10,7 +10,10 @@ env:
   message: ${{ github.event.pull_request.title }}
   state: ${{ github.event.pull_request.state }}
   pull_number: ${{ github.event.pull_request.number }}
+  requested_reviewers: ${{ toJson(github.event.pull_request.requested_reviewers) }}
+  creator: ${{ github.event.pull_request.user.login }}
   repo_name: ${{ github.event.repository.full_name }}
+  base_branch_name: ${{ github.event.pull_request.base.ref }}
 jobs:
   check_tasks:
     name: Check for eXo tasks identifiers
@@ -26,16 +29,40 @@ jobs:
           echo "OK Task(s) found! Starting notifications..."
           link="PR <a href=\"https://github.com/${repo_name}/pull/${pull_number}\">${repo_name}#${pull_number}</a>"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
-              msg="$link has been merged."
+            if [ "${{ github.event.action }}" = "review_requested" ]; then
+              ghLogins="$(echo ${requested_reviewers} | jq '.[].login' | tr -d '\"' | xargs)"
+              if [ ! -z "${ghLogins}" ]; then
+                tribeUsers=""
+                for ghLogin in ${ghLogins}; do
+                  response=$(curl -s -f -L -u ${TRIBE_USERNAME}:${TRIBE_PASSWORD} -XGET "${TRIBE_GAMGH_CONNECTOR_REST_URL}/users/${ghLogin}" || echo "")
+                  [ -z "${response}" ] || tribeUsers="${tribeUsers} @${response}"
+                done
+                if [ ! -z "${tribeUsers}" ]; then
+                  echo "Requested reviewers are: $(echo ${tribeUsers} | tr -d '@')."
+                  msg="💭 $link requested a review from ${tribeUsers} ."
+                else
+                 echo "Could not get Tribe users' identifiers! Abort"
+                 exit 0
+                fi
+              else
+                echo "No Github reviewers' identifiers were found! Abort!"
+                exit 0
+              fi
+            elif [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+              msg="🌟 $link has been merged into ${base_branch_name}."
             else
-              msg="$link has been ${{ github.event.action }}."
+              msg="ℹ️ $link has been ${{ github.event.action }}."
             fi
           elif [ "${{ github.event_name }}" = "pull_request_review" ] && [ "${{ github.event.action }}" = "submitted" ]; then
+            mentionCreator=""
+            response=$(curl -s -f -L -u ${TRIBE_USERNAME}:${TRIBE_PASSWORD} -XGET "${TRIBE_GAMGH_CONNECTOR_REST_URL}/users/${creator}" || echo "")
+            [ -z "${response}" ] || mentionCreator=" FYI @${response} "
             if [ "${{ github.event.review.state }}" = "changes_requested" ]; then
-              msg="$link requires some changes."
+              msg="🛠️ $link requires some changes.${mentionCreator}"
+            elif [ "${{ github.event.review.state }}" = "approved" ]; then
+              msg="✅ $link has been ${{ github.event.review.state }}.${mentionCreator}"
             else
-              msg="$link has been ${{ github.event.review.state }}."
+              msg="ℹ️ $link has been ${{ github.event.review.state }}."
             fi
           fi
           echo "*** Message is:"
@@ -43,9 +70,10 @@ jobs:
           echo "***"
           for TASK_ID in ${TASKS_IDS}; do
             echo "Commenting to Task #${TASK_ID}..."
-            curl -s -L -u ${TRIBE_USERNAME}:${TRIBE_PASSWORD} -XPOST --data-urlencode "${msg}" "${TRIBE_TASK_REST_PREFIXE_URL}/comments/${TASK_ID}"
+            curl -s -L -u ${TRIBE_USERNAME}:${TRIBE_PASSWORD} -XPOST --data-urlencode "<p>${msg}</p>" "${TRIBE_TASK_REST_PREFIXE_URL}/comments/${TASK_ID}"
           done
         env:
           TRIBE_USERNAME: ${{ secrets.TRIBE_USERNAME }}
           TRIBE_PASSWORD: ${{ secrets.TRIBE_PASSWORD }}
           TRIBE_TASK_REST_PREFIXE_URL: ${{ secrets.TRIBE_TASK_REST_PREFIXE_URL }}
+          TRIBE_GAMGH_CONNECTOR_REST_URL: ${{ secrets.TRIBE_GAMGH_CONNECTOR_REST_URL }}
