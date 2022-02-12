@@ -21,7 +21,7 @@
     <groupId>org.exoplatform</groupId>
     <artifactId>maven-parent-pom</artifactId>
     <version>23</version>
-    <relativePath />
+    <relativePath/>
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-webapp</artifactId>
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.18</version>
+      <version>1.7.33</version>
     </dependency>
   </dependencies>
   <build>
