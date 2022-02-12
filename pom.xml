@@ -21,7 +21,7 @@
     <groupId>org.exoplatform</groupId>
     <artifactId>maven-parent-pom</artifactId>
     <version>23</version>
-    <relativePath />
+    <relativePath/>
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-webapp</artifactId>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.7</version>
+      <version>2.11.0</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
