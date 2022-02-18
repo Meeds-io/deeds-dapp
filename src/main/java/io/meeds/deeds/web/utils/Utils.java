@@ -18,8 +18,6 @@
  */
 package io.meeds.deeds.web.utils;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Random;
 
 import javax.servlet.http.HttpSession;
@@ -28,21 +26,7 @@ public class Utils {
 
   private static final String LOGIN_MESSAGE_ATTRIBUTE_NAME = "login_message";
 
-  private static final Random RANDOM;
-
-  static {
-    Random random = null;
-    try {
-      random = SecureRandom.getInstanceStrong();
-    } catch (NoSuchAlgorithmException e) {
-      try {
-        random = SecureRandom.getInstance("SHA1PRNG");
-      } catch (NoSuchAlgorithmException e1) {
-        random = new SecureRandom();
-      }
-    }
-    RANDOM = random;
-  }
+  private static final Random RANDOM                       = new Random();
 
   private Utils() {
     // Utility class
@@ -51,14 +35,18 @@ public class Utils {
   public static String generateLoginMessage(HttpSession session) {
     String token = getLoginMessage(session);
     if (token == null) {
-      token = RANDOM.nextLong() + "-" + RANDOM.nextLong() + "-" + RANDOM.nextLong();
-      session.setAttribute(LOGIN_MESSAGE_ATTRIBUTE_NAME, token);
+      token = getRandomString();
+      session.setAttribute(LOGIN_MESSAGE_ATTRIBUTE_NAME, token); // NOSONAR
     }
     return token;
   }
 
   public static String getLoginMessage(HttpSession session) {
     return session == null ? null : (String) session.getAttribute(LOGIN_MESSAGE_ATTRIBUTE_NAME);
+  }
+
+  private static String getRandomString() {
+    return RANDOM.nextLong() + "-" + RANDOM.nextLong() + "-" + RANDOM.nextLong();
   }
 
 }
