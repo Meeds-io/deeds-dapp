@@ -85,13 +85,8 @@ public class DeedAuthenticationProvider implements AuthenticationProvider {
     String prefix = PERSONAL_MESSAGE_PREFIX + rawMessage.length();
     byte[] rawMessageHash = Hash.sha3((prefix + rawMessage).getBytes());
     byte[] signatureBytes = Numeric.hexStringToByteArray(signedMessage);
-
-    byte v = signatureBytes[64];
-    if (v < 27) {
-      v += 27;
-    }
-    byte[] r = (byte[]) Arrays.copyOfRange(signatureBytes, 0, 32);
-    byte[] s = (byte[]) Arrays.copyOfRange(signatureBytes, 32, 64);
+    byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
+    byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
 
     // Iterate for each possible key to recover
     for (int i = 0; i < 4; i++) {
