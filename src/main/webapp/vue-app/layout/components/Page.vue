@@ -22,25 +22,41 @@ import routes from './../routes';
 export default {
   data: () => ({
     regex: /(\/)([a-zA-Z]+)(\/?)([a-zA-Z]*)/,
-    currentRoute: window.location.pathname || '/',
+    currentRoute: '/',
   }),
   computed: Vuex.mapState({
     address: state => state.address,
     viewComponent(state) {
-      if (state.address) {
-        const pathParts = this.currentRoute.match(this.regex);
-        const route = pathParts.length > 4 && pathParts[4].length && pathParts[4] || '';
-        return routes[`/${route}`] || {template: '<p>Not Found</p>'};
+      if (!this.currentRoute) {
+        return {template: '<p>Not Found</p>'};
+      } else if (state.address) {
+        return routes[this.currentRoute] || {template: '<p>Not Found</p>'};
       } else {
         return {template: '<deeds-wallet-connect />'};
       }
     },
   }),
   created() {
-    this.$root.$on('location-change', () => this.currentRoute = window.location.pathname || '/');
+    this.$root.$on('location-change', this.refreshRoute);
+    this.refreshRoute(window.location.pathname);
   },
   render(h) {
     return h(this.viewComponent);
+  },
+  methods: {
+    refreshRoute(path) {
+      const parts = path && window.location.pathname.split('/') || [];
+      let currentRoute = '/';
+      if (parts.length > 1) {
+        currentRoute = parts[parts.length - 1];
+        if (!currentRoute || !currentRoute.length) {
+          currentRoute = '/';
+        } else {
+          currentRoute = `/${currentRoute}`;
+        }
+      }
+      this.currentRoute = currentRoute;
+    },
   },
 };
 </script>

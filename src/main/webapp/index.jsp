@@ -1,4 +1,4 @@
-﻿<%@page import="io.meeds.deeds.web.utils.Utils"%>
+<%@page import="io.meeds.deeds.web.utils.Utils"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 
 <!DOCTYPE html>
@@ -7,19 +7,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Meeds DAO</title>
-    <meta name="msapplication-TileImage" content="/dapp/images/favicon.png">
+    <meta name="msapplication-TileImage" content="/deeds-dapp/static/images/favicon.png">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://cdn.jsdelivr.net 'unsafe-eval';
                                                         style-src 'self' https://fonts.gstatic.com/ https://fonts.googleapis.com/ https://cdn.jsdelivr.net/ ;
                                                         font-src https://fonts.gstatic.com https://cdn.jsdelivr.net ;
                                                         img-src 'self'">
-    <link rel="icon" href="/dapp/images/favicon.png" sizes="32x32">
-    <link rel="icon" href="/dapp/images/favicon.png" sizes="192x192">
-    <link rel="apple-touch-icon-precomposed" href="/dapp/images/favicon.png">
+    <link rel="icon" href="/deeds-dapp/static/images/favicon.png" sizes="32x32">
+    <link rel="icon" href="/deeds-dapp/static/images/favicon.png" sizes="192x192">
+    <link rel="apple-touch-icon-precomposed" href="/deeds-dapp/static/images/favicon.png">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.14/dist/vuetify.min.css" rel="stylesheet">
-    <link href="/dapp/css/deeds.css" rel="stylesheet">
-    <link href="/dapp/css/vuetify-theme.css" rel="stylesheet">
+    <link href="/deeds-dapp/static/css/deeds.css" rel="stylesheet">
+    <link href="/deeds-dapp/static/css/vuetify-theme.css" rel="stylesheet">
   </head>
   <body>
     <div id="deedsApp"></div>
@@ -36,6 +36,6 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bignumber.js@9.0.1/bignumber.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.min.js"></script>
-    <script src="/dapp/js/deeds.js"></script>
+    <script src="/deeds-dapp/static/js/deeds.js"></script>
   </body>
 </html>

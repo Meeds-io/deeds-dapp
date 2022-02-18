@@ -20,6 +20,7 @@
   <v-tabs v-model="selectedTab">
     <v-tab
       ref="snapshot"
+      id="snapshot"
       :href="`/${parentLocation}/snapshot`"
       link 
       class="px-0 me-2"
@@ -28,6 +29,7 @@
     </v-tab>
     <v-tab
       ref="stake"
+      id="stake"
       :href="`/${parentLocation}/stake`"
       link 
       class="px-0 me-2"
@@ -36,6 +38,7 @@
     </v-tab>
     <v-tab
       ref="deeds"
+      id="deeds"
       :href="`/${parentLocation}/deeds`"
       link 
       class="px-0 me-2"
@@ -44,8 +47,9 @@
     </v-tab>
     <v-tab
       ref="farm"
+      id="farm"
       :href="`/${parentLocation}/farm`"
-      link 
+      link
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
@@ -82,7 +86,7 @@ export default {
         const link = event.target.href || event.target.parentElement && (event.target.parentElement.href || (event.target.parentElement.parentElement && event.target.parentElement.parentElement.href));
         if (link) {
           window.history.pushState({}, '', link);
-          this.$root.$emit('location-change');
+          this.$root.$emit('location-change', `/${event.target.id}`);
         }
       }
     }
