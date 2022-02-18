@@ -49,10 +49,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .headers(headers -> headers.referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicy.SAME_ORIGIN)))
         .formLogin(formLogin -> formLogin
                                          .loginProcessingUrl("/login")
-                                         .successHandler((request, response, authentication) -> {
-                                           // Disable login redirection
-                                           response.setStatus(HttpServletResponse.SC_OK);
-                                         }))
+                                         .successHandler((request,
+                                                          response,
+                                                          authentication) -> response.setStatus(HttpServletResponse.SC_OK)))
         .logout(logout -> logout
                                 .logoutUrl("/logout")
                                 .logoutSuccessHandler((request, response, authentication) -> {

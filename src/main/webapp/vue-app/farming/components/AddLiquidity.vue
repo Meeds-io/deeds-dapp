@@ -38,7 +38,7 @@
         text
         class="rounded-lg me-4">
         <span class="text-none">Sushiswap</span>
-        <img src="/dapp/images/sushiswap.ico" class="my-3">
+        <img src="/deeds-dapp/static/images/sushiswap.ico" class="my-3">
       </v-btn>
       <v-btn
         v-if="addUniswapLiquidityLink"

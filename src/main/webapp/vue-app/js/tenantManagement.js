@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export function changeStatus(networkId, deedAddress, nftId, status) {
-  return fetch(`/dapp/api/tenant/${networkId}/${deedAddress}/${nftId}`, {
+  return fetch(`/deeds-dapp/api/tenant/${networkId}/${deedAddress}/${nftId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -33,7 +33,7 @@ export function changeStatus(networkId, deedAddress, nftId, status) {
 }
 
 export function getStatus(networkId, deedAddress, nftId) {
-  return fetch(`/dapp/api/tenant/${networkId}/${deedAddress}/${nftId}`, {
+  return fetch(`/deeds-dapp/api/tenant/${networkId}/${deedAddress}/${nftId}`, {
     method: 'GET',
     credentials: 'include',
   }).then(resp => {

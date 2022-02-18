@@ -17,14 +17,14 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export function retrieveMeedsData() {
-  return fetch('/dapp/json/exchangeRate-meeds.json', {
+  return fetch('/deeds-dapp/static/json/exchangeRate-meeds.json', {
     cache: 'reload',
     method: 'GET',
   }).then(resp => resp && resp.ok && resp.json());
 }
 
 export function retrieveCurrencyExchangeRate() {
-  return fetch('/dapp/json/exchangeRate-eur.json', {
+  return fetch('/deeds-dapp/static/json/exchangeRate-eur.json', {
     cache: 'reload',
     method: 'GET'
   }).then(resp => resp && resp.ok && resp.json());

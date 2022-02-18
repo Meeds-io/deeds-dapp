@@ -20,7 +20,7 @@ export function login(address, signedMessage) {
   if (hasAuthenticatedLogin()) {
     return logout().then(() => login(address, signedMessage));
   }
-  return fetch('/dapp/login', {
+  return fetch('/deeds-dapp/login', {
     method: 'POST',
     redirect: 'manual',
     headers: {
@@ -39,7 +39,7 @@ export function login(address, signedMessage) {
 }
 
 export function logout() {
-  return fetch('/dapp/logout', {
+  return fetch('/deeds-dapp/logout', {
     method: 'POST',
     redirect: 'manual',
     credentials: 'include',
