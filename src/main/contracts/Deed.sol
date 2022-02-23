@@ -75,11 +75,12 @@ contract Deed is ERC1155Tradable, StrategyRole {
      * @param _account  User account address
      * @param _id       ID of the token type
      */
-    function startUsingNFT(address _account, uint256 _id) public onlyStrategy {
-        require(balances[_account][_id] > 0, "MeedsNFT: user account doesnt have NFT");
+    function startUsingNFT(address _account, uint256 _id) external onlyStrategy returns (bool) {
+        require(balances[_account][_id] > 0, "Deed#startUsingNFT: user account doesn't own the NFT");
         stratUseCount[_account][_id][msg.sender] = stratUseCount[_account][_id][msg.sender].add(1);
         totalUseCount[_account][_id] = totalUseCount[_account][_id].add(1);
         emit StartedUsingNFT(_account, _id, msg.sender);
+        return true;
     }
 
     /**
@@ -87,19 +88,19 @@ contract Deed is ERC1155Tradable, StrategyRole {
      * @param _account  User account address
      * @param _id       ID of the token type
      */
-    function endUsingNFT(address _account, uint256 _id) public onlyStrategy {
-        // if a strategy tries to call endUsingNFT function for which it did not call
-        // startUsingNFT then subtraction reverts due to safemath.
+    function endUsingNFT(address _account, uint256 _id) external onlyStrategy returns (bool) {
+        require(stratUseCount[_account][_id][msg.sender] > 0, "Deed#endUsingNFT: NFT is not currently in use by strategy");
         stratUseCount[_account][_id][msg.sender] = stratUseCount[_account][_id][msg.sender].sub(1);
         totalUseCount[_account][_id] = totalUseCount[_account][_id].sub(1);
         emit EndedUsingNFT(_account, _id, msg.sender);
+        return true;
     }
 
     /**
      * @dev Overrides safeTransferFrom function of ERC1155 to introduce totalUseCount check
      */
     function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data) public override {
-        require(totalUseCount[_from][_id] == 0, "MeedsNFT: NFT being used in strategy");
+        require(totalUseCount[_from][_id] == 0, "Deed#safeTransferFrom: NFT being used in strategy");
         ERC1155.safeTransferFrom(_from, _to, _id, _amount, _data);
     }
 
@@ -112,7 +113,7 @@ contract Deed is ERC1155Tradable, StrategyRole {
 
         // check if any nft is being used
         for (uint256 i = 0; i < nTransfer; i++) {
-            require(totalUseCount[_from][_ids[i]] == 0, "MeedsNFT: NFT being used in strategy");
+            require(totalUseCount[_from][_ids[i]] == 0, "Deed#safeBatchTransferFrom: NFT being used in strategy");
         }
 
         ERC1155.safeBatchTransferFrom(_from, _to, _ids, _amounts, _data);
