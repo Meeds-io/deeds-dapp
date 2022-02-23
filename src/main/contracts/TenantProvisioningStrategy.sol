@@ -3,39 +3,30 @@ pragma solidity 0.8.11;
 
 import "./abstract/SafeMath.sol";
 import "./abstract/Address.sol";
-import "./abstract/Ownable.sol";
+import "./abstract/ManagerRole.sol";
 import "./abstract/TenantProvisioningDelegator.sol";
-import "./Deed.sol";
+import "./abstract/StrategyHandler.sol";
 
 /**
  * @title Deed Tenant provisionning Contract for Deed NFT owners
  */
-contract TenantProvisioningStrategy is Ownable {
+contract TenantProvisioningStrategy is ManagerRole {
     using SafeMath for uint256;
     using Address for address;
 
-    Deed public deed;
+    event DelegateeAdded(address indexed account, uint256 nftId, address indexed manager);
+    event DelegateeRemoved(address indexed account, uint256 nftId, address indexed manager);
 
-    address[] public blockerStrategies;
+    StrategyHandler public deed;
 
-    TenantProvisioningDelegator[] public delegators;
+    // NFT ID => Delegatee on behalf of NFT owner
+    mapping(uint256 => address) private delegatees;
 
     /**
      * @dev Throws if called by any account other than the owner of the NFT.
      */
-    modifier onlyNFTOwner(uint256 _nftId) {
-        uint256 _balance = deed.balanceOf(msg.sender, _nftId);
-        if (_balance == 0) {
-            uint i = 0;
-            while ( i < delegators.length && _balance == 0) {
-                if (delegators[i++].isApprovedForProvisioning(msg.sender, _nftId)) {
-                    _balance++;
-                }
-            }
-            if (_balance == 0) {
-              revert("TenantProvisioningStrategy#onlyNFTOwner: Not owner or approved to use the NFT");
-            }
-        }
+    modifier onlyProvisioningManager(uint256 _nftId) {
+        require(isProvisioningManager(msg.sender, _nftId), "TenantProvisioningStrategy#onlyProvisioningOwner: Not provisioning owner of the NFT");
         _;
     }
 
@@ -45,21 +36,18 @@ contract TenantProvisioningStrategy is Ownable {
      * used by current strategy
      */
     modifier canUse(uint256 _nftId) {
-        require(deed.getStratUseCount(msg.sender, _nftId, address(this)) == 0, "TenantProvisioningStrategy#startDeedTenant: NFT is already used in current strategy");
-        for (uint i = 0; i < blockerStrategies.length;i++) {
-            require(deed.getStratUseCount(msg.sender, _nftId, blockerStrategies[i]) == 0, "TenantProvisioningStrategy#startDeedTenant: NFT is used in another blocker strategy");
-        }
+        require(deed.getStrategyUseCount(msg.sender, _nftId, address(this)) == 0, "TenantProvisioningStrategy#startDeedTenant: NFT is already used in current strategy");
         _;
     }
 
-    constructor (Deed _deed) {
+    constructor (StrategyHandler _deed) {
         deed = _deed;
     }
 
     /**
      * @dev Enroll NFT into current strategy to start corresponding Tenant in its city
      */
-    function startUsingDeed(uint256 _nftId) external onlyNFTOwner(_nftId) canUse(_nftId) {
+    function startUsingDeed(uint256 _nftId) external onlyProvisioningManager(_nftId) canUse(_nftId) {
         try deed.startUsingNFT(msg.sender, _nftId) returns (bool response) {
             if (response != true) {
                 revert("TenantProvisioningStrategy#startUsingDeed: Error Starting Strategy");
@@ -74,7 +62,7 @@ contract TenantProvisioningStrategy is Ownable {
     /**
      * @dev ends using NFT. This will throws an error when NFT is not in use
      */
-    function endUsingDeed(uint256 _nftId) external onlyNFTOwner(_nftId) {
+    function endUsingDeed(uint256 _nftId) external onlyProvisioningManager(_nftId) {
         try deed.endUsingNFT(msg.sender, _nftId) returns (bool response) {
             if (response != true) {
                 revert("TenantProvisioningStrategy#endUsingDeed: Error Stopping Strategy");
@@ -86,33 +74,35 @@ contract TenantProvisioningStrategy is Ownable {
         }
     }
 
-    /**
-     * @dev Add a blocker strategy
-     */
-    function addBlockerStrategy(address _strategy) external onlyOwner {
-        blockerStrategies.push(_strategy);
+    function setDelegatee(address _address, uint256 _nftId) external onlyManager returns(bool) {
+        delegatees[_nftId] = _address;
+        emit DelegateeAdded(_address, _nftId, _msgSender());
+        return true;
+    }
+
+    function removeDelegatee(uint256 _nftId) external onlyManager returns(bool) {
+        address delegatee = delegatees[_nftId];
+        delete delegatees[_nftId];
+        emit DelegateeRemoved(delegatee, _nftId, _msgSender());
+        return true;
+    }
+
+    function getDelegatee(uint256 _nftId) public view returns(address) {
+        return delegatees[_nftId];
     }
 
     /**
-     * @dev Removes a blocker strategy identified by its index in the array
+     * @dev returns true if the address can manage NFT Tenant provisionning (Start & Stop)
      */
-    function removeBlockerStrategy(uint index) external onlyOwner {
-        delete blockerStrategies[index];
-    }
-
-    /**
-     * @dev Add a delegator
-     */
-    function addDelegator(TenantProvisioningDelegator _delegator) external onlyOwner {
-        require(address(_delegator).isContract(), "TenantProvisioningStrategy#addDelegator: Address must be a TenantProvisioningDelegator contract");
-        delegators.push(_delegator);
-    }
-
-    /**
-     * @dev Removes a _delegator identified by its index in the array
-     */
-    function removeDelegator(uint index) external onlyOwner {
-        delete delegators[index];
+    function isProvisioningManager(address _address, uint256 _nftId) public view returns(bool) {
+        uint256 _balance = deed.balanceOf(_address, _nftId);
+        if (_balance == 0) {
+            // If this is not NFT owner, we will check if the _address is approved to manage provisioning
+            return _address == delegatees[_nftId];
+        } else {
+            // If this is about owner, the provisionning shouldn't be delegated
+            return address(0x0) == delegatees[_nftId];
+        }
     }
 
 }

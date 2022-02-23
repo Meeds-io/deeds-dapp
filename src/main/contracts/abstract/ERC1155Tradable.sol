@@ -117,7 +117,9 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
             emit URI(_uri, _id);
         }
 
-        if (_initialSupply != 0) _mint(_initialOwner, _id, _initialSupply, _data);
+        if (_initialSupply != 0) {
+            _mint(_initialOwner, _id, _initialSupply, _data);
+        }
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
         tokenCityIndex[_id] = _cityIndex;
