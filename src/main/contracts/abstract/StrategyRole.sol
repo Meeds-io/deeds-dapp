@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.11;
 
-import "./Ownable.sol";
+import "./ManagerRole.sol";
 import "./SafeMath.sol";
 import "./Context.sol";
 import "./Roles.sol";
@@ -10,7 +10,7 @@ import "./Roles.sol";
  * @title StrategyRole
  * @dev Owner is responsible to add/remove strategy
  */
-contract StrategyRole is Context, Ownable {
+contract StrategyRole is Context, ManagerRole {
     using Roles for Roles.Role;
 
     event StrategyAdded(address indexed account);
@@ -27,11 +27,11 @@ contract StrategyRole is Context, Ownable {
         return _strategies.has(account);
     }
 
-    function addStrategy(address account) public onlyOwner {
+    function addStrategy(address account) public onlyManager {
         _addStrategy(account);
     }
 
-    function removeStrategy(address account) public onlyOwner {
+    function removeStrategy(address account) public onlyManager {
         _removeStrategy(account);
     }
 

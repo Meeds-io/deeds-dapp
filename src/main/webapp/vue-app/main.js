@@ -129,6 +129,12 @@ const store = new Vuex.Store({
       'function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256)',
       'function pendingRewardBalanceOf(address _fundAddress, address _userAddress) public view returns (uint256)',
     ],
+    tenantProvisioningABI: [
+      'function startTenant(uint256 _nftId) external',
+      'function stopTenant(uint256 _nftId) external',
+      'function getDelegatee(uint256 _nftId) public view returns(address)',
+      'function isProvisioningManager(address _address, uint256 _nftId) public view returns(bool)',
+    ],
     // Contracts addresses
     sushiswapRouterAddress: null,
     wethAddress: null,
@@ -138,6 +144,7 @@ const store = new Vuex.Store({
     xMeedAddress: null,
     nftAddress: null,
     tokenFactoryAddress: null,
+    tenantProvisioningAddress: null,
     // Contracts objects
     sushiswapRouterContract: null,
     wethContract: null,
@@ -145,6 +152,7 @@ const store = new Vuex.Store({
     xMeedContract: null,
     nftContract: null,
     tokenFactoryContract: null,
+    tenantProvisioningContract: null,
     // User preferred language
     language,
     // Metamask status
@@ -256,9 +264,9 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-              state.nftAddress = '0x56B4fDF68BE8BAc27DA774e59484CD1c955c4985';
+              state.nftAddress = '0x47345425e76CDF38B8816B82fBd777c4B66e64Da';
               state.xMeedAddress = '0xea5b691e3711e3804B9DE627d7d27A1545DfA084';
-              state.tenantProvisioningAddress = '0x891a15e1378479506B8A8A4780334240034E97ea';
+              state.tenantProvisioningAddress = '0x1cf39165cFA04d73e9eC5DDD8dA5695311942a0a';
               state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
               state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
               state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
@@ -457,6 +465,13 @@ const store = new Vuex.Store({
           state.tokenFactoryContract = new ethers.Contract(
             state.tokenFactoryAddress,
             state.tokenFactoryABI,
+            state.provider
+          );
+        }
+        if (state.tenantProvisioningAddress) {
+          state.tenantProvisioningContract = new ethers.Contract(
+            state.tenantProvisioningAddress,
+            state.tenantProvisioningABI,
             state.provider
           );
         }
