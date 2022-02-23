@@ -47,7 +47,7 @@ contract TenantProvisioningStrategy is ManagerRole {
     /**
      * @dev Enroll NFT into current strategy to start corresponding Tenant in its city
      */
-    function startUsingDeed(uint256 _nftId) external onlyProvisioningManager(_nftId) canUse(_nftId) {
+    function startTenant(uint256 _nftId) external onlyProvisioningManager(_nftId) canUse(_nftId) {
         try deed.startUsingNFT(msg.sender, _nftId) returns (bool response) {
             if (response != true) {
                 revert("TenantProvisioningStrategy#startUsingDeed: Error Starting Strategy");
@@ -62,7 +62,7 @@ contract TenantProvisioningStrategy is ManagerRole {
     /**
      * @dev ends using NFT. This will throws an error when NFT is not in use
      */
-    function endUsingDeed(uint256 _nftId) external onlyProvisioningManager(_nftId) {
+    function stopTenant(uint256 _nftId) external onlyProvisioningManager(_nftId) {
         try deed.endUsingNFT(msg.sender, _nftId) returns (bool response) {
             if (response != true) {
                 revert("TenantProvisioningStrategy#endUsingDeed: Error Stopping Strategy");
