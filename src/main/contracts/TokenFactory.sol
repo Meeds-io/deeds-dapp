@@ -452,14 +452,7 @@ contract TokenFactory is Ownable, FundDistribution {
     function _getAccMeedPerShare(address _lpAddress, uint256 pendingRewardAmount) internal view returns (uint256) {
         FundInfo memory fund = fundInfos[_lpAddress];
         if (block.timestamp > fund.lastRewardTime) {
-            uint256 lpSupply;
-            try IERC20(_lpAddress).balanceOf(address(this)) returns(uint256 balance) {
-                lpSupply = balance;
-            } catch {
-                // Not an ERC20, so keep the accMeedPerShare equal to 0,
-                // thus no share will be sent and computation will be ignored
-                lpSupply = 0;
-            }
+            uint256 lpSupply = IERC20(_lpAddress).balanceOf(address(this));
             if (lpSupply > 0) {
               return fund.accMeedPerShare.add(pendingRewardAmount.mul(MEED_REWARDING_PRECISION).div(lpSupply));
             }
