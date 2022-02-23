@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
-import "./abstract/Ownable.sol";
+import "./abstract/Address.sol";
 import "./abstract/SafeMath.sol";
+import "./abstract/Ownable.sol";
 import "./abstract/SafeERC20.sol";
 import "./abstract/MeedsToken.sol";
 import "./abstract/FundDistribution.sol";
@@ -32,6 +33,7 @@ contract TokenFactory is Ownable, FundDistribution {
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
+    using Address for address;
 
     // Info of each user who staked LP Tokens
     struct UserInfo {
@@ -108,14 +110,36 @@ contract TokenFactory is Ownable, FundDistribution {
      * @dev changes the rewarded MEEDs per minute
      */
     function setMeedPerMinute(uint256 _meedPerMinute) external onlyOwner {
-        require(_meedPerMinute > 0, "!meedPerMinute-0");
+        require(_meedPerMinute > 0, "TokenFactory#setMeedPerMinute: _meedPerMinute must be strictly positive integer");
         meedPerMinute = _meedPerMinute;
     }
 
     /**
-     * @dev add a new Fund Address. The address can be an LP Token or another contract
-     * that will receive funds and distribute MEED earnings switch a specific algorithm
-     * (User and/or Employee Engagement Program, DAO, xMEED staking...)
+     * @dev add a new Fund Address. The address must be an ERC20 LP Token contract address.
+     * 
+     * The proportion of MEED rewarding can be fixed (30% by example) or variable (using allocationPoints).
+     * The allocationPoint will determine the proportion (percentage) of MEED rewarding that a fund will take
+     * comparing to other funds using the same percentage mechanism.
+     * 
+     * The computing of percentage using allocationPoint mechanism is as following:
+     * Allocation percentage = allocationPoint / totalAllocationPoints * (100 - totalFixedPercentage)
+     * 
+     * The computing of percentage using fixedPercentage mechanism is as following:
+     * Allocation percentage = fixedPercentage
+     * 
+     * If the rewarding didn't started yet, no fund address will receive rewards.
+     * 
+     * See {sendReward} method for more details.
+     */
+    function addLPToken(IERC20 _lpToken, uint256 _value, bool _isFixedPercentage) external onlyOwner {
+        require(address(_lpToken).isContract(), "TokenFactory#addLPToken: _fundAddress must be an ERC20 Token Address");
+        _addFund(address(_lpToken), _value, _isFixedPercentage, true);
+    }
+
+    /**
+     * @dev add a new Fund Address. The address can be a contract that will receive
+     * funds and distribute MEED earnings switch a specific algorithm (User and/or Employee Engagement Program,
+     * DAO, xMEED staking...)
      * 
      * The proportion of MEED rewarding can be fixed (30% by example) or variable (using allocationPoints).
      * The allocationPoint will determine the proportion (percentage) of MEED rewarding that a fund will take
@@ -129,49 +153,31 @@ contract TokenFactory is Ownable, FundDistribution {
      * 
      * If the rewarding didn't started yet, no fund will receive rewards.
      * 
-     * See {updateFundReward} method for more details.
+     * See {sendReward} method for more details.
      */
-    function addFund(address _fundAddress, uint256 _value, bool _isFixedPercentage, bool _isLPToken) external onlyOwner {
-        uint256 lastRewardTime = block.timestamp > startRewardsTime ? block.timestamp : startRewardsTime;
-
-        fundAddresses.push(_fundAddress);
-        fundInfos[_fundAddress] = FundInfo({
-          lastRewardTime: lastRewardTime,
-          isLPToken: _isLPToken,
-          allocationPoint: 0,
-          fixedPercentage: 0,
-          accMeedPerShare: 0
-        });
-
-        if (_isFixedPercentage) {
-            totalFixedPercentage = totalFixedPercentage.add(_value);
-            fundInfos[_fundAddress].fixedPercentage = _value;
-            require(totalFixedPercentage <= 100, "#addFund: total percentage can't be greater than 100%");
-        } else {
-            totalAllocationPoints = totalAllocationPoints.add(_value);
-            fundInfos[_fundAddress].allocationPoint = _value;
-        }
-        emit FundAdded(_fundAddress, _value, _isFixedPercentage, _isLPToken);
+    function addFund(address _fundAddress, uint256 _value, bool _isFixedPercentage) external onlyOwner {
+        _addFund(_fundAddress, _value, _isFixedPercentage, false);
     }
 
     /**
-     * @dev add a new Fund Address. The address can be an LP Token or another contract
-     * that will receive funds and distribute MEED earnings switch a specific algorithm
-     * (User Engagement Program, DAO, xMEED staking...)
+     * @dev Updates the allocated rewarding ratio to the ERC20 LPToken or Fund address.
+     * See #addLPToken and #addFund for more information.
      */
-    function setFundAllocation(address _fundAddress, uint256 _value, bool _isFixedPercentage) external onlyOwner {
-        updateFundReward(_fundAddress);
-
+    function updateAllocation(address _fundAddress, uint256 _value, bool _isFixedPercentage) external onlyOwner {
         FundInfo storage fund = fundInfos[_fundAddress];
+        require(fund.lastRewardTime > 0, "TokenFactory#updateAllocation: _fundAddress isn't a recognized LPToken nor a fund address");
+
+        sendReward(_fundAddress);
+
         if (_isFixedPercentage) {
-            require(fund.accMeedPerShare == 0, "#setFundAllocation Error: can't change fund percentage from variable to fixed");
+            require(fund.accMeedPerShare == 0, "TokenFactory#setFundAllocation Error: can't change fund percentage from variable to fixed");
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage).add(_value);
-            require(totalFixedPercentage <= 100, "#setFundAllocation: total percentage can't be greater than 100%");
+            require(totalFixedPercentage <= 100, "TokenFactory#setFundAllocation: total percentage can't be greater than 100%");
             fund.fixedPercentage = _value;
             totalAllocationPoints = totalAllocationPoints.sub(fund.allocationPoint);
             fund.allocationPoint = 0;
         } else {
-            require(!fund.isLPToken || fund.fixedPercentage == 0, "#setFundAllocation Error: can't change Liquidity Pool percentage from fixed to variable");
+            require(!fund.isLPToken || fund.fixedPercentage == 0, "TokenFactory#setFundAllocation Error: can't change Liquidity Pool percentage from fixed to variable");
             totalAllocationPoints = totalAllocationPoints.sub(fund.allocationPoint).add(_value);
             fund.allocationPoint = _value;
             totalFixedPercentage = totalFixedPercentage.sub(fund.fixedPercentage);
@@ -182,23 +188,23 @@ contract TokenFactory is Ownable, FundDistribution {
 
     /**
      * @dev update all fund allocations and send minted MEED
-     * See {updateFundReward} method for more details.
+     * See {sendReward} method for more details.
      */
-    function updateAllFundRewards() external {
+    function sendAllRewards() external {
         uint256 length = fundAddresses.length;
         for (uint256 index = 0; index < length; index++) {
-            updateFundReward(fundAddresses[index]);
+            sendReward(fundAddresses[index]);
         }
     }
 
     /**
      * @dev update designated fund allocations and send minted MEED
-     * See {updateFundReward} method for more details.
+     * See {sendReward} method for more details.
      */
-    function batchUpdateFundRewards(address[] memory _fundAddresses) external {
+    function batchSendRewards(address[] memory _fundAddresses) external {
         uint256 length = _fundAddresses.length;
         for (uint256 index = 0; index < length; index++) {
-            updateFundReward(fundAddresses[index]);
+            sendReward(fundAddresses[index]);
         }
     }
 
@@ -228,13 +234,15 @@ contract TokenFactory is Ownable, FundDistribution {
      * for other type of funds, the Rewards will be sent directly to the contract/wallet address
      * to manage Reward distribution to wallets switch its specific algorithm outside this contract.
      */
-    function updateFundReward(address _fundAddress) public override {
+    function sendReward(address _fundAddress) public override returns (bool) {
         // Minting didn't started yet
         if (block.timestamp < startRewardsTime) {
-            return;
+            return true;
         }
 
         FundInfo storage fund = fundInfos[_fundAddress];
+        require(fund.lastRewardTime > 0, "TokenFactory#sendReward: _fundAddress isn't a recognized LPToken nor a fund address");
+
         uint256 pendingRewardAmount = _pendingRewardBalanceOf(fund);
         if (fund.isLPToken) {
           fund.accMeedPerShare = _getAccMeedPerShare(_fundAddress, pendingRewardAmount);
@@ -243,6 +251,7 @@ contract TokenFactory is Ownable, FundDistribution {
           _mint(_fundAddress, pendingRewardAmount);
         }
         fund.lastRewardTime = block.timestamp;
+        return true;
     }
 
     /**
@@ -255,14 +264,15 @@ contract TokenFactory is Ownable, FundDistribution {
      * 
      * https://github.com/gnufoo/ERC2917-Proposal/blob/master/contracts/ERC2917.sol
      */
-    function deposit(address _lpAddress, uint256 _amount) public {
+    function deposit(IERC20 _lpToken, uint256 _amount) public {
+        address _lpAddress = address(_lpToken);
         FundInfo storage fund = fundInfos[_lpAddress];
-        require(fund.isLPToken, "#deposit Error: Liquidity Pool doesn't exist");
+        require(fund.isLPToken, "TokenFactory#deposit Error: Liquidity Pool doesn't exist");
 
         // Update & Mint MEED for the designated pool
         // to ensure systematically to have enough
         // MEEDs balance in current contract
-        updateFundReward(_lpAddress);
+        sendReward(_lpAddress);
 
         UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
         if (user.amount > 0) {
@@ -288,14 +298,15 @@ contract TokenFactory is Ownable, FundDistribution {
      * 
      * If the amount of withdrawn LP Tokens is 0, only {harvest}ing the pending reward will be made.
      */
-    function withdraw(address _lpAddress, uint256 _amount) public {
+    function withdraw(IERC20 _lpToken, uint256 _amount) public {
+        address _lpAddress = address(_lpToken);
         FundInfo storage fund = fundInfos[_lpAddress];
-        require(fund.isLPToken, "#withdraw Error: Liquidity Pool doesn't exist");
+        require(fund.isLPToken, "TokenFactory#withdraw Error: Liquidity Pool doesn't exist");
 
         // Update & Mint MEED for the designated pool
         // to ensure systematically to have enough
         // MEEDs balance in current contract
-        updateFundReward(_lpAddress);
+        sendReward(_lpAddress);
 
         UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
         // Send pending MEED Reward to user
@@ -318,21 +329,24 @@ contract TokenFactory is Ownable, FundDistribution {
     /**
      * @dev Withdraw without caring about rewards. EMERGENCY ONLY.
      */
-    function emergencyWithdraw(address _lpAddress) public {
+    function emergencyWithdraw(IERC20 _lpToken) public {
+        address _lpAddress = address(_lpToken);
         FundInfo storage fund = fundInfos[_lpAddress];
-        require(fund.isLPToken, "#emergencyWithdraw Error: Liquidity Pool doesn't exist");
+        require(fund.isLPToken, "TokenFactory#emergencyWithdraw Error: Liquidity Pool doesn't exist");
 
         UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
-        IERC20(_lpAddress).safeTransfer(address(msg.sender), user.amount);
-        emit EmergencyWithdraw(msg.sender, _lpAddress, user.amount);
+        uint256 amount = user.amount;
         user.amount = 0;
         user.rewardDebt = 0;
+
+        IERC20(_lpAddress).safeTransfer(address(msg.sender), amount);
+        emit EmergencyWithdraw(msg.sender, _lpAddress, amount);
     }
 
     /**
      * @dev Claim reward for current wallet from designated Liquidity Pool
      */
-    function harvest(address _lpAddress) public {
+    function harvest(IERC20 _lpAddress) public {
         withdraw(_lpAddress, 0);
     }
 
@@ -345,7 +359,8 @@ contract TokenFactory is Ownable, FundDistribution {
      * this operation is possible only when the LP Token address is an ERC-20 Token.
      * If the rewarding program didn't started yet, 0 will be returned.
      */
-    function pendingRewardBalanceOf(address _lpAddress, address _user) public view returns (uint256) {
+    function pendingRewardBalanceOf(IERC20 _lpToken, address _user) public view returns (uint256) {
+        address _lpAddress = address(_lpToken);
         if (block.timestamp < startRewardsTime) {
             return 0;
         }
@@ -361,13 +376,57 @@ contract TokenFactory is Ownable, FundDistribution {
 
     /**
      * @dev returns the pending amount of MEED rewarding for a designated Fund address.
-     * See {updateFundReward} method for more details.
+     * See {sendReward} method for more details.
      */
     function pendingRewardBalanceOf(address _fundAddress) public view returns (uint256) {
         if (block.timestamp < startRewardsTime) {
             return 0;
         }
         return _pendingRewardBalanceOf(fundInfos[_fundAddress]);
+    }
+
+    /**
+     * @dev add a new Fund Address. The address can be an LP Token or another contract
+     * that will receive funds and distribute MEED earnings switch a specific algorithm
+     * (User and/or Employee Engagement Program, DAO, xMEED staking...)
+     * 
+     * The proportion of MEED rewarding can be fixed (30% by example) or variable (using allocationPoints).
+     * The allocationPoint will determine the proportion (percentage) of MEED rewarding that a fund will take
+     * comparing to other funds using the same percentage mechanism.
+     * 
+     * The computing of percentage using allocationPoint mechanism is as following:
+     * Allocation percentage = allocationPoint / totalAllocationPoints * (100 - totalFixedPercentage)
+     * 
+     * The computing of percentage using fixedPercentage mechanism is as following:
+     * Allocation percentage = fixedPercentage
+     * 
+     * If the rewarding didn't started yet, no fund will receive rewards.
+     * 
+     * See {sendReward} method for more details.
+     */
+    function _addFund(address _fundAddress, uint256 _value, bool _isFixedPercentage, bool _isLPToken) private {
+        require(fundInfos[_fundAddress].lastRewardTime == 0, "TokenFactory#_addFund : Fund address already exists, use #setFundAllocation to change allocation");
+
+        uint256 lastRewardTime = block.timestamp > startRewardsTime ? block.timestamp : startRewardsTime;
+
+        fundAddresses.push(_fundAddress);
+        fundInfos[_fundAddress] = FundInfo({
+          lastRewardTime: lastRewardTime,
+          isLPToken: _isLPToken,
+          allocationPoint: 0,
+          fixedPercentage: 0,
+          accMeedPerShare: 0
+        });
+
+        if (_isFixedPercentage) {
+            totalFixedPercentage = totalFixedPercentage.add(_value);
+            fundInfos[_fundAddress].fixedPercentage = _value;
+            require(totalFixedPercentage <= 100, "TokenFactory#_addFund: total percentage can't be greater than 100%");
+        } else {
+            totalAllocationPoints = totalAllocationPoints.add(_value);
+            fundInfos[_fundAddress].allocationPoint = _value;
+        }
+        emit FundAdded(_fundAddress, _value, _isFixedPercentage, _isLPToken);
     }
 
     function _getMultiplier(uint256 _fromTimestamp, uint256 _toTimestamp) internal view returns (uint256) {
@@ -393,8 +452,15 @@ contract TokenFactory is Ownable, FundDistribution {
     function _getAccMeedPerShare(address _lpAddress, uint256 pendingRewardAmount) internal view returns (uint256) {
         FundInfo memory fund = fundInfos[_lpAddress];
         if (block.timestamp > fund.lastRewardTime) {
-            uint256 lpSupply = IERC20(_lpAddress).balanceOf(address(this));
-            if (lpSupply != 0) {
+            uint256 lpSupply;
+            try IERC20(_lpAddress).balanceOf(address(this)) returns(uint256 balance) {
+                lpSupply = balance;
+            } catch {
+                // Not an ERC20, so keep the accMeedPerShare equal to 0,
+                // thus no share will be sent and computation will be ignored
+                lpSupply = 0;
+            }
+            if (lpSupply > 0) {
               return fund.accMeedPerShare.add(pendingRewardAmount.mul(MEED_REWARDING_PRECISION).div(lpSupply));
             }
         }

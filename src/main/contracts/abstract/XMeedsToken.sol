@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import './IERC20.sol';
 import './ERC20.sol';
@@ -14,15 +14,9 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
     IERC20 public meed;
     FundDistribution public rewardDistribution;
 
-    event RewardDistributorSet(address indexed newRewardDistributor);
-
-    constructor(IERC20 _Meed) {
-        meed = _Meed;
-    }
-
-    function setRewardDistribution(address _rewardDistribution) external onlyOwner {
-        rewardDistribution = FundDistribution(_rewardDistribution);
-        emit RewardDistributorSet(_rewardDistribution);
+    constructor(IERC20 _meed, FundDistribution _rewardDistribution) {
+        meed = _meed;
+        rewardDistribution = _rewardDistribution;
     }
 
     /**
@@ -32,7 +26,7 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
      */
     function _stake(uint256 _amount) internal {
         // Retrieve MEEDs from Reserve Fund (TokenFactory)
-        rewardDistribution.updateFundReward(address(this));
+        require(rewardDistribution.sendReward(address(this)) == true, "Error retrieving funds from reserve");
 
         uint256 totalMeed = meed.balanceOf(address(this));
         uint256 totalShares = totalSupply();
@@ -53,7 +47,7 @@ abstract contract XMeedsToken is ERC20("Staked MEED", "xMEED"), Ownable {
      */
     function _withdraw(uint256 _amount) internal {
         // Retrieve MEEDs from Reserve Fund (TokenFactory)
-        rewardDistribution.updateFundReward(address(this));
+        require(rewardDistribution.sendReward(address(this)) == true, "Error retrieving funds from reserve");
 
         uint256 totalMeed = meed.balanceOf(address(this));
         uint256 totalShares = totalSupply();

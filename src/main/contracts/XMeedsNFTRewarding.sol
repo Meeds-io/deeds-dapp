@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import './abstract/MeedsPointsRewarding.sol';
 import './abstract/ERC1155Tradable.sol';
@@ -39,6 +39,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
 
     constructor (
         IERC20 _meed,
+        FundDistribution _rewardDistribution,
         ERC1155Tradable _nftAddress,
         uint256 _startRewardsDelay,
         string[] memory _cityNames,
@@ -46,7 +47,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         uint256[] memory _cardPrices,
         uint32[] memory _cardSupply,
         string[] memory _uris
-    ) MeedsPointsRewarding(_meed, _startRewardsDelay) {
+    ) MeedsPointsRewarding(_meed, _rewardDistribution, _startRewardsDelay) {
         nft = _nftAddress;
         lastCityMintingCompleteDate = block.timestamp;
 

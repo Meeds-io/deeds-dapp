@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import './SafeMath.sol';
 import './Address.sol';
@@ -122,11 +122,16 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
         bytes memory _data
     )
         internal {
-        // Check if recipient is contract
-        if (_to.isContract()
-        ) {
-            bytes4 retval = IERC1155TokenReceiver(_to).onERC1155Received(msg.sender, _from, _id, _amount, _data);
-            require(retval == ERC1155_RECEIVED_VALUE, "ERC1155#_callonERC1155Received: INVALID_ON_RECEIVE_MESSAGE");
+        if (_to.isContract()) {
+            try IERC1155TokenReceiver(_to).onERC1155Received(msg.sender, _from, _id, _amount, _data) returns (bytes4 response) {
+                if (response != ERC1155_RECEIVED_VALUE) {
+                    revert("ERC1155#_callonERC1155Received: INVALID_ON_RECEIVE_MESSAGE");
+                }
+            } catch Error(string memory reason) {
+                revert(reason);
+            } catch {
+                revert("ERC1155#_callonERC1155Received: transfer to non ERC1155Receiver implementer");
+            }
         }
     }
 
@@ -177,8 +182,15 @@ abstract contract ERC1155 is IERC1155, IERC165, ERC1155Metadata {
         // Check if recipient is contract
         if (_to.isContract()
         ) {
-            bytes4 retval = IERC1155TokenReceiver(_to).onERC1155BatchReceived(msg.sender, _from, _ids, _amounts, _data);
-            require(retval == ERC1155_BATCH_RECEIVED_VALUE, "ERC1155#_callonERC1155BatchReceived: INVALID_ON_RECEIVE_MESSAGE");
+            try IERC1155TokenReceiver(_to).onERC1155BatchReceived(msg.sender, _from, _ids, _amounts, _data) returns (bytes4 response) {
+                if (response != ERC1155_BATCH_RECEIVED_VALUE) {
+                    revert("ERC1155#_callonERC1155BatchReceived: INVALID_ON_RECEIVE_MESSAGE");
+                }
+            } catch Error(string memory reason) {
+                revert(reason);
+            } catch {
+                revert("ERC1155#_callonERC1155BatchReceived: transfer to non ERC1155Receiver implementer");
+            }
         }
     }
 
