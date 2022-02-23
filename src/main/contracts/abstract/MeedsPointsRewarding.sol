@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import './XMeedsToken.sol';
 import './SafeMath.sol';
@@ -34,7 +34,7 @@ contract MeedsPointsRewarding is XMeedsToken {
         _;
     }
 
-    constructor (IERC20 _meed, uint256 _startRewardsDelay) XMeedsToken(_meed) {
+    constructor (IERC20 _meed, FundDistribution _rewardDistribution, uint256 _startRewardsDelay) XMeedsToken(_meed, _rewardDistribution) {
         startRewardsTime = block.timestamp + _startRewardsDelay;
     }
 
