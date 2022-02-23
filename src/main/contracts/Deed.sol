@@ -5,11 +5,13 @@ import "./abstract/SafeMath.sol";
 import "./abstract/Ownable.sol";
 import "./abstract/StrategyRole.sol";
 import "./abstract/ERC1155Tradable.sol";
+import "./abstract/ERC1155.sol";
+import "./abstract/StrategyHandler.sol";
 
 /**
  * @title NFT Contract for Meeds DAO
  */
-contract Deed is ERC1155Tradable, StrategyRole {
+contract Deed is ERC1155Tradable, StrategyHandler, StrategyRole {
 
     using SafeMath for uint256;
 
@@ -62,11 +64,14 @@ contract Deed is ERC1155Tradable, StrategyRole {
 		/**
      * @dev return the total use count of an NFT by owner
      */
-    function getTotalUseCount(address _account, uint256 _id) public view returns (uint256) {
+    function getTotalUseCount(address _account, uint256 _id) external view returns (uint256) {
         return totalUseCount[_account][_id];
     }
 
-    function getStratUseCount(address _account, uint256 _id, address _strategy) public view returns (uint256) {
+    /**
+     * @dev return the use count of an NFT by wallet inside a strategy
+     */
+    function getStrategyUseCount(address _account, uint256 _id, address _strategy) external view returns (uint256) {
         return stratUseCount[_account][_id][_strategy];
     }
 
@@ -99,7 +104,7 @@ contract Deed is ERC1155Tradable, StrategyRole {
     /**
      * @dev Overrides safeTransferFrom function of ERC1155 to introduce totalUseCount check
      */
-    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data) public override {
+    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data) public override (ERC1155, IERC1155) {
         require(totalUseCount[_from][_id] == 0, "Deed#safeTransferFrom: NFT being used in strategy");
         ERC1155.safeTransferFrom(_from, _to, _id, _amount, _data);
     }
@@ -107,7 +112,7 @@ contract Deed is ERC1155Tradable, StrategyRole {
     /**
      * @dev Overrides safeBatchTransferFrom function of ERC1155 to introduce totalUseCount check
      */
-    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data) public  override {
+    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data) public  override (ERC1155, IERC1155) {
         // Number of transfer to execute
         uint256 nTransfer = _ids.length;
 
