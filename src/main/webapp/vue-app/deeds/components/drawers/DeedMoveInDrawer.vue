@@ -202,7 +202,7 @@ export default {
       }
       if (this.email) {
         this.sendingEmail = true;
-        return this.$tenantManagement.sendEmail(this.nftId, this.address, this.email)
+        return this.$tenantManagement.sendEmail(this.nftId, this.email)
           .finally(() => this.isEditingEmail = this.sendingEmail = false);
       }
     },
@@ -222,6 +222,9 @@ export default {
         ).then(receipt => {
           this.transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', this.transactionHash);
+          if (this.transactionHash) {
+            this.sendEmail();
+          }
         }).finally(() => this.sending = false);
       }
     },

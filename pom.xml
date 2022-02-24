@@ -75,6 +75,10 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-elasticsearch</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
@@ -100,6 +104,10 @@
       <groupId>org.web3j</groupId>
       <artifactId>crypto</artifactId>
       <version>${web3j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
     </dependency>
   </dependencies>
   <build>

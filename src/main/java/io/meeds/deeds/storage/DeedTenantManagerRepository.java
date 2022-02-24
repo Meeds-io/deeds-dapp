@@ -16,9 +16,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.constant;
+package io.meeds.deeds.storage;
 
-public enum TenantCommand {
-  START,
-  STOP;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+import io.meeds.deeds.model.DeedTenantManager;
+
+public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenantManager, Long> {
+
 }
