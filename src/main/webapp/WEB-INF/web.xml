@@ -14,21 +14,29 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this program; if not, write to the Free Software Foundation,
   Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
-<web-app version="3.0" metadata-complete="true" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app
+  version="3.0"
+  metadata-complete="true"
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
   <display-name>deeds-dapp</display-name>
 
-  <servlet>
-    <servlet-name>application</servlet-name>
-    <servlet-class>io.meeds.deeds.servlet.RequestDispatcherSerlvet</servlet-class>
-  </servlet>
+  <filter>
+    <filter-name>requestDispatcherFilter</filter-name>
+    <filter-class>io.meeds.deeds.filter.RequestDispatcherFilter</filter-class>
+  </filter>
 
-  <servlet-mapping>
-    <servlet-name>application</servlet-name>
+  <filter-mapping>
+    <filter-name>requestDispatcherFilter</filter-name>
+    <url-pattern>/</url-pattern>
     <url-pattern>/snapshot</url-pattern>
     <url-pattern>/stake</url-pattern>
     <url-pattern>/deeds</url-pattern>
     <url-pattern>/farm</url-pattern>
-  </servlet-mapping>
+  </filter-mapping>
 
 </web-app>
