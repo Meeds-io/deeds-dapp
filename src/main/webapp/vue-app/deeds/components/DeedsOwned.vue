@@ -29,7 +29,7 @@
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
     <v-data-table
       :headers="headers"
-      :items="nfts"
+      :items="nftsList"
       :items-per-page="10"
       hide-default-header>
       <template v-slot:item.id="{item}">
@@ -42,6 +42,23 @@
           link>
           #{{ item.id }}
         </v-btn>
+      </template>
+      <template v-slot:item.status="{item}">
+        <a
+          v-if="item.status === 'STARTED'"
+          :href="item.link"
+          target="_blank"
+          rel="nofollow">
+          {{ item.linkLabel }}
+        </a>
+        <div v-else-if="item.status === 'STOPPED'" class="text-capitalize">
+          {{ $t('vacant') }}
+        </div>
+        <v-progress-circular
+          v-else-if="item.status === 'loading'"
+          size="24"
+          color="primary"
+          indeterminate />
       </template>
       <template v-slot:item.earnedRewards="{item}">
         <v-tooltip bottom>
@@ -56,7 +73,11 @@
         </v-tooltip>
       </template>
       <template v-slot:item.actions="{item}">
-        <deeds-owned-actions :nft="item" />
+        <deeds-owned-actions
+          :nft="item"
+          :authenticated="authenticated"
+          @login="login"
+          @logout="logout" />
       </template>
     </v-data-table>
   </v-card>
@@ -81,7 +102,7 @@ export default {
       },
       {
         text: 'status',
-        value: 'statusLabel',
+        value: 'status',
       },
       {
         text: 'earnedRewards',
@@ -92,6 +113,8 @@ export default {
         value: 'actions',
       },
     ],
+    nfts: {},
+    authenticated: false,
   }),
   computed: Vuex.mapState({
     etherscanBaseLink: state => state.etherscanBaseLink,
@@ -100,16 +123,86 @@ export default {
     ownedNfts: state => state.ownedNfts,
     address: state => state.address,
     provider: state => state.provider,
-    nfts() {
-      return this.ownedNfts && this.ownedNfts.length && this.ownedNfts.slice().reverse().map(nft => {
-        return Object.assign({
-          id: nft.id,
-          cityName: this.cities[nft.cityIndex],
-          hasEarnedMeeds: false,
-          earnedRewardsNoDecimals: 0,
-        }, nft);
-      }) || [];
+    tenantProvisioningContract: state => state.tenantProvisioningContract,
+    nftsList() {
+      return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id);
     },
   }),
+  watch: {
+    ownedNfts: {
+      immediate: true,
+      handler() {
+        this.reloadStatus();
+      },
+    },
+    tenantProvisioningContract: {
+      immediate: true,
+      handler() {
+        this.reloadStatus();
+      },
+    },
+  },
+  created() {
+    this.refreshAuthentication();
+  },
+  methods: {
+    refreshAuthentication() {
+      this.authenticated = this.$authentication.isAuthenticated(this.address);
+    },
+    logout() {
+      this.$authentication.logout(this.address)
+        .finally(() => this.refreshAuthentication());
+    },
+    login() {
+      const token = document.querySelector('[name=loginMessage]').value;
+      const message = this.$t('signMessage', {0: token});
+      this.$ethUtils.signMessage(this.provider, this.address, message)
+        .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
+        .finally(() => this.refreshAuthentication());
+    },
+    reloadStatus() {
+      if (this.ownedNfts && this.ownedNfts.length) {
+        const promises = [];
+        this.ownedNfts.forEach(ownedNft => {
+          if (!this.nfts[ownedNft.id]) {
+            this.nfts[ownedNft.id] = Object.assign(this.nfts[ownedNft.id] || {
+              cityName: this.cities[ownedNft.cityIndex],
+              provisioningManager: false,
+              hasEarnedMeeds: false,
+              earnedRewardsNoDecimals: 0,
+            }, ownedNft);
+          }
+
+          if (!ownedNft.status) {
+            this.nfts[ownedNft.id].status = ownedNft.status = 'loading';
+            promises.push(Promise.resolve(
+              this.loadStatus(this.nfts[ownedNft.id])
+            ));
+          }
+          this.nfts = Object.assign({}, this.nfts);
+        });
+        // force refresh computed value
+        Promise.all(promises)
+          .then(() => this.nfts = Object.assign({}, this.nfts));
+      }
+    },
+    loadStatus(nft) {
+      return this.tenantProvisioningContract.isProvisioningManager(this.address, nft.id)
+        .then(provisioningManager => {
+          if (provisioningManager) {
+            nft.provisioningManager = true;
+            return this.tenantProvisioningContract.tenantStatus(nft.id)
+              .then(status => {
+                nft.status = status && 'STARTED' || 'STOPPED';
+                if (status) {
+                  nft.link = `https://${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
+                  nft.linkLabel = `${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
+                }
+                this.$forceUpdate();
+              });
+          }
+        });
+    },
+  },
 };
 </script>
