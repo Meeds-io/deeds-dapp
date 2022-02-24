@@ -18,26 +18,26 @@
  */
 package io.meeds.deeds.web.security;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.web3j.crypto.ECDSASignature;
-import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
+import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
 import io.meeds.deeds.web.utils.Utils;
@@ -55,15 +55,25 @@ public class DeedAuthenticationProvider implements AuthenticationProvider {
     String encryptedMessage = authentication.getCredentials().toString();
 
     ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-    HttpSession session = requestAttributes.getRequest().getSession(false);
+
+    HttpServletRequest request = requestAttributes.getRequest();
+    String message = request.getParameter("message");
+
+    HttpSession session = request.getSession(false);
     String loginMessage = Utils.getLoginMessage(session);
 
-    if (validateSignedMessage(walletAddress, loginMessage, encryptedMessage)) {
-      return new UsernamePasswordAuthenticationToken(walletAddress,
-                                                     null,
-                                                     Collections.singleton(new SimpleGrantedAuthority(USER_ROLE_NAME)));
-    } else {
-      throw new BadCredentialsException("Can't decrypt wallet message");
+    try {
+      if (!StringUtils.contains(message, loginMessage)) {
+        throw new BadCredentialsException("Flat message signed by user doesn't have the corresponding Token");
+      } else if (validateSignedMessage(walletAddress, message, encryptedMessage)) {
+        return new UsernamePasswordAuthenticationToken(walletAddress,
+                                                       null,
+                                                       Collections.singleton(new SimpleGrantedAuthority(USER_ROLE_NAME)));
+      } else {
+        throw new BadCredentialsException("Can't decrypt wallet message");
+      }
+    } catch (Exception e) {
+      throw new AuthenticationServiceException("An unknown error is encountered while authenticating user", e);
     }
   }
 
@@ -77,29 +87,33 @@ public class DeedAuthenticationProvider implements AuthenticationProvider {
    * @param rawMessage raw signed message
    * @param signedMessage encrypted message
    * @return true if the message has been decrypted successfully, else false
+   * @throws UnsupportedEncodingException when UTF-8 isn't recognized as
+   *           Encoding Charset
+   * @throws SignatureException when an error occurs while decrypting signed
+   *           message
    */
-  public boolean validateSignedMessage(String walletAddress, String rawMessage, String signedMessage) {
+  public boolean validateSignedMessage(String walletAddress,
+                                       String rawMessage,
+                                       String signedMessage) throws UnsupportedEncodingException, SignatureException {
     if (StringUtils.isBlank(walletAddress) || StringUtils.isBlank(rawMessage) || StringUtils.isBlank(signedMessage)) {
       return false;
     }
-    String prefix = PERSONAL_MESSAGE_PREFIX + rawMessage.length();
-    byte[] rawMessageHash = Hash.sha3((prefix + rawMessage).getBytes());
+
     byte[] signatureBytes = Numeric.hexStringToByteArray(signedMessage);
     byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
     byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
+    byte v = signatureBytes[64];
+    if (v < 27) {
+      v += 27;
+    }
 
     // Iterate for each possible key to recover
-    for (int i = 0; i < 4; i++) {
-      BigInteger publicKey = Sign.recoverFromSignature(i,
-                                                       new ECDSASignature(new BigInteger(1, r),
-                                                                          new BigInteger(1, s)),
-                                                       rawMessageHash);
+    BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(), new SignatureData(v, r, s));
 
-      if (publicKey != null) {
-        String recoveredAddress = "0x" + Keys.getAddress(publicKey);
-        if (recoveredAddress.equalsIgnoreCase(walletAddress)) {
-          return true;
-        }
+    if (publicKey != null) {
+      String recoveredAddress = "0x" + Keys.getAddress(publicKey);
+      if (recoveredAddress.equalsIgnoreCase(walletAddress)) {
+        return true;
       }
     }
     return false;

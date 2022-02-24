@@ -22,6 +22,10 @@
       {{ $t('yourDeeds') }}
       <v-divider class="my-auto ms-4" />
     </h3>
+    <template v-if="ownedNfts && ownedNfts.length">
+      <deeds-move-in-drawer />
+      <deeds-move-out-drawer />
+    </template>
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
     <v-data-table
       :headers="headers"

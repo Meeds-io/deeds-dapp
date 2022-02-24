@@ -1,4 +1,5 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
  
  Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
@@ -15,6 +16,7 @@
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <v-menu offset-y>
@@ -28,12 +30,31 @@
       </v-btn>
     </template>
     <v-list dense>
-      <v-list-item v-if="status === 'STOPPED'" @click="startTenant">
-        <v-list-item-title class="text-capitalize">{{ $t('moveIn') }}</v-list-item-title>
-      </v-list-item>
-      <v-list-item v-else-if="status === 'STARTED'" @click="stopTenant">
-        <v-list-item-title class="text-capitalize">{{ $t('moveOut') }}</v-list-item-title>
-      </v-list-item>
+      <template v-if="provisioningManager">
+        <template v-if="authenticated">
+          <v-list-item v-if="status === 'STOPPED'" @click="startTenant">
+            <v-list-item-title class="text-capitalize">{{ $t('moveIn') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item v-else-if="status === 'STARTED'" @click="stopTenant">
+            <v-list-item-title class="text-capitalize">{{ $t('moveOut') }}</v-list-item-title>
+          </v-list-item>
+        </template>
+        <v-tooltip v-else bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-list-item
+              v-bind="attrs"
+              v-on="on"
+              @click="authenticate()">
+              <v-list-item-title class="text-capitalize">
+                <v-icon size="16">mdi-lock-open</v-icon>
+                {{ $t('signIn') }}
+              </v-list-item-title>
+            </v-list-item>
+          </template>
+          <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
+        </v-tooltip>
+        <v-divider class="my-1" />
+      </template>
       <v-list-item>
         <v-list-item-title class="text-capitalize">
           <a
@@ -44,6 +65,12 @@
           </a>
         </v-list-item-title>
       </v-list-item>
+      <template v-if="authenticated">
+        <v-divider class="my-1" />
+        <v-list-item @click="logout()">
+          <v-list-item-title class="text-capitalize">{{ $t('signOut') }}</v-list-item-title>
+        </v-list-item>
+      </template>
     </v-list>
   </v-menu>
 </template>
@@ -57,6 +84,8 @@ export default {
   },
   data: () => ({
     status: 'loading',
+    authenticated: false,
+    provisioningManager: false,
   }),
   computed: Vuex.mapState({
     openSeaBaseLink: state => state.openSeaBaseLink,
@@ -64,32 +93,46 @@ export default {
     address: state => state.address,
     nftAddress: state => state.nftAddress,
     provider: state => state.provider,
+    tenantProvisioningContract: state => state.tenantProvisioningContract,
+    nftId() {
+      return this.nft && this.nft.id;
+    }
   }),
   created() {
     this.loadStatus();
+    this.refreshAuthentication();
   },
   methods: {
+    refreshAuthentication() {
+      this.authenticated = this.$authentication.isAuthenticated(this.address);
+    },
+    logout() {
+      this.$authentication.logout(this.address)
+        .finally(() => this.refreshAuthentication());
+    },
+    authenticate() {
+      const token = document.querySelector('[name=loginMessage]').value;
+      const message = this.$t('signMessage', {0: token});
+      this.$ethUtils.signMessage(this.provider, this.address, message)
+        .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
+        .finally(() => this.refreshAuthentication());
+    },
     startTenant() {
-      return this.changeStatus(this.nft.id, 'START');
+      this.$root.$emit('deeds-move-in-drawer', this.nftId);
     },
     stopTenant() {
-      return this.changeStatus(this.nft.id, 'STOP');
+      this.$root.$emit('deeds-move-out-drawer', this.nftId);
     },
     loadStatus() {
       this.status = 'loading';
-      return this.$tenantManagement.getStatus(this.networkId, this.nftAddress, this.nft.id)
-        .then(status => this.status = status);
-    },
-    changeStatus(nftId, status) {
-      if (this.$authentication.isAuthenticated(this.address)) {
-        return this.$tenantManagement.changeStatus(this.networkId, this.nftAddress, nftId, status)
-          .then(() => this.loadStatus());
-      } else {
-        return this.$ethUtils.signMessage(this.provider, this.address, document.querySelector('[name=loginMessage]').value)
-          .then(signedMessage => this.$authentication.login(this.address, signedMessage))
-          .then(() => this.$tenantManagement.changeStatus(this.networkId, this.nftAddress, nftId, status))
-          .then(() => this.loadStatus());
-      }
+      return this.tenantProvisioningContract.isProvisioningManager(this.address, this.nftId)
+        .then(provisioningManager => {
+          this.provisioningManager = provisioningManager;
+          if (this.provisioningManager) {
+            return this.tenantProvisioningContract.tenantStatus(this.nft.id)
+              .then(status => this.status = status && 'STARTED' || 'STOPPED');
+          }
+        });
     },
   },
 };
