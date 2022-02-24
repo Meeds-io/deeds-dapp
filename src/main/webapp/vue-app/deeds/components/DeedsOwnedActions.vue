@@ -44,7 +44,7 @@
             <v-list-item
               v-bind="attrs"
               v-on="on"
-              @click="authenticate()">
+              @click="$emit('login')">
               <v-list-item-title class="text-capitalize">
                 <v-icon size="16">mdi-lock-open</v-icon>
                 {{ $t('signIn') }}
@@ -67,7 +67,7 @@
       </v-list-item>
       <template v-if="authenticated">
         <v-divider class="my-1" />
-        <v-list-item @click="logout()">
+        <v-list-item @click="$emit('logout')">
           <v-list-item-title class="text-capitalize">{{ $t('signOut') }}</v-list-item-title>
         </v-list-item>
       </template>
@@ -81,12 +81,11 @@ export default {
       type: Object,
       default: null,
     },
+    authenticated: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data: () => ({
-    status: 'loading',
-    authenticated: false,
-    provisioningManager: false,
-  }),
   computed: Vuex.mapState({
     openSeaBaseLink: state => state.openSeaBaseLink,
     networkId: state => state.networkId,
@@ -96,43 +95,20 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     nftId() {
       return this.nft && this.nft.id;
-    }
+    },
+    provisioningManager() {
+      return this.nft && this.nft.provisioningManager;
+    },
+    status() {
+      return this.nft && this.nft.status;
+    },
   }),
-  created() {
-    this.loadStatus();
-    this.refreshAuthentication();
-  },
   methods: {
-    refreshAuthentication() {
-      this.authenticated = this.$authentication.isAuthenticated(this.address);
-    },
-    logout() {
-      this.$authentication.logout(this.address)
-        .finally(() => this.refreshAuthentication());
-    },
-    authenticate() {
-      const token = document.querySelector('[name=loginMessage]').value;
-      const message = this.$t('signMessage', {0: token});
-      this.$ethUtils.signMessage(this.provider, this.address, message)
-        .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
-        .finally(() => this.refreshAuthentication());
-    },
     startTenant() {
       this.$root.$emit('deeds-move-in-drawer', this.nftId);
     },
     stopTenant() {
       this.$root.$emit('deeds-move-out-drawer', this.nftId);
-    },
-    loadStatus() {
-      this.status = 'loading';
-      return this.tenantProvisioningContract.isProvisioningManager(this.address, this.nftId)
-        .then(provisioningManager => {
-          this.provisioningManager = provisioningManager;
-          if (this.provisioningManager) {
-            return this.tenantProvisioningContract.tenantStatus(this.nft.id)
-              .then(status => this.status = status && 'STARTED' || 'STOPPED');
-          }
-        });
     },
   },
 };

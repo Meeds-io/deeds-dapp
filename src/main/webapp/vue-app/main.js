@@ -103,6 +103,8 @@ const store = new Vuex.Store({
       'function lastCityMintingCompleteDate() public view returns (uint256)',
     ],
     nftABI: [
+      'event StartedUsingNFT(address indexed account, uint256 indexed id, address indexed strategy)',
+      'event EndedUsingNFT(address indexed account, uint256 indexed id, address indexed strategy)',
       'function totalSupply() public view returns (uint256)',
       'function totalSupply(uint256 _id) public view returns (uint256)',
       'function uri(uint256 _id) public view returns (string)',
@@ -517,6 +519,41 @@ const store = new Vuex.Store({
               this.commit('loadPointsBalance');
             }
             this.commit('loadCurrentCity');
+          });
+        }
+
+        if (state.nftContract) {
+          // eslint-disable-next-line new-cap
+          const startedUsingNFT = state.nftContract.filters.StartedUsingNFT();
+          state.nftContract.on(startedUsingNFT, (address, nftId, strategyAddress) => {
+            if (address.toUpperCase() === state.address.toUpperCase()) {
+              if (strategyAddress.toUpperCase() === state.tenantProvisioningAddress.toUpperCase()) {
+                if (state.ownedNfts) {
+                  const id = nftId.toNumber();
+                  const nft = state.ownedNfts.find(ownedNft => ownedNft.id === id);
+                  if (nft) {
+                    delete nft.status;
+                  }
+                  state.ownedNfts = state.ownedNfts.slice();
+                }
+              }
+            }
+          });
+          // eslint-disable-next-line new-cap
+          const endedUsingNFT = state.nftContract.filters.EndedUsingNFT();
+          state.nftContract.on(endedUsingNFT, (address, nftId, strategyAddress) => {
+            if (address.toUpperCase() === state.address.toUpperCase()) {
+              if (strategyAddress.toUpperCase() === state.tenantProvisioningAddress.toUpperCase()) {
+                if (state.ownedNfts) {
+                  const id = nftId.toNumber();
+                  const nft = state.ownedNfts.find(ownedNft => ownedNft.id === id);
+                  if (nft) {
+                    delete nft.status;
+                  }
+                  state.ownedNfts = state.ownedNfts.slice();
+                }
+              }
+            }
           });
         }
 

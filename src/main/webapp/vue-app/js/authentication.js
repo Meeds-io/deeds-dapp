@@ -67,13 +67,13 @@ export function logout() {
 }
 
 export function isAuthenticated(address) {
-  const login = getAuthenticatedLogin();
-  return login && address && address.toUpperCase() === login.toUpperCase();
+  const userLogin = getAuthenticatedLogin();
+  return userLogin && address && address.toUpperCase() === userLogin.toUpperCase() || false;
 }
 
 export function hasAuthenticatedLogin() {
-  const login = getAuthenticatedLogin();
-  return login && login.length;
+  const userLogin = getAuthenticatedLogin();
+  return userLogin && userLogin.indexOf('0x') === 0;
 }
 
 export function getAuthenticatedLogin() {

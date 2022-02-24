@@ -164,8 +164,10 @@ export default {
       this.$nextTick()
         .then(() => this.$refs.drawer.open());
     },
-    close() {
-      this.$refs.drawer.close();
+    close(nftId) {
+      if (nftId === this.nftId) {
+        this.$refs.drawer.close();
+      }
     },
     sendRequest(event) {
       if (event) {
