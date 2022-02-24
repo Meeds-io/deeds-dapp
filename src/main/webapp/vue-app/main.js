@@ -311,6 +311,9 @@ const store = new Vuex.Store({
       state.xMeedsBalance = xMeedsBalance;
       state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
     },
+    loadPointsPeriodically() {
+      window.setInterval(() => this.commit('loadPointsBalance'), 20000);
+    },
     loadPointsBalance(state) {
       tokenUtils.getPointsBalance(state.xMeedContract, state.address)
         .then(balance => {
@@ -518,6 +521,7 @@ const store = new Vuex.Store({
         this.commit('loadGasPrice');
         this.commit('loadOwnedNfts');
         this.commit('loadPointsBalance');
+        this.commit('loadPointsPeriodically');
         this.commit('loadCurrentCity');
 
         state.provider.lookupAddress(state.address)
