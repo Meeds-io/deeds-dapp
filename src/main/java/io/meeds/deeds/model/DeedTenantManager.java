@@ -16,12 +16,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.constant;
+package io.meeds.deeds.model;
 
-public enum TenantStatus {
-  STARTED,
-  STOPPED,
-  STARTING,
-  STOPPING,
-  NOT_EXISTING;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Dynamic;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(indexName = "deed_tenant_manager", createIndex = true, dynamic = Dynamic.TRUE)
+public class DeedTenantManager {
+
+  @Id
+  private long   nftId;
+
+  private String managerAddress;
+
+  private String email;
+
 }

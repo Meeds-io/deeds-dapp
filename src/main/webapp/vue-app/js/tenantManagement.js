@@ -33,7 +33,7 @@ export function sendEmail(nftId, email) {
     body: params,
   }).then(resp => {
     if (!resp || !resp.ok) {
-      throw new Error(`Error changing tenant status to ${status}`);
+      throw new Error(`Error changing sending email of nft with id ${nftId}`);
     }
   });
 }

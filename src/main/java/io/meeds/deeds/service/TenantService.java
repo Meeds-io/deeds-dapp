@@ -18,77 +18,50 @@
  */
 package io.meeds.deeds.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.constant.TenantCommand;
-import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
+import io.meeds.deeds.model.DeedTenantManager;
+import io.meeds.deeds.storage.DeedTenantManagerRepository;
 
 @Component
 public class TenantService {
 
-  private Map<Long, TenantStatus> tenantStatus = new HashMap<>();
+  @Autowired
+  private DeedTenantManagerRepository deedTenantManagerRepository;
 
   /**
-   * Retrieves deed status from SaaS hosting platform
+   * Stores User Email to allow support Team Contact him and notify him about
+   * Tenant Status
    * 
-   * @param networkId Etheureum chain Id
-   * @param deedAddress DEED contract address
-   * @param deedId DEED NFT Id
-   * @return {@link TenantStatus}
+   * @param nftId DEED NFT id in the blockchain
+   * @param managerAddress DEED Provisioning Manager wallet address
+   * @param email Email of the manager
+   * @throws UnauthorizedOperationException when the wallet isn't the DEED
+   *           manager
    */
-  public TenantStatus getStatus(long networkId,
-                                String deedAddress,
-                                long deedId) {
-    // TODO retrieve status from Rancher
-    return tenantStatus.computeIfAbsent(deedId, id -> TenantStatus.STOPPED);
-  }
-
-  /**
-   * Changes the status of DEED NFT corresponding host. This will send a command
-   * to SaaS hosting platform to stop or start the host.
-   * 
-   * @param networkId Etheureum chain Id
-   * @param deedAddress DEED contract address
-   * @param deedId DEED NFT Id
-   * @param status Tenant Status to change to
-   * @param walletAddress wallet Address used to change Tenant Status on SaaS
-   *          platform
-   * @throws UnauthorizedOperationException when wallet address isn't allowed to
-   *           change host status
-   */
-  public void changeStatus(long networkId,
-                           String deedAddress,
-                           long deedId,
-                           TenantCommand status,
-                           String walletAddress) throws UnauthorizedOperationException {
-    if (!isManager(networkId, deedAddress, deedId, walletAddress)) {
-      throw new UnauthorizedOperationException();
+  public void saveEmail(long nftId, String managerAddress, String email) throws UnauthorizedOperationException {
+    if (!isDeedManager(nftId, managerAddress)) {
+      throw new UnauthorizedOperationException("User with address " + managerAddress + " isn't the manager of deed " + nftId);
     }
-
-    // TODO change status on Rancher
-    TenantStatus newStatus = status == TenantCommand.START ? TenantStatus.STARTED : TenantStatus.STOPPED;
-    tenantStatus.put(deedId, newStatus);
+    if (StringUtils.isBlank(email)) {
+      deedTenantManagerRepository.deleteById(nftId);
+    } else {
+      DeedTenantManager deedTenantManager = new DeedTenantManager(nftId, StringUtils.lowerCase(managerAddress), email);
+      deedTenantManagerRepository.save(deedTenantManager);
+    }
   }
 
   /**
-   * Check if user having corresponding wallet address has the role manager on
-   * designated Tenant Host
-   * 
-   * @param networkId Etheureum chain Id
-   * @param deedAddress DEED contract address
-   * @param deedId DEED NFT Id
-   * @param walletAddress wallet Address (wallet public key)
-   * @return true is the user is a manager
+   * @param nftId
+   * @param managerAddress
+   * @return
    */
-  public boolean isManager(long networkId,
-                           String deedAddress,
-                           long deedId,
-                           String walletAddress) {
-    // TODO check
+  private boolean isDeedManager(long nftId, String managerAddress) {
+    // TODO check on blockcahin, using Web3J, that the user is the provisioning
+    // manager of the DEED Tenant
     return true;
   }
 

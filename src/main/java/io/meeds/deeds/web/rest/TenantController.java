@@ -24,16 +24,9 @@ import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.deeds.constant.TenantCommand;
-import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
@@ -45,36 +38,20 @@ public class TenantController {
   @Autowired
   private TenantService tenantService;
 
-  @GetMapping("/{networkId}/{deedAddress}/{id}")
-  public String status(
-                       @PathVariable(name = "networkId")
-                       long networkId,
-                       @PathVariable(name = "deedAddress")
-                       String deedAddress,
-                       @PathVariable(value = "id")
-                       long deedId) {
-    TenantStatus status = tenantService.getStatus(networkId, deedAddress, deedId);
-    return status == null ? "" : status.name();
-  }
-
-  @PostMapping("/{networkId}/{deedAddress}/{id}")
+  @PostMapping("/{nftId}")
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
-  public void changeStatus(
-                           @PathVariable(name = "networkId")
-                           long networkId,
-                           @PathVariable(name = "deedAddress")
-                           String deedAddress,
-                           @PathVariable(name = "id")
-                           long deedId,
-                           @RequestParam(name = "status", required = true)
-                           TenantCommand status,
-                           Principal principal) {
+  public void saveEmail(
+                        @PathVariable(name = "nftId")
+                        long deedId,
+                        @RequestParam(name = "email")
+                        String email,
+                        Principal principal) {
     if (principal == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
-    String wallet = principal.getName();
+    String walletAddress = principal.getName();
     try {
-      tenantService.changeStatus(networkId, deedAddress, deedId, status, wallet);
+      tenantService.saveEmail(deedId, walletAddress, email);
     } catch (UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
