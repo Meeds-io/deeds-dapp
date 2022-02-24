@@ -16,10 +16,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function login(address, signedMessage) {
+export function login(address, message, signedMessage) {
   if (hasAuthenticatedLogin()) {
     return logout().then(() => login(address, signedMessage));
   }
+  const formData = new FormData();
+  formData.append('username', address);
+  formData.append('password', signedMessage);
+  formData.append('message', message);
+  const params = new URLSearchParams(formData).toString();
+
   return fetch('/deeds-dapp/login', {
     method: 'POST',
     redirect: 'manual',
@@ -28,7 +34,7 @@ export function login(address, signedMessage) {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
     },
     credentials: 'include',
-    body: `username=${address}&password=${signedMessage}`,
+    body: params,
   }).then(resp => {
     if (resp && resp.ok) {
       document.querySelector('[name=login]').value = address;
@@ -48,11 +54,15 @@ export function logout() {
     },
   }).then(resp => {
     if (resp && resp.ok) {
-      // Remove logged in address
-      document.querySelector('[name=login]').removeAttribute('value');
+      return resp.text();
     } else {
       throw new Error('Logout failed');
     }
+  }).then(token => {
+    // Remove logged in address
+    document.querySelector('[name=login]').removeAttribute('value');
+    // Refresh login Message
+    document.querySelector('[name=loginMessage]').value = token || '';
   });
 }
 

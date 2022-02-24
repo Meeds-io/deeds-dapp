@@ -18,8 +18,13 @@
  */
 package io.meeds.deeds.web.security;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,8 +35,12 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 
+import io.meeds.deeds.web.utils.Utils;
+
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+  private static final Logger        LOG                 = LoggerFactory.getLogger(WebSecurityConfig.class);
 
   private CookieCsrfTokenRepository  csrfTokenRepository = new CookieCsrfTokenRepository();
 
@@ -51,18 +60,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                          .loginProcessingUrl("/login")
                                          .successHandler((request,
                                                           response,
-                                                          authentication) -> response.setStatus(HttpServletResponse.SC_OK)))
+                                                          authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                                         .failureHandler((request,
+                                                          response,
+                                                          authentication) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN)))
         .logout(logout -> logout
                                 .logoutUrl("/logout")
-                                .logoutSuccessHandler((request, response, authentication) -> {
-                                  // Regenerate CSRF Token for anonymous user to
-                                  // allow login again
-                                  // Using a valid CSRF Token
-                                  CsrfToken csrfToken = csrfTokenRepository.generateToken(request);
-                                  csrfTokenRepository.saveToken(csrfToken, request, response);
-                                  // Disable logout redirection
-                                  response.setStatus(HttpServletResponse.SC_OK);
-                                }));
+                                .logoutSuccessHandler((request, response, authentication) -> handleLogout(request, response)));
   }
 
   @Override
@@ -73,6 +77,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) throws Exception {
     web.ignoring().antMatchers("/static/**");
+  }
+
+  private void handleLogout(HttpServletRequest request, HttpServletResponse response) {
+    // Regenerate CSRF Token for anonymous user to
+    // allow login again using a valid CSRF Token
+    CsrfToken csrfToken = csrfTokenRepository.generateToken(request);
+    csrfTokenRepository.saveToken(csrfToken, request, response);
+    // Disable logout redirection
+    String loginMessage = Utils.generateLoginMessage(request.getSession(true));
+    try {
+      response.setContentType("text/plain; charset=UTF-8");
+      response.getWriter().append(loginMessage);
+      response.getWriter().close();
+      response.setStatus(HttpServletResponse.SC_OK);
+    } catch (IOException e) {
+      LOG.warn("Error while generating Login Password for user to sign by his wallet", e);
+    }
   }
 
 }

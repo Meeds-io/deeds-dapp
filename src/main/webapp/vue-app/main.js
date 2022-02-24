@@ -132,7 +132,8 @@ const store = new Vuex.Store({
     tenantProvisioningABI: [
       'function startTenant(uint256 _nftId) external',
       'function stopTenant(uint256 _nftId) external',
-      'function getDelegatee(uint256 _nftId) public view returns(address)',
+      'function delegatee(uint256 _nftId) public view returns(address)',
+      'function tenantStatus(uint256 _nftId) public view returns(bool)',
       'function isProvisioningManager(address _address, uint256 _nftId) public view returns(bool)',
     ],
     // Contracts addresses
@@ -171,6 +172,8 @@ const store = new Vuex.Store({
     depositGasLimit: 170000,
     withdrawGasLimit: 170000,
     tradeGasLimit: 150000,
+    startTenantGasLimit: 150000,
+    stopTenantGasLimit: 150000,
     maxGasLimit: 300000,
     // Cuurent Gas Price 
     gasPrice: 0,
@@ -264,9 +267,9 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-              state.nftAddress = '0x47345425e76CDF38B8816B82fBd777c4B66e64Da';
+              state.nftAddress = '0xe311B974A14dB84Dd668e04Ec61637453BbEA1E4';
               state.xMeedAddress = '0xea5b691e3711e3804B9DE627d7d27A1545DfA084';
-              state.tenantProvisioningAddress = '0x1cf39165cFA04d73e9eC5DDD8dA5695311942a0a';
+              state.tenantProvisioningAddress = '0x8be53DAE5Bf9F834BFa18166a8a79A99491315e7';
               state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
               state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
               state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
