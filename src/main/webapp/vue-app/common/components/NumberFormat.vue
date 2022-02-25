@@ -45,7 +45,7 @@ export default {
     },
     fractions: {
       type: Number,
-      default: 2,
+      default: 0,
     },
     noDecimals: {
       type: Boolean,
@@ -62,9 +62,7 @@ export default {
   },
   computed: Vuex.mapState({
     language: state => state.language,
-    meedsPrice: state => state.meedsPrice,
-    ethPrice: state => state.ethPrice,
-    exchangeRate: state => state.exchangeRate,
+    meedPrice: state => state.meedPrice,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     display() {
       return !this.hideZero || (this.value && (!this.value.isZero || !this.value.isZero()));
@@ -74,13 +72,13 @@ export default {
     },
     formattedValue() {
       if (this.currency) {
-        return this.$ethUtils.computeFiatBalance(
+        const fractions = this.fractions || (this.selectedFiatCurrency === 'eth' ? 8 : 3);
+        return this.meedPrice && this.$ethUtils.computeFiatBalance(
           this.value || 0,
-          this.meedsPrice,
-          this.ethPrice,
-          this.exchangeRate,
+          this.meedPrice,
           this.selectedFiatCurrency,
-          this.language);
+          fractions,
+          this.language) || '-';
       } else if (this.noDecimals) {
         return this.$ethUtils.toFixedDisplay(this.value, this.fractions, this.language);
       } else {

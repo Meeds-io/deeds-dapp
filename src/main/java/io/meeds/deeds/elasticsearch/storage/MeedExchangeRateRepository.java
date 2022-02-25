@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function getMeedsExchange(from, currency) {
-  return fetch(`/${window.parentAppLocation}/api/exchange/${(currency || 'USD').toUpperCase()}?from=${from}`, {
-    cache: 'reload',
-    method: 'GET',
-  }).then(resp => resp && resp.ok && resp.json());
+package io.meeds.deeds.elasticsearch.storage;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
+
+public interface MeedExchangeRateRepository extends ElasticsearchRepository<MeedExchangeRate, LocalDate> {
+
+  List<MeedExchangeRate> findByDateBetween(LocalDate from, LocalDate to);
+
 }

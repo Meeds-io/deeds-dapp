@@ -23,7 +23,7 @@ export function sendEmail(nftId, email) {
   formData.append('email', email);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/deeds-dapp/api/tenant/${nftId}`, {
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

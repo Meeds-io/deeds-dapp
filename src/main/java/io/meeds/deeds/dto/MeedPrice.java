@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,27 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function getMeedsExchange(from, currency) {
-  return fetch(`/${window.parentAppLocation}/api/exchange/${(currency || 'USD').toUpperCase()}?from=${from}`, {
-    cache: 'reload',
-    method: 'GET',
-  }).then(resp => resp && resp.ok && resp.json());
+package io.meeds.deeds.dto;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MeedPrice {
+
+  @JsonProperty("date")
+  private LocalDate  date;
+
+  @JsonProperty("ethPrice")
+  private BigDecimal ethPrice;
+
+  @JsonProperty("currencyPrice")
+  private BigDecimal currencyPrice;
+
 }

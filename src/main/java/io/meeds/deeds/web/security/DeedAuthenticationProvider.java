@@ -45,9 +45,7 @@ import io.meeds.deeds.web.utils.Utils;
 @Component
 public class DeedAuthenticationProvider implements AuthenticationProvider {
 
-  public static final String  USER_ROLE_NAME          = "USER";
-
-  private static final String PERSONAL_MESSAGE_PREFIX = "\u0019Ethereum Signed Message:\n";
+  public static final String USER_ROLE_NAME = "USER";
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {

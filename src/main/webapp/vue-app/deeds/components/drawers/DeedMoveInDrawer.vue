@@ -27,14 +27,14 @@
           <v-card-text v-if="transactionHash">
             <v-list-item class="px-0">
               <v-list-item-avatar size="72">
-                <v-img src="/deeds-dapp/static/images/transactionInProgress.png" />
+                <v-img :src="`/${parentLocation}/static/images/transactionInProgress.png`" />
               </v-list-item-avatar>
               <v-list-item-content class="d-inline">
                 {{ $t('requestTenantSentDescription') }}
                 <a
                   :href="transactionLink"
                   target="_blank"
-                  rel="nofollow">
+                  rel="noreferrer">
                   {{ transactionHashAlias }}
                 </a>
               </v-list-item-content>
@@ -103,12 +103,14 @@ export default {
   data: () => ({
     nftId: 0,
     email: null,
+    emailChanged: false,
     isEditingEmail: false,
     sending: false,
     sendingEmail: false,
     transactionHash: null,
   }),
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     address: state => state.address,
     provider: state => state.provider,
     etherscanBaseLink: state => state.etherscanBaseLink,
@@ -151,6 +153,11 @@ export default {
         this.$refs.drawer.endLoading();
       }
     },
+    email(newVal, oldVal) {
+      if (this.transactionHash && newVal !== oldVal) {
+        this.emailChanged = true;
+      }
+    },
   },
   created() {
     this.$root.$on('deeds-move-in-drawer', this.open);
@@ -161,6 +168,7 @@ export default {
       this.transactionHash = null;
       this.sending = false;
       this.isEditingEmail = false;
+      this.emailChanged = false;
       this.$nextTick()
         .then(() => this.$refs.drawer.open());
     },
@@ -181,7 +189,7 @@ export default {
       }
     },
     cancelEditEmail() {
-      if (this.transactionHash) {
+      if (this.transactionHash && !this.emailChanged) {
         window.setTimeout(() => {
           if (this.isEditingEmail && !this.sendingEmail) {
             this.isEditingEmail = false;
@@ -192,6 +200,7 @@ export default {
     editEmail() {
       if (this.transactionHash && !this.isEditingEmail) {
         this.isEditingEmail = true;
+        this.emailChanged = false;
         this.$nextTick().then(() => this.$refs.email.focus());
       }
     },
@@ -203,6 +212,7 @@ export default {
       if (this.email) {
         this.sendingEmail = true;
         return this.$tenantManagement.sendEmail(this.nftId, this.email)
+          .then(() => this.emailChanged = false)
           .finally(() => this.isEditingEmail = this.sendingEmail = false);
       }
     },

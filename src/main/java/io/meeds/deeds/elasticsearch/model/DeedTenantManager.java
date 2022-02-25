@@ -16,12 +16,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.storage;
+package io.meeds.deeds.elasticsearch.model;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Dynamic;
 
-import io.meeds.deeds.model.DeedTenantManager;
+import lombok.*;
 
-public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenantManager, Long> {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(indexName = "deed_tenant_manager", createIndex = true, dynamic = Dynamic.TRUE)
+public class DeedTenantManager {
+
+  @Id
+  private long   nftId;
+
+  private String managerAddress;
+
+  private String email;
 
 }

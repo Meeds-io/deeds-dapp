@@ -124,9 +124,7 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
-    meedsPrice: state => state.meedsPrice,
-    ethPrice: state => state.ethPrice,
-    exchangeRate: state => state.exchangeRate,
+    meedPrice: state => state.meedPrice,
     meedsBalance: state => state.meedsBalance,
     loadingMeedsBalance: state => state.loadingMeedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,

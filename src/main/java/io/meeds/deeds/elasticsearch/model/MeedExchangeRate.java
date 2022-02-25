@@ -16,25 +16,38 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.model;
+package io.meeds.deeds.elasticsearch.model;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Dynamic;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = true, dynamic = Dynamic.TRUE)
-public class DeedTenantManager {
+@Document(indexName = "meed_exchange_rate", createIndex = true, dynamic = Dynamic.TRUE)
+public class MeedExchangeRate {
+
+  public MeedExchangeRate(LocalDate date) {
+    this.date = date;
+  }
 
   @Id
-  private long   nftId;
+  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
+  private LocalDate  date;
 
-  private String managerAddress;
+  private BigDecimal ethUsdPrice;
 
-  private String email;
+  private BigDecimal meedEthPrice;
+
+  private BigDecimal meedReserve;
+
+  private BigDecimal ethReserve;
+
+  private boolean    finalRate;
 
 }
