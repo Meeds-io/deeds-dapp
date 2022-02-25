@@ -51,7 +51,7 @@ public class TenantController {
     }
     String walletAddress = principal.getName();
     try {
-      tenantService.saveEmail(deedId, walletAddress, email);
+      tenantService.saveEmail(walletAddress, deedId, email);
     } catch (UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }

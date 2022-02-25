@@ -55,6 +55,7 @@
               v-model="email"
               :placeholder="$t('requestTenantEmailPlaceholder')"
               :readonly="disabledEmail"
+              :disabled="sendingEmail"
               name="email"
               type="email"
               class="align-center"

@@ -31,6 +31,7 @@
       :headers="headers"
       :items="nftsList"
       :items-per-page="10"
+      item-key="updateDate"
       hide-default-header>
       <template v-slot:item.id="{item}">
         <v-btn
@@ -127,7 +128,10 @@ export default {
     tenantProvisioningAddress: state => state.tenantProvisioningAddress,
     nftContract: state => state.nftContract,
     nftsList() {
-      return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id);
+      return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id)
+        .map(nft => Object.assign(nft, {
+          updateDate: Date.now(),
+        }));
     },
   }),
   watch: {
@@ -232,7 +236,7 @@ export default {
                   nft.link = `https://${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                   nft.linkLabel = `${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                 }
-                this.$forceUpdate();
+                this.$root.$emit('nft-status-changed', nft);
               });
           }
         });
