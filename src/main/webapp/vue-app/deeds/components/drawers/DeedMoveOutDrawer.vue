@@ -138,6 +138,8 @@ export default {
           this.nftId,
           options
         ).then(receipt => {
+          this.$root.$emit('nft-status-changed', this.nftId, 'loading');
+
           this.transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', this.transactionHash);
         }).finally(() => this.sending = false);

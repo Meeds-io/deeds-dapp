@@ -185,6 +185,14 @@ export default {
         }
       });
     }
+
+    this.$root.$on('nft-status-changed', (id, status) => {
+      const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
+      if (nft) {
+        nft.status = status;
+        this.nfts = Object.assign({}, this.nfts);
+      }
+    });
   },
   methods: {
     refreshAuthentication() {
@@ -224,19 +232,18 @@ export default {
       }
     },
     loadStatus(nft) {
-      nft.status = 'loading';
+      this.$root.$emit('nft-status-changed', nft.id, 'loading');
       return this.tenantProvisioningContract.isProvisioningManager(this.address, nft.id)
         .then(provisioningManager => {
           if (provisioningManager) {
             nft.provisioningManager = true;
             return this.tenantProvisioningContract.tenantStatus(nft.id)
               .then(status => {
-                nft.status = status && 'STARTED' || 'STOPPED';
                 if (status) {
                   nft.link = `https://${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                   nft.linkLabel = `${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                 }
-                this.$root.$emit('nft-status-changed', nft);
+                this.$root.$emit('nft-status-changed', nft.id, status && 'STARTED' || 'STOPPED');
               });
           }
         });

@@ -231,11 +231,11 @@ export default {
           this.nftId,
           options
         ).then(receipt => {
+          this.$root.$emit('nft-status-changed', this.nftId, 'loading');
+
           this.transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', this.transactionHash);
-          if (this.transactionHash) {
-            this.sendEmail();
-          }
+          this.sendEmail();
         }).finally(() => this.sending = false);
       }
     },
