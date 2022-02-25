@@ -53,9 +53,11 @@ const selectedFiatCurrency = localStorage.getItem('deeds-selectedFiatCurrency') 
 const isMetamaskInstalled = ethUtils.isMetamaskInstalled();
 const isMetamaskConnected = ethUtils.isMetamaskConnected();
 
+window.parentAppLocation = window.location.pathname.split('/')[1];
+
 const store = new Vuex.Store({
   state: {
-    parentLocation: window.location.pathname.split('/')[1],
+    parentLocation: window.parentAppLocation,
     appLoading: true,
     ens: null,
     address: null,
@@ -63,7 +65,7 @@ const store = new Vuex.Store({
     validNetwork: false,
     etherscanBaseLink: null,
     openSeaBaseLink: null,
-    managedNetworkIds: [1, 4, 5],
+    managedNetworkIds: [1, 4],
     provider: null,
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
@@ -163,8 +165,6 @@ const store = new Vuex.Store({
     isMetamaskConnected,
     // Meed/ETH pair historical data
     pairHistoryData: null,
-    // Euro/USD historical exchange rate data
-    currencyExchangeRate: null,
     // Default Gas limit for sent transactions
     approvalGasLimit: 60000,
     stakeGasLimit: 200000,
@@ -181,9 +181,7 @@ const store = new Vuex.Store({
     gasPrice: 0,
     gasPriceGwei: 0,
     transactionGas: 0,
-    exchangeRate: 1,
-    meedsPrice: 0,
-    ethPrice: 0,
+    meedPrice: 0,
     // User balances
     etherBalance: null,
     loadingMeedsBalance: true,
@@ -296,14 +294,8 @@ const store = new Vuex.Store({
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;
     },
-    setMeedsPrice(state, meedsPrice) {
-      state.meedsPrice = meedsPrice;
-    },
-    setEthPrice(state, ethPrice) {
-      state.ethPrice = ethPrice;
-    },
-    setExchangeRate(state, exchangeRate) {
-      state.exchangeRate = exchangeRate;
+    setMeedPrice(state, meedPrice) {
+      state.meedPrice = meedPrice;
     },
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
@@ -522,41 +514,6 @@ const store = new Vuex.Store({
           });
         }
 
-        if (state.nftContract) {
-          // eslint-disable-next-line new-cap
-          const startedUsingNFT = state.nftContract.filters.StartedUsingNFT();
-          state.nftContract.on(startedUsingNFT, (address, nftId, strategyAddress) => {
-            if (address.toUpperCase() === state.address.toUpperCase()) {
-              if (strategyAddress.toUpperCase() === state.tenantProvisioningAddress.toUpperCase()) {
-                if (state.ownedNfts) {
-                  const id = nftId.toNumber();
-                  const nft = state.ownedNfts.find(ownedNft => ownedNft.id === id);
-                  if (nft) {
-                    delete nft.status;
-                  }
-                  state.ownedNfts = state.ownedNfts.slice();
-                }
-              }
-            }
-          });
-          // eslint-disable-next-line new-cap
-          const endedUsingNFT = state.nftContract.filters.EndedUsingNFT();
-          state.nftContract.on(endedUsingNFT, (address, nftId, strategyAddress) => {
-            if (address.toUpperCase() === state.address.toUpperCase()) {
-              if (strategyAddress.toUpperCase() === state.tenantProvisioningAddress.toUpperCase()) {
-                if (state.ownedNfts) {
-                  const id = nftId.toNumber();
-                  const nft = state.ownedNfts.find(ownedNft => ownedNft.id === id);
-                  if (nft) {
-                    delete nft.status;
-                  }
-                  state.ownedNfts = state.ownedNfts.slice();
-                }
-              }
-            }
-          });
-        }
-
         this.commit('loadBalances');
         this.commit('loadGasPrice');
         this.commit('loadOwnedNfts');
@@ -577,31 +534,14 @@ const store = new Vuex.Store({
         });
       }
     },
-    loadPairHistoryData(state) {
-      exchange.retrieveMeedsData().then(result => {
-        state.pairHistoryData = result || {};
-        const today = new Date().toISOString().substring(0, 10);
-        const todayStats = state.pairHistoryData[today];
-        if (todayStats) {
-          if (todayStats.meedsPrice) {
-            this.commit('setMeedsPrice', new BigNumber(todayStats.meedsPrice));
+    loadMeedPrice(state) {
+      const today = new Date().toISOString().substring(0, 10);
+      exchange.getMeedsExchange(today, state.selectedFiatCurrency)
+        .then(result => {
+          if (result && result.length && result[0].currencyPrice) {
+            this.commit('setMeedPrice', new BigNumber(result[0].currencyPrice));
           }
-          if (todayStats.ethPrice) {
-            this.commit('setEthPrice', new BigNumber(todayStats.ethPrice));
-          }
-        }
-      });
-    },
-    loadCurrencyExchangeRate(state) {
-      exchange.retrieveCurrencyExchangeRate().then(result => {
-        state.currencyExchangeRate = result || {};
-        const todayDate = new Date().toISOString().substring(0, 10);
-        if (state.currencyExchangeRate && state.currencyExchangeRate[todayDate]) {
-          this.commit('setExchangeRate', state.currencyExchangeRate[todayDate]);
-        } else {
-          this.commit('setExchangeRate', 1);
-        }
-      });
+        });
     },
     loaded(state) {
       state.appLoading = false;
@@ -609,6 +549,8 @@ const store = new Vuex.Store({
     selectFiatCurrency(state, fiatCurrency) {
       state.selectedFiatCurrency = fiatCurrency;
       localStorage.setItem('deeds-selectedFiatCurrency', state.selectedFiatCurrency);
+
+      this.commit('loadMeedPrice');
     },
     refreshMetamaskState() {
       this.commit('setMetamaskInstalled');
@@ -648,10 +590,6 @@ if (isMetamaskInstalled) {
 new Vue({
   el: '#deedsApp',
   template: '<deeds-site id="deedsApp" />',
-  created() {
-    store.commit('loadPairHistoryData');
-    store.commit('loadCurrencyExchangeRate');
-  },
   store,
   i18n,
   vuetify: new Vuetify({

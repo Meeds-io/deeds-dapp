@@ -26,14 +26,14 @@
         <v-card-text v-if="transactionHash">
           <v-list-item class="px-0">
             <v-list-item-avatar size="72">
-              <v-img src="/deeds-dapp/static/images/transactionInProgress.png" />
+              <v-img :src="`/${parentLocation}/static/images/transactionInProgress.png`" />
             </v-list-item-avatar>
             <v-list-item-content class="d-inline">
               {{ $t('removeTenantSentDescription') }}
               <a
                 :href="transactionLink"
                 target="_blank"
-                rel="nofollow">
+                rel="noreferrer">
                 {{ transactionHashAlias }}
               </a>
             </v-list-item-content>
@@ -72,6 +72,7 @@ export default {
     transactionHash: null,
   }),
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     address: state => state.address,
     provider: state => state.provider,
     etherscanBaseLink: state => state.etherscanBaseLink,

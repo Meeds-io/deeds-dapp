@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.model.DeedTenantManager;
-import io.meeds.deeds.storage.DeedTenantManagerRepository;
+import io.meeds.deeds.elasticsearch.model.DeedTenantManager;
+import io.meeds.deeds.elasticsearch.storage.DeedTenantManagerRepository;
 
 @Component
 public class TenantService {

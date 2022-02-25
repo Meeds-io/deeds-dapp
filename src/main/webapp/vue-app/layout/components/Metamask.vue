@@ -37,7 +37,7 @@
         text>
         <span class="py-2">Metamask</span>
         <v-img
-          src="/deeds-dapp/static/images/metamask.svg"
+          :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
           max-width="57px" />
       </v-btn>
@@ -51,7 +51,7 @@
         @click="connectToMetamask">
         <span class="py-2">Metamask</span>
         <v-img
-          src="/deeds-dapp/static/images/metamask.svg"
+          :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
           max-width="57px" />
       </v-btn>
@@ -65,7 +65,7 @@
         @click="switchMetamaskNetwork">
         <span class="py-2">Metamask</span>
         <v-img
-          src="/deeds-dapp/static/images/metamask.svg"
+          :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
           max-width="57px" />
       </v-btn>
@@ -75,6 +75,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     validNetwork: state => state.validNetwork,
     address: state => state.address,

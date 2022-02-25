@@ -18,80 +18,10 @@
  */
 package io.meeds.deeds;
 
-import javax.servlet.ServletContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.elasticsearch.client.ClientConfiguration;
-import org.springframework.data.elasticsearch.client.ClientConfiguration.ClientConfigurationBuilderWithRequiredEndpoint;
-import org.springframework.data.elasticsearch.client.ClientConfiguration.MaybeSecureClientConfigurationBuilder;
-import org.springframework.data.elasticsearch.client.RestClients;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.web.context.ServletContextAware;
-
-import io.meeds.deeds.task.CurrencyExchangeTask;
-import io.meeds.deeds.task.MeedsExchangeTask;
 
 @SpringBootApplication
-@EnableAsync
-@EnableScheduling
-@EnableWebSecurity
-@EnableElasticsearchRepositories(basePackages = "io.meeds.deeds.storage")
-public class DeedApplication extends SpringBootServletInitializer implements ServletContextAware {
-
-  @Value("${exo.es.index.server.username:}")
-  private String         esUsername;
-
-  @Value("${exo.es.index.server.password:}")
-  private String         esPassword;
-
-  @Value("${exo.es.index.server.url:http://127.0.0.1:9200}")
-  private String         esUrl;
-
-  private ServletContext servletContext;
-
-  @Bean
-  public CurrencyExchangeTask currencyExchangeTask() {
-    return new CurrencyExchangeTask(servletContext);
-  }
-
-  @Bean
-  public MeedsExchangeTask meedsExchangeTask() {
-    return new MeedsExchangeTask(servletContext);
-  }
-
-  @Override
-  public void setServletContext(ServletContext servletContext) {
-    this.servletContext = servletContext;
-  }
-
-  @Bean
-  public RestHighLevelClient client() {
-    ClientConfigurationBuilderWithRequiredEndpoint builder = ClientConfiguration.builder();
-    String hostAndPort = esUrl.split("//")[1];
-    MaybeSecureClientConfigurationBuilder connectionBuilder = builder.connectedTo(hostAndPort);
-    if (esUrl.contains("https://")) {
-      connectionBuilder.usingSsl();
-    }
-    if (StringUtils.isNotBlank(esPassword) && StringUtils.isNotBlank(esUsername)) {
-      connectionBuilder.withBasicAuth(esUsername, esPassword);
-    }
-    ClientConfiguration clientConfiguration = connectionBuilder.build();
-    return RestClients.create(clientConfiguration).rest();// NOSONAR
-  }
-
-  @Bean
-  public ElasticsearchOperations elasticsearchTemplate() {
-    return new ElasticsearchRestTemplate(client());
-  }
+public class DeedApplication extends SpringBootServletInitializer {
 
 }

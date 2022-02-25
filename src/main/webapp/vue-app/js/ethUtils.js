@@ -75,21 +75,10 @@ export function computeTokenBalanceNoDecimals(tokenBalance, fractions, language)
   return toFixedDisplay(tokenBalanceWithFractions, fractions, language);
 }
 
-export function computeFiatBalance(tokenBalance, meedsPrice, ethPrice, exchangeRate, selectedFiatCurrency, language) {
-  tokenBalance = tokenBalance || 0;
-  meedsPrice = meedsPrice || 0;
-  const tokenBalanceNoDecimals = fromDecimals(tokenBalance, 18);
-  if (selectedFiatCurrency === 'eur') {
-    const tokenBalanceEur = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice).multipliedBy(new BigNumber(exchangeRate)), 3);
-    return toCurrencyDisplay(tokenBalanceEur, selectedFiatCurrency, language);
-  } else if (selectedFiatCurrency === 'usd' && ethPrice) {
-    const tokenBalanceUsd = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice).multipliedBy(ethPrice), 3);
-    return toCurrencyDisplay(tokenBalanceUsd, selectedFiatCurrency, language);
-  } else if (selectedFiatCurrency === 'eth') {
-    const tokenBalanceEth = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedsPrice), 8);
-    return toCurrencyDisplay(tokenBalanceEth, selectedFiatCurrency, language);
-  }
-  return 0;
+export function computeFiatBalance(tokenBalance, meedPrice, selectedFiatCurrency, fractions, language) {
+  const tokenBalanceNoDecimals = fromDecimals(tokenBalance || 0, 18);
+  const tokenBalanceWithFractions = fractionsToDisplay(new BigNumber(tokenBalanceNoDecimals).multipliedBy(meedPrice || 1), fractions);
+  return toCurrencyDisplay(tokenBalanceWithFractions, selectedFiatCurrency, language);
 }
 
 export function toCurrencyDisplay(value, currency, lang) {

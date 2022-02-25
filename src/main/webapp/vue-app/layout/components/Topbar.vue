@@ -22,7 +22,7 @@
       <v-img
         max-height="64px"
         max-width="64px"
-        src="/deeds-dapp/static/images/meeds.png"
+        :src="`/${parentLocation}/static/images/meeds.png`"
         contain />
       <div class="ps-2 pb-1">{{ $t('dao') }}</div>
       <v-chip
@@ -49,6 +49,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
     address: state => state.address,

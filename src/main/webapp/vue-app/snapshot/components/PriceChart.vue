@@ -18,7 +18,10 @@
 -->
 <template>
   <div class="d-flex flex-column priceChartParent">
-    <div class="priceChartPeriodSelector d-none d-sm-block">
+    <div class="priceChartPeriodSelector d-none d-sm-flex align-center font-weight-bold ps-2 pe-12">
+      <div class="display-5 flex-grow-1">
+        {{ this.chartTitle }}
+      </div>
       <v-btn
         link
         text
@@ -61,6 +64,7 @@ export default {
   data: () => ({
     periods: ['1w' , '1month', 'ytd', 'all'],
     period: '1w',
+    meedPriceHistory: [],
     overallStartTimetamp: 1636156800000,
     toTimetamp: Date.now(),
     chart: null,
@@ -69,86 +73,46 @@ export default {
     language: state => state.language,
     address: state => state.address,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
-    pairHistoryData: state => state.pairHistoryData,
-    currencyExchangeRate: state => state.currencyExchangeRate,
-    needsExchangeRate() {
-      return this.selectedFiatCurrency === 'eur';
+    selectedFiatCurrencyLabel() {
+      return this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
     },
-    fromTimetamp() {
+    fromDate() {
       if (this.period === '1w') {
-        return this.toTimetamp - 604800000;
+        return new Date(this.toTimetamp - 604800000).toISOString().substring(0, 10);
       } else if (this.period === '1month') {
-        return this.toTimetamp - 2592000000;
+        return new Date(this.toTimetamp - 2592000000).toISOString().substring(0, 10);
       } else if (this.period === 'ytd') {
-        return this.toTimetamp - 31536000000;
+        return new Date(this.toTimetamp - 31536000000).toISOString().substring(0, 10);
       } else if (this.period === 'all') {
-        return this.overallStartTimetamp;
+        return new Date(this.overallStartTimetamp).toISOString().substring(0, 10);
       }
-    },
-    dates() {
-      const dates = [];
-      let timestamp = this.fromTimetamp;
-      do {
-        dates.push(timestamp);
-        timestamp += 86400000;
-      } while (timestamp <= this.toTimetamp);
-      return dates;
-    },
-    meedsPriceData() {
-      if (!this.pairHistoryData || (this.needsExchangeRate && !this.currencyExchangeRate)) {
-        return [];
-      }
-      // Build Meeds price data items
-      return this.dates.map(date => {
-        const dateString = this.dateFormat(date);
-        const meedsPriceItem = this.pairHistoryData[dateString];
-        if (!meedsPriceItem) {
-          return null;
-        }
-        meedsPriceItem.date = date;
-        if (this.needsExchangeRate) {
-          const rate = this.currencyExchangeRate[dateString] || Object.values(this.currencyExchangeRate)[0];
-          if (rate) {
-            const usdPrice = new BigNumber(meedsPriceItem.meedsPrice).multipliedBy(meedsPriceItem.ethPrice);
-            meedsPriceItem.price = usdPrice.multipliedBy(rate).toNumber();
-          }
-        } else if (this.selectedFiatCurrency === 'usd') {
-          meedsPriceItem.price = new BigNumber(meedsPriceItem.meedsPrice).multipliedBy(meedsPriceItem.ethPrice).toNumber();
-        } else if (this.selectedFiatCurrency === 'eth') {
-          meedsPriceItem.price = new BigNumber(meedsPriceItem.meedsPrice).toNumber();
-        }
-        return meedsPriceItem;
-      }).filter(item => !!item);
     },
     chartData() {
-      return this.meedsPriceData.map(item => [item.date, item.price]);
+      return this.meedPriceHistory.sort((item1, item2) => item2.date.localeCompare(item1.date))
+        .map(item => [item.date, item.currencyPrice]);
     },
     chartTitle() {
       if (this.chartData && this.chartData.length) {
-        const meedsPrice = this.chartData[this.chartData.length - 1][1];
-        if (meedsPrice) {
-          const meedsPriceLabel = this.currencyFormat(meedsPrice);
-          return `${this.$t('meedsPrice')}: ${meedsPriceLabel}`;
+        const meedPrice = this.chartData[this.chartData.length - 1][1];
+        if (meedPrice) {
+          const meedPriceLabel = this.currencyFormat(meedPrice);
+          return `${this.$t('meedPrice')}: ${meedPriceLabel}`;
         }
       }
-      return this.$t('meedsPrice');
+      return this.$t('meedPrice');
     },
     chartLeftMargin() {
       if (this.chartData && this.chartData.length) {
         const meedsMaxPrice = Math.max(...this.chartData.map(values => values[1]));
         if (meedsMaxPrice) {
-          const meedsPriceLabel = this.currencyFormat(meedsMaxPrice);
-          return meedsPriceLabel.length * 8;
+          const meedPriceLabel = this.currencyFormat(meedsMaxPrice);
+          return meedPriceLabel.length * 8;
         }
       }
       return 0;
     },
     chartOptions() {
       return {
-        title: {
-          text: this.chartTitle,
-          textAlign: 'left',
-        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -198,41 +162,45 @@ export default {
     },
   }),
   watch: {
-    selectedFiatCurrency() {
-      if (this.chart && this.chartOptions && this.meedsPriceData.length) {
-        this.chart.setOption(this.chartOptions);
+    fromDate(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        this.refreshData();
       }
     },
-    currencyExchangeRate() {
-      if (this.chart && this.chartOptions && this.meedsPriceData.length) {
-        this.chart.setOption(this.chartOptions);
+    selectedFiatCurrency(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        this.refreshData();
       }
     },
-    chart() {
-      if (this.chart && this.chartOptions && this.meedsPriceData.length) {
+    meedPriceHistory() {
+      if (this.chart && this.chartOptions && this.meedPriceHistory.length) {
         this.chart.setOption(this.chartOptions);
-      }
-    },
-    chartOptions() {
-      if (this.chart && this.chartOptions && this.meedsPriceData.length) {
-        this.chart.setOption(this.chartOptions);
+        const today = new Date().toISOString().substring(0, 10);
+        const todayItem = this.meedPriceHistory.find(item => item.date === today);
+        if (todayItem && todayItem.currencyPrice) {
+          this.$store.commit('setMeedPrice', new BigNumber(todayItem.currencyPrice));
+        }
       }
     },
   },
   mounted() {
     this.initChart();
+    this.refreshData();
   },
   methods: {
     initChart() {
       this.chart = echarts.init(this.$refs.priceChart);
     },
+    refreshData() {
+      return this.$exchange.getMeedsExchange(this.fromDate, this.selectedFiatCurrency)
+        .then(result => this.meedPriceHistory = result);
+    },
     currencyFormat(price) {
       const value = price && price.value || price;
       if (this.selectedFiatCurrency === 'eth') {
-        return `${this.$ethUtils.toFixed(value, 8)} ${this.$t(`fiat.currency.${this.selectedFiatCurrency}`)}`;
+        return `${this.$ethUtils.toFixed(value, 8)} ${this.selectedFiatCurrencyLabel}`;
       } else {
-        const price = this.$ethUtils.toFixed(value, 2);
-        return this.$ethUtils.toCurrencyDisplay(price, this.selectedFiatCurrency, this.language);
+        return this.$ethUtils.toCurrencyDisplay(this.$ethUtils.toFixed(value, 2), this.selectedFiatCurrency, this.language);
       }
     },
     dateFormat(timestamp) {
