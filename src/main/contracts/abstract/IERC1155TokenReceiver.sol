@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.11;
+pragma solidity 0.8.9;
 
 /**
  * @dev ERC-1155 interface for accepting safe transfers.

@@ -32,6 +32,9 @@ public class TenantService {
   @Autowired
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
+  @Autowired
+  private BlockchainService           blockchainService;
+
   /**
    * Stores User Email to allow support Team Contact him and notify him about
    * Tenant Status
@@ -42,8 +45,8 @@ public class TenantService {
    * @throws UnauthorizedOperationException when the wallet isn't the DEED
    *           manager
    */
-  public void saveEmail(long nftId, String managerAddress, String email) throws UnauthorizedOperationException {
-    if (!isDeedManager(nftId, managerAddress)) {
+  public void saveEmail(String managerAddress, long nftId, String email) throws UnauthorizedOperationException {
+    if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException("User with address " + managerAddress + " isn't the manager of deed " + nftId);
     }
     if (StringUtils.isBlank(email)) {
@@ -55,14 +58,14 @@ public class TenantService {
   }
 
   /**
-   * @param nftId
-   * @param managerAddress
-   * @return
+   * Checks if address is the provisioning manager of the DEED
+   * 
+   * @param nftId DEED NFT identifier
+   * @param address Wallet or Contract Ethereum address
+   * @return true if address is the provisioning manager of the DEED Tenant
    */
-  private boolean isDeedManager(long nftId, String managerAddress) {
-    // TODO check on blockcahin, using Web3J, that the user is the provisioning
-    // manager of the DEED Tenant
-    return true;
+  public boolean isDeedManager(String address, long nftId) {
+    return blockchainService.isTenantProvisioningManager(address, nftId);
   }
 
 }
