@@ -204,6 +204,7 @@ export default {
           if (!this.nfts[ownedNft.id]) {
             this.nfts[ownedNft.id] = Object.assign(ownedNft, {
               cityName: this.cities[ownedNft.cityIndex],
+              owner: true,
               provisioningManager: false,
               hasEarnedMeeds: false,
               earnedRewardsNoDecimals: 0,

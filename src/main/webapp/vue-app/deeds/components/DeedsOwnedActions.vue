@@ -53,9 +53,9 @@
           </template>
           <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
         </v-tooltip>
-        <v-divider class="my-1" />
       </template>
-      <v-list-item>
+      <v-divider v-if="provisioningManager && owner && status === 'STOPPED'" class="my-1" />
+      <v-list-item v-if="owner && status === 'STOPPED'">
         <v-list-item-title class="text-capitalize">
           <a
             :href="`${openSeaBaseLink}/${nft.id}/sell`"
@@ -100,6 +100,9 @@ export default {
       return this.nft && this.nft.provisioningManager;
     },
     status() {
+      return this.nft && this.nft.status;
+    },
+    owner() {
       return this.nft && this.nft.status;
     },
   }),
