@@ -35,7 +35,7 @@ public class Utils {
   public static String generateLoginMessage(HttpSession session) {
     String token = getLoginMessage(session);
     if (token == null) {
-      token = getRandomString();
+      token = RANDOM.nextLong() + "-" + RANDOM.nextLong() + "-" + RANDOM.nextLong();
       session.setAttribute(LOGIN_MESSAGE_ATTRIBUTE_NAME, token); // NOSONAR
     }
     return token;
@@ -45,8 +45,8 @@ public class Utils {
     return session == null ? null : (String) session.getAttribute(LOGIN_MESSAGE_ATTRIBUTE_NAME);
   }
 
-  private static String getRandomString() {
-    return RANDOM.nextLong() + "-" + RANDOM.nextLong() + "-" + RANDOM.nextLong();
+  public static String getApplicationBuildNumber() {
+    return EnvironmentService.getEnvironment().getProperty("application.buildNumber", "");
   }
 
 }

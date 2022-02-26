@@ -18,13 +18,13 @@
  */
 package io.meeds.deeds.web.rest;
 
-import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,17 +40,21 @@ public class ExchangeController {
   private ExchangeService exchangeService;
 
   @GetMapping("/{currency}")
-  public List<MeedPrice> getExchangeRates(
-                                             @PathVariable(name = "currency")
-                                             Currency currency,
-                                             @RequestParam(name = "from", required = true)
-                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                             LocalDate fromDate) {
+  public ResponseEntity<List<MeedPrice>> getExchangeRates(
+                                                          @PathVariable(name = "currency")
+                                                          Currency currency,
+                                                          @RequestParam(name = "from", required = true)
+                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                          LocalDate fromDate) {
     LocalDate today = LocalDate.now(ZoneOffset.UTC);
     if (fromDate.isAfter(today)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From date must be before today");
     }
-    return exchangeService.getExchangeRates(currency, fromDate, today);
+    List<MeedPrice> exchangeRates = exchangeService.getExchangeRates(currency, fromDate, today);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.maxAge(15, TimeUnit.MINUTES).cachePublic())
+                         .lastModified(ZonedDateTime.now())
+                         .body(exchangeRates);
   }
 
 }

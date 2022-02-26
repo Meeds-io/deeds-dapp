@@ -1,6 +1,8 @@
 <%@page import="io.meeds.deeds.web.utils.Utils"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
-
+<%
+  String buildnumber = Utils.getApplicationBuildNumber();
+%>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -18,8 +20,8 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.5.14/dist/vuetify.min.css" rel="stylesheet">
-    <link href="/deeds-dapp/static/css/deeds.css" rel="stylesheet">
-    <link href="/deeds-dapp/static/css/vuetify-theme.css" rel="stylesheet">
+    <link href="/deeds-dapp/static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
+    <link href="/deeds-dapp/static/css/vuetify-theme.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
     <div id="deedsApp"></div>
@@ -36,6 +38,6 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bignumber.js@9.0.1/bignumber.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.5.1/dist/ethers.umd.min.js"></script>
-    <script src="/deeds-dapp/static/js/deeds.js"></script>
+    <script src="/deeds-dapp/static/js/deeds.js?_=<%=buildnumber%>"></script>
   </body>
 </html>
