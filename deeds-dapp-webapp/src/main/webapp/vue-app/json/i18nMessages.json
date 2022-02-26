@@ -132,7 +132,13 @@
     "sendEmailButtonTooltip": "Update email",
     "editEmailButtonTooltip": "Edit used email to contact you",
     "authenticateToCommandTenantTooltip": "Sign in order to access tenant commands",
-    "signMessage": "Welcome to Meeds dApp!\nPlease sign the current message to authenticate your wallet on dApp.\n\nToken: {0}"
+    "signMessage": "Welcome to Meeds dApp!\nPlease sign the current message to authenticate your wallet on dApp.\n\nToken: {0}",
+    "nft.id": "NFT",
+    "nft.cityName": "City name",
+    "nft.name": "Name",
+    "nft.status": "Status",
+    "nft.earnedRewards": "Earned rewards",
+    "nft.actions": "Commands"
   },
   "fr": {
     "dao": "DAO",
@@ -268,6 +274,12 @@
     "sendEmailButtonTooltip": "Mettre à jour l'email de contact",
     "editEmailButtonTooltip": "Changer l'email de contact",
     "authenticateToCommandTenantTooltip": "S'authentifier afin d'accéder aux commandes du tenant",
-    "signMessage": "Bienvenue dans l'écosystème de Meeds!\nVeuillez signer ce message afin de vous authentifier.\n\nToken: {0}"
+    "signMessage": "Bienvenue dans l'écosystème de Meeds!\nVeuillez signer ce message afin de vous authentifier.\n\nToken: {0}",
+    "nft.id": "NFT",
+    "nft.cityName": "Nom de la cité",
+    "nft.name": "Nom",
+    "nft.status": "État",
+    "nft.earnedRewards": "Points de gagnés",
+    "nft.actions": "Commandes"
   }
 }

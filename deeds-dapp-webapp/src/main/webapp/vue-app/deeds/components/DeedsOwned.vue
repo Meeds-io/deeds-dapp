@@ -30,15 +30,19 @@
     <v-data-table
       :headers="headers"
       :items="nftsList"
-      :items-per-page="10"
+      :hide-default-header="!isMobile"
+      :disable-sort="isMobile"
       item-key="updateDate"
-      hide-default-header>
+      disable-pagination
+      disable-filtering
+      hide-default-footer>
       <template v-slot:item.id="{item}">
         <v-btn
           :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}#inventory`"
           target="_blank"
           rel="noreferrer"
           color="primary"
+          class="px-0 px-sm-3 d-inline d-sm-flex"
           text
           link>
           #{{ item.id }}
@@ -88,32 +92,6 @@ export default {
   data: () => ({
     cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
     cardTypes: ['Common', 'Uncommon', 'Epic', 'Legendary'],
-    headers: [
-      {
-        text: '',
-        value: 'id',
-      },
-      {
-        text: '',
-        value: 'cityName',
-      },
-      {
-        text: 'id',
-        value: 'name',
-      },
-      {
-        text: 'status',
-        value: 'status',
-      },
-      {
-        text: 'earnedRewards',
-        value: 'earnedRewards',
-      },
-      {
-        text: 'actions',
-        value: 'actions',
-      },
-    ],
     nfts: {},
     authenticated: false,
   }),
@@ -127,11 +105,35 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     tenantProvisioningAddress: state => state.tenantProvisioningAddress,
     nftContract: state => state.nftContract,
+    isMobile() {
+      return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
+    },
     nftsList() {
       return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id)
         .map(nft => Object.assign(nft, {
           updateDate: Date.now(),
         }));
+    },
+    headers() {
+      return [{
+        text: this.$t('nft.id'),
+        value: 'id',
+      }, {
+        text: this.$t('nft.cityName'),
+        value: 'cityName',
+      }, {
+        text: this.$t('nft.name'),
+        value: 'name',
+      }, {
+        text: this.$t('nft.status'),
+        value: 'status',
+      }, {
+        text: this.$t('nft.earnedRewards'),
+        value: 'earnedRewards',
+      }, {
+        text: this.$t('nft.actions'),
+        value: 'actions',
+      }];
     },
   }),
   watch: {
@@ -210,16 +212,17 @@ export default {
         .finally(() => this.refreshAuthentication());
     },
     reloadStatus() {
-      if (this.ownedNfts && this.ownedNfts.length) {
+      if (this.tenantProvisioningContract && this.ownedNfts && this.ownedNfts.length) {
         const promises = [];
         this.ownedNfts.forEach(ownedNft => {
           if (!this.nfts[ownedNft.id]) {
             this.nfts[ownedNft.id] = Object.assign(ownedNft, {
               cityName: this.cities[ownedNft.cityIndex],
+              earnedRewardsNoDecimals: 0,
+              hasEarnedMeeds: false,
               owner: true,
               provisioningManager: false,
-              hasEarnedMeeds: false,
-              earnedRewardsNoDecimals: 0,
+              status: false,
             });
           }
           if (!ownedNft.status) {
@@ -232,7 +235,7 @@ export default {
       }
     },
     loadStatus(nft) {
-      this.$root.$emit('nft-status-changed', nft.id, 'loading');
+      nft.status = 'loading';
       return this.tenantProvisioningContract.isProvisioningManager(this.address, nft.id)
         .then(provisioningManager => {
           if (provisioningManager) {
@@ -243,7 +246,9 @@ export default {
                   nft.link = `https://${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                   nft.linkLabel = `${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                 }
-                this.$root.$emit('nft-status-changed', nft.id, status && 'STARTED' || 'STOPPED');
+                nft.status = status && 'STARTED' || 'STOPPED';
+                // Force update nft in table by updating Table Key
+                nft.updateDate = Date.now();
               });
           }
         });

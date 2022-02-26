@@ -72,6 +72,7 @@
                     :key="emailAppendIcon"
                     :title="emailAppendIconTooltip"
                     :loading="sendingEmail"
+                    :disabled="!emailChanged && isEditingEmail"
                     icon
                     @click="isEditingEmail && sendEmail() || editEmail()">
                     <v-icon :color="emailAppendIconColor">
@@ -171,7 +172,11 @@ export default {
       this.isEditingEmail = false;
       this.emailChanged = false;
       this.$nextTick()
-        .then(() => this.$refs.drawer.open());
+        .then(() => {
+          if (this.$refs.drawer) {
+            this.$refs.drawer.open();
+          }
+        });
     },
     close(nftId) {
       if (nftId === this.nftId) {

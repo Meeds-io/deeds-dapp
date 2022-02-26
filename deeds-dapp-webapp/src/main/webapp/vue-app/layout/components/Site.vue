@@ -28,7 +28,7 @@
           <deeds-navbar v-if="address" role="navigation" />
           <deeds-page
             v-if="address"
-            class="mt-10"
+            class="mt-8 mt-sm-10"
             role="main" />
         </template>
       </div>
