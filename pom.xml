@@ -2,7 +2,7 @@
 <!--
 
 	This file is part of the Meeds project (https://meeds.io/).
-	Copyright (C) 2021 Meeds Association contact@meeds.io
+	Copyright (C) 2022 Meeds Association contact@meeds.io
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
 	License as published by the Free Software Foundation; either
@@ -14,28 +14,42 @@
 	You should have received a copy of the GNU Lesser General Public License
 	along with this program; if not, write to the Free Software Foundation,
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.exoplatform</groupId>
-    <artifactId>maven-parent-pom</artifactId>
-    <version>23</version>
-    <relativePath />
+    <artifactId>addons-parent-pom</artifactId>
+    <groupId>org.exoplatform.addons</groupId>
+    <version>15-M03</version>
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
-  <artifactId>deeds-dapp-webapp</artifactId>
+  <artifactId>deeds-dapp-parent</artifactId>
   <version>1.0.x-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
   <name>Meeds:: Deeds Dapp</name>
-  <description>Meeds:: Deeds Decentralized Web Application</description>
+  <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
+  <modules>
+    <module>deeds-dapp-contract</module>
+    <module>deeds-dapp-service</module>
+    <module>deeds-dapp-webapp</module>
+    <module>deeds-dapp-packaging</module>
+  </modules>
+  <scm>
+    <connection>scm:git:git://github.com/meeds-io/deeds-dapp.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/meeds-io/deeds-dapp.git</developerConnection>
+    <url>https://github.com/meeds-io/deeds-dapp</url>
+    <tag>HEAD</tag>
+  </scm>
   <properties>
-    <!-- 3rd party libraries versions -->
     <spring-boot-dependencies.version>2.6.3</spring-boot-dependencies.version>
     <commons-io.version>2.9.0</commons-io.version>
     <org.web3j.version>4.8.9</org.web3j.version>
     <com.squareup.okhttp3.version>4.9.0</com.squareup.okhttp3.version>
-    <org.web3j.maven-plugin.version>4.8.10</org.web3j.maven-plugin.version>
+
+    <!-- Sonar properties -->
+    <sonar.organization>meeds-io</sonar.organization>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -47,157 +61,81 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>core</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>crypto</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${com.squareup.okhttp3.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+
+      <!-- Current project artifacts -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-contract</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-webapp</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-packaging</artifactId>
+        <version>${project.version}</version>
+        <type>zip</type>
+      </dependency>
     </dependencies>
   </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>jul-to-slf4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.tomcat.embed</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-elasticsearch</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.web3j</groupId>
-      <artifactId>crypto</artifactId>
-      <version>${org.web3j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>${com.squareup.okhttp3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.web3j</groupId>
-      <artifactId>core</artifactId>
-      <version>${org.web3j.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <finalName>deeds-dapp</finalName>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/contracts</directory>
-        <includes>
-          <include>**/*.sol</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>com.github.longdt</groupId>
-        <artifactId>web3j-maven-plugin</artifactId>
-        <version>${org.web3j.maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate-sources</goal>
-            </goals>
-            <configuration>
-              <packageName>io.meeds.deeds.contract</packageName>
-              <sourceDestination>target/generated-contracts</sourceDestination>
-              <nativeJavaType>true</nativeJavaType>
-              <outputFormat>java</outputFormat>
-              <soliditySourceFiles>
-                <directory>src/main/contracts</directory>
-                <includes>
-                  <include>**/*.sol</include>
-                </includes>
-              </soliditySourceFiles>
-              <outputDirectory>
-                <java>target/generated-contracts</java>
-              </outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>target/generated-contracts</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <includeEmptyDirectories>false</includeEmptyDirectories>
-          <packagingExcludes>**/*.less,**/less/**,**/*.vue,css/lib/*,vue-app/**,js/mock/**/*,**-dev.*,**/vue-apps</packagingExcludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+  
+  <!-- This profile is used to allow github action to build branches. The github action is used for sonar analysis -->
+  <profiles>
+    <profile>
+      <id>project-repositories</id>
+      <activation>
+        <property>
+          <name>!skip-project-repositories</name>
+        </property>
+      </activation>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <id>repository.exoplatform.org</id>
+          <url>https://repository.exoplatform.org/public</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <id>repository.exoplatform.org</id>
+          <url>https://repository.exoplatform.org/public</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
 </project>
