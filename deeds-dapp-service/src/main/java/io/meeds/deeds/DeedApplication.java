@@ -20,8 +20,10 @@ package io.meeds.deeds;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
+@EnableCaching
 public class DeedApplication extends SpringBootServletInitializer {
 
 }

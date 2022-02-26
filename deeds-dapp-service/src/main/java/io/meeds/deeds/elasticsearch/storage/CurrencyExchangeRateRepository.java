@@ -21,6 +21,8 @@ package io.meeds.deeds.elasticsearch.storage;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.constant.Currency;
@@ -28,6 +30,11 @@ import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
 
 public interface CurrencyExchangeRateRepository extends ElasticsearchRepository<CurrencyExchangeRate, LocalDate> {
 
+  @Cacheable(cacheNames = "currencyRates")
   List<CurrencyExchangeRate> findByCurrencyAndDateBetween(Currency currency, LocalDate from, LocalDate to);
+
+  @Override
+  @CacheEvict(cacheNames = "currencyRates", allEntries = true)
+  <S extends CurrencyExchangeRate> S save(S entity);
 
 }
