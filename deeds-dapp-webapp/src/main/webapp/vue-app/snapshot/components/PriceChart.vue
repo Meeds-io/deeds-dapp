@@ -210,7 +210,11 @@ export default {
       return new Date(value).toISOString().substring(0, 10);
     },
     dateFormatI18N(timestamp) {
-      timestamp = parseInt(timestamp && timestamp.value || timestamp);
+      if (timestamp.value) {
+        timestamp = timestamp.value;
+      } else if ((typeof timestamp) === 'string' && timestamp.indexOf('-') < 0) {
+        timestamp = parseInt(timestamp);
+      }
       return this.$ethUtils.formatDate(new Date(timestamp), this.language);
     },
     labelFormatter(item) {
