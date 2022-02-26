@@ -110,7 +110,11 @@ export default {
       this.transactionHash = null;
       this.sending = false;
       this.$nextTick()
-        .then(() => this.$refs.drawer.open());
+        .then(() => {
+          if (this.$refs.drawer) {
+            this.$refs.drawer.open();
+          }
+        });
     },
     close() {
       this.$refs.drawer.close();

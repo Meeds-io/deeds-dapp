@@ -23,7 +23,7 @@
       <deeds-stake-governance />
       <deeds-stake-deeds />
     </div>
-    <deeds-stake-meeds class="ms-auto flex-shrink-0 flex-grow-1" />
+    <deeds-stake-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 flex-shrink-0 flex-grow-1" />
   </div>
 </template>
 <script>

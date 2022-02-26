@@ -24,7 +24,7 @@
           <deeds-nft-introduction />
           <deeds-points-simulator />
         </div>
-        <deeds-earned-points class="ms-auto flex-shrink-0 flex-grow-0" />
+        <deeds-earned-points class="ms-sm-auto me-sm-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
       </div>
       <deeds-redeem class="mb-8" />
     </template>

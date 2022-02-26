@@ -22,6 +22,7 @@
       :elevation="hover ? 3 : 0"
       :loading="sendingRedeem || loading"
       class="mx-auto my-2"
+      min-width="250px"
       max-width="250px"
       outlined>
       <v-card-text class="d-flex">

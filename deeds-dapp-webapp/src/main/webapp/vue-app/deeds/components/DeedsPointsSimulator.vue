@@ -40,7 +40,7 @@
               hide-details
               outlined
               dense
-              style="max-width: 145px"
+              style="max-width: 185px"
               dir="rtl" />
             <div class="my-auto">xMEED</div>
           </div>

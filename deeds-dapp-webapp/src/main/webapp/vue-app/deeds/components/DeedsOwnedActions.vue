@@ -103,7 +103,7 @@ export default {
       return this.nft && this.nft.status;
     },
     owner() {
-      return this.nft && this.nft.status;
+      return this.nft && this.nft.owner;
     },
   }),
   methods: {

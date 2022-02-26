@@ -18,42 +18,44 @@
 -->
 <template>
   <div class="d-flex flex-column priceChartParent">
-    <div class="priceChartPeriodSelector d-none d-sm-flex align-center font-weight-bold ps-2 pe-12">
+    <div class="priceChartPeriodSelector d-flex align-center ps-2 pe-12">
       <div class="display-5 flex-grow-1">
         {{ this.chartTitle }}
       </div>
-      <v-btn
-        link
-        text
-        color="primary"
-        x-small
-        @click="period = '1w'">
-        {{ $t('week') }}
-      </v-btn>
-      <v-btn
-        link
-        text
-        color="primary"
-        x-small
-        @click="period = '1month'">
-        {{ $t('month') }}
-      </v-btn>
-      <v-btn
-        link
-        text
-        x-small
-        color="primary"
-        @click="period = 'ytd'">
-        {{ $t('year') }}
-      </v-btn>
-      <v-btn
-        link
-        text
-        x-small
-        color="primary"
-        @click="period = 'all'">
-        {{ $t('all') }}
-      </v-btn>
+      <div class="d-none d-sm-flex align-center">
+        <v-btn
+          link
+          text
+          color="primary"
+          x-small
+          @click="period = '1w'">
+          {{ $t('week') }}
+        </v-btn>
+        <v-btn
+          link
+          text
+          color="primary"
+          x-small
+          @click="period = '1month'">
+          {{ $t('month') }}
+        </v-btn>
+        <v-btn
+          link
+          text
+          x-small
+          color="primary"
+          @click="period = 'ytd'">
+          {{ $t('year') }}
+        </v-btn>
+        <v-btn
+          link
+          text
+          x-small
+          color="primary"
+          @click="period = 'all'">
+          {{ $t('all') }}
+        </v-btn>
+      </div>
     </div>
     <div id="priceChart" ref="priceChart"></div>
   </div>
