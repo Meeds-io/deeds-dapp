@@ -21,12 +21,19 @@ package io.meeds.deeds.elasticsearch.storage;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
 
 public interface MeedExchangeRateRepository extends ElasticsearchRepository<MeedExchangeRate, LocalDate> {
 
+  @Cacheable(cacheNames = "meedRates")
   List<MeedExchangeRate> findByDateBetween(LocalDate from, LocalDate to);
+
+  @Override
+  @CacheEvict(cacheNames = "meedRates", allEntries = true)
+  <S extends MeedExchangeRate> S save(S entity);
 
 }
