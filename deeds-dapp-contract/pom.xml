@@ -47,6 +47,9 @@
       </resource>
     </resources>
     <plugins>
+      <!-- TODO replace by original plugin once
+      the commit https://github.com/web3j/web3j-maven-plugin/commit/648819ec5bafd3aad11bca8370c136ed00d955ea 
+      is released -->
       <plugin>
         <groupId>com.github.longdt</groupId>
         <artifactId>web3j-maven-plugin</artifactId>
@@ -95,4 +98,32 @@
       </plugin>
     </plugins>
   </build>
+
+  <!-- TODO Delete once
+  the commit https://github.com/web3j/web3j-maven-plugin/commit/648819ec5bafd3aad11bca8370c136ed00d955ea 
+  is released -->
+  <profiles>
+    <profile>
+      <id>exo-release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-plugin-versions</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
