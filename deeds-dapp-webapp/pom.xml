@@ -30,7 +30,46 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-service</artifactId>
-      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.web3j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat.embed</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!--
+      Include log4j-api (without log4j-core which is NOT USED, to prevent https://www.slf4j.org/log4shell.html)
+      in order to route LOGGING calls to LOGBACK.
+
+      Read more here: https://spring.io/blog/2021/12/10/log4j2-vulnerability-and-spring-boot
+      about 'log4j-to-slf4j' and 'log4j-api'
+     -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-to-slf4j</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
@@ -47,7 +86,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <includeEmptyDirectories>false</includeEmptyDirectories>
-          <packagingExcludes>**/*.less,**/less/**,**/*.vue,css/lib/*,vue-app/**,js/mock/**/*,**-dev.*,**/vue-apps</packagingExcludes>
+          <packagingExcludes>vue-app/**</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>
