@@ -118,7 +118,10 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
      * from caller balance of points.
      */
     function redeem(uint8 cardTypeId) public updateReward(msg.sender) returns (uint256 tokenId) {
+        require(cardTypeId < cardTypeInfo.length, "Card Type doesn't exist");
+
         CardTypeDetail storage cardType = cardTypeInfo[cardTypeId];
+        require(cardType.maxSupply > 0, "Card Type not available for minting");
         require(points[msg.sender] >= cardType.amount, "Not enough points to redeem for card");
         require(cardType.supply < cardType.maxSupply, "Max cards supply reached");
         require(cardType.cityIndex == currentCityIndex, "Designated city isn't available for minting yet");

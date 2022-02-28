@@ -59,11 +59,17 @@
         <div v-else-if="item.status === 'STOPPED'" class="text-capitalize">
           {{ $t('vacant') }}
         </div>
-        <v-progress-circular
-          v-else-if="item.status === 'loading'"
-          size="24"
-          color="primary"
-          indeterminate />
+        <v-tooltip v-else-if="item.status === 'loading'" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-progress-circular
+              size="24"
+              color="primary"
+              indeterminate
+              v-bind="attrs"
+              v-on="on" />
+          </template>
+          <span>{{ item.statusLabel || '' }}</span>
+        </v-tooltip>
       </template>
       <template v-slot:item.earnedRewards="{item}">
         <v-tooltip bottom>
@@ -188,10 +194,11 @@ export default {
       });
     }
 
-    this.$root.$on('nft-status-changed', (id, status) => {
+    this.$root.$on('nft-status-changed', (id, status, statusLabel) => {
       const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
       if (nft) {
         nft.status = status;
+        nft.statusLabel = statusLabel;
         this.nfts = Object.assign({}, this.nfts);
       }
     });
@@ -247,6 +254,7 @@ export default {
                   nft.linkLabel = `${this.cities[nft.cityIndex]}-${nft.id}.wom.meeds.io`;
                 }
                 nft.status = status && 'STARTED' || 'STOPPED';
+                nft.statusLabel = null;
                 // Force update nft in table by updating Table Key
                 nft.updateDate = Date.now();
               });

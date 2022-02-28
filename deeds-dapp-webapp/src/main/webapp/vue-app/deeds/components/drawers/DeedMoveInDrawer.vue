@@ -217,7 +217,7 @@ export default {
       }
       if (this.email) {
         this.sendingEmail = true;
-        return this.$tenantManagement.sendEmail(this.nftId, this.email)
+        return this.$tenantManagement.saveEmail(this.nftId, this.email)
           .then(() => this.emailChanged = false)
           .finally(() => this.isEditingEmail = this.sendingEmail = false);
       }
@@ -236,13 +236,19 @@ export default {
           this.nftId,
           options
         ).then(receipt => {
-          this.$root.$emit('nft-status-changed', this.nftId, 'loading');
+          this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.starting'));
 
           this.transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', this.transactionHash);
-          this.sendEmail();
+          this.saveStartTenantRequest();
         }).finally(() => this.sending = false);
       }
+    },
+    saveStartTenantRequest() {
+      this.sendingEmail = true;
+      return this.$tenantManagement.startTenant(this.nftId, this.email, this.transactionHash)
+        .then(() => this.emailChanged = false)
+        .finally(() => this.isEditingEmail = this.sendingEmail = false);
     },
   },
 };
