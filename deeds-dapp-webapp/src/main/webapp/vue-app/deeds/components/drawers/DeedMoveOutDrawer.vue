@@ -142,12 +142,16 @@ export default {
           this.nftId,
           options
         ).then(receipt => {
-          this.$root.$emit('nft-status-changed', this.nftId, 'loading');
+          this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.stopping'));
 
           this.transactionHash = receipt.hash;
           this.$root.$emit('transaction-sent', this.transactionHash);
+          this.saveStopTenantRequest();
         }).finally(() => this.sending = false);
       }
+    },
+    saveStopTenantRequest() {
+      return this.$tenantManagement.stopTenant(this.nftId, this.transactionHash);
     },
   },
 };

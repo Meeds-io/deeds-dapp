@@ -18,9 +18,30 @@
  */
 import {getCookie} from './authentication';
 
-export function sendEmail(nftId, email) {
+export function saveEmail(nftId, email) {
   const formData = new FormData();
   formData.append('email', email);
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+    body: params,
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error(`Error changing sending email of nft with id ${nftId}`);
+    }
+  });
+}
+
+export function startTenant(nftId, email, transactionHash) {
+  const formData = new FormData();
+  formData.append('email', email);
+  formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
   return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
@@ -33,6 +54,42 @@ export function sendEmail(nftId, email) {
     body: params,
   }).then(resp => {
     if (!resp || !resp.ok) {
+      throw new Error(`Error changing tenant status for nft with id ${nftId}`);
+    }
+  });
+}
+
+export function stopTenant(nftId, transactionHash) {
+  const formData = new FormData();
+  formData.append('transactionHash', transactionHash);
+  const params = new URLSearchParams(formData).toString();
+
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+    body: params,
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error(`Error changing tenant status for nft with id ${nftId}`);
+    }
+  });
+}
+
+export function loadLastCommand(nftId) {
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}/lastCommand`, {
+    method: 'GET',
+    headers: {
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+  }).then(resp => {
+    if (resp && resp.ok) {
+      return resp.text();
+    } else {
       throw new Error(`Error changing sending email of nft with id ${nftId}`);
     }
   });

@@ -27,7 +27,7 @@
 
   <filter>
     <filter-name>requestDispatcherFilter</filter-name>
-    <filter-class>io.meeds.deeds.filter.RequestDispatcherFilter</filter-class>
+    <filter-class>io.meeds.deeds.web.filter.RequestDispatcherFilter</filter-class>
   </filter>
 
   <filter-mapping>

@@ -66,7 +66,7 @@
         </v-list-item-title>
       </v-list-item>
       <template v-if="authenticated">
-        <v-divider class="my-1" />
+        <v-divider v-if="status !== 'loading'" class="my-1" />
         <v-list-item @click="$emit('logout')">
           <v-list-item-title class="text-capitalize">{{ $t('signOut') }}</v-list-item-title>
         </v-list-item>

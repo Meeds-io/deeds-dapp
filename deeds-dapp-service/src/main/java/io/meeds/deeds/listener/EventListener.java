@@ -16,12 +16,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.storage;
+package io.meeds.deeds.listener;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import java.util.List;
 
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
+public interface EventListener<T> {
 
-public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenant, Long> {
+  String getName();
 
+  List<String> getSupportedEvents();
+
+  @SuppressWarnings("unchecked")
+  default void handleEvent(String eventName, Object event) {
+    onEvent(eventName, (T) event);
+  }
+
+  void onEvent(String eventName, T event);
 }

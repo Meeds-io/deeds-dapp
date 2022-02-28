@@ -1,4 +1,4 @@
-package io.meeds.deeds.filter;
+package io.meeds.deeds.web.filter;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -16,25 +16,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.model;
+package io.meeds.deeds.redis;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Dynamic;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-import lombok.*;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = true, dynamic = Dynamic.TRUE)
-public class DeedTenantManager {
-
-  @Id
-  private long   nftId;
-
-  private String managerAddress;
-
-  private String email;
+@Configuration
+@ConfigurationProperties(prefix = "meeds.redis")
+public class DeedRedisProperties extends RedisProperties {
 
 }

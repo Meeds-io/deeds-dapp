@@ -19,9 +19,9 @@
 <template>
   <div class="d-flex flex-column priceChartParent">
     <div class="priceChartPeriodSelector d-flex align-center ps-2 pe-12">
-      <div class="display-5 flex-grow-1">
+      <strong class="flex-grow-1">
         {{ this.chartTitle }}
-      </div>
+      </strong>
       <div class="d-none d-sm-flex align-center">
         <v-btn
           link

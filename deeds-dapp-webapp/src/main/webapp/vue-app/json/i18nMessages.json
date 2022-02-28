@@ -138,7 +138,9 @@
     "nft.name": "Name",
     "nft.status": "Status",
     "nft.earnedRewards": "Earned rewards",
-    "nft.actions": "Commands"
+    "nft.actions": "Commands",
+    "tenant.starting": "Starting Tenant transaction is in progress",
+    "tenant.stopping": "Stopping Tenant transaction is in progress"
   },
   "fr": {
     "dao": "DAO",
@@ -280,6 +282,8 @@
     "nft.name": "Nom",
     "nft.status": "État",
     "nft.earnedRewards": "Points de gagnés",
-    "nft.actions": "Commandes"
+    "nft.actions": "Commandes",
+    "tenant.starting": "La transaction de démarrage du tenant est en cours",
+    "tenant.stopping": "La transaction d'arrêt du tenant est en cours"
   }
 }
