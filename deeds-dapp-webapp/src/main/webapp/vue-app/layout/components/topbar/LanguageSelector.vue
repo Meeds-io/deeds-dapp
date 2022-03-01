@@ -20,6 +20,7 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        name="languageSelectorButton"
         outlined
         text
         class="ps-2 pe-0"

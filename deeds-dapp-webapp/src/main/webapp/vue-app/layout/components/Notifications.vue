@@ -42,8 +42,9 @@
         v-if="alertLink"
         :href="alertLink"
         :title="alertLinkTooltip"
-        rel="noreferrer"
+        name="closeSnackbarButton"
         target="_blank"
+        rel="nofollow noreferrer noopener"
         class="primary--text"
         icon
         link>
@@ -52,6 +53,7 @@
       <v-btn
         slot="close"
         slot-scope="{toggle}"
+        name="closeAlertButton"
         icon
         small
         light

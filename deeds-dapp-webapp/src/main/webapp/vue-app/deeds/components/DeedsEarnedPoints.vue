@@ -45,7 +45,7 @@
       </v-list-item>
       <strong class="d-flex flex-row">
         <v-divider class="ms-8 me-2 my-auto" />
-        <h6>{{ $t('myAssets') }}</h6>
+        <div>{{ $t('myAssets') }}</div>
         <v-divider class="me-8 ms-2 my-auto" />
       </strong>
       <v-list-item two-line class="mt-2">

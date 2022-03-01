@@ -26,6 +26,7 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
+        name="displayOwnedDeedsButton"
         outlined
         text
         @click="$root.$emit('switch-page', 'deeds')">

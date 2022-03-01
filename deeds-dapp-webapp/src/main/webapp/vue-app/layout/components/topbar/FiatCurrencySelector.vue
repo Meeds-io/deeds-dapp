@@ -20,6 +20,7 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        name="fiatCurrencySelectorButton"
         outlined
         text
         class="ps-2 pe-0"

@@ -32,6 +32,7 @@
     </v-list-item>
     <v-list-item class="ps-8 mt-4">
       <v-btn
+        name="displayOwnedDeedsButton"
         outlined
         text
         @click="$root.$emit('switch-page', 'deeds')">

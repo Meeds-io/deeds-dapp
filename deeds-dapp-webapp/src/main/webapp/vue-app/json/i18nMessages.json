@@ -140,7 +140,8 @@
     "nft.earnedRewards": "Earned rewards",
     "nft.actions": "Commands",
     "tenant.starting": "Starting Tenant transaction is in progress",
-    "tenant.stopping": "Stopping Tenant transaction is in progress"
+    "tenant.stopping": "Stopping Tenant transaction is in progress",
+    "deedTenantActions": "Tenant actions of Deed {0}"
   },
   "fr": {
     "dao": "DAO",
@@ -284,6 +285,7 @@
     "nft.earnedRewards": "Points de gagnés",
     "nft.actions": "Commandes",
     "tenant.starting": "La transaction de démarrage du tenant est en cours",
-    "tenant.stopping": "La transaction d'arrêt du tenant est en cours"
+    "tenant.stopping": "La transaction d'arrêt du tenant est en cours",
+    "deedTenantActions": "Actions possibles sur le tenant du Deed {0}"
   }
 }

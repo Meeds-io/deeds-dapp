@@ -51,6 +51,7 @@
         </template>
       </v-text-field>
       <v-btn
+        name="switchTokenTradingButton"
         icon
         class="mx-auto my-2"
         @click="switchInputs"
@@ -80,6 +81,7 @@
             v-if="hasSufficientAllowedTokens"
             :loading="!!sendingTransaction"
             :disabled="disabledButton"
+            name="sendSwapTransactionButton"
             class="ma-auto"
             @click="sendSwapTransaction">
             <span class="text-capitalize">
@@ -90,6 +92,7 @@
             v-else
             :loading="!!sendingTransaction"
             :disabled="disabledButton"
+            name="sendApproveTransactionButton"
             class="ma-auto"
             @click="sendApproveTransaction">
             <span class="text-capitalize">

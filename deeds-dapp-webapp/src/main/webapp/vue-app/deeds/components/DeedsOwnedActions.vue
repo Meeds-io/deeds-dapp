@@ -22,6 +22,8 @@
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        :aria-label="$t('deedTenantActions', {0: nftId})"
+        name="deedTenantCommands"
         text
         icon
         v-bind="attrs"
@@ -60,7 +62,7 @@
           <a
             :href="`${openSeaBaseLink}/${nft.id}/sell`"
             target="_blank"
-            rel="noreferrer">
+            rel="nofollow noreferrer noopener">
             {{ $t('sellOnOpenSea') }}
           </a>
         </v-list-item-title>

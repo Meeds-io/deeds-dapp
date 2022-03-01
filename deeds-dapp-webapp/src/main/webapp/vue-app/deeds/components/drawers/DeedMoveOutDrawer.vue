@@ -33,7 +33,7 @@
               <a
                 :href="transactionLink"
                 target="_blank"
-                rel="noreferrer">
+                rel="nofollow noreferrer noopener">
                 {{ transactionHashAlias }}
               </a>
             </v-list-item-content>
@@ -52,6 +52,7 @@
         <v-card-actions v-if="!transactionHash" class="ms-2">
           <v-btn
             :loading="sending"
+            name="moveOutConfirmButton"
             color="primary"
             @click="sendRequest">
             <span class="text-capitalize">
