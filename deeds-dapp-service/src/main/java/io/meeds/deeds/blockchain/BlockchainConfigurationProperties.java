@@ -1,27 +1,34 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * 
  * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.storage;
+package io.meeds.deeds.blockchain;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-import io.meeds.deeds.dto.DeedTenant;
+import lombok.Data;
 
-public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenant, Long> {
+@Configuration
+@ConfigurationProperties(prefix = "meeds.blockchain")
+@Data
+public class BlockchainConfigurationProperties {
+
+  private String networkUrl;
+
+  private String tenantProvisioningAddress;
+
+  private String deedAddress;
 
 }

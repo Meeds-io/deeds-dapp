@@ -26,7 +26,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
+import io.meeds.deeds.dto.CurrencyExchangeRate;
 
 public interface CurrencyExchangeRateRepository extends ElasticsearchRepository<CurrencyExchangeRate, LocalDate> {
 

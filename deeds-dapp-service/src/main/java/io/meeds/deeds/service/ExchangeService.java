@@ -1,20 +1,17 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * 
  * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
- * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package io.meeds.deeds.service;
 
@@ -42,9 +39,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.dto.MeedPrice;
-import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
-import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
+import io.meeds.deeds.dto.*;
 import io.meeds.deeds.elasticsearch.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.elasticsearch.storage.MeedExchangeRateRepository;
 
@@ -69,16 +64,19 @@ public class ExchangeService {
 
   private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
 
-  @Value("${m3o.url:https://api.m3o.com/v1/currency/Rates}")
-  private String                         currencyExchangeUrl;
+  @Value("${meeds.exchange.currencyApiUrl:https://api.m3o.com/v1/currency/Rates}")
+  private String                         currencyApiUrl;
 
-  @Value("${m3o.apiKey:}")
-  private String                         currencyExchangeApiKey;
+  @Value("${meeds.exchange.currencyApiKey:}")
+  private String                         currencyApiKey;
 
-  @Value("${meeds.defi.apiUrl:https://api.thegraph.com/subgraphs/name/sushiswap/exchange}")
+  @Value("${meeds.exchange.blockchainApiUrl:https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}")
+  private String                         blockchainApiUrl;
+
+  @Value("${meeds.exchange.lpTokenApiUrl:https://api.thegraph.com/subgraphs/name/sushiswap/exchange}")
   private String                         lpTokenApiUrl;
 
-  @Value("${meeds.defi.pairAddress:0x960bd61d0b960b107ff5309a2dcced4705567070}")
+  @Value("${meeds.exchange.lpTokenAddress:0x960bd61d0b960b107ff5309a2dcced4705567070}")
   private String                         lpTokenAddress;
 
   @Autowired
@@ -270,7 +268,7 @@ public class ExchangeService {
       body = "{\"query\":\"{blocks(first:1,orderBy:timestamp,orderDirection: desc,where:{timestamp_lte:"
           + date.toEpochSecond() + "}){number}}\"}";
     }
-    String blockNumberDataJsonString = executeQuery("https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks", body);
+    String blockNumberDataJsonString = executeQuery(blockchainApiUrl, body);
     if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
       try (JsonReader reader = Json.createReader(new StringReader(blockNumberDataJsonString))) {
         JsonObject blockNumberDataJson = reader.readObject();
@@ -320,17 +318,17 @@ public class ExchangeService {
   }
 
   private String retrieveCurrencyExchangeRate(LocalDate date) {
-    if (currencyExchangeApiKey == null) {
+    if (currencyApiKey == null) {
       throw new IllegalStateException("API Key is mandatory");
     }
     try {
-      URL apiUrl = new URL(currencyExchangeUrl);
+      URL apiUrl = new URL(currencyApiUrl);
       HttpsURLConnection con = (HttpsURLConnection) apiUrl.openConnection();
 
       // add reuqest header
       con.setRequestMethod("GET");
       con.setRequestProperty("Content-Type", "application/json");
-      con.setRequestProperty("Authorization", "Bearer " + currencyExchangeApiKey);
+      con.setRequestProperty("Authorization", "Bearer " + currencyApiKey);
       String parameters = "{\"code\": \"USD\"}";
 
       // Send post request

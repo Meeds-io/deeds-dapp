@@ -16,38 +16,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.model;
+package io.meeds.deeds.redis.listener;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+public interface EventListener<T> {
 
-import lombok.*;
+  String getName();
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Document(indexName = "meed_exchange_rate", createIndex = true, dynamic = Dynamic.TRUE)
-public class MeedExchangeRate {
+  List<String> getSupportedEvents();
 
-  public MeedExchangeRate(LocalDate date) {
-    this.date = date;
+  @SuppressWarnings("unchecked")
+  default void handleEvent(String eventName, Object event) {
+    onEvent(eventName, (T) event);
   }
 
-  @Id
-  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
-  private LocalDate  date;
-
-  private BigDecimal ethUsdPrice;
-
-  private BigDecimal meedEthPrice;
-
-  private BigDecimal meedReserve;
-
-  private BigDecimal ethReserve;
-
-  private boolean    finalRate;
-
+  void onEvent(String eventName, T event);
 }
