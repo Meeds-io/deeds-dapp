@@ -16,14 +16,38 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.redis;
+package io.meeds.deeds.dto;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.redis")
-public class DeedRedisProperties extends RedisProperties {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.*;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(indexName = "meed_exchange_rate", createIndex = true, dynamic = Dynamic.TRUE)
+public class MeedExchangeRate {
+
+  public MeedExchangeRate(LocalDate date) {
+    this.date = date;
+  }
+
+  @Id
+  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
+  private LocalDate  date;
+
+  private BigDecimal ethUsdPrice;
+
+  private BigDecimal meedEthPrice;
+
+  private BigDecimal meedReserve;
+
+  private BigDecimal ethReserve;
+
+  private boolean    finalRate;
 
 }

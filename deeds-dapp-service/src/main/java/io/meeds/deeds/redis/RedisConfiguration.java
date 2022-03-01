@@ -23,11 +23,11 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.RedisURI.Builder;
 
-@Configuration(proxyBeanMethods = false)
-public class DeedRedisConfiguration {
+@Configuration
+public class RedisConfiguration {
 
   @Bean
-  public RedisClient redisClient(DeedRedisProperties redisProperties) {
+  public RedisClient redisClient(RedisConfigurationProperties redisProperties) {
     Builder redis = RedisURI.Builder.redis(redisProperties.getHost(), redisProperties.getPort());
     if (StringUtils.isNotBlank(redisProperties.getUsername()) || StringUtils.isNotBlank(redisProperties.getPassword())) {
       redis.withAuthentication(redisProperties.getUsername(), redisProperties.getPassword());

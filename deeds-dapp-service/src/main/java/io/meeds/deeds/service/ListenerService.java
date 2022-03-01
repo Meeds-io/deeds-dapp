@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,8 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
-import io.meeds.deeds.listener.EventListener;
+import io.meeds.deeds.redis.RedisConfigurationProperties;
+import io.meeds.deeds.redis.listener.EventListener;
 import lombok.*;
 
 @Component
@@ -54,8 +54,8 @@ public class ListenerService implements ApplicationContextAware {
     OBJECT_MAPPER.registerModule(new JavaTimeModule());
   }
 
-  @Value("${meeds.redis.listenerService.channel:channel}")
-  private String                              channelName;
+  @Autowired(required = false)
+  private RedisConfigurationProperties        redisProperties;
 
   @Autowired(required = false)
   private RedisClient                         redisClient;
@@ -105,13 +105,14 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   public void publishEvent(String eventName, Object data) {
-    Event event = new Event(eventName, data, data.getClass().getName());
+    Event event = new Event(eventName, data);
+
     // Trigger Event Remotely
     try {
       StatefulRedisPubSubConnection<String, String> connection = redisClient.connectPubSub();
       RedisPubSubAsyncCommands<String, String> async = connection.async();
       String eventJsonString = serializeObjectToJson(event);
-      async.publish(channelName, eventJsonString);
+      async.publish(getChannelName(), eventJsonString);
     } catch (Exception e) {
       LOG.warn("Redis connection failure, event {} will not be triggered remotely, try to trigger it locally only",
                event.getEventName(),
@@ -155,7 +156,7 @@ public class ListenerService implements ApplicationContextAware {
 
       // Subscribe to channel
       RedisPubSubAsyncCommands<String, String> async = connection.async();
-      async.subscribe(channelName);
+      async.subscribe(getChannelName());
     } catch (Exception e) {
       LOG.warn("Redis connection failure", e);
     }
@@ -169,6 +170,10 @@ public class ListenerService implements ApplicationContextAware {
     }
   }
 
+  private String getChannelName() {
+    return redisProperties.getChannelName();
+  }
+
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
@@ -177,8 +182,6 @@ public class ListenerService implements ApplicationContextAware {
     private String eventName;
 
     private Object data;
-
-    private String dataClassName;
 
   }
 

@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.dto.DeedTenant;
 import io.meeds.deeds.elasticsearch.storage.DeedTenantManagerRepository;
 
 @Component
@@ -82,7 +82,7 @@ public class TenantService {
     deedTenant.setManagerAddress(managerAddress.toLowerCase());
     deedTenant.setManagerEmail(email);
     deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
-    readDeedProperties(deedTenant);
+    setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent("deed.event.tenantEmailUpdated", deedTenant);
@@ -116,7 +116,7 @@ public class TenantService {
     deedTenant.setStartupTransactionHash(transactionHash);
     deedTenant.setShutdownTransactionHash(null);
     deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
-    readDeedProperties(deedTenant);
+    setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent("deed.event.tenantStart", deedTenant);
@@ -146,7 +146,7 @@ public class TenantService {
     deedTenant.setStartupTransactionHash(null);
     deedTenant.setShutdownTransactionHash(transactionHash);
     deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
-    readDeedProperties(deedTenant);
+    setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent("deed.event.tenantStop", deedTenant);
@@ -163,7 +163,7 @@ public class TenantService {
     return blockchainService.isDeedProvisioningManager(address, nftId);
   }
 
-  private void readDeedProperties(DeedTenant deedTenant) {
+  private void setDeedNftProperties(DeedTenant deedTenant) {
     if (deedTenant.getCardType() < 0 || deedTenant.getCityIndex() < 0) {
       short cardType = blockchainService.getDeedCardType(deedTenant.getNftId());
       deedTenant.setCardType(cardType);
