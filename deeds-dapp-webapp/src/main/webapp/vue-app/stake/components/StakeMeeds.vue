@@ -131,6 +131,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            name="openStakeDrawerButton"
             outlined
             text
             @click="openStakeDrawer(true)">
@@ -156,6 +157,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            name="openUnstakeDrawerButton"
             outlined
             text
             @click="openStakeDrawer(false)">

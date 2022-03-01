@@ -27,9 +27,10 @@
       class="elevation-0 mt-4">
       <v-btn
         v-if="!isMetamaskInstalled"
+        name="installMetamaskLink"
         href="https://metamask.io/"
         target="_blank"
-        rel="noreferrer"
+        rel="nofollow noreferrer noopener"
         height="168px"
         width="168px"
         class="rounded-lg"
@@ -43,6 +44,7 @@
       </v-btn>
       <v-btn
         v-else-if="!hasMetamashConnectedAddress"
+        name="connectMetamaskButton"
         height="168px"
         width="168px"
         class="rounded-lg"
@@ -57,6 +59,7 @@
       </v-btn>
       <v-btn
         v-else-if="!validNetwork"
+        name="switchMetamaskNetworkButton"
         height="168px"
         width="168px"
         class="rounded-lg"

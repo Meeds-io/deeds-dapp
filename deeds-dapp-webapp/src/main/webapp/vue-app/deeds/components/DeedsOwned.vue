@@ -38,13 +38,15 @@
       hide-default-footer>
       <template v-slot:item.id="{item}">
         <v-btn
-          :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}#inventory`"
+          :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}`"
+          name="nftEtherscanLink"
           target="_blank"
-          rel="noreferrer"
+          rel="nofollow noreferrer noopener"
           color="primary"
           class="px-0 px-sm-3 d-inline d-sm-flex"
           text
-          link>
+          link
+          small>
           #{{ item.id }}
         </v-btn>
       </template>
@@ -53,7 +55,7 @@
           v-if="item.status === 'STARTED'"
           :href="item.link"
           target="_blank"
-          rel="noreferrer">
+          rel="nofollow noreferrer noopener">
           {{ item.linkLabel }}
         </a>
         <div v-else-if="item.status === 'STOPPED'" class="text-capitalize">

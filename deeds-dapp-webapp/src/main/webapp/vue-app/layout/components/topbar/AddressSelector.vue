@@ -21,11 +21,13 @@
     <input
       ref="clipboardInput"
       v-model="address"
+      name="copyToClipboardInput"
       class="copyToClipboardInput"
       type="text">
     <v-tooltip bottom>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
+          name="copyAddressButton"
           outlined
           text
           class="px-2"

@@ -48,6 +48,7 @@
         <v-btn
           :disabled="disableRedeemButton"
           :loading="sendingRedeem"
+          name="redeemButton"
           outlined
           text
           @click="redeem">

@@ -74,6 +74,7 @@
           <v-btn
             :disabled="disabledApproveButton"
             :loading="sendingApproval"
+            name="approveTokensButton"
             color="primary"
             @click="approve">
             {{ $t('approve') }}
@@ -124,6 +125,7 @@
           <v-btn
             :disabled="disabledStakeButton"
             :loading="sendingStake"
+            name="stakeTokensButton"
             color="primary"
             @click="stake">
             {{ $t('stake') }}

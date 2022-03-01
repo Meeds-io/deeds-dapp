@@ -27,6 +27,8 @@
     <v-card-text class="ps-0">
       <v-slider
         v-model="xMeedAmount"
+        id="xMeedAmountSlider"
+        name="xMeedAmountSlider"
         min="0"
         max="999999"
         class="align-center"
@@ -35,6 +37,7 @@
           <div class="font-weight-bold d-flex flex-nowrap">
             <v-text-field
               v-model="xMeedAmount"
+              name="xMeedAmount"
               max="999999"
               class="mt-0 pt-0 me-2"
               hide-details
@@ -42,7 +45,7 @@
               dense
               style="max-width: 185px"
               dir="rtl" />
-            <div class="my-auto">xMEED</div>
+            <label for="xMeedAmount" class="my-auto">xMEED</label>
           </div>
         </template>
       </v-slider>

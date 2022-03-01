@@ -124,6 +124,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            name="stakeLPTokenButton"
             outlined
             text
             @click="openStakeDrawer(true)">
@@ -149,6 +150,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            name="unstakeLPTokenButton"
             outlined
             text
             @click="openStakeDrawer(false)">
@@ -189,6 +191,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            name="claimRewardButton"
             :loading="sendingClaim"
             :disabled="sendingClaim"
             outlined

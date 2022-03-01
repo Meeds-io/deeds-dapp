@@ -30,8 +30,9 @@
       class="elevation-0 mt-4">
       <v-btn
         :href="addSushiswapLiquidityLink"
+        name="addSushiswapLiquidityLink"
         target="_blank"
-        rel="noreferrer"
+        rel="nofollow noreferrer noopener"
         height="90px"
         width="90px"
         outlined
@@ -43,8 +44,9 @@
       <v-btn
         v-if="addUniswapLiquidityLink"
         :href="addUniswapLiquidityLink"
+        name="addUniswapLiquidityLink"
         target="_blank"
-        rel="noreferrer"
+        rel="nofollow noreferrer noopener"
         height="90px"
         width="90px"
         outlined
@@ -56,6 +58,7 @@
       <v-tooltip v-else bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
+            name="addUniswapLiquidityLink"
             height="90px"
             width="90px"
             outlined

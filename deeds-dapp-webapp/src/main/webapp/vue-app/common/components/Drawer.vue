@@ -41,12 +41,14 @@
                 <slot name="titleIcons"></slot>
                 <v-btn
                   v-if="allowExpand && !isMobile"
+                  name="expandDrawer"
                   icon
                   @click="toogleExpand">
                   <v-icon v-text="expandIcon" size="18" />
                 </v-btn>
                 <v-btn
                   :title="$t('label.close')"
+                  name="closeDrawer"
                   icon>
                   <v-icon @click="close()">mdi-close</v-icon>
                 </v-btn>

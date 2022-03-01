@@ -24,6 +24,7 @@
       </strong>
       <div class="d-none d-sm-flex align-center">
         <v-btn
+          name="displayThisWeekPricesButton"
           link
           text
           color="primary"
@@ -32,6 +33,7 @@
           {{ $t('week') }}
         </v-btn>
         <v-btn
+          name="displayThisMonthPricesButton"
           link
           text
           color="primary"
@@ -40,6 +42,7 @@
           {{ $t('month') }}
         </v-btn>
         <v-btn
+          name="displayThisYearPricesButton"
           link
           text
           x-small
@@ -48,6 +51,7 @@
           {{ $t('year') }}
         </v-btn>
         <v-btn
+          name="displayAllPricesButton"
           link
           text
           x-small

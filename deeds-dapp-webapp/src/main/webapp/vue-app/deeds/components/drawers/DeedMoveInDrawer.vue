@@ -34,7 +34,7 @@
                 <a
                   :href="transactionLink"
                   target="_blank"
-                  rel="noreferrer">
+                  rel="nofollow noreferrer noopener">
                   {{ transactionHashAlias }}
                 </a>
               </v-list-item-content>
@@ -73,6 +73,7 @@
                     :title="emailAppendIconTooltip"
                     :loading="sendingEmail"
                     :disabled="!emailChanged && isEditingEmail"
+                    name="emailAppendIcon"
                     icon
                     @click="isEditingEmail && sendEmail() || editEmail()">
                     <v-icon :color="emailAppendIconColor">
@@ -87,6 +88,7 @@
             <v-btn
               :disabled="!validForm"
               :loading="sending"
+              name="moveInConfirmButton"
               type="submit"
               color="primary">
               <span class="text-capitalize">
