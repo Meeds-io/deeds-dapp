@@ -99,11 +99,11 @@ contract TokenFactory is Ownable, FundDistribution {
     constructor (
         MeedsToken _meed,
         uint256 _meedPerMinute,
-        uint256 _startRewardsDelay
+        uint256 _startRewardsTime
     ) {
         meed = _meed;
         meedPerMinute = _meedPerMinute;
-        startRewardsTime = block.timestamp + _startRewardsDelay;
+        startRewardsTime = _startRewardsTime;
     }
 
     /**
