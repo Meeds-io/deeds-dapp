@@ -105,9 +105,7 @@ public class DeedAuthenticationProvider implements AuthenticationProvider {
       v += 27;
     }
 
-    // Iterate for each possible key to recover
     BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(), new SignatureData(v, r, s));
-
     if (publicKey != null) {
       String recoveredAddress = "0x" + Keys.getAddress(publicKey);
       if (recoveredAddress.equalsIgnoreCase(walletAddress)) {
