@@ -16,25 +16,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.storage;
+package io.meeds.deeds.listener;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+public interface EventListener<T> {
 
-import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.dto.CurrencyExchangeRate;
+  String getName();
 
-public interface CurrencyExchangeRateRepository extends ElasticsearchRepository<CurrencyExchangeRate, LocalDate> {
+  List<String> getSupportedEvents();
 
-  @Cacheable(cacheNames = "currencyRates")
-  List<CurrencyExchangeRate> findByCurrencyAndDateBetween(Currency currency, LocalDate from, LocalDate to);
+  @SuppressWarnings("unchecked")
+  default void handleEvent(String eventName, Object event) {
+    onEvent(eventName, (T) event);
+  }
 
-  @Override
-  @CacheEvict(cacheNames = "currencyRates", allEntries = true)
-  <S extends CurrencyExchangeRate> S save(S entity);
-
+  void onEvent(String eventName, T event);
 }

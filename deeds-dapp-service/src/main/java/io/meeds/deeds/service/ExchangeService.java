@@ -39,9 +39,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.dto.*;
-import io.meeds.deeds.elasticsearch.storage.CurrencyExchangeRateRepository;
-import io.meeds.deeds.elasticsearch.storage.MeedExchangeRateRepository;
+import io.meeds.deeds.model.*;
+import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
+import io.meeds.deeds.storage.MeedExchangeRateRepository;
 
 @Component
 public class ExchangeService {

@@ -16,30 +16,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.dto;
+package io.meeds.deeds.storage;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.constant.Currency;
-import lombok.*;
+import io.meeds.deeds.model.CurrencyExchangeRate;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Document(indexName = "currency_exchange_rate", createIndex = true, dynamic = Dynamic.TRUE)
-public class CurrencyExchangeRate {
+public interface CurrencyExchangeRateRepository extends ElasticsearchRepository<CurrencyExchangeRate, LocalDate> {
 
-  @Id
-  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
-  private LocalDate  date;
+  @Cacheable(cacheNames = "currencyRates")
+  List<CurrencyExchangeRate> findByCurrencyAndDateBetween(Currency currency, LocalDate from, LocalDate to);
 
-  @Field(type = FieldType.Keyword)
-  private Currency   currency;
-
-  private BigDecimal rate;
+  @Override
+  @CacheEvict(cacheNames = "currencyRates", allEntries = true)
+  <S extends CurrencyExchangeRate> S save(S entity);
 
 }

@@ -16,20 +16,30 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.redis.listener;
+package io.meeds.deeds.model;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
-public interface EventListener<T> {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.*;
 
-  String getName();
+import io.meeds.deeds.constant.Currency;
+import lombok.*;
 
-  List<String> getSupportedEvents();
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document(indexName = "currency_exchange_rate", createIndex = true, dynamic = Dynamic.TRUE)
+public class CurrencyExchangeRate {
 
-  @SuppressWarnings("unchecked")
-  default void handleEvent(String eventName, Object event) {
-    onEvent(eventName, (T) event);
-  }
+  @Id
+  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
+  private LocalDate  date;
 
-  void onEvent(String eventName, T event);
+  @Field(type = FieldType.Keyword)
+  private Currency   currency;
+
+  private BigDecimal rate;
+
 }

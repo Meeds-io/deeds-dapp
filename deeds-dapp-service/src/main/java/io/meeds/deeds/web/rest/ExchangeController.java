@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.dto.MeedPrice;
+import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.service.ExchangeService;
 
 @RestController

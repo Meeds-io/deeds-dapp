@@ -21,10 +21,10 @@
   <parent>
     <groupId>io.meeds.deeds-dapp</groupId>
     <artifactId>deeds-dapp-parent</artifactId>
-    <version>1.0.x-SNAPSHOT</version>
+    <version>1.0.x-meedsv2-SNAPSHOT</version>
   </parent>
-  <artifactId>deeds-dapp-service</artifactId>
-  <name>Meeds:: Deeds Dapp - Services</name>
+  <artifactId>deeds-dapp-common</artifactId>
+  <name>Meeds:: Deeds Dapp - Configuration</name>
   <properties>
     <exo.test.coverage.ratio>0</exo.test.coverage.ratio>
   </properties>
@@ -34,32 +34,20 @@
       <artifactId>deeds-dapp-contract</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>deeds-dapp-common</artifactId>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-elasticsearch</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
+      <artifactId>spring-boot-starter-json</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.reactivex.rxjava2</groupId>
-      <artifactId>rxjava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.web3j</groupId>
-      <artifactId>crypto</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -70,16 +58,6 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>

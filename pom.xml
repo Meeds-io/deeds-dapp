@@ -32,6 +32,7 @@
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
   <modules>
     <module>deeds-dapp-contract</module>
+    <module>deeds-dapp-common</module>
     <module>deeds-dapp-service</module>
     <module>deeds-dapp-webapp</module>
     <module>deeds-dapp-packaging</module>
@@ -90,6 +91,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>deeds-dapp-contract</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
