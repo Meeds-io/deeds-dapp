@@ -16,24 +16,27 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.storage;
+package io.meeds.deeds.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.meeds.deeds.dto.MeedExchangeRate;
+import lombok.*;
 
-public interface MeedExchangeRateRepository extends ElasticsearchRepository<MeedExchangeRate, LocalDate> {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class MeedPrice {
 
-  @Cacheable(cacheNames = "meedRates")
-  List<MeedExchangeRate> findByDateBetween(LocalDate from, LocalDate to);
+  @JsonProperty("date")
+  private LocalDate  date;
 
-  @Override
-  @CacheEvict(cacheNames = "meedRates", allEntries = true)
-  <S extends MeedExchangeRate> S save(S entity);
+  @JsonProperty("ethPrice")
+  private BigDecimal ethPrice;
+
+  @JsonProperty("currencyPrice")
+  private BigDecimal currencyPrice;
 
 }

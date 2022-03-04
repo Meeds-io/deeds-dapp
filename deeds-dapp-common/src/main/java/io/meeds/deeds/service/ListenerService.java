@@ -37,8 +37,8 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
+import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
-import io.meeds.deeds.redis.listener.EventListener;
 import lombok.*;
 
 @Component
