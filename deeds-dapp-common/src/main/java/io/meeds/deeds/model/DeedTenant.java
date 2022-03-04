@@ -43,6 +43,10 @@ public class DeedTenant {
 
   private String        shutdownTransactionHash;
 
+  private String        provisioningStatus;
+
+  private String        tenantStatus;
+
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
   private LocalDateTime date;
 
