@@ -20,7 +20,9 @@ import {getCookie} from './authentication';
 
 export function saveEmail(nftId, email) {
   const formData = new FormData();
-  formData.append('email', email);
+  if (email) {
+    formData.append('email', email);
+  }
   const params = new URLSearchParams(formData).toString();
 
   return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
@@ -40,7 +42,9 @@ export function saveEmail(nftId, email) {
 
 export function startTenant(nftId, email, transactionHash) {
   const formData = new FormData();
-  formData.append('email', email);
+  if (email) {
+    formData.append('email', email);
+  }
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
