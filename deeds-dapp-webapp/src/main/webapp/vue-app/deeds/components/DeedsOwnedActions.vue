@@ -27,7 +27,8 @@
         text
         icon
         v-bind="attrs"
-        v-on="on">
+        v-on="on"
+        @click="checkAuthentication">
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
     </template>
@@ -114,6 +115,10 @@ export default {
     },
     stopTenant() {
       this.$root.$emit('deeds-move-out-drawer', this.nftId);
+    },
+    checkAuthentication() {
+      this.$tenantManagement.loadLastCommand(this.nftId)
+        .catch(() => this.$emit('logout'));
     },
   },
 };
