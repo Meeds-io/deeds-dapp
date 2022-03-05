@@ -16,6 +16,7 @@
 package io.meeds.deeds.model;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
@@ -29,25 +30,27 @@ import lombok.*;
 public class DeedTenant {
 
   @Id
-  private long          nftId;
+  private long                nftId;
 
-  private long          cityIndex = -1;
+  private short               cityIndex = -1;
 
-  private long          cardType  = -1;
+  private short               cardType  = -1;
 
-  private String        managerAddress;
+  private String              managerAddress;
 
-  private String        managerEmail;
+  private String              managerEmail;
 
-  private String        startupTransactionHash;
+  private String              startupTransactionHash;
 
-  private String        shutdownTransactionHash;
+  private String              shutdownTransactionHash;
 
-  private String        provisioningStatus;
+  private String              provisioningStatus;
 
-  private String        tenantStatus;
+  private String              tenantStatus;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime date;
+  private LocalDateTime       date;
+
+  private Map<String, String> properties;
 
 }

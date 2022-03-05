@@ -29,8 +29,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.RedisClient;
@@ -60,23 +63,20 @@ public class ListenerService implements ApplicationContextAware {
   @Autowired(required = false)
   private RedisClient                         redisClient;
 
+  private ApplicationContext                  applicationContext;
+
   private List<EventListener<?>>              eventListeners = new ArrayList<>();
 
-  private Map<String, List<EventListener<?>>> listeners      = new HashMap<>();
+  private Map<String, List<EventListener<?>>> listeners;
 
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    @SuppressWarnings("rawtypes")
-    Map<String, EventListener> eventListenerBeans = applicationContext.getBeansOfType((EventListener.class));
-    for (EventListener<?> eventListener : eventListenerBeans.values()) {
-      eventListeners.add(eventListener);
-    }
+    this.applicationContext = applicationContext;
   }
 
   @PostConstruct
   public void init() {
     initSubscription();
-    initListeners();
   }
 
   public void addListener(EventListener<?> listener) {
@@ -87,25 +87,25 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   public void addListener(String eventName, EventListener<?> listener) {
-    listeners.computeIfAbsent(eventName, key -> new ArrayList<>())
-             .add(listener);
+    getListeners().computeIfAbsent(eventName, key -> new ArrayList<>())
+                  .add(listener);
   }
 
   public void removeListsner(String listenerName) {
-    listeners.forEach((key, eventListeners) -> { // NOSONAR
+    getListeners().forEach((key, eventListeners) -> { // NOSONAR
       eventListeners.removeIf(eventListener -> StringUtils.equals(eventListener.getName(), listenerName));
     });
   }
 
   public void removeListsner(String eventName, String listenerName) {
-    listeners.computeIfPresent(eventName, (key, list) -> {
+    getListeners().computeIfPresent(eventName, (key, list) -> {
       list.removeIf(eventListener -> StringUtils.equals(eventListener.getName(), listenerName));
       return list;
     });
   }
 
   public void publishEvent(String eventName, Object data) {
-    Event event = new Event(eventName, data);
+    Event event = new Event(eventName, data, data == null ? null : data.getClass().getName());
 
     // Trigger Event Remotely
     try {
@@ -123,28 +123,22 @@ public class ListenerService implements ApplicationContextAware {
     }
   }
 
+  @SuppressWarnings("deprecation")
   protected void publishEventLocally(Event event) {
-    List<EventListener<?>> listenerList = listeners.get(event.getEventName());
+    List<EventListener<?>> listenerList = getListeners().get(event.getEventName());
     if (!CollectionUtils.isEmpty(listenerList)) {
       listenerList.forEach(listener -> listener.handleEvent(event.getEventName(), event.getData()));
     }
   }
 
+  @SuppressWarnings("deprecation")
   protected void triggerEvent(Event event) {
     String eventName = event.getEventName();
     Object data = event.getData();
 
-    List<EventListener<?>> listenerList = listeners.get(eventName);
+    List<EventListener<?>> listenerList = getListeners().get(eventName);
     if (!CollectionUtils.isEmpty(listenerList)) {
       listenerList.forEach(listener -> listener.handleEvent(eventName, data));
-    }
-  }
-
-  private void initListeners() {
-    // Reorder Listeners by Event Name and use a new Map
-    // In order to allow programatically add/remove listeners
-    if (!CollectionUtils.isEmpty(eventListeners)) {
-      eventListeners.forEach(this::addListener);
     }
   }
 
@@ -159,6 +153,29 @@ public class ListenerService implements ApplicationContextAware {
       async.subscribe(getChannelName());
     } catch (Exception e) {
       LOG.warn("Redis connection failure", e);
+    }
+  }
+
+  private Map<String, List<EventListener<?>>> getListeners() {// NOSONAR
+    if (listeners == null) {
+      initListeners();
+    }
+    return listeners;
+  }
+
+  @SuppressWarnings("rawtypes")
+  private synchronized void initListeners() {
+    if (listeners == null) {
+      listeners = new HashMap<>();
+      Map<String, EventListener> eventListenerBeans = applicationContext.getBeansOfType(EventListener.class);
+      for (EventListener<?> eventListener : eventListenerBeans.values()) {
+        eventListeners.add(eventListener);
+      }
+      // Reorder Listeners by Event Name and use a new Map
+      // In order to allow programatically add/remove listeners
+      if (!CollectionUtils.isEmpty(eventListeners)) {
+        eventListeners.forEach(this::addListener);
+      }
     }
   }
 
@@ -177,11 +194,43 @@ public class ListenerService implements ApplicationContextAware {
   @Data
   @NoArgsConstructor
   @AllArgsConstructor
+  @JsonDeserialize(using = EventDeserializer.class)
   public static class Event {
 
     private String eventName;
 
     private Object data;
+
+    private String dataClassName;
+
+  }
+
+  public static class EventDeserializer extends StdDeserializer<Event> {
+
+    private static final long serialVersionUID = -5369587672932623714L;
+
+    public EventDeserializer() {
+      this(null);
+    }
+
+    public EventDeserializer(Class<?> vc) {
+      super(vc);
+    }
+
+    @Override
+    public Event deserialize(JsonParser p, DeserializationContext ctxt) {
+      try {
+        JsonNode node = p.getCodec().readTree(p);
+        String eventName = node.get("eventName").asText();
+        String dataClassName = node.get("dataClassName").asText();
+        String dataJson = node.get("data").toString();
+        Object data = OBJECT_MAPPER.readValue(dataJson, Class.forName(dataClassName));
+        return new Event(eventName, data, dataClassName);
+      } catch (Exception e) {
+        LOG.debug("Error reading value of event", e);
+        return null;
+      }
+    }
 
   }
 
@@ -191,7 +240,9 @@ public class ListenerService implements ApplicationContextAware {
     public void message(String channel, String message) {
       try {
         Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        triggerEvent(event);
+        if (event != null) {
+          triggerEvent(event);
+        }
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
       }
@@ -201,7 +252,9 @@ public class ListenerService implements ApplicationContextAware {
     public void message(String pattern, String channel, String message) {
       try {
         Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        triggerEvent(event);
+        if (event != null) {
+          triggerEvent(event);
+        }
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
       }
