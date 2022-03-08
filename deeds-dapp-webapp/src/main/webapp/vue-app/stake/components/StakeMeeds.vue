@@ -25,7 +25,7 @@
       <v-icon>mdi-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
-    <v-card-text>
+    <v-card-text :class="!xMeedAddress && 'blur-box'">
       <v-list-item>
         <v-list-item-content class="pb-0">
           <v-list-item-title>
@@ -131,6 +131,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            :disabled="!xMeedAddress"
             name="openStakeDrawerButton"
             outlined
             text
@@ -157,6 +158,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
+            :disabled="!xMeedAddress"
             name="openUnstakeDrawerButton"
             outlined
             text
@@ -167,6 +169,14 @@
       </v-list-item>
     </v-card-text>
     <deeds-stake-meeds-drawer ref="stakeDrawer" :stake="stake" />
+    <v-fade-transition>
+      <v-overlay
+        v-if="!xMeedAddress"
+        absolute
+        color="grey lignten-5">
+        <p class="display-1">{{ $t('comingSoon') }}</p>
+      </v-overlay>
+    </v-fade-transition>
   </v-card>
 </template>
 <script>

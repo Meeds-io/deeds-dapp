@@ -46,7 +46,7 @@
           currency />
       </v-list-item-content>
     </v-list-item>
-    <v-list-item class="ps-8">
+    <v-list-item v-if="xMeedAddress" class="ps-8">
       <v-list-item-content>xMeeds</v-list-item-content>
       <v-list-item-content>
         <v-skeleton-loader
