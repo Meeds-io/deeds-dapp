@@ -318,7 +318,7 @@ public class ExchangeService {
   }
 
   private String retrieveCurrencyExchangeRate(LocalDate date) {
-    if (currencyApiKey == null) {
+    if (StringUtils.isBlank(currencyApiKey)) {
       throw new IllegalStateException("API Key is mandatory");
     }
     try {
