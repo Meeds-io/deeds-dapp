@@ -179,7 +179,7 @@ export default {
       return this.meedsStartRewardsTime < this.now;
     },
     apyLoading() {
-      return !this.meedsBalanceOfXMeeds || !this.rewardedFunds || !this.meedsPendingBalanceOfXMeeds;
+      return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
     },
     apy() {
       if (!this.meedsTotalBalanceOfXMeeds

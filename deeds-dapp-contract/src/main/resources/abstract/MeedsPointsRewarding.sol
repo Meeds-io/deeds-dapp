@@ -34,8 +34,8 @@ contract MeedsPointsRewarding is XMeedsToken {
         _;
     }
 
-    constructor (IERC20 _meed, FundDistribution _rewardDistribution, uint256 _startRewardsDelay) XMeedsToken(_meed, _rewardDistribution) {
-        startRewardsTime = block.timestamp + _startRewardsDelay;
+    constructor (IERC20 _meed, FundDistribution _rewardDistribution, uint256 _startRewardsTime) XMeedsToken(_meed, _rewardDistribution) {
+        startRewardsTime = _startRewardsTime;
     }
 
     /**

@@ -20,11 +20,15 @@
   <div v-if="display">
     <template v-if="label">
       {{ $t(label, labelComputedParams) }}
+      <slot></slot>
+    </template>
+    <template v-else-if="!formattedValue">
+      -
     </template>
     <template v-else>
       {{ formattedValue }}
+      <slot></slot>
     </template>
-    <slot></slot>
   </div>
 </template>
 

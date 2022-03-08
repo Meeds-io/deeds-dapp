@@ -267,10 +267,11 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-              state.nftAddress = '0xe311B974A14dB84Dd668e04Ec61637453BbEA1E4';
               state.xMeedAddress = '0xea5b691e3711e3804B9DE627d7d27A1545DfA084';
+              state.nftAddress = '0xe311B974A14dB84Dd668e04Ec61637453BbEA1E4';
               state.tenantProvisioningAddress = '0x8be53DAE5Bf9F834BFa18166a8a79A99491315e7';
               state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+
               state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
               state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
@@ -312,47 +313,59 @@ const store = new Vuex.Store({
       window.setInterval(() => this.commit('loadPointsBalance'), 20000);
     },
     loadPointsBalance(state) {
-      tokenUtils.getPointsBalance(state.xMeedContract, state.address)
-        .then(balance => {
-          state.pointsBalance = balance;
-          state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
-        });
+      if (state.xMeedContract) {
+        tokenUtils.getPointsBalance(state.xMeedContract, state.address)
+          .then(balance => {
+            state.pointsBalance = balance;
+            state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
+          });
+      } else {
+        state.pointsBalance = 0;
+        state.pointsBalanceNoDecimals = 0;
+      }
     },
     loadCurrentCity(state, reloadOnNotMintable) {
-      tokenUtils.getCurrentCity(state.xMeedContract)
-        .then(currentCity => {
-          state.currentCity = currentCity;
-          state.noCityLeft = !currentCity;
-          if (currentCity) {
-            return tokenUtils.isCurrentCityMintable(state.xMeedContract);
-          } else {
-            return false;
-          }
-        })
-        .then(currentCityMintable => {
-          state.currentCityMintable = currentCityMintable;
-          if (!currentCityMintable && state.currentCity) {
-            if (reloadOnNotMintable) {
-              throw new Error('City not mintable yet');
+      if (state.xMeedContract) {
+        tokenUtils.getCurrentCity(state.xMeedContract)
+          .then(currentCity => {
+            state.currentCity = currentCity;
+            state.noCityLeft = !currentCity;
+            if (currentCity) {
+              return tokenUtils.isCurrentCityMintable(state.xMeedContract);
             } else {
-              return tokenUtils.getLastCityMintingCompleteDate(state.xMeedContract)
-                .then(lastCityMintingCompleteDate => state.lastCityMintingCompleteDate = lastCityMintingCompleteDate);
+              return false;
             }
-          }
-        })
-        .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
-        .then(currentCardTypes => state.currentCardTypes = currentCardTypes || [])
-        .catch(error => console.error('Error while loading current city', error))
-        .finally(() => {
-          if (reloadOnNotMintable && !state.currentCityMintable) {
-            window.setTimeout(() => this.commit('loadCurrentCity', true), 1000);
-          }
-        });
+          })
+          .then(currentCityMintable => {
+            state.currentCityMintable = currentCityMintable;
+            if (!currentCityMintable && state.currentCity) {
+              if (reloadOnNotMintable) {
+                throw new Error('City not mintable yet');
+              } else {
+                return tokenUtils.getLastCityMintingCompleteDate(state.xMeedContract)
+                  .then(lastCityMintingCompleteDate => state.lastCityMintingCompleteDate = lastCityMintingCompleteDate);
+              }
+            }
+          })
+          .then(() => state.currentCity && tokenUtils.getCityCardTypes(state.xMeedContract, state.currentCity.id))
+          .then(currentCardTypes => state.currentCardTypes = currentCardTypes || [])
+          .catch(error => console.error('Error while loading current city', error))
+          .finally(() => {
+            if (reloadOnNotMintable && !state.currentCityMintable) {
+              window.setTimeout(() => this.commit('loadCurrentCity', true), 1000);
+            }
+          });
+      } else {
+        state.currentCityMintable = false;
+        state.currentCardTypes = [];
+      }
     },
     loadOwnedNfts(state) {
       if (state.nftContract && state.xMeedContract) {
         tokenUtils.getNftsOfWallet(state.nftContract, state.xMeedContract, state.address)
           .then(nfts => state.ownedNfts = nfts);
+      } else {
+        state.ownedNfts = [];
       }
     },
     loadRewardedFunds(state) {
@@ -383,7 +396,7 @@ const store = new Vuex.Store({
             }
             return Promise.all(promises);
           })
-          .then(fundInfos => state.rewardedFunds = fundInfos);
+          .then(fundInfos => state.rewardedFunds = fundInfos || []);
         state.tokenFactoryContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
         state.tokenFactoryContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
       }
@@ -395,19 +408,29 @@ const store = new Vuex.Store({
         .finally(() => state.loadingMeedsBalance = false);
     },
     loadXMeedsBalances(state) {
-      state.loadingXMeedsBalance = true;
-      state.xMeedContract.balanceOf(state.address)
-        .then(balance => this.commit('setXMeedsBalance', balance))
-        .finally(() => state.loadingXMeedsBalance = false);
+      if (state.xMeedContract) {
+        state.loadingXMeedsBalance = true;
+        state.xMeedContract.balanceOf(state.address)
+          .then(balance => this.commit('setXMeedsBalance', balance))
+          .finally(() => state.loadingXMeedsBalance = false);
+      } else {
+        this.commit('setXMeedsBalance', 0);
+        state.loadingXMeedsBalance = false;
+      }
     },
     loadBalances(state) {
       if (state.address && state.provider) {
         state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
         if (state.meedContract) {
           this.commit('loadMeedsBalances');
-          state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
+          if (state.xMeedAddress) {
+            state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
+            state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
+          } else {
+            state.meedsBalanceOfXMeeds = 0;
+            state.meedsStakeAllowance = 0;
+          }
           state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
-          state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
           state.meedContract.totalSupply().then(totalSupply => {
             state.meedsTotalSupply = totalSupply;
             state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
@@ -418,14 +441,17 @@ const store = new Vuex.Store({
             }
           });
         }
+        this.commit('loadXMeedsBalances');
         if (state.xMeedContract) {
-          this.commit('loadXMeedsBalances');
           state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
-        }
-        if (state.tokenFactoryContract) {
-          state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
-            .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
-            .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
+          if (state.tokenFactoryContract) {
+            state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
+              .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
+              .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
+          }
+        } else {
+          state.xMeedsTotalSupply = 0;
+          state.meedsPendingBalanceOfXMeeds = 0;
         }
       }
     },
@@ -517,10 +543,9 @@ const store = new Vuex.Store({
         this.commit('loadBalances');
         this.commit('loadGasPrice');
         this.commit('loadOwnedNfts');
+        this.commit('loadCurrentCity');
         this.commit('loadPointsBalance');
         this.commit('loadPointsPeriodically');
-        this.commit('loadCurrentCity');
-
         state.provider.lookupAddress(state.address)
           .then(name => state.ens = name);
       }
