@@ -310,12 +310,12 @@ contract TokenFactory is Ownable, FundDistribution {
 
         UserInfo storage user = userLpInfos[_lpAddress][msg.sender];
         // Send pending MEED Reward to user
-        uint256 pendingUserReward = user.amount.mul(fund.accMeedPerShare).div(1e12).sub(
+        uint256 pendingUserReward = user.amount.mul(fund.accMeedPerShare).div(MEED_REWARDING_PRECISION).sub(
             user.rewardDebt
         );
         _safeMeedTransfer(msg.sender, pendingUserReward);
         user.amount = user.amount.sub(_amount);
-        user.rewardDebt = user.amount.mul(fund.accMeedPerShare).div(1e12);
+        user.rewardDebt = user.amount.mul(fund.accMeedPerShare).div(MEED_REWARDING_PRECISION);
 
         if (_amount > 0) {
           // Send pending Reward

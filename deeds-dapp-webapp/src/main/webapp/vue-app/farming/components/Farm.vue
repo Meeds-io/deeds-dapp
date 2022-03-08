@@ -19,7 +19,6 @@
 <template>
   <div class="d-flex flex-column">
     <deeds-add-liquidity />
-    <deeds-sell-liquidity />
     <deeds-rent-liquidity />
     <deeds-liquidity-pools />
   </div>

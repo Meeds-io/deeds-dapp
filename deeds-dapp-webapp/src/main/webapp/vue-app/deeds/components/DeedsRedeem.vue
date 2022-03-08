@@ -23,45 +23,47 @@
       <v-divider class="my-auto ms-4" />
     </h3>
     <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
-    <v-skeleton-loader
-      v-if="currentCityName === null"
-      type="chip"
-      max-height="17"
-      tile />
-    <h4 v-else>{{ currentCityName }}</h4>
-    <small class="d-flex flex-nowrap align-center">
-      {{ $t('cityPopulation') }}:
+    <template v-if="xMeedAddress">
       <v-skeleton-loader
-        v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
+        v-if="currentCityName === null"
         type="chip"
-        class="ms-2" />
-      <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
-      <div v-if="!currentCityMintable && currentCityMintingStartDate">
-        . {{ $t('cityMintingStartDate') }}:
-        <deeds-timer :end-time="currentCityMintingStartDate" @end="endCountDown" />
-      </div>
-    </small>
-    <template v-if="currentCardTypes">
-      <v-container class="mt-2">
-        <v-row class="mx-auto" no-gutters>
-          <v-col
-            v-for="card in currentCardTypes"
-            :key="card.name">
-            <deeds-redeem-card :card="card" :loading="loadingCityDetails" />
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-    <template v-else>
-      <v-container class="grey lighten-5 mt-2">
-        <v-row class="mx-auto" no-gutters>
-          <v-col
-            v-for="i in 4"
-            :key="i">
-            <v-skeleton-loader type="card" class="mx-2" />
-          </v-col>
-        </v-row>
-      </v-container>
+        max-height="17"
+        tile />
+      <h4 v-else>{{ currentCityName }}</h4>
+      <small class="d-flex flex-nowrap align-center">
+        {{ $t('cityPopulation') }}:
+        <v-skeleton-loader
+          v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
+          type="chip"
+          class="ms-2" />
+        <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
+        <div v-if="!currentCityMintable && currentCityMintingStartDate">
+          . {{ $t('cityMintingStartDate') }}:
+          <deeds-timer :end-time="currentCityMintingStartDate" @end="endCountDown" />
+        </div>
+      </small>
+      <template v-if="currentCardTypes">
+        <v-container class="mt-2">
+          <v-row class="mx-auto" no-gutters>
+            <v-col
+              v-for="card in currentCardTypes"
+              :key="card.name">
+              <deeds-redeem-card :card="card" :loading="loadingCityDetails" />
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+      <template v-else>
+        <v-container class="grey lighten-5 mt-2">
+          <v-row class="mx-auto" no-gutters>
+            <v-col
+              v-for="i in 4"
+              :key="i">
+              <v-skeleton-loader type="card" class="mx-2" />
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
     </template>
   </v-card>
 </template>
@@ -76,6 +78,7 @@ export default {
     seconds: 0,
   }),
   computed: Vuex.mapState({
+    xMeedAddress: state => state.xMeedAddress,
     currentCity: state => state.currentCity,
     currentCardTypes: state => state.currentCardTypes,
     currentCityMintable: state => state.currentCityMintable,
