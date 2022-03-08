@@ -18,6 +18,7 @@
 -->
 <template>
   <v-card
+    :class="!xMeedAddress && 'no-border'"
     width="340"
     height="350"
     outlined>
