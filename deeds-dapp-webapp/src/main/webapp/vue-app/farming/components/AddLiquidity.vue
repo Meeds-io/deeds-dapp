@@ -39,7 +39,9 @@
         text
         class="rounded-lg me-4">
         <span class="text-none">Sushiswap</span>
-        <img :src="`/${parentLocation}/static/images/sushiswap.ico`" class="my-3">
+        <img
+          :src="`/${parentLocation}/static/images/sushiswap.ico`"
+          class="my-3 addLiquidityIcon">
       </v-btn>
       <v-btn
         v-if="addUniswapLiquidityLink"
@@ -55,23 +57,22 @@
         <span class="text-none">Uniswap</span>
         <div class="my-3 headline">🦄</div>
       </v-btn>
-      <v-tooltip v-else bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            name="addUniswapLiquidityLink"
-            height="90px"
-            width="90px"
-            outlined
-            text
-            class="rounded-lg ms-4"
-            v-bind="attrs"
-            v-on="on">
-            <span class="text-none">Uniswap</span>
-            <div class="my-3 headline">🦄</div>
-          </v-btn>
-        </template>
-        <span>{{ $t('comingSoon') }}</span>
-      </v-tooltip>
+      <v-btn
+        v-if="addComethLiquidityLink"
+        :href="addComethLiquidityLink"
+        name="addComethLiquidityLink"
+        target="_blank"
+        rel="nofollow noreferrer noopener"
+        height="90px"
+        width="90px"
+        outlined
+        text
+        class="rounded-lg me-4">
+        <span class="text-none">Cometh</span>
+        <img
+          :src="`/${parentLocation}/static/images/cometh.ico`"
+          class="my-3 addLiquidityIcon">
+      </v-btn>
     </v-bottom-navigation>
   </v-card>
 </template>
@@ -81,6 +82,7 @@ export default {
     parentLocation: state => state.parentLocation,
     addSushiswapLiquidityLink: state => state.addSushiswapLiquidityLink,
     addUniswapLiquidityLink: state => state.addUniswapLiquidityLink,
+    addComethLiquidityLink: state => state.addComethLiquidityLink,
   }),
 };
 </script>

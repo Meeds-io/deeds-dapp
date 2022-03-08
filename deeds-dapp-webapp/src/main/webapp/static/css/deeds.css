@@ -75,3 +75,8 @@ html {
   filter: blur(2px);
   user-select: none;
 }
+
+.addLiquidityIcon {
+  max-height: 32px;
+  max-width: 32px;
+}
