@@ -18,7 +18,6 @@
  */
 import Farm from './components/Farm.vue';
 import AddLiquidity from './components/AddLiquidity.vue';
-import SellLiquidity from './components/SellLiquidity.vue';
 import RentLiquidity from './components/RentLiquidity.vue';
 import LiquidityPools from './components/LiquidityPools.vue';
 import LiquidityPool from './components/LiquidityPool.vue';
@@ -29,7 +28,6 @@ import StakeLiquidityUnstake from './components/drawer/StakeLiquidityUnstake.vue
 const components = {
   'deeds-farm': Farm,
   'deeds-add-liquidity': AddLiquidity,
-  'deeds-sell-liquidity': SellLiquidity,
   'deeds-rent-liquidity': RentLiquidity,
   'deeds-liquidity-pools': LiquidityPools,
   'deeds-liquidity-pool': LiquidityPool,

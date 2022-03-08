@@ -32,6 +32,7 @@
       :items="nftsList"
       :hide-default-header="!isMobile"
       :disable-sort="isMobile"
+      :locale="language"
       item-key="updateDate"
       disable-pagination
       disable-filtering
@@ -104,6 +105,7 @@ export default {
     authenticated: false,
   }),
   computed: Vuex.mapState({
+    language: state => state.language,
     etherscanBaseLink: state => state.etherscanBaseLink,
     openSeaBaseLink: state => state.openSeaBaseLink,
     nftAddress: state => state.nftAddress,

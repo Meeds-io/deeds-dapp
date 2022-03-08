@@ -41,13 +41,13 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         IERC20 _meed,
         FundDistribution _rewardDistribution,
         ERC1155Tradable _nftAddress,
-        uint256 _startRewardsDelay,
+        uint256 _startRewardsTime,
         string[] memory _cityNames,
         string[] memory _cardNames,
         uint256[] memory _cardPrices,
         uint32[] memory _cardSupply,
         string[] memory _uris
-    ) MeedsPointsRewarding(_meed, _rewardDistribution, _startRewardsDelay) {
+    ) MeedsPointsRewarding(_meed, _rewardDistribution, _startRewardsTime) {
         nft = _nftAddress;
         lastCityMintingCompleteDate = block.timestamp;
 
