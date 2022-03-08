@@ -80,3 +80,7 @@ html {
   max-height: 32px;
   max-width: 32px;
 }
+
+.no-border {
+  border: 0 !important;
+}
