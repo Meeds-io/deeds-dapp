@@ -70,3 +70,8 @@ html {
   top: 35px;
   left: 55px;
 }
+
+.blur-box {
+  filter: blur(2px);
+  user-select: none;
+}
