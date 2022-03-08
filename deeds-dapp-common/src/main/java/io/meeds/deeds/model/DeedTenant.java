@@ -20,13 +20,20 @@ import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = true, dynamic = Dynamic.TRUE)
+@Document(indexName = "deed_tenant_manager", createIndex = true)
+@Setting(
+    sortFields = "date",
+    sortOrders = SortOrder.desc,
+    replicas = 0,
+    shards = 1
+)
 public class DeedTenant {
 
   @Id
