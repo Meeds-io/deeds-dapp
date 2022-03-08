@@ -25,6 +25,24 @@
           :key="pool.address">
           <deeds-liquidity-pool :pool="pool" />
         </v-col>
+        <v-col key="cometh">
+          <deeds-liquidity-pool>
+            <template #title>
+              {{ $t('rentLiquidityOnCometh') }}
+            </template>
+            <template #content>
+              <v-btn
+                :href="rentComethLiquidityLink"
+                target="_blank"
+                rel="nofollow noreferrer noopener"
+                class="mx-auto d-flex"
+                link
+                text>
+                <span class="text-capitalize link--color">{{ $t('stake') }}</span>
+              </v-btn>
+            </template>
+          </deeds-liquidity-pool>
+        </v-col>
       </template>
       <template v-else>
         <v-col
@@ -43,6 +61,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
+    rentComethLiquidityLink: state => state.rentComethLiquidityLink,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools() {
       return this.rewardedFunds && this.rewardedFunds.filter(fund => fund.isLPToken);

@@ -27,189 +27,197 @@
       <v-card-text class="d-flex">
         <v-icon size="72" class="mx-auto">mdi-cash</v-icon>
       </v-card-text>
-      <v-card-title class="justify-center pt-0 text-center">
-        <template v-if="poolName">
+      <v-card-title class="justify-center pt-0 text-center text-break">
+        <template v-if="$slots.title">
+          <slot name="title"></slot>
+        </template>
+        <template v-else-if="poolName">
           {{ $t('rentLiquidityOn', {0: poolName}) }}
         </template>
         <template v-else>
           {{ $t('rentLiquidity') }}
         </template>
       </v-card-title>
-      <v-list-item>
-        <v-list-item-content class="pb-0">
-          <v-list-item-title>
-            {{ $t('apy') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="loading"
-              type="chip"
-              max-height="17"
-              tile />
-            <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <div
-                  class="d-flex flex-nowrap"
-                  v-bind="attrs"
-                  v-on="on">
-                  <deeds-number-format
-                    :value="apy"
-                    no-decimals>
-                    %
-                  </deeds-number-format>
-                  <v-icon
-                    v-if="!rewardsStarted"
-                    size="15px"
-                    color="primary"
-                    class="ms-2">
-                    mdi-alert-circle-outline
-                  </v-icon>
+      <template v-if="$slots.content">
+        <slot name="content"></slot>
+      </template>
+      <template v-else>
+        <v-list-item>
+          <v-list-item-content class="pb-0">
+            <v-list-item-title>
+              {{ $t('apy') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="loading"
+                type="chip"
+                max-height="17"
+                tile />
+              <v-tooltip v-else bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <div
+                    class="d-flex flex-nowrap"
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-number-format
+                      :value="apy"
+                      no-decimals>
+                      %
+                    </deeds-number-format>
+                    <v-icon
+                      v-if="!rewardsStarted"
+                      size="15px"
+                      color="primary"
+                      class="ms-2">
+                      mdi-alert-circle-outline
+                    </v-icon>
+                  </div>
+                </template>
+                <span v-if="noMeedSupplyForLPRemaining">
+                  {{ $t('maxMeedsSupplyReached') }}
+                </span>
+                <ul v-else-if="rewardsStarted">
+                  <li>
+                    <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
+                  </li>
+                  <li>
+                    <deeds-number-format :value="stakedEquivalentMeedsBalanceOfPool" label="meedsBalanceOfPool" />
+                  </li>
+                </ul>
+                <div v-else>
+                  {{ $t('meedsRewardingDidntStarted') }}
                 </div>
-              </template>
-              <span v-if="noMeedSupplyForLPRemaining">
-                {{ $t('maxMeedsSupplyReached') }}
-              </span>
-              <ul v-else-if="rewardsStarted">
-                <li>
-                  <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
-                </li>
-                <li>
-                  <deeds-number-format :value="stakedEquivalentMeedsBalanceOfPool" label="meedsBalanceOfPool" />
-                </li>
-              </ul>
-              <div v-else>
-                {{ $t('meedsRewardingDidntStarted') }}
-              </div>
-            </v-tooltip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('totalHoldings') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="loadingBalance > 0"
-              type="chip"
-              max-height="17"
-              tile />
-            <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
-              {{ lpSymbol }}
-            </deeds-number-format>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <strong class="d-flex flex-row">
-        <v-divider class="ms-8 me-2 my-auto" />
-        <h6>{{ $t('myAssets') }}</h6>
-        <v-divider class="me-8 ms-2 my-auto" />
-      </strong>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('availableToStake') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="loadingBalance > 0"
-              type="chip"
-              max-height="17"
-              tile />
-            <deeds-number-format v-else :value="lpBalance">
-              {{ lpSymbol }}
-            </deeds-number-format>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            name="stakeLPTokenButton"
-            outlined
-            text
-            @click="openStakeDrawer(true)">
-            <span class="text-none">{{ $t('stake') }}</span>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('balance') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="loadingUserInfo"
-              type="chip"
-              max-height="17"
-              tile />
-            <deeds-number-format v-else :value="lpStaked">
-              {{ lpSymbol }}
-            </deeds-number-format>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            name="unstakeLPTokenButton"
-            outlined
-            text
-            @click="openStakeDrawer(false)">
-            <span class="text-none">{{ $t('unstake') }}</span>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('earned') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="loadingUserReward"
-              type="chip"
-              max-height="17"
-              tile />
-            <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
-            <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
-              MEED
-            </deeds-number-format>
-            <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <div
-                  v-bind="attrs"
-                  v-on="on">
-                  <deeds-number-format :value="meedsPendingUserReward">
-                    MEED
-                  </deeds-number-format>
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('totalHoldings') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="loadingBalance > 0"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
+                {{ lpSymbol }}
+              </deeds-number-format>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <strong class="d-flex flex-row">
+          <v-divider class="ms-8 me-2 my-auto" />
+          <h6>{{ $t('myAssets') }}</h6>
+          <v-divider class="me-8 ms-2 my-auto" />
+        </strong>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('availableToStake') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="loadingBalance > 0"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpBalance">
+                {{ lpSymbol }}
+              </deeds-number-format>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              name="stakeLPTokenButton"
+              outlined
+              text
+              @click="openStakeDrawer(true)">
+              <span class="text-none">{{ $t('stake') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('balance') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="loadingUserInfo"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpStaked">
+                {{ lpSymbol }}
+              </deeds-number-format>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              name="unstakeLPTokenButton"
+              outlined
+              text
+              @click="openStakeDrawer(false)">
+              <span class="text-none">{{ $t('unstake') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('earned') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="loadingUserReward"
+                type="chip"
+                max-height="17"
+                tile />
+              <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
+              <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
+                MEED
+              </deeds-number-format>
+              <v-tooltip v-else bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-number-format :value="meedsPendingUserReward">
+                      MEED
+                    </deeds-number-format>
+                  </div>
+                </template>
+                <div>
+                  {{ $t('meedsRewardingDidntStarted') }}
                 </div>
-              </template>
-              <div>
-                {{ $t('meedsRewardingDidntStarted') }}
-              </div>
-            </v-tooltip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            name="claimRewardButton"
-            :loading="sendingClaim"
-            :disabled="sendingClaim"
-            outlined
-            text
-            @click="claimReward()">
-            <span class="text-capitalize">{{ $t('claim') }}</span>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-      <deeds-stake-liquidity-drawer
-        ref="stakeDrawer"
-        :lp-address="lpAddress"
-        :lp-symbol="lpSymbol"
-        :lp-balance="lpBalance"
-        :lp-staked="lpStaked"
-        :lp-allowance="lpAllowance"
-        :lp-contract="lpContract"
-        :stake="stake" />
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              name="claimRewardButton"
+              :loading="sendingClaim"
+              :disabled="sendingClaim"
+              outlined
+              text
+              @click="claimReward()">
+              <span class="text-capitalize">{{ $t('claim') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <deeds-stake-liquidity-drawer
+          ref="stakeDrawer"
+          :lp-address="lpAddress"
+          :lp-symbol="lpSymbol"
+          :lp-balance="lpBalance"
+          :lp-staked="lpStaked"
+          :lp-allowance="lpAllowance"
+          :lp-contract="lpContract"
+          :stake="stake" />
+      </template>
     </v-card>
   </v-hover>
 </template>
@@ -267,7 +275,7 @@ export default {
       return this.lpSymbol;
     },
     lpContract() {
-      if (this.provider) {
+      if (this.provider && this.lpAddress) {
         return new ethers.Contract(
           this.lpAddress,
           this.erc20ABI,
@@ -320,7 +328,7 @@ export default {
       return this.meedsStartRewardsTime < this.now;
     },
     yearlyRewardedMeeds() {
-      if (this.pool) {
+      if (this.pool && this.lpAddress) {
         if (this.pool.fixedPercentage && !this.pool.fixedPercentage.isZero()) {
           return new BigNumber(this.rewardedMeedPerMinute.toString())
             .multipliedBy(this.yearInMinutes)
@@ -360,7 +368,7 @@ export default {
     meedContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
+        if (this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
           this.refreshMeedsBalanceOfPool();
         }
       },
@@ -368,7 +376,7 @@ export default {
     lpContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPBalance();
           if (this.tokenFactoryAddress) {
             this.refreshTokenFactoryBalance();
@@ -380,7 +388,7 @@ export default {
     lpContractSymbol: {
       immadiate: true,
       handler() {
-        if (this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPSymbol();
         }
       },
@@ -388,7 +396,7 @@ export default {
     lpContractTotalSupply: {
       immadiate: true,
       handler() {
-        if (this.lpContractTotalSupply && !this.lpTotalSupply) {
+        if (this.lpAddress && this.lpContractTotalSupply && !this.lpTotalSupply) {
           this.refreshLPTotalSupply();
         }
       },
@@ -396,7 +404,7 @@ export default {
     tokenFactoryUserLpInfos: {
       immadiate: true,
       handler() {
-        if (this.tokenFactoryUserLpInfos && !this.lpStaked) {
+        if (this.lpAddress && this.tokenFactoryUserLpInfos && !this.lpStaked) {
           this.refreshUserInfo();
         }
       },
@@ -404,18 +412,21 @@ export default {
     tokenFactoryUserPendingReward: {
       immadiate: true,
       handler() {
-        if (this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
+        if (this.lpAddress && this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
           this.refreshPendingReward();
         }
       },
     },
     rewardsStarted() {
-      if (this.rewardsStarted && this.refreshInterval) {
+      if (this.lpAddress && this.rewardsStarted && this.refreshInterval) {
         window.clearInterval(this.refreshInterval);
       }
     },
   },
   created() {
+    if (!this.lpAddress) {
+      return;
+    }
     if (this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
       this.refreshMeedsBalanceOfPool();
     }
