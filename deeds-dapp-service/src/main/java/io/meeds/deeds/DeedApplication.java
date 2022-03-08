@@ -15,9 +15,6 @@
  */
 package io.meeds.deeds;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -27,11 +24,4 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableCaching
 public class DeedApplication extends SpringBootServletInitializer {
 
-  @Override
-  public void onStartup(ServletContext servletContext) throws ServletException {
-    // Used to disable LogBack initialization in WebApp context after having
-    // initialized it already in Meeds Server globally
-    System.setProperty("org.springframework.boot.logging.LoggingSystem", "none");
-    super.onStartup(servletContext);
-  }
 }

@@ -13,6 +13,11 @@ public class RequestDispatcherFilter implements Filter {
   private static final List<String> PATHS = Arrays.asList("/", "/snapshot", "/stake", "/deeds", "/farm");
 
   @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    // Nothing to start
+  }
+
+  @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
