@@ -29,7 +29,7 @@ import io.meeds.deeds.storage.DeedTenantManagerRepository;
 @Component
 public class TenantService {
 
-  @Autowired
+  @Autowired(required = false)
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
   @Autowired

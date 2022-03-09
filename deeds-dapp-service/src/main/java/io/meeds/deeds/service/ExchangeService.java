@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.json.*;
 import javax.net.ssl.HttpsURLConnection;
 
@@ -50,6 +51,8 @@ public class ExchangeService {
 
   private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
 
+  private static final String            CURRENCY_API_URL                  = "https://api.currencyapi.com/v3/latest";
+
   private static final String            PAIR_PARAM_NAME                   = "pair";
 
   private static final String            MESSAGE_PARAM_NAME                = "message";
@@ -64,9 +67,6 @@ public class ExchangeService {
 
   private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
 
-  @Value("${meeds.exchange.currencyApiUrl:https://api.m3o.com/v1/currency/Rates}")
-  private String                         currencyApiUrl;
-
   @Value("${meeds.exchange.currencyApiKey:}")
   private String                         currencyApiKey;
 
@@ -79,10 +79,10 @@ public class ExchangeService {
   @Value("${meeds.exchange.lpTokenAddress:0x960bd61d0b960b107ff5309a2dcced4705567070}")
   private String                         lpTokenAddress;
 
-  @Autowired
+  @Autowired(required = false)
   private CurrencyExchangeRateRepository currencyExchangeRateRepository;
 
-  @Autowired
+  @Autowired(required = false)
   private MeedExchangeRateRepository     meedExchangeRateRepository;
 
   /**
@@ -116,26 +116,35 @@ public class ExchangeService {
                         .collect(Collectors.toList());
   }
 
+  public void computeTodayCurrencyExchangeRate() {
+    computeCurrencyExchangeRateOfDay(LocalDate.now(ZoneOffset.UTC));
+  }
+
   /**
    * Compute and store EURO Currency Exchange rate from first date when MEED
    * Contract has been created until today
    */
+  @PostConstruct
   public void computeCurrencyExchangeRate() {
-    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
     LocalDate today = LocalDate.now(ZoneOffset.UTC);
+    CurrencyExchangeRate todayExchangeRate = currencyExchangeRateRepository.findById(today).orElse(null);
+    if (todayExchangeRate == null) {
+      todayExchangeRate = computeCurrencyExchangeRateOfDay(today);
+      if (todayExchangeRate == null) {
+        LOG.warn("Can't find Currency Exchange rate for today, give up update rates");
+        return;
+      }
+    }
+
+    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
     LocalDate untilDate = LocalDate.now(ZoneOffset.UTC).plusDays(1);
     while (indexDate.isBefore(untilDate)) {
       CurrencyExchangeRate rate = currencyExchangeRateRepository.findById(indexDate).orElse(null);
-      if (rate == null || indexDate.isEqual(today)) {
-        String exchangeRateResultString = retrieveCurrencyExchangeRate(indexDate);
-        if (StringUtils.isNotBlank(exchangeRateResultString)) {
-          try (JsonReader reader = Json.createReader(new StringReader(exchangeRateResultString))) {
-            JsonObject exchangeRateResult = reader.readObject();
-            BigDecimal euroExchangeRate = exchangeRateResult.getJsonObject("rates").getJsonNumber("EUR").bigDecimalValue();
-            rate = new CurrencyExchangeRate(indexDate, Currency.EUR, euroExchangeRate);
-            currencyExchangeRateRepository.save(rate);
-          }
-        }
+      if (rate == null) {
+        rate = new CurrencyExchangeRate(indexDate,
+                                        todayExchangeRate.getCurrency(),
+                                        todayExchangeRate.getRate());
+        currencyExchangeRateRepository.save(rate);
       }
       indexDate = indexDate.plusDays(1);
     }
@@ -163,6 +172,23 @@ public class ExchangeService {
       }
       indexDate = indexDate.plusDays(1);
     }
+  }
+
+  private CurrencyExchangeRate computeCurrencyExchangeRateOfDay(LocalDate date) {
+    CurrencyExchangeRate rate = null;
+    String exchangeRateResultString = retrieveCurrencyExchangeRate();
+    if (StringUtils.isNotBlank(exchangeRateResultString)) {
+      try (JsonReader reader = Json.createReader(new StringReader(exchangeRateResultString))) {
+        JsonObject exchangeRateResult = reader.readObject();
+        BigDecimal euroExchangeRate = exchangeRateResult.getJsonObject("data")
+                                                        .getJsonObject("EUR")
+                                                        .getJsonNumber("value")
+                                                        .bigDecimalValue();
+        rate = new CurrencyExchangeRate(date, Currency.EUR, euroExchangeRate);
+        currencyExchangeRateRepository.save(rate);
+      }
+    }
+    return rate;
   }
 
   private void computePrice(MeedExchangeRate rate,
@@ -317,27 +343,13 @@ public class ExchangeService {
     }
   }
 
-  private String retrieveCurrencyExchangeRate(LocalDate date) {
+  private String retrieveCurrencyExchangeRate() {
     if (StringUtils.isBlank(currencyApiKey)) {
       throw new IllegalStateException("API Key is mandatory");
     }
     try {
-      URL apiUrl = new URL(currencyApiUrl);
+      URL apiUrl = new URL(getCurrencyApiUrl());
       HttpsURLConnection con = (HttpsURLConnection) apiUrl.openConnection();
-
-      // add reuqest header
-      con.setRequestMethod("GET");
-      con.setRequestProperty("Content-Type", "application/json");
-      con.setRequestProperty("Authorization", "Bearer " + currencyApiKey);
-      String parameters = "{\"code\": \"USD\"}";
-
-      // Send post request
-      con.setDoOutput(true);
-      DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-      wr.writeBytes(parameters);
-      wr.flush();
-      wr.close();
-
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
         try (InputStream inputStream = con.getInputStream()) {
@@ -346,9 +358,13 @@ public class ExchangeService {
       }
       return null;
     } catch (Exception e) {
-      LOG.warn("An error occurred while retrieving EURO exchange rate of date {}", date, e);
+      LOG.warn("An error occurred while retrieving EURO exchange rate", e);
       return null;
     }
+  }
+
+  private String getCurrencyApiUrl() {
+    return CURRENCY_API_URL + "?apikey=" + currencyApiKey + "&base_currency=USD&currencies=EUR";
   }
 
   private MeedPrice toMeedPrice(MeedExchangeRate exchangeRate,
