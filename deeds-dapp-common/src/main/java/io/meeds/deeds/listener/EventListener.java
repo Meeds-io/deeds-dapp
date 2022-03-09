@@ -56,7 +56,7 @@ public interface EventListener<T> {
    * @deprecated used for internal casting and must not be overridden
    */
   @SuppressWarnings("unchecked")
-  @Deprecated
+  @Deprecated(forRemoval = false)
   default void handleEvent(String eventName, Object data) { // NOSONAR
     onEvent(eventName, (T) data);
   }

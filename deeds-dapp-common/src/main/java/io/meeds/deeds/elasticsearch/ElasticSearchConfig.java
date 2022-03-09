@@ -32,13 +32,13 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackages = "io.meeds.deeds.elasticsearch")
 public class ElasticSearchConfig {
 
-  @Value("${exo.es.index.server.username:}")
+  @Value("${meeds.elasticsearch.username:}")
   private String esUsername;
 
-  @Value("${exo.es.index.server.password:}")
+  @Value("${meeds.elasticsearch.password:}")
   private String esPassword;
 
-  @Value("${exo.es.index.server.url:http://127.0.0.1:9200}")
+  @Value("${meeds.elasticsearch.url:http://127.0.0.1:9200}")
   private String esUrl;
 
   @Bean
