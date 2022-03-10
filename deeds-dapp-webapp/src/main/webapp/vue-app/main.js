@@ -241,7 +241,7 @@ const store = new Vuex.Store({
           state.networkId = new BigNumber(networkId).toNumber();
           if (state.managedNetworkIds.indexOf(state.networkId) >= 0) {
             if (state.networkId === 1) {
-              state.validNetwork = false; // TODO coming soon
+              state.validNetwork = true;
 
               // Mainnet
               state.etherscanBaseLink = 'https://etherscan.io/';
@@ -249,11 +249,11 @@ const store = new Vuex.Store({
               state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
-              // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
+              state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               // TODO replace with real addresses
+              // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
               state.nftAddress = null;
               state.xMeedAddress = null;
-              state.tokenFactoryAddress = null;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
