@@ -84,3 +84,15 @@ html {
 .no-border {
   border: 0 !important;
 }
+
+.v-btn--outlined.v-btn:before {
+  bottom: -1px;
+  left: -1px;
+  right: -1px;
+  top: -1px;
+}
+
+.v-list {
+  padding-top: 0;
+  padding-bottom: 0;
+}
