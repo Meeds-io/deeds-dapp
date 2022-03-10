@@ -33,18 +33,37 @@
         outlined
         text
         class="me-4">
+        <v-img
+          :src="`/${parentLocation}/static/images/discord.ico`"
+          height="24"
+          max-width="24"
+          class="me-2"
+          contain />
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
-        name="voteLink"
+        name="voteOnSnapshotLink"
         href="https://snapshot.org/#/meedsdao.eth"
         target="_blank"
         rel="nofollow noreferrer noopener"
         outlined
         text
         class="ms-4">
-        <span class="text-none">{{ $t('vote') }}</span>
+        <v-img
+          :src="`/${parentLocation}/static/images/snapshot.png`"
+          height="24"
+          max-width="24"
+          class="me-2"
+          contain />
+        <span class="text-none">{{ $t('voteOnSnapshot') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
