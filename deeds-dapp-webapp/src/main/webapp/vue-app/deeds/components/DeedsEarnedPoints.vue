@@ -122,6 +122,7 @@ export default {
   }),
   computed: Vuex.mapState({
     language: state => state.language,
+    xMeedAddress: state => state.xMeedAddress,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     meedsBalance: state => state.meedsBalance,
     xMeedsBalance: state => state.xMeedsBalance,
