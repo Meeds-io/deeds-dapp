@@ -21,6 +21,8 @@
   <jmxConfigurator />
   <!-- Default pattern used for printing logs in files and on the console for systems that doesn't support a colorized output -->
   <property name="meeds.logs.default.pattern" value="%date{ISO8601} | %-5level | %msg [%logger{40}&lt;%thread&gt;] %n%xEx" />
+  <!-- Pattern used for console supporting ANSI colors -->
+  <property name="meeds.logs.colorized.pattern" value="%date{ISO8601} | %highlight(%-5level) | %msg %green([%logger{40}){}%cyan(&lt;%thread&gt;){}%green(]){} %n%xEx" />
   <!-- Logs are daily archived or whenever the file size reaches maxFileSize -->
   <property name="meeds.logs.rolling.maxFileSize" value="100Mb" />
   <!-- Number of archives to keep -->
@@ -68,7 +70,7 @@
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <withJansi>${meeds.logs.jansi.console:-false}</withJansi>
     <encoder>
-      <pattern>${meeds.logs.default.pattern}</pattern>
+      <pattern>${meeds.logs.colorized.pattern}</pattern>
     </encoder>
   </appender>
   <root level="INFO">

@@ -125,29 +125,9 @@ public class ExchangeService {
    * Contract has been created until today
    */
   @PostConstruct
-  public void computeCurrencyExchangeRate() {
-    LocalDate today = LocalDate.now(ZoneOffset.UTC);
-    CurrencyExchangeRate todayExchangeRate = currencyExchangeRateRepository.findById(today).orElse(null);
-    if (todayExchangeRate == null) {
-      todayExchangeRate = computeCurrencyExchangeRateOfDay(today);
-      if (todayExchangeRate == null) {
-        LOG.warn("Can't find Currency Exchange rate for today, give up update rates");
-        return;
-      }
-    }
-
-    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
-    LocalDate untilDate = LocalDate.now(ZoneOffset.UTC).plusDays(1);
-    while (indexDate.isBefore(untilDate)) {
-      CurrencyExchangeRate rate = currencyExchangeRateRepository.findById(indexDate).orElse(null);
-      if (rate == null) {
-        rate = new CurrencyExchangeRate(indexDate,
-                                        todayExchangeRate.getCurrency(),
-                                        todayExchangeRate.getRate());
-        currencyExchangeRateRepository.save(rate);
-      }
-      indexDate = indexDate.plusDays(1);
-    }
+  public void computeRates() {
+    new Thread(this::computeCurrencyExchangeRate).start();
+    new Thread(this::computeMeedExchangeRate).start();
   }
 
   /**
@@ -169,6 +149,31 @@ public class ExchangeService {
         computePrice(rate, time, todayValue, this::addEthPrice);
         computePrice(rate, time, todayValue, this::addPairData);
         meedExchangeRateRepository.save(rate);
+      }
+      indexDate = indexDate.plusDays(1);
+    }
+  }
+
+  private void computeCurrencyExchangeRate() {
+    LocalDate today = LocalDate.now(ZoneOffset.UTC);
+    CurrencyExchangeRate todayExchangeRate = currencyExchangeRateRepository.findById(today).orElse(null);
+    if (todayExchangeRate == null) {
+      todayExchangeRate = computeCurrencyExchangeRateOfDay(today);
+      if (todayExchangeRate == null) {
+        LOG.warn("Can't find Currency Exchange rate for today, give up update rates");
+        return;
+      }
+    }
+
+    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
+    LocalDate untilDate = LocalDate.now(ZoneOffset.UTC).plusDays(1);
+    while (indexDate.isBefore(untilDate)) {
+      CurrencyExchangeRate rate = currencyExchangeRateRepository.findById(indexDate).orElse(null);
+      if (rate == null) {
+        rate = new CurrencyExchangeRate(indexDate,
+                                        todayExchangeRate.getCurrency(),
+                                        todayExchangeRate.getRate());
+        currencyExchangeRateRepository.save(rate);
       }
       indexDate = indexDate.plusDays(1);
     }
