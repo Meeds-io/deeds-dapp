@@ -101,7 +101,7 @@ const store = new Vuex.Store({
       'function earned(address account) public view returns (uint256)',
       'function currentCityIndex() public view returns (uint8)',
       'function cityInfo(uint256 index) public view returns (string name, uint32 population, uint32 maxPopulation, uint256 availability)',
-      'function cardTypeInfo(uint256 index) public view returns (string name, string uri, uint8 cityIndex, uint8 cardType, uint32 supply, uint32 maxSupply, uint256 amount)',
+      'function cardTypeInfo(uint256 index) public view returns (string name, uint8 cityIndex, uint8 cardType, uint32 supply, uint32 maxSupply, uint256 amount)',
       'function lastCityMintingCompleteDate() public view returns (uint256)',
     ],
     nftABI: [
@@ -270,11 +270,11 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-              state.xMeedAddress = '0xea5b691e3711e3804B9DE627d7d27A1545DfA084';
-              state.nftAddress = '0xe311B974A14dB84Dd668e04Ec61637453BbEA1E4';
-              state.tenantProvisioningAddress = '0x8be53DAE5Bf9F834BFa18166a8a79A99491315e7';
-              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+              state.xMeedAddress = '0xE634D0d0fBF18149d9D525Eb5a65613a89b1dd8B';
+              state.nftAddress = '0x40cF793e6F968516B284bEaC8bfe7b61C2Ce0B79';
+              state.tenantProvisioningAddress = '0xFEACbde15f0d53dE8f792B6073EC3D09201DBFca';
 
+              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
               state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
               state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 

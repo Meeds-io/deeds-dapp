@@ -31,7 +31,7 @@ contract Deed is ERC1155Tradable, StrategyHandler, StrategyRole {
     mapping(address => mapping(uint256 => mapping(address => uint256)))
         internal stratUseCount;
 
-    constructor (address _proxyRegistryAddress) ERC1155Tradable("Meeds Deed Token", "DEED", _proxyRegistryAddress) {
+    constructor (address _proxyRegistryAddress, string memory _baseMetadataURI) ERC1155Tradable("Meeds Deed Token", "DEED", _proxyRegistryAddress, _baseMetadataURI) {
     }
 
     /**

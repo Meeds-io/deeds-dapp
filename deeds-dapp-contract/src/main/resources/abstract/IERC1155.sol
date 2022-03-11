@@ -43,7 +43,7 @@ interface IERC1155 {
      *   URIs are defined in RFC 3986
      *   The URI MUST point a JSON file that conforms to the "ERC-1155 Metadata JSON Schema"
      */
-    event URI(string _amount, uint256 indexed _id);
+    event URI(string _uri, uint256 indexed _id);
 
     /**
      * @notice Transfers amount of an _id from the _from address to the _to address specified
