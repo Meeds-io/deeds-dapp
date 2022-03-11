@@ -20,6 +20,7 @@ import Stake from './components/Stake.vue';
 import StakeDeeds from './components/StakeDeeds.vue';
 import StakeGovernance from './components/StakeGovernance.vue';
 import StakeYield from './components/StakeYield.vue';
+import StakeContribute from './components/StakeContribute.vue';
 import StakeMeeds from './components/StakeMeeds.vue';
 import StakeMeedsDrawer from './components/drawer/StakeMeedsDrawer.vue';
 import StakeMeedsSteps from './components/drawer/StakeMeedsSteps.vue';
@@ -30,6 +31,7 @@ const components = {
   'deeds-stake-deeds': StakeDeeds,
   'deeds-stake-governance': StakeGovernance,
   'deeds-stake-yield': StakeYield,
+  'deeds-stake-contribute': StakeContribute,
   'deeds-stake-meeds': StakeMeeds,
   'deeds-stake-meeds-drawer': StakeMeedsDrawer,
   'deeds-stake-meeds-steps': StakeMeedsSteps,

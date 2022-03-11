@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,20 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column-reverse flex-sm-row">
-    <div class="d-flex flex-column">
-      <deeds-stake-yield />
-      <deeds-stake-governance />
-      <deeds-stake-deeds />
-      <deeds-stake-contribute />
-    </div>
-    <deeds-stake-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 flex-shrink-0 flex-grow-1" />
-  </div>
+  <v-card flat>
+    <v-card-title class="ps-0">
+      {{ $t('contribute') }}
+    </v-card-title>
+    <v-card-text class="ps-0">
+      {{ $t('contributionIntroduction') }}
+    </v-card-text>
+    <v-card-actions class="ps-0 justify-center">
+      <v-btn
+        name="getInvolvedLink"
+        href="https://builders.meeds.io"
+        target="_blank"
+        rel="nofollow noreferrer noopener"
+        outlined
+        text
+        class="me-4">
+        <span class="text-capitalize">{{ $t('getInvolved') }}</span>
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
-<script>
-export default {
-  created() {
-    this.$store.commit('loadRewardedFunds');
-  },
-};
-</script>
