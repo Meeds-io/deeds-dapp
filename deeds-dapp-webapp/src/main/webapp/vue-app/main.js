@@ -196,7 +196,9 @@ const store = new Vuex.Store({
     xMeedsTotalSupply: null,
     meedsBalanceOfXMeeds: null,
     meedsPendingBalanceOfXMeeds: null,
-    meedsStartRewardsTime: null,
+    farmingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
+    stakingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
+    deedStartTime: 1651363200000, // May 01 2022 00:00:00 GMT
     pointsStartRewardsTime: null,
     xMeedsBalance: null,
     loadingXMeedsBalance: true,
