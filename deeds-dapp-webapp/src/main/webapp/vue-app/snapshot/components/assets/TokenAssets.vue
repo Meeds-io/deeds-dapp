@@ -117,8 +117,6 @@
 <script>
 export default {
   data: () => ({
-    refreshInterval: null,
-    now: Date.now(),
     yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
@@ -139,8 +137,9 @@ export default {
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     rewardedFunds: state => state.rewardedFunds,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
-    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    now: state => state.now,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
         return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
@@ -176,7 +175,7 @@ export default {
       return new BigNumber(0);
     },
     rewardsStarted() {
-      return this.meedsStartRewardsTime < this.now;
+      return this.stakingStartTime < this.now;
     },
     apyLoading() {
       return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
@@ -193,20 +192,8 @@ export default {
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
   }),
-  watch: {
-    rewardsStarted() {
-      if (this.rewardsStarted && this.refreshInterval) {
-        window.clearInterval(this.refreshInterval);
-      }
-    },
-  },
   created() {
     this.$store.commit('loadRewardedFunds');
-    if (!this.rewardsStarted) {
-      this.refreshInterval = window.setInterval(() => {
-        this.now = Date.now();
-      }, 1000);
-    }
   },
 };
 </script>

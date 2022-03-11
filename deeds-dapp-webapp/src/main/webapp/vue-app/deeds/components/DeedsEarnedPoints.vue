@@ -117,8 +117,6 @@
 export default {
   data: () => ({
     stake: true,
-    now: Date.now(),
-    refreshInterval: null,
   }),
   computed: Vuex.mapState({
     language: state => state.language,
@@ -128,24 +126,11 @@ export default {
     xMeedsBalance: state => state.xMeedsBalance,
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
-    pointsStartRewardsTime: state => state.pointsStartRewardsTime,
+    pointsRewardsStartTime: state => state.pointsRewardsStartTime,
+    now: state => state.now,
     rewardsStarted() {
-      return !this.endCountDown && this.pointsStartRewardsTime < this.now;
+      return this.pointsRewardsStartTime < this.now;
     },
   }),
-  watch: {
-    rewardsStarted() {
-      if (this.rewardsStarted && this.refreshInterval) {
-        window.clearInterval(this.refreshInterval);
-      }
-    },
-  },
-  created() {
-    if (!this.rewardsStarted) {
-      this.refreshInterval = window.setInterval(() => {
-        this.now = Date.now();
-      }, 1000);
-    }
-  },
 };
 </script>

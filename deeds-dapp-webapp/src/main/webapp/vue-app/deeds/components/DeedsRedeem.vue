@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat>
+  <v-card flat class="d-flex flex-column">
     <h3 class="d-flex flex-nowrap">
       {{ $t('deedsToRedeem') }}
       <v-divider class="my-auto ms-4" />
@@ -37,9 +37,19 @@
           type="chip"
           class="ms-2" />
         <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
-        <div v-if="!currentCityMintable && currentCityMintingStartDate">
+        <div v-if="!deedGenesisStarted">
           . {{ $t('cityMintingStartDate') }}:
-          <deeds-timer :end-time="currentCityMintingStartDate" @end="endCountDown" />
+          <deeds-timer
+            :end-time="deedGenesisStartTime"
+            class="my-auto" />
+        </div>
+        <div v-else-if="!currentCityMintable && currentCityMintingStartDate">
+          . {{ $t('cityMintingStartDate') }}:
+          <deeds-timer
+            v-if="deedGenesisStarted"
+            :end-time="currentCityMintingStartDate"
+            class="my-auto"
+            @end="endCountDown" />
         </div>
       </small>
       <template v-if="currentCardTypes">
@@ -48,7 +58,10 @@
             <v-col
               v-for="card in currentCardTypes"
               :key="card.name">
-              <deeds-redeem-card :card="card" :loading="loadingCityDetails" />
+              <deeds-redeem-card
+                :card="card"
+                :loading="loadingCityDetails"
+                :genesis-started="deedGenesisStarted" />
             </v-col>
           </v-row>
         </v-container>
@@ -65,24 +78,27 @@
         </v-container>
       </template>
     </template>
+    <small v-else-if="!deedGenesisStarted" class="mx-auto mt-4">
+      <span class="my-auto text-capitalize text-capitalize grey--text">{{ $t('startsAfter') }}</span>
+      <deeds-timer
+        :end-time="deedGenesisStartTime"
+        class="my-auto" />
+    </small>
   </v-card>
 </template>
 <script>
 export default {
   data: () => ({
     loadingCityDetails: false,
-    interval: 0,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
   }),
   computed: Vuex.mapState({
     xMeedAddress: state => state.xMeedAddress,
+    deedGenesisStartTime: state => state.deedGenesisStartTime,
     currentCity: state => state.currentCity,
     currentCardTypes: state => state.currentCardTypes,
     currentCityMintable: state => state.currentCityMintable,
     lastCityMintingCompleteDate: state => state.lastCityMintingCompleteDate,
+    now: state => state.now,
     currentCityMintingStartDate() {
       if (!this.currentCityMintable && this.currentCityAvailability && this.lastCityMintingCompleteDate) {
         return (this.currentCityAvailability.toNumber() + this.lastCityMintingCompleteDate.toNumber()) * 1000;
@@ -102,6 +118,9 @@ export default {
     currentCityMaxPopulation() {
       return this.currentCity && this.currentCity.maxPopulation;
     },
+    deedGenesisStarted() {
+      return this.deedGenesisStartTime < this.now;
+    },
   }),
   watch: {
     currentCityMintable() {
@@ -111,16 +130,16 @@ export default {
     },
   },
   methods: {
-    setCountDown() {
-      if (!this.currentCityMintingStartDate) {
-        return;
-      }
-      this.updateCountDown();
-      this.interval = setInterval(this.updateCountDown, 1000);
-    },
     endCountDown() {
       this.loadingCityDetails = true;
-      window.setTimeout(() => this.$store.commit('loadCurrentCity', true), 1000);
+      window.setTimeout(() => {
+        this.$store.commit('loadCurrentCity', true);
+        window.setTimeout(() => {
+          if (!this.currentCityMintable) {
+            this.endCountDown();
+          }
+        }, 3000);
+      }, 1000);
     },
   },
 };

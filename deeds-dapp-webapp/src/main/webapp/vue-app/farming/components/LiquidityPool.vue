@@ -57,8 +57,7 @@
                 <span class="my-auto text-capitalize text-capitalize grey--text">{{ $t('startsAfter') }}</span>
                 <deeds-timer
                   :end-time="farmingStartTime"
-                  class="my-auto"
-                  @end="farmingStartTime = 0" />
+                  class="my-auto" />
               </small>
               <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -94,14 +93,17 @@
               {{ $t('totalHoldings') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingBalance > 0"
-                type="chip"
-                max-height="17"
-                tile />
-              <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
-                {{ lpSymbol }}
-              </deeds-number-format>
+              <template v-if="rewardsStarted">
+                <v-skeleton-loader
+                  v-if="loadingBalance > 0"
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
+                  {{ lpSymbol }}
+                </deeds-number-format>
+              </template>
+              <template v-else>-</template>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -116,14 +118,17 @@
               {{ $t('availableToStake') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingBalance > 0"
-                type="chip"
-                max-height="17"
-                tile />
-              <deeds-number-format v-else :value="lpBalance">
-                {{ lpSymbol }}
-              </deeds-number-format>
+              <template v-if="rewardsStarted">
+                <v-skeleton-loader
+                  v-if="loadingBalance > 0"
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <deeds-number-format v-else :value="lpBalance">
+                  {{ lpSymbol }}
+                </deeds-number-format>
+              </template>
+              <template v-else>-</template>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -143,14 +148,17 @@
               {{ $t('balance') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingUserInfo"
-                type="chip"
-                max-height="17"
-                tile />
-              <deeds-number-format v-else :value="lpStaked">
-                {{ lpSymbol }}
-              </deeds-number-format>
+              <template v-if="rewardsStarted">
+                <v-skeleton-loader
+                  v-if="loadingUserInfo"
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <deeds-number-format v-else :value="lpStaked">
+                  {{ lpSymbol }}
+                </deeds-number-format>
+              </template>
+              <template v-else>-</template>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -170,29 +178,32 @@
               {{ $t('earned') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingUserReward"
-                type="chip"
-                max-height="17"
-                tile />
-              <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
-              <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
-                MEED
-              </deeds-number-format>
-              <v-tooltip v-else bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <div
-                    v-bind="attrs"
-                    v-on="on">
-                    <deeds-number-format :value="meedsPendingUserReward">
-                      MEED
-                    </deeds-number-format>
+              <template v-if="rewardsStarted">
+                <v-skeleton-loader
+                  v-if="loadingUserReward"
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
+                <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
+                  MEED
+                </deeds-number-format>
+                <v-tooltip v-else bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-bind="attrs"
+                      v-on="on">
+                      <deeds-number-format :value="meedsPendingUserReward">
+                        MEED
+                      </deeds-number-format>
+                    </div>
+                  </template>
+                  <div>
+                    {{ $t('meedsRewardingDidntStarted') }}
                   </div>
-                </template>
-                <div>
-                  {{ $t('meedsRewardingDidntStarted') }}
-                </div>
-              </v-tooltip>
+                </v-tooltip>
+              </template>
+              <template v-else>-</template>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -229,8 +240,6 @@ export default {
     },
   },
   data: () => ({
-    refreshInterval: null,
-    now: Date.now(),
     loading: false,
     loadingBalance: 0,
     loadingUserInfo: false,
@@ -262,6 +271,7 @@ export default {
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
     tokenFactoryContract: state => state.tokenFactoryContract,
+    now: state => state.now,
     lpAddress() {
       return this.pool && this.pool.address;
     },
@@ -354,6 +364,7 @@ export default {
     apy() {
       if (!this.stakedEquivalentMeedsBalanceOfPool
           || !this.yearlyRewardedMeeds
+          || !this.rewardsStarted
           || this.stakedEquivalentMeedsBalanceOfPool.isZero()
           || this.noMeedSupplyForLPRemaining
           || this.yearlyRewardedMeeds.isZero()
@@ -367,7 +378,7 @@ export default {
     meedContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
+        if (this.rewardsStarted && this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
           this.refreshMeedsBalanceOfPool();
         }
       },
@@ -375,7 +386,7 @@ export default {
     lpContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.rewardsStarted && this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPBalance();
           if (this.tokenFactoryAddress) {
             this.refreshTokenFactoryBalance();
@@ -387,7 +398,7 @@ export default {
     lpContractSymbol: {
       immadiate: true,
       handler() {
-        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.rewardsStarted && this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPSymbol();
         }
       },
@@ -416,14 +427,9 @@ export default {
         }
       },
     },
-    rewardsStarted() {
-      if (this.lpAddress && this.rewardsStarted && this.refreshInterval) {
-        window.clearInterval(this.refreshInterval);
-      }
-    },
   },
   created() {
-    if (!this.lpAddress) {
+    if (!this.lpAddress || !this.rewardsStarted) {
       return;
     }
     if (this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
@@ -473,12 +479,6 @@ export default {
       this.tokenFactoryContract.filters.Harvest(this.address, this.lpAddress), 
       () => this.refreshPendingReward()
     );
-
-    if (!this.rewardsStarted) {
-      this.refreshInterval = window.setInterval(() => {
-        this.now = Date.now();
-      }, 1000);
-    }
   },
   methods: {
     refreshMeedsBalanceOfPool() {

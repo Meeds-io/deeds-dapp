@@ -63,7 +63,7 @@
 <script>
 export default {
   data: () => ({
-    xMeedAmount: 0,
+    xMeedAmount: 100000,
     cardPrice: 8000,
     dayInSeconds: 24 * 60 * 60,
   }),
@@ -99,7 +99,7 @@ export default {
     xMeedsBalanceNoDecimals: {
       immediate: true,
       handler() {
-        if (!this.xMeedAmount && this.xMeedsBalanceNoDecimals) {
+        if (this.xMeedAmount === 100000 && this.xMeedsBalanceNoDecimals) {
           this.xMeedAmount = parseInt(this.xMeedsBalanceNoDecimals);
         }
       },

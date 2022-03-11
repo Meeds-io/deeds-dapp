@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card
-    :class="!xMeedAddress && 'no-border'"
+    :class="!rewardsStarted && 'no-border'"
     width="340"
     height="350"
     outlined>
@@ -26,7 +26,7 @@
       <v-icon>mdi-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
-    <v-card-text :class="!xMeedAddress && 'blur-box'">
+    <v-card-text :class="!rewardsStarted && 'blur-box'">
       <v-list-item>
         <v-list-item-content class="pb-0">
           <v-list-item-title>
@@ -38,7 +38,7 @@
               type="chip"
               max-height="17"
               tile />
-            <v-tooltip v-else bottom>
+            <v-tooltip v-else-if="rewardsStarted" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
@@ -49,19 +49,12 @@
                     no-decimals>
                     %
                   </deeds-number-format>
-                  <v-icon
-                    v-if="!rewardsStarted"
-                    size="15px"
-                    color="primary"
-                    class="ms-2">
-                    mdi-alert-circle-outline
-                  </v-icon>
                 </div>
               </template>
               <span v-if="maxMeedSupplyReached">
                 {{ $t('maxMeedsSupplyReached') }}
               </span>
-              <ul v-else-if="rewardsStarted">
+              <ul v-else>
                 <li>
                   <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
                 </li>
@@ -69,9 +62,6 @@
                   <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
                 </li>
               </ul>
-              <div v-else>
-                {{ $t('meedsRewardingDidntStarted') }}
-              </div>
             </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -132,7 +122,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
-            :disabled="!xMeedAddress"
+            :disabled="!rewardsStarted"
             name="openStakeDrawerButton"
             outlined
             text
@@ -159,7 +149,7 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
-            :disabled="!xMeedAddress"
+            :disabled="!rewardsStarted"
             name="openUnstakeDrawerButton"
             outlined
             text
@@ -172,7 +162,7 @@
     <deeds-stake-meeds-drawer ref="stakeDrawer" :stake="stake" />
     <v-fade-transition>
       <v-overlay
-        v-if="!xMeedAddress"
+        v-if="!rewardsStarted"
         absolute
         color="grey lignten-5">
         <p class="display-1">{{ $t('comingSoon') }}</p>
@@ -184,8 +174,6 @@
 export default {
   data: () => ({
     stake: true,
-    refreshInterval: null,
-    now: Date.now(),
     yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
@@ -200,8 +188,9 @@ export default {
     rewardedFunds: state => state.rewardedFunds,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
-    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    now: state => state.now,
     xMeedRewardInfo() {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
     },
@@ -231,7 +220,7 @@ export default {
       return new BigNumber(0);
     },
     rewardsStarted() {
-      return this.meedsStartRewardsTime < this.now;
+      return this.stakingStartTime < this.now;
     },
     apyLoading() {
       return this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null;
@@ -248,20 +237,6 @@ export default {
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
   }),
-  watch: {
-    rewardsStarted() {
-      if (this.rewardsStarted && this.refreshInterval) {
-        window.clearInterval(this.refreshInterval);
-      }
-    },
-  },
-  created() {
-    if (!this.rewardsStarted) {
-      this.refreshInterval = window.setInterval(() => {
-        this.now = Date.now();
-      }, 1000);
-    }
-  },
   methods: {
     openStakeDrawer(stake) {
       this.stake = stake;
