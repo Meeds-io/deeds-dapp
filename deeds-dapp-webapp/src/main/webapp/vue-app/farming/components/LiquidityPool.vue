@@ -47,16 +47,23 @@
             <v-list-item-title>
               {{ $t('apy') }}
             </v-list-item-title>
-            <v-list-item-subtitle class="font-weight-bold ms-2">
+            <v-list-item-subtitle class="font-weight-bold">
               <v-skeleton-loader
                 v-if="loading"
                 type="chip"
                 max-height="17"
                 tile />
+              <small v-else-if="!rewardsStarted" class="d-flex mt-2">
+                <span class="my-auto text-capitalize text-capitalize grey--text">{{ $t('startsAfter') }}</span>
+                <deeds-timer
+                  :end-time="farmingStartTime"
+                  class="my-auto"
+                  @end="farmingStartTime = 0" />
+              </small>
               <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <div
-                    class="d-flex flex-nowrap"
+                    class="d-flex flex-nowrap ms-2"
                     v-bind="attrs"
                     v-on="on">
                     <deeds-number-format
@@ -64,19 +71,12 @@
                       no-decimals>
                       %
                     </deeds-number-format>
-                    <v-icon
-                      v-if="!rewardsStarted"
-                      size="15px"
-                      color="primary"
-                      class="ms-2">
-                      mdi-alert-circle-outline
-                    </v-icon>
                   </div>
                 </template>
                 <span v-if="noMeedSupplyForLPRemaining">
                   {{ $t('maxMeedsSupplyReached') }}
                 </span>
-                <ul v-else-if="rewardsStarted">
+                <ul v-else>
                   <li>
                     <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
                   </li>
@@ -84,9 +84,6 @@
                     <deeds-number-format :value="stakedEquivalentMeedsBalanceOfPool" label="meedsBalanceOfPool" />
                   </li>
                 </ul>
-                <div v-else>
-                  {{ $t('meedsRewardingDidntStarted') }}
-                </div>
               </v-tooltip>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -131,6 +128,7 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
+              :disabled="!rewardsStarted"
               name="stakeLPTokenButton"
               outlined
               text
@@ -157,6 +155,7 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
+              :disabled="!rewardsStarted"
               name="unstakeLPTokenButton"
               outlined
               text
@@ -200,7 +199,7 @@
             <v-btn
               name="claimRewardButton"
               :loading="sendingClaim"
-              :disabled="sendingClaim"
+              :disabled="sendingClaim || !rewardsStarted"
               outlined
               text
               @click="claimReward()">
@@ -258,7 +257,7 @@ export default {
     univ2PairAddress: state => state.univ2PairAddress,
     erc20ABI: state => state.erc20ABI,
     meedContract: state => state.meedContract,
-    meedsStartRewardsTime: state => state.meedsStartRewardsTime,
+    farmingStartTime: state => state.farmingStartTime,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
@@ -325,7 +324,7 @@ export default {
       return this.userInfo && this.userInfo.amount || 0;
     },
     rewardsStarted() {
-      return this.meedsStartRewardsTime < this.now;
+      return this.farmingStartTime < this.now;
     },
     yearlyRewardedMeeds() {
       if (this.pool && this.lpAddress) {
