@@ -198,8 +198,9 @@ const store = new Vuex.Store({
     meedsPendingBalanceOfXMeeds: null,
     farmingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
     stakingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
-    deedStartTime: 1651363200000, // May 01 2022 00:00:00 GMT
-    pointsStartRewardsTime: null,
+    deedGenesisStartTime: 1651363200000, // May 01 2022 00:00:00 GMT
+    pointsRewardsStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
+    now: Date.now(),
     xMeedsBalance: null,
     loadingXMeedsBalance: true,
     xMeedsBalanceNoDecimals: null,
@@ -281,6 +282,11 @@ const store = new Vuex.Store({
               state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
+
+              state.farmingStartTime = Date.now() + 5000;
+              state.stakingStartTime = Date.now() + 10000;
+              state.pointsRewardsStartTime = Date.now() + 15000;
+              state.deedGenesisStartTime = Date.now() + 25000;
             }
             state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
             state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';
@@ -506,11 +512,12 @@ const store = new Vuex.Store({
           );
         }
 
-        if (state.xMeedContract) {
-          state.xMeedContract.startRewardsTime().then(timestamp => state.pointsStartRewardsTime = timestamp * 1000);
+        if (state.xMeedContract && (state.deedGenesisStartTime - Date.now() < 10000)) {
+          state.xMeedContract.startRewardsTime().then(timestamp => {
+            state.pointsRewardsStartTime = timestamp * 1000;
+          });
         }
         if (state.tokenFactoryContract) {
-          state.tokenFactoryContract.startRewardsTime().then(timestamp => state.meedsStartRewardsTime = timestamp * 1000);
           state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
         }
 
@@ -574,6 +581,23 @@ const store = new Vuex.Store({
     },
     loaded(state) {
       state.appLoading = false;
+    },
+    endTimer(state) {
+      state.refreshNowIntervalUsage--;
+      if (state.refreshNowInterval && state.refreshNowIntervalUsage <= 0) {
+        window.clearInterval(state.refreshNowInterval);
+        state.refreshNowInterval = null;
+      }
+    },
+    startTimer(state) {
+      if (!state.refreshNowInterval) {
+        state.refreshNowInterval = window.setInterval(() => {
+          state.now = Date.now();
+        }, 1000);
+        state.refreshNowIntervalUsage = 1;
+      } else {
+        state.refreshNowIntervalUsage++;
+      }
     },
     selectFiatCurrency(state, fiatCurrency) {
       state.selectedFiatCurrency = fiatCurrency;

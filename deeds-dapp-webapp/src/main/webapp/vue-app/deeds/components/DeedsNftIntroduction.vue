@@ -25,9 +25,8 @@
       <small v-if="!rewardsStarted" class="d-flex">
         <span class="mt-auto mb-1">{{ $t('startsAfter') }}</span>
         <deeds-timer
-          :end-time="pointsStartRewardsTime"
-          class="mt-auto mb-1"
-          @end="endCountDown = true" />
+          :end-time="pointsRewardsStartTime"
+          class="mt-auto mb-1" />
       </small>
     </flex>
     <v-card-text class="ps-0">
@@ -37,13 +36,11 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    endCountDown: false,
-  }),
   computed: Vuex.mapState({
-    pointsStartRewardsTime: state => state.pointsStartRewardsTime,
+    pointsRewardsStartTime: state => state.pointsRewardsStartTime,
+    now: state => state.now,
     rewardsStarted() {
-      return !this.endCountDown && this.pointsStartRewardsTime < Date.now();
+      return this.pointsRewardsStartTime < this.now;
     },
   }),
 };
