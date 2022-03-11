@@ -14,21 +14,18 @@ import "./ERC1155MintBurn.sol";
  * has create and mint functionality, and supports useful standards from OpenZeppelin,
  *   like _exists(), name(), symbol(), and totalSupply()
  */
-contract ERC1155Tradable is ERC1155MintBurn, Ownable {
+abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
     using SafeMath for uint256;
     using Address for address;
 
     // OpenSea proxy registry to ease selling NFTs on OpenSea
     address public proxyRegistryAddress;
 
-    mapping(uint256 => string) public tokenUri;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
     mapping(uint256 => uint8) public tokenCityIndex;
     mapping(uint256 => uint8) public tokenType;
-
-    uint256 internal _currentTokenID = 0;
 
     // Contract name
     string public name;
@@ -36,21 +33,26 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
     // Contract symbol
     string public symbol;
 
-    constructor (string memory _name, string memory _symbol, address _proxyRegistryAddress) {
+    // URI's default URI prefix
+    string internal baseMetadataURI;
+
+    uint256 internal _currentTokenID = 0;
+
+    constructor (string memory _name, string memory _symbol, address _proxyRegistryAddress, string memory _baseMetadataURI) {
         name = _name;
         symbol = _symbol;
         proxyRegistryAddress = _proxyRegistryAddress;
+        baseMetadataURI = _baseMetadataURI;
     }
 
+    /**
+     * @dev Returns URIs are defined in RFC 3986.
+     *      URIs are assumed to be deterministically generated based on token ID
+     *      Token IDs are assumed to be represented in their hex format in URIs
+     * @return URI string
+     */
     function uri(uint256 _id) override public view returns (string memory) {
-        require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
-        // We have to convert string to bytes to check for existence
-        bytes memory customUriBytes = bytes(tokenUri[_id]);
-        if (customUriBytes.length > 0) {
-            return tokenUri[_id];
-        } else {
-            return "";
-        }
+        return string(abi.encodePacked(baseMetadataURI, _uint2str(_id)));
     }
 
     /**
@@ -90,7 +92,6 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
      * @param _initialOwner the first owner of the Token
      * @param _initialSupply Optional amount to supply the first owner (1 for NFT)
      * @param _maxSupply max supply allowed (1 for NFT)
-     * @param _uri Optional URI for this token type
      * @param _cityIndex city index of NFT
      *    (0 = Tanit, 1 = Reshef, 2 = Ashtarte, 3 = Melqart, 4 = Eshmun, 5 = Kushor, 6 = Hammon)
      * @param _type card type of NFT
@@ -102,7 +103,6 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         address _initialOwner,
         uint256 _initialSupply,
         uint256 _maxSupply,
-        string memory _uri,
         uint8 _cityIndex,
         uint8 _type,
         bytes memory _data
@@ -112,11 +112,6 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         _incrementTokenTypeId();
         creators[_id] = _initialOwner;
 
-        if (bytes(_uri).length > 0) {
-            tokenUri[_id] = _uri;
-            emit URI(_uri, _id);
-        }
-
         if (_initialSupply != 0) {
             _mint(_initialOwner, _id, _initialSupply, _data);
         }
@@ -124,11 +119,16 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         tokenMaxSupply[_id] = _maxSupply;
         tokenCityIndex[_id] = _cityIndex;
         tokenType[_id] = _type;
+
+        emit URI(uri(_id), _id);
         return _id;
     }
 
     /**
-     * Override isApprovedForAll to whitelist user's OpenSea proxy accounts to enable gas-free listings.
+     * @dev Override isApprovedForAll to whitelist user's OpenSea proxy accounts to enable gas-free listings.
+     * @param _owner      The owner of the Tokens
+     * @param _operator   Address of authorized operator
+     * @return isOperator true if the operator is approved, false if not
      */
     function isApprovedForAll(address _owner, address _operator) override public view returns (bool isOperator) {
         // Whitelist OpenSea proxy contract for easy trading.
@@ -163,4 +163,32 @@ contract ERC1155Tradable is ERC1155MintBurn, Ownable {
     function _incrementTokenTypeId() private {
         _currentTokenID++;
     }
+
+    /**
+     * @dev Convert uint256 to string
+     * @param _i Unsigned integer to convert to string
+     */
+    function _uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 ii = _i;
+        uint256 len;
+        // Get number of bytes
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len - 1;
+        // Get each individual ASCII
+        while (ii != 0) {
+            bstr[k--] = bytes1(uint8(48 + (ii % 10)));
+            ii /= 10;
+        }
+        // Convert to string
+        return string(bstr);
+    }
+
 }

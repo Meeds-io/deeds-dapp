@@ -11,7 +11,6 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
     // Info of each Card Type
     struct CardTypeDetail {
         string name;
-        string uri;
         uint8 cityIndex;
         uint8 cardType;
         uint32 supply;
@@ -45,8 +44,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         string[] memory _cityNames,
         string[] memory _cardNames,
         uint256[] memory _cardPrices,
-        uint32[] memory _cardSupply,
-        string[] memory _uris
+        uint32[] memory _cardSupply
     ) MeedsPointsRewarding(_meed, _rewardDistribution, _startRewardsTime) {
         nft = _nftAddress;
         lastCityMintingCompleteDate = block.timestamp;
@@ -54,7 +52,6 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         uint256 citiesLength = _cityNames.length;
         uint256 cardsLength = _cardNames.length;
         uint32 citiesCardsLength = uint32(citiesLength * cardsLength);
-        require(uint32(_uris.length) == citiesCardsLength, "Provided URIs length must equal to Card Type length");
         require(uint32(_cardSupply.length) == citiesCardsLength, "Provided Supply list per card per city must equal to Card Type length");
 
         uint256 _month = 30 days;
@@ -64,7 +61,6 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
             for (uint8 j = 0; j < cardsLength; j++) {
                 string memory _cardName = _cardNames[j];
                 uint256 _cardPrice = _cardPrices[j];
-                string memory _uri = _uris[_index];
                 uint32 _maxSupply = _cardSupply[_index];
                 cardTypeInfo.push(CardTypeDetail({
                     name: _cardName,
@@ -72,8 +68,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
                     cardType: j,
                     amount: _cardPrice,
                     supply: 0,
-                    maxSupply: _maxSupply,
-                    uri: _uri
+                    maxSupply: _maxSupply
                 }));
                 _maxPopulation += _maxSupply;
                 _index++;
@@ -137,7 +132,7 @@ contract XMeedsNFTRewarding is MeedsPointsRewarding {
         }
 
         points[msg.sender] = points[msg.sender].sub(cardType.amount);
-        uint256 _tokenId = nft.create(msg.sender, 1, 1, cardType.uri, cardType.cityIndex, cardType.cardType, "");
+        uint256 _tokenId = nft.create(msg.sender, 1, 1, cardType.cityIndex, cardType.cardType, "");
         emit Redeemed(msg.sender, city.name, cardType.name, _tokenId);
         return _tokenId;
     }
