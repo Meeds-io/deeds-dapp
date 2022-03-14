@@ -119,8 +119,6 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         tokenMaxSupply[_id] = _maxSupply;
         tokenCityIndex[_id] = _cityIndex;
         tokenType[_id] = _type;
-
-        emit URI(uri(_id), _id);
         return _id;
     }
 
