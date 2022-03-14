@@ -62,9 +62,9 @@ public class TenantController {
   public void startTenant(
                           @PathVariable(name = "nftId")
                           long nftId,
-                          @RequestParam(name = "email")
+                          @RequestParam(name = "email", required = false)
                           String email,
-                          @RequestParam(name = "transactionHash")
+                          @RequestParam(name = "transactionHash", required = true)
                           String transactionHash,
                           Principal principal) {
     if (principal == null) {
@@ -84,7 +84,7 @@ public class TenantController {
   public void stopTenant(
                          @PathVariable(name = "nftId")
                          long nftId,
-                         @RequestParam(name = "transactionHash")
+                         @RequestParam(name = "transactionHash", required = true)
                          String transactionHash,
                          Principal principal) {
     if (principal == null) {
@@ -104,7 +104,7 @@ public class TenantController {
   public void updateEmail(
                           @PathVariable(name = "nftId")
                           long nftId,
-                          @RequestParam(name = "email")
+                          @RequestParam(name = "email", required = true)
                           String email,
                           Principal principal) {
     if (principal == null) {

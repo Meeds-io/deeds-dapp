@@ -26,7 +26,18 @@
       max-width="250px"
       outlined>
       <v-card-text class="d-flex">
-        <v-icon size="72" class="mx-auto">mdi-image-size-select-actual</v-icon>
+        <v-img
+          v-if="cardImage"
+          :src="cardImage"
+          width="248"
+          max-width="248"
+          contain />
+        <v-icon
+          v-else
+          size="72"
+          class="mx-auto">
+          mdi-image-size-select-actual
+        </v-icon>
       </v-card-text>
       <v-card-title class="justify-center pt-0">
         {{ cardName }}
@@ -40,7 +51,7 @@
       <v-divider class="mx-4" />
       <v-card-text>
         <div>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          {{ cardDescription }}
         </div>
       </v-card-text>
       <v-card-actions>
@@ -85,6 +96,8 @@ export default {
   },
   data: () => ({
     sendingRedeem: false,
+    cardImage: null,
+    cardDescription: null,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -106,6 +119,12 @@ export default {
     cardType() {
       return this.card && this.card.cardType;
     },
+    cityIndex() {
+      return parseInt(this.cardType / 4);
+    },
+    cardTypeIndex() {
+      return this.cardType % 4;
+    },
     cardAmount() {
       return this.card && this.card.amount;
     },
@@ -126,6 +145,13 @@ export default {
       return null;
     },
   }),
+  created() {
+    this.$deedMetadata.getCardInfo(this.cityIndex, this.cardTypeIndex)
+      .then(cardInfo => {
+        this.cardDescription = cardInfo.description;
+        this.cardImage = cardInfo.image;
+      });
+  },
   methods: {
     redeem() {
       this.sendingRedeem = true;

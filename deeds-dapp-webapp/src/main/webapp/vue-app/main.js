@@ -23,6 +23,7 @@ import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
 import * as authentication from './js/authentication.js';
 import * as tenantManagement from './js/tenantManagement.js';
+import * as deedMetadata from './js/deedMetadata.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
@@ -38,6 +39,10 @@ window.Object.defineProperty(Vue.prototype, '$authentication', {
 
 window.Object.defineProperty(Vue.prototype, '$tenantManagement', {
   value: tenantManagement,
+});
+
+window.Object.defineProperty(Vue.prototype, '$deedMetadata', {
+  value: deedMetadata,
 });
 
 Vue.use(Vuex);
@@ -257,6 +262,7 @@ const store = new Vuex.Store({
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
               state.nftAddress = null;
               state.xMeedAddress = null;
+              state.tenantProvisioningAddress = null;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
@@ -267,26 +273,27 @@ const store = new Vuex.Store({
 
               // Rinkeby
               state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
+              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+              state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
               state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-              state.xMeedAddress = '0xE634D0d0fBF18149d9D525Eb5a65613a89b1dd8B';
-              state.nftAddress = '0x40cF793e6F968516B284bEaC8bfe7b61C2Ce0B79';
-              state.tenantProvisioningAddress = '0xFEACbde15f0d53dE8f792B6073EC3D09201DBFca';
 
-              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-              state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
-              state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
+              state.xMeedAddress = '0x0F1C3a87f912D2d41BD480AA2121CC14CA834a0e';
+              state.nftAddress = '0xb9dc311cf6f6500da12e81b460d4e35E818BA9Ba';
+              state.tenantProvisioningAddress = '0xb755984B1D63C010010D87F4107B83e1069E6798';
+
+              // state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-              state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
+              // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
 
-              state.farmingStartTime = Date.now() + 5000;
-              state.stakingStartTime = Date.now() + 10000;
-              state.pointsRewardsStartTime = Date.now() + 15000;
-              state.deedGenesisStartTime = Date.now() + 25000;
+              state.farmingStartTime = Date.now() + 3000;
+              state.stakingStartTime = Date.now() + 3000;
+              state.pointsRewardsStartTime = Date.now() + 3000;
+              state.deedGenesisStartTime = Date.now() + 3000;
             }
             state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
             state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';
