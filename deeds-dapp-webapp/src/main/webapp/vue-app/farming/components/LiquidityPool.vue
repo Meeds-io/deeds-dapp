@@ -93,17 +93,14 @@
               {{ $t('totalHoldings') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <template v-if="rewardsStarted">
-                <v-skeleton-loader
-                  v-if="loadingBalance > 0"
-                  type="chip"
-                  max-height="17"
-                  tile />
-                <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
-                  {{ lpSymbol }}
-                </deeds-number-format>
-              </template>
-              <template v-else>-</template>
+              <v-skeleton-loader
+                v-if="loadingBalance > 0"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
+                {{ lpSymbol }}
+              </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -118,22 +115,18 @@
               {{ $t('availableToStake') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <template v-if="rewardsStarted">
-                <v-skeleton-loader
-                  v-if="loadingBalance > 0"
-                  type="chip"
-                  max-height="17"
-                  tile />
-                <deeds-number-format v-else :value="lpBalance">
-                  {{ lpSymbol }}
-                </deeds-number-format>
-              </template>
-              <template v-else>-</template>
+              <v-skeleton-loader
+                v-if="loadingBalance > 0"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpBalance">
+                {{ lpSymbol }}
+              </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
-              :disabled="!rewardsStarted"
               name="stakeLPTokenButton"
               outlined
               text
@@ -148,22 +141,18 @@
               {{ $t('balance') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <template v-if="rewardsStarted">
-                <v-skeleton-loader
-                  v-if="loadingUserInfo"
-                  type="chip"
-                  max-height="17"
-                  tile />
-                <deeds-number-format v-else :value="lpStaked">
-                  {{ lpSymbol }}
-                </deeds-number-format>
-              </template>
-              <template v-else>-</template>
+              <v-skeleton-loader
+                v-if="loadingUserInfo"
+                type="chip"
+                max-height="17"
+                tile />
+              <deeds-number-format v-else :value="lpStaked">
+                {{ lpSymbol }}
+              </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
-              :disabled="!rewardsStarted"
               name="unstakeLPTokenButton"
               outlined
               text
@@ -178,32 +167,29 @@
               {{ $t('earned') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <template v-if="rewardsStarted">
-                <v-skeleton-loader
-                  v-if="loadingUserReward"
-                  type="chip"
-                  max-height="17"
-                  tile />
-                <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
-                <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
-                  MEED
-                </deeds-number-format>
-                <v-tooltip v-else bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <div
-                      v-bind="attrs"
-                      v-on="on">
-                      <deeds-number-format :value="meedsPendingUserReward">
-                        MEED
-                      </deeds-number-format>
-                    </div>
-                  </template>
-                  <div>
-                    {{ $t('meedsRewardingDidntStarted') }}
+              <v-skeleton-loader
+                v-if="loadingUserReward"
+                type="chip"
+                max-height="17"
+                tile />
+              <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
+              <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
+                MEED
+              </deeds-number-format>
+              <v-tooltip v-else bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-number-format :value="meedsPendingUserReward">
+                      MEED
+                    </deeds-number-format>
                   </div>
-                </v-tooltip>
-              </template>
-              <template v-else>-</template>
+                </template>
+                <div>
+                  {{ $t('meedsRewardingDidntStarted') }}
+                </div>
+              </v-tooltip>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -378,7 +364,7 @@ export default {
     meedContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.rewardsStarted && this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
+        if (this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
           this.refreshMeedsBalanceOfPool();
         }
       },
@@ -386,7 +372,7 @@ export default {
     lpContractBalanceOf: {
       immadiate: true,
       handler() {
-        if (this.rewardsStarted && this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPBalance();
           if (this.tokenFactoryAddress) {
             this.refreshTokenFactoryBalance();
@@ -398,7 +384,7 @@ export default {
     lpContractSymbol: {
       immadiate: true,
       handler() {
-        if (this.rewardsStarted && this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
+        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPSymbol();
         }
       },
@@ -429,7 +415,7 @@ export default {
     },
   },
   created() {
-    if (!this.lpAddress || !this.rewardsStarted) {
+    if (!this.lpAddress) {
       return;
     }
     if (this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
