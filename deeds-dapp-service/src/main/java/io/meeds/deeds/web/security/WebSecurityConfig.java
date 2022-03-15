@@ -30,7 +30,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy;
 
 import io.meeds.deeds.web.utils.Utils;
 
@@ -53,8 +52,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
           csrfTokenRepository.setCookieHttpOnly(false);
           csrf.csrfTokenRepository(csrfTokenRepository);
         })
-        .headers(headers -> headers.referrerPolicy(referrerPolicy -> referrerPolicy.policy(ReferrerPolicy.SAME_ORIGIN)))
-        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.antMatchers("/static/**")
+        .headers(headers -> {
+          headers.frameOptions().disable();
+          headers.xssProtection().disable();
+          headers.contentTypeOptions().disable();
+        })
+        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.antMatchers("/static/**", "/api/deed/metadata/**")
                                                                              .permitAll())
         .formLogin(formLogin -> formLogin
                                          .loginProcessingUrl("/login")

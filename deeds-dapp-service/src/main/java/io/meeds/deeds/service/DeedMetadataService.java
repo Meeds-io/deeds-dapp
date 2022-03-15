@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,6 +73,7 @@ public class DeedMetadataService {
    * @return DEED NFT metadatas. If the Metadata entry doesn't exist in storage,
    *           it will build a new one base on City and Card Type of the NFT.
    */
+  @Cacheable(cacheNames = "deedMetadata")
   public DeedMetadata getDeedMetadata(Long nftId) {
     return deedMetadataRepository.findById(nftId).orElseGet(() -> this.buildDeedMetadata(nftId));
   }

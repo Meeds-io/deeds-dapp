@@ -16,6 +16,7 @@
 package io.meeds.deeds.web.rest;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.CacheControl;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import io.meeds.deeds.model.DeedMetadata;
@@ -44,7 +44,6 @@ public class DeedMetadataController {
   private String              imageServerBase;
 
   @GetMapping("/{nftId}")
-  @CrossOrigin(origins = "*")
   public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
                                                                  @PathVariable(name = "nftId")
                                                                  Long nftId,
@@ -61,6 +60,24 @@ public class DeedMetadataController {
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.maxAge(15, TimeUnit.MINUTES).cachePublic())
                          .lastModified(ZonedDateTime.now())
+                         .headers(headers -> {
+                           headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+
+                           headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                                          Arrays.asList("Content-Type",
+                                                        "Range",
+                                                        "User-Agent",
+                                                        "X-Requested-With"));
+
+                           headers.addAll(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                                          Arrays.asList("Content-Range",
+                                                        "X-Chunked-Output",
+                                                        "X-Stream-Output"));
+
+                           headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                                          Arrays.asList("GET",
+                                                        "HEAD"));
+                         })
                          .body(DeedMetadataPresentation.build(deedMetadata));
   }
 
