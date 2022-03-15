@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
@@ -73,6 +74,8 @@ public class TenantController {
     String walletAddress = principal.getName();
     try {
       tenantService.startTenant(walletAddress, transactionHash, nftId, email);
+    } catch (ObjectNotFoundException e) {
+      throwNftNotExistsError();
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to send start tenant query for Deed with id {}", walletAddress, nftId, e);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -93,6 +96,8 @@ public class TenantController {
     String walletAddress = principal.getName();
     try {
       tenantService.stopTenant(walletAddress, transactionHash, nftId);
+    } catch (ObjectNotFoundException e) {
+      throwNftNotExistsError();
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to send stop tenant query for Deed with id {}", walletAddress, nftId, e);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -113,9 +118,15 @@ public class TenantController {
     String walletAddress = principal.getName();
     try {
       tenantService.saveEmail(walletAddress, nftId, email);
+    } catch (ObjectNotFoundException e) {
+      throwNftNotExistsError();
     } catch (UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
+  }
+
+  private void throwNftNotExistsError() {
+    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "NFT doesn't exist");
   }
 
 }

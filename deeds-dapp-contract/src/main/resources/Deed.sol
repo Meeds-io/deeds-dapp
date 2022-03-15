@@ -35,6 +35,14 @@ contract Deed is ERC1155Tradable, StrategyHandler, StrategyRole {
     }
 
     /**
+     * @dev Will update the base URL of token's URI
+     * @param _newBaseMetadataURI New base URL of token's URI
+     */
+    function setBaseMetadataURI(string memory _newBaseMetadataURI) public onlyManager {
+        baseMetadataURI = _newBaseMetadataURI;
+    }
+
+    /**
      * @dev return the list of NFTs owned by an address
      */
     function nftsOf(address _account) public view returns (uint256[] memory) {

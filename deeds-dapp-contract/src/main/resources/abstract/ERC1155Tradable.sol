@@ -45,13 +45,18 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         baseMetadataURI = _baseMetadataURI;
     }
 
+    function contractURI() public view returns (string memory) {
+        return string(abi.encodePacked(baseMetadataURI));
+    }
+
     /**
      * @dev Returns URIs are defined in RFC 3986.
      *      URIs are assumed to be deterministically generated based on token ID
      *      Token IDs are assumed to be represented in their hex format in URIs
      * @return URI string
      */
-    function uri(uint256 _id) override public view returns (string memory) {
+    function uri(uint256 _id) override external view returns (string memory) {
+        require(_exists(_id), "Deed NFT doesn't exists");
         return string(abi.encodePacked(baseMetadataURI, _uint2str(_id)));
     }
 
@@ -77,6 +82,7 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
      * @dev return city index of designated NFT with its identifier
      */
     function cityIndex(uint256 _id) public view returns (uint256) {
+        require(_exists(_id), "Deed NFT doesn't exists");
         return tokenCityIndex[_id];
     }
 
@@ -84,6 +90,7 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
      * @dev return card type of designated NFT with its identifier
      */
     function cardType(uint256 _id) public view returns (uint256) {
+        require(_exists(_id), "Deed NFT doesn't exists");
         return tokenType[_id];
     }
 
@@ -166,26 +173,25 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
      * @dev Convert uint256 to string
      * @param _i Unsigned integer to convert to string
      */
-    function _uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
+    function _uint2str(uint _i) internal pure returns (string memory _uintAsString) {
         if (_i == 0) {
             return "0";
         }
-        uint256 j = _i;
-        uint256 ii = _i;
-        uint256 len;
-        // Get number of bytes
+        uint j = _i;
+        uint len;
         while (j != 0) {
             len++;
             j /= 10;
         }
         bytes memory bstr = new bytes(len);
-        uint256 k = len - 1;
-        // Get each individual ASCII
-        while (ii != 0) {
-            bstr[k--] = bytes1(uint8(48 + (ii % 10)));
-            ii /= 10;
+        uint k = len - 1;
+        while (_i != 0) {
+            bstr[k] = bytes1(uint8(48 + _i % 10));
+            _i /= 10;
+            if (k > 0) {
+                k--;
+            }
         }
-        // Convert to string
         return string(bstr);
     }
 

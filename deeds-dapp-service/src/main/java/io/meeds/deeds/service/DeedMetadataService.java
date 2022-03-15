@@ -29,8 +29,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.constant.*;
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.storage.DeedMetadataRepository;
 
@@ -91,16 +90,20 @@ public class DeedMetadataService {
   }
 
   private DeedMetadata buildDeedMetadata(long nftId) {
-    short cityIndex = blockchainService.getDeedCityIndex(nftId);
-    short cardTypeIndex = blockchainService.getDeedCardType(nftId);
+    try {
+      short cityIndex = blockchainService.getDeedCityIndex(nftId);
+      short cardTypeIndex = blockchainService.getDeedCardType(nftId);
 
-    DeedCity deedCity = DeedCity.values()[cityIndex];
-    DeedCard cardType = DeedCard.values()[cardTypeIndex];
+      DeedCity deedCity = DeedCity.values()[cityIndex];
+      DeedCard cardType = DeedCard.values()[cardTypeIndex];
 
-    String key = deedCity.name() + "-" + cardType.name();
-    DeedMetadata deedMetadata = deedMetadatas.get(key).clone();
-    deedMetadata.setNftId(nftId);
-    return deedMetadata;
+      String key = deedCity.name() + "-" + cardType.name();
+      DeedMetadata deedMetadata = deedMetadatas.get(key).clone();
+      deedMetadata.setNftId(nftId);
+      return deedMetadata;
+    } catch (ObjectNotFoundException e) {
+      return null;
+    }
   }
 
 }

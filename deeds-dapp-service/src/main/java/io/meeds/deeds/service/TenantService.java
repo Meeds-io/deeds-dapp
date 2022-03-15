@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.storage.DeedTenantManagerRepository;
@@ -71,8 +72,11 @@ public class TenantService {
    * @param email Email of the manager
    * @throws UnauthorizedOperationException when the wallet isn't the DEED
    *           manager
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *           exists
    */
-  public void saveEmail(String managerAddress, long nftId, String email) throws UnauthorizedOperationException {
+  public void saveEmail(String managerAddress, long nftId, String email) throws UnauthorizedOperationException,
+                                                                         ObjectNotFoundException {
     if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
@@ -100,11 +104,13 @@ public class TenantService {
    * @param email Email of the manager
    * @throws UnauthorizedOperationException when the wallet isn't the DEED
    *           manager
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *           exists
    */
   public void startTenant(String managerAddress,
                           String transactionHash,
                           long nftId,
-                          String email) throws UnauthorizedOperationException {
+                          String email) throws UnauthorizedOperationException, ObjectNotFoundException {
     if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
@@ -132,10 +138,12 @@ public class TenantService {
    *          Hash
    * @throws UnauthorizedOperationException when the wallet isn't the DEED
    *           manager
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *           exists
    */
   public void stopTenant(String managerAddress,
                          String transactionHash,
-                         long nftId) throws UnauthorizedOperationException {
+                         long nftId) throws UnauthorizedOperationException, ObjectNotFoundException {
     if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
@@ -163,7 +171,7 @@ public class TenantService {
     return blockchainService.isDeedProvisioningManager(address, nftId);
   }
 
-  private void setDeedNftProperties(DeedTenant deedTenant) {
+  private void setDeedNftProperties(DeedTenant deedTenant) throws ObjectNotFoundException {
     if (deedTenant.getCardType() < 0 || deedTenant.getCityIndex() < 0) {
       short cardType = blockchainService.getDeedCardType(deedTenant.getNftId());
       deedTenant.setCardType(cardType);
