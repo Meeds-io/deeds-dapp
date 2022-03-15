@@ -279,9 +279,9 @@ const store = new Vuex.Store({
               state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
 
-              state.xMeedAddress = '0x0F1C3a87f912D2d41BD480AA2121CC14CA834a0e';
-              state.nftAddress = '0xb9dc311cf6f6500da12e81b460d4e35E818BA9Ba';
-              state.tenantProvisioningAddress = '0xb755984B1D63C010010D87F4107B83e1069E6798';
+              state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
+              state.nftAddress = '0xC6f758CC5a2d78A6c6618Aa4B8a82Fc13f300944';
+              state.tenantProvisioningAddress = '0xb27739BA3452607Aa62241e56D679b6295432b19';
 
               // state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 

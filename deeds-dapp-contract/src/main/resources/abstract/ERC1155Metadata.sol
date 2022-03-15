@@ -18,7 +18,7 @@ abstract contract ERC1155Metadata {
      *      Token IDs are assumed to be represented in their hex format in URIs
      * @return URI string
      */
-    function uri(uint256 _id) public view virtual returns (string memory);
+    function uri(uint256 _id) external view virtual returns (string memory);
 }
 
 

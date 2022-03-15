@@ -32,7 +32,7 @@ import io.meeds.deeds.service.DeedMetadataService;
 import io.meeds.deeds.web.rest.model.DeedMetadataPresentation;
 
 @RestController
-@RequestMapping("/api/deed/metadata/")
+@RequestMapping("/api/deeds")
 public class DeedMetadataController {
 
   private static final String DAPP_IMAGE_SERVER_BASE = "${DAPP_SERVER_BASE}";

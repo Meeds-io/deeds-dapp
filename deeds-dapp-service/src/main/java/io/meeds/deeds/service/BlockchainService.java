@@ -17,9 +17,11 @@ package io.meeds.deeds.service;
 
 import java.math.BigInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
 
@@ -57,12 +59,18 @@ public class BlockchainService {
    * 
    * @param nftId Deed NFT identifier
    * @return card type index
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *           exists
    */
-  public short getDeedCardType(long nftId) {
+  public short getDeedCardType(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cardType(BigInteger.valueOf(nftId)).send().shortValue();
     } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'getDeedCardType' from Blockchain", e);
+      if (StringUtils.contains(e.getMessage(), "execution reverted")) {
+        throw new ObjectNotFoundException(e.getMessage());
+      } else {
+        throw new IllegalStateException("Error retrieving information 'getDeedCardType' from Blockchain", e);
+      }
     }
   }
 
@@ -78,12 +86,18 @@ public class BlockchainService {
    * 
    * @param nftId Deed NFT identifier
    * @return card city index
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *           exists
    */
-  public short getDeedCityIndex(long nftId) {
+  public short getDeedCityIndex(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cityIndex(BigInteger.valueOf(nftId)).send().shortValue();
     } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'getDeedCityIndex' from Blockchain", e);
+      if (StringUtils.contains(e.getMessage(), "execution reverted")) {
+        throw new ObjectNotFoundException(e.getMessage());
+      } else {
+        throw new IllegalStateException("Error retrieving information 'getDeedCityIndex' from Blockchain", e);
+      }
     }
   }
 
