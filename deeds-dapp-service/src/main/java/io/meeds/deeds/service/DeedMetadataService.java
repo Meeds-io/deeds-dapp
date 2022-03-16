@@ -58,6 +58,8 @@ public class DeedMetadataService {
 
   private Map<String, DeedMetadata> deedMetadatas;
 
+  private DeedMetadata              contractMetadata;
+
   @PostConstruct
   public void init() {
     try {
@@ -89,6 +91,14 @@ public class DeedMetadataService {
 
     String key = deedCity.name() + "-" + cardType.name();
     return deedMetadatas.get(key).clone();
+  }
+
+  /**
+   * @return {@link DeedMetadata} representing the contract Metadata used by
+   *           OpenSea
+   */
+  public DeedMetadata getContractMetadata() {
+    return contractMetadata.clone();
   }
 
   private DeedMetadata buildDeedMetadata(long nftId) {

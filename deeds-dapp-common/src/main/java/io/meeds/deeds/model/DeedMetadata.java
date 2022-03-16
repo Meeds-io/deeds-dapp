@@ -23,8 +23,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
@@ -55,6 +55,12 @@ public class DeedMetadata implements Cloneable {
   @JsonProperty("external_url")
   private String                     externalUrl;
 
+  @JsonProperty("seller_fee_basis_points")
+  private String                     sellerFeeBasisPoints;
+
+  @JsonProperty("fee_recipient")
+  private String                     feeRecipient;
+
   private Set<DeedMetadataAttribute> attributes = new HashSet<>();
 
   @Field(type = FieldType.Date, format = DateFormat.year_month_day)
@@ -68,6 +74,8 @@ public class DeedMetadata implements Cloneable {
                             imageUrl,
                             backgroundColor,
                             externalUrl,
+                            sellerFeeBasisPoints,
+                            feeRecipient,
                             attributes == null ? new HashSet<>() : new HashSet<>(attributes),
                             date);
   }
