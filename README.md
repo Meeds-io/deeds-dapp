@@ -16,3 +16,4 @@
 | meeds.redis.username | NO        | | Redis username if authentication enabled |
 | meeds.redis.password | NO        | | Redis password if authentication enabled |
 | meeds.exchange.currencyApiKey | YES        | | API Key used to retrieve currency exchange rates from api.currencyapi.com |
+| meeds.deed.metadata.serverBase | NO        | | Base URL for DEED images URL replacement in DEED Metadata. exemple: https://wom.meeds.io/dapp |
