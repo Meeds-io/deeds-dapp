@@ -43,12 +43,34 @@ public class DeedMetadataController {
   @Value("${meeds.deed.metadata.serverBase:}")
   private String              imageServerBase;
 
+  @GetMapping
+  public ResponseEntity<DeedMetadataPresentation> getContractMetadata(HttpServletRequest request) {
+    DeedMetadata deedMetadata = deedMetadataService.getContractMetadata();
+    return getDeedMetadataResponse(deedMetadata, request);
+  }
+
   @GetMapping("/{nftId}")
   public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
                                                                  @PathVariable(name = "nftId")
                                                                  Long nftId,
                                                                  HttpServletRequest request) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
+    return getDeedMetadataResponse(deedMetadata, request);
+  }
+
+  @GetMapping("/type/{cityIndex}/{cardType}")
+  public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
+                                                                 @PathVariable(name = "cityIndex")
+                                                                 short cityIndex,
+                                                                 @PathVariable(name = "cardType")
+                                                                 short cardType,
+                                                                 HttpServletRequest request) {
+    DeedMetadata deedMetadata = deedMetadataService.getDeedMetadataOfCard(cityIndex, cardType);
+    return getDeedMetadataResponse(deedMetadata, request);
+  }
+
+  private ResponseEntity<DeedMetadataPresentation> getDeedMetadataResponse(DeedMetadata deedMetadata,
+                                                                           HttpServletRequest request) {
     if (deedMetadata == null) {
       return ResponseEntity.notFound().build();
     } else if (StringUtils.contains(deedMetadata.getImageUrl(), DAPP_IMAGE_SERVER_BASE)) {
@@ -58,7 +80,7 @@ public class DeedMetadataController {
     }
 
     return ResponseEntity.ok()
-                         .cacheControl(CacheControl.maxAge(15, TimeUnit.MINUTES).cachePublic())
+                         .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                          .lastModified(ZonedDateTime.now())
                          .headers(headers -> {
                            headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
@@ -78,28 +100,6 @@ public class DeedMetadataController {
                                           Arrays.asList("GET",
                                                         "HEAD"));
                          })
-                         .body(DeedMetadataPresentation.build(deedMetadata));
-  }
-
-  @GetMapping("/type/{cityIndex}/{cardType}")
-  public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
-                                                                 @PathVariable(name = "cityIndex")
-                                                                 short cityIndex,
-                                                                 @PathVariable(name = "cardType")
-                                                                 short cardType,
-                                                                 HttpServletRequest request) {
-    DeedMetadata deedMetadata = deedMetadataService.getDeedMetadataOfCard(cityIndex, cardType);
-    if (deedMetadata == null) {
-      return ResponseEntity.notFound().build();
-    } else if (StringUtils.contains(deedMetadata.getImageUrl(), DAPP_IMAGE_SERVER_BASE)) {
-      deedMetadata.setImageUrl(deedMetadata.getImageUrl()
-                                           .replace(DAPP_IMAGE_SERVER_BASE,
-                                                    getServerBase(request)));
-    }
-
-    return ResponseEntity.ok()
-                         .cacheControl(CacheControl.maxAge(15, TimeUnit.MINUTES).cachePublic())
-                         .lastModified(ZonedDateTime.now())
                          .body(DeedMetadataPresentation.build(deedMetadata));
   }
 

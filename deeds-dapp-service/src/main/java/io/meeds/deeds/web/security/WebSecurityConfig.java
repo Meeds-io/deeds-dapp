@@ -57,7 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
           headers.xssProtection().disable();
           headers.contentTypeOptions().disable();
         })
-        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.antMatchers("/static/**", "/api/deed/metadata/**")
+        .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.antMatchers("/static/**", "/api/deeds/**")
                                                                              .permitAll())
         .formLogin(formLogin -> formLogin
                                          .loginProcessingUrl("/login")

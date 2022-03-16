@@ -114,7 +114,7 @@ export default {
     provider: state => state.provider,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     tenantProvisioningAddress: state => state.tenantProvisioningAddress,
-    nftContract: state => state.nftContract,
+    deedContract: state => state.deedContract,
     isMobile() {
       return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
     },
@@ -163,10 +163,10 @@ export default {
   created() {
     this.refreshAuthentication();
 
-    if (this.nftContract) {
+    if (this.deedContract) {
       // eslint-disable-next-line new-cap
-      const startedUsingNFT = this.nftContract.filters.StartedUsingNFT();
-      this.nftContract.on(startedUsingNFT, (address, nftId, strategyAddress) => {
+      const startedUsingNFT = this.deedContract.filters.StartedUsingNFT();
+      this.deedContract.on(startedUsingNFT, (address, nftId, strategyAddress) => {
         if (address.toUpperCase() === this.address.toUpperCase()) {
           if (strategyAddress.toUpperCase() === this.tenantProvisioningAddress.toUpperCase()) {
             if (this.ownedNfts) {
@@ -181,8 +181,8 @@ export default {
         }
       });
       // eslint-disable-next-line new-cap
-      const endedUsingNFT = this.nftContract.filters.EndedUsingNFT();
-      this.nftContract.on(endedUsingNFT, (address, nftId, strategyAddress) => {
+      const endedUsingNFT = this.deedContract.filters.EndedUsingNFT();
+      this.deedContract.on(endedUsingNFT, (address, nftId, strategyAddress) => {
         if (address.toUpperCase() === this.address.toUpperCase()) {
           if (strategyAddress.toUpperCase() === this.tenantProvisioningAddress.toUpperCase()) {
             if (this.ownedNfts) {

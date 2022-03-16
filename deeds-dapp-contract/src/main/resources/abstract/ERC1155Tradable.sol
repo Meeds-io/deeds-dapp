@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import "./ERC1155.sol";
 import "./Ownable.sol";
+import "./MinterRole.sol";
 import "./SafeMath.sol";
 import "./Address.sol";
 import "./ProxyRegistry.sol";
@@ -14,7 +15,7 @@ import "./ERC1155MintBurn.sol";
  * has create and mint functionality, and supports useful standards from OpenZeppelin,
  *   like _exists(), name(), symbol(), and totalSupply()
  */
-abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
+abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable, MinterRole {
     using SafeMath for uint256;
     using Address for address;
 
@@ -113,7 +114,7 @@ abstract contract ERC1155Tradable is ERC1155MintBurn, Ownable {
         uint8 _cityIndex,
         uint8 _type,
         bytes memory _data
-    ) public onlyOwner returns (uint256) {
+    ) public onlyMinter returns (uint256) {
         require(_initialSupply <= _maxSupply, "_initialSupply > _maxSupply");
         uint256 _id = _getNextTokenID();
         _incrementTokenTypeId();

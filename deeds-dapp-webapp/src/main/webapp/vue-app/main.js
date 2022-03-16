@@ -152,7 +152,7 @@ const store = new Vuex.Store({
     sushiswapPairAddress: null,
     univ2PairAddress: null,
     xMeedAddress: null,
-    nftAddress: null,
+    deedAddress: null,
     tokenFactoryAddress: null,
     tenantProvisioningAddress: null,
     // Contracts objects
@@ -160,7 +160,7 @@ const store = new Vuex.Store({
     wethContract: null,
     meedContract: null,
     xMeedContract: null,
-    nftContract: null,
+    deedContract: null,
     tokenFactoryContract: null,
     tenantProvisioningContract: null,
     // User preferred language
@@ -260,14 +260,14 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               // TODO replace with real addresses
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
-              state.nftAddress = null;
+              state.deedAddress = null;
               state.xMeedAddress = null;
               state.tenantProvisioningAddress = null;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
-              state.openSeaBaseLink = `https://opensea.io/assets/${state.nftAddress}`;
+              state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
             } else if (state.networkId === 4) {
               state.validNetwork = true;
 
@@ -280,15 +280,15 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
 
               state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
-              state.nftAddress = '0xC6f758CC5a2d78A6c6618Aa4B8a82Fc13f300944';
-              state.tenantProvisioningAddress = '0xb27739BA3452607Aa62241e56D679b6295432b19';
+              state.deedAddress = '0x27A24DA52d0410353ba054acA4F3ed02e7D0bE28';
+              state.tenantProvisioningAddress = '0x65e77a289F21d27376a8Bc25E8e807D05F546461';
 
-              // state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
+              state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-              // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
+              state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
-              state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.nftAddress}`;
+              state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
 
               state.farmingStartTime = Date.now() + 3000;
               state.stakingStartTime = Date.now() + 3000;
@@ -378,8 +378,8 @@ const store = new Vuex.Store({
       }
     },
     loadOwnedNfts(state) {
-      if (state.nftContract && state.xMeedContract) {
-        tokenUtils.getNftsOfWallet(state.nftContract, state.xMeedContract, state.address)
+      if (state.deedContract && state.xMeedContract) {
+        tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
           .then(nfts => state.ownedNfts = nfts);
       } else {
         state.ownedNfts = [];
@@ -497,9 +497,9 @@ const store = new Vuex.Store({
             state.provider
           );
         }
-        if (state.nftAddress) {
-          state.nftContract = new ethers.Contract(
-            state.nftAddress,
+        if (state.deedAddress) {
+          state.deedContract = new ethers.Contract(
+            state.deedAddress,
             state.nftABI,
             state.provider
           );

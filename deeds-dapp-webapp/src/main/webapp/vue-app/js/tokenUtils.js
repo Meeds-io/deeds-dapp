@@ -18,14 +18,14 @@
  */
 const cardTypes = {};
 
-export function getNftsOfWallet(nftContract, xMeedContract, address) {
-  if (nftContract && xMeedContract && address) {
-    return nftContract.nftsOf(address).then(nftIds => {
+export function getNftsOfWallet(deedContract, xMeedContract, address) {
+  if (deedContract && xMeedContract && address) {
+    return deedContract.nftsOf(address).then(nftIds => {
       const nftsPromises = [];
       if (nftIds && nftIds.length) {
         nftIds.forEach(nftId => {
           nftsPromises.push(
-            getNftInfo(nftContract, xMeedContract, nftId)
+            getNftInfo(deedContract, xMeedContract, nftId)
           );
         });
       }
@@ -35,13 +35,13 @@ export function getNftsOfWallet(nftContract, xMeedContract, address) {
   Promise.resolve([]);
 }
 
-export function getNftInfo(nftContract, xMeedContract, nftId) {
-  if (localStorage.getItem(`nft-info-${nftContract.address}-${nftId}`)) {
-    return Promise.resolve(JSON.parse(localStorage.getItem(`nft-info-${nftContract.address}-${nftId}`)));
+export function getNftInfo(deedContract, xMeedContract, nftId) {
+  if (localStorage.getItem(`nft-info-${deedContract.address}-${nftId}`)) {
+    return Promise.resolve(JSON.parse(localStorage.getItem(`nft-info-${deedContract.address}-${nftId}`)));
   } else {
-    return nftContract.cardType(nftId)
+    return deedContract.cardType(nftId)
       .then(cardType => {
-        return nftContract.cityIndex(nftId)
+        return deedContract.cityIndex(nftId)
           .then(cityIndex => {
             const cardTypeIndex = cityIndex.toNumber() * 4 + cardType.toNumber();
             return getCityCardType(xMeedContract, cardTypeIndex);
@@ -55,7 +55,7 @@ export function getNftInfo(nftContract, xMeedContract, nftId) {
                 cardType: Number(cardTypeInfo.cardType),
                 cityIndex: Number(cardTypeInfo.cityIndex),
               };
-              localStorage.setItem(`nft-info-${nftContract.address}-${nftId}`, JSON.stringify(card));
+              localStorage.setItem(`nft-info-${deedContract.address}-${nftId}`, JSON.stringify(card));
               return card;
             }
           });
