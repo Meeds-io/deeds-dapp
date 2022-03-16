@@ -282,8 +282,8 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
 
               state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
-              state.deedAddress = '0x27A24DA52d0410353ba054acA4F3ed02e7D0bE28';
-              state.tenantProvisioningAddress = '0x65e77a289F21d27376a8Bc25E8e807D05F546461';
+              state.deedAddress = '0xDa91F50491AB8b3C82b43623fC317d9fF5207D9c';
+              state.tenantProvisioningAddress = '0x8b5B554985c4393eF30FDf33146A22a99A984C69';
 
               state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
