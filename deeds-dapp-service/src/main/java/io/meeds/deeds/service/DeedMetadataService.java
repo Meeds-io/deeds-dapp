@@ -56,6 +56,9 @@ public class DeedMetadataService {
   @Value("${meeds.deed.metadatas.path:metadatas.json}")
   private String                    metadatasFilePath;
 
+  @Value("${meeds.deed.contract.metadatas.path:deedCollection.json}")
+  private String                    deedCollectionMetadataFilePath;
+
   private Map<String, DeedMetadata> deedMetadatas;
 
   private DeedMetadata              contractMetadata;
@@ -63,8 +66,11 @@ public class DeedMetadataService {
   @PostConstruct
   public void init() {
     try {
-      URL resource = getClass().getClassLoader().getResource(metadatasFilePath);
-      deedMetadatas = OBJECT_MAPPER.readerForMapOf(DeedMetadata.class).readValue(resource);
+      URL deedMetadatasResource = getClass().getClassLoader().getResource(metadatasFilePath);
+      deedMetadatas = OBJECT_MAPPER.readerForMapOf(DeedMetadata.class).readValue(deedMetadatasResource);
+
+      URL contractMetadataResource = getClass().getClassLoader().getResource(deedCollectionMetadataFilePath);
+      contractMetadata = OBJECT_MAPPER.readerFor(DeedMetadata.class).readValue(contractMetadataResource);
     } catch (Exception e) {
       LOG.error("Error reading Default NFT mappings", e);
     }

@@ -55,6 +55,10 @@ public class DeedMetadataPresentation {
   @EqualsAndHashCode.Exclude
   private String                     externalUrl;
 
+  @JsonProperty("external_link")
+  @EqualsAndHashCode.Exclude
+  private String                     externalLink;
+
   @JsonProperty("seller_fee_basis_points")
   @EqualsAndHashCode.Exclude
   private String                     sellerFeeBasisPoints;
@@ -78,6 +82,7 @@ public class DeedMetadataPresentation {
                                         deedMetadata.getImageUrl(),
                                         deedMetadata.getBackgroundColor(),
                                         deedMetadata.getExternalUrl(),
+                                        deedMetadata.getExternalLink(),
                                         deedMetadata.getSellerFeeBasisPoints(),
                                         deedMetadata.getFeeRecipient(),
                                         attributes);
