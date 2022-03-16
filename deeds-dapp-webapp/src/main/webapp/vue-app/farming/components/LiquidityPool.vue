@@ -25,7 +25,23 @@
       max-width="100%"
       outlined>
       <v-card-text class="d-flex">
-        <v-icon size="72" class="mx-auto">mdi-cash</v-icon>
+        <template v-if="$slots.icon">
+          <slot name="icon"></slot>
+        </template>
+        <template v-else>
+          <img
+            v-if="isSushiswapPool"
+            :src="`/${parentLocation}/static/images/sushiswap.ico`"
+            alt="sushiswap"
+            class="mx-auto addLiquidityIcon">
+          <div v-else-if="isUniswapPool" class="mx-auto headline">🦄</div>
+          <v-icon
+            v-else
+            size="72"
+            class="mx-auto">
+            mdi-cash
+          </v-icon>
+        </template>
       </v-card-text>
       <v-card-title class="justify-center pt-0 text-center text-break">
         <template v-if="$slots.title">
@@ -243,6 +259,7 @@ export default {
     yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     provider: state => state.provider,
     address: state => state.address,
     noMeedSupplyForLPRemaining: state => state.noMeedSupplyForLPRemaining,
@@ -261,10 +278,16 @@ export default {
     lpAddress() {
       return this.pool && this.pool.address;
     },
+    isSushiswapPool() {
+      return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
+    },
+    isUniswapPool() {
+      return this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase();
+    },
     poolName() {
-      if (this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase()) {
+      if (this.isSushiswapPool) {
         return 'Sushiswap';
-      } else if (this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase()) {
+      } else if (this.isUniswapPool) {
         return 'Uniswap';
       }
       return this.lpSymbol;

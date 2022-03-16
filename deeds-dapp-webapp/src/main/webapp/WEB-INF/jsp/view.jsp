@@ -9,12 +9,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Meeds DAO</title>
-    <meta name="msapplication-TileImage" content="./static/images/favicon.png">
+    <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';
                                                         style-src 'self';
                                                         font-src 'self';
-                                                        img-src 'self'">
+                                                        img-src 'self' storage.googleapis.com">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>">
@@ -36,13 +36,13 @@
     <link rel="preload" href="./static/js/ethers.umd.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/deeds.js?_=<%=buildnumber%>" as="script" type="text/javascript">
 
-    <link rel="preload" href="./static/images/favicon.png" as="image" type="image/png">
-    <link rel="preload" href="./static/images/favicon.png" as="image" type="image/png">
+    <link rel="preload" href="./static/images/meedsicon.png" as="image" type="image/png">
+    <link rel="preload" href="./static/images/meedsicon.png" as="image" type="image/png">
     <link rel="preload" href="./static/images/meeds.png" as="image" type="image/png">
 
-    <link rel="icon" href="./static/images/favicon.png" sizes="32x32">
-    <link rel="icon" href="./static/images/favicon.png" sizes="192x192">
-    <link rel="apple-touch-icon-precomposed" href="./static/images/favicon.png">
+    <link rel="icon" href="./static/images/meedsicon.png" sizes="32x32">
+    <link rel="icon" href="./static/images/meedsicon.png" sizes="192x192">
+    <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
     <link href="./static/css/fonts-roboto.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/vuetify.min.css?_=<%=buildnumber%>" rel="stylesheet">

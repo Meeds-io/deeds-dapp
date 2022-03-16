@@ -17,25 +17,32 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <template v-if="!noCityLeft">
-      <div class="d-flex flex-column-reverse flex flex-sm-row mb-8">
-        <div class="d-flex flex-column">
-          <deeds-nft-introduction />
-          <deeds-points-simulator />
-        </div>
-        <deeds-earned-points class="ms-sm-auto me-sm-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
-      </div>
-      <deeds-redeem class="mb-8" />
-    </template>
-    <deeds-owned />
-    <deeds-trade />
-  </div>
+  <v-card flat>
+    <h3 class="d-flex flex-nowrap">
+      {{ $t('tradeDeeds') }}
+      <v-divider class="my-auto ms-4" />
+    </h3>
+    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: openSeaLink})" />
+    <v-card-actions class="ps-0 justify-center">
+      <a
+        :href="openSeaLink"
+        :title="$t('sellOnOpenSea')"
+        target="_blank">
+        <img
+          src="https://storage.googleapis.com/opensea-static/Logomark/Badge%20-%20Available%20On%20-%20Light.png"
+          class="openSea-badge"
+          alt="Available on OpenSea">
+      </a>
+    </v-card-actions>
+  </v-card>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
-    noCityLeft: state => state.noCityLeft,
+    openSeaCollectionLink: state => state.openSeaCollectionLink,
+    openSeaLink() {
+      return this.openSeaCollectionLink || '#';
+    },
   }),
 };
 </script>

@@ -5,7 +5,7 @@ const webpackCommonConfig = require('./webpack.common.js');
 // the display name of the war
 const app = 'deeds-dapp';
 
-const serverPath = "/exo-server";
+const serverPath = "/deeds-server";
 
 let config = merge(webpackCommonConfig, {
   output: {

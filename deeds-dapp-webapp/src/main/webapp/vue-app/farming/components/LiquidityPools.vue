@@ -27,6 +27,11 @@
         </v-col>
         <v-col key="cometh">
           <deeds-liquidity-pool>
+            <template #icon>
+              <img
+                :src="`/${parentLocation}/static/images/cometh.ico`"
+                class="mx-auto addLiquidityIcon">
+            </template>
             <template #title>
               {{ $t('rentLiquidityOnCometh') }}
             </template>
@@ -62,6 +67,7 @@
 export default {
   computed: Vuex.mapState({
     rentComethLiquidityLink: state => state.rentComethLiquidityLink,
+    parentLocation: state => state.parentLocation,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools() {
       return this.rewardedFunds && this.rewardedFunds.filter(fund => fund.isLPToken);

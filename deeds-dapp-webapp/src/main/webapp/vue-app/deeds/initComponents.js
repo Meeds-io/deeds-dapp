@@ -25,6 +25,7 @@ import DeedsRedeemCard from './components/DeedsRedeemCard.vue';
 import DeedsOwned from './components/DeedsOwned.vue';
 import DeedsOwnedActions from './components/DeedsOwnedActions.vue';
 import DeedsTimer from './components/DeedsTimer.vue';
+import DeedsTrade from './components/DeedsTrade.vue';
 import DeedMoveInDrawer from './components/drawers/DeedMoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
 
@@ -40,6 +41,7 @@ const components = {
   'deeds-move-in-drawer': DeedMoveInDrawer,
   'deeds-move-out-drawer': DeedMoveOutDrawer,
   'deeds-timer': DeedsTimer,
+  'deeds-trade': DeedsTrade,
 };
 
 for (const key in components) {

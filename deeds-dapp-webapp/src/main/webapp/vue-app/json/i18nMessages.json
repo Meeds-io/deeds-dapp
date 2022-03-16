@@ -91,7 +91,7 @@
     "earned": "Earned",
     "xMeedsStakes": "xMeeds Chest",
     "deedsToRedeem": "Deeds to Redeem",
-    "deedsToRedeemIntroduction": "You accumulate points over time just by holding your xMeeds. Spend your points to redeem DEED NFTs. Each deed is a unique spot in one of the 7 cities of the Work Metaverse (see whitepaper). The deed entitles you to run a workspace for your organisation, where members can earn meeds for their engagement. Deeds can also be sold and rent.",
+    "deedsToRedeemIntroduction": "You accumulate points over time just by holding your xMeeds. Spend your points to redeem DEED NFTs. Each deed is a unique spot in one of the 7 cities of the Work Metaverse (see whitepaper). The deed entitles you to run a workspace for your organisation, where members can earn meeds for their engagement.",
     "cityPopulation": "City population",
     "redeem": "Redeem",
     "cardSupply": "Redeemed",
@@ -142,7 +142,9 @@
     "nft.actions": "Commands",
     "tenant.starting": "Starting Tenant transaction is in progress",
     "tenant.stopping": "Stopping Tenant transaction is in progress",
-    "deedTenantActions": "Tenant Actions of Deed {0}"
+    "deedTenantActions": "Tenant Actions of Deed {0}",
+    "tradeDeeds": "Trade Deeds",
+    "tradeDeedsIntroduction": "Deeds are ERC 1155 compliant NFTs. Once redeemed, they can be sold or purchased <a href='{0}' target='_blank'>OpenSea</a> marketplace. As a deed redeemer, you retain 1% of all its future sales on the OpenSea."
   },
   "fr": {
     "dao": "DAO",
@@ -288,6 +290,8 @@
     "nft.actions": "Commandes",
     "tenant.starting": "La transaction de démarrage du tenant est en cours",
     "tenant.stopping": "La transaction d'arrêt du tenant est en cours",
-    "deedTenantActions": "Actions possibles sur le tenant du deed {0}"
+    "deedTenantActions": "Actions possibles sur le tenant du deed {0}",
+    "tradeDeeds": "Échanger vos deeds",
+    "tradeDeedsIntroduction": "Les deeds sont des NFTs conformes à la norme ERC 1155. Une fois acquis, ils peuvent être vendus ou achetés sur la place de marché <a href='{0}' target='_blank'>OpenSea</a>. En tant qu'acheteur d'un deed, vous conservez 1% de chaque vente future de ce deed sur OpenSea."
   }
 }

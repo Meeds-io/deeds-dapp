@@ -70,6 +70,7 @@ const store = new Vuex.Store({
     validNetwork: false,
     etherscanBaseLink: null,
     openSeaBaseLink: null,
+    openSeaCollectionLink: null,
     managedNetworkIds: [1, 4],
     provider: null,
     erc20ABI: [
@@ -260,8 +261,9 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               // TODO replace with real addresses
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
-              state.deedAddress = null;
               state.xMeedAddress = null;
+              state.deedAddress = null;
+              state.openSeaCollectionLink = null;
               state.tenantProvisioningAddress = null;
 
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
@@ -289,6 +291,7 @@ const store = new Vuex.Store({
               state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
+              state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-deed-token-znroiz3lxb';
 
               state.farmingStartTime = Date.now() + 3000;
               state.stakingStartTime = Date.now() + 3000;
