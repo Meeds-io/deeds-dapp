@@ -27,13 +27,12 @@
     <v-card-actions class="ps-0 justify-center">
       <v-btn
         name="getInvolvedLink"
-        href="https://builders.meeds.io"
         target="_blank"
         rel="nofollow noreferrer noopener"
         outlined
         text
-        class="me-4">
-        <span class="text-capitalize">{{ $t('getInvolved') }}</span>
+        disabled>
+        <span class="text-capitalize">{{ $t('comingSoon') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>
