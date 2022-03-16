@@ -26,7 +26,7 @@
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-parent</artifactId>
-  <version>1.0.x-SNAPSHOT</version>
+  <version>1.0.x-meedsv2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Meeds:: Deeds Dapp</name>
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
