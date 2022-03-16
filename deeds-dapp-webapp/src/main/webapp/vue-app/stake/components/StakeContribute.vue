@@ -32,8 +32,21 @@
         outlined
         text
         disabled>
+        <v-img
+          :src="`/${parentLocation}/static/images/meedsicon.png`"
+          height="24"
+          max-width="24"
+          class="me-2"
+          contain />
         <span class="text-capitalize">{{ $t('comingSoon') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
