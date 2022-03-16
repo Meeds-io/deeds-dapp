@@ -30,7 +30,7 @@
           v-if="cardImage"
           :src="cardImage"
           width="248"
-          max-width="248"
+          max-width="100%"
           contain />
         <v-icon
           v-else
