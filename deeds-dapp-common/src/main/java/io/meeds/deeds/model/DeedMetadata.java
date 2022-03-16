@@ -55,6 +55,9 @@ public class DeedMetadata implements Cloneable {
   @JsonProperty("external_url")
   private String                     externalUrl;
 
+  @JsonProperty("external_link")
+  private String                     externalLink;
+
   @JsonProperty("seller_fee_basis_points")
   private String                     sellerFeeBasisPoints;
 
@@ -74,6 +77,7 @@ public class DeedMetadata implements Cloneable {
                             imageUrl,
                             backgroundColor,
                             externalUrl,
+                            externalLink,
                             sellerFeeBasisPoints,
                             feeRecipient,
                             attributes == null ? new HashSet<>() : new HashSet<>(attributes),
