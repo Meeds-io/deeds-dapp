@@ -29,7 +29,8 @@
         <v-img
           v-if="cardImage"
           :src="cardImage"
-          width="248"
+          min-width="215"
+          width="100%"
           max-width="100%"
           contain />
         <v-icon

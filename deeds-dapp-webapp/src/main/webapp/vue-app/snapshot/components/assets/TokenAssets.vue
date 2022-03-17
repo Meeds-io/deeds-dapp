@@ -61,12 +61,13 @@
               v-bind="attrs"
               v-on="on">
               <deeds-number-format
+                v-if="rewardsStarted"
                 :value="apy"
                 no-decimals>
                 %
               </deeds-number-format>
               <v-icon
-                v-if="!rewardsStarted"
+                v-else
                 size="15px"
                 color="primary"
                 class="ms-2">
