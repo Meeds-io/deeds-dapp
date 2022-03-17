@@ -22,12 +22,12 @@
       {{ $t('tradeDeeds') }}
       <v-divider class="my-auto ms-4" />
     </h3>
-    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: openSeaLink})" />
+    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: openSeaLink, 1: openSeaTarget})" />
     <v-card-actions class="ps-0 justify-center">
       <a
         :href="openSeaLink"
         :title="$t('sellOnOpenSea')"
-        target="_blank">
+        :target="openSeaTarget">
         <img
           src="https://storage.googleapis.com/opensea-static/Logomark/Badge%20-%20Available%20On%20-%20Light.png"
           class="openSea-badge"
@@ -41,7 +41,10 @@ export default {
   computed: Vuex.mapState({
     openSeaCollectionLink: state => state.openSeaCollectionLink,
     openSeaLink() {
-      return this.openSeaCollectionLink || '#';
+      return this.openSeaCollectionLink || 'javascript:void(0)';
+    },
+    openSeaTarget() {
+      return this.openSeaCollectionLink && '_blank' || '';
     },
   }),
 };
