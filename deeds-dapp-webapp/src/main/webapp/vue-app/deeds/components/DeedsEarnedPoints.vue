@@ -18,7 +18,6 @@
 -->
 <template>
   <v-card
-    :class="!xMeedAddress && 'no-border'"
     width="340"
     height="350"
     outlined>
@@ -26,7 +25,7 @@
       <v-icon>mdi-office-building-outline</v-icon>
       <span>{{ $t('xMeedsStakes') }}</span>
     </v-card-title>
-    <v-card-text :class="!xMeedAddress && 'blur-box'">
+    <v-card-text>
       <v-list-item two-line class="mb-2">
         <v-list-item-content>
           <v-list-item-title>
@@ -103,14 +102,6 @@
         </v-list-item-content>
       </v-list-item>
     </v-card-text>
-    <v-fade-transition>
-      <v-overlay
-        v-if="!xMeedAddress"
-        absolute
-        color="grey lignten-5">
-        <p class="display-1">{{ $t('comingSoon') }}</p>
-      </v-overlay>
-    </v-fade-transition>
   </v-card>
 </template>
 <script>

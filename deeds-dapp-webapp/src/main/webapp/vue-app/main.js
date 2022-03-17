@@ -260,9 +260,11 @@ const store = new Vuex.Store({
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
+              state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
+
               // TODO replace with real addresses
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
-              state.xMeedAddress = null;
+
               state.openSeaCollectionLink = null;
               state.tenantProvisioningAddress = null;
 
@@ -293,10 +295,10 @@ const store = new Vuex.Store({
               state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
               state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-deed-token-znroiz3lxb';
 
-              state.farmingStartTime = Date.now() + 3000;
-              state.stakingStartTime = Date.now() + 3000;
-              state.pointsRewardsStartTime = Date.now() + 3000;
-              state.deedGenesisStartTime = Date.now() + 3000;
+              state.farmingStartTime = 0;
+              state.stakingStartTime = 0;
+              state.pointsRewardsStartTime = 0;
+              state.deedGenesisStartTime = 0;
             }
             state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
             state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';

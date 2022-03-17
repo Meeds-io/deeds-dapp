@@ -18,7 +18,6 @@
 -->
 <template>
   <v-card
-    :class="!rewardsStarted && 'no-border'"
     width="340"
     height="350"
     outlined>
@@ -26,7 +25,7 @@
       <v-icon>mdi-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
-    <v-card-text :class="!rewardsStarted && 'blur-box'">
+    <v-card-text>
       <v-list-item>
         <v-list-item-content class="pb-0">
           <v-list-item-title>
@@ -38,23 +37,31 @@
               type="chip"
               max-height="17"
               tile />
-            <v-tooltip v-else-if="rewardsStarted" bottom>
+            <v-tooltip v-else bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format
+                    v-if="rewardsStarted"
                     :value="apy"
                     no-decimals>
                     %
                   </deeds-number-format>
+                  <v-icon
+                    v-else
+                    size="15px"
+                    color="primary"
+                    class="mt-1">
+                    mdi-alert-circle-outline
+                  </v-icon>
                 </div>
               </template>
               <span v-if="maxMeedSupplyReached">
                 {{ $t('maxMeedsSupplyReached') }}
               </span>
-              <ul v-else>
+              <ul v-else-if="rewardsStarted">
                 <li>
                   <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
                 </li>
@@ -62,6 +69,9 @@
                   <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
                 </li>
               </ul>
+              <div v-else>
+                {{ $t('meedsRewardingDidntStarted') }}
+              </div>
             </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -122,7 +132,6 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
-            :disabled="!rewardsStarted"
             name="openStakeDrawerButton"
             outlined
             text
@@ -149,7 +158,6 @@
         </v-list-item-content>
         <v-list-item-action>
           <v-btn
-            :disabled="!rewardsStarted"
             name="openUnstakeDrawerButton"
             outlined
             text
@@ -160,14 +168,6 @@
       </v-list-item>
     </v-card-text>
     <deeds-stake-meeds-drawer ref="stakeDrawer" :stake="stake" />
-    <v-fade-transition>
-      <v-overlay
-        v-if="!rewardsStarted"
-        absolute
-        color="grey lignten-5">
-        <p class="display-1">{{ $t('comingSoon') }}</p>
-      </v-overlay>
-    </v-fade-transition>
   </v-card>
 </template>
 <script>
@@ -223,7 +223,7 @@ export default {
       return this.stakingStartTime < this.now;
     },
     apyLoading() {
-      return this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null;
+      return this.rewardsStarted && (this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null);
     },
     apy() {
       if (!this.meedsTotalBalanceOfXMeeds
