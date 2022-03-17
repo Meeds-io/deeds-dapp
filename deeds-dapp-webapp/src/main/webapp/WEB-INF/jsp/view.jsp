@@ -14,7 +14,7 @@
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';
                                                         style-src 'self';
                                                         font-src 'self';
-                                                        img-src 'self' storage.googleapis.com">
+                                                        img-src 'self' https://storage.googleapis.com/opensea-static/ *.meeds.io">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>">
