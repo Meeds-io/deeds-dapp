@@ -1,7 +1,7 @@
 {
   "TANIT-COMMON": {
     "name": "Tanit - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-common.png",
     "description": "Deed NFT : Tanit - Common",
     "attributes": [
@@ -20,7 +20,7 @@
   },
   "TANIT-UNCOMMON": {
     "name": "Tanit - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-uncommon.png",
     "description": "Deed NFT : Tanit - Uncommon",
     "attributes": [
@@ -39,7 +39,7 @@
   },
   "TANIT-RARE": {
     "name": "Tanit - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-rare.png",
     "description": "Deed NFT : Tanit - Rare",
     "attributes": [
@@ -58,7 +58,7 @@
   },
   "TANIT-LEGENDARY": {
     "name": "Tanit - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-legendary.png",
     "description": "Deed NFT : Tanit - Legendary",
     "attributes": [
@@ -76,7 +76,7 @@
   },
   "RESHEF-COMMON": {
     "name": "Reshef - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-common.png",
     "description": "Deed NFT : Reshef - Common",
     "attributes": [
@@ -95,7 +95,7 @@
   },
   "RESHEF-UNCOMMON": {
     "name": "Reshef - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-uncommon.png",
     "description": "Deed NFT : Reshef - Uncommon",
     "attributes": [
@@ -114,7 +114,7 @@
   },
   "RESHEF-RARE": {
     "name": "Reshef - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-rare.png",
     "description": "Deed NFT : Reshef - Rare",
     "attributes": [
@@ -133,7 +133,7 @@
   },
   "RESHEF-LEGENDARY": {
     "name": "Reshef - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-legendary.png",
     "description": "Deed NFT : Reshef - Legendary",
     "attributes": [
@@ -151,7 +151,7 @@
   },
   "ASHTARTE-COMMON": {
     "name": "Ashtarte - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-common.png",
     "description": "Deed NFT : Ashtarte - Common",
     "attributes": [
@@ -170,7 +170,7 @@
   },
   "ASHTARTE-UNCOMMON": {
     "name": "Ashtarte - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-uncommon.png",
     "description": "Deed NFT : Ashtarte - Uncommon",
     "attributes": [
@@ -189,7 +189,7 @@
   },
   "ASHTARTE-RARE": {
     "name": "Ashtarte - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-rare.png",
     "description": "Deed NFT : Ashtarte - Rare",
     "attributes": [
@@ -208,7 +208,7 @@
   },
   "ASHTARTE-LEGENDARY": {
     "name": "Ashtarte - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-legendary.png",
     "description": "Deed NFT : Ashtarte - Legendary",
     "attributes": [
@@ -226,7 +226,7 @@
   },
   "MELQART-COMMON": {
     "name": "Melqart - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-common.png",
     "description": "Deed NFT : Melqart - Common",
     "attributes": [
@@ -245,7 +245,7 @@
   },
   "MELQART-UNCOMMON": {
     "name": "Melqart - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-uncommon.png",
     "description": "Deed NFT : Melqart - Uncommon",
     "attributes": [
@@ -264,7 +264,7 @@
   },
   "MELQART-RARE": {
     "name": "Melqart - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-rare.png",
     "description": "Deed NFT : Melqart - Rare",
     "attributes": [
@@ -283,7 +283,7 @@
   },
   "MELQART-LEGENDARY": {
     "name": "Melqart - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-legendary.png",
     "description": "Deed NFT : Melqart - Legendary",
     "attributes": [
@@ -301,7 +301,7 @@
   },
   "ESHMUN-COMMON": {
     "name": "Eshmun - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-common.png",
     "description": "Deed NFT : Eshmun - Common",
     "attributes": [
@@ -320,7 +320,7 @@
   },
   "ESHMUN-UNCOMMON": {
     "name": "Eshmun - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-uncommon.png",
     "description": "Deed NFT : Eshmun - Uncommon",
     "attributes": [
@@ -339,7 +339,7 @@
   },
   "ESHMUN-RARE": {
     "name": "Eshmun - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-rare.png",
     "description": "Deed NFT : Eshmun - Rare",
     "attributes": [
@@ -358,7 +358,7 @@
   },
   "ESHMUN-LEGENDARY": {
     "name": "Eshmun - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-legendary.png",
     "description": "Deed NFT : Eshmun - Legendary",
     "attributes": [
@@ -376,7 +376,7 @@
   },
   "KUSHOR-COMMON": {
     "name": "Kushor - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-common.png",
     "description": "Deed NFT : Kushor - Common",
     "attributes": [
@@ -395,7 +395,7 @@
   },
   "KUSHOR-UNCOMMON": {
     "name": "Kushor - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-uncommon.png",
     "description": "Deed NFT : Kushor - Uncommon",
     "attributes": [
@@ -414,7 +414,7 @@
   },
   "KUSHOR-RARE": {
     "name": "Kushor - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-rare.png",
     "description": "Deed NFT : Kushor - Rare",
     "attributes": [
@@ -433,7 +433,7 @@
   },
   "KUSHOR-LEGENDARY": {
     "name": "Kushor - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-legendary.png",
     "description": "Deed NFT : Kushor - Legendary",
     "attributes": [
@@ -451,7 +451,7 @@
   },
   "HAMMON-COMMON": {
     "name": "Hammon - Common",
-    "background_color": "#319ab3",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-common.png",
     "description": "Deed NFT : Hammon - Common",
     "attributes": [
@@ -470,7 +470,7 @@
   },
   "HAMMON-UNCOMMON": {
     "name": "Hammon - Uncommon",
-    "background_color": "#f97575",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-uncommon.png",
     "description": "Deed NFT : Hammon - Uncommon",
     "attributes": [
@@ -489,7 +489,7 @@
   },
   "HAMMON-RARE": {
     "name": "Hammon - Rare",
-    "background_color": "#98cc81",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-rare.png",
     "description": "Deed NFT : Hammon - Rare",
     "attributes": [
@@ -508,7 +508,7 @@
   },
   "HAMMON-LEGENDARY": {
     "name": "Hammon - Legendary",
-    "background_color": "#4273c8",
+    "background_color": "#ffffff",
     "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-legendary.png",
     "description": "Deed NFT : Hammon - Legendary",
     "attributes": [
