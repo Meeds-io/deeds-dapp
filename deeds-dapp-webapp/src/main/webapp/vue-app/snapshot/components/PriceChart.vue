@@ -99,7 +99,7 @@ export default {
     },
     chartTitle() {
       if (this.chartData && this.chartData.length) {
-        const meedPrice = this.chartData[this.chartData.length - 1][1];
+        const meedPrice = this.chartData[0][1];
         if (meedPrice) {
           const meedPriceLabel = this.currencyFormat(meedPrice);
           return `${this.$t('meedPrice')}: ${meedPriceLabel}`;
@@ -121,10 +121,7 @@ export default {
       return {
         tooltip: {
           trigger: 'axis',
-          axisPointer: {
-            type: 'cross',
-            label: {backgroundColor: '#6a7985'}
-          },
+          show: true,
           formatter: this.labelFormatter,
         },
         grid: {

@@ -259,10 +259,10 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
+              state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
               // TODO replace with real addresses
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
               state.xMeedAddress = null;
-              state.deedAddress = null;
               state.openSeaCollectionLink = null;
               state.tenantProvisioningAddress = null;
 
