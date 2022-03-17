@@ -144,7 +144,7 @@
     "tenant.stopping": "Stopping Tenant transaction is in progress",
     "deedTenantActions": "Tenant Actions of Deed {0}",
     "tradeDeeds": "Trade Deeds",
-    "tradeDeedsIntroduction": "Deeds are ERC 1155 compliant NFTs. Once redeemed, they can be sold or purchased <a href='{0}' target='_blank'>OpenSea</a> marketplace. As a deed redeemer, you retain 1% of all its future sales on the OpenSea."
+    "tradeDeedsIntroduction": "Deeds are ERC 1155 compliant NFTs. Once redeemed, they can be sold or purchased <a href='{0}' target='{1}'>OpenSea</a> marketplace. As a deed redeemer, you retain 1% of all its future sales on the OpenSea."
   },
   "fr": {
     "dao": "DAO",
