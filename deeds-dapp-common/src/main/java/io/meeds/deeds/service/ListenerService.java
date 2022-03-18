@@ -16,6 +16,7 @@
 package io.meeds.deeds.service;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
@@ -92,15 +93,27 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   public void removeListsner(String listenerName) {
-    getListeners().forEach((key, eventListeners) -> { // NOSONAR
-      eventListeners.removeIf(eventListener -> StringUtils.equals(eventListener.getName(), listenerName));
+    Iterator<Entry<String, List<EventListener<?>>>> iterator = getListeners().entrySet().iterator();
+    iterator.forEachRemaining(entry -> {
+      List<EventListener<?>> list = entry.getValue();
+      list.removeIf(eventListener -> StringUtils.equals(eventListener.getName(), listenerName));
+      if (list.isEmpty()) {
+        iterator.remove();
+      }
     });
   }
 
   public void removeListsner(String eventName, String listenerName) {
-    getListeners().computeIfPresent(eventName, (key, list) -> {
+    Iterator<Entry<String, List<EventListener<?>>>> iterator = getListeners().entrySet().iterator();
+    iterator.forEachRemaining(entry -> {
+      if (!StringUtils.equals(entry.getKey(), eventName)) {
+        return;
+      }
+      List<EventListener<?>> list = entry.getValue();
       list.removeIf(eventListener -> StringUtils.equals(eventListener.getName(), listenerName));
-      return list;
+      if (list.isEmpty()) {
+        iterator.remove();
+      }
     });
   }
 
@@ -142,7 +155,7 @@ public class ListenerService implements ApplicationContextAware {
     }
   }
 
-  private void initSubscription() {
+  protected void initSubscription() {
     try {
       // Add Redis Pub/Sub Listener
       StatefulRedisPubSubConnection<String, String> connection = redisClient.connectPubSub();
@@ -156,7 +169,7 @@ public class ListenerService implements ApplicationContextAware {
     }
   }
 
-  private Map<String, List<EventListener<?>>> getListeners() {// NOSONAR
+  protected Map<String, List<EventListener<?>>> getListeners() {// NOSONAR
     if (listeners == null) {
       initListeners();
     }
@@ -164,18 +177,18 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   @SuppressWarnings("rawtypes")
-  private synchronized void initListeners() {
+  protected synchronized void initListeners() {
     if (listeners == null) {
       listeners = new HashMap<>();
-      Map<String, EventListener> eventListenerBeans = applicationContext.getBeansOfType(EventListener.class);
-      for (EventListener<?> eventListener : eventListenerBeans.values()) {
-        eventListeners.add(eventListener);
-      }
-      // Reorder Listeners by Event Name and use a new Map
-      // In order to allow programatically add/remove listeners
-      if (!CollectionUtils.isEmpty(eventListeners)) {
-        eventListeners.forEach(this::addListener);
-      }
+    }
+    Map<String, EventListener> eventListenerBeans = applicationContext.getBeansOfType(EventListener.class);
+    for (EventListener<?> eventListener : eventListenerBeans.values()) {
+      eventListeners.add(eventListener);
+    }
+    // Reorder Listeners by Event Name and use a new Map
+    // In order to allow programatically add/remove listeners
+    if (!CollectionUtils.isEmpty(eventListeners)) {
+      eventListeners.forEach(this::addListener);
     }
   }
 
@@ -240,9 +253,7 @@ public class ListenerService implements ApplicationContextAware {
     public void message(String channel, String message) {
       try {
         Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        if (event != null) {
-          triggerEvent(event);
-        }
+        triggerEvent(event);
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
       }
@@ -252,9 +263,7 @@ public class ListenerService implements ApplicationContextAware {
     public void message(String pattern, String channel, String message) {
       try {
         Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        if (event != null) {
-          triggerEvent(event);
-        }
+        triggerEvent(event);
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
       }

@@ -18,11 +18,13 @@ package io.meeds.deeds.blockchain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.Data;
+import lombok.*;
 
 @Configuration
 @ConfigurationProperties(prefix = "meeds.blockchain")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BlockchainConfigurationProperties {
 
   private String networkUrl;
