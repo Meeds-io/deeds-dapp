@@ -1,0 +1,124 @@
+/*
+ * This file is part of the Meeds project (https://meeds.io/).
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
+package io.meeds.deeds.service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.math.BigInteger;
+
+import org.apache.commons.codec.binary.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.web3j.protocol.core.RemoteFunctionCall;
+
+import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.TenantProvisioningStrategy;
+
+@SpringBootTest(
+    classes = {
+        BlockchainService.class,
+    }
+)
+class BlockchainServiceTest {
+
+  @MockBean
+  private TenantProvisioningStrategy tenantProvisioningStrategy;
+
+  @MockBean
+  private Deed                       deed;
+
+  @Autowired
+  private BlockchainService          blockchainService;
+
+  @Test
+  void testGetDeedCardType() throws Exception {
+    assertNotNull(blockchainService);
+
+    when(deed.cardType(any())).thenAnswer(invocation -> {
+      BigInteger argument = invocation.getArgument(0, BigInteger.class);
+      if (argument == null || argument.shortValue() > 1) {
+        throw new IllegalStateException("execution reverted: nftId doesn't exist");
+      } else if (argument.shortValue() == 0) {
+        throw new RuntimeException();
+      } else {
+        @SuppressWarnings("unchecked")
+        RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+        when(remoteFunctionCall.send()).thenReturn(BigInteger.TWO);
+        return remoteFunctionCall;
+      }
+    });
+
+    assertThrows(IllegalStateException.class, () -> blockchainService.getDeedCardType(0));
+    assertThrows(ObjectNotFoundException.class, () -> blockchainService.getDeedCardType(2));
+    assertThrows(ObjectNotFoundException.class, () -> blockchainService.getDeedCardType(500));
+    assertEquals(2, blockchainService.getDeedCardType(1));
+  }
+
+  @Test
+  void testGetDeedCityIndex() throws Exception {
+    assertNotNull(blockchainService);
+
+    when(deed.cityIndex(any())).thenAnswer(invocation -> {
+      BigInteger argument = invocation.getArgument(0, BigInteger.class);
+      if (argument == null || argument.shortValue() > 1) {
+        throw new IllegalStateException("execution reverted: nftId doesn't exist");
+      } else if (argument.shortValue() == 0) {
+        throw new RuntimeException();
+      } else {
+        @SuppressWarnings("unchecked")
+        RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+        when(remoteFunctionCall.send()).thenReturn(BigInteger.TWO);
+        return remoteFunctionCall;
+      }
+    });
+
+    assertThrows(IllegalStateException.class, () -> blockchainService.getDeedCityIndex(0));
+    assertThrows(ObjectNotFoundException.class, () -> blockchainService.getDeedCityIndex(2));
+    assertThrows(ObjectNotFoundException.class, () -> blockchainService.getDeedCityIndex(500));
+    assertEquals(2, blockchainService.getDeedCityIndex(1));
+  }
+
+  @Test
+  void testIsDeedProvisioningManager() throws Exception {
+    assertNotNull(blockchainService);
+
+    String walletAddress = "walletAddress";
+
+    when(tenantProvisioningStrategy.isProvisioningManager(any(), any())).thenAnswer(invocation -> {
+      String address = invocation.getArgument(0, String.class);
+      BigInteger nftId = invocation.getArgument(1, BigInteger.class);
+      if (nftId == null || nftId.shortValue() == 0 || !StringUtils.equals(address, walletAddress)) {
+        throw new RuntimeException();
+      } else {
+        @SuppressWarnings("unchecked")
+        RemoteFunctionCall<Boolean> remoteFunctionCall = mock(RemoteFunctionCall.class);
+        when(remoteFunctionCall.send()).thenReturn(nftId.shortValue() == 1);
+        return remoteFunctionCall;
+      }
+    });
+
+    assertThrows(RuntimeException.class, () -> blockchainService.isDeedProvisioningManager(walletAddress, 0));
+    assertTrue(blockchainService.isDeedProvisioningManager(walletAddress, 1));
+    assertFalse(blockchainService.isDeedProvisioningManager(walletAddress, 2));
+  }
+
+}

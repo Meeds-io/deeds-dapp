@@ -15,18 +15,16 @@
  */
 package io.meeds.deeds.blockchain;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = BlockchainConfigurationProperties.class)
 @EnableConfigurationProperties(value = BlockchainConfigurationProperties.class)
 @TestPropertySource(
     properties = {
@@ -35,8 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "meeds.blockchain.deedAddress=" + BlockchainConfigurationPropertiesTest.DEED_ADDRESS_VALUE,
     }
 )
-@ActiveProfiles("test")
-public class BlockchainConfigurationPropertiesTest {
+class BlockchainConfigurationPropertiesTest {
 
   public static final String                NETWORK_URL_VALUE                 = "NETWORK_URL";
 
@@ -48,7 +45,7 @@ public class BlockchainConfigurationPropertiesTest {
   private BlockchainConfigurationProperties blockchainConfigurationProperties;
 
   @Test
-  public void testProperties() {
+  void testProperties() {
     assertNotNull(blockchainConfigurationProperties);
     assertEquals(NETWORK_URL_VALUE, blockchainConfigurationProperties.getNetworkUrl());
     assertEquals(TENANT_PROVISIONING_ADDRESS_VALUE, blockchainConfigurationProperties.getTenantProvisioningAddress());

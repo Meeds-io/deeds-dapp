@@ -15,9 +15,7 @@
  */
 package io.meeds.deeds.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -28,14 +26,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.binary.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.*;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -47,14 +43,11 @@ import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
-import io.meeds.deeds.redis.RedisConfigurationPropertiesTest;
 import io.meeds.deeds.service.ListenerService.Listener;
 import io.meeds.deeds.service.ListenerServiceTest.FakeEventListener;
 import io.meeds.deeds.service.ListenerServiceTest.ListenerServiceTestConfiguration;
 
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
+@SpringBootTest(
     classes = {
         ListenerServiceTestConfiguration.class,
         ListenerService.class,
@@ -62,12 +55,7 @@ import io.meeds.deeds.service.ListenerServiceTest.ListenerServiceTestConfigurati
         RedisConfigurationProperties.class
     }
 )
-@TestPropertySource(
-    properties = {
-        "meeds.redis.channelName=" + RedisConfigurationPropertiesTest.CHANNEL_NAME_VALUE,
-    }
-)
-public class ListenerServiceTest {
+class ListenerServiceTest {
 
   public static final String       FAKE_EVENT_LISTENER_NAME = "fakeEventListener";
 
@@ -88,7 +76,7 @@ public class ListenerServiceTest {
   @Autowired
   private RedisPubSubAsyncCommands<String, String> async;
 
-  @Before
+  @BeforeEach
   public void init() {
     if (listenerService != null && listenerService.getListeners() != null) {
       listenerService.getListeners().clear();
@@ -96,7 +84,7 @@ public class ListenerServiceTest {
   }
 
   @Test
-  public void testAddListener() {
+  void testAddListener() {
     assertNotNull(listenerService);
 
     String eventListenerName = "eventListenerName";
@@ -131,7 +119,7 @@ public class ListenerServiceTest {
   }
 
   @Test
-  public void testRemoveListener() {
+  void testRemoveListener() {
     assertNotNull(listenerService);
 
     String eventListenerName = "eventListenerName";
@@ -192,7 +180,7 @@ public class ListenerServiceTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void testPublishEvent() {
+  void testPublishEvent() {
     assertNotNull(listenerService);
     assertNotNull(async);
 
@@ -298,7 +286,6 @@ public class ListenerServiceTest {
     assertEquals(3, event2TriggerCount.get());
   }
 
-  @Profile("test")
   @Configuration
   public static class ListenerServiceTestConfiguration {
 

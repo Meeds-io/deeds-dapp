@@ -37,7 +37,9 @@ import io.meeds.deeds.storage.DeedMetadataRepository;
 @Component
 public class DeedMetadataService {
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final String       DAPP_IMAGE_SERVER_BASE = "${DAPP_SERVER_BASE}";
+
+  private static final ObjectMapper OBJECT_MAPPER          = new ObjectMapper();
 
   static {
     // Workaround when Jackson is defined in shared library with different
@@ -59,6 +61,9 @@ public class DeedMetadataService {
   @Value("${meeds.deed.contract.metadatas.path:deedCollection.json}")
   private String                    deedCollectionMetadataFilePath;
 
+  @Value("${meeds.deed.metadata.serverBase:}")
+  private String                    imageServerBase;
+
   private Map<String, DeedMetadata> deedMetadatas;
 
   private DeedMetadata              contractMetadata;
@@ -68,9 +73,16 @@ public class DeedMetadataService {
     try {
       URL deedMetadatasResource = getClass().getClassLoader().getResource(metadatasFilePath);
       deedMetadatas = OBJECT_MAPPER.readerForMapOf(DeedMetadata.class).readValue(deedMetadatasResource);
+      deedMetadatas.values()
+                   .forEach(deedMetadata -> deedMetadata.setImageUrl(deedMetadata.getImageUrl()
+                                                                                 .replace(DAPP_IMAGE_SERVER_BASE,
+                                                                                          imageServerBase)));
 
       URL contractMetadataResource = getClass().getClassLoader().getResource(deedCollectionMetadataFilePath);
       contractMetadata = OBJECT_MAPPER.readerFor(DeedMetadata.class).readValue(contractMetadataResource);
+      contractMetadata.setImageUrl(contractMetadata.getImageUrl()
+                                                   .replace(DAPP_IMAGE_SERVER_BASE,
+                                                            imageServerBase));
     } catch (Exception e) {
       LOG.error("Error reading Default NFT mappings", e);
     }
@@ -91,7 +103,10 @@ public class DeedMetadataService {
    * @param cardTypeIndex Card Type index of selected Card
    * @return DEED NFT metadatas from metadata pattern.
    */
-  public DeedMetadata getDeedMetadataOfCard(short cityIndex, short cardTypeIndex) {
+  public DeedMetadata getDeedMetadataOfCard(int cityIndex, int cardTypeIndex) {
+    if (cityIndex >= DeedCity.values().length || cardTypeIndex >= DeedCard.values().length) {
+      return null;
+    }
     DeedCity deedCity = DeedCity.values()[cityIndex];
     DeedCard cardType = DeedCard.values()[cardTypeIndex];
 

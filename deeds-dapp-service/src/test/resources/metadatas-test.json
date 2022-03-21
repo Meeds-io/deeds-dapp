@@ -1,0 +1,527 @@
+{
+  "TANIT-COMMON": {
+    "name": "Tanit - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-common.png",
+    "description": "Deed NFT : Tanit - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "TANIT-UNCOMMON": {
+    "name": "Tanit - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-uncommon.png",
+    "description": "Deed NFT : Tanit - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "TANIT-RARE": {
+    "name": "Tanit - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-rare.png",
+    "description": "Deed NFT : Tanit - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "TANIT-LEGENDARY": {
+    "name": "Tanit - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/tanit-legendary.png",
+    "description": "Deed NFT : Tanit - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "RESHEF-COMMON": {
+    "name": "Reshef - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-common.png",
+    "description": "Deed NFT : Reshef - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "RESHEF-UNCOMMON": {
+    "name": "Reshef - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-uncommon.png",
+    "description": "Deed NFT : Reshef - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "RESHEF-RARE": {
+    "name": "Reshef - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-rare.png",
+    "description": "Deed NFT : Reshef - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "RESHEF-LEGENDARY": {
+    "name": "Reshef - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/reshef-legendary.png",
+    "description": "Deed NFT : Reshef - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "ASHTARTE-COMMON": {
+    "name": "Ashtarte - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-common.png",
+    "description": "Deed NFT : Ashtarte - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "ASHTARTE-UNCOMMON": {
+    "name": "Ashtarte - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-uncommon.png",
+    "description": "Deed NFT : Ashtarte - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "ASHTARTE-RARE": {
+    "name": "Ashtarte - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-rare.png",
+    "description": "Deed NFT : Ashtarte - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "ASHTARTE-LEGENDARY": {
+    "name": "Ashtarte - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/ashtarte-legendary.png",
+    "description": "Deed NFT : Ashtarte - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "MELQART-COMMON": {
+    "name": "Melqart - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-common.png",
+    "description": "Deed NFT : Melqart - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "MELQART-UNCOMMON": {
+    "name": "Melqart - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-uncommon.png",
+    "description": "Deed NFT : Melqart - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "MELQART-RARE": {
+    "name": "Melqart - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-rare.png",
+    "description": "Deed NFT : Melqart - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "MELQART-LEGENDARY": {
+    "name": "Melqart - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/melqart-legendary.png",
+    "description": "Deed NFT : Melqart - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "ESHMUN-COMMON": {
+    "name": "Eshmun - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-common.png",
+    "description": "Deed NFT : Eshmun - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "ESHMUN-UNCOMMON": {
+    "name": "Eshmun - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-uncommon.png",
+    "description": "Deed NFT : Eshmun - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "ESHMUN-RARE": {
+    "name": "Eshmun - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-rare.png",
+    "description": "Deed NFT : Eshmun - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "ESHMUN-LEGENDARY": {
+    "name": "Eshmun - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/eshmun-legendary.png",
+    "description": "Deed NFT : Eshmun - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "KUSHOR-COMMON": {
+    "name": "Kushor - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-common.png",
+    "description": "Deed NFT : Kushor - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "KUSHOR-UNCOMMON": {
+    "name": "Kushor - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-uncommon.png",
+    "description": "Deed NFT : Kushor - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "KUSHOR-RARE": {
+    "name": "Kushor - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-rare.png",
+    "description": "Deed NFT : Kushor - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "KUSHOR-LEGENDARY": {
+    "name": "Kushor - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/kushor-legendary.png",
+    "description": "Deed NFT : Kushor - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  },
+  "HAMMON-COMMON": {
+    "name": "Hammon - Common",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-common.png",
+    "description": "Deed NFT : Hammon - Common",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 100
+      }
+    ]
+  },
+  "HAMMON-UNCOMMON": {
+    "name": "Hammon - Uncommon",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-uncommon.png",
+    "description": "Deed NFT : Hammon - Uncommon",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.1,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 1000
+      }
+    ]
+  },
+  "HAMMON-RARE": {
+    "name": "Hammon - Rare",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-rare.png",
+    "description": "Deed NFT : Hammon - Rare",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 1.3,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "display_type": "number",
+        "value": 10000
+      }
+    ]
+  },
+  "HAMMON-LEGENDARY": {
+    "name": "Hammon - Legendary",
+    "background_color": "#ffffff",
+    "image": "${DAPP_SERVER_BASE}/static/images/nft/hammon-legendary.png",
+    "description": "Deed NFT : Hammon - Legendary",
+    "attributes": [
+      {
+        "trait_type": "Minting Power",
+        "display_type": "boost_number",
+        "value": 2,
+        "max_value": 2
+      },
+      {
+        "trait_type": "Max users",
+        "value": "Unlimited"
+      }
+    ]
+  }
+}

@@ -21,9 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,18 +33,13 @@ import io.meeds.deeds.web.rest.model.DeedMetadataPresentation;
 @RequestMapping("/api/deeds")
 public class DeedMetadataController {
 
-  private static final String DAPP_IMAGE_SERVER_BASE = "${DAPP_SERVER_BASE}";
-
   @Autowired
   private DeedMetadataService deedMetadataService;
-
-  @Value("${meeds.deed.metadata.serverBase:}")
-  private String              imageServerBase;
 
   @GetMapping
   public ResponseEntity<DeedMetadataPresentation> getContractMetadata(HttpServletRequest request) {
     DeedMetadata deedMetadata = deedMetadataService.getContractMetadata();
-    return getDeedMetadataResponse(deedMetadata, request);
+    return getDeedMetadataResponse(deedMetadata);
   }
 
   @GetMapping("/{nftId}")
@@ -55,7 +48,7 @@ public class DeedMetadataController {
                                                                  Long nftId,
                                                                  HttpServletRequest request) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
-    return getDeedMetadataResponse(deedMetadata, request);
+    return getDeedMetadataResponse(deedMetadata);
   }
 
   @GetMapping("/type/{cityIndex}/{cardType}")
@@ -66,17 +59,12 @@ public class DeedMetadataController {
                                                                  short cardType,
                                                                  HttpServletRequest request) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadataOfCard(cityIndex, cardType);
-    return getDeedMetadataResponse(deedMetadata, request);
+    return getDeedMetadataResponse(deedMetadata);
   }
 
-  private ResponseEntity<DeedMetadataPresentation> getDeedMetadataResponse(DeedMetadata deedMetadata,
-                                                                           HttpServletRequest request) {
+  private ResponseEntity<DeedMetadataPresentation> getDeedMetadataResponse(DeedMetadata deedMetadata) {
     if (deedMetadata == null) {
       return ResponseEntity.notFound().build();
-    } else if (StringUtils.contains(deedMetadata.getImageUrl(), DAPP_IMAGE_SERVER_BASE)) {
-      deedMetadata.setImageUrl(deedMetadata.getImageUrl()
-                                           .replace(DAPP_IMAGE_SERVER_BASE,
-                                                    getServerBase(request)));
     }
 
     return ResponseEntity.ok()
@@ -101,15 +89,6 @@ public class DeedMetadataController {
                                                         "HEAD"));
                          })
                          .body(DeedMetadataPresentation.build(deedMetadata));
-  }
-
-  private String getServerBase(HttpServletRequest request) {
-    if (StringUtils.isBlank(imageServerBase)) {
-      return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + ""
-          + request.getContextPath();
-    } else {
-      return imageServerBase;
-    }
   }
 
 }

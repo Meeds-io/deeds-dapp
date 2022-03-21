@@ -1,0 +1,6 @@
+{
+  "name": "Meeds DAO",
+  "description": "Deed Collection",
+  "external_link": "https://meeds.io/investors",
+  "image": "${DAPP_SERVER_BASE}/static/images/nft/deed-collection-avatar.png"
+}

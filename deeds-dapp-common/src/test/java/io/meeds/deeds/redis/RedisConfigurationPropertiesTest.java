@@ -15,26 +15,23 @@
  */
 package io.meeds.deeds.redis;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = RedisConfigurationProperties.class)
 @EnableConfigurationProperties(value = RedisConfigurationProperties.class)
 @TestPropertySource(
     properties = {
         "meeds.redis.channelName=" + RedisConfigurationPropertiesTest.CHANNEL_NAME_VALUE,
     }
 )
-@ActiveProfiles("test")
-public class RedisConfigurationPropertiesTest {
+class RedisConfigurationPropertiesTest {
 
   public static final String           CHANNEL_NAME_VALUE = "CHANNEL_NAME";
 
@@ -42,7 +39,7 @@ public class RedisConfigurationPropertiesTest {
   private RedisConfigurationProperties redisConfigurationProperties;
 
   @Test
-  public void testProperties() {
+  void testProperties() {
     assertNotNull(redisConfigurationProperties);
     assertEquals(CHANNEL_NAME_VALUE, redisConfigurationProperties.getChannelName());
 

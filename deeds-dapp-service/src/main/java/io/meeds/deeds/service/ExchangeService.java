@@ -49,9 +49,9 @@ public class ExchangeService {
 
   private static final Logger            LOG                               = LoggerFactory.getLogger(ExchangeService.class);
 
-  private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
+  private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
 
-  private static final String            CURRENCY_API_URL                  = "https://api.currencyapi.com/v3/latest";
+  private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
 
   private static final String            PAIR_PARAM_NAME                   = "pair";
 
@@ -65,10 +65,11 @@ public class ExchangeService {
 
   private static final String            ERRORS_PARAM_NAME                 = "errors";
 
-  private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
-
   @Value("${meeds.exchange.currencyApiKey:}")
   private String                         currencyApiKey;
+
+  @Value("${meeds.exchange.currencyApiUrl:https://api.currencyapi.com/v3/latest}")
+  private String                         currencyApiUrl;
 
   @Value("${meeds.exchange.blockchainApiUrl:https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}")
   private String                         blockchainApiUrl;
@@ -105,6 +106,9 @@ public class ExchangeService {
       throw new IllegalArgumentException("toDate must be after mandatory");
     }
     List<MeedExchangeRate> exchangeRates = meedExchangeRateRepository.findByDateBetween(fromDate, toDate);
+    if (exchangeRates == null || exchangeRates.isEmpty()) {
+      return Collections.emptyList();
+    }
     List<CurrencyExchangeRate> currencyExchangeRates;
     if (currency != null && currency != Currency.USD && currency != Currency.ETH) {
       currencyExchangeRates = currencyExchangeRateRepository.findByCurrencyAndDateBetween(currency, fromDate, toDate);
@@ -135,7 +139,7 @@ public class ExchangeService {
    * Contract has been created until today
    */
   public void computeMeedExchangeRate() {
-    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
+    LocalDate indexDate = firstMeedTokenDate();
     LocalDate today = LocalDate.now(ZoneOffset.UTC);
     LocalDate untilDate = today.plusDays(1);
     while (indexDate.isBefore(untilDate)) {
@@ -154,7 +158,7 @@ public class ExchangeService {
     }
   }
 
-  private void computeCurrencyExchangeRate() {
+  protected void computeCurrencyExchangeRate() {
     LocalDate today = LocalDate.now(ZoneOffset.UTC);
     CurrencyExchangeRate todayExchangeRate = currencyExchangeRateRepository.findById(today).orElse(null);
     if (todayExchangeRate == null) {
@@ -165,7 +169,7 @@ public class ExchangeService {
       }
     }
 
-    LocalDate indexDate = MEEDS_TOKEN_FIRST_DATE;
+    LocalDate indexDate = firstMeedTokenDate();
     LocalDate untilDate = LocalDate.now(ZoneOffset.UTC).plusDays(1);
     while (indexDate.isBefore(untilDate)) {
       CurrencyExchangeRate rate = currencyExchangeRateRepository.findById(indexDate).orElse(null);
@@ -316,10 +320,9 @@ public class ExchangeService {
     return null;
   }
 
-  private String executeQuery(String url, String body) {
+  protected String executeQuery(String url, String body) {
     try {
-      URL apiUrl = new URL(url);
-      HttpsURLConnection con = (HttpsURLConnection) apiUrl.openConnection();
+      HttpsURLConnection con = newURLConnection(url);
 
       // add reuqest header
       con.setRequestMethod("GET");
@@ -353,8 +356,7 @@ public class ExchangeService {
       throw new IllegalStateException("API Key is mandatory");
     }
     try {
-      URL apiUrl = new URL(getCurrencyApiUrl());
-      HttpsURLConnection con = (HttpsURLConnection) apiUrl.openConnection();
+      HttpsURLConnection con = newURLConnection(getCurrencyApiUrl());
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
         try (InputStream inputStream = con.getInputStream()) {
@@ -369,7 +371,7 @@ public class ExchangeService {
   }
 
   private String getCurrencyApiUrl() {
-    return CURRENCY_API_URL + "?apikey=" + currencyApiKey + "&base_currency=USD&currencies=EUR";
+    return currencyApiUrl + "?apikey=" + currencyApiKey + "&base_currency=USD&currencies=EUR";
   }
 
   private MeedPrice toMeedPrice(MeedExchangeRate exchangeRate,
@@ -409,4 +411,11 @@ public class ExchangeService {
         && !pairDataJson.getJsonObject(DATA_PARAM_NAME).isNull(PAIR_PARAM_NAME);
   }
 
+  protected HttpsURLConnection newURLConnection(String url) throws IOException {
+    return (HttpsURLConnection) new URL(url).openConnection();
+  }
+
+  protected LocalDate firstMeedTokenDate() {
+    return MEEDS_TOKEN_FIRST_DATE;
+  }
 }
