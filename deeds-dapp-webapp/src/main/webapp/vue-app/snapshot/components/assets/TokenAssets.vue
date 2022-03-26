@@ -70,7 +70,7 @@
                 v-else
                 size="15px"
                 color="primary"
-                class="ms-2">
+                class="ms-2 mt-1">
                 mdi-alert-circle-outline
               </v-icon>
             </div>
