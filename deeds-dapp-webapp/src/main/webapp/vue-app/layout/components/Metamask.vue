@@ -27,8 +27,8 @@
       class="elevation-0 mt-4">
       <v-btn
         v-if="!isMetamaskInstalled"
+        :href="metamaskInstallLinlk"
         name="installMetamaskLink"
-        href="https://metamask.io/"
         target="_blank"
         rel="nofollow noreferrer noopener"
         height="168px"
@@ -87,6 +87,17 @@ export default {
     },
     showMetamaskButton() {
       return !this.isMetamaskInstalled || !this.hasMetamashConnectedAddress || !this.validNetwork;
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
+    currentSiteLink() {
+      return `${window.location.host}${window.location.pathname}`;
+    },
+    metamaskInstallLinlk() {
+      return this.isMobile
+        && `https://metamask.app.link/dapp/${this.currentSiteLink}`
+        || 'https://metamask.io/';
     },
     connectionLabel() {
       if (!this.isMetamaskInstalled) {
