@@ -24,7 +24,7 @@
     <v-card-text class="ps-0">
       {{ $t('governanceIntroduction') }}
     </v-card-text>
-    <v-card-actions class="ps-0 justify-center">
+    <v-card-actions class="ps-0 justify-center d-flex flex-column flex-sm-row">
       <v-btn
         name="discussOnDiscordLink"
         href="https://discord.gg/7d9Byf4Fz6"
@@ -32,7 +32,7 @@
         rel="nofollow noreferrer noopener"
         outlined
         text
-        class="me-4">
+        class="me-sm-4">
         <v-img
           :src="`/${parentLocation}/static/images/discord.ico`"
           height="24"
@@ -48,7 +48,7 @@
         rel="nofollow noreferrer noopener"
         outlined
         text
-        class="ms-4">
+        class="ms-0 ms-sm-4 mt-4 mt-sm-0">
         <v-img
           :src="`/${parentLocation}/static/images/snapshot.png`"
           height="24"

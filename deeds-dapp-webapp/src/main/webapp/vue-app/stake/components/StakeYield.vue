@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card flat>
-    <flex class="d-flex flex-nowrap">
+    <flex class="d-flex flex-column flex-sm-row">
       <v-card-title class="ps-0 py-0">
         {{ $t('yields') }}
       </v-card-title>

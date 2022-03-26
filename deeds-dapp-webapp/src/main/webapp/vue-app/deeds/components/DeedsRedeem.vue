@@ -30,7 +30,7 @@
         max-height="17"
         tile />
       <h4 v-else>{{ currentCityName }}</h4>
-      <small class="d-flex flex-nowrap align-center">
+      <small class="d-flex flex-column flex-sm-row align-center">
         {{ $t('cityPopulation') }}:
         <v-skeleton-loader
           v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
@@ -38,7 +38,7 @@
           class="ms-2" />
         <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
         <div v-if="!deedGenesisStarted">
-          . {{ $t('cityMintingStartDate') }}:
+          <span class="d-none d-sm-inline">. </span>{{ $t('cityMintingStartDate') }}:
           <deeds-timer
             :end-time="deedGenesisStartTime"
             class="my-auto" />
