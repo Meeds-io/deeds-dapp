@@ -63,10 +63,16 @@
               </span>
               <ul v-else-if="rewardsStarted">
                 <li>
-                  <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
+                  <deeds-number-format
+                    :fractions="2"
+                    :value="yearlyRewardedMeeds"
+                    label="yearlyRewardedMeeds" />
                 </li>
                 <li>
-                  <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
+                  <deeds-number-format
+                    :fractions="2"
+                    :value="meedsTotalBalanceOfXMeeds"
+                    label="meedsTotalBalanceOfXMeeds" />
                 </li>
               </ul>
               <div v-else>
@@ -92,17 +98,23 @@
                 <div
                   v-bind="attrs"
                   v-on="on">
-                  <deeds-number-format :value="meedsTotalBalanceOfXMeeds">
+                  <deeds-number-format :value="meedsTotalBalanceOfXMeeds" :fractions="2">
                     MEED
                   </deeds-number-format>
                 </div>
               </template>
               <ul>
                 <li>
-                  <deeds-number-format :value="meedsBalanceOfXMeeds" label="xMeedCurrentBalance" />
+                  <deeds-number-format
+                    :fractions="2"
+                    :value="meedsBalanceOfXMeeds"
+                    label="xMeedCurrentBalance" />
                 </li>
                 <li v-if="!maxMeedSupplyReached">
-                  <deeds-number-format :value="meedsPendingBalanceOfXMeeds" label="xMeedPendingRewards" />
+                  <deeds-number-format
+                    :fractions="2"
+                    :value="meedsPendingBalanceOfXMeeds"
+                    label="xMeedPendingRewards" />
                 </li>
               </ul>
             </v-tooltip>
@@ -151,6 +163,20 @@
               type="chip"
               max-height="17"
               tile />
+            <v-tooltip v-else-if="pendingMeedRewardsBalance" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="d-flex flex-nowrap"
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ xMeedsBalanceNoDecimals }} xMEED
+                </div>
+              </template>
+              <deeds-number-format
+                :value="pendingMeedRewardsBalance"
+                :fractions="2"
+                label="xMeedPendingWalletRewards" />
+            </v-tooltip>
             <template v-else>
               {{ xMeedsBalanceNoDecimals }} xMEED
             </template>
@@ -182,6 +208,7 @@ export default {
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
+    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
@@ -224,6 +251,13 @@ export default {
     },
     apyLoading() {
       return this.rewardsStarted && (this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null);
+    },
+    pendingMeedRewardsBalance() {
+      if (this.xMeedsTotalSupply && this.xMeedsBalance && this.meedsTotalBalanceOfXMeeds && !this.xMeedsTotalSupply.isZero()) {
+        return this.xMeedsBalance.mul(this.meedsTotalBalanceOfXMeeds).div(this.xMeedsTotalSupply).sub(this.xMeedsBalance);
+      } else {
+        return 0;
+      }
     },
     apy() {
       if (!this.meedsTotalBalanceOfXMeeds

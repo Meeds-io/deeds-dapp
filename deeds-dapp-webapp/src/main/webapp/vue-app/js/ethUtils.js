@@ -55,8 +55,11 @@ export function sendTransaction(provider, contract, method, options, params) {
         options
       );
     }).catch(e => {
+      if (e && e.code === 4001) { // User denied transaction signature
+        return;
+      }
       // eslint-disable-next-line no-console
-      console.debug('Error estimating gas, send transaction with fixed limit', e);
+      console.debug('Error estimating gas, send transaction with fixed limit');
       return signer[method](
         ...params,
         options
