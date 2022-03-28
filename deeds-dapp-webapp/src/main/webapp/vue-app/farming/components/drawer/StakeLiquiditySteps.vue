@@ -248,20 +248,6 @@ export default {
     hasStakeAllowance() {
       return this.lpAllowance && !this.lpAllowance.isZero();
     },
-    approveMethod() {
-      if (this.provider && this.lpContract) {
-        const signer = this.lpContract.connect(this.provider.getSigner());
-        return signer.approve;
-      }
-      return null;
-    },
-    depositMethod() {
-      if (this.provider && this.tokenFactoryContract) {
-        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
-        return signer.deposit;
-      }
-      return null;
-    },
   }),
   watch: {
     approvalInProgress() {
@@ -285,10 +271,12 @@ export default {
       const options = {
         gasLimit: this.approvalGasLimit,
       };
-      return this.approveMethod(
-        this.tokenFactoryAddress,
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.lpContract,
+        'approve',
+        options,
+        [this.tokenFactoryAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);
@@ -311,10 +299,12 @@ export default {
       const options = {
         gasLimit: this.depositGasLimit,
       };
-      return this.depositMethod(
-        this.lpAddress,
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.tokenFactoryContract,
+        'deposit',
+        options,
+        [this.lpAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);

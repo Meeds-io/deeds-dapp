@@ -326,13 +326,6 @@ export default {
       }
       return null;
     },
-    tokenFactoryClaimReward() {
-      if (this.provider && this.tokenFactoryContract) {
-        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
-        return signer.harvest;
-      }
-      return null;
-    },
     tokenFactoryUserPendingReward() {
       if (this.provider && this.tokenFactoryContract) {
         return this.tokenFactoryContract['pendingRewardBalanceOf(address,address)'];
@@ -357,8 +350,8 @@ export default {
             .multipliedBy(this.yearInMinutes)
             .multipliedBy(this.pool.allocationPoint.toString())
             .dividedBy(this.rewardedTotalAllocationPoints.toString())
-            .multipliedBy(100)
-            .dividedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
+            .dividedBy(100)
+            .multipliedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
         }
       }
       return new BigNumber(0);
@@ -559,18 +552,20 @@ export default {
       const options = {
         gasLimit: this.harvestGasLimit,
       };
-      return this.tokenFactoryClaimReward(
-        this.lpAddress,
-        options
-      )
-        .then(receipt => {
-          const transactionHash = receipt.hash;
-          this.$root.$emit('transaction-sent', transactionHash);
-          this.stakeAmount = 0;
-          this.sendingStake = false;
-          this.$root.$emit('close-drawer');
-          this.step = 1;
-        })
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.tokenFactoryContract,
+        'harvest',
+        options,
+        [this.lpAddress]
+      ).then(receipt => {
+        const transactionHash = receipt.hash;
+        this.$root.$emit('transaction-sent', transactionHash);
+        this.stakeAmount = 0;
+        this.sendingStake = false;
+        this.$root.$emit('close-drawer');
+        this.step = 1;
+      })
         .finally(() => this.sendingClaim = false);
     },
   },

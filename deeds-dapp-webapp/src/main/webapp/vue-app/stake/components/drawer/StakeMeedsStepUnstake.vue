@@ -140,13 +140,6 @@ export default {
         () => !!this.isUnstakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.xMeedsBalanceNoDecimals}),
       ];
     },
-    withdrawMethod() {
-      if (this.provider && this.xMeedContract) {
-        const xMeedContractSigner = this.xMeedContract.connect(this.provider.getSigner());
-        return xMeedContractSigner.withdraw;
-      }
-      return null;
-    },
   }),
   methods: {
     setMaxXMeeds() {
@@ -158,9 +151,12 @@ export default {
       const options = {
         gasLimit: this.unstakeGasLimit,
       };
-      return this.withdrawMethod(
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.xMeedContract,
+        'withdraw',
+        options,
+        [amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);

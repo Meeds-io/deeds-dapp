@@ -138,13 +138,6 @@ export default {
         || this.cardAmount.gt(this.pointsBalance)
         || (this.cardSupply || 0) >= this.cardMaxSupply;
     },
-    redeemMethod() {
-      if (this.provider && this.xMeedContract) {
-        const xMeedContractSigner = this.xMeedContract.connect(this.provider.getSigner());
-        return xMeedContractSigner.redeem;
-      }
-      return null;
-    },
   }),
   created() {
     this.$deedMetadata.getCardInfo(this.cityIndex, this.cardTypeIndex)
@@ -159,9 +152,12 @@ export default {
       const options = {
         gasLimit: this.redeemGasLimit,
       };
-      return this.redeemMethod(
-        this.cardType,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.xMeedContract,
+        'redeem',
+        options,
+        [this.cardType]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);
