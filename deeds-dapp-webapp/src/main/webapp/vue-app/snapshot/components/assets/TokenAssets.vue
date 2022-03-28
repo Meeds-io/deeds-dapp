@@ -169,8 +169,8 @@ export default {
             .multipliedBy(this.yearInMinutes)
             .multipliedBy(this.xMeedRewardInfo.allocationPoint.toString())
             .dividedBy(this.rewardedTotalAllocationPoints.toString())
-            .multipliedBy(100)
-            .dividedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
+            .dividedBy(100)
+            .multipliedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
         }
       }
       return new BigNumber(0);

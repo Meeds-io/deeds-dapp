@@ -40,6 +40,32 @@ export function connectToMetamask() {
   });
 }
 
+export function sendTransaction(provider, contract, method, options, params) {
+  const signer = provider && contract && contract.connect(provider.getSigner());
+  if (signer) {
+    return signer.estimateGas[method](
+      ...params
+    ).then(estimatedGasLimit => {
+      if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
+        options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
+      }
+    }).then(() => {
+      return signer[method](
+        ...params,
+        options
+      );
+    }).catch(e => {
+      // eslint-disable-next-line no-console
+      console.debug('Error estimating gas, send transaction with fixed limit', e);
+      return signer[method](
+        ...params,
+        options
+      );
+    });
+  }
+  return Promise.resolve(null);
+}
+
 export function switchMetamaskNetwork(networkId) {
   return window.ethereum.request({
     method: 'wallet_switchEthereumChain',

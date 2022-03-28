@@ -125,13 +125,6 @@ export default {
         () => !!this.isUnstakeAmountLessThanMax || this.$t('valueMustBeLessThan', {0: this.lpStakedNoDecimals}),
       ];
     },
-    withdrawMethod() {
-      if (this.provider && this.tokenFactoryContract) {
-        const signer = this.tokenFactoryContract.connect(this.provider.getSigner());
-        return signer.withdraw;
-      }
-      return null;
-    },
   }),
   methods: {
     setMaxLPAmount() {
@@ -143,10 +136,12 @@ export default {
       const options = {
         gasLimit: this.withdrawGasLimit,
       };
-      return this.withdrawMethod(
-        this.lpAddress,
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.tokenFactoryContract,
+        'withdraw',
+        options,
+        [this.lpAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);

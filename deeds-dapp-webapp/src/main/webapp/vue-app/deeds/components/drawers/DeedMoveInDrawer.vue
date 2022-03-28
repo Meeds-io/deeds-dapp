@@ -120,13 +120,6 @@ export default {
     etherscanBaseLink: state => state.etherscanBaseLink,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
-    startTenantMethod() {
-      if (this.provider && this.tenantProvisioningContract) {
-        const signer = this.tenantProvisioningContract.connect(this.provider.getSigner());
-        return signer.startTenant;
-      }
-      return null;
-    },
     validForm() {
       return !this.email || !this.email.length || (this.$refs.form && this.$refs.form.$el.reportValidity());
     },
@@ -234,15 +227,19 @@ export default {
         const options = {
           gasLimit: this.startTenantGasLimit,
         };
-        return this.startTenantMethod(
-          this.nftId,
-          options
+        return this.$ethUtils.sendTransaction(
+          this.provider,
+          this.tenantProvisioningContract,
+          'startTenant',
+          options,
+          [this.nftId]
         ).then(receipt => {
-          this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.starting'));
-
-          this.transactionHash = receipt.hash;
-          this.$root.$emit('transaction-sent', this.transactionHash);
-          this.saveStartTenantRequest();
+          if (receipt) {
+            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.starting'));
+            this.transactionHash = receipt.hash;
+            this.$root.$emit('transaction-sent', this.transactionHash);
+            this.saveStartTenantRequest();
+          }
         }).finally(() => this.sending = false);
       }
     },

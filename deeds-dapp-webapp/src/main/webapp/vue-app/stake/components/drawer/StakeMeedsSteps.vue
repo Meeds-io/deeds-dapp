@@ -259,20 +259,6 @@ export default {
     hasMeedsStakeAllowance() {
       return this.meedsStakeAllowance && !this.meedsStakeAllowance.isZero();
     },
-    approveMethod() {
-      if (this.provider && this.meedContract) {
-        const meedContractSigner = this.meedContract.connect(this.provider.getSigner());
-        return meedContractSigner.approve;
-      }
-      return null;
-    },
-    stakeMethod() {
-      if (this.provider && this.xMeedContract) {
-        const xMeedContractSigner = this.xMeedContract.connect(this.provider.getSigner());
-        return xMeedContractSigner.stake;
-      }
-      return null;
-    },
   }),
   watch: {
     approvalInProgress() {
@@ -296,10 +282,12 @@ export default {
       const options = {
         gasLimit: this.approvalGasLimit,
       };
-      return this.approveMethod(
-        this.xMeedAddress,
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.meedContract,
+        'approve',
+        options,
+        [this.xMeedAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);
@@ -322,9 +310,12 @@ export default {
       const options = {
         gasLimit: this.stakeGasLimit,
       };
-      return this.stakeMethod(
-        amount,
-        options
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.xMeedContract,
+        'stake',
+        options,
+        [amount]
       ).then(receipt => {
         const transactionHash = receipt.hash;
         this.$root.$emit('transaction-sent', transactionHash);

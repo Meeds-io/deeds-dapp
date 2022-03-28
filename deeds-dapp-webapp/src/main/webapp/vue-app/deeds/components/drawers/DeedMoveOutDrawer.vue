@@ -79,13 +79,6 @@ export default {
     etherscanBaseLink: state => state.etherscanBaseLink,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     stopTenantGasLimit: state => state.stopTenantGasLimit,
-    stopTenantMethod() {
-      if (this.provider && this.tenantProvisioningContract) {
-        const signer = this.tenantProvisioningContract.connect(this.provider.getSigner());
-        return signer.stopTenant;
-      }
-      return null;
-    },
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;
     },
@@ -139,9 +132,12 @@ export default {
         const options = {
           gasLimit: this.stopTenantGasLimit,
         };
-        return this.stopTenantMethod(
-          this.nftId,
-          options
+        return this.$ethUtils.sendTransaction(
+          this.provider,
+          this.tenantProvisioningContract,
+          'stopTenant',
+          options,
+          [this.nftId]
         ).then(receipt => {
           this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.stopping'));
 
