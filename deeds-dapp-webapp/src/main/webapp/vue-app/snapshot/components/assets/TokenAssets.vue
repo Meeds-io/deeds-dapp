@@ -22,7 +22,14 @@
       <h4>{{ $t('tokens') }}</h4>
     </v-list-item>
     <v-list-item class="ps-8">
-      <v-list-item-content>Meeds</v-list-item-content>
+      <v-list-item-content class="align-start">
+        <div>
+          <deeds-contract-address
+            :address="meedAddress"
+            label="Meeds"
+            token />
+        </div>
+      </v-list-item-content>
       <v-list-item-content />
       <v-list-item-content class="align-end">
         <v-skeleton-loader
@@ -43,11 +50,19 @@
         <deeds-number-format
           v-else
           :value="meedsBalance"
+          :fractions="2"
           currency />
       </v-list-item-content>
     </v-list-item>
     <v-list-item v-if="xMeedAddress" class="ps-8">
-      <v-list-item-content>xMeeds</v-list-item-content>
+      <v-list-item-content class="align-start">
+        <div>
+          <deeds-contract-address
+            :address="xMeedAddress"
+            label="xMeeds"
+            token />
+        </div>
+      </v-list-item-content>
       <v-list-item-content>
         <v-skeleton-loader
           v-if="apyLoading"
@@ -127,6 +142,7 @@ export default {
     meedsBalance: state => state.meedsBalance,
     loadingMeedsBalance: state => state.loadingMeedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,

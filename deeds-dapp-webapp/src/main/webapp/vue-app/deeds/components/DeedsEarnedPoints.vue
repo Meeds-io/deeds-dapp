@@ -38,7 +38,11 @@
               max-height="17"
               tile />
             <deeds-number-format v-else :value="xMeedsTotalSupply">
-              xMEED
+              <deeds-contract-address
+                :address="xMeedAddress"
+                :button-top="-2"
+                label="xMEED"
+                token />
             </deeds-number-format>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -59,7 +63,14 @@
               type="chip"
               max-height="17"
               tile />
-            <template v-else>{{ xMeedsBalanceNoDecimals }} xMEED</template>
+            <template v-else>
+              {{ xMeedsBalanceNoDecimals }}
+              <deeds-contract-address
+                :address="xMeedAddress"
+                :button-top="-2"
+                label="xMEED"
+                token />
+            </template>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -74,7 +85,10 @@
               type="chip"
               max-height="17"
               tile />
-            <deeds-number-format v-else-if="rewardsStarted" :value="pointsBalance">
+            <deeds-number-format
+              v-else-if="rewardsStarted"
+              :value="pointsBalance"
+              fractions="2">
               {{ $t('points') }}
             </deeds-number-format>
             <v-tooltip v-else bottom>
@@ -83,7 +97,7 @@
                   class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
-                  <deeds-number-format :value="pointsBalance">
+                  <deeds-number-format :value="pointsBalance" fractions="2">
                     {{ $t('points') }}
                   </deeds-number-format>
                   <v-icon

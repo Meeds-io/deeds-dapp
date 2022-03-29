@@ -38,7 +38,8 @@
           height="24"
           max-width="24"
           class="me-2"
-          contain />
+          contain
+          eager />
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
@@ -54,7 +55,8 @@
           height="24"
           max-width="24"
           class="me-2"
-          contain />
+          contain
+          eager />
         <span class="text-none">{{ $t('voteOnSnapshot') }}</span>
       </v-btn>
     </v-card-actions>

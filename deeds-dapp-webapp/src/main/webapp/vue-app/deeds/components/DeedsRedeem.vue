@@ -20,6 +20,7 @@
   <v-card flat class="d-flex flex-column">
     <h3 class="d-flex flex-nowrap">
       {{ $t('deedsToRedeem') }}
+      <deeds-contract-address :address="deedAddress" token />
       <v-divider class="my-auto ms-4" />
     </h3>
     <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
@@ -92,6 +93,7 @@ export default {
     loadingCityDetails: false,
   }),
   computed: Vuex.mapState({
+    deedAddress: state => state.deedAddress,
     xMeedAddress: state => state.xMeedAddress,
     deedGenesisStartTime: state => state.deedGenesisStartTime,
     currentCity: state => state.currentCity,

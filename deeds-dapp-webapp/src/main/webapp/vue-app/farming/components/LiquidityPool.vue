@@ -115,7 +115,11 @@
                 max-height="17"
                 tile />
               <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
-                {{ lpSymbol }}
+                <deeds-contract-address
+                  :address="lpAddress"
+                  :label="lpSymbol"
+                  :button-top="-2"
+                  token />
               </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -136,8 +140,15 @@
                 type="chip"
                 max-height="17"
                 tile />
-              <deeds-number-format v-else :value="lpBalance">
-                {{ lpSymbol }}
+              <deeds-number-format
+                v-else
+                :value="lpBalance"
+                :fractions="2">
+                <deeds-contract-address
+                  :address="lpAddress"
+                  :label="lpSymbol"
+                  :button-top="-2"
+                  token />
               </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -162,8 +173,15 @@
                 type="chip"
                 max-height="17"
                 tile />
-              <deeds-number-format v-else :value="lpStaked">
-                {{ lpSymbol }}
+              <deeds-number-format
+                v-else
+                :value="lpStaked"
+                :fractions="2">
+                <deeds-contract-address
+                  :address="lpAddress"
+                  :label="lpSymbol"
+                  :button-top="-2"
+                  token />
               </deeds-number-format>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -188,17 +206,34 @@
                 type="chip"
                 max-height="17"
                 tile />
-              <span v-else-if="noMeedSupplyForLPRemaining">0 MEED</span>
-              <deeds-number-format v-else-if="rewardsStarted" :value="meedsPendingUserReward">
-                MEED
+              <span v-else-if="noMeedSupplyForLPRemaining">
+                0 <deeds-contract-address
+                  :address="meedAddress"
+                  label="MEED"
+                  :button-top="-2"
+                  token />
+              </span>
+              <deeds-number-format
+                v-else-if="rewardsStarted"
+                :value="meedsPendingUserReward"
+                :fractions="2">
+                <deeds-contract-address
+                  :address="meedAddress"
+                  label="MEED"
+                  :button-top="-2"
+                  token />
               </deeds-number-format>
               <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <div
                     v-bind="attrs"
                     v-on="on">
-                    <deeds-number-format :value="meedsPendingUserReward">
-                      MEED
+                    <deeds-number-format :value="meedsPendingUserReward" :fractions="2">
+                      <deeds-contract-address
+                        :address="meedAddress"
+                        label="MEED"
+                        :button-top="-2"
+                        token />
                     </deeds-number-format>
                   </div>
                 </template>
@@ -262,6 +297,7 @@ export default {
     parentLocation: state => state.parentLocation,
     provider: state => state.provider,
     address: state => state.address,
+    meedAddress: state => state.meedAddress,
     noMeedSupplyForLPRemaining: state => state.noMeedSupplyForLPRemaining,
     harvestGasLimit: state => state.harvestGasLimit,
     tokenFactoryAddress: state => state.tokenFactoryAddress,

@@ -99,7 +99,11 @@
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format :value="meedsTotalBalanceOfXMeeds" :fractions="2">
-                    MEED
+                    <deeds-contract-address
+                      :address="meedAddress"
+                      :button-top="-2"
+                      label="MEED"
+                      token />
                   </deeds-number-format>
                 </div>
               </template>
@@ -138,7 +142,12 @@
               max-height="17"
               tile />
             <template v-else>
-              {{ meedsBalanceNoDecimals }} MEED
+              {{ meedsBalanceNoDecimals }}
+              <deeds-contract-address
+                :address="meedAddress"
+                :button-top="-2"
+                label="MEED"
+                token />
             </template>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -166,10 +175,14 @@
             <v-tooltip v-else-if="pendingMeedRewardsBalance" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
-                  class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
-                  {{ xMeedsBalanceNoDecimals }} xMEED
+                  {{ xMeedsBalanceNoDecimals }}
+                  <deeds-contract-address
+                    :address="xMeedAddress"
+                    :button-top="-2"
+                    label="xMEED"
+                    token />
                 </div>
               </template>
               <deeds-number-format
@@ -178,7 +191,12 @@
                 label="xMeedPendingWalletRewards" />
             </v-tooltip>
             <template v-else>
-              {{ xMeedsBalanceNoDecimals }} xMEED
+              {{ xMeedsBalanceNoDecimals }}
+              <deeds-contract-address
+                :address="xMeedAddress"
+                :button-top="-2"
+                label="xMEED"
+                token />
             </template>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -206,6 +224,7 @@ export default {
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     meedsBalance: state => state.meedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,

@@ -34,6 +34,7 @@
     <link rel="preload" href="./static/js/echarts.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/bignumber.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/ethers.umd.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
+    <link rel="preload" href="./static/js/jdenticon.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/deeds.js?_=<%=buildnumber%>" as="script" type="text/javascript">
 
     <link rel="preload" href="./static/images/meedsicon.png" as="image" type="image/png">
@@ -64,6 +65,7 @@
     <script src="./static/js/echarts.min.js?_=<%=buildnumber%>"></script>
     <script src="./static/js/bignumber.min.js?_=<%=buildnumber%>"></script>
     <script src="./static/js/ethers.umd.min.js?_=<%=buildnumber%>"></script>
+    <script src="./static/js/jdenticon.min.js?_=<%=buildnumber%>"></script>
     <script src="./static/js/deeds.js?_=<%=buildnumber%>"></script>
   </body>
 </html>

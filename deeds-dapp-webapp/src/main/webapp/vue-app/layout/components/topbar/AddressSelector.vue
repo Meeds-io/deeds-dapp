@@ -21,6 +21,7 @@
     <input
       ref="clipboardInput"
       v-model="address"
+      id="copyToClipboardInput"
       name="copyToClipboardInput"
       class="copyToClipboardInput"
       type="text">

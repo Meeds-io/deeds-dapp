@@ -40,7 +40,8 @@
         <v-img
           :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
-          max-width="57px" />
+          max-width="57px"
+          eager />
       </v-btn>
       <v-btn
         v-else-if="!hasMetamashConnectedAddress"
@@ -55,7 +56,8 @@
         <v-img
           :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
-          max-width="57px" />
+          max-width="57px"
+          eager />
       </v-btn>
       <v-btn
         v-else-if="!validNetwork"
@@ -70,7 +72,8 @@
         <v-img
           :src="`/${parentLocation}/static/images/metamask.svg`"
           max-height="57px"
-          max-width="57px" />
+          max-width="57px"
+          eager />
       </v-btn>
     </v-bottom-navigation>
   </div>

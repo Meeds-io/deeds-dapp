@@ -23,7 +23,8 @@
         max-height="64px"
         max-width="64px"
         :src="`/${parentLocation}/static/images/meeds.png`"
-        contain />
+        contain
+        eager />
       <div class="ps-2 pb-1">{{ $t('dao') }}</div>
       <v-chip
         v-if="isTestNetwork"

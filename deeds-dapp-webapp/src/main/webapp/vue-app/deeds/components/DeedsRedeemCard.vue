@@ -32,7 +32,8 @@
           min-width="215"
           width="100%"
           max-width="100%"
-          contain />
+          contain
+          eager />
         <v-icon
           v-else
           size="72"

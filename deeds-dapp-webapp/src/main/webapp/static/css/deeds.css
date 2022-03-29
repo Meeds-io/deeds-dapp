@@ -85,6 +85,11 @@ html {
   border: 0 !important;
 }
 
+.border-color {
+  border: 1px solid #e1e8ee;
+  box-shadow: 0 0 0 0 rgb(0 0 0 / 20%), 0px 0 0 0 rgb(0 0 0 / 14%), 0px 0 0 0 rgb(0 0 0 / 12%);
+}
+
 .v-btn--outlined.v-btn:before {
   bottom: -1px;
   left: -1px;
@@ -101,4 +106,14 @@ html {
   width:220px;
   border-radius:5px;
   box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.25);
+}
+
+.openSea-badge {
+  width:220px;
+  border-radius:5px;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.25);
+}
+
+.position-relative {
+  position: relative;
 }

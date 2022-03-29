@@ -37,7 +37,8 @@
           height="24"
           max-width="24"
           class="me-2"
-          contain />
+          contain
+          eager />
         <span class="text-capitalize">{{ $t('comingSoon') }}</span>
       </v-btn>
     </v-card-actions>

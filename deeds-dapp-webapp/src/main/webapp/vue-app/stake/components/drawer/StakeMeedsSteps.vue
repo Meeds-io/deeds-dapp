@@ -66,6 +66,7 @@
           <small>
             <deeds-number-format
               :value="stakedMeedsAmount"
+              :fractions="2"
               label="stakeMeedsEstimation"
               hide-zero />
           </small>
@@ -92,6 +93,7 @@
         <v-card-text>
           <deeds-number-format
             :value="meedsStakeAllowance"
+            :fractions="2"
             label="stakeMeedsDescription" />
           <v-text-field
             v-model="stakeAmount"
@@ -117,6 +119,7 @@
           <small>
             <deeds-number-format
               :value="stakedMeedsAmount"
+              :fractions="2"
               label="stakeMeedsEstimation"
               hide-zero />
           </small>

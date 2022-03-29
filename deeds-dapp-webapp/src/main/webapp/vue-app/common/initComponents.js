@@ -18,10 +18,12 @@
  */
 import Drawer from './components/Drawer.vue';
 import NumberFormat from './components/NumberFormat.vue';
+import ContractAddress from './components/ContractAddress.vue';
 
 const components = {
   'deeds-drawer': Drawer,
   'deeds-number-format': NumberFormat,
+  'deeds-contract-address': ContractAddress,
 };
 
 for (const key in components) {

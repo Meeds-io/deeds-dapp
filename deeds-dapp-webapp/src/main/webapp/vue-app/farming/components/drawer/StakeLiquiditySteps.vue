@@ -43,6 +43,7 @@
           <deeds-number-format
             :value="lpBalance"
             :label-params="{1: lpSymbol}"
+            :fractions="2"
             label="approveLPDescription"
             hide-zero />
           <v-text-field
@@ -90,6 +91,7 @@
           <deeds-number-format
             :value="lpAllowance"
             :label-params="{1: lpSymbol}"
+            :fractions="2"
             label="stakeLPDescription"
             hide-zero />
           <v-text-field

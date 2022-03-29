@@ -6,6 +6,7 @@
     "ethers": true,
     "BigNumber": true,
     "echarts": true,
-    "Vuex": true
+    "Vuex": true,
+    "jdenticon": true
   }
 }
