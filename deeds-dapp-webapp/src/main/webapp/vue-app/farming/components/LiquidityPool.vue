@@ -109,18 +109,29 @@
               {{ $t('totalHoldings') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingBalance > 0"
-                type="chip"
-                max-height="17"
-                tile />
-              <deeds-number-format v-else :value="lpBalanceOfTokenFactory">
-                <deeds-contract-address
-                  :address="lpAddress"
-                  :label="lpSymbol"
-                  :button-top="-2"
-                  token />
-              </deeds-number-format>
+              <template v-if="loadingBalance > 0">
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
+              </template>
+              <template v-else>
+                <deeds-number-format :value="lpBalanceOfTokenFactory">
+                  <deeds-contract-address
+                    :address="lpAddress"
+                    :label="lpSymbol"
+                    :button-top="-2"
+                    token />
+                </deeds-number-format>
+                <deeds-number-format
+                  :value="stakedEquivalentMeedsBalanceOfPool"
+                  class="caption"
+                  currency />
+              </template>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -201,11 +212,16 @@
               {{ $t('earned') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <v-skeleton-loader
-                v-if="loadingUserReward"
-                type="chip"
-                max-height="17"
-                tile />
+              <template v-if="loadingUserReward">
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
+              </template>
               <span v-else-if="noMeedSupplyForLPRemaining">
                 0 <deeds-contract-address
                   :address="meedAddress"
@@ -213,16 +229,21 @@
                   :button-top="-2"
                   token />
               </span>
-              <deeds-number-format
-                v-else-if="rewardsStarted"
-                :value="meedsPendingUserReward"
-                :fractions="2">
-                <deeds-contract-address
-                  :address="meedAddress"
-                  label="MEED"
-                  :button-top="-2"
-                  token />
-              </deeds-number-format>
+              <template v-else-if="rewardsStarted">
+                <deeds-number-format
+                  :value="meedsPendingUserReward"
+                  :fractions="2">
+                  <deeds-contract-address
+                    :address="meedAddress"
+                    label="MEED"
+                    :button-top="-2"
+                    token />
+                </deeds-number-format>
+                <deeds-number-format
+                  :value="meedsPendingUserReward"
+                  class="caption"
+                  currency />
+              </template>
               <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <div

@@ -32,18 +32,29 @@
             {{ $t('totalHoldings') }}
           </v-list-item-title>
           <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="xMeedsTotalSupply === null"
-              type="chip"
-              max-height="17"
-              tile />
-            <deeds-number-format v-else :value="xMeedsTotalSupply">
-              <deeds-contract-address
-                :address="xMeedAddress"
-                :button-top="-2"
-                label="xMEED"
-                token />
-            </deeds-number-format>
+            <template v-if="xMeedsTotalSupply === null">
+              <v-skeleton-loader
+                type="chip"
+                max-height="17"
+                tile />
+              <v-skeleton-loader
+                type="chip"
+                max-height="17"
+                tile />
+            </template>
+            <template v-else>
+              <deeds-number-format :value="xMeedsTotalSupply">
+                <deeds-contract-address
+                  :address="xMeedAddress"
+                  :button-top="-2"
+                  label="xMEED"
+                  token />
+              </deeds-number-format>
+              <deeds-number-format
+                :value="meedsTotalBalanceOfXMeeds"
+                class="caption"
+                currency />
+            </template>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -132,9 +143,19 @@ export default {
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     pointsRewardsStartTime: state => state.pointsRewardsStartTime,
+    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
+    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     now: state => state.now,
     rewardsStarted() {
       return this.pointsRewardsStartTime < this.now;
+    },
+    meedsTotalBalanceOfXMeeds() {
+      const meedsPendingBalanceOfXMeeds = this.maxMeedSupplyReached && '0' || this.meedsPendingBalanceOfXMeeds;
+      return this.meedsBalanceOfXMeeds
+        && this.meedsPendingBalanceOfXMeeds
+        && this.meedsBalanceOfXMeeds.add(meedsPendingBalanceOfXMeeds)
+        || 0;
     },
   }),
 };

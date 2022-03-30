@@ -93,5 +93,10 @@ export default {
       }
     },
   }),
+  created() {
+    if (!this.meedPrice && this.currency) {
+      this.$store.commit('loadMeedPrice');
+    }
+  },
 };
 </script>

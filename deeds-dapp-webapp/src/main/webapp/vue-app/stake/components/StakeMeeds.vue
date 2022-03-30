@@ -83,16 +83,21 @@
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
-        <v-list-item-content>
+        <v-list-item-content class="pb-0">
           <v-list-item-title>
             {{ $t('totalHoldings') }}
           </v-list-item-title>
           <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="meedsBalanceOfXMeeds === null || meedsPendingBalanceOfXMeeds == null"
-              type="chip"
-              max-height="17"
-              tile />
+            <template v-if="meedsBalanceOfXMeeds === null || meedsPendingBalanceOfXMeeds == null">
+              <v-skeleton-loader
+                type="chip"
+                max-height="17"
+                tile />
+              <v-skeleton-loader
+                type="chip"
+                max-height="17"
+                tile />
+            </template>
             <v-tooltip v-else bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
@@ -105,6 +110,10 @@
                       label="MEED"
                       token />
                   </deeds-number-format>
+                  <deeds-number-format
+                    :value="meedsTotalBalanceOfXMeeds"
+                    class="caption"
+                    currency />
                 </div>
               </template>
               <ul>

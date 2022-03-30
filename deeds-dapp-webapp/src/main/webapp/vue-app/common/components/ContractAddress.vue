@@ -23,7 +23,7 @@
     </template>
     <v-card>
       <v-list-item class="px-2">
-        <v-list-item-avatar class="elevation-1 pt-1">
+        <v-list-item-avatar class="elevation-1">
           <svg
             ref="avatar"
             :data-jdenticon-value="address"></svg>
