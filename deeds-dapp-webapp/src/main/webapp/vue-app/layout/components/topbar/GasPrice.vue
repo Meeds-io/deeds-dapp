@@ -1,0 +1,42 @@
+<template>
+  <v-tooltip bottom>
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn
+        v-show="address"
+        name="gasPriceButton"
+        outlined
+        text
+        plain
+        class="px-2"
+        v-bind="attrs"
+        v-on="on"
+        @click="refreshGasPrice">
+        <v-icon color="grey" class="me-1">mdi-gas-station</v-icon>
+        <div v-if="floorGasPriceGwei">{{ floorGasPriceGwei }} GWEI</div>
+        <v-skeleton-loader
+          v-else
+          type="chip"
+          max-height="17"
+          max-width="55"
+          tile />
+      </v-btn>
+    </template>
+    <span>{{ $t('gasPrice') }}</span>
+  </v-tooltip>
+</template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    address: state => state.address,
+    gasPriceGwei: state => state.gasPriceGwei,
+    floorGasPriceGwei() {
+      return parseInt(this.gasPriceGwei);
+    },
+  }),
+  methods: {
+    refreshGasPrice() {
+      this.$store.commit('loadGasPrice');
+    },
+  },
+};
+</script>

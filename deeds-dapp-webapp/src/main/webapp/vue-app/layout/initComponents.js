@@ -22,6 +22,7 @@ import Topbar from './components/Topbar.vue';
 import TopbarAddressSelector from './components/topbar/AddressSelector.vue';
 import TopbarFiatCurrencySelector from './components/topbar/FiatCurrencySelector.vue';
 import TopbarLanguageSelector from './components/topbar/LanguageSelector.vue';
+import TopbarGasPrice from './components/topbar/GasPrice.vue';
 // Metamask connection button components
 import Metamask from './components/Metamask.vue';
 // Navbar components
@@ -36,6 +37,7 @@ const components = {
   'deeds-topbar-address-selector': TopbarAddressSelector,
   'deeds-topbar-fiat-currency-selector': TopbarFiatCurrencySelector,
   'deeds-topbar-language-selector': TopbarLanguageSelector,
+  'deeds-topbar-gas-price': TopbarGasPrice,
   'deeds-metamask': Metamask,
   'deeds-navbar': Navbar,
   'deeds-page': Page,

@@ -625,32 +625,45 @@ const store = new Vuex.Store({
   }
 });
 
-if (isMetamaskInstalled) {
-  if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
-    window.ethereum._metamask.isUnlocked().then(unlocked => {
-      if (unlocked) {
-        store.commit('refreshMetamaskState');
+
+function initialize() {
+  if (ethUtils.isMetamaskInstalled()) {
+    store.commit('refreshMetamaskState');
+
+    if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
+      window.ethereum._metamask.isUnlocked().then(unlocked => {
+        if (!unlocked) {
+          store.commit('loaded');
+        }
+      });
+    }
+
+    window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
+    window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
+    window.ethereum.on('accountsChanged', () => {
+      if (authentication.hasAuthenticatedLogin()) {
+        authentication.logout().finally(() => window.location.reload());
       } else {
-        store.commit('loaded');
+        window.location.reload();
       }
     });
+    window.ethereum.on('chainChanged', () => window.location.reload());
+  
+    window.setInterval(() => store.commit('loadGasPrice'), 12000);
+  } else {
+    store.commit('loaded');
+
+    window.addEventListener('ethereum#initialized', initialize, {
+      once: true,
+    });
+
+    // If the event is not dispatched by the end of the timeout,
+    // the user probably doesn't have MetaMask installed.
+    setTimeout(initialize, 3000); // 3 seconds
   }
-
-  window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
-  window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
-  window.ethereum.on('accountsChanged', () => {
-    if (authentication.hasAuthenticatedLogin()) {
-      authentication.logout().finally(() => window.location.reload());
-    } else {
-      window.location.reload();
-    }
-  });
-  window.ethereum.on('chainChanged', () => window.location.reload());
-
-  window.setInterval(() => store.commit('loadGasPrice'), 30000);
-} else {
-  store.commit('loaded');
 }
+
+initialize();
 
 new Vue({
   el: '#deedsApp',
