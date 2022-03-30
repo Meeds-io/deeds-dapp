@@ -32,7 +32,7 @@
       :items="nftsList"
       :hide-default-header="!isMobile"
       :disable-sort="isMobile"
-      :locale="language"
+      :no-data-text="$t('noDeedYet')"
       item-key="updateDate"
       disable-pagination
       disable-filtering

@@ -26,9 +26,9 @@
         </div>
         <deeds-earned-points class="ms-sm-auto me-sm-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
       </div>
-      <deeds-redeem class="mb-8" />
     </template>
-    <deeds-owned />
+    <deeds-owned v-if="!noCityLeft" />
+    <deeds-redeem class="mb-8" />
     <deeds-trade />
   </div>
 </template>
