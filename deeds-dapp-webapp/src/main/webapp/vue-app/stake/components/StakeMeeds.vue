@@ -181,7 +181,7 @@
               type="chip"
               max-height="17"
               tile />
-            <v-tooltip v-else-if="pendingMeedRewardsBalance" bottom>
+            <v-tooltip v-else-if="equivalentMeedBalance" bottom>
               <template v-slot:activator="{ on, attrs }">
                 <div
                   v-bind="attrs"
@@ -195,9 +195,9 @@
                 </div>
               </template>
               <deeds-number-format
-                :value="pendingMeedRewardsBalance"
+                :value="equivalentMeedBalance"
                 :fractions="2"
-                label="xMeedPendingWalletRewards" />
+                label="equivalentXMeedBalanceInMeed" />
             </v-tooltip>
             <template v-else>
               {{ xMeedsBalanceNoDecimals }}
@@ -280,9 +280,9 @@ export default {
     apyLoading() {
       return this.rewardsStarted && (this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null);
     },
-    pendingMeedRewardsBalance() {
+    equivalentMeedBalance() {
       if (this.xMeedsTotalSupply && this.xMeedsBalance && this.meedsTotalBalanceOfXMeeds && !this.xMeedsTotalSupply.isZero()) {
-        return this.xMeedsBalance.mul(this.meedsTotalBalanceOfXMeeds).div(this.xMeedsTotalSupply).sub(this.xMeedsBalance);
+        return this.xMeedsBalance.mul(this.meedsTotalBalanceOfXMeeds).div(this.xMeedsTotalSupply);
       } else {
         return 0;
       }
