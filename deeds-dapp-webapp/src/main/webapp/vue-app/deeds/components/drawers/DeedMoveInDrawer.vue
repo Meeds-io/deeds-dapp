@@ -65,7 +65,7 @@
               dense
               @focus="editEmail"
               @blur="cancelEditEmail">
-              <template v-if="transactionHash" v-slot:append-outer>
+              <template v-if="transactionHash" #append-outer>
                 <v-slide-x-reverse-transition mode="out-in">
                   <v-btn
                     ref="emailEditButton"

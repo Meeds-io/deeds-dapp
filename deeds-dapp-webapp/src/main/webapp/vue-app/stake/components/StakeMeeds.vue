@@ -38,7 +38,7 @@
               max-height="17"
               tile />
             <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
                   v-bind="attrs"
@@ -99,7 +99,7 @@
                 tile />
             </template>
             <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <div
                   v-bind="attrs"
                   v-on="on">
@@ -182,7 +182,7 @@
               max-height="17"
               tile />
             <v-tooltip v-else-if="equivalentMeedBalance" bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <div
                   v-bind="attrs"
                   v-on="on">

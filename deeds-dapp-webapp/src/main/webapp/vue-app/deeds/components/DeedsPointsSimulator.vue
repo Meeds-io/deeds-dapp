@@ -33,7 +33,7 @@
         max="999999"
         class="align-center"
         hide-details>
-        <template v-slot:append>
+        <template #append>
           <div class="font-weight-bold d-flex flex-nowrap">
             <v-text-field
               v-model="xMeedAmount"

@@ -2,6 +2,9 @@
   "extends": [
     "eslint-config-meedsio"
   ],
+  "rules": {
+    "vue/multi-word-component-names": "off"
+  },
   "globals": {
     "ethers": true,
     "BigNumber": true,

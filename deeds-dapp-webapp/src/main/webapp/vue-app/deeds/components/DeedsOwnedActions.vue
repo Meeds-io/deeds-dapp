@@ -20,7 +20,7 @@
 -->
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <v-btn
         :aria-label="$t('deedTenantActions', {0: nftId})"
         name="deedTenantCommands"
@@ -43,7 +43,7 @@
           </v-list-item>
         </template>
         <v-tooltip v-else bottom>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-list-item
               v-bind="attrs"
               v-on="on"

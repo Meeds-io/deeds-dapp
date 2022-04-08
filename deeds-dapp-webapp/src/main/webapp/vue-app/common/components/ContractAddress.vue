@@ -6,7 +6,7 @@
     close-delay="500"
     open-on-hover
     offset-x>
-    <template v-slot:activator="{ on, attrs }">
+    <template #activator="{ on, attrs }">
       <span class="d-flex-inline position-relative pe-8">
         <span v-if="label">{{ label }}</span>
         <v-btn

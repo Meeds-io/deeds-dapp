@@ -37,7 +37,7 @@
       disable-pagination
       disable-filtering
       hide-default-footer>
-      <template v-slot:item.id="{item}">
+      <template #[`item.id`]="{item}">
         <v-btn
           :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}`"
           name="nftEtherscanLink"
@@ -51,7 +51,7 @@
           #{{ item.id }}
         </v-btn>
       </template>
-      <template v-slot:item.status="{item}">
+      <template #[`item.status`]="{item}">
         <a
           v-if="item.status === 'STARTED'"
           :href="item.link"
@@ -63,7 +63,7 @@
           {{ $t('vacant') }}
         </div>
         <v-tooltip v-else-if="item.status === 'loading'" bottom>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-progress-circular
               size="24"
               color="primary"
@@ -74,9 +74,9 @@
           <span>{{ item.statusLabel || '' }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:item.earnedRewards="{item}">
+      <template #[`item.earnedRewards`]="{item}">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <div
               v-bind="attrs"
               v-on="on">
@@ -86,7 +86,7 @@
           <span>{{ item.hasEarnedMeeds && $t('tooltipClaimRewardedMeeds', {0: item.earnedRewardsNoDecimals}) || $t('tooltipClaimReward') }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:item.actions="{item}">
+      <template #[`item.actions`]="{item}">
         <deeds-owned-actions
           :nft="item"
           :authenticated="authenticated"

@@ -76,7 +76,7 @@
                   class="my-auto" />
               </small>
               <v-tooltip v-else bottom>
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <div
                     class="d-flex flex-nowrap ms-2"
                     v-bind="attrs"
@@ -245,7 +245,7 @@
                   currency />
               </template>
               <v-tooltip v-else bottom>
-                <template v-slot:activator="{ on, attrs }">
+                <template #activator="{ on, attrs }">
                   <div
                     v-bind="attrs"
                     v-on="on">

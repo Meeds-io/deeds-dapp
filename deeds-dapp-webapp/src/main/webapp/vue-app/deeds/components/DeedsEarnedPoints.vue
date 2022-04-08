@@ -103,7 +103,7 @@
               {{ $t('points') }}
             </deeds-number-format>
             <v-tooltip v-else bottom>
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
                   v-bind="attrs"

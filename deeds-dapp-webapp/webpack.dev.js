@@ -1,5 +1,5 @@
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const webpackCommonConfig = require('./webpack.common.js');
 
 // the display name of the war
@@ -12,6 +12,7 @@ let config = merge(webpackCommonConfig, {
     path: path.resolve(`${serverPath}/webapps/${app}/`),
     filename: 'static/js/[name].js',
   },
+  mode: 'development',
   devtool: 'inline-source-map'
 });
 
