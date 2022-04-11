@@ -144,7 +144,7 @@ export default {
     this.$deedMetadata.getCardInfo(this.cityIndex, this.cardTypeIndex)
       .then(cardInfo => {
         this.cardDescription = cardInfo.description;
-        this.cardImage = cardInfo.image;
+        this.cardImage = `${cardInfo.image}?_=3299479372153`;
       });
   },
   methods: {
