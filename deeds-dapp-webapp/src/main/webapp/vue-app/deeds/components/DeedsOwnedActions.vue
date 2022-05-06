@@ -93,7 +93,6 @@ export default {
     openSeaBaseLink: state => state.openSeaBaseLink,
     networkId: state => state.networkId,
     address: state => state.address,
-    nftAddress: state => state.nftAddress,
     provider: state => state.provider,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     nftId() {
@@ -117,6 +116,9 @@ export default {
       this.$root.$emit('deeds-move-out-drawer', this.nftId);
     },
     checkAuthentication() {
+      if (!this.tenantProvisioningContract) {
+        return;
+      }
       this.$tenantManagement.loadLastCommand(this.nftId)
         .catch(() => this.$emit('logout'));
     },

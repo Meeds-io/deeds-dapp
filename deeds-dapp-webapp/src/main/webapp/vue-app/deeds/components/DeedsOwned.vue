@@ -39,7 +39,7 @@
       hide-default-footer>
       <template #[`item.id`]="{item}">
         <v-btn
-          :href="`${etherscanBaseLink}/token/${nftAddress}?a=${item.id}`"
+          :href="`${etherscanBaseLink}/nft/${deedAddress}/${item.id}`"
           name="nftEtherscanLink"
           target="_blank"
           rel="nofollow noreferrer noopener"
@@ -108,7 +108,7 @@ export default {
     language: state => state.language,
     etherscanBaseLink: state => state.etherscanBaseLink,
     openSeaBaseLink: state => state.openSeaBaseLink,
-    nftAddress: state => state.nftAddress,
+    deedAddress: state => state.deedAddress,
     ownedNfts: state => state.ownedNfts,
     address: state => state.address,
     provider: state => state.provider,
@@ -223,7 +223,7 @@ export default {
         .finally(() => this.refreshAuthentication());
     },
     reloadStatus() {
-      if (this.tenantProvisioningContract && this.ownedNfts && this.ownedNfts.length) {
+      if (this.ownedNfts && this.ownedNfts.length) {
         const promises = [];
         this.ownedNfts.forEach(ownedNft => {
           if (!this.nfts[ownedNft.id]) {
@@ -246,6 +246,10 @@ export default {
       }
     },
     loadStatus(nft) {
+      if (!this.tenantProvisioningContract) {
+        nft.status = 'STOPPED';
+        return;
+      }
       nft.status = 'loading';
       return this.tenantProvisioningContract.isProvisioningManager(this.address, nft.id)
         .then(provisioningManager => {
