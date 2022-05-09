@@ -29,15 +29,14 @@
           class="mt-auto mb-1" />
       </small>
     </flex>
-    <v-card-text class="ps-0">
-      {{ $t('deedPointsIntroduction') }}
-    </v-card-text>
+    <v-card-text class="ps-0" v-html="$t('deedPointsIntroduction', {0: whitepaperLink})" />
   </v-card>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
     pointsRewardsStartTime: state => state.pointsRewardsStartTime,
+    whitepaperLink: state => state.whitepaperLink,
     now: state => state.now,
     rewardsStarted() {
       return this.pointsRewardsStartTime < this.now;
