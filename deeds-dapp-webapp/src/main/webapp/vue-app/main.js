@@ -259,18 +259,18 @@ const store = new Vuex.Store({
               state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
               state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
-              state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
+
               state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
+              state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
+              state.tenantProvisioningAddress = null;
 
               // TODO replace with real addresses
               // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
 
-              state.openSeaCollectionLink = null;
-              state.tenantProvisioningAddress = null;
-
               state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
               // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
+              state.openSeaCollectionLink = 'https://opensea.io/collection/meeds-dao';
               state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
             } else if (state.networkId === 4) {
               state.validNetwork = true;
