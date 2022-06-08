@@ -2,6 +2,7 @@
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
+  String extendedHtmlContent = Utils.getExtendedHtmlContent();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,10 +12,6 @@
     <title>Meeds DAO</title>
     <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval';
-                                                        style-src 'self';
-                                                        font-src 'self';
-                                                        img-src 'self' https://storage.googleapis.com/opensea-static/ *.meeds.io">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>">
@@ -67,5 +64,6 @@
     <script src="./static/js/ethers.umd.min.js?_=<%=buildnumber%>"></script>
     <script src="./static/js/jdenticon.min.js?_=<%=buildnumber%>"></script>
     <script src="./static/js/deeds.js?_=<%=buildnumber%>"></script>
+    <%=extendedHtmlContent == null ? "" : extendedHtmlContent%>
   </body>
 </html>
