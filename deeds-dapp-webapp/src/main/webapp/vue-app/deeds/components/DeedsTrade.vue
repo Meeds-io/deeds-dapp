@@ -29,7 +29,7 @@
         :title="$t('sellOnOpenSea')"
         :target="openSeaTarget">
         <img
-          src="https://storage.googleapis.com/opensea-static/Logomark/Badge%20-%20Available%20On%20-%20Light.png"
+          :src="`/${parentLocation}/static/images/OpenSea-Badge.png`"
           class="openSea-badge"
           alt="Available on OpenSea">
       </a>
@@ -40,6 +40,7 @@
 export default {
   computed: Vuex.mapState({
     openSeaCollectionLink: state => state.openSeaCollectionLink,
+    parentLocation: state => state.parentLocation,
     openSeaLink() {
       return this.openSeaCollectionLink || 'javascript:void(0)';
     },
