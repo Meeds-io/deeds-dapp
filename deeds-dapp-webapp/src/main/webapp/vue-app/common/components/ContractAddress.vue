@@ -99,7 +99,9 @@ export default {
   },
   methods: {
     copyToClipboard() {
-      document.getElementById('copyToClipboardInput').select();
+      const copyToClipboardInput = document.getElementById('copyToClipboardInput');
+      copyToClipboardInput.value = this.address;
+      copyToClipboardInput.select();
       if (document.execCommand) {
         try {
           document.execCommand('copy');
