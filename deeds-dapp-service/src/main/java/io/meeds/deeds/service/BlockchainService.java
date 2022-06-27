@@ -15,24 +15,35 @@
  */
 package io.meeds.deeds.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
 
 @Component
 public class BlockchainService {
 
-  @Autowired
   private TenantProvisioningStrategy tenantProvisioningStrategy;
 
-  @Autowired
   private Deed                       deed;
+
+  private MeedsToken                 token;
+
+  public BlockchainService(TenantProvisioningStrategy tenantProvisioningStrategy,
+                           Deed deed,
+                           @Qualifier("mainMeedToken")
+                           MeedsToken token) {
+    this.tenantProvisioningStrategy = tenantProvisioningStrategy;
+    this.deed = deed;
+    this.token = token;
+  }
 
   /**
    * Retrieves from blockchain whether an address is the provisioning manager of
@@ -98,6 +109,15 @@ public class BlockchainService {
       } else {
         throw new IllegalStateException("Error retrieving information 'getDeedCityIndex' from Blockchain", e);
       }
+    }
+  }
+
+  public BigDecimal totalSupply() {
+    try {
+      BigInteger totalsupply = token.totalSupply().send();
+      return new BigDecimal(totalsupply).divide(BigDecimal.valueOf(10).pow(18));
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving information 'totalSupply' from Blockchain", e);
     }
   }
 

@@ -17,7 +17,9 @@ package io.meeds.deeds.blockchain;
 
 import java.math.BigInteger;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.abi.datatypes.Address;
@@ -27,6 +29,7 @@ import org.web3j.tx.ReadonlyTransactionManager;
 import org.web3j.tx.gas.StaticGasProvider;
 
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
 
 @Configuration
@@ -35,31 +38,77 @@ public class BlockchainConfiguration {
   @Autowired
   private BlockchainConfigurationProperties properties;
 
-  @Bean
-  public Web3j getWeb3j() {
+  @Bean("customNetwork")
+  public Web3j getCustomNetworkWeb3j() {
     return Web3j.build(new HttpService(properties.getNetworkUrl()));
   }
 
+  @Bean("mainNetwork")
+  public Web3j getMainnetNetworkWeb3j(
+                                      @Qualifier("customNetwork")
+                                      Web3j web3j) {
+    if (StringUtils.equals(properties.getMainnetNetworkUrl(), properties.getNetworkUrl())) {
+      return web3j;
+    } else {
+      return Web3j.build(new HttpService(properties.getMainnetNetworkUrl()));
+    }
+  }
+
+  @Bean("mainPolygonNetwork")
+  public Web3j getPolygonNetworkWeb3j() {
+    return Web3j.build(new HttpService(properties.getPolygonNetworkUrl()));
+  }
+
   @Bean
-  public TenantProvisioningStrategy getTenantProvisioningStrategy(Web3j web3j) {
+  public TenantProvisioningStrategy getTenantProvisioningStrategy(
+                                                                  @Qualifier("customNetwork")
+                                                                  Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
     return TenantProvisioningStrategy.load(properties.getTenantProvisioningAddress(),
                                            web3j,
-                                           new ReadonlyTransactionManager(getWeb3j(),
+                                           new ReadonlyTransactionManager(web3j,
                                                                           Address.DEFAULT.toString()),
                                            new StaticGasProvider(gasPrice, gasLimit));
   }
 
   @Bean
-  public Deed getDeed(Web3j web3j) {
+  public Deed getDeed(
+                      @Qualifier("customNetwork")
+                      Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
     return Deed.load(properties.getDeedAddress(),
                      web3j,
-                     new ReadonlyTransactionManager(getWeb3j(),
+                     new ReadonlyTransactionManager(web3j,
                                                     Address.DEFAULT.toString()),
                      new StaticGasProvider(gasPrice, gasLimit));
+  }
+
+  @Bean("mainMeedToken")
+  public MeedsToken getMainnetMeedToken(
+                                        @Qualifier("mainNetwork")
+                                        Web3j web3j) {
+    BigInteger gasPrice = BigInteger.valueOf(20000000000l);
+    BigInteger gasLimit = BigInteger.valueOf(300000l);
+    return MeedsToken.load(properties.getMainnetMeedAddress(),
+                           web3j,
+                           new ReadonlyTransactionManager(web3j,
+                                                          Address.DEFAULT.toString()),
+                           new StaticGasProvider(gasPrice, gasLimit));
+  }
+
+  @Bean("polygonNetwork")
+  public MeedsToken getPolygonMeedToken(
+                                        @Qualifier("mainPolygonNetwork")
+                                        Web3j web3j) {
+    BigInteger gasPrice = BigInteger.valueOf(20000000000l);
+    BigInteger gasLimit = BigInteger.valueOf(300000l);
+    return MeedsToken.load(properties.getPolygonMeedAddress(),
+                           web3j,
+                           new ReadonlyTransactionManager(web3j,
+                                                          Address.DEFAULT.toString()),
+                           new StaticGasProvider(gasPrice, gasLimit));
   }
 
 }
