@@ -17,7 +17,6 @@ package io.meeds.deeds.blockchain;
 
 import java.math.BigInteger;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -38,30 +37,19 @@ public class BlockchainConfiguration {
   @Autowired
   private BlockchainConfigurationProperties properties;
 
-  @Bean("customNetwork")
-  public Web3j getCustomNetworkWeb3j() {
+  @Bean("ethereumNetwork")
+  public Web3j getMainnetNetworkWeb3j() {
     return Web3j.build(new HttpService(properties.getNetworkUrl()));
   }
 
-  @Bean("mainNetwork")
-  public Web3j getMainnetNetworkWeb3j(
-                                      @Qualifier("customNetwork")
-                                      Web3j web3j) {
-    if (StringUtils.equals(properties.getMainnetNetworkUrl(), properties.getNetworkUrl())) {
-      return web3j;
-    } else {
-      return Web3j.build(new HttpService(properties.getMainnetNetworkUrl()));
-    }
-  }
-
-  @Bean("mainPolygonNetwork")
+  @Bean("polygonNetwork")
   public Web3j getPolygonNetworkWeb3j() {
     return Web3j.build(new HttpService(properties.getPolygonNetworkUrl()));
   }
 
   @Bean
   public TenantProvisioningStrategy getTenantProvisioningStrategy(
-                                                                  @Qualifier("customNetwork")
+                                                                  @Qualifier("ethereumNetwork")
                                                                   Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
@@ -74,7 +62,7 @@ public class BlockchainConfiguration {
 
   @Bean
   public Deed getDeed(
-                      @Qualifier("customNetwork")
+                      @Qualifier("ethereumNetwork")
                       Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
@@ -85,9 +73,9 @@ public class BlockchainConfiguration {
                      new StaticGasProvider(gasPrice, gasLimit));
   }
 
-  @Bean("mainMeedToken")
+  @Bean("ethereumMeedToken")
   public MeedsToken getMainnetMeedToken(
-                                        @Qualifier("mainNetwork")
+                                        @Qualifier("ethereumNetwork")
                                         Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
@@ -98,9 +86,9 @@ public class BlockchainConfiguration {
                            new StaticGasProvider(gasPrice, gasLimit));
   }
 
-  @Bean("polygonNetwork")
+  @Bean("polygonMeedToken")
   public MeedsToken getPolygonMeedToken(
-                                        @Qualifier("mainPolygonNetwork")
+                                        @Qualifier("polygonNetwork")
                                         Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);

@@ -29,8 +29,6 @@ public class BlockchainConfigurationProperties {
 
   private String networkUrl;
 
-  private String mainnetNetworkUrl;
-
   private String polygonNetworkUrl;
 
   private String tenantProvisioningAddress;

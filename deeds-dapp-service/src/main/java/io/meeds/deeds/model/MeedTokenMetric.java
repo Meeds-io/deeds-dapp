@@ -28,15 +28,19 @@ import lombok.NoArgsConstructor;
 )
 public class MeedTokenMetric {
 
+  public MeedTokenMetric(LocalDate date) {
+    this.date = date;
+  }
+
   @Id
   @Field(type = FieldType.Date, format = DateFormat.year_month_day)
   private LocalDate               date;
 
   private BigDecimal              totalSupply;
 
-  private Map<String, BigDecimal> lockedValues;
+  private Map<String, BigDecimal> lockedBalances;
 
-  private Map<String, BigDecimal> reserveValues;
+  private Map<String, BigDecimal> reserveBalances;
 
   private BigDecimal              circulatingSupply;
 

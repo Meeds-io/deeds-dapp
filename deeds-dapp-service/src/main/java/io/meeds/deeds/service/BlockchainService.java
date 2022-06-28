@@ -17,9 +17,11 @@ package io.meeds.deeds.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.MeedsToken;
@@ -32,15 +34,20 @@ public class BlockchainService {
 
   private Deed                       deed;
 
-  private MeedsToken                 token;
+  private MeedsToken                 ethereumToken;
+
+  private MeedsToken                 polygonToken;
 
   public BlockchainService(TenantProvisioningStrategy tenantProvisioningStrategy,
                            Deed deed,
-                           @Qualifier("mainMeedToken")
-                           MeedsToken token) {
+                           @Qualifier("ethereumMeedToken")
+                           MeedsToken ethereumToken,
+                           @Qualifier("polygonMeedToken")
+                           MeedsToken polygonToken) {
     this.tenantProvisioningStrategy = tenantProvisioningStrategy;
     this.deed = deed;
-    this.token = token;
+    this.ethereumToken = ethereumToken;
+    this.polygonToken = polygonToken;
   }
 
   /**
@@ -112,19 +119,30 @@ public class BlockchainService {
 
   public BigDecimal totalSupply() {
     try {
-      BigInteger totalsupply = token.totalSupply().send();
+      BigInteger totalsupply = ethereumToken.totalSupply().send();
       return new BigDecimal(totalsupply).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving information 'totalSupply' from Blockchain", e);
     }
   }
 
-  public BigDecimal balanceOf(String address) {
+  public BigDecimal balanceOfOnEthereum(String address) {
     try {
-      BigInteger balanceof = token.balanceOf(address).send();
+      BigInteger balanceof = ethereumToken.balanceOf(address).send();
       return new BigDecimal(balanceof).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'balanceOf' from Blockchain", e);
+      throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' on Ethereum Blockchain",
+                                      e);
+    }
+  }
+
+  public BigDecimal balanceOfOnPolygon(String address) {
+    try {
+      BigInteger balanceof = polygonToken.balanceOf(address).send();
+      return new BigDecimal(balanceof).divide(BigDecimal.valueOf(10).pow(18));
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' from Polygon Blockchain",
+                                      e);
     }
   }
 

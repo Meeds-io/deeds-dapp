@@ -17,141 +17,118 @@ package io.meeds.deeds.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @Component
 public class CirculatingSupplyService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
+  @Value(
+    "#{'${meeds.blockchain.reserveValueEthereumAddresses:0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853}'.split(',')}"
+  )
+  private List<String>               reserveEthereumAddresses;
 
-	private static final LocalDate         CIRCULATING_SUPPLY_DATE            = LocalDate.now();
+  @Value(
+    "#{'${meeds.blockchain.reserveValuePolygonAddresses:}'.split(',')}"
+  )
+  private List<String>               reservePolygonAddresses;
 
-	private static final String xMEEDS_TOKEN_ADDRESS = "0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4";
+  @Value(
+    "#{'${meeds.blockchain.lockedValueEthereumAddresses:0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070}'.split(',')}"
+  )
+  private List<String>               lockedEthereumAddresses;
 
-	private static final String SUSHIPOOL_TOKEN_ADDRESS = "0x960Bd61D0b960B107fF5309A2DCceD4705567070";
+  @Value("#{'${meeds.blockchain.lockedValuePolygonAddresses:0x6acA77CF3BaB0C4E8210A09B57B07854a995289a}'.split(',')}")
+  private List<String>               lockedPolygonAddresses;
 
-	private static final String COMETHSWAP_TOKEN_ADDRESS = "0x6acA77CF3BaB0C4E8210A09B57B07854a995289a";
+  @Autowired(required = false)
+  private BlockchainService          blockchainService;
 
-	private static final String VESTING_TOKEN_ADDRESS = "0x440701Ca5817b5847438da2EC2cA3b9fdBF37DFa";
+  @Autowired
+  private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
-	private static final String USERS_RESERVES ="0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655";
+  private MeedTokenMetric            recentMetric;
 
-	private static final String BUILDERS_RESERVES ="0x8f4660498E79c771f93316f09da98E1eBF94c576";
+  /**
+   * Retrieves list of total circulating Meeds supply from adding total Meeds
+   * supply, total Meeds reserves and total Meeds locked tokens
+   * 
+   * @return
+   */
+  public BigDecimal getCirculatingSupply() {
+    if (recentMetric == null) {
+      recentMetric = getTodayMetric();
+      if (recentMetric == null) {
+        recentMetric = retriveCirculatingSupply();
+      }
+    }
+    return recentMetric.getCirculatingSupply();
+  }
 
-	private static final String INVESTORS_RESERVES ="0x70CAd5d439591Ea7f496B69DcB22521685015853";
+  private MeedTokenMetric retriveCirculatingSupply() {
+    MeedTokenMetric metric = getTodayMetric();
+    if (metric == null) {
+      metric = new MeedTokenMetric(getTodayId());
+    }
+    BigDecimal totalSupply = blockchainService.totalSupply();
+    metric.setTotalSupply(totalSupply);
 
-	private static final Map<String,BigDecimal> lockedValues = new HashMap<>() ;
+    Map<String, BigDecimal> reserveBalances = getReserveBalances();
+    metric.setReserveBalances(reserveBalances);
 
-	private static final Map<String,BigDecimal> totalReserves = new HashMap<>() ;
-	@Autowired(required = false)
-	private BlockchainService blockchainService;
+    Map<String, BigDecimal> lockedBalances = getLockedBalances();
+    metric.setLockedBalances(lockedBalances);
 
-	@Autowired
-	private MeedTokenMetricsRepository meedTokenMetricsRepository;
+    BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+    BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+    BigDecimal circualtingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
+    metric.setCirculatingSupply(circualtingSupply);
 
-	private BigDecimal getVestedMeeds() {
-		try {
-			return blockchainService.balanceOf(VESTING_TOKEN_ADDRESS);
-		} catch (Exception e) {
-			LOG.warn("Error retrieving contract vested supply", e);
-		}
-		return null;
-	}
+    meedTokenMetricsRepository.save(metric);
+    return metric;
+  }
 
-	private BigDecimal getXMeedsStakes() {
-		try {
-			return blockchainService.balanceOf(xMEEDS_TOKEN_ADDRESS);
-		} catch (Exception e) {
-			LOG.warn("Error retrieving contract XMeedsStakes supply", e);
-		}
-		return null;
-	}
+  private Map<String, BigDecimal> getReserveBalances() {
+    Map<String, BigDecimal> reserveBalances = new HashMap<>();
+    reserveEthereumAddresses.stream().forEach(address -> {
+      BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+      reserveBalances.put(address.toLowerCase(), balance);
+    });
+    reservePolygonAddresses.stream().forEach(address -> {
+      BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+      reserveBalances.put(address.toLowerCase(), balance);
+    });
+    return reserveBalances;
+  }
 
-	private BigDecimal getSushiPoolMeeds() {
-		try {
-			return blockchainService.balanceOf(SUSHIPOOL_TOKEN_ADDRESS);
-		} catch (Exception e) {
-			LOG.warn("Error retrieving contract sushiPoolMeeds supply", e);
-		}
-		return null;
-	}
+  private Map<String, BigDecimal> getLockedBalances() {
+    Map<String, BigDecimal> reserveBalances = new HashMap<>();
+    lockedEthereumAddresses.stream().forEach(address -> {
+      BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+      reserveBalances.put(address.toLowerCase(), balance);
+    });
+    lockedPolygonAddresses.stream().forEach(address -> {
+      BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+      reserveBalances.put(address.toLowerCase(), balance);
+    });
+    return reserveBalances;
+  }
 
-	private BigDecimal getComethSwapPoolMeeds() {
-		try {
-			return blockchainService.balanceOf(COMETHSWAP_TOKEN_ADDRESS);
-		} catch (Exception e) {
-			LOG.warn("Error retrieving contract sushiPoolMeeds supply", e);
-		}
-		return null;
-	}
+  private MeedTokenMetric getTodayMetric() {
+    return meedTokenMetricsRepository.findById(getTodayId()).orElse(null);
+  }
 
-	public BigDecimal getCircualtingSupply() {
-		try {
-			return getTotalSupply()
-					.subtract(getVestedMeeds())
-					.subtract(getXMeedsStakes())
-					.subtract(getSushiPoolMeeds())
-					.subtract(getComethSwapPoolMeeds())
-					.subtract(blockchainService.balanceOf(USERS_RESERVES))
-					.subtract(blockchainService.balanceOf(INVESTORS_RESERVES))
-					.subtract(blockchainService.balanceOf(BUILDERS_RESERVES));
-		} catch (Exception e) {
-			LOG.warn("Error retrieving Meed total supply", e);
-		}
-		return null;
-	}
-
-	private BigDecimal getTotalSupply() {
-		try {
-			return blockchainService.totalSupply();
-		} catch (Exception e) {
-			LOG.warn("Error retrieving contract total supply", e);
-		}
-		return null;
-	}
-
-	private Map<String, BigDecimal> getTotalReserves() {
-		lockedValues.put("USERS_RESERVES",blockchainService.balanceOf(USERS_RESERVES)) ;
-		lockedValues.put("INVESTORS_RESERVES",blockchainService.balanceOf(INVESTORS_RESERVES)) ;
-		lockedValues.put("BUILDERS_RESERVES",blockchainService.balanceOf(BUILDERS_RESERVES)) ;
-		return totalReserves;
-	}
-
-	private Map<String, BigDecimal> getTotalLocked() {
-		lockedValues.put("VESTING_TOKEN_ADDRESS",getVestedMeeds()) ;
-		lockedValues.put("xMEEDS_TOKEN_ADDRESS",getXMeedsStakes()) ;
-		lockedValues.put("SUSHIPOOL_TOKEN_ADDRESS",getSushiPoolMeeds()) ;
-		lockedValues.put("COMETHSWAP_TOKEN_ADDRESS",getComethSwapPoolMeeds()) ;
-		return lockedValues;
-	}
-
-	/**
-	 * Retrieves list of total circulating Meeds supply from adding total Meeds
-	 * supply, total Meeds reserves and total Meeds locked tokens
-	 *
-	 */
-	public void computeCirculatingSupply() {
-		LocalDate indexDate = circulatingSupplyDate();
-			MeedTokenMetric metric = meedTokenMetricsRepository.findById(indexDate)
-					.orElse(new MeedTokenMetric());
-			if (!metric.getDate().equals(indexDate)) {
-				metric.setTotalSupply(getTotalSupply());
-				metric.setReserveValues(getTotalReserves());
-				metric.setLockedValues(getTotalLocked());
-				metric.setCirculatingSupply(getCircualtingSupply());
-				meedTokenMetricsRepository.save(metric);
-			}
-	}
-
-	private LocalDate circulatingSupplyDate() {
-		return CIRCULATING_SUPPLY_DATE;
-	}
+  private LocalDate getTodayId() {
+    return LocalDate.now(ZoneOffset.UTC);
+  }
 
 }
