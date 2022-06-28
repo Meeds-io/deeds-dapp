@@ -17,11 +17,9 @@ package io.meeds.deeds.service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.MeedsToken;
@@ -48,7 +46,7 @@ public class BlockchainService {
   /**
    * Retrieves from blockchain whether an address is the provisioning manager of
    * the deed or not
-   * 
+   *
    * @param address Ethereum address to check
    * @param nftId Deed NFT identifier
    * @return true if is manager else false
@@ -67,7 +65,7 @@ public class BlockchainService {
    * - 1 : Uncommon
    * - 2 : Rare
    * - 3 : Legendary
-   * 
+   *
    * @param nftId Deed NFT identifier
    * @return card type index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
@@ -94,7 +92,7 @@ public class BlockchainService {
    * - 4 : Eshmun
    * - 5 : Kushor
    * - 6 : Hammon
-   * 
+   *
    * @param nftId Deed NFT identifier
    * @return card city index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
@@ -118,6 +116,15 @@ public class BlockchainService {
       return new BigDecimal(totalsupply).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving information 'totalSupply' from Blockchain", e);
+    }
+  }
+
+  public BigDecimal balanceOf(String address) {
+    try {
+      BigInteger balanceof = token.balanceOf(address).send();
+      return new BigDecimal(balanceof).divide(BigDecimal.valueOf(10).pow(18));
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving information 'balanceOf' from Blockchain", e);
     }
   }
 
