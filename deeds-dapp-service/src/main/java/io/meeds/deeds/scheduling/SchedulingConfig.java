@@ -18,7 +18,7 @@
  */
 package io.meeds.deeds.scheduling;
 
-import io.meeds.deeds.scheduling.task.MeedsCirculatingSupplyTask;
+import io.meeds.deeds.scheduling.task.MeedTokenMetricTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -41,8 +41,8 @@ public class SchedulingConfig {
   }
 
   @Bean
-  public MeedsCirculatingSupplyTask meedsCirculatingSupplyTask() {
-    return new MeedsCirculatingSupplyTask();
+  public MeedTokenMetricTask meedsTokenMetricTask() {
+    return new MeedTokenMetricTask();
   }
 
 }

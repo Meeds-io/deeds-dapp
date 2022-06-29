@@ -69,16 +69,13 @@ public class MeedTokenMetricService {
     if (recentMetric == null) {
       recentMetric = getTodayMetric();
       if (recentMetric == null) {
-        retriveTokenMetrics();
+        computeTokenMetrics();
       }
     }
     return recentMetric.getCirculatingSupply();
   }
 
-  /**
-   * 
-   */
-  public void retriveTokenMetrics() {
+  public void computeTokenMetrics() {
     MeedTokenMetric metric = getTodayMetric();
     if (metric == null) {
       metric = new MeedTokenMetric(getTodayId());

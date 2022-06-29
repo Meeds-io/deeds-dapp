@@ -27,15 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 import io.meeds.deeds.service.MeedTokenMetricService;
 
 @RestController
-@RequestMapping("/rest/meed")
+@RequestMapping("/api/token/meed")
 public class MeedTokenMetricController {
 
   @Autowired
-  private MeedTokenMetricService circulatingSupplyService;
+  private MeedTokenMetricService meedTokenMetricService;
 
   @GetMapping("/circ")
   public ResponseEntity<BigDecimal> getCirculatingSupply() {
-    BigDecimal circulatingSupply = circulatingSupplyService.getCirculatingSupply();
+    BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noCache().cachePublic())
                          .body(circulatingSupply);
