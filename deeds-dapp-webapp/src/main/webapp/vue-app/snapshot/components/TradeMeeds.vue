@@ -374,7 +374,12 @@ export default {
     },
     setMaxValue() {
       if (this.buy) {
-        this.fromValue = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+        const remainingEtherValue = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
+        if (remainingEtherValue > 0) {
+          this.fromValue = remainingEtherValue;
+        } else {
+          this.fromValue = 0;
+        }
       } else {
         this.fromValue = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
       }
