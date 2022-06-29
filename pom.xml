@@ -48,6 +48,7 @@
     <commons-io.version>2.9.0</commons-io.version>
     <org.web3j.version>4.8.9</org.web3j.version>
     <com.squareup.okhttp3.version>4.9.0</com.squareup.okhttp3.version>
+    <org.exoplatform.wallet.ert-contract.version>1.3.x-SNAPSHOT</org.exoplatform.wallet.ert-contract.version>
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M5</version.surefire.plugin>

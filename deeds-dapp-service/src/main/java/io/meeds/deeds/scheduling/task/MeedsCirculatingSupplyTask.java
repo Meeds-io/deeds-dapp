@@ -34,7 +34,7 @@ public class MeedsCirculatingSupplyTask {
     LOG.info("Start Computing circulating supply");
     long start = System.currentTimeMillis();
     try {
-      circulatingSupplyService.computeCirculatingSupply();
+      circulatingSupplyService.retriveCirculatingSupply();
       LOG.info("End Computing circulating supply in {}ms", System.currentTimeMillis() - start);
     } catch (Exception e) {
       LOG.error("An error occurred while computing circulating supply", e);

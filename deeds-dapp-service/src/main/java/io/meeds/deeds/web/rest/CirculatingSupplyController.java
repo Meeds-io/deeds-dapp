@@ -41,7 +41,7 @@ public class CirculatingSupplyController {
 
   @GetMapping("/circ")
   public ResponseEntity<BigDecimal> getCirculatingSupply() {
-    BigDecimal circulatingSupply = circulatingSupplyService.getCircualtingSupply();
+    BigDecimal circulatingSupply = circulatingSupplyService.getCirculatingSupply();
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.maxAge(15, TimeUnit.MINUTES).cachePublic())
                          .lastModified(ZonedDateTime.now())

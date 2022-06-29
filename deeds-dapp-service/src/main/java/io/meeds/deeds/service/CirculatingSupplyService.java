@@ -74,7 +74,7 @@ public class CirculatingSupplyService {
     return recentMetric.getCirculatingSupply();
   }
 
-  private MeedTokenMetric retriveCirculatingSupply() {
+  public MeedTokenMetric retriveCirculatingSupply() {
     MeedTokenMetric metric = getTodayMetric();
     if (metric == null) {
       metric = new MeedTokenMetric(getTodayId());
@@ -111,16 +111,16 @@ public class CirculatingSupplyService {
   }
 
   private Map<String, BigDecimal> getLockedBalances() {
-    Map<String, BigDecimal> reserveBalances = new HashMap<>();
+    Map<String, BigDecimal> LockedBalances = new HashMap<>();
     lockedEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
-      reserveBalances.put(address.toLowerCase(), balance);
+      LockedBalances.put(address.toLowerCase(), balance);
     });
     lockedPolygonAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
-      reserveBalances.put(address.toLowerCase(), balance);
+      LockedBalances.put(address.toLowerCase(), balance);
     });
-    return reserveBalances;
+    return LockedBalances;
   }
 
   private MeedTokenMetric getTodayMetric() {
