@@ -18,7 +18,9 @@ package io.meeds.deeds.blockchain;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Configuration
 @ConfigurationProperties(prefix = "meeds.blockchain")
@@ -31,13 +33,11 @@ public class BlockchainConfigurationProperties {
 
   private String polygonNetworkUrl;
 
-  private String mainnetNetworkUrl;
-
   private String tenantProvisioningAddress;
 
   private String deedAddress;
 
-  private String mainnetMeedAddress;
+  private String meedAddress;
 
   private String polygonMeedAddress;
 

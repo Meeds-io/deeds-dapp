@@ -15,7 +15,7 @@
  */
 package io.meeds.deeds.scheduling.task;
 
-import io.meeds.deeds.service.CirculatingSupplyService;
+import io.meeds.deeds.service.MeedTokenMetricService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +27,14 @@ public class MeedsCirculatingSupplyTask {
   private static final Logger LOG = LoggerFactory.getLogger(CurrencyExchangeTask.class);
 
   @Autowired
-  private CirculatingSupplyService circulatingSupplyService;
+  private MeedTokenMetricService circulatingSupplyService;
 
   @Scheduled(cron = "*/30 * * * *")
   public synchronized void computeCirculatingSupply() {
     LOG.info("Start Computing circulating supply");
     long start = System.currentTimeMillis();
     try {
-      circulatingSupplyService.retriveCirculatingSupply();
+      circulatingSupplyService.retriveTokenMetrics();
       LOG.info("End Computing circulating supply in {}ms", System.currentTimeMillis() - start);
     } catch (Exception e) {
       LOG.error("An error occurred while computing circulating supply", e);

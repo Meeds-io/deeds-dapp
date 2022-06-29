@@ -29,19 +29,16 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(
     properties = {
         "meeds.blockchain.networkUrl=" + BlockchainConfigurationPropertiesTest.NETWORK_URL_VALUE,
-        "meeds.blockchain.mainnetNetworkUrl=" + BlockchainConfigurationPropertiesTest.MAINNET_NETWORK_URL_VALUE,
         "meeds.blockchain.polygonNetworkUrl=" + BlockchainConfigurationPropertiesTest.POLYGON_NETWORK_URL_VALUE,
         "meeds.blockchain.tenantProvisioningAddress=" + BlockchainConfigurationPropertiesTest.TENANT_PROVISIONING_ADDRESS_VALUE,
         "meeds.blockchain.deedAddress=" + BlockchainConfigurationPropertiesTest.DEED_ADDRESS_VALUE,
-        "meeds.blockchain.mainnetMeedAddress=" + BlockchainConfigurationPropertiesTest.MAINNET_MEED_ADDRESS_VALUE,
+        "meeds.blockchain.meedAddress=" + BlockchainConfigurationPropertiesTest.MAINNET_MEED_ADDRESS_VALUE,
         "meeds.blockchain.polygonMeedAddress=" + BlockchainConfigurationPropertiesTest.POLYGON_MEED_ADDRESS_VALUE,
     }
 )
 class BlockchainConfigurationPropertiesTest {
 
   public static final String                NETWORK_URL_VALUE                 = "NETWORK_URL";
-
-  public static final String                MAINNET_NETWORK_URL_VALUE         = "MAINNET_NETWORK_URL";
 
   public static final String                POLYGON_NETWORK_URL_VALUE         = "POLYGON_NETWORK_URL";
 
@@ -60,15 +57,13 @@ class BlockchainConfigurationPropertiesTest {
   void testProperties() {
     assertNotNull(blockchainConfigurationProperties);
     assertEquals(NETWORK_URL_VALUE, blockchainConfigurationProperties.getNetworkUrl());
-    assertEquals(MAINNET_NETWORK_URL_VALUE, blockchainConfigurationProperties.getMainnetNetworkUrl());
     assertEquals(POLYGON_NETWORK_URL_VALUE, blockchainConfigurationProperties.getPolygonNetworkUrl());
     assertEquals(TENANT_PROVISIONING_ADDRESS_VALUE, blockchainConfigurationProperties.getTenantProvisioningAddress());
     assertEquals(DEED_ADDRESS_VALUE, blockchainConfigurationProperties.getDeedAddress());
-    assertEquals(MAINNET_MEED_ADDRESS_VALUE, blockchainConfigurationProperties.getMainnetMeedAddress());
+    assertEquals(MAINNET_MEED_ADDRESS_VALUE, blockchainConfigurationProperties.getMeedAddress());
     assertEquals(POLYGON_MEED_ADDRESS_VALUE, blockchainConfigurationProperties.getPolygonMeedAddress());
 
     BlockchainConfigurationProperties properties = new BlockchainConfigurationProperties(NETWORK_URL_VALUE,
-                                                                                         MAINNET_NETWORK_URL_VALUE,
                                                                                          POLYGON_NETWORK_URL_VALUE,
                                                                                          TENANT_PROVISIONING_ADDRESS_VALUE,
                                                                                          DEED_ADDRESS_VALUE,

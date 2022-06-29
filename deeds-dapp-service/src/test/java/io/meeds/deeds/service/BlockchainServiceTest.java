@@ -15,7 +15,11 @@
  */
 package io.meeds.deeds.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,6 +35,7 @@ import org.web3j.protocol.core.RemoteFunctionCall;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
 
 @SpringBootTest(
@@ -45,6 +50,12 @@ class BlockchainServiceTest {
 
   @MockBean
   private Deed                       deed;
+
+  @MockBean(name = "ethereumMeedToken")
+  private MeedsToken                 ethereumToken;
+
+  @MockBean(name = "polygonMeedToken")
+  private MeedsToken                 polygonToken;
 
   @Autowired
   private BlockchainService          blockchainService;

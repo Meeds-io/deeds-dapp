@@ -92,10 +92,6 @@
       <artifactId>rlp</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.web3j</groupId>
-      <artifactId>crypto</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>

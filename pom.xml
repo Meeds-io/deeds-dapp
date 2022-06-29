@@ -71,6 +71,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.exoplatform.wallet</groupId>
+        <artifactId>ert-contract</artifactId>
+        <version>${org.exoplatform.wallet.ert-contract.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>core</artifactId>
         <version>${org.web3j.version}</version>
@@ -78,6 +84,26 @@
       <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>crypto</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>utils</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>abi</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>rlp</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>tuples</artifactId>
         <version>${org.web3j.version}</version>
       </dependency>
       <dependency>

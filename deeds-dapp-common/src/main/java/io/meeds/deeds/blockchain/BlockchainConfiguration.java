@@ -79,7 +79,7 @@ public class BlockchainConfiguration {
                                         Web3j web3j) {
     BigInteger gasPrice = BigInteger.valueOf(20000000000l);
     BigInteger gasLimit = BigInteger.valueOf(300000l);
-    return MeedsToken.load(properties.getMainnetMeedAddress(),
+    return MeedsToken.load(properties.getMeedAddress(),
                            web3j,
                            new ReadonlyTransactionManager(web3j,
                                                           Address.DEFAULT.toString()),

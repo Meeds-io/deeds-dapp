@@ -30,7 +30,7 @@ import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
 
 @Component
-public class CirculatingSupplyService {
+public class MeedTokenMetricService {
 
   @Value(
     "#{'${meeds.blockchain.reserveValueEthereumAddresses:0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853}'.split(',')}"
@@ -59,22 +59,26 @@ public class CirculatingSupplyService {
   private MeedTokenMetric            recentMetric;
 
   /**
-   * Retrieves list of total circulating Meeds supply from adding total Meeds
-   * supply, total Meeds reserves and total Meeds locked tokens
+   * Retrieves list of total circulating Meeds supply by using this formula:
+   * - Total supply of Meeds - total Meeds reserves - total locked Meeds
    * 
-   * @return
+   * @return {@link BigDecimal} for most recent computed circulating supply
+   *           value
    */
   public BigDecimal getCirculatingSupply() {
     if (recentMetric == null) {
       recentMetric = getTodayMetric();
       if (recentMetric == null) {
-        recentMetric = retriveCirculatingSupply();
+        retriveTokenMetrics();
       }
     }
     return recentMetric.getCirculatingSupply();
   }
 
-  public MeedTokenMetric retriveCirculatingSupply() {
+  /**
+   * 
+   */
+  public void retriveTokenMetrics() {
     MeedTokenMetric metric = getTodayMetric();
     if (metric == null) {
       metric = new MeedTokenMetric(getTodayId());
@@ -94,7 +98,9 @@ public class CirculatingSupplyService {
     metric.setCirculatingSupply(circualtingSupply);
 
     meedTokenMetricsRepository.save(metric);
-    return metric;
+
+    // Cache most recent collected Metric
+    this.recentMetric = metric;
   }
 
   private Map<String, BigDecimal> getReserveBalances() {
@@ -111,16 +117,16 @@ public class CirculatingSupplyService {
   }
 
   private Map<String, BigDecimal> getLockedBalances() {
-    Map<String, BigDecimal> LockedBalances = new HashMap<>();
+    Map<String, BigDecimal> lockedBalances = new HashMap<>();
     lockedEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
-      LockedBalances.put(address.toLowerCase(), balance);
+      lockedBalances.put(address.toLowerCase(), balance);
     });
     lockedPolygonAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
-      LockedBalances.put(address.toLowerCase(), balance);
+      lockedBalances.put(address.toLowerCase(), balance);
     });
-    return LockedBalances;
+    return lockedBalances;
   }
 
   private MeedTokenMetric getTodayMetric() {
