@@ -26,17 +26,23 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigInteger;
 
+import io.meeds.deeds.blockchain.BlockchainConfiguration;
 import org.apache.commons.codec.binary.StringUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
+import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.DefaultGasProvider;
 
 @SpringBootTest(
     classes = {
@@ -48,6 +54,9 @@ class BlockchainServiceTest {
   @MockBean
   private TenantProvisioningStrategy tenantProvisioningStrategy;
 
+  @Mock
+  private MeedsToken meedsToken;
+
   @MockBean
   private Deed                       deed;
 
@@ -56,7 +65,6 @@ class BlockchainServiceTest {
 
   @MockBean(name = "polygonMeedToken")
   private MeedsToken                 polygonToken;
-
   @Autowired
   private BlockchainService          blockchainService;
 
@@ -130,6 +138,40 @@ class BlockchainServiceTest {
     assertThrows(RuntimeException.class, () -> blockchainService.isDeedProvisioningManager(walletAddress, 0));
     assertTrue(blockchainService.isDeedProvisioningManager(walletAddress, 1));
     assertFalse(blockchainService.isDeedProvisioningManager(walletAddress, 2));
+  }
+
+  @Test
+  void TestTotalSupply() throws Exception {
+    assertNotNull(ethereumToken);
+    when(ethereumToken.totalSupply()).thenAnswer(invocation -> {
+      RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+      when(remoteFunctionCall.send()).thenReturn(BigInteger.valueOf((long) 5008548.684083333333333319));
+      return remoteFunctionCall;
+    });
+    assertNotNull(ethereumToken.totalSupply().send());
+  }
+  @Test
+  void TestBalanceOfOnPolygon() throws Exception {
+    assertNotNull(polygonToken);
+    when(polygonToken.balanceOf("0x6acA77CF3BaB0C4E8210A09B57B07854a995289a")).thenAnswer(invocation -> {
+      RemoteFunctionCall<Boolean> remoteFunctionCall = mock(RemoteFunctionCall.class);
+      when(remoteFunctionCall.send()).thenReturn(true);
+      return remoteFunctionCall;
+    });
+    assertNotNull(polygonToken.balanceOf("0x6acA77CF3BaB0C4E8210A09B57B07854a995289a"));
+
+  }
+  @Test
+  void TestBalanceOfOnEthereum() throws Exception {
+    assertNotNull(polygonToken);
+    when(ethereumToken.balanceOf("0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4")).thenAnswer(invocation -> {
+    RemoteFunctionCall<Boolean> remoteFunctionCall = mock(RemoteFunctionCall.class);
+    when(remoteFunctionCall.send()).thenReturn(true);
+    return remoteFunctionCall;
+  });
+    assertNotNull(ethereumToken.balanceOf("0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4"));
+
+
   }
 
 }
