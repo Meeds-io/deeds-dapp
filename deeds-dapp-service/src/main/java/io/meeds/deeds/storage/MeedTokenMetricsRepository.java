@@ -13,32 +13,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.blockchain;
+package io.meeds.deeds.storage;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.blockchain")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class BlockchainConfigurationProperties {
+import io.meeds.deeds.model.MeedTokenMetric;
 
-  private String networkUrl;
-
-  private String polygonNetworkUrl;
-
-  private String tenantProvisioningAddress;
-
-  private String deedAddress;
-
-  private String meedAddress;
-
-  private String polygonMeedAddress;
+public interface MeedTokenMetricsRepository extends ElasticsearchRepository<MeedTokenMetric, LocalDate> {
 
 }
