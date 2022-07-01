@@ -91,8 +91,8 @@ public class MeedTokenMetricService {
 
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
-    BigDecimal circualtingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
-    metric.setCirculatingSupply(circualtingSupply);
+    BigDecimal circulatingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
+    metric.setCirculatingSupply(circulatingSupply);
 
     meedTokenMetricsRepository.save(metric);
 

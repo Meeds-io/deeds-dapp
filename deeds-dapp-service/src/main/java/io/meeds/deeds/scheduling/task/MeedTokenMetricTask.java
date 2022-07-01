@@ -37,7 +37,7 @@ public class MeedTokenMetricTask {
       meedTokenMetricService.computeTokenMetrics();
       LOG.info("End Computing circulating supply in {}ms", System.currentTimeMillis() - start);
     } catch (Exception e) {
-      LOG.error("An error occurred while computing circulating supply", e);
+      LOG.warn("An error occurred while computing circulating supply", e);
     }
   }
 

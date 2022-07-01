@@ -122,7 +122,8 @@ public class BlockchainService {
       BigInteger totalsupply = ethereumToken.totalSupply().send();
       return new BigDecimal(totalsupply).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'totalSupply' from Blockchain", e);
+      throw new IllegalStateException("Error retrieving total supply for MEED Token on Ethereum at address 0x8503a7b00b4b52692cc6c14e5b96f142e30547b7",
+                                      e);
     }
   }
 

@@ -59,4 +59,8 @@ public class MeedTokenMetric {
 
   private BigDecimal              circulatingSupply;
 
+  private BigDecimal              marketCapitalization;
+
+  private BigDecimal              totalValuelocked;
+
 }
