@@ -100,7 +100,7 @@ public class MeedTokenMetricService {
     this.recentMetric = metric;
   }
 
-  private Map<String, BigDecimal> getReserveBalances() {
+  Map<String, BigDecimal> getReserveBalances() {
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
     reserveEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
@@ -113,7 +113,7 @@ public class MeedTokenMetricService {
     return reserveBalances;
   }
 
-  private Map<String, BigDecimal> getLockedBalances() {
+  Map<String, BigDecimal> getLockedBalances() {
     Map<String, BigDecimal> lockedBalances = new HashMap<>();
     lockedEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
