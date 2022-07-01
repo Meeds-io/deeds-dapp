@@ -81,6 +81,11 @@ public class MeedTokenMetricService {
     return recentMetric.getCirculatingSupply();
   }
 
+  /**
+   * Retrieves Metrics of Meed Token from Blockchain and other external sources.
+   * Once retrieved, it will be saved. The metrics are collected by day, in
+   * other terms, there will be only one metric entity collected by a day.
+   */
   public void computeTokenMetrics() {
     MeedTokenMetric metric = getTodayMetric();
     if (metric == null) {
@@ -106,6 +111,11 @@ public class MeedTokenMetricService {
     this.recentMetric = metric;
   }
 
+  /**
+   * @return {@link Map} of {@link String} and {@link BigDecimal}. This will
+   *           retrieve from Ethereum and Polygon Blockchains a Map of Token
+   *           balances for each configured reserveBalanceAddress.
+   */
   public Map<String, BigDecimal> getReserveBalances() {
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
     reserveEthereumAddresses.stream().forEach(address -> {
@@ -119,6 +129,11 @@ public class MeedTokenMetricService {
     return reserveBalances;
   }
 
+  /**
+   * @return {@link Map} of {@link String} and {@link BigDecimal}. This will
+   *           retrieve from Ethereum and Polygon Blockchains a Map of Token
+   *           balances for each configured lockedBalanceAddress.
+   */
   public Map<String, BigDecimal> getLockedBalances() {
     Map<String, BigDecimal> lockedBalances = new HashMap<>();
     lockedEthereumAddresses.stream().forEach(address -> {
