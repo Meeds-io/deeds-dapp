@@ -117,30 +117,48 @@ public class BlockchainService {
     }
   }
 
+  /**
+   * @return {@link BigDecimal} representing the total supply of Meeds Token
+   *           which is retrieved from ethereum blockchain. The retrieved value
+   *           is divided by number of decimals of the token (10^18)
+   */
   public BigDecimal totalSupply() {
     try {
-      BigInteger totalsupply = ethereumToken.totalSupply().send();
-      return new BigDecimal(totalsupply).divide(BigDecimal.valueOf(10).pow(18));
+      BigInteger totalSupply = ethereumToken.totalSupply().send();
+      return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving total supply for MEED Token on Ethereum at address 0x8503a7b00b4b52692cc6c14e5b96f142e30547b7",
+      throw new IllegalStateException("Error retrieving total supply for MEED Token on Ethereum at address "
+          + ethereumToken.getContractAddress(),
                                       e);
     }
   }
 
+  /**
+   * @param address Ethereum address
+   * @return {@link BigDecimal} representing the balance of address
+   *           which is retrieved from ethereum blockchain. The retrieved value
+   *           is divided by number of decimals of the token (10^18)
+   */
   public BigDecimal balanceOfOnEthereum(String address) {
     try {
-      BigInteger balanceof = ethereumToken.balanceOf(address).send();
-      return new BigDecimal(balanceof).divide(BigDecimal.valueOf(10).pow(18));
+      BigInteger balance = ethereumToken.balanceOf(address).send();
+      return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' on Ethereum Blockchain",
                                       e);
     }
   }
 
+  /**
+   * @param address Ethereum address
+   * @return {@link BigDecimal} representing the balance of address
+   *           which is retrieved from polygon blockchain. The retrieved value
+   *           is divided by number of decimals of the token (10^18)
+   */
   public BigDecimal balanceOfOnPolygon(String address) {
     try {
-      BigInteger balanceof = polygonToken.balanceOf(address).send();
-      return new BigDecimal(balanceof).divide(BigDecimal.valueOf(10).pow(18));
+      BigInteger balance = polygonToken.balanceOf(address).send();
+      return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
     } catch (Exception e) {
       throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' from Polygon Blockchain",
                                       e);

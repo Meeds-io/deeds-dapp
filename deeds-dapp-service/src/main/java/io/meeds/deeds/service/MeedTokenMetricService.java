@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
+import lombok.Getter;
 
 @Component
 public class MeedTokenMetricService {
@@ -35,19 +36,23 @@ public class MeedTokenMetricService {
   @Value(
     "#{'${meeds.blockchain.reserveValueEthereumAddresses:0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853}'.split(',')}"
   )
+  @Getter
   private List<String>               reserveEthereumAddresses;
 
   @Value(
     "#{'${meeds.blockchain.reserveValuePolygonAddresses:}'.split(',')}"
   )
+  @Getter
   private List<String>               reservePolygonAddresses;
 
   @Value(
     "#{'${meeds.blockchain.lockedValueEthereumAddresses:0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070}'.split(',')}"
   )
+  @Getter
   private List<String>               lockedEthereumAddresses;
 
   @Value("#{'${meeds.blockchain.lockedValuePolygonAddresses:0x6acA77CF3BaB0C4E8210A09B57B07854a995289a}'.split(',')}")
+  @Getter
   private List<String>               lockedPolygonAddresses;
 
   @Autowired(required = false)
@@ -56,6 +61,7 @@ public class MeedTokenMetricService {
   @Autowired
   private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
+  @Getter
   private MeedTokenMetric            recentMetric;
 
   /**
@@ -100,7 +106,7 @@ public class MeedTokenMetricService {
     this.recentMetric = metric;
   }
 
-  Map<String, BigDecimal> getReserveBalances() {
+  public Map<String, BigDecimal> getReserveBalances() {
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
     reserveEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
@@ -113,7 +119,7 @@ public class MeedTokenMetricService {
     return reserveBalances;
   }
 
-  Map<String, BigDecimal> getLockedBalances() {
+  public Map<String, BigDecimal> getLockedBalances() {
     Map<String, BigDecimal> lockedBalances = new HashMap<>();
     lockedEthereumAddresses.stream().forEach(address -> {
       BigDecimal balance = blockchainService.balanceOfOnEthereum(address);

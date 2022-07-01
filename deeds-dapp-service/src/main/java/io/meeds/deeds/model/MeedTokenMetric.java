@@ -63,4 +63,6 @@ public class MeedTokenMetric {
 
   private BigDecimal              totalValuelocked;
 
+  private BigDecimal              meedUsdPrice;
+
 }
