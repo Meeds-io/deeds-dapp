@@ -56,6 +56,9 @@ public class MeedTokenMetricService {
   @Getter
   private List<String>               lockedPolygonAddresses;
 
+  @Value("${meeds.exchange.Coingecko.UsdPrice:https://api.coingecko.com/api/v3/simple/price?ids=meeds-dao&vs_currencies=USD}")
+  private String                         InstantMeedUsdPrice;
+
   @Autowired(required = false)
   private BlockchainService          blockchainService;
 
@@ -64,6 +67,9 @@ public class MeedTokenMetricService {
 
   @Getter
   private MeedTokenMetric            recentMetric;
+
+  @Autowired(required = false)
+  private ExchangeService exchangeService;
 
   /**
    * Retrieves list of total circulating Meeds supply by using this formula:
@@ -100,6 +106,9 @@ public class MeedTokenMetricService {
 
     Map<String, BigDecimal> lockedBalances = getLockedBalances();
     metric.setLockedBalances(lockedBalances);
+
+    BigDecimal martketCap = getMarketCapitalization();
+    metric.setMarketCapitalization(martketCap);
 
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
@@ -154,6 +163,21 @@ public class MeedTokenMetricService {
                             lockedBalances.put(address.toLowerCase(), balance);
                           });
     return lockedBalances;
+  }
+
+  /**
+   * @return {@link BigDecimal} . This will return the Makert Capitalization value of the Meeds Token
+   *            throughout the formula of MarketCap = TotalSupply * Meeds price
+   */
+  public BigDecimal getMarketCapitalization() {
+    BigDecimal MarketCap = null ;
+    try {
+      MarketCap = getCirculatingSupply().multiply(BigDecimal.valueOf(Long.parseLong(InstantMeedUsdPrice)));
+    } catch (Exception e) {
+      throw new IllegalStateException("Error calculating Market Capitalization of Meeds Token",
+              e);
+    }
+    return MarketCap;
   }
 
   private MeedTokenMetric getTodayMetric() {
