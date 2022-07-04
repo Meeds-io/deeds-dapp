@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -118,14 +119,18 @@ public class MeedTokenMetricService {
    */
   public Map<String, BigDecimal> getReserveBalances() {
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
-    reserveEthereumAddresses.stream().forEach(address -> {
-      BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
-      reserveBalances.put(address.toLowerCase(), balance);
-    });
-    reservePolygonAddresses.stream().forEach(address -> {
-      BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
-      reserveBalances.put(address.toLowerCase(), balance);
-    });
+    reserveEthereumAddresses.stream()
+                            .filter(StringUtils::isNotBlank)
+                            .forEach(address -> {
+                              BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+                              reserveBalances.put(address.toLowerCase(), balance);
+                            });
+    reservePolygonAddresses.stream()
+                           .filter(StringUtils::isNotBlank)
+                           .forEach(address -> {
+                             BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+                             reserveBalances.put(address.toLowerCase(), balance);
+                           });
     return reserveBalances;
   }
 
@@ -136,14 +141,18 @@ public class MeedTokenMetricService {
    */
   public Map<String, BigDecimal> getLockedBalances() {
     Map<String, BigDecimal> lockedBalances = new HashMap<>();
-    lockedEthereumAddresses.stream().forEach(address -> {
-      BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
-      lockedBalances.put(address.toLowerCase(), balance);
-    });
-    lockedPolygonAddresses.stream().forEach(address -> {
-      BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
-      lockedBalances.put(address.toLowerCase(), balance);
-    });
+    lockedEthereumAddresses.stream()
+                           .filter(StringUtils::isNotBlank)
+                           .forEach(address -> {
+                             BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+                             lockedBalances.put(address.toLowerCase(), balance);
+                           });
+    lockedPolygonAddresses.stream()
+                          .filter(StringUtils::isNotBlank)
+                          .forEach(address -> {
+                            BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+                            lockedBalances.put(address.toLowerCase(), balance);
+                          });
     return lockedBalances;
   }
 
