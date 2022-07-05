@@ -67,7 +67,7 @@ public class MeedTokenMetricService {
   private List<String>               lockedPolygonAddresses;
 
   @Value("${meeds.exchange.Coingecko.UsdPrice:https://api.coingecko.com/api/v3/simple/price?ids=meeds-dao&vs_currencies=USD}")
-  private String InstantMeedUsdPrice;
+  private String meedUsdPriceProviderUrl;
 
   @Autowired(required = false)
   private BlockchainService          blockchainService;
@@ -119,6 +119,9 @@ public class MeedTokenMetricService {
 
     BigDecimal marketCap = getMarketCapitalization();
     metric.setMarketCapitalization(marketCap);
+
+    BigDecimal meedUsdValue = getMeedUsdPrice();
+    metric.setMeedUsdPrice(meedUsdValue);
 
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
@@ -180,14 +183,21 @@ public class MeedTokenMetricService {
    * throughout the formula of MarketCap = TotalSupply * Meeds price
    */
   public BigDecimal getMarketCapitalization() {
+    try {
+      return getMeedUsdPrice().multiply(getCirculatingSupply());
+    } catch (Exception e){
+      throw new IllegalStateException("Error retrieving Market Capitalization for Meed Token from Blockchain", e);
+    }
+  }
+
+  public BigDecimal getMeedUsdPrice(){
     BigDecimal MarketCap = null;
     try {
-      HttpsURLConnection con = (HttpsURLConnection) new URL(InstantMeedUsdPrice).openConnection();
+      HttpsURLConnection con = (HttpsURLConnection) new URL(meedUsdPriceProviderUrl).openConnection();
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
         try (InputStream inputStream = con.getInputStream()) {
-          String meedUsdValue = findDecimalNums(IOUtils.toString(inputStream, StandardCharsets.UTF_8)).get(0);
-          return new BigDecimal(meedUsdValue).multiply(getCirculatingSupply());
+          return  new BigDecimal(findDecimalNums(IOUtils.toString(inputStream, StandardCharsets.UTF_8)).get(0));
         }
       }
 
