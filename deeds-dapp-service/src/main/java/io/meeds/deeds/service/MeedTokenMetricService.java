@@ -117,8 +117,8 @@ public class MeedTokenMetricService {
     Map<String, BigDecimal> lockedBalances = getLockedBalances();
     metric.setLockedBalances(lockedBalances);
 
-    BigDecimal martketCap = getMarketCapitalization();
-    metric.setMarketCapitalization(martketCap);
+    BigDecimal marketCap = getMarketCapitalization();
+    metric.setMarketCapitalization(marketCap);
 
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
