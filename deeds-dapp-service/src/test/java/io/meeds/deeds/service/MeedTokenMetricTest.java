@@ -158,7 +158,6 @@ class MeedTokenMetricTest {
 
     // Then
     BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
-    when(meedTokenMetricService.getCirculatingSupply()).thenReturn(BigDecimal.valueOf(2));
     BigDecimal marketCap = meedTokenMetricService.getMarketCapitalization();
     assertNotNull(marketCap);
   }
