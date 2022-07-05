@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-const Overview = { template: '<deeds-snapshot />' };
+const Overview = { template: '<deeds-overview />' };
 const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
