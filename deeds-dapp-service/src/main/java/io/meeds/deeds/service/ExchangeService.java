@@ -47,52 +47,52 @@ import io.meeds.deeds.storage.MeedExchangeRateRepository;
 @Component
 public class ExchangeService {
 
-  private static final Logger            LOG                               = LoggerFactory.getLogger(ExchangeService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ExchangeService.class);
 
-  private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
+  private static final LocalDate MEEDS_TOKEN_FIRST_DATE = LocalDate.of(2021, 11, 6);
 
-  private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
+  private static final Pattern LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
 
-  private static final String            PAIR_PARAM_NAME                   = "pair";
+  private static final String PAIR_PARAM_NAME = "pair";
 
-  private static final String            MESSAGE_PARAM_NAME                = "message";
+  private static final String MESSAGE_PARAM_NAME = "message";
 
-  private static final String            BUNDLE_PARAM_NAME                 = "bundle";
+  private static final String BUNDLE_PARAM_NAME = "bundle";
 
-  private static final String            DATA_PARAM_NAME                   = "data";
+  private static final String DATA_PARAM_NAME = "data";
 
-  private static final String            BLOCKS_PARAM_NAME                 = "blocks";
+  private static final String BLOCKS_PARAM_NAME = "blocks";
 
-  private static final String            ERRORS_PARAM_NAME                 = "errors";
+  private static final String ERRORS_PARAM_NAME = "errors";
 
   @Value("${meeds.exchange.currencyApiKey:}")
-  private String                         currencyApiKey;
+  private String currencyApiKey;
 
   @Value("${meeds.exchange.currencyApiUrl:https://api.currencyapi.com/v3/latest}")
-  private String                         currencyApiUrl;
+  private String currencyApiUrl;
 
   @Value("${meeds.exchange.blockchainApiUrl:https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}")
-  private String                         blockchainApiUrl;
+  private String blockchainApiUrl;
 
   @Value("${meeds.exchange.lpTokenApiUrl:https://api.thegraph.com/subgraphs/name/sushiswap/exchange}")
-  private String                         lpTokenApiUrl;
+  private String lpTokenApiUrl;
 
   @Value("${meeds.exchange.lpTokenAddress:0x960bd61d0b960b107ff5309a2dcced4705567070}")
-  private String                         lpTokenAddress;
+  private String lpTokenAddress;
 
   @Autowired(required = false)
   private CurrencyExchangeRateRepository currencyExchangeRateRepository;
 
   @Autowired(required = false)
-  private MeedExchangeRateRepository     meedExchangeRateRepository;
+  private MeedExchangeRateRepository meedExchangeRateRepository;
 
   /**
    * Retrieves list of {@link MeedPrice} from selected date until a dedicated
    * date
-   * 
+   *
    * @param currency {@link Currency}
    * @param fromDate {@link LocalDate}
-   * @param toDate {@link LocalDate}
+   * @param toDate   {@link LocalDate}
    * @return {@link List} of {@link MeedPrice} for selected dates
    */
   public List<MeedPrice> getExchangeRates(Currency currency, LocalDate fromDate, LocalDate toDate) {
@@ -116,8 +116,8 @@ public class ExchangeService {
       currencyExchangeRates = Collections.emptyList();
     }
     return exchangeRates.stream()
-                        .map(exchangeRate -> toMeedPrice(exchangeRate, currencyExchangeRates, currency))
-                        .collect(Collectors.toList());
+            .map(exchangeRate -> toMeedPrice(exchangeRate, currencyExchangeRates, currency))
+            .collect(Collectors.toList());
   }
 
   public void computeTodayCurrencyExchangeRate() {
@@ -144,12 +144,12 @@ public class ExchangeService {
     LocalDate untilDate = today.plusDays(1);
     while (indexDate.isBefore(untilDate)) {
       MeedExchangeRate rate = meedExchangeRateRepository.findById(indexDate)
-                                                        .orElse(new MeedExchangeRate(indexDate));
+              .orElse(new MeedExchangeRate(indexDate));
       if (!rate.isFinalRate()) {
         boolean todayValue = indexDate.isEqual(today);
         rate.setFinalRate(!todayValue);
         ZonedDateTime time = todayValue ? ZonedDateTime.now(ZoneOffset.UTC)
-                                        : indexDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).minusSeconds(1);
+                : indexDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).minusSeconds(1);
         computePrice(rate, time, todayValue, this::addEthPrice);
         computePrice(rate, time, todayValue, this::addPairData);
         meedExchangeRateRepository.save(rate);
@@ -175,8 +175,8 @@ public class ExchangeService {
       CurrencyExchangeRate rate = currencyExchangeRateRepository.findById(indexDate).orElse(null);
       if (rate == null) {
         rate = new CurrencyExchangeRate(indexDate,
-                                        todayExchangeRate.getCurrency(),
-                                        todayExchangeRate.getRate());
+                todayExchangeRate.getCurrency(),
+                todayExchangeRate.getRate());
         currencyExchangeRateRepository.save(rate);
       }
       indexDate = indexDate.plusDays(1);
@@ -190,9 +190,9 @@ public class ExchangeService {
       try (JsonReader reader = Json.createReader(new StringReader(exchangeRateResultString))) {
         JsonObject exchangeRateResult = reader.readObject();
         BigDecimal euroExchangeRate = exchangeRateResult.getJsonObject("data")
-                                                        .getJsonObject("EUR")
-                                                        .getJsonNumber("value")
-                                                        .bigDecimalValue();
+                .getJsonObject("EUR")
+                .getJsonNumber("value")
+                .bigDecimalValue();
         rate = new CurrencyExchangeRate(date, Currency.EUR, euroExchangeRate);
         currencyExchangeRateRepository.save(rate);
       }
@@ -228,8 +228,8 @@ public class ExchangeService {
       try (JsonReader reader = Json.createReader(new StringReader(ethPriceDataJsonString))) {
         JsonObject ethPriceDataJson = reader.readObject();
         if (ethPriceDataJson.containsKey(DATA_PARAM_NAME)
-            && ethPriceDataJson.getJsonObject(DATA_PARAM_NAME).containsKey(BUNDLE_PARAM_NAME)
-            && !ethPriceDataJson.getJsonObject(DATA_PARAM_NAME).isNull(BUNDLE_PARAM_NAME)) {
+                && ethPriceDataJson.getJsonObject(DATA_PARAM_NAME).containsKey(BUNDLE_PARAM_NAME)
+                && !ethPriceDataJson.getJsonObject(DATA_PARAM_NAME).isNull(BUNDLE_PARAM_NAME)) {
           JsonObject bundleObject = ethPriceDataJson.getJsonObject(DATA_PARAM_NAME).getJsonObject(BUNDLE_PARAM_NAME);
           BigDecimal ethPrice = new BigDecimal(bundleObject.getJsonString("ethPrice").getString());
           rate.setEthUsdPrice(ethPrice);
@@ -248,8 +248,8 @@ public class ExchangeService {
   private boolean addPairData(MeedExchangeRate rate, String blockNumber) {
     if (StringUtils.isNotBlank(blockNumber)) {
       String body = "{\"query\":\"{pair(id: \\\""
-          + lpTokenAddress + "\\\", block: {number:" + blockNumber
-          + "}) {id,token1Price,reserve0,reserve1}}\"}";
+              + lpTokenAddress + "\\\", block: {number:" + blockNumber
+              + "}) {id,token1Price,reserve0,reserve1}}\"}";
       String pairDataJsonString = executeQuery(lpTokenApiUrl, body);
       if (StringUtils.isNotBlank(pairDataJsonString)) {
         try (JsonReader reader = Json.createReader(new StringReader(pairDataJsonString))) {
@@ -278,10 +278,10 @@ public class ExchangeService {
 
   private String getLastBlockFromErrorMessage(JsonObject pairDataJson) {
     if (pairDataJson.containsKey(ERRORS_PARAM_NAME)
-        && !pairDataJson.isNull(ERRORS_PARAM_NAME)
-        && !pairDataJson.getJsonArray(ERRORS_PARAM_NAME).isEmpty()
-        && pairDataJson.getJsonArray(ERRORS_PARAM_NAME).getJsonObject(0).containsKey(MESSAGE_PARAM_NAME)
-        && !pairDataJson.getJsonArray(ERRORS_PARAM_NAME).getJsonObject(0).isNull(MESSAGE_PARAM_NAME)) {
+            && !pairDataJson.isNull(ERRORS_PARAM_NAME)
+            && !pairDataJson.getJsonArray(ERRORS_PARAM_NAME).isEmpty()
+            && pairDataJson.getJsonArray(ERRORS_PARAM_NAME).getJsonObject(0).containsKey(MESSAGE_PARAM_NAME)
+            && !pairDataJson.getJsonArray(ERRORS_PARAM_NAME).getJsonObject(0).isNull(MESSAGE_PARAM_NAME)) {
       String message = pairDataJson.getJsonArray(ERRORS_PARAM_NAME).getJsonObject(0).getString(MESSAGE_PARAM_NAME);
       if (message.contains("up to block number")) {
         Matcher matcher = LATEST_BLOCK_NUMBER_ERROR_PATTERN.matcher(message);
@@ -301,26 +301,26 @@ public class ExchangeService {
       body = "{\"query\":\"{blocks(first:1,orderBy:number,orderDirection:desc){number}}\"}";
     } else {
       body = "{\"query\":\"{blocks(first:1,orderBy:timestamp,orderDirection: desc,where:{timestamp_lte:"
-          + date.toEpochSecond() + "}){number}}\"}";
+              + date.toEpochSecond() + "}){number}}\"}";
     }
     String blockNumberDataJsonString = executeQuery(blockchainApiUrl, body);
     if (StringUtils.isNotBlank(blockNumberDataJsonString)) {
       try (JsonReader reader = Json.createReader(new StringReader(blockNumberDataJsonString))) {
         JsonObject blockNumberDataJson = reader.readObject();
         if (blockNumberDataJson.containsKey(DATA_PARAM_NAME)
-            && blockNumberDataJson.getJsonObject(DATA_PARAM_NAME).containsKey(BLOCKS_PARAM_NAME)
-            && !blockNumberDataJson.getJsonObject(DATA_PARAM_NAME).isNull(BLOCKS_PARAM_NAME)) {
+                && blockNumberDataJson.getJsonObject(DATA_PARAM_NAME).containsKey(BLOCKS_PARAM_NAME)
+                && !blockNumberDataJson.getJsonObject(DATA_PARAM_NAME).isNull(BLOCKS_PARAM_NAME)) {
           return blockNumberDataJson.getJsonObject(DATA_PARAM_NAME)
-                                    .getJsonArray(BLOCKS_PARAM_NAME)
-                                    .getJsonObject(0)
-                                    .getString("number");
+                  .getJsonArray(BLOCKS_PARAM_NAME)
+                  .getJsonObject(0)
+                  .getString("number");
         }
       }
     }
     return null;
   }
 
-  protected String executeQuery(String url, String body) {
+   protected String executeQuery(String url, String body) {
     try {
       HttpsURLConnection con = newURLConnection(url);
 
