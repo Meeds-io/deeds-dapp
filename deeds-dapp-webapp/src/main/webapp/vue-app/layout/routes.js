@@ -16,14 +16,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-const Snapshot = { template: '<deeds-snapshot />' };
+const Overview = { template: '<deeds-snapshot />' };
 const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 
 export default {
-  '/': Snapshot,
-  '/snapshot': Snapshot,
+  '/': Overview,
+  '/overview': Overview,
   '/stake': Stake,
   '/deeds': Deeds,
   '/farm': Farm,
