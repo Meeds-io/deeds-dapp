@@ -15,11 +15,16 @@
  */
 package io.meeds.deeds.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.apache.commons.codec.binary.StringUtils;
@@ -31,6 +36,7 @@ import org.web3j.protocol.core.RemoteFunctionCall;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
 
 @SpringBootTest(
@@ -45,6 +51,12 @@ class BlockchainServiceTest {
 
   @MockBean
   private Deed                       deed;
+
+  @MockBean(name = "ethereumMeedToken")
+  private MeedsToken                 ethereumToken;
+
+  @MockBean(name = "polygonMeedToken")
+  private MeedsToken                 polygonToken;
 
   @Autowired
   private BlockchainService          blockchainService;
@@ -119,6 +131,56 @@ class BlockchainServiceTest {
     assertThrows(RuntimeException.class, () -> blockchainService.isDeedProvisioningManager(walletAddress, 0));
     assertTrue(blockchainService.isDeedProvisioningManager(walletAddress, 1));
     assertFalse(blockchainService.isDeedProvisioningManager(walletAddress, 2));
+  }
+
+  @Test
+  void testTotalSupply() throws Exception {
+    assertNotNull(blockchainService);
+
+    BigInteger totalSupply = BigInteger.valueOf(12500);
+
+    when(ethereumToken.totalSupply()).thenAnswer(invocation -> {
+      @SuppressWarnings("unchecked")
+      RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+      when(remoteFunctionCall.send()).thenReturn(totalSupply);
+      return remoteFunctionCall;
+    });
+    assertEquals(new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18)),
+                 blockchainService.totalSupply());
+  }
+
+  @Test
+  void testBalanceOfOnPolygon() throws Exception {
+    assertNotNull(blockchainService);
+
+    BigInteger balance = BigInteger.valueOf(12500);
+    String address = "0x6acA77CF3BaB0C4E8210A09B57B07854a995289a";
+
+    when(polygonToken.balanceOf(address)).thenAnswer(invocation -> {
+      @SuppressWarnings("unchecked")
+      RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+      when(remoteFunctionCall.send()).thenReturn(balance);
+      return remoteFunctionCall;
+    });
+    assertEquals(new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18)),
+                 blockchainService.balanceOfOnPolygon(address));
+  }
+
+  @Test
+  void testBalanceOfOnEthereum() throws Exception {
+    assertNotNull(blockchainService);
+
+    BigInteger balance = BigInteger.valueOf(12500);
+    String address = "0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4";
+
+    when(ethereumToken.balanceOf(address)).thenAnswer(invocation -> {
+      @SuppressWarnings("unchecked")
+      RemoteFunctionCall<BigInteger> remoteFunctionCall = mock(RemoteFunctionCall.class);
+      when(remoteFunctionCall.send()).thenReturn(balance);
+      return remoteFunctionCall;
+    });
+    assertEquals(new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18)),
+                 blockchainService.balanceOfOnEthereum(address));
   }
 
 }

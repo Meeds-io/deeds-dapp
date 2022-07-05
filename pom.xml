@@ -48,6 +48,7 @@
     <commons-io.version>2.9.0</commons-io.version>
     <org.web3j.version>4.8.9</org.web3j.version>
     <com.squareup.okhttp3.version>4.9.0</com.squareup.okhttp3.version>
+    <org.exoplatform.wallet.ert-contract.version>1.3.x-SNAPSHOT</org.exoplatform.wallet.ert-contract.version>
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M5</version.surefire.plugin>
@@ -70,6 +71,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.exoplatform.wallet</groupId>
+        <artifactId>ert-contract</artifactId>
+        <version>${org.exoplatform.wallet.ert-contract.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>core</artifactId>
         <version>${org.web3j.version}</version>
@@ -77,6 +84,26 @@
       <dependency>
         <groupId>org.web3j</groupId>
         <artifactId>crypto</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>utils</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>abi</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>rlp</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>tuples</artifactId>
         <version>${org.web3j.version}</version>
       </dependency>
       <dependency>
