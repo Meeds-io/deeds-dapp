@@ -15,11 +15,16 @@
  */
 package io.meeds.deeds.service;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -28,7 +33,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.IOUtils;
@@ -40,7 +47,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.*;
+import io.meeds.deeds.model.CurrencyExchangeRate;
+import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.storage.MeedExchangeRateRepository;
 
@@ -65,11 +74,18 @@ public class ExchangeService {
 
   private static final String            ERRORS_PARAM_NAME                 = "errors";
 
+  private static final String            USD_CURRENCY_PARAM_NAME           = "usd";
+
+  private static final String            MEEDS_DAO_COIN_PARAM_NAME         = "meeds-dao";
+
   @Value("${meeds.exchange.currencyApiKey:}")
   private String                         currencyApiKey;
 
   @Value("${meeds.exchange.currencyApiUrl:https://api.currencyapi.com/v3/latest}")
   private String                         currencyApiUrl;
+
+  @Value("${meeds.exchange.meedUsdPriceUrl:https://api.coingecko.com/api/v3/simple/price?ids=meeds-dao&vs_currencies=USD}")
+  private String                         meedUsdPriceUrl;
 
   @Value("${meeds.exchange.blockchainApiUrl:https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}")
   private String                         blockchainApiUrl;
@@ -156,6 +172,23 @@ public class ExchangeService {
       }
       indexDate = indexDate.plusDays(1);
     }
+  }
+
+  public BigDecimal getMeedUsdPrice() {
+    String priceJsonString = executeQuery(meedUsdPriceUrl, null);
+    if (StringUtils.isNotBlank(priceJsonString)) {
+      try (JsonReader reader = Json.createReader(new StringReader(priceJsonString))) {
+        JsonObject blockNumberDataJson = reader.readObject();
+        if (blockNumberDataJson.containsKey(MEEDS_DAO_COIN_PARAM_NAME)
+            && blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME).containsKey(USD_CURRENCY_PARAM_NAME)
+            && !blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME).isNull(USD_CURRENCY_PARAM_NAME)) {
+          return blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME)
+                                    .getJsonNumber(USD_CURRENCY_PARAM_NAME)
+                                    .bigDecimalValue();
+        }
+      }
+    }
+    return null;
   }
 
   protected void computeCurrencyExchangeRate() {
@@ -328,12 +361,14 @@ public class ExchangeService {
       con.setRequestMethod("GET");
       con.setRequestProperty("Content-Type", "application/json");
 
-      // Send post request
-      con.setDoOutput(true);
-      DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-      wr.writeBytes(body);
-      wr.flush();
-      wr.close();
+      if (StringUtils.isNotBlank(body)) {
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(body);
+        wr.flush();
+        wr.close();
+      }
 
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
@@ -418,4 +453,5 @@ public class ExchangeService {
   protected LocalDate firstMeedTokenDate() {
     return MEEDS_TOKEN_FIRST_DATE;
   }
+
 }

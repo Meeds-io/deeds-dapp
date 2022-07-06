@@ -15,22 +15,14 @@
  */
 package io.meeds.deeds.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,8 +30,6 @@ import org.springframework.stereotype.Component;
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
 import lombok.Getter;
-
-import javax.net.ssl.HttpsURLConnection;
 
 @Component
 public class MeedTokenMetricService {
@@ -66,9 +56,6 @@ public class MeedTokenMetricService {
   @Getter
   private List<String>               lockedPolygonAddresses;
 
-  @Value("${meeds.exchange.Coingecko.UsdPrice:https://api.coingecko.com/api/v3/simple/price?ids=meeds-dao&vs_currencies=USD}")
-  private String meedUsdPriceProviderUrl;
-
   @Autowired(required = false)
   private BlockchainService          blockchainService;
 
@@ -79,23 +66,30 @@ public class MeedTokenMetricService {
   private MeedTokenMetric            recentMetric;
 
   @Autowired(required = false)
-  private ExchangeService exchangeService;
+  private ExchangeService            exchangeService;
 
   /**
-   * Retrieves list of total circulating Meeds supply by using this formula:
+   * Retrieves total circulating Meeds supply by using this formula:
    * - Total supply of Meeds - total Meeds reserves - total locked Meeds
    * 
    * @return {@link BigDecimal} for most recent computed circulating supply
    *           value
    */
   public BigDecimal getCirculatingSupply() {
-    if (recentMetric == null) {
-      recentMetric = getTodayMetric();
-      if (recentMetric == null) {
-        computeTokenMetrics();
-      }
-    }
-    return recentMetric.getCirculatingSupply();
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getCirculatingSupply();
+  }
+
+  /**
+   * Retrieves Merket Capitalization by using this formula:
+   * - Circulating Supply of Meeds * Meed USD Token price
+   * 
+   * @return {@link BigDecimal} for most recent computed market capitalization
+   *           value
+   */
+  public BigDecimal getMarketCapitalization() {
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getMarketCapitalization();
   }
 
   /**
@@ -117,16 +111,16 @@ public class MeedTokenMetricService {
     Map<String, BigDecimal> lockedBalances = getLockedBalances();
     metric.setLockedBalances(lockedBalances);
 
-    BigDecimal marketCap = getMarketCapitalization();
-    metric.setMarketCapitalization(marketCap);
-
-    BigDecimal meedUsdValue = getMeedUsdPrice();
+    BigDecimal meedUsdValue = exchangeService.getMeedUsdPrice();
     metric.setMeedUsdPrice(meedUsdValue);
 
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal circulatingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
     metric.setCirculatingSupply(circulatingSupply);
+
+    BigDecimal marketCapitalization = meedUsdValue.multiply(circulatingSupply);
+    metric.setMarketCapitalization(marketCapitalization);
 
     meedTokenMetricsRepository.save(metric);
 
@@ -178,48 +172,15 @@ public class MeedTokenMetricService {
     return lockedBalances;
   }
 
-  /**
-   * @return {@link BigDecimal} . This will return the Makert Capitalization value of the Meeds Token
-   * throughout the formula of MarketCap = TotalSupply * Meeds price
-   */
-  public BigDecimal getMarketCapitalization() {
-    try {
-      return getMeedUsdPrice().multiply(getCirculatingSupply());
-    } catch (Exception e){
-      throw new IllegalStateException("Error retrieving Market Capitalization for Meed Token from Blockchain", e);
-    }
-  }
-
-  public BigDecimal getMeedUsdPrice(){
-    BigDecimal MarketCap = null;
-    try {
-      HttpsURLConnection con = (HttpsURLConnection) new URL(meedUsdPriceProviderUrl).openConnection();
-      int responseCode = con.getResponseCode();
-      if (responseCode == 200) {
-        try (InputStream inputStream = con.getInputStream()) {
-          return  new BigDecimal(findDecimalNums(IOUtils.toString(inputStream, StandardCharsets.UTF_8)).get(0));
-        }
+  private MeedTokenMetric getLastMetric() {
+    if (recentMetric == null) {
+      recentMetric = getTodayMetric();
+      if (recentMetric == null) {
+        computeTokenMetrics();
       }
-
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
     }
-    return MarketCap;
+    return recentMetric;
   }
-
-  List<String> findDecimalNums(String stringToSearch) {
-    Pattern decimalNumPattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-    Matcher matcher = decimalNumPattern.matcher(stringToSearch);
-
-    List<String> decimalNumList = new ArrayList<>();
-    while (matcher.find()) {
-      decimalNumList.add(matcher.group());
-    }
-
-    return decimalNumList;
-  }
-
-
 
   private MeedTokenMetric getTodayMetric() {
     return meedTokenMetricsRepository.findById(getTodayId()).orElse(null);
