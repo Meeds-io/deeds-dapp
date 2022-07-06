@@ -81,7 +81,7 @@ public class MeedTokenMetricService {
   }
 
   /**
-   * Retrieves Merket Capitalization by using this formula:
+   * Retrieves Market Capitalization by using this formula:
    * - Circulating Supply of Meeds * Meed USD Token price
    * 
    * @return {@link BigDecimal} for most recent computed market capitalization
