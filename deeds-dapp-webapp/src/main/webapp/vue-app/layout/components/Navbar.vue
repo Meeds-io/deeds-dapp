@@ -19,13 +19,13 @@
 <template>
   <v-tabs v-model="selectedTab">
     <v-tab
-      ref="snapshot"
-      id="snapshot"
-      :href="`/${parentLocation}/snapshot`"
+      ref="overview"
+      id="overview"
+      :href="`/${parentLocation}/overview`"
       link 
       class="px-0 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.snapshot') }}</h3>
+      <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
     </v-tab>
     <v-tab
       ref="stake"
@@ -64,7 +64,7 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     defaultTab() {
-      return `/${this.parentLocation}/snapshot`;
+      return `/${this.parentLocation}/overview`;
     }
   }),
   created() {
