@@ -89,7 +89,7 @@ public class ExchangeService {
   /**
    * Retrieves list of {@link MeedPrice} from selected date until a dedicated
    * date
-   *
+   * 
    * @param currency {@link Currency}
    * @param fromDate {@link LocalDate}
    * @param toDate {@link LocalDate}
