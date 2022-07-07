@@ -188,7 +188,7 @@ public class MeedTokenMetricService {
     return lockedBalances;
   }
 
-  public BigDecimal getTotalLockedBalance(Map<String, BigDecimal> lockedBalances) {
+  private BigDecimal getTotalLockedBalance(Map<String, BigDecimal> lockedBalances) {
     return lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
   }
 
