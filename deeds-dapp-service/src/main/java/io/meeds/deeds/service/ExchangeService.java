@@ -28,7 +28,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,10 +74,6 @@ public class ExchangeService {
   private static final String            BLOCKS_PARAM_NAME                 = "blocks";
 
   private static final String            ERRORS_PARAM_NAME                 = "errors";
-
-  private static final String            USD_CURRENCY_PARAM_NAME           = "usd";
-
-  private static final String            MEEDS_DAO_COIN_PARAM_NAME         = "meeds-dao";
 
   @Value("${meeds.exchange.currencyApiKey:}")
   private String                         currencyApiKey;
@@ -173,12 +168,13 @@ public class ExchangeService {
     }
   }
 
-  public  BigDecimal  getMeedUsdPrice() {
-    List<MeedPrice>  meedExchangeRates = getExchangeRates(Currency.USD, LocalDate.now().minusDays(8), LocalDate.now());
-    Optional<MeedPrice> recentMeedExchangeRate = meedExchangeRates.stream()
-            .filter(object -> object.getDate() != null)
-            .max(Comparator.comparing(MeedPrice::getDate));
-    return recentMeedExchangeRate.get().getCurrencyPrice();
+  public BigDecimal getMeedUsdPrice() {
+    List<MeedPrice> meedExchangeRates = getExchangeRates(Currency.USD, LocalDate.now().minusDays(8), LocalDate.now());
+    return meedExchangeRates.stream()
+                            .filter(object -> object.getDate() != null)
+                            .max(Comparator.comparing(MeedPrice::getDate))
+                            .map(MeedPrice::getCurrencyPrice)
+                            .orElse(BigDecimal.ZERO);
   }
 
   protected void computeCurrencyExchangeRate() {
