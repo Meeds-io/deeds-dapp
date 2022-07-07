@@ -65,21 +65,31 @@ public class MeedTokenMetricService {
   @Getter
   private MeedTokenMetric            recentMetric;
 
+  @Autowired(required = false)
+  private ExchangeService            exchangeService;
+
   /**
-   * Retrieves list of total circulating Meeds supply by using this formula:
+   * Retrieves total circulating Meeds supply by using this formula:
    * - Total supply of Meeds - total Meeds reserves - total locked Meeds
    * 
    * @return {@link BigDecimal} for most recent computed circulating supply
    *           value
    */
   public BigDecimal getCirculatingSupply() {
-    if (recentMetric == null) {
-      recentMetric = getTodayMetric();
-      if (recentMetric == null) {
-        computeTokenMetrics();
-      }
-    }
-    return recentMetric.getCirculatingSupply();
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getCirculatingSupply();
+  }
+
+  /**
+   * Retrieves Market Capitalization by using this formula:
+   * - Circulating Supply of Meeds * Meed USD Token price
+   * 
+   * @return {@link BigDecimal} for most recent computed market capitalization
+   *           value
+   */
+  public BigDecimal getMarketCapitalization() {
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getMarketCapitalization();
   }
 
   /**
@@ -101,10 +111,16 @@ public class MeedTokenMetricService {
     Map<String, BigDecimal> lockedBalances = getLockedBalances();
     metric.setLockedBalances(lockedBalances);
 
+    BigDecimal meedUsdValue = exchangeService.getMeedUsdPrice();
+    metric.setMeedUsdPrice(meedUsdValue);
+
     BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
     BigDecimal circulatingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
     metric.setCirculatingSupply(circulatingSupply);
+
+    BigDecimal marketCapitalization = meedUsdValue.multiply(circulatingSupply);
+    metric.setMarketCapitalization(marketCapitalization);
 
     meedTokenMetricsRepository.save(metric);
 
@@ -154,6 +170,16 @@ public class MeedTokenMetricService {
                             lockedBalances.put(address.toLowerCase(), balance);
                           });
     return lockedBalances;
+  }
+
+  private MeedTokenMetric getLastMetric() {
+    if (recentMetric == null) {
+      recentMetric = getTodayMetric();
+      if (recentMetric == null) {
+        computeTokenMetrics();
+      }
+    }
+    return recentMetric;
   }
 
   private MeedTokenMetric getTodayMetric() {

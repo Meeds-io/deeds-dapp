@@ -15,12 +15,18 @@
  */
 package io.meeds.deeds.service;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
@@ -28,7 +34,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.IOUtils;
@@ -40,7 +48,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.*;
+import io.meeds.deeds.model.CurrencyExchangeRate;
+import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.storage.MeedExchangeRateRepository;
 
@@ -156,6 +166,15 @@ public class ExchangeService {
       }
       indexDate = indexDate.plusDays(1);
     }
+  }
+
+  public BigDecimal getMeedUsdPrice() {
+    List<MeedPrice> meedExchangeRates = getExchangeRates(Currency.USD, LocalDate.now().minusDays(8), LocalDate.now());
+    return meedExchangeRates.stream()
+                            .filter(object -> object.getDate() != null)
+                            .max(Comparator.comparing(MeedPrice::getDate))
+                            .map(MeedPrice::getCurrencyPrice)
+                            .orElse(BigDecimal.ZERO);
   }
 
   protected void computeCurrencyExchangeRate() {
@@ -328,12 +347,14 @@ public class ExchangeService {
       con.setRequestMethod("GET");
       con.setRequestProperty("Content-Type", "application/json");
 
-      // Send post request
-      con.setDoOutput(true);
-      DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-      wr.writeBytes(body);
-      wr.flush();
-      wr.close();
+      if (StringUtils.isNotBlank(body)) {
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.writeBytes(body);
+        wr.flush();
+        wr.close();
+      }
 
       int responseCode = con.getResponseCode();
       if (responseCode == 200) {
@@ -418,4 +439,5 @@ public class ExchangeService {
   protected LocalDate firstMeedTokenDate() {
     return MEEDS_TOKEN_FIRST_DATE;
   }
+
 }

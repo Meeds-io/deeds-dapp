@@ -51,10 +51,13 @@ import io.meeds.deeds.storage.MeedTokenMetricsRepository;
         "meeds.blockchain.lockedValuePolygonAddresses=0x6acA77CF3BaB0C4E8210A09B57B07854a995289a"
     }
 )
-class MeedTokenMetricTest {
+class MeedTokenMetricServiceTest {
 
   @MockBean
   private BlockchainService          blockchainService;
+
+  @MockBean
+  private ExchangeService            exchangeService;
 
   @MockBean
   private MeedTokenMetric            metric;
@@ -103,6 +106,7 @@ class MeedTokenMetricTest {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
     when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(exchangeService.getMeedUsdPrice()).thenReturn(BigDecimal.ZERO);
 
     HashMap<String, BigDecimal> expectedReserveBalances = new HashMap<>();
     BigDecimal expectedTotalReserves = mockReserveBalances(expectedReserveBalances);
@@ -130,6 +134,7 @@ class MeedTokenMetricTest {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
     when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(exchangeService.getMeedUsdPrice()).thenReturn(BigDecimal.ZERO);
 
     BigDecimal expectedTotalReserves = mockReserveBalances(new HashMap<>());
     BigDecimal expectedTotalLocked = mockLockedBalances(new HashMap<>());
@@ -141,6 +146,29 @@ class MeedTokenMetricTest {
     // Then
     BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
     assertEquals(expectedCirculatingSupply, circulatingSupply);
+  }
+
+  @Test
+  void testGetMarketCapitalization() {
+    // Given
+    BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
+    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+
+    BigDecimal meedPrice = BigDecimal.valueOf(10);
+    BigDecimal expectedTotalReserves = mockReserveBalances(new HashMap<>());
+    BigDecimal expectedTotalLocked = mockLockedBalances(new HashMap<>());
+
+    BigDecimal expectedCirculatingSupply = expectedTotalSupply.subtract(expectedTotalReserves).subtract(expectedTotalLocked);
+    BigDecimal expectedMarketCap = expectedCirculatingSupply.multiply(meedPrice);
+
+    when(exchangeService.getMeedUsdPrice()).thenReturn(meedPrice);
+
+    // When
+    meedTokenMetricService.computeTokenMetrics();
+
+    // Then
+    BigDecimal marketCap = meedTokenMetricService.getMarketCapitalization();
+    assertEquals(expectedMarketCap, marketCap);
   }
 
   private BigDecimal mockReserveBalances(Map<String, BigDecimal> expectedReserveBalances) {

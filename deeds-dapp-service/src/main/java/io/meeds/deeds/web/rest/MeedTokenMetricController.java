@@ -41,4 +41,12 @@ public class MeedTokenMetricController {
                          .body(circulatingSupply);
   }
 
+  @GetMapping("/mcap")
+  public ResponseEntity<BigDecimal> getMarketCapitalization() {
+    BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization();
+    return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache().cachePublic())
+            .body(marketCapitalization);
+  }
+
 }
