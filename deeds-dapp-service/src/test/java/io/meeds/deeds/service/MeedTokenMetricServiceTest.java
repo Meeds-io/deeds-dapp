@@ -139,7 +139,6 @@ class MeedTokenMetricServiceTest {
 
     //then
     assertEquals(expectedTotalLockedValue,totalLockedValue);
-
   }
 
   @Test
