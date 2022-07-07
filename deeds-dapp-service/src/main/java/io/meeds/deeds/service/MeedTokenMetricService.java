@@ -93,6 +93,18 @@ public class MeedTokenMetricService {
   }
 
   /**
+   * Retrieves Total Locked Value by using this formula:
+   * - Total Locked Meed Tokens * Meed USD Token price
+   *
+   * @return {@link BigDecimal} for most recent computed Total Locked Value
+   *           value
+   */
+  public BigDecimal getTotalValuelocked() {
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getTotalValuelocked();
+  }
+
+  /**
    * Retrieves Metrics of Meed Token from Blockchain and other external sources.
    * Once retrieved, it will be saved. The metrics are collected by day, in
    * other terms, there will be only one metric entity collected by a day.
@@ -114,9 +126,13 @@ public class MeedTokenMetricService {
     BigDecimal meedUsdValue = exchangeService.getMeedUsdPrice();
     metric.setMeedUsdPrice(meedUsdValue);
 
-    BigDecimal reserveValue = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
-    BigDecimal lockedValue = lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
-    BigDecimal circulatingSupply = totalSupply.subtract(reserveValue).subtract(lockedValue);
+    BigDecimal totalLockedBalance = getTotalLockedBalance(lockedBalances);
+    BigDecimal totalLockedValue = meedUsdValue.multiply(totalLockedBalance);
+    metric.setTotalValuelocked(totalLockedValue);
+
+    BigDecimal totalReserveBalance = getTotalReserveBalance(reserveBalances);
+
+    BigDecimal circulatingSupply = totalSupply.subtract(totalReserveBalance).subtract(totalLockedBalance);
     metric.setCirculatingSupply(circulatingSupply);
 
     BigDecimal marketCapitalization = meedUsdValue.multiply(circulatingSupply);
@@ -170,6 +186,14 @@ public class MeedTokenMetricService {
                             lockedBalances.put(address.toLowerCase(), balance);
                           });
     return lockedBalances;
+  }
+
+  public BigDecimal getTotalLockedBalance(Map<String, BigDecimal> lockedBalances) {
+    return lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+  }
+
+  public BigDecimal getTotalReserveBalance(Map<String, BigDecimal> reserveBalances) {
+    return reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
   }
 
   private MeedTokenMetric getLastMetric() {
