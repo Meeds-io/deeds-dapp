@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import javax.json.Json;
 import javax.net.ssl.HttpsURLConnection;
 
+import io.meeds.deeds.storage.MeedTokenMetricsRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,8 @@ import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
@@ -47,6 +51,7 @@ import io.meeds.deeds.model.*;
 import io.meeds.deeds.service.ExchangeServiceTest.ExchangeServiceNoInit;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.storage.MeedExchangeRateRepository;
+import org.springframework.test.web.client.MockRestServiceServer;
 
 @SpringBootTest(
     classes = {
@@ -213,6 +218,52 @@ class ExchangeServiceTest {
                  new MeedPrice(LocalDate.now().minusDays(2),
                                BigDecimal.valueOf(2),
                                BigDecimal.valueOf(10.8)).hashCode());
+  }
+
+  @Test
+  void testGetMeedUsdPrice(){
+    assertNotNull(exchangeService);
+
+    List<CurrencyExchangeRate> currencyExchangeRates = new ArrayList<CurrencyExchangeRate>();
+    List<MeedExchangeRate> meedExchangeRates = new ArrayList<MeedExchangeRate>();
+
+    when(meedExchangeRateRepository.save(any())).thenAnswer(invocation -> {
+      MeedExchangeRate exchangeRate = invocation.getArgument(0, MeedExchangeRate.class);
+      meedExchangeRates.add(exchangeRate);
+      return exchangeRate;
+    });
+    when(currencyExchangeRateRepository.save(any())).thenAnswer(invocation -> {
+      CurrencyExchangeRate exchangeRate = invocation.getArgument(0, CurrencyExchangeRate.class);
+      currencyExchangeRates.add(exchangeRate);
+      return exchangeRate;
+    });
+
+    exchangeService.computeMeedExchangeRate();
+    exchangeService.computeCurrencyExchangeRate();
+
+    when(currencyExchangeRateRepository.findByCurrencyAndDateBetween(any(), any(), any())).thenAnswer(invocation -> {
+      LocalDate fromDate = invocation.getArgument(1, LocalDate.class);
+      LocalDate toDate = invocation.getArgument(2, LocalDate.class);
+      return currencyExchangeRates.stream()
+              .filter(currencyExchangeRate -> (currencyExchangeRate.getDate().isAfter(fromDate)
+                      || currencyExchangeRate.getDate().isEqual(fromDate))
+                      && (currencyExchangeRate.getDate().isBefore(toDate)
+                      || currencyExchangeRate.getDate().isEqual(toDate)))
+              .collect(Collectors.toList());
+    });
+
+    when(meedExchangeRateRepository.findByDateBetween(any(), any())).thenAnswer(invocation -> {
+      LocalDate fromDate = invocation.getArgument(0, LocalDate.class);
+      LocalDate toDate = invocation.getArgument(1, LocalDate.class);
+      return meedExchangeRates.stream()
+              .filter(meedExchangeRate -> (meedExchangeRate.getDate().isAfter(fromDate)
+                      || meedExchangeRate.getDate().isEqual(fromDate))
+                      && (meedExchangeRate.getDate().isBefore(toDate)
+                      || meedExchangeRate.getDate().isEqual(toDate)))
+              .collect(Collectors.toList());
+    });
+    BigDecimal price = exchangeService.getMeedUsdPrice();
+    assertEquals(BigDecimal.valueOf(6),price);
   }
 
   @Component

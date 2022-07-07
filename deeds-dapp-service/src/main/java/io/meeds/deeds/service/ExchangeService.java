@@ -26,7 +26,9 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -83,9 +85,6 @@ public class ExchangeService {
 
   @Value("${meeds.exchange.currencyApiUrl:https://api.currencyapi.com/v3/latest}")
   private String                         currencyApiUrl;
-
-  @Value("${meeds.exchange.meedUsdPriceUrl:https://api.coingecko.com/api/v3/simple/price?ids=meeds-dao&vs_currencies=USD}")
-  private String                         meedUsdPriceUrl;
 
   @Value("${meeds.exchange.blockchainApiUrl:https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks}")
   private String                         blockchainApiUrl;
@@ -174,21 +173,12 @@ public class ExchangeService {
     }
   }
 
-  public BigDecimal getMeedUsdPrice() {
-    String priceJsonString = executeQuery(meedUsdPriceUrl, null);
-    if (StringUtils.isNotBlank(priceJsonString)) {
-      try (JsonReader reader = Json.createReader(new StringReader(priceJsonString))) {
-        JsonObject blockNumberDataJson = reader.readObject();
-        if (blockNumberDataJson.containsKey(MEEDS_DAO_COIN_PARAM_NAME)
-            && blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME).containsKey(USD_CURRENCY_PARAM_NAME)
-            && !blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME).isNull(USD_CURRENCY_PARAM_NAME)) {
-          return blockNumberDataJson.getJsonObject(MEEDS_DAO_COIN_PARAM_NAME)
-                                    .getJsonNumber(USD_CURRENCY_PARAM_NAME)
-                                    .bigDecimalValue();
-        }
-      }
-    }
-    return null;
+  public  BigDecimal  getMeedUsdPrice() {
+    List<MeedPrice>  meedExchangeRates = getExchangeRates(Currency.USD, LocalDate.now().minusDays(8), LocalDate.now());
+    Optional<MeedPrice> recentMeedExchangeRate = meedExchangeRates.stream()
+            .filter(object -> object.getDate() != null)
+            .max(Comparator.comparing(MeedPrice::getDate));
+    return recentMeedExchangeRate.get().getCurrencyPrice();
   }
 
   protected void computeCurrencyExchangeRate() {
