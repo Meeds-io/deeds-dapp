@@ -102,31 +102,11 @@ class MeedTokenMetricServiceTest {
   }
 
   @Test
-  void testGetTotalLockedBalance() {
-    Map<String, BigDecimal> lockedBalances = new HashMap<>();
-    mockLockedBalances(lockedBalances);
-
-    BigDecimal expectedTotalLockedBalance = BigDecimal.ZERO;
-    for (BigDecimal lockedBalance : lockedBalances.values()) {
-      expectedTotalLockedBalance = expectedTotalLockedBalance.add(lockedBalance);
-    }
-
-    BigDecimal totalLockedBalance = meedTokenMetricService.getTotalLockedBalance(lockedBalances);
-
-    assertEquals(expectedTotalLockedBalance, totalLockedBalance);
-  }
-
-  @Test
   void testGetTotalLockedValue() {
     //Given
-    Map<String, BigDecimal> lockedBalances = new HashMap<>();
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
-    mockLockedBalances(lockedBalances);
     mockReserveBalances(reserveBalances);
-    BigDecimal totalLockedBalance = BigDecimal.ZERO;
-    for (BigDecimal lockedBalance : lockedBalances.values()) {
-      totalLockedBalance = totalLockedBalance.add(lockedBalance);
-    }
+    BigDecimal totalLockedBalance = mockLockedBalances(new HashMap<>());
     BigDecimal meedPrice = BigDecimal.valueOf(19);
     BigDecimal expectedTotalLockedValue = meedPrice.multiply(totalLockedBalance);
 
