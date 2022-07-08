@@ -51,10 +51,10 @@ public class MeedTokenMetricController {
 
   @GetMapping("/tvl")
   public ResponseEntity<BigDecimal> getTotalLockedValue() {
-    BigDecimal marketCapitalization = meedTokenMetricService.getTotalValuelocked();
+    BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked();
     return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache().cachePublic())
-            .body(marketCapitalization);
+            .body(totalValueLocked);
   }
 
 }

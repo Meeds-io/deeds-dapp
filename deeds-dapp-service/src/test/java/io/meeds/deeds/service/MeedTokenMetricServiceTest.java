@@ -115,7 +115,7 @@ class MeedTokenMetricServiceTest {
     when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
     when(exchangeService.getMeedUsdPrice()).thenReturn(meedPrice);
     meedTokenMetricService.computeTokenMetrics();
-    BigDecimal totalLockedValue = meedTokenMetricService.getTotalValuelocked();
+    BigDecimal totalLockedValue = meedTokenMetricService.getTotalValueLocked();
 
     //then
     assertEquals(expectedTotalLockedValue,totalLockedValue);

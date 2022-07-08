@@ -99,7 +99,7 @@ public class MeedTokenMetricService {
    * @return {@link BigDecimal} for most recent computed Total Locked Value
    *           value
    */
-  public BigDecimal getTotalValuelocked() {
+  public BigDecimal getTotalValueLocked() {
     MeedTokenMetric lastMetric = getLastMetric();
     return lastMetric.getTotalValuelocked();
   }
