@@ -102,6 +102,24 @@ class MeedTokenMetricServiceTest {
   }
 
   @Test
+  void testGetTotalLockedValue() {
+    //Given
+    BigDecimal totalLockedBalance = mockLockedBalances(new HashMap<>());
+    BigDecimal meedPrice = BigDecimal.valueOf(19);
+    BigDecimal expectedTotalLockedValue = meedPrice.multiply(totalLockedBalance);
+
+    //when
+    BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
+    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(exchangeService.getMeedUsdPrice()).thenReturn(meedPrice);
+    meedTokenMetricService.computeTokenMetrics();
+    BigDecimal totalLockedValue = meedTokenMetricService.getTotalValueLocked();
+
+    //then
+    assertEquals(expectedTotalLockedValue,totalLockedValue);
+  }
+
+  @Test
   void testComputeTokenMetrics() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
