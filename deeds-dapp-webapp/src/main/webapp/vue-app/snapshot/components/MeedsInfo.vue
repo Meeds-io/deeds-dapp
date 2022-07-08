@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,33 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <div class="d-flex flex-column flex-sm-row">
-      <deeds-assets class="mb-4 mb-sm-8" />
-      <deeds-trade-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 mb-sm-0 flex-shrink-0 flex-grow-0" />
-    </div>
-    <deeds-meeds-info />
-  </div>
+  <v-card flat>
+    <h3 class="d-flex flex-nowrap">
+      {{ $t('Meeds token') }}
+      <v-divider class="my-auto ms-4" />
+    </h3>
+    {{ MeedsPriceValue }}
+    <deeds-price-chart class="mb-4 mb-sm-8" />
+    <deeds-currencies-chart />
+  </v-card>
 </template>
+<script>
+export default {
+  data: () => ({
+  }),
+  computed: Vuex.mapState({
+    meedPrice: state => state.meedPrice,
+    xMeedsBalance: state => state.xMeedsBalance,
+    selectedFiatCurrency: state => state.selectedFiatCurrency,
+  
+    MeedsPriceValue() {
+      const fractions = this.fractions || (this.selectedFiatCurrency === 'eth' ? 8 : 3);
+      return this.$ethUtils.fractionsToDisplay(
+        this.meedPrice,
+        fractions);
+   
+    },
+  
+  }),
+};
+</script>
