@@ -104,8 +104,6 @@ class MeedTokenMetricServiceTest {
   @Test
   void testGetTotalLockedValue() {
     //Given
-    Map<String, BigDecimal> reserveBalances = new HashMap<>();
-    mockReserveBalances(reserveBalances);
     BigDecimal totalLockedBalance = mockLockedBalances(new HashMap<>());
     BigDecimal meedPrice = BigDecimal.valueOf(19);
     BigDecimal expectedTotalLockedValue = meedPrice.multiply(totalLockedBalance);

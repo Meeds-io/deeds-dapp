@@ -21,6 +21,7 @@ import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,11 +190,19 @@ public class MeedTokenMetricService {
   }
 
   private BigDecimal getTotalLockedBalance(Map<String, BigDecimal> lockedBalances) {
-    return lockedBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+    return lockedBalances.values()
+                         .stream()
+                         .filter(Objects::nonNull)
+                         .reduce(BigDecimal::add)
+                         .orElse(BigDecimal.valueOf(0));
   }
 
   private BigDecimal getTotalReserveBalance(Map<String, BigDecimal> reserveBalances) {
-    return reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.valueOf(0));
+    return reserveBalances.values()
+                          .stream()
+                          .filter(Objects::nonNull)
+                          .reduce(BigDecimal::add)
+                          .orElse(BigDecimal.valueOf(0));
   }
 
   private MeedTokenMetric getLastMetric() {
