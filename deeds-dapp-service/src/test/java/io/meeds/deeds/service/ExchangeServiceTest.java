@@ -19,9 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -43,7 +49,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.*;
+import io.meeds.deeds.model.CurrencyExchangeRate;
+import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.service.ExchangeServiceTest.ExchangeServiceNoInit;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.storage.MeedExchangeRateRepository;
@@ -213,6 +221,35 @@ class ExchangeServiceTest {
                  new MeedPrice(LocalDate.now().minusDays(2),
                                BigDecimal.valueOf(2),
                                BigDecimal.valueOf(10.8)).hashCode());
+  }
+
+  @Test
+  void testGetMeedUsdPrice() {
+    assertNotNull(exchangeService);
+
+    List<MeedExchangeRate> meedExchangeRates = new ArrayList<MeedExchangeRate>();
+
+    when(meedExchangeRateRepository.save(any())).thenAnswer(invocation -> {
+      MeedExchangeRate exchangeRate = invocation.getArgument(0, MeedExchangeRate.class);
+      meedExchangeRates.add(exchangeRate);
+      return exchangeRate;
+    });
+
+    exchangeService.computeMeedExchangeRate();
+
+    when(meedExchangeRateRepository.findByDateBetween(any(), any())).thenAnswer(invocation -> {
+      LocalDate fromDate = invocation.getArgument(0, LocalDate.class);
+      LocalDate toDate = invocation.getArgument(1, LocalDate.class);
+      return meedExchangeRates.stream()
+                              .filter(meedExchangeRate -> (meedExchangeRate.getDate().isAfter(fromDate)
+                                  || meedExchangeRate.getDate().isEqual(fromDate))
+                                  && (meedExchangeRate.getDate().isBefore(toDate)
+                                      || meedExchangeRate.getDate().isEqual(toDate)))
+                              .collect(Collectors.toList());
+    });
+
+    BigDecimal price = exchangeService.getMeedUsdPrice();
+    assertEquals(BigDecimal.valueOf(6), price);
   }
 
   @Component
