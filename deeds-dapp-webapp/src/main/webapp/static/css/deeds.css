@@ -117,3 +117,12 @@ html {
 .position-relative {
   position: relative;
 }
+
+#echartCurrencies {
+  width:450px;
+  height:250px;
+}
+
+.assets {
+  width: 50%
+}

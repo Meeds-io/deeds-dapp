@@ -17,54 +17,98 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-    <div id="echartCurrencies" style="width:320px; height:220px; "></div>
+  <div ref="echartCurrencies" id="echartCurrencies"></div>
 </template>
 <script>
+import * as constants from '../../../js/Constants';
 export default {
   data: () => ({
-    chartOptions: {
-      title: [{
-        text: 'Currencies',
-        textStyle: {
-          fontStyle: 'normal',
-          color: '#4d5466',
-          fontWeight: 'normal',
-          fontSize: '16',
-        },
-        textAlign: 'center'
-      }],
-      tooltip: { 
-        trigger: 'item',
-        formatter: '{b} : {c} ({d}%)'
-      },
-      legend: {
-        orient: 'vertical',
-        left: 5,
-        top: 12,
-      },
-      series: [{
-        type: 'pie',
-        data: [
-          {value: 50, name: 'Meed'},
-          {value: 20, name: 'UNI-V2'},
-          {value: 10, name: 'SLP'},
-          {value: 20, name: 'xMeed'},
-        ],
-      }]
-    },
+    metrics: null,
+    lockedBalances: [],
     chart: null,
   }),
+  computed: {
+    chartOptions() {
+      return {
+        title: [{
+          text: 'Currencies',
+          left: '63%',
+          textStyle: {
+            fontStyle: 'normal',
+            color: '#4d5466',
+            fontWeight: 'normal',
+            fontSize: '16',
+          },
+          top: '40%',
+          textAlign: 'center'
+        }],
+        tooltip: { 
+          trigger: 'item',
+          formatter: '{b} : {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 5,
+          top: 12,
+        },
+        series: [{
+          type: 'pie',
+          radius: ['50%', '70%'],
+          center: ['66%', '45%'],
+          data: []
+        }],
+        color: ['#476a9c', '#ffb441', '#bc4343', '#2eb58c']};
+    },
+  },
+  watch: {
+    metrics() {
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+       
+      }
+    },
+  },
   mounted() {
     this.initChart();
   },
+  created() {
+    this.$deedService.getMetrics()
+      .then(metrics => {
+        this.metrics = metrics;
+        Object.keys(this.metrics.lockedBalances).forEach((lockedBalance, key) => {
+          if (lockedBalance.toLowerCase() === constants.SLP_address.toLowerCase()) {
+            const serie = {
+              name: 'SLP',
+              value: Object.values(this.metrics.lockedBalances)[key],
+            }; 
+            this.chartOptions.series[0].data.push(serie);
+          } else if (lockedBalance.toLowerCase() === constants.XMeed_address.toLowerCase()) {
+            const serie = {
+              name: 'XMeed',
+              value: Object.values(this.metrics.lockedBalances)[key],
+            }; 
+            this.chartOptions.series[0].data.push(serie);
+          } else if (lockedBalance.toLowerCase() === constants.UNIV2_address.toLowerCase()) {
+            const serie = {
+              name: 'UNI-V2',
+              value: Object.values(this.metrics.lockedBalances)[key],
+            }; 
+            this.chartOptions.series[0].data.push(serie);
+          } else {
+            const serie = {
+              name: 'Meed',
+              value: Object.values(this.metrics.lockedBalances)[key],
+            }; 
+            this.chartOptions.series[0].data.push(serie);
+          }
+        });
+      });
+  },
   methods: {
     initChart() {
-      const echartCurrencies = document.getElementById('echartCurrencies');
-      this.chart = echarts.init(echartCurrencies);
-      //this.chart = echarts.init(this.$refs.echartCurrencies);
-      this.chart.setOption(this.chartOptions);
+      this.chart = echarts.init(this.$refs.echartCurrencies);
+      // this.chart.setOption(this.chartOptions);
     },
   }
-  
 };
 </script>

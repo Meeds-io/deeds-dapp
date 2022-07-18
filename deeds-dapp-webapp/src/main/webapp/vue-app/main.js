@@ -24,6 +24,7 @@ import * as exchange from './js/exchange.js';
 import * as authentication from './js/authentication.js';
 import * as tenantManagement from './js/tenantManagement.js';
 import * as deedMetadata from './js/deedMetadata.js';
+import * as deedService from './js/deedService.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
@@ -43,6 +44,10 @@ window.Object.defineProperty(Vue.prototype, '$tenantManagement', {
 
 window.Object.defineProperty(Vue.prototype, '$deedMetadata', {
   value: deedMetadata,
+});
+
+window.Object.defineProperty(Vue.prototype, '$deedService', {
+  value: deedService,
 });
 
 Vue.use(Vuex);

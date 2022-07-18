@@ -19,31 +19,45 @@
 <template>
   <v-card flat>
     <h3 class="d-flex flex-nowrap">
-      {{ $t('Meeds token') }}
+      {{ $t('MeedsToken') }}
       <v-divider class="my-auto ms-4" />
     </h3>
-    {{ MeedsPriceValue }}
-    <deeds-price-chart class="mb-4 mb-sm-8" />
-    <deeds-currencies-chart />
+    <v-list>
+      <v-list-item>
+        <h4>{{ $t('MeedsPrice') }}</h4>
+        <v-list-item-content class="ml-4">
+          {{ meedsPriceToDisplay }}
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
+    <div class="d-flex">
+      <deeds-price-chart class="mb-4 mb-sm-8" />
+      <deeds-currencies-chart class="mt-15" />
+    </div>
   </v-card>
 </template>
 <script>
 export default {
-  data: () => ({
-  }),
   computed: Vuex.mapState({
     meedPrice: state => state.meedPrice,
-    xMeedsBalance: state => state.xMeedsBalance,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
-  
-    MeedsPriceValue() {
-      const fractions = this.fractions || (this.selectedFiatCurrency === 'eth' ? 8 : 3);
-      return this.$ethUtils.fractionsToDisplay(
-        this.meedPrice,
-        fractions);
-   
-    },
-  
+    language: state => state.language,
+    meedsPriceToDisplay() {
+      if (this.meedPrice) {
+        const meedPriceLabel = this.currencyFormat(this.meedPrice);
+        return  meedPriceLabel;
+      }
+    }
   }),
+  methods: {
+    currencyFormat(price) {
+      const value = price && price.value || price;
+      if (this.selectedFiatCurrency === 'eth') {
+        return `${this.$ethUtils.toFixed(value, 8)} ${this.selectedFiatCurrencyLabel}`;
+      } else {
+        return this.$ethUtils.toCurrencyDisplay(this.$ethUtils.toFixed(value, 2), this.selectedFiatCurrency, this.language);
+      }
+    },
+  }
 };
 </script>

@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.meeds.deeds.model.MeedTokenMetric;
+
 import io.meeds.deeds.service.MeedTokenMetricService;
 
 @RestController
@@ -32,6 +34,11 @@ public class MeedTokenMetricController {
 
   @Autowired
   private MeedTokenMetricService meedTokenMetricService;
+
+  @GetMapping("/")
+  public ResponseEntity<MeedTokenMetric> getMetrics() {
+    return ResponseEntity.ok(meedTokenMetricService.getLastMetric());
+  }
 
   @GetMapping("/circ")
   public ResponseEntity<BigDecimal> getCirculatingSupply() {

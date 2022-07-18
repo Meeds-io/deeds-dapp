@@ -216,7 +216,7 @@ public class MeedTokenMetricService {
                           .orElse(BigDecimal.valueOf(0));
   }
 
-  private MeedTokenMetric getLastMetric() {
+  public MeedTokenMetric getLastMetric() {
     if (recentMetric == null) {
       recentMetric = getTodayMetric();
       if (recentMetric == null) {
