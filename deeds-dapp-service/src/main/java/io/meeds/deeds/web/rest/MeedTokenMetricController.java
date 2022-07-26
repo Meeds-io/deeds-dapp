@@ -45,24 +45,24 @@ public class MeedTokenMetricController {
   public ResponseEntity<BigDecimal> getMarketCapitalization() {
     BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization();
     return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache().cachePublic())
-            .body(marketCapitalization);
+                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .body(marketCapitalization);
   }
 
   @GetMapping("/tvl")
   public ResponseEntity<BigDecimal> getTotalLockedValue() {
     BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked();
     return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache().cachePublic())
-            .body(totalValueLocked);
+                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .body(totalValueLocked);
   }
 
   @GetMapping("/supply")
   public ResponseEntity<BigDecimal> getTotalSupply() {
     BigDecimal totalSupply = meedTokenMetricService.getTotalSupply();
     return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache().cachePublic())
-            .body(totalSupply);
+                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .body(totalSupply);
   }
 
 }
