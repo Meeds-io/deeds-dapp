@@ -18,7 +18,10 @@ package io.meeds.deeds.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -57,9 +60,6 @@ class MeedTokenMetricServiceTest {
   private ExchangeService            exchangeService;
 
   @MockBean
-  private MeedTokenMetric            metric;
-
-  @MockBean
   private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
   @MockBean(name = "ethereumMeedToken")
@@ -89,9 +89,12 @@ class MeedTokenMetricServiceTest {
 
   @Test
   void testGetTotalSupply() {
-    // Given the wanted format with 8 decimals
-    BigDecimal totalSupply = BigDecimal.valueOf(100.00000000);
+    BigDecimal totalSupply = BigDecimal.valueOf(1997.190119975555D);
     when(blockchainService.totalSupply()).thenReturn(totalSupply);
+
+    when(exchangeService.getMeedUsdPrice()).thenReturn(BigDecimal.ZERO);
+    meedTokenMetricService.computeTokenMetrics();
+
     assertEquals(totalSupply, meedTokenMetricService.getTotalSupply());
   }
 

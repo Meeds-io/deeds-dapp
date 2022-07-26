@@ -16,7 +16,6 @@
 package io.meeds.deeds.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -90,8 +89,7 @@ public class MeedTokenMetricService {
    */
   public BigDecimal getTotalSupply() {
     MeedTokenMetric lastMetric = getLastMetric();
-    BigDecimal totalSupply = lastMetric.getTotalSupply();
-    return totalSupply.setScale(8, RoundingMode.CEILING);
+    return lastMetric.getTotalSupply();
   }
 
   /**
