@@ -16,6 +16,7 @@
 package io.meeds.deeds.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -72,13 +73,25 @@ public class MeedTokenMetricService {
   /**
    * Retrieves total circulating Meeds supply by using this formula:
    * - Total supply of Meeds - total Meeds reserves - total locked Meeds
-   * 
+   *
    * @return {@link BigDecimal} for most recent computed circulating supply
    *           value
    */
   public BigDecimal getCirculatingSupply() {
     MeedTokenMetric lastMetric = getLastMetric();
     return lastMetric.getCirculatingSupply();
+  }
+
+  /**
+   * Retrieves total Meeds supply, reading the value of the ERC20.totalSupply() Meeds contract
+   *
+   * @return {@link BigDecimal} for most recent computed total supply
+   *           value
+   */
+  public BigDecimal getTotalSupply() {
+    MeedTokenMetric lastMetric = getLastMetric();
+    BigDecimal totalSupply = lastMetric.getTotalSupply();
+    return totalSupply.setScale(8, RoundingMode.CEILING);
   }
 
   /**
