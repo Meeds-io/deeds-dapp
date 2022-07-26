@@ -57,7 +57,7 @@ public class MeedTokenMetricController {
             .body(totalValueLocked);
   }
 
-  @GetMapping("/total")
+  @GetMapping("/supply")
   public ResponseEntity<BigDecimal> getTotalSupply() {
     BigDecimal totalSupply = meedTokenMetricService.getTotalSupply();
     return ResponseEntity.ok()

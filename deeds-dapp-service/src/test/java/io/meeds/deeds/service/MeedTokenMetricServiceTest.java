@@ -18,10 +18,7 @@ package io.meeds.deeds.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -88,6 +85,14 @@ class MeedTokenMetricServiceTest {
 
     BigDecimal result = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     assertEquals(totalReserves, result);
+  }
+
+  @Test
+  void testGetTotalSupply() {
+    // Given the wanted format with 8 decimals
+    BigDecimal totalSupply = BigDecimal.valueOf(100.00000000);
+    when(blockchainService.totalSupply()).thenReturn(totalSupply);
+    assertEquals(totalSupply, meedTokenMetricService.getTotalSupply());
   }
 
   @Test
