@@ -72,13 +72,24 @@ public class MeedTokenMetricService {
   /**
    * Retrieves total circulating Meeds supply by using this formula:
    * - Total supply of Meeds - total Meeds reserves - total locked Meeds
-   * 
+   *
    * @return {@link BigDecimal} for most recent computed circulating supply
    *           value
    */
   public BigDecimal getCirculatingSupply() {
     MeedTokenMetric lastMetric = getLastMetric();
     return lastMetric.getCirculatingSupply();
+  }
+
+  /**
+   * Retrieves total Meeds supply, reading the value of the ERC20.totalSupply() Meeds contract
+   *
+   * @return {@link BigDecimal} for most recent computed total supply
+   *           value
+   */
+  public BigDecimal getTotalSupply() {
+    MeedTokenMetric lastMetric = getLastMetric();
+    return lastMetric.getTotalSupply();
   }
 
   /**
