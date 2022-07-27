@@ -60,9 +60,6 @@ class MeedTokenMetricServiceTest {
   private ExchangeService            exchangeService;
 
   @MockBean
-  private MeedTokenMetric            metric;
-
-  @MockBean
   private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
   @MockBean(name = "ethereumMeedToken")
@@ -88,6 +85,17 @@ class MeedTokenMetricServiceTest {
 
     BigDecimal result = reserveBalances.values().stream().reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     assertEquals(totalReserves, result);
+  }
+
+  @Test
+  void testGetTotalSupply() {
+    BigDecimal totalSupply = BigDecimal.valueOf(1997.190119975555D);
+    when(blockchainService.totalSupply()).thenReturn(totalSupply);
+
+    when(exchangeService.getMeedUsdPrice()).thenReturn(BigDecimal.ZERO);
+    meedTokenMetricService.computeTokenMetrics();
+
+    assertEquals(totalSupply, meedTokenMetricService.getTotalSupply());
   }
 
   @Test
