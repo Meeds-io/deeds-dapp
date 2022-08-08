@@ -44,8 +44,7 @@ export default {
     language: state => state.language,
     meedsPriceToDisplay() {
       if (this.meedPrice) {
-        const meedPriceLabel = this.currencyFormat(this.meedPrice);
-        return  meedPriceLabel;
+        return this.currencyFormat(this.meedPrice);
       }
     }
   }),

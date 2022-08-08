@@ -24,7 +24,6 @@ import * as constants from '../../../js/Constants';
 export default {
   data: () => ({
     metrics: null,
-    lockedBalances: [],
     chart: null,
   }),
   computed: {
@@ -74,20 +73,20 @@ export default {
     this.$deedService.getMetrics()
       .then(metrics => {
         this.metrics = metrics;
-        Object.keys(this.metrics.lockedBalances).forEach((lockedBalance, key) => {
-          if (lockedBalance.toLowerCase() === constants.SLP_address.toLowerCase()) {
+        Object.keys(this.metrics.lockedBalances).forEach((address, key) => {
+          if (address.toLowerCase() === constants.SLP_address.toLowerCase()) {
             const serie = {
               name: 'SLP',
               value: Object.values(this.metrics.lockedBalances)[key],
             }; 
             this.chartOptions.series[0].data.push(serie);
-          } else if (lockedBalance.toLowerCase() === constants.XMeed_address.toLowerCase()) {
+          } else if (address.toLowerCase() === constants.XMeed_address.toLowerCase()) {
             const serie = {
               name: 'XMeed',
               value: Object.values(this.metrics.lockedBalances)[key],
             }; 
             this.chartOptions.series[0].data.push(serie);
-          } else if (lockedBalance.toLowerCase() === constants.UNIV2_address.toLowerCase()) {
+          } else if (address.toLowerCase() === constants.UNIV2_address.toLowerCase()) {
             const serie = {
               name: 'UNI-V2',
               value: Object.values(this.metrics.lockedBalances)[key],

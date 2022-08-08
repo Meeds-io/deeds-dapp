@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.deeds.model.MeedTokenMetric;
-
 import io.meeds.deeds.service.MeedTokenMetricService;
 
 @RestController
