@@ -32,14 +32,14 @@ export default {
       return {
         title: [{
           text: 'Currencies',
-          left: '63%',
+          left: '64%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
             fontSize: '16',
           },
-          top: '40%',
+          top: '44%',
           textAlign: 'center'
         }],
         tooltip: { 
@@ -53,18 +53,17 @@ export default {
         },
         series: [{
           type: 'pie',
-          radius: ['50%', '70%'],
-          center: ['66%', '45%'],
+          radius: ['45%', '88%'],
+          center: ['65%', '50%'],
           data: []
         }],
-        color: ['#476a9c', '#ffb441', '#bc4343', '#2eb58c']};
+        color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']};
     },
   },
   watch: {
     metrics() {
       if (this.chart && this.chartOptions) {
         this.chart.setOption(this.chartOptions);
-       
       }
     },
   },
@@ -107,7 +106,6 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$refs.echartCurrencies);
-      // this.chart.setOption(this.chartOptions);
     },
   }
 };
