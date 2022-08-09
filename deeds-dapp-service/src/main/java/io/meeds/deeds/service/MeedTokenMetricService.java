@@ -216,6 +216,11 @@ public class MeedTokenMetricService {
                           .orElse(BigDecimal.valueOf(0));
   }
 
+  /**
+   * Retrieves the latest Metrics of Meed Token
+   * 
+   * @return {@link MeedTokenMetric} representing the Meed Token Metrics
+   */
   public MeedTokenMetric getLastMetric() {
     if (recentMetric == null) {
       recentMetric = getTodayMetric();
@@ -232,6 +237,13 @@ public class MeedTokenMetricService {
 
   private LocalDate getTodayId() {
     return LocalDate.now(ZoneOffset.UTC);
+  }
+
+  /**
+   * Sets Recent Metric to null
+   */
+  public void setRecentMetricToNull() {
+    this.recentMetric = null;
   }
 
 }
