@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
-import lombok.Getter;
+import lombok.*;
 
 @Component
 public class MeedTokenMetricService {
@@ -64,6 +64,7 @@ public class MeedTokenMetricService {
   private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
   @Getter
+  @Setter
   private MeedTokenMetric            recentMetric;
 
   @Autowired(required = false)
