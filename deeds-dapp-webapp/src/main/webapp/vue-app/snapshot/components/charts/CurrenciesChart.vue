@@ -28,8 +28,36 @@ export default {
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
-    comethswapddress: state => state.comethswapddress,
+    comethPairAddress: state => state.comethPairAddress,
     chartOptions() {
+      const chartData = [];
+      Object.keys(this.metrics.lockedBalances).forEach((address, key) => {
+        if (address.toLowerCase() === this.comethPairAddress.toLowerCase()) {
+          const serie = {
+            name: 'SLP',
+            value: Object.values(this.metrics.lockedBalances)[key],
+          }; 
+          chartData.push(serie);
+        } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
+          const serie = {
+            name: 'XMeed',
+            value: Object.values(this.metrics.lockedBalances)[key],
+          }; 
+          chartData.push(serie);
+        } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
+          const serie = {
+            name: 'UNI-V2',
+            value: Object.values(this.metrics.lockedBalances)[key],
+          }; 
+          chartData.push(serie);
+        } else {
+          const serie = {
+            name: 'Meed',
+            value: Object.values(this.metrics.lockedBalances)[key],
+          }; 
+          chartData.push(serie);
+        }
+      });
       return {
         title: [{
           text: 'Currencies',
@@ -60,7 +88,7 @@ export default {
           label: {
             show: false,
           },
-          data: []
+          data: chartData,
         }],
         color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']};
     },
@@ -76,36 +104,9 @@ export default {
     this.initChart();
   },
   created() {
-    this.$deedService.getMetrics()
+    this.$tokenMetricService.getMetrics()
       .then(metrics => {
         this.metrics = metrics;
-        Object.keys(this.metrics.lockedBalances).forEach((address, key) => {
-          if (address.toLowerCase() === this.comethswapddress.toLowerCase()) {
-            const serie = {
-              name: 'SLP',
-              value: Object.values(this.metrics.lockedBalances)[key],
-            }; 
-            this.chartOptions.series[0].data.push(serie);
-          } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
-            const serie = {
-              name: 'XMeed',
-              value: Object.values(this.metrics.lockedBalances)[key],
-            }; 
-            this.chartOptions.series[0].data.push(serie);
-          } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
-            const serie = {
-              name: 'UNI-V2',
-              value: Object.values(this.metrics.lockedBalances)[key],
-            }; 
-            this.chartOptions.series[0].data.push(serie);
-          } else {
-            const serie = {
-              name: 'Meed',
-              value: Object.values(this.metrics.lockedBalances)[key],
-            }; 
-            this.chartOptions.series[0].data.push(serie);
-          }
-        });
       });
   },
   methods: {
