@@ -65,7 +65,7 @@ public class MeedTokenMetricService {
 
   @Getter
   @Setter
-  private MeedTokenMetric            recentMetric;
+  protected MeedTokenMetric            recentMetric;
 
   @Autowired(required = false)
   private ExchangeService            exchangeService;
@@ -238,13 +238,6 @@ public class MeedTokenMetricService {
 
   private LocalDate getTodayId() {
     return LocalDate.now(ZoneOffset.UTC);
-  }
-
-  /**
-   * Sets Recent Metric to null
-   */
-  public void setRecentMetricToNull() {
-    this.recentMetric = null;
   }
 
 }

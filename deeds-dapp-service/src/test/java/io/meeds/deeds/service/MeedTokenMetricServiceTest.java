@@ -171,7 +171,7 @@ class MeedTokenMetricServiceTest {
     BigDecimal expectedCirculatingSupply = expectedTotalSupply.subtract(expectedTotalReserves).subtract(expectedTotalLocked);
 
     // When
-    meedTokenMetricService.setRecentMetricToNull();
+    meedTokenMetricService.setRecentMetric(null);
 
     // Then
     MeedTokenMetric recentMetric = meedTokenMetricService.getLastMetric();

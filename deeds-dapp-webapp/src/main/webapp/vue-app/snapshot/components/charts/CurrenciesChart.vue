@@ -20,13 +20,15 @@
   <div ref="echartCurrencies" id="echartCurrencies"></div>
 </template>
 <script>
-import * as constants from '../../../js/Constants';
 export default {
   data: () => ({
     metrics: null,
     chart: null,
   }),
-  computed: {
+  computed: Vuex.mapState({
+    sushiswapPairAddress: state => state.sushiswapPairAddress,
+    xMeedAddress: state => state.xMeedAddress,
+    comethswapddress: state => state.comethswapddress,
     chartOptions() {
       return {
         title: [{
@@ -46,19 +48,23 @@ export default {
           formatter: '{b} : {c} ({d}%)'
         },
         legend: {
+          display: false,
           orient: 'vertical',
-          left: 5,
+          left: 120,
           top: 12,
         },
         series: [{
           type: 'pie',
           radius: ['45%', '88%'],
           center: ['65%', '50%'],
+          label: {
+            show: false,
+          },
           data: []
         }],
         color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']};
     },
-  },
+  }),
   watch: {
     metrics() {
       if (this.chart && this.chartOptions) {
@@ -74,19 +80,19 @@ export default {
       .then(metrics => {
         this.metrics = metrics;
         Object.keys(this.metrics.lockedBalances).forEach((address, key) => {
-          if (address.toLowerCase() === constants.SLP_address.toLowerCase()) {
+          if (address.toLowerCase() === this.comethswapddress.toLowerCase()) {
             const serie = {
               name: 'SLP',
               value: Object.values(this.metrics.lockedBalances)[key],
             }; 
             this.chartOptions.series[0].data.push(serie);
-          } else if (address.toLowerCase() === constants.XMeed_address.toLowerCase()) {
+          } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
             const serie = {
               name: 'XMeed',
               value: Object.values(this.metrics.lockedBalances)[key],
             }; 
             this.chartOptions.series[0].data.push(serie);
-          } else if (address.toLowerCase() === constants.UNIV2_address.toLowerCase()) {
+          } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
             const serie = {
               name: 'UNI-V2',
               value: Object.values(this.metrics.lockedBalances)[key],

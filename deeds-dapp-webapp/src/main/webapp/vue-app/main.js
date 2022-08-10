@@ -267,6 +267,7 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
               state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
+              state.comethswapddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
               state.tenantProvisioningAddress = null;
 
               // TODO replace with real addresses
