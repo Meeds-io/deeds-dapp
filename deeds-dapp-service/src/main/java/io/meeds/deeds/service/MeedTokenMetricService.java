@@ -65,7 +65,7 @@ public class MeedTokenMetricService {
 
   @Getter
   @Setter
-  protected MeedTokenMetric            recentMetric;
+  private MeedTokenMetric            recentMetric;
 
   @Autowired(required = false)
   private ExchangeService            exchangeService;

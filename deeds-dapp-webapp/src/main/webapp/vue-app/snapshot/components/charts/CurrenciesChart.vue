@@ -29,35 +29,31 @@ export default {
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
     comethPairAddress: state => state.comethPairAddress,
+    vestingAddress: state => state.vestingAddress,
     chartOptions() {
       const chartData = [];
-      Object.keys(this.metrics.lockedBalances).forEach((address, key) => {
-        if (address.toLowerCase() === this.comethPairAddress.toLowerCase()) {
+      if (this.metrics) {
+        Object.keys(this.metrics.lockedBalances).forEach((address) => {
+          let name;
+          const lockedBalance = this.metrics.lockedBalances[address];
+          if (address.toLowerCase() === this.comethPairAddress.toLowerCase()) {
+            name = this.$t('ComethPool');
+          } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
+            name = this.$t('xMeedsStaked');
+          } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
+            name = this.$t('SushiSwapPool');
+          } else if (address.toLowerCase() === this.vestingAddress.toLowerCase()) {
+            name = this.$t('VestedMeeds');
+          } else {
+            name = this.$t('Others');
+          }
           const serie = {
-            name: 'SLP',
-            value: Object.values(this.metrics.lockedBalances)[key],
+            name,
+            value: lockedBalance,
           }; 
           chartData.push(serie);
-        } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
-          const serie = {
-            name: 'XMeed',
-            value: Object.values(this.metrics.lockedBalances)[key],
-          }; 
-          chartData.push(serie);
-        } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
-          const serie = {
-            name: 'UNI-V2',
-            value: Object.values(this.metrics.lockedBalances)[key],
-          }; 
-          chartData.push(serie);
-        } else {
-          const serie = {
-            name: 'Meed',
-            value: Object.values(this.metrics.lockedBalances)[key],
-          }; 
-          chartData.push(serie);
-        }
-      });
+        });
+      }
       return {
         title: [{
           text: 'Currencies',
@@ -78,7 +74,7 @@ export default {
         legend: {
           display: false,
           orient: 'vertical',
-          left: 120,
+          left: 80,
           top: 12,
         },
         series: [{
