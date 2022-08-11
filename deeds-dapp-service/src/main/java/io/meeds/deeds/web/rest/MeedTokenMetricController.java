@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,12 +35,12 @@ public class MeedTokenMetricController {
   @Autowired
   private MeedTokenMetricService meedTokenMetricService;
 
-  @GetMapping("/")
+  @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<MeedTokenMetric> getMetrics() {
     return ResponseEntity.ok(meedTokenMetricService.getLastMetric());
   }
 
-  @GetMapping("/circ")
+  @GetMapping(value = "/circ", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<BigDecimal> getCirculatingSupply() {
     BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
     return ResponseEntity.ok()
@@ -47,7 +48,7 @@ public class MeedTokenMetricController {
                          .body(circulatingSupply);
   }
 
-  @GetMapping("/mcap")
+  @GetMapping(value = "/mcap", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<BigDecimal> getMarketCapitalization() {
     BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization();
     return ResponseEntity.ok()
@@ -55,7 +56,7 @@ public class MeedTokenMetricController {
                          .body(marketCapitalization);
   }
 
-  @GetMapping("/tvl")
+  @GetMapping(value = "/tvl", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<BigDecimal> getTotalLockedValue() {
     BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked();
     return ResponseEntity.ok()
@@ -63,7 +64,7 @@ public class MeedTokenMetricController {
                          .body(totalValueLocked);
   }
 
-  @GetMapping("/supply")
+  @GetMapping(value = "/supply", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<BigDecimal> getTotalSupply() {
     BigDecimal totalSupply = meedTokenMetricService.getTotalSupply();
     return ResponseEntity.ok()
