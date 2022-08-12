@@ -17,11 +17,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import Overview from './components/Overview.vue';
-import PriceChart from './components/PriceChart.vue';
+import PriceChart from './components/charts/PriceChart.vue';
 import TradeMeeds from './components/TradeMeeds.vue';
 import Assets from './components/Assets.vue';
 import TokenAssets from './components/assets/TokenAssets.vue';
 import DeedAssets from './components/assets/DeedAssets.vue';
+import MeedsInfo from './components/MeedsInfo.vue';
+import CurrenciesChart from './components/charts/CurrenciesChart.vue';
 
 const components = {
   'deeds-overview': Overview,
@@ -30,6 +32,8 @@ const components = {
   'deeds-assets': Assets,
   'deeds-token-assets': TokenAssets,
   'deeds-deed-assets': DeedAssets,
+  'deeds-meeds-info': MeedsInfo,
+  'deeds-currencies-chart': CurrenciesChart,
 };
 
 for (const key in components) {

@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat>
+  <v-card flat class="assets">
     <h3 class="d-flex flex-nowrap">
       {{ $t('yourAssets') }}
       <v-divider class="my-auto ms-4" />
