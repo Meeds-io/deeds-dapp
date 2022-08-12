@@ -156,6 +156,32 @@ class MeedTokenMetricServiceTest {
   }
 
   @Test
+  void testGetLastMetric() {
+    // Given
+    BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
+    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(exchangeService.getMeedUsdPrice()).thenReturn(BigDecimal.ZERO);
+
+    HashMap<String, BigDecimal> expectedReserveBalances = new HashMap<>();
+    BigDecimal expectedTotalReserves = mockReserveBalances(expectedReserveBalances);
+    HashMap<String, BigDecimal> expectedLockedBalances = new HashMap<>();
+    BigDecimal expectedTotalLocked = mockLockedBalances(expectedLockedBalances);
+
+    BigDecimal expectedCirculatingSupply = expectedTotalSupply.subtract(expectedTotalReserves).subtract(expectedTotalLocked);
+
+    // When
+    meedTokenMetricService.setRecentMetric(null);
+
+    // Then
+    MeedTokenMetric recentMetric = meedTokenMetricService.getLastMetric();
+    assertNotNull(recentMetric);
+    assertEquals(expectedTotalSupply, recentMetric.getTotalSupply());
+    assertEquals(expectedReserveBalances, recentMetric.getReserveBalances());
+    assertEquals(expectedLockedBalances, recentMetric.getLockedBalances());
+    assertEquals(expectedCirculatingSupply, recentMetric.getCirculatingSupply());
+  }
+
+  @Test
   void testGetCirculatingSupply() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);

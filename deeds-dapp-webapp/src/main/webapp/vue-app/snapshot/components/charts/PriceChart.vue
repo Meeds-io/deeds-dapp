@@ -19,9 +19,6 @@
 <template>
   <div class="d-flex flex-column priceChartParent">
     <div class="priceChartPeriodSelector d-flex align-center ps-2 pe-12">
-      <strong class="flex-grow-1">
-        {{ chartTitle }}
-      </strong>
       <div class="d-none d-sm-flex align-center">
         <v-btn
           name="displayThisWeekPricesButton"
