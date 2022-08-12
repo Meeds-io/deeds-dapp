@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,7 +56,9 @@ class MeedTokenMetricControllerTest {
   @Test
   void testGetLastMetric() throws Exception {
 
-    MeedTokenMetric result = new MeedTokenMetric(LocalDate.now(),
+    LocalDate today = LocalDate.now();
+
+    MeedTokenMetric result = new MeedTokenMetric(today,
                                                  new BigDecimal("1"),
                                                  Collections.singletonMap("", new BigDecimal("2")),
                                                  Collections.singletonMap("", new BigDecimal("3")),
@@ -67,8 +70,63 @@ class MeedTokenMetricControllerTest {
     when(meedTokenMetricService.getLastMetric()).thenReturn(result);
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/"));
-    response.andExpect(status().isOk());
-    // TODO on all attributes .andExpect(jsonPath(null, null))
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$.date",is(today.toString())))
+            .andExpect(jsonPath("$.totalSupply",is(1)))
+            .andExpect(jsonPath("$.lockedBalances",aMapWithSize(1)))
+            .andExpect(jsonPath("$.reserveBalances",aMapWithSize(1)))
+            .andExpect(jsonPath("$.circulatingSupply",is(4)))
+            .andExpect(jsonPath("$.marketCapitalization",is(5)))
+            .andExpect(jsonPath("$.totalValuelocked",is(6)))
+            .andExpect(jsonPath("$.meedUsdPrice",is(7)));
+  }
+
+  @Test
+  void testGetCirculatingSupply() throws Exception {
+
+    BigDecimal circulatingSupply = new BigDecimal("2");
+
+    when(meedTokenMetricService.getCirculatingSupply()).thenReturn(circulatingSupply);
+
+    ResultActions response = mockMvc.perform(get("/api/token/meed/circ"));
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(2)));
+  }
+
+  @Test
+  void testGetMarketCapitalization() throws Exception {
+
+    BigDecimal marketCapitalization = new BigDecimal("5");
+
+    when(meedTokenMetricService.getMarketCapitalization()).thenReturn(marketCapitalization);
+
+    ResultActions response = mockMvc.perform(get("/api/token/meed/mcap"));
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(5)));
+  }
+
+  @Test
+  void testGetTotalLockedValue() throws Exception {
+
+    BigDecimal totalValuelocked = new BigDecimal("4");
+
+    when(meedTokenMetricService.getTotalValueLocked()).thenReturn(totalValuelocked);
+
+    ResultActions response = mockMvc.perform(get("/api/token/meed/tvl"));
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(4)));
+  }
+
+  @Test
+  void testGetTotalSupply() throws Exception {
+
+    BigDecimal totalSupply = new BigDecimal("3");
+
+    when(meedTokenMetricService.getTotalSupply()).thenReturn(totalSupply);
+
+    ResultActions response = mockMvc.perform(get("/api/token/meed/supply"));
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(3)));
   }
 
 }

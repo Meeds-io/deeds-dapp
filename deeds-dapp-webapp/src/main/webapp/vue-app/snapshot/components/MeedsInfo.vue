@@ -19,12 +19,12 @@
 <template>
   <v-card flat>
     <h3 class="d-flex flex-nowrap">
-      {{ $t('MeedsToken') }}
+      {{ $t('meedToken') }}
       <v-divider class="my-auto ms-4" />
     </h3>
     <v-list>
       <v-list-item>
-        <h4>{{ $t('MeedsPrice') }}</h4>
+        <h4>{{ $t('meedPrice') }}</h4>
         <v-list-item-content class="ml-4">
           {{ meedsPriceToDisplay }}
         </v-list-item-content>
@@ -42,21 +42,21 @@ export default {
     meedPrice: state => state.meedPrice,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     language: state => state.language,
-    meedsPriceToDisplay() {
-      if (this.meedPrice) {
-        return this.currencyFormat(this.meedPrice);
-      }
-    }
-  }),
-  methods: {
-    currencyFormat(price) {
-      const value = price && price.value || price;
+    currencyFormat() {
+      const value = this.meedPrice && this.meedPrice.value || this.meedPrice;
       if (this.selectedFiatCurrency === 'eth') {
         return `${this.$ethUtils.toFixed(value, 8)} ${this.selectedFiatCurrencyLabel}`;
       } else {
         return this.$ethUtils.toCurrencyDisplay(this.$ethUtils.toFixed(value, 2), this.selectedFiatCurrency, this.language);
       }
     },
-  }
+    meedsPriceToDisplay() {
+      if (this.meedPrice) {
+        return this.currencyFormat;
+      } else {
+        return '';
+      }
+    }
+  }),
 };
 </script>

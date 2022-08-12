@@ -40,7 +40,7 @@ public class MeedTokenMetricController {
     return ResponseEntity.ok(meedTokenMetricService.getLastMetric());
   }
 
-  @GetMapping(value = "/circ", produces = MediaType.TEXT_PLAIN_VALUE)
+  @GetMapping("/circ")
   public ResponseEntity<BigDecimal> getCirculatingSupply() {
     BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
     return ResponseEntity.ok()
@@ -48,7 +48,7 @@ public class MeedTokenMetricController {
                          .body(circulatingSupply);
   }
 
-  @GetMapping(value = "/mcap", produces = MediaType.TEXT_PLAIN_VALUE)
+  @GetMapping("/mcap")
   public ResponseEntity<BigDecimal> getMarketCapitalization() {
     BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization();
     return ResponseEntity.ok()
@@ -56,7 +56,7 @@ public class MeedTokenMetricController {
                          .body(marketCapitalization);
   }
 
-  @GetMapping(value = "/tvl", produces = MediaType.TEXT_PLAIN_VALUE)
+  @GetMapping("/tvl")
   public ResponseEntity<BigDecimal> getTotalLockedValue() {
     BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked();
     return ResponseEntity.ok()
@@ -64,7 +64,7 @@ public class MeedTokenMetricController {
                          .body(totalValueLocked);
   }
 
-  @GetMapping(value = "/supply", produces = MediaType.TEXT_PLAIN_VALUE)
+  @GetMapping("/supply")
   public ResponseEntity<BigDecimal> getTotalSupply() {
     BigDecimal totalSupply = meedTokenMetricService.getTotalSupply();
     return ResponseEntity.ok()

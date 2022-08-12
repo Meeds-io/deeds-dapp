@@ -37,15 +37,15 @@ export default {
           let name;
           const lockedBalance = this.metrics.lockedBalances[address];
           if (address.toLowerCase() === this.comethPairAddress.toLowerCase()) {
-            name = this.$t('ComethPool');
+            name = this.$t('comethPool');
           } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
             name = this.$t('xMeedsStaked');
           } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
-            name = this.$t('SushiSwapPool');
+            name = this.$t('sushiSwapPool');
           } else if (address.toLowerCase() === this.vestingAddress.toLowerCase()) {
-            name = this.$t('VestedMeeds');
+            name = this.$t('vestedMeeds');
           } else {
-            name = this.$t('Others');
+            name = this.$t('others');
           }
           const serie = {
             name,
