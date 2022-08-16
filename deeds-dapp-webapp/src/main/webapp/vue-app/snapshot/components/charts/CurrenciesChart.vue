@@ -30,6 +30,7 @@ export default {
     xMeedAddress: state => state.xMeedAddress,
     comethPairAddress: state => state.comethPairAddress,
     vestingAddress: state => state.vestingAddress,
+    language: state => state.language,
     chartOptions() {
       const chartData = [];
       if (this.metrics) {
@@ -91,6 +92,11 @@ export default {
   }),
   watch: {
     metrics() {
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+      }
+    },
+    language() {
       if (this.chart && this.chartOptions) {
         this.chart.setOption(this.chartOptions);
       }
