@@ -18,7 +18,7 @@
 -->
 <template>
   <div class="d-flex flex-column">
-    <deeds-assets  />
+    <deeds-assets />
     <deeds-meeds-info />
   </div>
 </template>
