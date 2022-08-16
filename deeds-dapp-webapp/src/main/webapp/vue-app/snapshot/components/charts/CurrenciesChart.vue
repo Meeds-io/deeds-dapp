@@ -56,7 +56,7 @@ export default {
       }
       return {
         title: [{
-          text: 'Currencies',
+          text: this.$t('currencies'),
           left: '64%',
           textStyle: {
             fontStyle: 'normal',
@@ -74,7 +74,7 @@ export default {
         legend: {
           display: false,
           orient: 'vertical',
-          left: 80,
+          left: 82,
           top: 12,
         },
         series: [{

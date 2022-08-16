@@ -30,9 +30,9 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
-    <div class="d-flex">
+    <div class="d-flex flex-column flex-sm-row">
       <deeds-price-chart class="mb-4 mb-sm-8" />
-      <deeds-currencies-chart class="mt-15" />
+      <deeds-currencies-chart class="mt-15 ml-8" />
     </div>
   </v-card>
 </template>
