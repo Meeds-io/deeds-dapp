@@ -114,6 +114,7 @@ export function toCurrencyDisplay(value, currency, lang) {
   return new Intl.NumberFormat(lang || 'en', {
     style: 'currency',
     currency,
+    currencyDisplay: 'narrowSymbol',
     minimumFractionDigits: 0,
     maximumFractionDigits: currency === 'eth' && 8 || 2,
   }).format(value || 0).replace(/(\..*[1-9])0+$/, '$1').replace(/\.0*$/, '');
