@@ -18,10 +18,7 @@
 -->
 <template>
   <div class="d-flex flex-column">
-    <div class="d-flex flex-column flex-sm-row">
-      <deeds-price-chart class="mb-4 mb-sm-8" />
-      <deeds-trade-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 mb-sm-0 flex-shrink-0 flex-grow-0" />
-    </div>
     <deeds-assets />
+    <deeds-meeds-info />
   </div>
 </template>
