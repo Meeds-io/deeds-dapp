@@ -109,6 +109,7 @@ export default {
     this.$tokenMetricService.getMetrics()
       .then(metrics => {
         this.metrics = metrics;
+        this.$emit('metrics', metrics);
       });
   },
   methods: {

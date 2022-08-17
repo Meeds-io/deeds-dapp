@@ -24,39 +24,88 @@
     </h3>
     <v-list>
       <v-list-item>
-        <h4>{{ $t('meedPrice') }}</h4>
-        <v-list-item-content class="ml-4">
+        <v-list-item-content class="align-start">
+          <h4>{{ $t('marketCap') }}</h4>
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
+          {{ marketCap }}
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
+          <h4>{{ $t('circulatingSupply') }}</h4>
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
+          {{ circulatingSupply }} MEED
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item>
+        <v-list-item-content class="align-start">
+          <h4>{{ $t('meedPrice') }}</h4>
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
           {{ meedsPriceToDisplay }}
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
+          <h4>TVL</h4>
+        </v-list-item-content>
+        <v-list-item-content class="align-end">
+          {{ totalValuelocked }}
         </v-list-item-content>
       </v-list-item>
     </v-list>
     <div class="d-flex flex-column flex-sm-row">
       <deeds-price-chart class="mb-4 mb-sm-8" />
-      <deeds-currencies-chart class="mt-15 ml-8" />
+      <deeds-currencies-chart 
+        class="mt-15 ml-8"
+        @metrics="getMetrics" />
     </div>
   </v-card>
 </template>
 <script>
 export default {
+  data: () => ({
+    metrics: null,
+  }),
   computed: Vuex.mapState({
     meedPrice: state => state.meedPrice,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     language: state => state.language,
-    currencyFormat() {
-      const value = this.meedPrice && this.meedPrice.value || this.meedPrice;
+    meedsPriceToDisplay() {
+      if (this.meedPrice) {
+        return this.currencyFormat(this.meedPrice);
+      } else {
+        return '';
+      }
+    },
+    circulatingSupply() {
+      return this.metrics?.circulatingSupply.toFixed(2);
+    },
+    marketCap() {
+      if (this.metrics) {
+        return this.currencyFormat(this.metrics.marketCapitalization);
+      } else {
+        return '';
+      }
+    },
+    totalValuelocked() {
+      if (this.metrics) {
+        return this.currencyFormat(this.metrics.totalValuelocked);
+      } else {
+        return '';
+      }
+    },
+  }),
+  methods: {
+    getMetrics(value) {
+      this.metrics = value;
+    },
+    currencyFormat(currencyValue) {
+      const value = currencyValue && currencyValue.value || currencyValue;
       if (this.selectedFiatCurrency === 'eth') {
         return `${this.$ethUtils.toFixed(value, 8)} ${this.selectedFiatCurrencyLabel}`;
       } else {
         return this.$ethUtils.toCurrencyDisplay(this.$ethUtils.toFixed(value, 2), this.selectedFiatCurrency, this.language);
       }
     },
-    meedsPriceToDisplay() {
-      if (this.meedPrice) {
-        return this.currencyFormat;
-      } else {
-        return '';
-      }
-    }
-  }),
+  }
 };
 </script>
