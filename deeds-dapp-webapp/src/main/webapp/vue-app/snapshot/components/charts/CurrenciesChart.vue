@@ -22,9 +22,14 @@
 <script>
 export default {
   data: () => ({
-    metrics: null,
     chart: null,
   }),
+  props: {
+    metrics: {
+      type: Object,
+      default: null,
+    },
+  },
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
@@ -104,13 +109,6 @@ export default {
   },
   mounted() {
     this.initChart();
-  },
-  created() {
-    this.$tokenMetricService.getMetrics()
-      .then(metrics => {
-        this.metrics = metrics;
-        this.$emit('metrics', metrics);
-      });
   },
   methods: {
     initChart() {

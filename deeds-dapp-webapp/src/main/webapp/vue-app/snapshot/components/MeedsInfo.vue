@@ -56,7 +56,7 @@
       <deeds-price-chart class="mb-4 mb-sm-8" />
       <deeds-currencies-chart 
         class="mt-15 ml-8"
-        @metrics="getMetrics" />
+        :metrics="metrics" />
     </div>
   </v-card>
 </template>
@@ -69,6 +69,9 @@ export default {
     meedPrice: state => state.meedPrice,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
     language: state => state.language,
+    selectedFiatCurrencyLabel() {
+      return this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
+    },
     meedsPriceToDisplay() {
       if (this.meedPrice) {
         return this.currencyFormat(this.meedPrice);
@@ -94,10 +97,13 @@ export default {
       }
     },
   }),
+  created() {
+    this.$tokenMetricService.getMetrics()
+      .then(metrics => {
+        this.metrics = metrics;
+      });
+  },
   methods: {
-    getMetrics(value) {
-      this.metrics = value;
-    },
     currencyFormat(currencyValue) {
       const value = currencyValue && currencyValue.value || currencyValue;
       if (this.selectedFiatCurrency === 'eth') {
