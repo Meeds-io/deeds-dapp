@@ -167,6 +167,11 @@ export default {
         this.refreshData();
       }
     },
+    language() {
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+      }
+    },
     selectedFiatCurrency(newVal, oldVal) {
       if (newVal && newVal !== oldVal) {
         this.refreshData();
