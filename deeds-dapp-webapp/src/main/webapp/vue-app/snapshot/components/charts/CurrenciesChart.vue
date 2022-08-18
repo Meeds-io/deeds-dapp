@@ -75,7 +75,8 @@ export default {
         }],
         tooltip: { 
           trigger: 'item',
-          formatter: '{b} : {c} ({d}%)'
+          show: true,
+          formatter: this.labelFormatter,
         },
         legend: {
           display: false,
@@ -113,6 +114,12 @@ export default {
   methods: {
     initChart() {
       this.chart = echarts.init(this.$refs.echartCurrencies);
+    },
+    labelFormatter(item) {
+      const name = item.data.name;
+      const value = this.$ethUtils.toFixedDisplay(item.data.value, 3, this.language);
+      const percent = item.percent;
+      return `<strong>${name}:</strong> ${value} (${percent}%)`;
     },
   }
 };

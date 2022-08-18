@@ -80,7 +80,7 @@ export default {
       }
     },
     circulatingSupply() {
-      return this.metrics?.circulatingSupply.toFixed(2);
+      return this.$ethUtils.toFixedDisplay(this.metrics?.circulatingSupply, 3, this.language);
     },
     marketCap() {
       if (this.metrics) {
