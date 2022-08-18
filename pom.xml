@@ -16,7 +16,8 @@
 	Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>addons-parent-pom</artifactId>
@@ -25,7 +26,7 @@
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-parent</artifactId>
-  <version>1.0.0-20220817</version>
+  <version>1.0.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Meeds:: Deeds Dapp</name>
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
@@ -40,14 +41,14 @@
     <connection>scm:git:git://github.com/meeds-io/deeds-dapp.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/meeds-io/deeds-dapp.git</developerConnection>
     <url>https://github.com/meeds-io/deeds-dapp</url>
-    <tag>1.0.0-20220817</tag>
+    <tag>HEAD</tag>
   </scm>
   <properties>
     <spring-boot-dependencies.version>2.6.4</spring-boot-dependencies.version>
     <commons-io.version>2.9.0</commons-io.version>
     <org.web3j.version>4.8.9</org.web3j.version>
     <com.squareup.okhttp3.version>4.9.0</com.squareup.okhttp3.version>
-    <org.exoplatform.wallet.ert-contract.version>1.3.0</org.exoplatform.wallet.ert-contract.version>
+    <org.exoplatform.wallet.ert-contract.version>1.3.x-SNAPSHOT</org.exoplatform.wallet.ert-contract.version>
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M5</version.surefire.plugin>
