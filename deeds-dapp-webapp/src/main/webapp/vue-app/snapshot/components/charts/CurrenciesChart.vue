@@ -33,7 +33,7 @@ export default {
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
-    comethPairAddress: state => state.comethPairAddress,
+    univ2PairAddress: state => state.univ2PairAddress,
     vestingAddress: state => state.vestingAddress,
     language: state => state.language,
     chartOptions() {
@@ -42,7 +42,7 @@ export default {
         Object.keys(this.metrics.lockedBalances).forEach((address) => {
           let name;
           const lockedBalance = this.metrics.lockedBalances[address];
-          if (address.toLowerCase() === this.comethPairAddress.toLowerCase()) {
+          if (address.toLowerCase() === this.univ2PairAddress.toLowerCase()) {
             name = this.$t('comethPool');
           } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
             name = this.$t('xMeedsStaked');

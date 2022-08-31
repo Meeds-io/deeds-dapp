@@ -30,7 +30,6 @@
             token />
         </div>
       </v-list-item-content>
-      <v-list-item-content />
       <v-list-item-content class="align-end">
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
@@ -41,6 +40,7 @@
           {{ meedsBalanceNoDecimals }} MEED
         </template>
       </v-list-item-content>
+      <v-list-item-content />
       <v-list-item-content class="align-end">
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
@@ -63,9 +63,9 @@
             token />
         </div>
       </v-list-item-content>
-      <v-list-item-content>
+      <v-list-item-content class="align-end">
         <v-skeleton-loader
-          v-if="apyLoading"
+          v-if="loadingXMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -75,32 +75,22 @@
               class="d-flex flex-nowrap"
               v-bind="attrs"
               v-on="on">
-              <deeds-number-format
-                v-if="rewardsStarted"
-                :value="apy"
-                no-decimals>
-                %
-              </deeds-number-format>
-              <v-icon
-                v-else
-                size="15px"
-                color="primary"
-                class="ms-2 mt-1">
-                mdi-alert-circle-outline
-              </v-icon>
+              {{ xMeedsBalanceNoDecimals }} xMEED
             </div>
           </template>
           <span v-if="maxMeedSupplyReached">
             {{ $t('maxMeedsSupplyReached') }}
           </span>
-          <ul v-else-if="rewardsStarted">
-            <li>
-              <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
-            </li>
-            <li>
-              <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
-            </li>
-          </ul>
+          <div
+            class="d-flex"
+            v-if="rewardsStarted">
+            <span class="mx-1"> {{ $t('apy') }} </span>
+            <deeds-number-format
+              :value="apy"
+              no-decimals>
+              %
+            </deeds-number-format>
+          </div>
           <div v-else>
             {{ $t('meedsRewardingDidntStarted') }}
           </div>
@@ -112,9 +102,15 @@
           type="chip"
           max-height="17"
           tile />
-        <template v-else>
-          {{ xMeedsBalanceNoDecimals }} xMEED
-        </template>
+        <div 
+          v-else
+          class="d-flex">
+          <span class="mx-1">+</span>
+          <deeds-number-format 
+            :value="weeklyRewardedMeeds" 
+            :fractions="2" />
+          <span class="mx-1">MEED / {{ $t('week') }}</span>
+        </div>
       </v-list-item-content>
       <v-list-item-content class="align-end">
         <v-skeleton-loader
@@ -125,15 +121,21 @@
         <deeds-number-format
           v-else
           :value="xMeedsBalanceInMeeds"
+          :fractions="2"
           currency />
       </v-list-item-content>
     </v-list-item>
+    <template
+      v-for="pool in rewardedPools">
+      <deeds-token-asset :key="pool.address" :pool="pool" />
+    </template>
   </v-list>
 </template>
 <script>
 export default {
   data: () => ({
     yearInMinutes: 365 * 24 * 60,
+    yearInWeeks: 7 / 365,
   }),
   computed: Vuex.mapState({
     language: state => state.language,
@@ -194,6 +196,14 @@ export default {
     rewardsStarted() {
       return this.stakingStartTime < this.now;
     },
+    weeklyRewardedMeeds() {
+      if (this.xMeedsBalance && this.apy) {
+        return new BigNumber(this.xMeedsBalance.toString())
+          .multipliedBy(this.apy)
+          .dividedBy(100)
+          .multipliedBy(this.yearInWeeks);
+      }
+    },
     apyLoading() {
       return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
     },
@@ -207,6 +217,9 @@ export default {
         return 0;
       }
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
+    },
+    rewardedPools() {
+      return this.rewardedFunds && this.rewardedFunds.filter(fund => fund.isLPToken);
     },
   }),
   created() {
