@@ -21,6 +21,8 @@ import PriceChart from './components/charts/PriceChart.vue';
 import TradeMeeds from './components/TradeMeeds.vue';
 import Assets from './components/Assets.vue';
 import TokenAssets from './components/assets/TokenAssets.vue';
+import TokenAssetTemplate from './components/assets/TokenAssetTemplate.vue';
+import TokenAsset from './components/assets/TokenAsset.vue';
 import DeedAssets from './components/assets/DeedAssets.vue';
 import MeedsInfo from './components/MeedsInfo.vue';
 import CurrenciesChart from './components/charts/CurrenciesChart.vue';
@@ -31,6 +33,8 @@ const components = {
   'deeds-trade-meeds': TradeMeeds,
   'deeds-assets': Assets,
   'deeds-token-assets': TokenAssets,
+  'deeds-token-asset': TokenAsset,
+  'deeds-token-asset-template': TokenAssetTemplate,
   'deeds-deed-assets': DeedAssets,
   'deeds-meeds-info': MeedsInfo,
   'deeds-currencies-chart': CurrenciesChart,
