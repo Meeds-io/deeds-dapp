@@ -69,12 +69,6 @@
                 type="chip"
                 max-height="17"
                 tile />
-              <small v-else-if="!rewardsStarted" class="d-flex mt-2">
-                <span class="my-auto text-capitalize text-capitalize grey--text">{{ $t('startsAfter') }}</span>
-                <deeds-timer
-                  :end-time="farmingStartTime"
-                  class="my-auto" />
-              </small>
               <v-tooltip v-else bottom>
                 <template #activator="{ on, attrs }">
                   <div
@@ -109,7 +103,7 @@
               {{ $t('totalHoldings') }}
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
-              <template v-if="loadingBalance > 0">
+              <template v-if="loading">
                 <v-skeleton-loader
                   type="chip"
                   max-height="17"
@@ -147,7 +141,7 @@
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold ms-2">
               <v-skeleton-loader
-                v-if="loadingBalance > 0"
+                v-if="loadingBalance"
                 type="chip"
                 max-height="17"
                 tile />
@@ -222,14 +216,7 @@
                   max-height="17"
                   tile />
               </template>
-              <span v-else-if="noMeedSupplyForLPRemaining">
-                0 <deeds-contract-address
-                  :address="meedAddress"
-                  label="MEED"
-                  :button-top="-2"
-                  token />
-              </span>
-              <template v-else-if="rewardsStarted">
+              <template v-else>
                 <deeds-number-format
                   :value="meedsPendingUserReward"
                   :fractions="2">
@@ -244,31 +231,13 @@
                   class="caption"
                   currency />
               </template>
-              <v-tooltip v-else bottom>
-                <template #activator="{ on, attrs }">
-                  <div
-                    v-bind="attrs"
-                    v-on="on">
-                    <deeds-number-format :value="meedsPendingUserReward" :fractions="2">
-                      <deeds-contract-address
-                        :address="meedAddress"
-                        label="MEED"
-                        :button-top="-2"
-                        token />
-                    </deeds-number-format>
-                  </div>
-                </template>
-                <div>
-                  {{ $t('meedsRewardingDidntStarted') }}
-                </div>
-              </v-tooltip>
             </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
               name="claimRewardButton"
               :loading="sendingClaim"
-              :disabled="sendingClaim || !rewardsStarted"
+              :disabled="sendingClaim"
               outlined
               text
               @click="claimReward()">
@@ -298,43 +267,25 @@ export default {
     },
   },
   data: () => ({
-    loading: false,
-    loadingBalance: 0,
-    loadingUserInfo: false,
-    loadingUserReward: false,
+    loadingBalance: true,
+    loadingUserReward: true,
     sendingClaim: false,
-    meedsBalanceOfPool: null,
     meedsPendingUserReward: null,
-    lpBalanceOfTokenFactory: null,
-    lpTotalSupply: null,
     stake: true,
-    lpSymbol: null,
     lpBalance: null,
-    userInfo: null,
     lpAllowance: null,
-    yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     provider: state => state.provider,
     address: state => state.address,
     meedAddress: state => state.meedAddress,
-    noMeedSupplyForLPRemaining: state => state.noMeedSupplyForLPRemaining,
     harvestGasLimit: state => state.harvestGasLimit,
     tokenFactoryAddress: state => state.tokenFactoryAddress,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
-    erc20ABI: state => state.erc20ABI,
-    meedContract: state => state.meedContract,
-    farmingStartTime: state => state.farmingStartTime,
-    rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
-    rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
-    rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
     tokenFactoryContract: state => state.tokenFactoryContract,
     now: state => state.now,
-    lpAddress() {
-      return this.pool && this.pool.address;
-    },
     isSushiswapPool() {
       return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
     },
@@ -349,39 +300,44 @@ export default {
       }
       return this.lpSymbol;
     },
+    lpAddress() {
+      return this.pool && this.pool.address;
+    },
     lpContract() {
-      if (this.provider && this.lpAddress) {
-        return new ethers.Contract(
-          this.lpAddress,
-          this.erc20ABI,
-          this.provider
-        );
-      }
-      return null;
+      return this.pool && this.pool.contract;
+    },
+    lpSymbol() {
+      return this.pool && this.pool.symbol;
+    },
+    lpBalanceOfTokenFactory() {
+      return this.pool && this.pool.lpBalanceOfTokenFactory;
+    },
+    userInfo() {
+      return this.pool && this.pool.userInfo;
+    },
+    lpStaked() {
+      return this.userInfo && this.userInfo.amount || 0;
+    },
+    stakedEquivalentMeedsBalanceOfPool() {
+      return this.pool && this.pool.stakedEquivalentMeedsBalanceOfPool;
+    },
+    meedsBalanceOfPool() {
+      return this.pool && this.pool.meedsBalance;
+    },
+    loadingUserInfo() {
+      return this.pool && this.pool.loadingUserInfo;
+    },
+    loading() {
+      return this.pool && this.pool.loading;
+    },
+    apy() {
+      return this.pool && this.pool.apy;
     },
     lpContractBalanceOf() {
       return this.lpContract && this.lpContract.balanceOf;
     },
-    lpContractSymbol() {
-      return this.lpContract && this.lpContract.symbol;
-    },
-    lpContractTotalSupply() {
-      return this.lpContract && this.lpContract.totalSupply;
-    },
     lpContractAllowance() {
       return this.lpContract && this.lpContract.allowance;
-    },
-    meedContractBalanceOf() {
-      if (this.provider && this.meedContract) {
-        return this.meedContract.balanceOf;
-      }
-      return null;
-    },
-    tokenFactoryUserLpInfos() {
-      if (this.provider && this.tokenFactoryContract) {
-        return this.tokenFactoryContract.userLpInfos;
-      }
-      return null;
     },
     tokenFactoryUserPendingReward() {
       if (this.provider && this.tokenFactoryContract) {
@@ -389,92 +345,16 @@ export default {
       }
       return null;
     },
-    lpStaked() {
-      return this.userInfo && this.userInfo.amount || 0;
-    },
-    rewardsStarted() {
-      return this.farmingStartTime < this.now;
-    },
-    yearlyRewardedMeeds() {
-      if (this.pool && this.lpAddress) {
-        if (this.pool.fixedPercentage && !this.pool.fixedPercentage.isZero()) {
-          return new BigNumber(this.rewardedMeedPerMinute.toString())
-            .multipliedBy(this.yearInMinutes)
-            .multipliedBy(this.pool.fixedPercentage.toString())
-            .dividedBy(100);
-        } else if (this.pool.allocationPoint && !this.pool.allocationPoint.isZero()) {
-          return new BigNumber(this.rewardedMeedPerMinute.toString())
-            .multipliedBy(this.yearInMinutes)
-            .multipliedBy(this.pool.allocationPoint.toString())
-            .dividedBy(this.rewardedTotalAllocationPoints.toString())
-            .dividedBy(100)
-            .multipliedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
-        }
-      }
-      return new BigNumber(0);
-    },
-    stakedEquivalentMeedsBalanceOfPool() {
-      return this.meedsBalanceOfPool
-        && this.lpBalanceOfTokenFactory
-        && this.lpTotalSupply
-        && !this.lpTotalSupply.isZero()
-        && this.meedsBalanceOfPool.mul(this.lpBalanceOfTokenFactory).mul(2).div(this.lpTotalSupply);
-    },
-    apy() {
-      if (!this.stakedEquivalentMeedsBalanceOfPool
-          || !this.yearlyRewardedMeeds
-          || !this.rewardsStarted
-          || this.stakedEquivalentMeedsBalanceOfPool.isZero()
-          || this.noMeedSupplyForLPRemaining
-          || this.yearlyRewardedMeeds.isZero()
-          || !this.rewardsStarted) {
-        return 0;
-      }
-      return this.yearlyRewardedMeeds.dividedBy(this.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
-    },
   }),
   watch: {
-    meedContractBalanceOf: {
-      immadiate: true,
-      handler() {
-        if (this.lpAddress && this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
-          this.refreshMeedsBalanceOfPool();
-        }
-      },
-    },
     lpContractBalanceOf: {
       immadiate: true,
       handler() {
         if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
           this.refreshLPBalance();
           if (this.tokenFactoryAddress) {
-            this.refreshTokenFactoryBalance();
             this.refreshTokenFactoryAllowance();
           }
-        }
-      },
-    },
-    lpContractSymbol: {
-      immadiate: true,
-      handler() {
-        if (this.lpAddress && this.lpContractBalanceOf && !this.lpBalance) {
-          this.refreshLPSymbol();
-        }
-      },
-    },
-    lpContractTotalSupply: {
-      immadiate: true,
-      handler() {
-        if (this.lpAddress && this.lpContractTotalSupply && !this.lpTotalSupply) {
-          this.refreshLPTotalSupply();
-        }
-      },
-    },
-    tokenFactoryUserLpInfos: {
-      immadiate: true,
-      handler() {
-        if (this.lpAddress && this.tokenFactoryUserLpInfos && !this.lpStaked) {
-          this.refreshUserInfo();
         }
       },
     },
@@ -488,93 +368,56 @@ export default {
     },
   },
   created() {
-    if (!this.lpAddress) {
-      return;
-    }
-    if (this.meedContractBalanceOf && !this.meedsBalanceOfPool) {
-      this.refreshMeedsBalanceOfPool();
-    }
-    if (this.lpContractBalanceOf && !this.lpBalance) {
-      this.refreshLPBalance();
-      if (this.tokenFactoryAddress) {
-        this.refreshTokenFactoryBalance();
-        this.refreshTokenFactoryAllowance();
-      }
-    }
-    if (this.lpContractSymbol && !this.lpBalance) {
-      this.refreshLPSymbol();
-    }
-    if (this.lpContractTotalSupply && !this.lpTotalSupply) {
-      this.refreshLPTotalSupply();
-    }
-    if (this.tokenFactoryUserLpInfos && !this.lpStaked) {
-      this.refreshUserInfo();
-    }
-    if (this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
-      this.refreshPendingReward();
-    }
-
-    // eslint-disable-next-line new-cap
-    this.lpContract.on(this.lpContract.filters.Transfer(), (from, to) => {
-      const address = this.address.toUpperCase();
-      if (from.toUpperCase() === address || to.toUpperCase() === address) {
-        this.refreshLPBalance();
-        this.refreshTokenFactoryBalance();
-        this.refreshUserInfo();
-        this.refreshPendingReward();
-      }
-    });
-
-    // eslint-disable-next-line new-cap
-    this.lpContract.on(this.lpContract.filters.Approval(), (from, to) => {
-      const address = this.address.toUpperCase();
-      if (from.toUpperCase() === address || to.toUpperCase() === address) {
-        this.refreshTokenFactoryAllowance();
-      }
-    });
-
-    this.tokenFactoryContract.on(
-      // eslint-disable-next-line new-cap
-      this.tokenFactoryContract.filters.Harvest(this.address, this.lpAddress), 
-      () => this.refreshPendingReward()
-    );
+    this.init();
   },
   methods: {
-    refreshMeedsBalanceOfPool() {
-      this.loading = true;
-      this.meedContractBalanceOf(this.lpAddress)
-        .then(balance => this.meedsBalanceOfPool = balance)
-        .finally(() => this.loading = false);
-    },
-    refreshLPSymbol() {
-      this.loadingBalance++;
-      this.lpContractSymbol()
-        .then(symbol => this.lpSymbol = symbol)
-        .finally(() => this.loadingBalance--);
-    },
-    refreshLPTotalSupply() {
-      this.loadingBalance++;
-      this.lpContractTotalSupply()
-        .then(totalSupply => this.lpTotalSupply = totalSupply)
-        .finally(() => this.loadingBalance--);
-    },
-    refreshTokenFactoryBalance() {
-      this.loadingBalance++;
-      this.lpContractBalanceOf(this.tokenFactoryAddress)
-        .then(balance => this.lpBalanceOfTokenFactory = balance)
-        .finally(() => this.loadingBalance--);
+    init() {
+      if (!this.lpAddress) {
+        return;
+      }
+      if (this.lpContractBalanceOf && !this.lpBalance) {
+        this.refreshLPBalance();
+        if (this.tokenFactoryAddress) {
+          this.refreshTokenFactoryAllowance();
+        }
+      }
+      if (this.tokenFactoryUserPendingReward && !this.meedsPendingUserReward) {
+        this.refreshPendingReward();
+      }
+
+      // eslint-disable-next-line new-cap
+      this.lpContract.on(this.lpContract.filters.Transfer(), (from, to) => {
+        const address = this.address.toUpperCase();
+        if (from.toUpperCase() === address || to.toUpperCase() === address) {
+          this.refreshLPBalance();
+          this.refreshPendingReward();
+          this.$store.commit('loadLPTokenAsset', this.pool);
+        }
+      });
+
+      // eslint-disable-next-line new-cap
+      this.lpContract.on(this.lpContract.filters.Approval(), (from, to) => {
+        const address = this.address.toUpperCase();
+        if (from.toUpperCase() === address || to.toUpperCase() === address) {
+          this.refreshTokenFactoryAllowance();
+        }
+      });
+
+      this.tokenFactoryContract.on(
+        // eslint-disable-next-line new-cap
+        this.tokenFactoryContract.filters.Harvest(this.address, this.lpAddress), 
+        () => this.refreshPendingReward()
+      );
     },
     refreshTokenFactoryAllowance() {
-      this.loadingBalance++;
       this.lpContractAllowance(this.address, this.tokenFactoryAddress)
-        .then(balance => this.lpAllowance = balance)
-        .finally(() => this.loadingBalance--);
+        .then(balance => this.lpAllowance = balance);
     },
     refreshLPBalance() {
-      this.loadingBalance++;
+      this.loadingBalance = true;
       this.lpContractBalanceOf(this.address)
         .then(balance => this.lpBalance = balance)
-        .finally(() => this.loadingBalance--);
+        .finally(() => this.loadingBalance = false);
     },
     refreshPendingReward() {
       this.loadingUserReward = true;
@@ -582,21 +425,6 @@ export default {
         .then(balance => this.meedsPendingUserReward = balance)
         .catch(() => this.meedsPendingUserReward = 0)
         .finally(() => this.loadingUserReward = false);
-    },
-    refreshUserInfo() {
-      this.loadingUserInfo = true;
-      this.tokenFactoryUserLpInfos(this.lpAddress, this.address)
-        .then(userInfo => {
-          const user = {};
-          Object.keys(userInfo).forEach(key => {
-            if (Number.isNaN(Number(key))) {
-              user[key] = userInfo[key];
-            }
-          });
-          this.userInfo = user;
-          return user;
-        })
-        .finally(() => this.loadingUserInfo = false);
     },
     openStakeDrawer(stake) {
       this.stake = stake;

@@ -22,3 +22,10 @@
     <deeds-meeds-info />
   </div>
 </template>
+<script>
+export default {
+  created() {
+    this.$store.commit('loadRewardedFunds', true);
+  },
+};
+</script>

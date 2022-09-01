@@ -19,10 +19,21 @@
 <template>
   <v-container class="mt-2">
     <v-row class="mx-auto" no-gutters>
-      <template v-if="rewardedFunds">
+      <template v-if="loading">
+        <v-col
+          v-for="i in poolCount"
+          :key="i">
+          <v-skeleton-loader
+            type="card"
+            class="mx-auto ma-2"
+            width="400px"
+            max-width="100%" />
+        </v-col>
+      </template>
+      <template v-else>
         <v-col
           v-for="pool in rewardedPools"
-          :key="pool.address">
+          :key="`${pool.address}_${pool.refresh}`">
           <deeds-liquidity-pool :pool="pool" />
         </v-col>
         <v-col key="cometh">
@@ -49,17 +60,6 @@
           </deeds-liquidity-pool>
         </v-col>
       </template>
-      <template v-else>
-        <v-col
-          v-for="i in 2"
-          :key="i">
-          <v-skeleton-loader
-            type="card"
-            class="mx-auto ma-2"
-            width="400px"
-            max-width="100%" />
-        </v-col>
-      </template>
     </v-row>
   </v-container>
 </template>
@@ -69,8 +69,12 @@ export default {
     rentComethLiquidityLink: state => state.rentComethLiquidityLink,
     parentLocation: state => state.parentLocation,
     rewardedFunds: state => state.rewardedFunds,
-    rewardedPools() {
-      return this.rewardedFunds && this.rewardedFunds.filter(fund => fund.isLPToken);
+    rewardedPools: state => state.rewardedPools,
+    poolCount() {
+      return this.rewardedPools && this.rewardedPools.length || 2;
+    },
+    loading() {
+      return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
     },
   }),
 };
