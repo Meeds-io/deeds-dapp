@@ -30,7 +30,7 @@
 <script>
 export default {
   created() {
-    this.$store.commit('loadRewardedFunds');
+    this.$store.commit('loadRewardedFunds', true);
   },
 };
 </script>

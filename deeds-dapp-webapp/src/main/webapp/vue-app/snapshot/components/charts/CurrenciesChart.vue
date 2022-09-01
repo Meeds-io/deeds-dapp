@@ -33,7 +33,7 @@ export default {
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
-    univ2PairAddress: state => state.univ2PairAddress,
+    comethPairAddress: state => state.comethPairAddress,
     vestingAddress: state => state.vestingAddress,
     language: state => state.language,
     chartOptions() {
@@ -42,13 +42,13 @@ export default {
         Object.keys(this.metrics.lockedBalances).forEach((address) => {
           let name;
           const lockedBalance = this.metrics.lockedBalances[address];
-          if (address.toLowerCase() === this.univ2PairAddress.toLowerCase()) {
+          if (address.toLowerCase() === this.comethPairAddress?.toLowerCase()) {
             name = this.$t('comethPool');
-          } else if (address.toLowerCase() === this.xMeedAddress.toLowerCase()) {
+          } else if (address.toLowerCase() === this.xMeedAddress?.toLowerCase()) {
             name = this.$t('xMeedsStaked');
-          } else if (address.toLowerCase() === this.sushiswapPairAddress.toLowerCase()) {
+          } else if (address.toLowerCase() === this.sushiswapPairAddress?.toLowerCase()) {
             name = this.$t('sushiSwapPool');
-          } else if (address.toLowerCase() === this.vestingAddress.toLowerCase()) {
+          } else if (address.toLowerCase() === this.vestingAddress?.toLowerCase()) {
             name = this.$t('vestedMeeds');
           } else {
             name = this.$t('others');

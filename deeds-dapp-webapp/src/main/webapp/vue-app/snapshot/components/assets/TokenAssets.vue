@@ -21,16 +21,16 @@
     <v-list-item>
       <h4>{{ $t('tokens') }}</h4>
     </v-list-item>
-    <v-list-item class="ps-8">
-      <v-list-item-content class="align-start">
+    <deeds-token-asset-template>
+      <template #col1>
         <div>
           <deeds-contract-address
             :address="meedAddress"
             label="Meeds"
             token />
         </div>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col2>
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
           type="chip"
@@ -39,9 +39,8 @@
         <template v-else>
           {{ meedsBalanceNoDecimals }} MEED
         </template>
-      </v-list-item-content>
-      <v-list-item-content />
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col4>
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
           type="chip"
@@ -52,18 +51,18 @@
           :value="meedsBalance"
           :fractions="2"
           currency />
-      </v-list-item-content>
-    </v-list-item>
-    <v-list-item v-if="xMeedAddress" class="ps-8">
-      <v-list-item-content class="align-start">
+      </template>
+    </deeds-token-asset-template>
+    <deeds-token-asset-template v-if="xMeedAddress">
+      <template #col1>
         <div>
           <deeds-contract-address
             :address="xMeedAddress"
             label="xMeeds"
             token />
         </div>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col2>
         <v-skeleton-loader
           v-if="loadingXMeedsBalance"
           type="chip"
@@ -95,8 +94,8 @@
             {{ $t('meedsRewardingDidntStarted') }}
           </div>
         </v-tooltip>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col3>
         <v-skeleton-loader
           v-if="loadingXMeedsBalance"
           type="chip"
@@ -111,8 +110,8 @@
             :fractions="2" />
           <span class="mx-1">MEED / {{ $t('week') }}</span>
         </div>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col4>
         <v-skeleton-loader
           v-if="loadingXMeedsBalance"
           type="chip"
@@ -123,20 +122,18 @@
           :value="xMeedsBalanceInMeeds"
           :fractions="2"
           currency />
-      </v-list-item-content>
-    </v-list-item>
-    <template
-      v-for="pool in rewardedPools">
-      <deeds-token-asset :key="pool.address" :pool="pool" />
+      </template>
+    </deeds-token-asset-template>
+    <template v-if="!poolsLoading">
+      <deeds-token-asset
+        v-for="pool in rewardedPools"
+        :key="`${pool.address}_${pool.refresh}`"
+        :pool="pool" />
     </template>
   </v-list>
 </template>
 <script>
 export default {
-  data: () => ({
-    yearInMinutes: 365 * 24 * 60,
-    yearInWeeks: 7 / 365,
-  }),
   computed: Vuex.mapState({
     language: state => state.language,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
@@ -147,6 +144,7 @@ export default {
     meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
+    yearInMinutes: state => state.yearInMinutes,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
@@ -154,10 +152,11 @@ export default {
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    rewardedFunds: state => state.rewardedFunds,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    rewardedFunds: state => state.rewardedFunds,
+    rewardedPools: state => state.rewardedPools,
     now: state => state.now,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
@@ -201,8 +200,10 @@ export default {
         return new BigNumber(this.xMeedsBalance.toString())
           .multipliedBy(this.apy)
           .dividedBy(100)
-          .multipliedBy(this.yearInWeeks);
+          .multipliedBy(7)
+          .dividedBy(365);
       }
+      return new BigNumber(0);
     },
     apyLoading() {
       return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
@@ -218,12 +219,9 @@ export default {
       }
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
-    rewardedPools() {
-      return this.rewardedFunds && this.rewardedFunds.filter(fund => fund.isLPToken);
+    poolsLoading() {
+      return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
     },
   }),
-  created() {
-    this.$store.commit('loadRewardedFunds');
-  },
 };
 </script>

@@ -79,6 +79,7 @@ const store = new Vuex.Store({
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     managedNetworkIds: [1, 4],
     provider: null,
+    yearInMinutes: 365 * 24 * 60,
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
@@ -228,6 +229,7 @@ const store = new Vuex.Store({
     rewardedMeedPerMinute: null,
     rewardedFundsLength: null,
     rewardedFunds: null,
+    rewardedPools: null,
     rewardedTotalFixedPercentage: null,
     rewardedTotalAllocationPoints: null,
     addSushiswapLiquidityLink: null,
@@ -267,7 +269,7 @@ const store = new Vuex.Store({
               state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
               state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
               state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
-              state.univ2PairAddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
+              state.comethPairAddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
               state.vestingAddress = '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa';
               state.tenantProvisioningAddress = null;
 
@@ -397,7 +399,11 @@ const store = new Vuex.Store({
         state.ownedNfts = [];
       }
     },
-    loadRewardedFunds(state) {
+    loadRewardedFunds(state, ignoreWhenLoaded) {
+      if (ignoreWhenLoaded && state.rewardedFunds) {
+        // Avoid reloading only when necessary
+        return;
+      }
       if (state.tokenFactoryContract && !state.rewardedFundsLength) {
         state.tokenFactoryContract.fundsLength()
           .then(length => {
@@ -425,10 +431,99 @@ const store = new Vuex.Store({
             }
             return Promise.all(promises);
           })
-          .then(fundInfos => state.rewardedFunds = fundInfos || []);
+          .then(fundInfos => {
+            state.rewardedFunds = fundInfos || [];
+            const rewardedPools = state.rewardedFunds.filter(fund => fund.isLPToken);
+            rewardedPools.forEach(pool => {
+              pool.refresh = 0;
+              pool.loading = true;
+            });
+            state.rewardedPools = rewardedPools;
+            return this.commit('loadLPTokenAssets');
+          });
         state.tokenFactoryContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
         state.tokenFactoryContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
       }
+    },
+    loadLPTokenAssets(state) {
+      state.rewardedPools.forEach(pool => {
+        pool.contract = new ethers.Contract(
+          pool.address,
+          state.erc20ABI,
+          state.provider
+        );
+        pool.contract.symbol()
+          .then(symbol => pool.symbol = symbol);
+        this.commit('loadLPTokenAsset', pool);
+      });
+    },
+    loadLPTokenAsset(state, pool) {
+      this.commit('refreshLPUserInfo', pool);
+      this.commit('loadLPApy', pool);
+    },
+    refreshLPUserInfo(state, pool) {
+      pool.loadingUserInfo = true;
+      state.tokenFactoryContract.userLpInfos(pool.address, state.address)
+        .then(userInfo => {
+          const user = {};
+          Object.keys(userInfo).forEach(key => {
+            if (Number.isNaN(Number(key))) {
+              user[key] = userInfo[key];
+            }
+          });
+          pool.userInfo = user;
+        })
+        .finally(() => pool.loadingUserInfo = false);
+    },
+    loadLPApy(state, pool) {
+      const promises = [];
+      promises.push(
+        state.meedContract.balanceOf(pool.address)
+          .then(balance => pool.meedsBalance = balance)
+      );
+      promises.push(
+        pool.contract.balanceOf(state.tokenFactoryAddress)
+          .then(balance => pool.lpBalanceOfTokenFactory = balance)
+      );
+      promises.push(
+        pool.contract.totalSupply()
+          .then(totalSupply => pool.totalSupply = totalSupply)
+      );
+      Promise.all(promises)
+        .then(() => {
+          pool.stakedEquivalentMeedsBalanceOfPool = !pool.totalSupply.isZero()
+            && pool.meedsBalance.mul(pool.lpBalanceOfTokenFactory).mul(2).div(pool.totalSupply) || new BigNumber(0);
+          if (pool.fixedPercentage && !pool.fixedPercentage.isZero()) {
+            pool.yearlyRewardedMeeds = new BigNumber(state.rewardedMeedPerMinute.toString())
+              .multipliedBy(state.yearInMinutes)
+              .multipliedBy(pool.fixedPercentage.toString())
+              .dividedBy(100);
+          } else if (pool.allocationPoint && !pool.allocationPoint.isZero()) {
+            pool.yearlyRewardedMeeds = new BigNumber(state.rewardedMeedPerMinute.toString())
+              .multipliedBy(state.yearInMinutes)
+              .multipliedBy(pool.allocationPoint.toString())
+              .dividedBy(state.rewardedTotalAllocationPoints.toString())
+              .dividedBy(100)
+              .multipliedBy(100 - state.rewardedTotalFixedPercentage.toNumber());
+          } else {
+            pool.yearlyRewardedMeeds = new BigNumber(0);
+          }
+
+          if (state.noMeedSupplyForLPRemaining
+              || pool.stakedEquivalentMeedsBalanceOfPool.isZero()
+              || pool.yearlyRewardedMeeds.isZero()) {
+            pool.apy = 0;
+          } else {
+            pool.apy = pool.yearlyRewardedMeeds.dividedBy(pool.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
+          }
+          pool.refresh++;
+        })
+        .finally(() => {
+          pool.loading = false;
+
+          const index = state.rewardedPools.findIndex(tmpPool => tmpPool === pool);
+          state.rewardedPools.splice(index, 1, pool);
+        });
     },
     loadMeedsBalances(state) {
       state.loadingMeedsBalance = true;
@@ -506,20 +601,6 @@ const store = new Vuex.Store({
           state.xMeedContract = new ethers.Contract(
             state.xMeedAddress,
             state.xMeedRewardingABI,
-            state.provider
-          );
-        }
-        if (state.sushiswapPairAddress) {
-          state.sushiswapPairContract = new ethers.Contract(
-            state.sushiswapPairAddress,
-            state.erc20ABI,
-            state.provider
-          );
-        }
-        if (state.univ2PairAddress) {
-          state.univ2PairContract = new ethers.Contract(
-            state.univ2PairAddress,
-            state.erc20ABI,
             state.provider
           );
         }
