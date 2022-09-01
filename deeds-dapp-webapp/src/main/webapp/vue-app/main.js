@@ -520,7 +520,7 @@ const store = new Vuex.Store({
         })
         .finally(() => {
           pool.loading = false;
-
+          // Force reloading list of pools after updated
           const index = state.rewardedPools.findIndex(tmpPool => tmpPool === pool);
           state.rewardedPools.splice(index, 1, pool);
         });
