@@ -17,7 +17,9 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list dense>
+  <v-list 
+    v-if="rewardedPools"
+    dense >
     <v-list-item>
       <h4>{{ $t('tokens') }}</h4>
     </v-list-item>
@@ -124,12 +126,10 @@
           currency />
       </template>
     </deeds-token-asset-template>
-    <template v-if="!poolsLoading">
-      <deeds-token-asset
-        v-for="pool in rewardedPools"
-        :key="`${pool.address}_${pool.refresh}`"
-        :pool="pool" />
-    </template>
+    <deeds-token-asset
+      v-for="pool in rewardedPools"
+      :key="`${pool.address}_${pool.refresh}`"
+      :pool="pool" />
   </v-list>
 </template>
 <script>
