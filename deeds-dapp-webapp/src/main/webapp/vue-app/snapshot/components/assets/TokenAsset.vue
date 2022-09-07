@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-token-asset-template>
+  <deeds-token-asset-template v-if="hasStakedToken">
     <template #col1>
       <deeds-contract-address
         :address="lpAddress"
@@ -138,6 +138,9 @@ export default {
         .multipliedBy(7)
         .dividedBy(365);
     },
+    hasStakedToken() {
+      return this.lpStaked && !this.lpStaked.isZero();
+    }
   }),
 };
 </script>
