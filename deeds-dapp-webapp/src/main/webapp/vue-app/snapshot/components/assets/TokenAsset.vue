@@ -1,0 +1,143 @@
+<!--
+ This file is part of the Meeds project (https://meeds.io/).
+ 
+ Copyright (C) 2022 Meeds Association contact@meeds.io
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 3 of the License, or (at your option) any later version.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <deeds-token-asset-template>
+    <template #col1>
+      <deeds-contract-address
+        :address="lpAddress"
+        :label="poolName"
+        token />
+    </template>
+    <template #col2>
+      <v-skeleton-loader
+        v-if="loadingUserInfo"
+        type="chip"
+        max-height="17"
+        tile />
+      <v-tooltip v-else bottom>
+        <template #activator="{ on, attrs }">
+          <div
+            class="d-flex flex-nowrap"
+            v-bind="attrs"
+            v-on="on">
+            <deeds-number-format
+              :value="lpStaked"
+              :fractions="2" />
+            <span class="mx-1 text-no-wrap"> {{ lpSymbol }}  </span>
+          </div>
+        </template>
+        <span v-if="noMeedSupplyForLPRemaining">
+          {{ $t('maxMeedsSupplyReached') }}
+        </span>
+        <div class="d-flex flex-row">
+          <span class="mx-1 text-no-wrap"> {{ $t('apy') }} </span>
+          <deeds-number-format
+            :value="apy"
+            no-decimals>
+            %
+          </deeds-number-format>
+        </div>
+      </v-tooltip>
+    </template>
+    <template #col3>
+      <v-skeleton-loader
+        v-if="loading"
+        type="chip"
+        max-height="17"
+        tile /> 
+      <div 
+        v-else
+        class="d-flex flex-row flex-nowrap">
+        <span class="mx-1">+</span>
+        <deeds-number-format 
+          :value="weeklyRewardedMeeds" 
+          :fractions="2" />
+        <span class="mx-1 text-no-wrap">MEED / {{ $t('week') }}</span>
+      </div>
+    </template>
+    <template #col4>
+      <v-skeleton-loader
+        v-if="loadingUserInfo"
+        type="chip"
+        max-height="17"
+        tile />
+      <deeds-number-format
+        v-else
+        :value="lpStaked"
+        :fractions="2"
+        currency />
+    </template>
+  </deeds-token-asset-template>
+</template>
+<script>
+export default {
+  props: {
+    pool: {
+      type: Object,
+      default: null,
+    },
+  },
+  computed: Vuex.mapState({
+    sushiswapPairAddress: state => state.sushiswapPairAddress,
+    univ2PairAddress: state => state.univ2PairAddress,
+    isSushiswapPool() {
+      return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
+    },
+    isUniswapPool() {
+      return this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase();
+    },
+    poolName() {
+      if (this.isSushiswapPool) {
+        return 'Sushiswap';
+      } else if (this.isUniswapPool) {
+        return 'Uniswap';
+      }
+      return this.lpSymbol;
+    },
+    lpAddress() {
+      return this.pool && this.pool.address;
+    },
+    lpSymbol() {
+      return this.pool && this.pool.symbol;
+    },
+    userInfo() {
+      return this.pool && this.pool.userInfo;
+    },
+    lpStaked() {
+      return this.userInfo && this.userInfo.amount || 0;
+    },
+    loadingUserInfo() {
+      return this.pool && this.pool.loadingUserInfo;
+    },
+    loading() {
+      return this.pool && this.pool.loading;
+    },
+    apy() {
+      return this.pool && this.pool.apy;
+    },
+    weeklyRewardedMeeds() {
+      return new BigNumber(this.lpStaked.toString())
+        .multipliedBy(this.apy.toString())
+        .dividedBy(100)
+        .multipliedBy(7)
+        .dividedBy(365);
+    },
+  }),
+};
+</script>

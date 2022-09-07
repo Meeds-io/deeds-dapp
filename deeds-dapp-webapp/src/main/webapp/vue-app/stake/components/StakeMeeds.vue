@@ -227,7 +227,6 @@
 export default {
   data: () => ({
     stake: true,
-    yearInMinutes: 365 * 24 * 60,
   }),
   computed: Vuex.mapState({
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
@@ -246,6 +245,7 @@ export default {
     stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     now: state => state.now,
+    yearInMinutes: state => state.yearInMinutes,
     xMeedRewardInfo() {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
     },
