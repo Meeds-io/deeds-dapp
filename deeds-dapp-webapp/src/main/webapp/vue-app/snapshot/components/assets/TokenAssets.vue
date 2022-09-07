@@ -17,21 +17,22 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list dense>
+  <v-list 
+    v-if="rewardedPools"
+    dense >
     <v-list-item>
       <h4>{{ $t('tokens') }}</h4>
     </v-list-item>
-    <v-list-item class="ps-8">
-      <v-list-item-content class="align-start">
+    <deeds-token-asset-template>
+      <template #col1>
         <div>
           <deeds-contract-address
             :address="meedAddress"
             label="Meeds"
             token />
         </div>
-      </v-list-item-content>
-      <v-list-item-content />
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col2>
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
           type="chip"
@@ -40,8 +41,8 @@
         <template v-else>
           {{ meedsBalanceNoDecimals }} MEED
         </template>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col4>
         <v-skeleton-loader
           v-if="loadingMeedsBalance"
           type="chip"
@@ -52,20 +53,20 @@
           :value="meedsBalance"
           :fractions="2"
           currency />
-      </v-list-item-content>
-    </v-list-item>
-    <v-list-item v-if="xMeedAddress" class="ps-8">
-      <v-list-item-content class="align-start">
+      </template>
+    </deeds-token-asset-template>
+    <deeds-token-asset-template v-if="xMeedAddress">
+      <template #col1>
         <div>
           <deeds-contract-address
             :address="xMeedAddress"
             label="xMeeds"
             token />
         </div>
-      </v-list-item-content>
-      <v-list-item-content>
+      </template>
+      <template #col2>
         <v-skeleton-loader
-          v-if="apyLoading"
+          v-if="loadingXMeedsBalance"
           type="chip"
           max-height="17"
           tile />
@@ -75,48 +76,44 @@
               class="d-flex flex-nowrap"
               v-bind="attrs"
               v-on="on">
-              <deeds-number-format
-                v-if="rewardsStarted"
-                :value="apy"
-                no-decimals>
-                %
-              </deeds-number-format>
-              <v-icon
-                v-else
-                size="15px"
-                color="primary"
-                class="ms-2 mt-1">
-                mdi-alert-circle-outline
-              </v-icon>
+              {{ xMeedsBalanceNoDecimals }} xMEED
             </div>
           </template>
           <span v-if="maxMeedSupplyReached">
             {{ $t('maxMeedsSupplyReached') }}
           </span>
-          <ul v-else-if="rewardsStarted">
-            <li>
-              <deeds-number-format :value="yearlyRewardedMeeds" label="yearlyRewardedMeeds" />
-            </li>
-            <li>
-              <deeds-number-format :value="meedsTotalBalanceOfXMeeds" label="meedsTotalBalanceOfXMeeds" />
-            </li>
-          </ul>
+          <div
+            class="d-flex"
+            v-if="rewardsStarted">
+            <span class="mx-1"> {{ $t('apy') }} </span>
+            <deeds-number-format
+              :value="apy"
+              no-decimals>
+              %
+            </deeds-number-format>
+          </div>
           <div v-else>
             {{ $t('meedsRewardingDidntStarted') }}
           </div>
         </v-tooltip>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+      </template>
+      <template #col3>
         <v-skeleton-loader
           v-if="loadingXMeedsBalance"
           type="chip"
           max-height="17"
           tile />
-        <template v-else>
-          {{ xMeedsBalanceNoDecimals }} xMEED
-        </template>
-      </v-list-item-content>
-      <v-list-item-content class="align-end">
+        <div 
+          v-else
+          class="d-flex">
+          <span class="mx-1">+</span>
+          <deeds-number-format 
+            :value="weeklyRewardedMeeds" 
+            :fractions="2" />
+          <span class="mx-1">MEED / {{ $t('week') }}</span>
+        </div>
+      </template>
+      <template #col4>
         <v-skeleton-loader
           v-if="loadingXMeedsBalance"
           type="chip"
@@ -125,16 +122,18 @@
         <deeds-number-format
           v-else
           :value="xMeedsBalanceInMeeds"
+          :fractions="2"
           currency />
-      </v-list-item-content>
-    </v-list-item>
+      </template>
+    </deeds-token-asset-template>
+    <deeds-token-asset
+      v-for="pool in rewardedPools"
+      :key="`${pool.address}_${pool.refresh}`"
+      :pool="pool" />
   </v-list>
 </template>
 <script>
 export default {
-  data: () => ({
-    yearInMinutes: 365 * 24 * 60,
-  }),
   computed: Vuex.mapState({
     language: state => state.language,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
@@ -145,6 +144,7 @@ export default {
     meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
+    yearInMinutes: state => state.yearInMinutes,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
@@ -152,10 +152,11 @@ export default {
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    rewardedFunds: state => state.rewardedFunds,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    rewardedFunds: state => state.rewardedFunds,
+    rewardedPools: state => state.rewardedPools,
     now: state => state.now,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
@@ -194,6 +195,16 @@ export default {
     rewardsStarted() {
       return this.stakingStartTime < this.now;
     },
+    weeklyRewardedMeeds() {
+      if (this.xMeedsBalance && this.apy) {
+        return new BigNumber(this.xMeedsBalance.toString())
+          .multipliedBy(this.apy)
+          .dividedBy(100)
+          .multipliedBy(7)
+          .dividedBy(365);
+      }
+      return new BigNumber(0);
+    },
     apyLoading() {
       return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
     },
@@ -208,9 +219,9 @@ export default {
       }
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
     },
+    poolsLoading() {
+      return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
+    },
   }),
-  created() {
-    this.$store.commit('loadRewardedFunds');
-  },
 };
 </script>
