@@ -25,12 +25,7 @@
         token />
     </template>
     <template #col2>
-      <v-skeleton-loader
-        v-if="loadingUserInfo"
-        type="chip"
-        max-height="17"
-        tile />
-      <v-tooltip v-else bottom>
+      <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <div
             class="d-flex flex-nowrap"
@@ -56,13 +51,7 @@
       </v-tooltip>
     </template>
     <template #col3>
-      <v-skeleton-loader
-        v-if="loading"
-        type="chip"
-        max-height="17"
-        tile /> 
-      <div 
-        v-else
+      <div
         class="d-flex flex-row flex-nowrap">
         <span class="mx-1">+</span>
         <deeds-number-format 
@@ -72,13 +61,7 @@
       </div>
     </template>
     <template #col4>
-      <v-skeleton-loader
-        v-if="loadingUserInfo"
-        type="chip"
-        max-height="17"
-        tile />
       <deeds-number-format
-        v-else
         :value="lpStaked"
         :fractions="2"
         currency />
@@ -124,9 +107,6 @@ export default {
     },
     loadingUserInfo() {
       return this.pool && this.pool.loadingUserInfo;
-    },
-    loading() {
-      return this.pool && this.pool.loading;
     },
     apy() {
       return this.pool && this.pool.apy;

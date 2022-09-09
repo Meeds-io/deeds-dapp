@@ -28,7 +28,7 @@
       class="mx-auto ma-2"
       max-width="90%" />
     <div v-else>
-      <template v-if="hasTokens">
+      <template v-if="hasLPTokens">
         <deeds-token-asset-template v-if="hasMeedBalance">
           <template #col1>
             <div>
@@ -39,23 +39,10 @@
             </div>
           </template>
           <template #col2>
-            <v-skeleton-loader
-              v-if="loadingMeedsBalance"
-              type="chip"
-              max-height="17"
-              tile />
-            <template v-else>
-              {{ meedsBalanceNoDecimals }} MEED
-            </template>
+            {{ meedsBalanceNoDecimals }} MEED
           </template>
           <template #col4>
-            <v-skeleton-loader
-              v-if="loadingMeedsBalance"
-              type="chip"
-              max-height="17"
-              tile />
             <deeds-number-format
-              v-else
               :value="meedsBalance"
               :fractions="2"
               currency />
@@ -71,12 +58,7 @@
             </div>
           </template>
           <template #col2>
-            <v-skeleton-loader
-              v-if="loadingXMeedsBalance"
-              type="chip"
-              max-height="17"
-              tile />
-            <v-tooltip v-else bottom>
+            <v-tooltip bottom>
               <template #activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
@@ -104,13 +86,7 @@
             </v-tooltip>
           </template>
           <template #col3>
-            <v-skeleton-loader
-              v-if="loadingXMeedsBalance"
-              type="chip"
-              max-height="17"
-              tile />
             <div 
-              v-else
               class="d-flex">
               <span class="mx-1">+</span>
               <deeds-number-format 
@@ -120,13 +96,7 @@
             </div>
           </template>
           <template #col4>
-            <v-skeleton-loader
-              v-if="loadingXMeedsBalance"
-              type="chip"
-              max-height="17"
-              tile />
             <deeds-number-format
-              v-else
               :value="xMeedsBalanceInMeeds"
               :fractions="2"
               currency />
@@ -272,10 +242,9 @@ export default {
     hasXMeedBalance() {
       return this.xMeedsBalance && !this.xMeedsBalance.isZero();
     },
-    hasTokens() {
+    hasLPTokens() {
       return this.tokenCount && this.tokenCount > 0;
-    }
-    
+    },
   }),
   watch: {
     poolsLoading() {
