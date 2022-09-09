@@ -18,122 +18,135 @@
 -->
 <template>
   <v-list 
-    v-if="rewardedPools"
-    dense >
+    dense>
     <v-list-item>
       <h4>{{ $t('yourTokens') }}</h4>
     </v-list-item>
-    <deeds-token-asset-template>
-      <template #col1>
-        <div>
-          <deeds-contract-address
-            :address="meedAddress"
-            label="Meeds"
-            token />
-        </div>
-      </template>
-      <template #col2>
-        <v-skeleton-loader
-          v-if="loadingMeedsBalance"
-          type="chip"
-          max-height="17"
-          tile />
-        <template v-else>
-          {{ meedsBalanceNoDecimals }} MEED
-        </template>
-      </template>
-      <template #col4>
-        <v-skeleton-loader
-          v-if="loadingMeedsBalance"
-          type="chip"
-          max-height="17"
-          tile />
-        <deeds-number-format
-          v-else
-          :value="meedsBalance"
-          :fractions="2"
-          currency />
-      </template>
-    </deeds-token-asset-template>
-    <deeds-token-asset-template v-if="xMeedAddress">
-      <template #col1>
-        <div>
-          <deeds-contract-address
-            :address="xMeedAddress"
-            label="xMeeds"
-            token />
-        </div>
-      </template>
-      <template #col2>
-        <v-skeleton-loader
-          v-if="loadingXMeedsBalance"
-          type="chip"
-          max-height="17"
-          tile />
-        <v-tooltip v-else bottom>
-          <template #activator="{ on, attrs }">
-            <div
-              class="d-flex flex-nowrap"
-              v-bind="attrs"
-              v-on="on">
-              {{ xMeedsBalanceNoDecimals }} xMEED
+    <v-skeleton-loader
+      v-if="poolsLoading"
+      type="image"
+      class="mx-auto ma-2"
+      max-width="90%" />
+    <div v-else>
+      <template v-if="hasLPTokens">
+        <deeds-token-asset-template v-if="hasMeedBalance">
+          <template #col1>
+            <div>
+              <deeds-contract-address
+                :address="meedAddress"
+                label="Meeds"
+                token />
             </div>
           </template>
-          <span v-if="maxMeedSupplyReached">
-            {{ $t('maxMeedsSupplyReached') }}
-          </span>
-          <div
-            class="d-flex"
-            v-if="rewardsStarted">
-            <span class="mx-1"> {{ $t('apy') }} </span>
+          <template #col2>
+            {{ meedsBalanceNoDecimals }} MEED
+          </template>
+          <template #col4>
             <deeds-number-format
-              :value="apy"
-              no-decimals>
-              %
-            </deeds-number-format>
-          </div>
-          <div v-else>
-            {{ $t('meedsRewardingDidntStarted') }}
-          </div>
-        </v-tooltip>
+              :value="meedsBalance"
+              :fractions="2"
+              currency />
+          </template>
+        </deeds-token-asset-template>
+        <deeds-token-asset-template v-if="xMeedAddress && hasXMeedBalance">
+          <template #col1>
+            <div>
+              <deeds-contract-address
+                :address="xMeedAddress"
+                label="xMeeds"
+                token />
+            </div>
+          </template>
+          <template #col2>
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <div
+                  class="d-flex flex-nowrap"
+                  v-bind="attrs"
+                  v-on="on">
+                  {{ xMeedsBalanceNoDecimals }} xMEED
+                </div>
+              </template>
+              <span v-if="maxMeedSupplyReached">
+                {{ $t('maxMeedsSupplyReached') }}
+              </span>
+              <div
+                class="d-flex"
+                v-if="rewardsStarted">
+                <span class="mx-1"> {{ $t('apy') }} </span>
+                <deeds-number-format
+                  :value="apy"
+                  no-decimals>
+                  %
+                </deeds-number-format>
+              </div>
+              <div v-else>
+                {{ $t('meedsRewardingDidntStarted') }}
+              </div>
+            </v-tooltip>
+          </template>
+          <template #col3>
+            <div 
+              class="d-flex">
+              <span class="mx-1">+</span>
+              <deeds-number-format 
+                :value="weeklyRewardedMeeds" 
+                :fractions="2" />
+              <span class="mx-1">MEED / {{ $t('week') }}</span>
+            </div>
+          </template>
+          <template #col4>
+            <deeds-number-format
+              :value="xMeedsBalanceInMeeds"
+              :fractions="2"
+              currency />
+          </template>
+        </deeds-token-asset-template>
+        <deeds-token-asset
+          v-for="pool in rewardedPools"
+          :key="`${pool.address}_${pool.refresh}`"
+          :pool="pool" />
       </template>
-      <template #col3>
-        <v-skeleton-loader
-          v-if="loadingXMeedsBalance"
-          type="chip"
-          max-height="17"
-          tile />
-        <div 
-          v-else
-          class="d-flex">
-          <span class="mx-1">+</span>
-          <deeds-number-format 
-            :value="weeklyRewardedMeeds" 
-            :fractions="2" />
-          <span class="mx-1">MEED / {{ $t('week') }}</span>
-        </div>
-      </template>
-      <template #col4>
-        <v-skeleton-loader
-          v-if="loadingXMeedsBalance"
-          type="chip"
-          max-height="17"
-          tile />
-        <deeds-number-format
-          v-else
-          :value="xMeedsBalanceInMeeds"
-          :fractions="2"
-          currency />
-      </template>
-    </deeds-token-asset-template>
-    <deeds-token-asset
-      v-for="pool in rewardedPools"
-      :key="`${pool.address}_${pool.refresh}`"
-      :pool="pool" />
+      <v-row
+        v-else
+        class="ms-4 d-flex flex-row">
+        <v-col class="pa-0" align-self="start">
+          <v-img 
+            height="100px"
+            width="140px"
+            :src="`/${parentLocation}/static/images/meeds.png`"
+            contain
+            eager />
+        </v-col>
+        <v-col cols="9">
+          <v-card flat>
+            <v-card-text class="py-0">
+              {{ $t('noTokensDescription') }}
+            </v-card-text>
+            <v-card-text class="d-flex">
+              <div class="pe-1">
+                {{ $t('see') }}
+              </div>
+              <a
+                class="text-decoration-underline"
+                @click="$root.$emit('switch-page', 'stake')">
+                {{ $t('there') }}
+              </a>
+              <div class="ps-1">
+                {{ $t('moreInformation') }}
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </v-list>
 </template>
 <script>
 export default {
+  data: () => ({
+    tokenCount: 0,
+  }),
   computed: Vuex.mapState({
     language: state => state.language,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
@@ -158,6 +171,7 @@ export default {
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
     now: state => state.now,
+    parentLocation: state => state.parentLocation,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
         return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
@@ -222,6 +236,32 @@ export default {
     poolsLoading() {
       return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
     },
+    hasMeedBalance() {
+      return this.meedsBalance && !this.meedsBalance.isZero();
+    },
+    hasXMeedBalance() {
+      return this.xMeedsBalance && !this.xMeedsBalance.isZero();
+    },
+    hasLPTokens() {
+      return this.tokenCount && this.tokenCount > 0;
+    },
   }),
+  watch: {
+    poolsLoading() {
+      if (this.rewardedPools) {
+        this.rewardedPools.filter(pool => {
+          if (!pool.userInfo?.amount.isZero()) {
+            this.tokenCount ++;
+          }
+        });
+      }
+      if (this.meedsBalance && !this.meedsBalance.isZero()) {
+        this.tokenCount ++;
+      }
+      if (this.xMeedsBalance && !this.xMeedsBalance.isZero()) {
+        this.tokenCount ++;
+      }
+    },
+  },
 };
 </script>
