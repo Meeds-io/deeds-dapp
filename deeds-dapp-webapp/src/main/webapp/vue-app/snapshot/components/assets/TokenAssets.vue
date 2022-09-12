@@ -248,7 +248,15 @@ export default {
   }),
   watch: {
     poolsLoading() {
-      if (this.rewardedPools) {
+      this.updateTokenNumber();
+    },
+  },
+  mounted() {
+    this.updateTokenNumber();
+  },
+  methods: {
+    updateTokenNumber() {
+      if (this.rewardedPools && !this.poolsLoading) {
         this.rewardedPools.filter(pool => {
           if (!pool.userInfo?.amount.isZero()) {
             this.tokenCount ++;
@@ -261,7 +269,7 @@ export default {
       if (this.xMeedsBalance && !this.xMeedsBalance.isZero()) {
         this.tokenCount ++;
       }
-    },
+    }
   },
 };
 </script>
