@@ -258,7 +258,7 @@ export default {
     updateTokenNumber() {
       if (this.rewardedPools && !this.poolsLoading) {
         this.rewardedPools.filter(pool => {
-          if (!pool.userInfo?.amount.isZero()) {
+          if (!pool?.loadingUserInfo && pool?.userInfo?.amount && !pool.userInfo.amount.isZero()) {
             this.tokenCount ++;
           }
         });
