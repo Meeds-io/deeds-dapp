@@ -62,7 +62,7 @@ export default {
       }
       return {
         title: [{
-          text: this.$t('currencies'),
+          text: this.$t('distribution'),
           left: '64%',
           textStyle: {
             fontStyle: 'normal',
