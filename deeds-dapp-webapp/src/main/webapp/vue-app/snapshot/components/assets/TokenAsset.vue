@@ -25,16 +25,26 @@
         token />
     </template>
     <template #col2>
+      <div
+        class="d-flex">
+        <deeds-number-format
+          :value="lpStaked"
+          :fractions="2" />
+        <span class="mx-1 text-no-wrap"> {{ lpSymbol }}  </span>
+      </div>
+    </template>
+    <template #col3>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <div
             class="d-flex flex-nowrap"
             v-bind="attrs"
             v-on="on">
-            <deeds-number-format
-              :value="lpStaked"
+            <span class="mx-1">+</span>
+            <deeds-number-format 
+              :value="weeklyRewardedMeeds" 
               :fractions="2" />
-            <span class="mx-1 text-no-wrap"> {{ lpSymbol }}  </span>
+            <span class="mx-1 text-no-wrap">MEED / {{ $t('week') }}</span>
           </div>
         </template>
         <span v-if="noMeedSupplyForLPRemaining">
@@ -49,16 +59,6 @@
           </deeds-number-format>
         </div>
       </v-tooltip>
-    </template>
-    <template #col3>
-      <div
-        class="d-flex flex-row flex-nowrap">
-        <span class="mx-1">+</span>
-        <deeds-number-format 
-          :value="weeklyRewardedMeeds" 
-          :fractions="2" />
-        <span class="mx-1 text-no-wrap">MEED / {{ $t('week') }}</span>
-      </div>
     </template>
     <template #col4>
       <deeds-number-format
