@@ -20,7 +20,7 @@
   <v-list 
     dense>
     <v-list-item>
-      <h4>{{ $t('tokens') }}</h4>
+      <h4>{{ $t('yourTokens') }}</h4>
     </v-list-item>
     <v-skeleton-loader
       v-if="poolsLoading"

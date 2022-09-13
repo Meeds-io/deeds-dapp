@@ -19,7 +19,7 @@
 <template>
   <div class="mb-4 mb-sm-8">
     <h3 class="d-flex flex-nowrap">
-      {{ $t('yourAssets') }}
+      {{ $t('assets') }}
       <v-divider class="my-auto ms-4" />
     </h3>
     <div class="d-flex flex-column flex-sm-row">
