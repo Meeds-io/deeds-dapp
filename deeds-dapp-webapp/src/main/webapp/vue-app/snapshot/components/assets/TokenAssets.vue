@@ -21,7 +21,7 @@
     v-if="rewardedPools"
     dense >
     <v-list-item>
-      <h4>{{ $t('tokens') }}</h4>
+      <h4>{{ $t('yourTokens') }}</h4>
     </v-list-item>
     <deeds-token-asset-template>
       <template #col1>
