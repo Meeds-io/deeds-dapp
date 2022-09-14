@@ -29,7 +29,11 @@
     <div v-else>
       <template
         v-if="ownedNfts && ownedNfts.length">
-        <v-list-item
+          <deeds-deed-asset 
+      v-for="nft in nftsByCardType"
+      :key="nft.id"
+      :deed="nft" />
+       <!-- <v-list-item
           v-for="nft in nftsByCardType"
           :key="nft.id"
           class="ps-8">
@@ -37,7 +41,7 @@
           <v-list-item-content class="align-end">{{ nft.cityName }}</v-list-item-content>
           <v-list-item-content class="align-end">{{ nft.count }}</v-list-item-content>
           <v-list-item-content class="align-end" />
-        </v-list-item>
+        </v-list-item>-->
       </template>
       <v-row
         v-else
