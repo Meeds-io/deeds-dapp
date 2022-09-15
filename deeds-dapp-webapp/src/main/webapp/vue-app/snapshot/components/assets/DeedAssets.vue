@@ -17,28 +17,62 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list dense v-if="ownedNfts && ownedNfts.length">
+  <v-list dense>
     <v-list-item>
       <h4>{{ $t('yourDeeds') }}</h4>
     </v-list-item>
-    <v-list-item
-      v-for="nft in nftsByCardType"
-      :key="nft.id"
-      class="ps-8">
-      <v-list-item-content>{{ nft.cardName }}</v-list-item-content>
-      <v-list-item-content class="align-end">{{ nft.cityName }}</v-list-item-content>
-      <v-list-item-content class="align-end">{{ nft.count }}</v-list-item-content>
-      <v-list-item-content class="align-end" />
-    </v-list-item>
-    <v-list-item class="ps-8 mt-4">
-      <v-btn
-        name="displayOwnedDeedsButton"
-        outlined
-        text
-        @click="$root.$emit('switch-page', 'deeds')">
-        <span class="text-capitalize">{{ $t('details') }}</span>
-      </v-btn>
-    </v-list-item>
+    <v-skeleton-loader
+      v-if="!ownedNfts"
+      type="image"
+      class="mx-auto ma-2"
+      max-width="90%" />
+    <div v-else>
+      <template
+        v-if="ownedNfts && ownedNfts.length">
+        <v-list-item
+          v-for="nft in nftsByCardType"
+          :key="nft.id"
+          class="ps-8">
+          <v-list-item-content>{{ nft.cardName }}</v-list-item-content>
+          <v-list-item-content class="align-end">{{ nft.cityName }}</v-list-item-content>
+          <v-list-item-content class="align-end">{{ nft.count }}</v-list-item-content>
+          <v-list-item-content class="align-end" />
+        </v-list-item>
+      </template>
+      <v-row
+        v-else
+        class="ms-4 pt-4 d-flex flex-row">
+        <v-col class="pa-0" align-self="start">
+          <v-img 
+            height="100px"
+            width="140px"
+            :src="`/${parentLocation}/static/images/deeds.png`"
+            contain
+            eager />
+        </v-col>
+        <v-col cols="9">
+          <v-card flat>
+            <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: whitepaperLink})" />
+            <v-card-text class="d-flex">
+              <div class="pe-1">
+                {{ $t('howGetDeed') }}
+              </div>
+              <div class="pe-1">
+                {{ $t('see') }}
+              </div>
+              <a
+                class="text-decoration-underline"
+                @click="$root.$emit('switch-page', 'deeds')">
+                {{ $t('there') }}
+              </a>
+              <div class="ps-1">
+                {{ $t('moreInformation') }}
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
   </v-list>
 </template>
 <script>
@@ -49,6 +83,8 @@ export default {
   }),
   computed: Vuex.mapState({
     ownedNfts: state => state.ownedNfts,
+    whitepaperLink: state => state.whitepaperLink,
+    parentLocation: state => state.parentLocation,
     nftsByCardType() {
       const nftsByCardType = {};
       if (this.ownedNfts) {
