@@ -41,6 +41,9 @@
           <template #col2>
             {{ meedsBalanceNoDecimals }} MEED
           </template>
+          <template #col3>
+            <div class="ms-n15 d-flex justify-center">-</div>
+          </template>
           <template #col4>
             <deeds-number-format
               :value="meedsBalance"
