@@ -30,15 +30,6 @@
       <v-list-item-content class="align-end">{{ nft.count }}</v-list-item-content>
       <v-list-item-content class="align-end" />
     </v-list-item>
-    <v-list-item class="ps-8 mt-4">
-      <v-btn
-        name="displayOwnedDeedsButton"
-        outlined
-        text
-        @click="$root.$emit('switch-page', 'deeds')">
-        <span class="text-capitalize">{{ $t('details') }}</span>
-      </v-btn>
-    </v-list-item>
   </v-list>
 </template>
 <script>
