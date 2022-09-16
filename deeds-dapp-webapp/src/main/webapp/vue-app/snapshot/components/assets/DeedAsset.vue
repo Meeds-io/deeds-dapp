@@ -28,7 +28,7 @@
       {{ count }}
     </template>
     <template #col4>
-      {{ }}
+      {{ empty }}
     </template>
   </deeds-token-asset-template>
 </template>
@@ -50,6 +50,9 @@ export default {
     count() {
       return this.deed?.count;
     },
+    emptyValue() {
+      return '';
+    }
   }),
 };
 </script>
