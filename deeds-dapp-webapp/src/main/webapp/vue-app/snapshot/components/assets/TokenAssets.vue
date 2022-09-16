@@ -61,13 +61,20 @@
             </div>
           </template>
           <template #col2>
+            {{ xMeedsBalanceNoDecimals }} xMEED
+          </template>
+          <template #col3>
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
                 <div
                   class="d-flex flex-nowrap"
                   v-bind="attrs"
                   v-on="on">
-                  {{ xMeedsBalanceNoDecimals }} xMEED
+                  <span class="mx-1">+</span>
+                  <deeds-number-format 
+                    :value="weeklyRewardedMeeds" 
+                    :fractions="2" />
+                  <span class="mx-1">MEED / {{ $t('week') }}</span>
                 </div>
               </template>
               <span v-if="maxMeedSupplyReached">
@@ -87,16 +94,6 @@
                 {{ $t('meedsRewardingDidntStarted') }}
               </div>
             </v-tooltip>
-          </template>
-          <template #col3>
-            <div 
-              class="d-flex">
-              <span class="mx-1">+</span>
-              <deeds-number-format 
-                :value="weeklyRewardedMeeds" 
-                :fractions="2" />
-              <span class="mx-1">MEED / {{ $t('week') }}</span>
-            </div>
           </template>
           <template #col4>
             <deeds-number-format
