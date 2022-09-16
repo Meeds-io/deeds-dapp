@@ -42,7 +42,7 @@
             v-on="on">
             <span class="mx-1">+</span>
             <deeds-number-format 
-              :value="weeklyRewardedMeeds" 
+              :value="weeklyRewardedInMeed" 
               :fractions="2" />
             <span class="mx-1 text-no-wrap">MEED / {{ $t('week') }}</span>
           </div>
@@ -105,22 +105,40 @@ export default {
     lpStaked() {
       return this.userInfo && this.userInfo.amount || 0;
     },
+    lpTotalSupply() {
+      return this.pool && this.pool.totalSupply;
+    },
+    lpMeedsBalance() {
+      return this.pool && this.pool.meedsBalance;
+    },
     loadingUserInfo() {
       return this.pool && this.pool.loadingUserInfo;
     },
     apy() {
       return this.pool && this.pool.apy;
     },
-    weeklyRewardedMeeds() {
-      return new BigNumber(this.lpStaked.toString())
-        .multipliedBy(this.apy.toString())
-        .dividedBy(100)
-        .multipliedBy(7)
-        .dividedBy(365);
+    weeklyRewardedInSLP() {
+      if (this.lpStaked && this.apy) {
+        return new BigNumber(this.lpStaked.toString())
+          .multipliedBy(this.apy.toString())
+          .dividedBy(100)
+          .multipliedBy(7)
+          .dividedBy(365);
+      }
+      return new BigNumber(0);
+    },
+    weeklyRewardedInMeed() {
+      if (this.weeklyRewardedInSLP && this.lpTotalSupply && this.lpMeedsBalance) {
+        return this.weeklyRewardedInSLP
+          .dividedBy(this.lpTotalSupply.toString())
+          .multipliedBy(this.lpMeedsBalance.toString())
+          .multipliedBy(2);
+      }
+      return 0;
     },
     hasStakedToken() {
       return this.lpStaked && !this.lpStaked.isZero();
-    }
+    },
   }),
 };
 </script>
