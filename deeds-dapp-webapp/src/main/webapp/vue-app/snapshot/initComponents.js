@@ -24,6 +24,7 @@ import TokenAssets from './components/assets/TokenAssets.vue';
 import TokenAssetTemplate from './components/assets/TokenAssetTemplate.vue';
 import TokenAsset from './components/assets/TokenAsset.vue';
 import DeedAssets from './components/assets/DeedAssets.vue';
+import DeedAsset from './components/assets/DeedAsset.vue';
 import MeedsInfo from './components/MeedsInfo.vue';
 import CurrenciesChart from './components/charts/CurrenciesChart.vue';
 
@@ -36,6 +37,7 @@ const components = {
   'deeds-token-asset': TokenAsset,
   'deeds-token-asset-template': TokenAssetTemplate,
   'deeds-deed-assets': DeedAssets,
+  'deeds-deed-asset': DeedAsset,
   'deeds-meeds-info': MeedsInfo,
   'deeds-currencies-chart': CurrenciesChart,
 };
