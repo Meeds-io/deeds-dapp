@@ -42,13 +42,13 @@ export default {
         Object.keys(this.metrics.lockedBalances).forEach((address) => {
           let name;
           const lockedBalance = this.metrics.lockedBalances[address];
-          if (address.toLowerCase() === this.comethPairAddress?.toLowerCase() || address.toLowerCase().substring(0,5) === '0xb82') {
+          if (address.toLowerCase() === this.comethPairAddress?.toLowerCase()) {
             name = this.$t('comethPool');
-          } else if (address.toLowerCase() === this.xMeedAddress?.toLowerCase() || address.toLowerCase().substring(0,5) === '0x44d') {
+          } else if (address.toLowerCase() === this.xMeedAddress?.toLowerCase()) {
             name = this.$t('xMeedsStaked');
-          } else if (address.toLowerCase() === this.sushiswapPairAddress?.toLowerCase() || address.toLowerCase().substring(0,5) === '0x960') {
+          } else if (address.toLowerCase() === this.sushiswapPairAddress?.toLowerCase()) {
             name = this.$t('sushiSwapPool');
-          } else if (address.toLowerCase() === this.vestingAddress?.toLowerCase() || address.toLowerCase().substring(0,5) === '0x440') {
+          } else if (address.toLowerCase() === this.vestingAddress?.toLowerCase()) {
             name = this.$t('vestedMeeds');
           } else {
             name = this.$t('others');
