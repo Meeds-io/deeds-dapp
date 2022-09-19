@@ -47,13 +47,16 @@ export default {
   }),
   computed: Vuex.mapState({
     selectedLanguage: state => state.language,
+    isMobile() {
+      return this.$vuetify?.breakpoint?.smAndDown;
+    },
     selectedLanguageLabel() {
-      return this.$t(`language.${this.selectedLanguage}`);
+      return this.isMobile ? this.selectedLanguage : this.$t(`language.${this.selectedLanguage}`);
     },
     languageOptions() {
       return this.languages.map(language => ({
         value: language,
-        label: this.$t(`language.${language}`),
+        label: this.isMobile ? language.toUpperCase() : this.$t(`language.${language}`),
       }));
     },
   }),
