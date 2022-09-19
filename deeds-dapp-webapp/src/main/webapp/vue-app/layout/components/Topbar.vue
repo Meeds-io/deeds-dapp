@@ -45,7 +45,7 @@
     <div class="ms-4">
       <deeds-topbar-fiat-currency-selector v-if="address" />
     </div>
-    <div class="ms-4 d-none d-sm-inline-block">
+    <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
   </v-toolbar>
