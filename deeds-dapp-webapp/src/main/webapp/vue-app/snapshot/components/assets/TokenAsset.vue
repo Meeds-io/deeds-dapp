@@ -120,7 +120,7 @@ export default {
     weeklyRewardedInSLP() {
       if (this.lpStaked && this.apy) {
         return new BigNumber(this.lpStaked.toString())
-          .multipliedBy(Math.trunc(this.apy))
+          .multipliedBy(this.$ethUtils.toFixedDisplay(this.apy, 0, this.language))
           .dividedBy(100)
           .multipliedBy(7)
           .dividedBy(365);
