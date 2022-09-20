@@ -72,7 +72,7 @@
                   v-on="on">
                   <span class="mx-1">+</span>
                   <deeds-number-format 
-                    :value="weeklyRewardedMeeds" 
+                    :value="weeklyRewardedInMeed" 
                     :fractions="2" />
                   <span class="mx-1">MEED / {{ $t('week') }}</span>
                 </div>
@@ -209,15 +209,23 @@ export default {
     rewardsStarted() {
       return this.stakingStartTime < this.now;
     },
-    weeklyRewardedMeeds() {
+    weeklyRewardedInXMeed() {
       if (this.xMeedsBalance && this.apy) {
         return new BigNumber(this.xMeedsBalance.toString())
-          .multipliedBy(this.apy)
+          .multipliedBy(this.$ethUtils.toFixedDisplay(this.apy, 0, this.language))
           .dividedBy(100)
           .multipliedBy(7)
           .dividedBy(365);
       }
       return new BigNumber(0);
+    },
+    weeklyRewardedInMeed() {
+      if (this.weeklyRewardedInXMeed && this.xMeedsTotalSupply && this.meedsBalanceOfXMeeds) {
+        return this.weeklyRewardedInXMeed
+          .dividedBy(this.xMeedsTotalSupply.toString())
+          .multipliedBy(this.meedsBalanceOfXMeeds.toString());
+      }
+      return 0;
     },
     apyLoading() {
       return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
