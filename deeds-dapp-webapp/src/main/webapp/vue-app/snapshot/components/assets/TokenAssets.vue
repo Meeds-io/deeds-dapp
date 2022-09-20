@@ -212,7 +212,7 @@ export default {
     weeklyRewardedInXMeed() {
       if (this.xMeedsBalance && this.apy) {
         return new BigNumber(this.xMeedsBalance.toString())
-          .multipliedBy(this.apy)
+          .multipliedBy(this.$ethUtils.toFixedDisplay(this.apy, 0, this.language))
           .dividedBy(100)
           .multipliedBy(7)
           .dividedBy(365);
