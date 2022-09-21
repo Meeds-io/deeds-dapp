@@ -17,7 +17,12 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar elevation="0">
+  <v-app-bar
+    :fixed="isMobile"
+    color="white"
+    :elevation="!isMobile && '0'"
+    elevate-on-scroll
+    :height="isMobile && '64px'">
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -48,7 +53,7 @@
     <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
-  </v-toolbar>
+  </v-app-bar>
 </template>
 <script>
 export default {
@@ -59,6 +64,9 @@ export default {
     address: state => state.address,
     isTestNetwork() {
       return this.networkId === 4;
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
     },
   }),
 };

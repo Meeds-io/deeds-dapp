@@ -18,21 +18,27 @@
 -->
 <template>
   <v-app>
-    <v-card flat>
+    <v-card flat class="overflow-hidden">
       <deeds-topbar class="mainPageLayout" role="banner" />
-      <v-divider />
-      <v-progress-linear v-if="loading" indeterminate />
-      <div v-else class="mainPageLayout pa-4">
-        <deeds-metamask />
-        <template v-if="validNetwork">
-          <deeds-navbar v-if="address" role="navigation" />
-          <deeds-page
-            v-if="address"
-            class="mt-8 mt-sm-10"
-            role="main" />
-        </template>
-      </div>
-      <deeds-notifications />
+      <v-divider v-if="!isMobile" />
+      <v-sheet
+        class="overflow-y-auto"
+        :class="isMobile && 'mt-13'">
+        <v-container class="mt-n3" style="height: auto;">
+          <v-progress-linear v-if="loading" indeterminate />
+          <div v-else class="mainPageLayout pa-4">
+            <deeds-metamask />
+            <template v-if="validNetwork">
+              <deeds-navbar v-if="address" role="navigation" />
+              <deeds-page
+                v-if="address"
+                class="mt-8 mt-sm-10"
+                role="main" />
+            </template>
+          </div>
+          <deeds-notifications />
+        </v-container>
+      </v-sheet>
     </v-card>
   </v-app>
 </template>
@@ -42,6 +48,9 @@ export default {
     address: state => state.address,
     loading: state => state.appLoading,
     validNetwork: state => state.validNetwork,
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   }),
 };
 </script>
