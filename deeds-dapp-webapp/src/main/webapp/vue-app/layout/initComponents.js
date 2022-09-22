@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import Site from './components/Site.vue';
+import SiteContent from './components/SiteContent.vue';
 // Topbar components
 import Topbar from './components/Topbar.vue';
 import TopbarAddressSelector from './components/topbar/AddressSelector.vue';
@@ -33,6 +34,7 @@ import Notifications from './components/Notifications.vue';
 
 const components = {
   'deeds-site': Site,
+  'deeds-site-content': SiteContent,
   'deeds-topbar': Topbar,
   'deeds-topbar-address-selector': TopbarAddressSelector,
   'deeds-topbar-fiat-currency-selector': TopbarFiatCurrencySelector,

@@ -18,30 +18,16 @@
 -->
 <template>
   <v-app>
-    <v-card flat>
+    <v-card flat class="overflow-hidden">
       <deeds-topbar class="mainPageLayout" role="banner" />
-      <v-divider />
-      <v-progress-linear v-if="loading" indeterminate />
-      <div v-else class="mainPageLayout pa-4">
-        <deeds-metamask />
-        <template v-if="validNetwork">
-          <deeds-navbar v-if="address" role="navigation" />
-          <deeds-page
-            v-if="address"
-            class="mt-8 mt-sm-10"
-            role="main" />
-        </template>
-      </div>
-      <deeds-notifications />
+      <deeds-site-content />
     </v-card>
   </v-app>
 </template>
 <script>
 export default {
-  computed: Vuex.mapState({
-    address: state => state.address,
-    loading: state => state.appLoading,
-    validNetwork: state => state.validNetwork,
-  }),
+  created() {
+    this.$store.commit('setMobile');
+  }
 };
 </script>
