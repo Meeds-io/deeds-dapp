@@ -17,7 +17,12 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar elevation="0">
+  <v-app-bar
+    :fixed="isMobile"
+    :elevation="!isMobile && '0'"
+    :height="isMobile && '64px'"
+    :elevate-on-scroll="isMobile"
+    color="white">
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -48,7 +53,7 @@
     <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
-  </v-toolbar>
+  </v-app-bar>
 </template>
 <script>
 export default {
@@ -57,6 +62,7 @@ export default {
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
     address: state => state.address,
+    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId === 4;
     },
