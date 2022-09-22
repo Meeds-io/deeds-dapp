@@ -19,10 +19,10 @@
 <template>
   <v-app-bar
     :fixed="isMobile"
-    color="white"
     :elevation="!isMobile && '0'"
-    elevate-on-scroll
-    :height="isMobile && '64px'">
+    :height="isMobile && '64px'"
+    :elevate-on-scroll="isMobile"
+    color="white">
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -62,11 +62,9 @@ export default {
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
     address: state => state.address,
+    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId === 4;
-    },
-    isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
     },
   }),
 };

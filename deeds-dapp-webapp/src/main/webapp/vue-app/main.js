@@ -234,8 +234,12 @@ const store = new Vuex.Store({
     rewardedTotalAllocationPoints: null,
     addSushiswapLiquidityLink: null,
     addUniswapLiquidityLink: null,
+    isMobile: false,
   },
   mutations: {
+    setMobile(state) {
+      state.isMobile = navigator.userAgentData && navigator.userAgentData.mobile || (navigator.userAgent && /mobi/i.test(navigator.userAgent.toLowerCase())) || false;
+    },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();
     },
@@ -729,6 +733,7 @@ const store = new Vuex.Store({
 
 
 function initialize() {
+  store.commit('setMobile');
   if (ethUtils.isMetamaskInstalled()) {
     store.commit('refreshMetamaskState');
 
