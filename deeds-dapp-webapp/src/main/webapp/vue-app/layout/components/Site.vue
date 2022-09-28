@@ -28,6 +28,6 @@
 export default {
   created() {
     this.$store.commit('setMobile');
-  }
+  },
 };
 </script>

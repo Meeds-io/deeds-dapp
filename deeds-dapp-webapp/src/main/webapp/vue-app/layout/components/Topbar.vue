@@ -21,7 +21,7 @@
     fixed
     elevation="4"
     color="white">
-    <v-spacer v-if="isMobile" />
+    <v-spacer />
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -39,7 +39,7 @@
         Rinkeby
       </v-chip>
     </v-toolbar-title>
-    <v-spacer v-if="isMobile" />
+    <v-spacer />
     <div class="ms-4 d-none d-sm-inline-block">
       <deeds-topbar-address-selector v-if="address" />
     </div>
@@ -62,7 +62,6 @@ export default {
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
     address: state => state.address,
-    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId === 4;
     },
