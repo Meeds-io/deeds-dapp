@@ -17,27 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <v-divider v-if="!isMobile" />
-    <v-sheet
-      :class="isMobile && 'mt-13'"
-      class="overflow-y-auto">
-      <v-container class="mt-n3" style="height: auto;">
-        <v-progress-linear v-if="loading" indeterminate />
-        <div v-else class="mainPageLayout pa-4">
-          <deeds-metamask />
-          <template v-if="validNetwork">
-            <deeds-navbar v-if="address" role="navigation" />
-            <deeds-page
-              v-if="address"
-              class="mt-8 mt-sm-10"
-              role="main" />
-          </template>
-        </div>
-        <deeds-notifications />
-      </v-container>
-    </v-sheet>
-  </div>
+  <v-sheet
+    class="overflow-y-auto">
+    <v-container style="height: auto;" class="mt-15">
+      <!-- <v-divider />-->
+      <v-progress-linear v-if="loading" indeterminate />
+      <div v-else class="mainPageLayout pa-4">
+        <deeds-metamask />
+        <template v-if="validNetwork">
+          <deeds-navbar v-if="address" role="navigation" />
+          <deeds-page
+            v-if="address"
+            class="mt-8 mt-sm-10"
+            role="main" />
+        </template>
+      </div>
+      <deeds-notifications />
+    </v-container>
+  </v-sheet>
 </template>
 <script>
 export default {

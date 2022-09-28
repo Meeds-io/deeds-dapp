@@ -19,7 +19,7 @@
 <template>
   <v-app>
     <v-card flat class="overflow-hidden">
-      <deeds-topbar class="mainPageLayout" role="banner" />
+      <deeds-topbar role="banner" />
       <deeds-site-content />
     </v-card>
   </v-app>

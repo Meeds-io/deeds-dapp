@@ -18,11 +18,10 @@
 -->
 <template>
   <v-app-bar
-    :fixed="isMobile"
-    :elevation="!isMobile && '0'"
-    :height="isMobile && '64px'"
-    :elevate-on-scroll="isMobile"
+    fixed
+    elevation="4"
     color="white">
+    <v-spacer v-if="isMobile" />
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -40,7 +39,7 @@
         Rinkeby
       </v-chip>
     </v-toolbar-title>
-    <v-spacer />
+    <v-spacer v-if="isMobile" />
     <div class="ms-4 d-none d-sm-inline-block">
       <deeds-topbar-address-selector v-if="address" />
     </div>
@@ -53,6 +52,7 @@
     <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
+    <v-spacer />
   </v-app-bar>
 </template>
 <script>
