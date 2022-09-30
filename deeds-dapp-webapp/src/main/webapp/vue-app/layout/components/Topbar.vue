@@ -18,11 +18,10 @@
 -->
 <template>
   <v-app-bar
-    :fixed="isMobile"
-    :elevation="!isMobile && '0'"
-    :height="isMobile && '64px'"
-    :elevate-on-scroll="isMobile"
+    fixed
+    elevation="4"
     color="white">
+    <v-spacer />
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -53,6 +52,7 @@
     <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
+    <v-spacer />
   </v-app-bar>
 </template>
 <script>
@@ -63,7 +63,6 @@ export default {
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
     address: state => state.address,
-    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },
