@@ -19,7 +19,7 @@
 <template>
   <v-sheet
     class="overflow-y-auto">
-    <v-container style="height: auto;" :class="isMobile && 'mt-11' || 'mt-13'">
+    <v-container class="siteContentLayout" :class="isMobile && 'mt-11' || 'mt-13'">
       <v-progress-linear v-if="loading" indeterminate />
       <div v-else class="mainPageLayout pa-4">
         <deeds-metamask />
