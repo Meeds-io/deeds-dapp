@@ -370,7 +370,7 @@ export default {
         });
     },
     getTransactionDeadline() {
-      return Date.now() + this.deadlineMinutes * 60 * 1000;
+      return parseInt(Date.now() / 1000 + this.deadlineMinutes * 60);
     },
     setMaxValue() {
       if (this.buy) {

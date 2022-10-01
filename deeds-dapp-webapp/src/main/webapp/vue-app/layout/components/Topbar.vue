@@ -32,7 +32,7 @@
         dark
         small
         class="testnet-chip mt-1 ms-2">
-        Rinkeby
+        {{ testnetName }}
       </v-chip>
     </v-toolbar-title>
     <v-spacer />
@@ -56,9 +56,23 @@ export default {
     parentLocation: state => state.parentLocation,
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     networkId: state => state.networkId,
+    validNetwork: state => state.validNetwork,
     address: state => state.address,
     isTestNetwork() {
-      return this.networkId === 4;
+      return this.networkId !== 1 && this.validNetwork;
+    },
+    testnetName() {
+      if (!this.networkId) {
+        return '';
+      }
+      switch (this.networkId) {
+      case 4:
+        return 'Rinkeby';
+      case 5:
+        return 'Goerli';
+      default:
+        return '';
+      }
     },
   }),
 };

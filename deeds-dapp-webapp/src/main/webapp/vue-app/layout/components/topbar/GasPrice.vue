@@ -12,7 +12,7 @@
         v-on="on"
         @click="refreshGasPrice">
         <v-icon color="grey" class="me-1">mdi-gas-station</v-icon>
-        <div v-if="floorGasPriceGwei">{{ floorGasPriceGwei }} GWEI</div>
+        <div v-if="gasPriceGwei">{{ floorGasPriceGwei }} GWEI</div>
         <v-skeleton-loader
           v-else
           type="chip"
@@ -28,9 +28,14 @@
 export default {
   computed: Vuex.mapState({
     address: state => state.address,
+    language: state => state.language,
     gasPriceGwei: state => state.gasPriceGwei,
     floorGasPriceGwei() {
-      return parseInt(this.gasPriceGwei);
+      if (this.gasPriceGwei < 1) {
+        return this.$ethUtils.toFixedDisplay(this.gasPriceGwei, 2, this.language);
+      } else {
+        return parseInt(this.gasPriceGwei);
+      }
     },
   }),
   methods: {
