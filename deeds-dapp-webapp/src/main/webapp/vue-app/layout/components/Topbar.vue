@@ -17,7 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar elevation="0">
+  <v-app-bar
+    fixed
+    elevation="4"
+    color="white">
+    <v-spacer />
     <v-toolbar-title class="d-flex">
       <v-img
         max-height="64px"
@@ -45,10 +49,11 @@
     <div class="ms-4">
       <deeds-topbar-fiat-currency-selector v-if="address" />
     </div>
-    <div class="ms-4 d-none d-sm-inline-block">
+    <div class="ms-4">
       <deeds-topbar-language-selector />
     </div>
-  </v-toolbar>
+    <v-spacer />
+  </v-app-bar>
 </template>
 <script>
 export default {

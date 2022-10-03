@@ -20,6 +20,10 @@ html {
   overflow: auto;
 }
 
+.siteContentLayout {
+  height: auto;
+}
+
 .mainPageLayout {
   max-width: 72rem;
   margin: 0 auto;
@@ -68,7 +72,6 @@ html {
 .testnet-chip {
   position: absolute;
   top: 35px;
-  left: 55px;
 }
 
 .blur-box {

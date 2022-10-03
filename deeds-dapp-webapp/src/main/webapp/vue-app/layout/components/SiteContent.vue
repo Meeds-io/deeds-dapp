@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,31 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <v-card flat class="overflow-hidden">
-      <deeds-topbar role="banner" />
-      <deeds-site-content />
-    </v-card>
-  </v-app>
+  <v-sheet
+    class="overflow-y-auto">
+    <v-container class="siteContentLayout" :class="isMobile && 'mt-11' || 'mt-13'">
+      <v-progress-linear v-if="loading" indeterminate />
+      <div v-else class="mainPageLayout pa-4">
+        <deeds-metamask />
+        <template v-if="validNetwork">
+          <deeds-navbar v-if="address" role="navigation" />
+          <deeds-page
+            v-if="address"
+            class="mt-8 mt-sm-10"
+            role="main" />
+        </template>
+      </div>
+      <deeds-notifications />
+    </v-container>
+  </v-sheet>
 </template>
 <script>
 export default {
-  created() {
-    this.$store.commit('setMobile');
-  },
+  computed: Vuex.mapState({
+    address: state => state.address,
+    loading: state => state.appLoading,
+    validNetwork: state => state.validNetwork,
+    isMobile: state => state.isMobile,
+  }),
 };
 </script>

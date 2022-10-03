@@ -31,12 +31,10 @@
       <template v-if="hasLPTokens">
         <deeds-token-asset-template v-if="hasMeedBalance">
           <template #col1>
-            <div>
-              <deeds-contract-address
-                :address="meedAddress"
-                label="Meeds"
-                token />
-            </div>
+            <deeds-contract-address
+              :address="meedAddress"
+              label="Meeds"
+              token />
           </template>
           <template #col2>
             {{ meedsBalanceNoDecimals }} MEED
