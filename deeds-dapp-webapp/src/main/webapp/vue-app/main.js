@@ -77,7 +77,6 @@ const store = new Vuex.Store({
     openSeaBaseLink: null,
     openSeaCollectionLink: null,
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
-    managedNetworkIds: [1, 4],
     provider: null,
     yearInMinutes: 365 * 24 * 60,
     erc20ABI: [
@@ -256,62 +255,72 @@ const store = new Vuex.Store({
       ethUtils.getSelectedChainId()
         .then(networkId => {
           state.networkId = new BigNumber(networkId).toNumber();
-          if (state.managedNetworkIds.indexOf(state.networkId) >= 0) {
-            if (state.networkId === 1) {
-              state.validNetwork = true;
+          if (state.networkId === 1) {
+            // Mainnet
+            state.etherscanBaseLink = 'https://etherscan.io/';
+            state.sushiswapRouterAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
+            state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
+            state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+            state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
+            state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
+            state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
+            state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
+            state.comethPairAddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
+            state.vestingAddress = '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa';
+            state.tenantProvisioningAddress = null;
 
-              // Mainnet
-              state.etherscanBaseLink = 'https://etherscan.io/';
-              state.sushiswapRouterAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
-              state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
-              state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
-              state.meedAddress = '0x8503a7b00b4b52692cc6c14e5b96f142e30547b7';
-              state.tokenFactoryAddress = '0x1B37D04759aD542640Cc44Ff849a373040386050';
-              state.xMeedAddress = '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4';
-              state.deedAddress = '0x0143b71443650aa8efa76bd82f35c22ebd558090';
-              state.comethPairAddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
-              state.vestingAddress = '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa';
-              state.tenantProvisioningAddress = null;
+            // TODO replace with real addresses
+            // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
 
-              // TODO replace with real addresses
-              // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
+            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
+            // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
-              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-              // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
+            state.openSeaCollectionLink = 'https://opensea.io/collection/meeds-dao';
+            state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
+          } else if (state.networkId === 4) {
+            // Rinkeby
+            state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
+            state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+            state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
+            state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
+            state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
+            state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
 
-              state.openSeaCollectionLink = 'https://opensea.io/collection/meeds-dao';
-              state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
-            } else if (state.networkId === 4) {
-              state.validNetwork = true;
+            state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
+            state.deedAddress = '0xDa91F50491AB8b3C82b43623fC317d9fF5207D9c';
+            state.tenantProvisioningAddress = '0x8b5B554985c4393eF30FDf33146A22a99A984C69';
 
-              // Rinkeby
-              state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
-              state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-              state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
-              state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
-              state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
-              state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
+            state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
-              state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
-              state.deedAddress = '0xDa91F50491AB8b3C82b43623fC317d9fF5207D9c';
-              state.tenantProvisioningAddress = '0x8b5B554985c4393eF30FDf33146A22a99A984C69';
+            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
+            state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
-              state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
+            state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
+            state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-deed-token-znroiz3lxb';
+          } else if (state.networkId === 5) {
+            // Goerli
+            state.etherscanBaseLink = 'https://goerli.etherscan.io/';
+            state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
+            state.sushiswapPairAddress = '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD';
+            state.wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
+            state.meedAddress = '0x4998a63C7494afc4Ea96E7Ea86E88c59271914c1';
+            state.tokenFactoryAddress = '0x13142F102152aBa8AD81281E7eC1374577D662EC';
 
-              state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-              state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
+            state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
+            state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
+            state.tenantProvisioningAddress = '0x801FD0FB6f70FAF985410FCbc97FC72D0CC76d8C';
 
-              state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
-              state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-deed-token-znroiz3lxb';
+            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
+            state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
-              state.farmingStartTime = 0;
-              state.stakingStartTime = 0;
-              state.pointsRewardsStartTime = 0;
-              state.deedGenesisStartTime = 0;
-            }
-            state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
-            state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';
+            state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
+            state.openSeaCollectionLink = `https://testnets.opensea.io/collection/${state.deedAddress}`;
+          } else {
+            return;
           }
+          state.validNetwork = true;
+          state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
+          state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';
           this.commit('setAddress');
         });
     },
