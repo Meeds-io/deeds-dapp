@@ -17,8 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function getMetrics() {
-  return fetch(`/${window.parentAppLocation}/api/token/meed/`, {
+export function getMetrics(currency) {
+  return fetch(`/${window.parentAppLocation}/api/token/meed/?currency=${currency?.toUpperCase() || 'USD'}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

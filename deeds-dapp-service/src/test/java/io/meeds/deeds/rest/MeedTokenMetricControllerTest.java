@@ -67,7 +67,7 @@ class MeedTokenMetricControllerTest {
                                                  new BigDecimal("6"),
                                                  new BigDecimal("7"));
 
-    when(meedTokenMetricService.getLastMetric()).thenReturn(result);
+    when(meedTokenMetricService.getLastMetric(null)).thenReturn(result);
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/"));
     response.andExpect(status().isOk())
@@ -98,7 +98,7 @@ class MeedTokenMetricControllerTest {
 
     BigDecimal marketCapitalization = new BigDecimal("5");
 
-    when(meedTokenMetricService.getMarketCapitalization()).thenReturn(marketCapitalization);
+    when(meedTokenMetricService.getMarketCapitalization(null)).thenReturn(marketCapitalization);
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/mcap"));
     response.andExpect(status().isOk())
@@ -110,7 +110,7 @@ class MeedTokenMetricControllerTest {
 
     BigDecimal totalValuelocked = new BigDecimal("4");
 
-    when(meedTokenMetricService.getTotalValueLocked()).thenReturn(totalValuelocked);
+    when(meedTokenMetricService.getTotalValueLocked(null)).thenReturn(totalValuelocked);
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/tvl"));
     response.andExpect(status().isOk())

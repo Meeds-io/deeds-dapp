@@ -97,13 +97,21 @@ export default {
       }
     },
   }),
+  watch: {
+    selectedFiatCurrency() {
+      this.refreshMetrics();
+    },
+  },
   created() {
-    this.$tokenMetricService.getMetrics()
-      .then(metrics => {
-        this.metrics = metrics;
-      });
+    this.refreshMetrics();
   },
   methods: {
+    refreshMetrics() {
+      this.$tokenMetricService.getMetrics(this.selectedFiatCurrency)
+        .then(metrics => {
+          this.metrics = metrics;
+        });
+    },
     currencyFormat(currencyValue) {
       const value = currencyValue && currencyValue.value || currencyValue;
       if (this.selectedFiatCurrency === 'eth') {

@@ -18,6 +18,7 @@ package io.meeds.deeds.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
 import lombok.*;
@@ -78,7 +80,7 @@ public class MeedTokenMetricService {
    *           value
    */
   public BigDecimal getCirculatingSupply() {
-    MeedTokenMetric lastMetric = getLastMetric();
+    MeedTokenMetric lastMetric = getLastMetric(null);
     return lastMetric.getCirculatingSupply();
   }
 
@@ -89,31 +91,33 @@ public class MeedTokenMetricService {
    *           value
    */
   public BigDecimal getTotalSupply() {
-    MeedTokenMetric lastMetric = getLastMetric();
+    MeedTokenMetric lastMetric = getLastMetric(null);
     return lastMetric.getTotalSupply();
   }
 
   /**
    * Retrieves Market Capitalization by using this formula:
    * - Circulating Supply of Meeds * Meed USD Token price
+   * @param currency used {@link Currency} for currency prices calculation
    * 
    * @return {@link BigDecimal} for most recent computed market capitalization
    *           value
    */
-  public BigDecimal getMarketCapitalization() {
-    MeedTokenMetric lastMetric = getLastMetric();
+  public BigDecimal getMarketCapitalization(Currency currency) {
+    MeedTokenMetric lastMetric = getLastMetric(currency);
     return lastMetric.getMarketCapitalization();
   }
 
   /**
    * Retrieves Total Locked Value by using this formula:
    * - Total Locked Meed Tokens * Meed USD Token price
+   * @param currency used {@link Currency} for currency prices calculation
    *
    * @return {@link BigDecimal} for most recent computed Total Locked Value
    *           value
    */
-  public BigDecimal getTotalValueLocked() {
-    MeedTokenMetric lastMetric = getLastMetric();
+  public BigDecimal getTotalValueLocked(Currency currency) {
+    MeedTokenMetric lastMetric = getLastMetric(currency);
     return lastMetric.getTotalValuelocked();
   }
 
@@ -219,17 +223,18 @@ public class MeedTokenMetricService {
 
   /**
    * Retrieves the latest Metrics of Meed Token
+   * @param currency used {@link Currency} for currency prices calculation
    * 
    * @return {@link MeedTokenMetric} representing the Meed Token Metrics
    */
-  public MeedTokenMetric getLastMetric() {
+  public MeedTokenMetric getLastMetric(Currency currency) {
     if (recentMetric == null) {
       recentMetric = getTodayMetric();
       if (recentMetric == null) {
         computeTokenMetrics();
       }
     }
-    return recentMetric;
+    return toCurrency(recentMetric, currency);
   }
 
   private MeedTokenMetric getTodayMetric() {
@@ -238,6 +243,24 @@ public class MeedTokenMetricService {
 
   private LocalDate getTodayId() {
     return LocalDate.now(ZoneOffset.UTC);
+  }
+
+  private MeedTokenMetric toCurrency(MeedTokenMetric metric, Currency currency) {
+    BigDecimal usdRate = exchangeService.getExchangeRate(currency);
+    if (BigDecimal.ONE.equals(usdRate)) {
+      return metric;
+    } else {
+      return new MeedTokenMetric(metric.getDate(),
+                                 metric.getTotalSupply(),
+                                 metric.getLockedBalances() == null ? Collections.emptyMap()
+                                                                    : new HashMap<>(metric.getLockedBalances()),
+                                 metric.getReserveBalances() == null ? Collections.emptyMap()
+                                                                     : new HashMap<>(metric.getReserveBalances()),
+                                 metric.getCirculatingSupply(),
+                                 metric.getMarketCapitalization().multiply(usdRate),
+                                 metric.getTotalValuelocked().multiply(usdRate),
+                                 metric.getMeedUsdPrice().multiply(usdRate));
+    }
   }
 
 }
