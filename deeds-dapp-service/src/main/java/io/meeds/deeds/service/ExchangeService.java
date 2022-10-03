@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.model.CurrencyExchangeRate;
@@ -128,6 +130,38 @@ public class ExchangeService {
     return exchangeRates.stream()
                         .map(exchangeRate -> toMeedPrice(exchangeRate, currencyExchangeRates, currency))
                         .collect(Collectors.toList());
+  }
+
+  public BigDecimal getExchangeRate(Currency currency) {
+    if (currency == null || currency == Currency.USD) {
+      return BigDecimal.ONE;
+    }
+    if (currency == Currency.ETH) {
+      List<MeedExchangeRate> meedExchangeRates = meedExchangeRateRepository.findByDateBetween(LocalDate.now().minusDays(2),
+                                                                                              LocalDate.now());
+      if (CollectionUtils.isEmpty(meedExchangeRates)) {
+        return BigDecimal.ZERO;
+      } else {
+        return meedExchangeRates.stream()
+                                .max(Comparator.comparing(MeedExchangeRate::getDate))
+                                .map(rate -> BigDecimal.ONE.divide(rate.getEthUsdPrice(), 18, RoundingMode.HALF_UP))
+                                .orElse(BigDecimal.ZERO);
+      }
+    } else {
+      List<CurrencyExchangeRate> currencyExchangeRates =
+                                                       currencyExchangeRateRepository.findByCurrencyAndDateBetween(currency,
+                                                                                                                   LocalDate.now()
+                                                                                                                            .minusDays(2),
+                                                                                                                   LocalDate.now());
+      if (CollectionUtils.isEmpty(currencyExchangeRates)) {
+        return BigDecimal.ZERO;
+      } else {
+        return currencyExchangeRates.stream()
+                                    .max(Comparator.comparing(CurrencyExchangeRate::getDate))
+                                    .map(CurrencyExchangeRate::getRate)
+                                    .orElse(BigDecimal.ZERO);
+      }
+    }
   }
 
   public void computeTodayCurrencyExchangeRate() {
