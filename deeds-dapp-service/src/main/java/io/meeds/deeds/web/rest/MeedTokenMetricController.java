@@ -23,8 +23,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.service.MeedTokenMetricService;
 
@@ -36,8 +38,10 @@ public class MeedTokenMetricController {
   private MeedTokenMetricService meedTokenMetricService;
 
   @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<MeedTokenMetric> getMetrics() {
-    return ResponseEntity.ok(meedTokenMetricService.getLastMetric());
+  public ResponseEntity<MeedTokenMetric> getMetrics(
+                                                    @RequestParam(name = "currency", required = false)
+                                                    Currency currency) {
+    return ResponseEntity.ok(meedTokenMetricService.getLastMetric(currency));
   }
 
   @GetMapping("/circ")
@@ -49,16 +53,20 @@ public class MeedTokenMetricController {
   }
 
   @GetMapping("/mcap")
-  public ResponseEntity<BigDecimal> getMarketCapitalization() {
-    BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization();
+  public ResponseEntity<BigDecimal> getMarketCapitalization(
+                                                            @RequestParam(name = "currency", required = false)
+                                                            Currency currency) {
+    BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization(currency);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noCache().cachePublic())
                          .body(marketCapitalization);
   }
 
   @GetMapping("/tvl")
-  public ResponseEntity<BigDecimal> getTotalLockedValue() {
-    BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked();
+  public ResponseEntity<BigDecimal> getTotalLockedValue(
+                                                        @RequestParam(name = "currency", required = false)
+                                                        Currency currency) {
+    BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked(currency);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noCache().cachePublic())
                          .body(totalValueLocked);

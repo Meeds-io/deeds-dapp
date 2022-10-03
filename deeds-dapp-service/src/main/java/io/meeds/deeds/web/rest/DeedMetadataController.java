@@ -19,8 +19,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +35,7 @@ public class DeedMetadataController {
   private DeedMetadataService deedMetadataService;
 
   @GetMapping
-  public ResponseEntity<DeedMetadataPresentation> getContractMetadata(HttpServletRequest request) {
+  public ResponseEntity<DeedMetadataPresentation> getContractMetadata() {
     DeedMetadata deedMetadata = deedMetadataService.getContractMetadata();
     return getDeedMetadataResponse(deedMetadata);
   }
@@ -45,8 +43,7 @@ public class DeedMetadataController {
   @GetMapping("/{nftId}")
   public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
                                                                  @PathVariable(name = "nftId")
-                                                                 Long nftId,
-                                                                 HttpServletRequest request) {
+                                                                 Long nftId) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
     return getDeedMetadataResponse(deedMetadata);
   }
@@ -56,8 +53,7 @@ public class DeedMetadataController {
                                                                  @PathVariable(name = "cityIndex")
                                                                  short cityIndex,
                                                                  @PathVariable(name = "cardType")
-                                                                 short cardType,
-                                                                 HttpServletRequest request) {
+                                                                 short cardType) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadataOfCard(cityIndex, cardType);
     return getDeedMetadataResponse(deedMetadata);
   }
