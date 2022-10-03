@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,66 +17,50 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div v-if="showMetamaskButton">
-    <h3 class="d-flex justify-center">
-      {{ connectionLabel }}
-    </h3>
-    <v-bottom-navigation
-      width="auto"
-      height="auto"
-      class="elevation-0 mt-4">
-      <v-btn
-        v-if="!isMetamaskInstalled"
-        :href="metamaskInstallLinlk"
-        name="installMetamaskLink"
-        target="_blank"
-        rel="nofollow noreferrer noopener"
-        height="168px"
-        width="168px"
-        class="rounded-lg"
-        outlined
-        text>
-        <span class="py-2">Metamask</span>
-        <v-img
-          :src="`/${parentLocation}/static/images/metamask.svg`"
-          max-height="57px"
-          max-width="57px"
-          eager />
-      </v-btn>
-      <v-btn
-        v-else-if="!hasMetamaskConnectedAddress"
-        name="connectMetamaskButton"
-        height="168px"
-        width="168px"
-        class="rounded-lg"
-        outlined
-        text
-        @click="connectToMetamask">
-        <span class="py-2">Metamask</span>
-        <v-img
-          :src="`/${parentLocation}/static/images/metamask.svg`"
-          max-height="57px"
-          max-width="57px"
-          eager />
-      </v-btn>
-      <v-btn
-        v-else-if="!validNetwork"
-        name="switchMetamaskNetworkButton"
-        height="168px"
-        width="168px"
-        class="rounded-lg"
-        outlined
-        text
-        @click="switchMetamaskNetwork">
-        <span class="py-2">Metamask</span>
-        <v-img
-          :src="`/${parentLocation}/static/images/metamask.svg`"
-          max-height="57px"
-          max-width="57px"
-          eager />
-      </v-btn>
-    </v-bottom-navigation>
-  </div>
+  <v-btn
+    v-if="!isMetamaskInstalled"
+    :href="metamaskInstallLinlk"
+    name="topbarInstallMetamaskLink"
+    target="_blank"
+    rel="nofollow noreferrer noopener"
+    color="tertiary"
+    outlined>
+    <v-img
+      :src="`/${parentLocation}/static/images/metamask.svg`"
+      max-height="16px"
+      max-width="16px"
+      class="me-0 me-sm-3"
+      eager />
+    <span v-if="!isMobile" class="text-none">{{ $t('installMetamaskButton') }}</span>
+  </v-btn>
+  <v-btn
+    v-else-if="!hasMetamaskConnectedAddress"
+    name="topbarConnectMetamaskButton"
+    color="tertiary"
+    outlined
+    @click="connectToMetamask">
+    <v-img
+      :src="`/${parentLocation}/static/images/metamask.svg`"
+      max-height="16px"
+      max-width="16px"
+      class="me-0 me-sm-3"
+      eager />
+    <span v-if="!isMobile" class="text-none">{{ $t('connectMetamaskButton') }}</span>
+  </v-btn>
+  <v-btn
+    v-else-if="!validNetwork"
+    name="topbarSwitchMetamaskNetworkButton"
+    color="tertiary"
+    outlined
+    @click="switchMetamaskNetwork">
+    <v-img
+      :src="`/${parentLocation}/static/images/metamask.svg`"
+      max-height="16px"
+      max-width="16px"
+      class="me-0 me-sm-3"
+      eager />
+    <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
+  </v-btn>
 </template>
 <script>
 export default {
@@ -87,9 +71,6 @@ export default {
     address: state => state.address,
     hasMetamaskConnectedAddress() {
       return !!this.address;
-    },
-    showMetamaskButton() {
-      return !this.isMetamaskInstalled || !this.hasMetamaskConnectedAddress || !this.validNetwork;
     },
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
