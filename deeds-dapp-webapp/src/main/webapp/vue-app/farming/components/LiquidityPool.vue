@@ -285,7 +285,6 @@ export default {
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
     tokenFactoryContract: state => state.tokenFactoryContract,
-    now: state => state.now,
     isSushiswapPool() {
       return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
     },

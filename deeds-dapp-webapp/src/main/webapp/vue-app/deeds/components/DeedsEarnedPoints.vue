@@ -97,32 +97,11 @@
               max-height="17"
               tile />
             <deeds-number-format
-              v-else-if="rewardsStarted"
+              v-else
               :value="pointsBalance"
               fractions="2">
               {{ $t('points') }}
             </deeds-number-format>
-            <v-tooltip v-else bottom>
-              <template #activator="{ on, attrs }">
-                <div
-                  class="d-flex flex-nowrap"
-                  v-bind="attrs"
-                  v-on="on">
-                  <deeds-number-format :value="pointsBalance" fractions="2">
-                    {{ $t('points') }}
-                  </deeds-number-format>
-                  <v-icon
-                    size="15px"
-                    color="primary"
-                    class="ms-2">
-                    mdi-alert-circle-outline
-                  </v-icon>
-                </div>
-              </template>
-              <div>
-                {{ $t('meedsRewardingDidntStarted') }}
-              </div>
-            </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -142,14 +121,9 @@ export default {
     xMeedsBalance: state => state.xMeedsBalance,
     pointsBalance: state => state.pointsBalance,
     xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
-    pointsRewardsStartTime: state => state.pointsRewardsStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
-    now: state => state.now,
-    rewardsStarted() {
-      return this.pointsRewardsStartTime < this.now;
-    },
     meedsTotalBalanceOfXMeeds() {
       const meedsPendingBalanceOfXMeeds = this.maxMeedSupplyReached && '0' || this.meedsPendingBalanceOfXMeeds;
       return this.meedsBalanceOfXMeeds

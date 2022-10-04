@@ -22,12 +22,6 @@
       <v-card-title class="ps-0 py-0">
         {{ $t('deedsNfts') }}
       </v-card-title>
-      <small v-if="!rewardsStarted" class="d-flex">
-        <span class="mt-auto mb-1">{{ $t('startsAfter') }}</span>
-        <deeds-timer
-          :end-time="pointsRewardsStartTime"
-          class="mt-auto mb-1" />
-      </small>
     </flex>
     <v-card-text class="ps-0" v-html="$t('deedPointsIntroduction', {0: whitepaperLink})" />
   </v-card>
@@ -35,12 +29,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    pointsRewardsStartTime: state => state.pointsRewardsStartTime,
     whitepaperLink: state => state.whitepaperLink,
-    now: state => state.now,
-    rewardsStarted() {
-      return this.pointsRewardsStartTime < this.now;
-    },
   }),
 };
 </script>

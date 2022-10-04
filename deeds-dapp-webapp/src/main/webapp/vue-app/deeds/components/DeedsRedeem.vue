@@ -38,16 +38,9 @@
           type="chip"
           class="ms-2" />
         <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
-        <div v-if="!deedGenesisStarted">
-          <span class="d-none d-sm-inline">. </span>{{ $t('cityMintingStartDate') }}:
-          <deeds-timer
-            :end-time="deedGenesisStartTime"
-            class="my-auto" />
-        </div>
-        <div v-else-if="!currentCityMintable && currentCityMintingStartDate">
+        <div v-if="!currentCityMintable && currentCityMintingStartDate">
           . {{ $t('cityMintingStartDate') }}:
           <deeds-timer
-            v-if="deedGenesisStarted"
             :end-time="currentCityMintingStartDate"
             class="my-auto"
             @end="endCountDown" />
@@ -61,8 +54,7 @@
               :key="card.name">
               <deeds-redeem-card
                 :card="card"
-                :loading="loadingCityDetails"
-                :genesis-started="deedGenesisStarted" />
+                :loading="loadingCityDetails" />
             </v-col>
           </v-row>
         </v-container>
@@ -79,12 +71,6 @@
         </v-container>
       </template>
     </template>
-    <small v-else-if="!deedGenesisStarted" class="mx-auto mt-4">
-      <span class="my-auto text-capitalize text-capitalize grey--text">{{ $t('startsAfter') }}</span>
-      <deeds-timer
-        :end-time="deedGenesisStartTime"
-        class="my-auto" />
-    </small>
   </v-card>
 </template>
 <script>
@@ -95,12 +81,10 @@ export default {
   computed: Vuex.mapState({
     deedAddress: state => state.deedAddress,
     xMeedAddress: state => state.xMeedAddress,
-    deedGenesisStartTime: state => state.deedGenesisStartTime,
     currentCity: state => state.currentCity,
     currentCardTypes: state => state.currentCardTypes,
     currentCityMintable: state => state.currentCityMintable,
     lastCityMintingCompleteDate: state => state.lastCityMintingCompleteDate,
-    now: state => state.now,
     currentCityMintingStartDate() {
       if (!this.currentCityMintable && this.currentCityAvailability && this.lastCityMintingCompleteDate) {
         return (this.currentCityAvailability.toNumber() + this.lastCityMintingCompleteDate.toNumber()) * 1000;
@@ -119,9 +103,6 @@ export default {
     },
     currentCityMaxPopulation() {
       return this.currentCity && this.currentCity.maxPopulation;
-    },
-    deedGenesisStarted() {
-      return this.deedGenesisStartTime < this.now;
     },
   }),
   watch: {
