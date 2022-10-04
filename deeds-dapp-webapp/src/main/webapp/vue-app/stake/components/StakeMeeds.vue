@@ -44,24 +44,16 @@
                   v-bind="attrs"
                   v-on="on">
                   <deeds-number-format
-                    v-if="rewardsStarted"
                     :value="apy"
                     no-decimals>
                     %
                   </deeds-number-format>
-                  <v-icon
-                    v-else
-                    size="15px"
-                    color="primary"
-                    class="mt-1">
-                    mdi-alert-circle-outline
-                  </v-icon>
                 </div>
               </template>
               <span v-if="maxMeedSupplyReached">
                 {{ $t('maxMeedsSupplyReached') }}
               </span>
-              <ul v-else-if="rewardsStarted">
+              <ul v-else>
                 <li>
                   <deeds-number-format
                     :fractions="2"
@@ -75,9 +67,6 @@
                     label="meedsTotalBalanceOfXMeeds" />
                 </li>
               </ul>
-              <div v-else>
-                {{ $t('meedsRewardingDidntStarted') }}
-              </div>
             </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
@@ -242,9 +231,7 @@ export default {
     rewardedFunds: state => state.rewardedFunds,
     rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
-    stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
-    now: state => state.now,
     yearInMinutes: state => state.yearInMinutes,
     xMeedRewardInfo() {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
@@ -274,11 +261,8 @@ export default {
       }
       return new BigNumber(0);
     },
-    rewardsStarted() {
-      return this.stakingStartTime < this.now;
-    },
     apyLoading() {
-      return this.rewardsStarted && (this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null);
+      return this.meedsBalanceOfXMeeds === null || this.rewardedFunds === null || this.meedsPendingBalanceOfXMeeds === null;
     },
     equivalentMeedBalance() {
       if (this.xMeedsTotalSupply && this.xMeedsBalance && this.meedsTotalBalanceOfXMeeds && !this.xMeedsTotalSupply.isZero()) {
@@ -292,8 +276,7 @@ export default {
           || !this.yearlyRewardedMeeds
           || this.meedsTotalBalanceOfXMeeds.isZero()
           || this.yearlyRewardedMeeds.isZero()
-          || this.maxMeedSupplyReached
-          || !this.rewardsStarted) {
+          || this.maxMeedSupplyReached) {
         return 0;
       }
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
