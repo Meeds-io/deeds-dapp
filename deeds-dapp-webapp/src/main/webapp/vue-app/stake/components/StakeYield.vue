@@ -22,13 +22,6 @@
       <v-card-title class="ps-0 py-0">
         {{ $t('yields') }}
       </v-card-title>
-      <small v-if="!rewardsStarted" class="d-flex">
-        <span class="my-auto">{{ $t('startsAfter') }}</span>
-        <deeds-timer
-          key="yieldTimer"
-          :end-time="stakingStartTime"
-          class="my-auto" />
-      </small>
     </flex>
     <v-card-text class="ps-0">
       {{ $t('yieldsIntroduction1') }}
@@ -37,14 +30,3 @@
     </v-card-text>
   </v-card>
 </template>
-<script>
-export default {
-  computed: Vuex.mapState({
-    stakingStartTime: state => state.stakingStartTime,
-    now: state => state.now,
-    rewardsStarted() {
-      return this.stakingStartTime < this.now;
-    },
-  }),
-};
-</script>
