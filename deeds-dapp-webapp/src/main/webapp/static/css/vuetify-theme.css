@@ -87,6 +87,14 @@
   color: #424242 !important;
   caret-color: #424242 !important;
 }
+.v-application .tertiary {
+  background-color: #3f8487 !important;
+  border-color: #3f8487 !important;
+}
+.v-application .tertiary--text {
+  color: #3f8487 !important;
+  caret-color: #3f8487 !important;
+}
 .v-application .secondary.lighten-5 {
   background-color: #c1c1c1 !important;
   border-color: #c1c1c1 !important;

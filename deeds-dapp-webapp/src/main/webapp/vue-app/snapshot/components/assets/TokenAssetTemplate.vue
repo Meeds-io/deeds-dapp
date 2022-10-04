@@ -52,10 +52,8 @@
 </template>
 <script>
 export default {
-  computed: {
-    isMobile() {
-      return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
-    },
-  },
+  computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
+  }),
 };
 </script>

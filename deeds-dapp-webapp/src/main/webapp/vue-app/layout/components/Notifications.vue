@@ -74,10 +74,8 @@ export default {
     alertLinkTooltip: null,
   }),
   computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
     etherscanBaseLink: state => state.etherscanBaseLink,
-    isMobile() {
-      return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
-    },
     maxWidth() {
       return this.isMobile && '100vw' || '50vw';
     },

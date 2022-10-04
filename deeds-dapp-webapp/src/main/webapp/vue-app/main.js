@@ -236,8 +236,8 @@ const store = new Vuex.Store({
     isMobile: false,
   },
   mutations: {
-    setMobile(state) {
-      state.isMobile = navigator.userAgentData && navigator.userAgentData.mobile || (navigator.userAgent && /mobi/i.test(navigator.userAgent.toLowerCase())) || false;
+    setMobile(state, value) {
+      state.isMobile = value;
     },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();
@@ -273,11 +273,7 @@ const store = new Vuex.Store({
             state.vestingAddress = '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa';
             state.tenantProvisioningAddress = null;
 
-            // TODO replace with real addresses
-            // state.univ2PairAddress = '0x1ba26c3a4ba059660149a43f69c49230f134dbc2';
-
             state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-            // state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
             state.openSeaCollectionLink = 'https://opensea.io/collection/meeds-dao';
             state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
@@ -742,7 +738,6 @@ const store = new Vuex.Store({
 
 
 function initialize() {
-  store.commit('setMobile');
   if (ethUtils.isMetamaskInstalled()) {
     store.commit('refreshMetamaskState');
 

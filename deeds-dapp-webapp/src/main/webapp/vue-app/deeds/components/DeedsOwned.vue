@@ -105,6 +105,7 @@ export default {
     authenticated: false,
   }),
   computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
     language: state => state.language,
     etherscanBaseLink: state => state.etherscanBaseLink,
     openSeaBaseLink: state => state.openSeaBaseLink,
@@ -115,9 +116,6 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     tenantProvisioningAddress: state => state.tenantProvisioningAddress,
     deedContract: state => state.deedContract,
-    isMobile() {
-      return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
-    },
     nftsList() {
       return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id)
         .map(nft => Object.assign(nft, {
