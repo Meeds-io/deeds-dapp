@@ -26,8 +26,23 @@
 </template>
 <script>
 export default {
+  computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
+  },
+  watch: {
+    isMobile() {
+      this.refreshMobileValue();
+    },
+  },
   created() {
-    this.$store.commit('setMobile');
+    this.refreshMobileValue();
+  },
+  methods: {
+    refreshMobileValue() {
+      this.$store.commit('setMobile', this.isMobile);
+    },
   },
 };
 </script>

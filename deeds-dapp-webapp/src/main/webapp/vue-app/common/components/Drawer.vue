@@ -104,17 +104,15 @@ export default {
     loading: false,
     expand: true,
   }),
-  computed: {
+  computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
     width() {
       return this.expand && '100%' || this.drawerWidth;
-    },
-    isMobile() {
-      return this.$vuetify && this.$vuetify.breakpoint && this.$vuetify.breakpoint.name === 'xs';
     },
     expandIcon() {
       return this.expand && 'mdi-arrow-collapse' || 'mdi-arrow-expand';
     },
-  },
+  }),
   watch: {
     value() {
       if (this.value && !this.drawer) {

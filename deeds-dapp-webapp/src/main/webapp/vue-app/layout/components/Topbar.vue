@@ -18,6 +18,7 @@
 -->
 <template>
   <v-app-bar
+    id="dappTopbar"
     fixed
     elevation="4"
     color="white">
@@ -40,14 +41,19 @@
       </v-chip>
     </v-toolbar-title>
     <v-spacer />
-    <div class="ms-4 d-none d-sm-inline-block">
-      <deeds-topbar-address-selector v-if="address" />
-    </div>
-    <div class="ms-4 d-none d-sm-inline-block">
-      <deeds-topbar-gas-price />
+    <template v-if="validNetwork && address">
+      <div class="ms-4 d-none d-sm-inline-block">
+        <deeds-topbar-address-selector v-if="address" />
+      </div>
+      <div class="ms-4 d-none d-sm-inline-block">
+        <deeds-topbar-gas-price />
+      </div>
+    </template>
+    <div v-else-if="!appLoading" class="ms-4">
+      <deeds-topbar-metamask-button />
     </div>
     <div class="ms-4">
-      <deeds-topbar-fiat-currency-selector v-if="address" />
+      <deeds-topbar-fiat-currency-selector />
     </div>
     <div class="ms-4">
       <deeds-topbar-language-selector />
@@ -63,6 +69,7 @@ export default {
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
     address: state => state.address,
+    appLoading: state => state.appLoading,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },
