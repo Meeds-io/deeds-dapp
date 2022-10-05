@@ -38,16 +38,14 @@
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
     color="primary"
-    dark
-    class="elevation-0"
+    outlined
     @click="switchMetamaskNetwork">
-    <div class="white pa-1 me-0 me-sm-3">
-      <v-img
-        :src="`/${parentLocation}/static/images/metamask.svg`"
-        max-height="16px"
-        max-width="16px"
-        eager />
-    </div>
+    <v-img
+      :src="`/${parentLocation}/static/images/metamask.svg`"
+      max-height="16px"
+      max-width="16px"
+      class="me-0 me-sm-3"
+      eager />
     <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
