@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -220,7 +220,6 @@ const store = new Vuex.Store({
     xMeedsBalance: null,
     xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
-    pointsBalanceNoDecimals: null,
     ownedNfts: null,
     selectedFiatCurrency,
     noCityLeft: false,
@@ -311,9 +310,8 @@ const store = new Vuex.Store({
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
-      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
-      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
-      state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
+      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
+      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 2, state.language);
     },
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;
@@ -323,14 +321,14 @@ const store = new Vuex.Store({
     },
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
-      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 3, state.language);
+      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
     },
     setMeedsRouteAllowance(state, meedsRouteAllowance) {
       state.meedsRouteAllowance = meedsRouteAllowance;
     },
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
-      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 3, state.language);
+      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 2, state.language);
     },
     loadPointsPeriodically() {
       window.setInterval(() => this.commit('loadPointsBalance'), 20000);
@@ -340,11 +338,9 @@ const store = new Vuex.Store({
         tokenUtils.getPointsBalance(state.xMeedContract, state.address)
           .then(balance => {
             state.pointsBalance = balance;
-            state.pointsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.pointsBalance, 3, state.language);
           });
       } else {
         state.pointsBalance = 0;
-        state.pointsBalanceNoDecimals = 0;
       }
     },
     loadCurrentCity(state, reloadOnNotMintable) {
