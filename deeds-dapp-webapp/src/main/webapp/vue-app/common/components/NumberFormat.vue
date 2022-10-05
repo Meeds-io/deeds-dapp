@@ -22,11 +22,8 @@
       {{ $t(label, labelComputedParams) }}
       <slot></slot>
     </template>
-    <template v-else-if="!formattedValue">
-      -
-    </template>
     <template v-else>
-      {{ formattedValue }}
+      {{ formattedValue || '-' }}
       <slot></slot>
     </template>
   </div>
@@ -72,9 +69,12 @@ export default {
       return !this.hideZero || (this.value && (!this.value.isZero || !this.value.isZero()));
     },
     labelComputedParams() {
-      return this.labelParams && Object.assign({0: this.formattedValue}, this.labelParams) || {0: this.formattedValue};
+      return this.labelParams && Object.assign({0: this.formattedValue || '-'}, this.labelParams) || {0: this.formattedValue || '-'};
     },
     formattedValue() {
+      if (!this.value && this.value !== 0) {
+        return null;
+      }
       if (this.currency) {
         const fractions = this.fractions || (this.selectedFiatCurrency === 'eth' ? 8 : 3);
         return this.meedPrice && this.$ethUtils.computeFiatBalance(

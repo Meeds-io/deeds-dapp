@@ -208,10 +208,6 @@ const store = new Vuex.Store({
     xMeedsTotalSupply: null,
     meedsBalanceOfXMeeds: null,
     meedsPendingBalanceOfXMeeds: null,
-    farmingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
-    stakingStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
-    deedGenesisStartTime: 1651363200000, // May 01 2022 00:00:00 GMT
-    pointsRewardsStartTime: 1648425600000, // Mar 28 2022 00:00:00 GMT
     now: Date.now(),
     xMeedsBalance: null,
     loadingXMeedsBalance: true,
@@ -639,11 +635,6 @@ const store = new Vuex.Store({
           );
         }
 
-        if (state.xMeedContract && (state.deedGenesisStartTime - Date.now() < 10000)) {
-          state.xMeedContract.startRewardsTime().then(timestamp => {
-            state.pointsRewardsStartTime = timestamp * 1000;
-          });
-        }
         if (state.tokenFactoryContract) {
           state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
         }

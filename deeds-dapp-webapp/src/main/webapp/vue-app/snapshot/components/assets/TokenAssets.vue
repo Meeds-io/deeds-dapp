@@ -78,18 +78,13 @@
               <span v-if="maxMeedSupplyReached">
                 {{ $t('maxMeedsSupplyReached') }}
               </span>
-              <div
-                class="d-flex"
-                v-if="rewardsStarted">
+              <div class="d-flex">
                 <span class="mx-1"> {{ $t('apy') }} </span>
                 <deeds-number-format
                   :value="apy"
                   no-decimals>
                   %
                 </deeds-number-format>
-              </div>
-              <div v-else>
-                {{ $t('meedsRewardingDidntStarted') }}
               </div>
             </v-tooltip>
           </template>
@@ -164,11 +159,9 @@ export default {
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
-    stakingStartTime: state => state.stakingStartTime,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
-    now: state => state.now,
     parentLocation: state => state.parentLocation,
     xMeedsBalanceInMeeds() {
       if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
@@ -204,13 +197,10 @@ export default {
       }
       return new BigNumber(0);
     },
-    rewardsStarted() {
-      return this.stakingStartTime < this.now;
-    },
     weeklyRewardedInXMeed() {
       if (this.xMeedsBalance && this.apy) {
         return new BigNumber(this.xMeedsBalance.toString())
-          .multipliedBy(this.$ethUtils.toFixedDisplay(this.apy, 0, this.language))
+          .multipliedBy(this.apy)
           .dividedBy(100)
           .multipliedBy(7)
           .dividedBy(365);
@@ -233,8 +223,7 @@ export default {
           || !this.yearlyRewardedMeeds
           || this.meedsTotalBalanceOfXMeeds.isZero()
           || this.yearlyRewardedMeeds.isZero()
-          || this.maxMeedSupplyReached
-          || !this.rewardsStarted) {
+          || this.maxMeedSupplyReached) {
         return 0;
       }
       return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);

@@ -91,10 +91,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    genesisStarted: {
-      type: Boolean,
-      default: false,
-    },
   },
   data: () => ({
     sendingRedeem: false,
@@ -132,7 +128,6 @@ export default {
     },
     disableRedeemButton() {
       return this.sendingRedeem
-        || !this.genesisStarted
         || !this.currentCityMintable
         || !this.pointsBalance
         || !this.cardAmount
