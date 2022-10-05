@@ -44,8 +44,7 @@
     </v-col>
     <v-col
       v-if="!isMobile && $slots.col4"
-      class="pe-0 ps-4 ps-sm-0 text-no-wrap"
-      align-self="end">
+      class="pe-0 ps-4 ps-sm-0 text-no-wrap">
       <slot name="col4"></slot>
     </v-col>
   </v-row>

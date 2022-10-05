@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -23,244 +23,50 @@
       <h4>{{ $t('yourTokens') }}</h4>
     </v-list-item>
     <v-skeleton-loader
-      v-if="poolsLoading"
+      v-if="loading"
       type="image"
       class="mx-auto ma-2"
       max-width="90%" />
-    <div v-else-if="hasLPTokens">
-      <deeds-token-asset-template v-if="hasMeedBalance">
-        <template #col1>
-          <deeds-contract-address
-            :address="meedAddress"
-            label="Meeds"
-            token />
-        </template>
-        <template #col2>
-          {{ meedsBalanceNoDecimals }} MEED
-        </template>
-        <template #col3>
-          <div class="ms-n15 d-flex justify-center">-</div>
-        </template>
-        <template #col4>
-          <deeds-number-format
-            :value="meedsBalance"
-            :fractions="2"
-            currency />
-        </template>
-      </deeds-token-asset-template>
-      <deeds-token-asset-template v-if="xMeedAddress && hasXMeedBalance">
-        <template #col1>
-          <div>
-            <deeds-contract-address
-              :address="xMeedAddress"
-              label="xMeeds"
-              token />
-          </div>
-        </template>
-        <template #col2>
-          {{ xMeedsBalanceNoDecimals }} xMEED
-        </template>
-        <template #col3>
-          <v-tooltip bottom>
-            <template #activator="{ on, attrs }">
-              <div
-                class="d-flex flex-nowrap"
-                v-bind="attrs"
-                v-on="on">
-                <span class="mx-1">+</span>
-                <deeds-number-format 
-                  :value="weeklyRewardedInMeed" 
-                  :fractions="2" />
-                <span class="mx-1">MEED / {{ $t('week') }}</span>
-              </div>
-            </template>
-            <span v-if="maxMeedSupplyReached">
-              {{ $t('maxMeedsSupplyReached') }}
-            </span>
-            <div class="d-flex">
-              <span class="mx-1"> {{ $t('apy') }} </span>
-              <deeds-number-format
-                :value="apy"
-                no-decimals>
-                %
-              </deeds-number-format>
-            </div>
-          </v-tooltip>
-        </template>
-        <template #col4>
-          <deeds-number-format
-            :value="xMeedsBalanceInMeeds"
-            :fractions="2"
-            currency />
-        </template>
-      </deeds-token-asset-template>
-      <deeds-token-asset
+    <div v-else-if="hasTokens">
+      <deeds-meed-asset v-if="hasMeedBalance" />
+      <deeds-x-meed-asset v-if="hasXMeedBalance" />
+      <deeds-liquidity-pool-asset
         v-for="pool in rewardedPools"
         :key="`${pool.address}_${pool.refresh}`"
         :pool="pool" />
     </div>
-    <v-row v-else class="ms-4 d-flex flex-row">
-      <v-col class="pa-0" align-self="start">
-        <v-img 
-          height="100px"
-          width="140px"
-          :src="`/${parentLocation}/static/images/meeds.png`"
-          contain
-          eager />
-      </v-col>
-      <v-col cols="9">
-        <v-card flat>
-          <v-card-text class="py-0">
-            {{ $t('noTokensDescription') }}
-          </v-card-text>
-          <v-card-text class="d-flex">
-            <div class="pe-1">
-              {{ $t('see') }}
-            </div>
-            <a
-              class="text-decoration-underline"
-              @click="$root.$emit('switch-page', 'stake')">
-              {{ $t('there') }}
-            </a>
-            <div class="ps-1">
-              {{ $t('moreInformation') }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <deeds-empty-token-assets v-else />
   </v-list>
 </template>
 <script>
 export default {
-  data: () => ({
-    tokenCount: 0,
-  }),
   computed: Vuex.mapState({
-    language: state => state.language,
-    selectedFiatCurrency: state => state.selectedFiatCurrency,
-    meedPrice: state => state.meedPrice,
     meedsBalance: state => state.meedsBalance,
-    meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    xMeedsBalance: state => state.xMeedsBalance,
     tokenLoading: state => state.tokenLoading,
     lpLoading: state => state.lpLoading,
-    meedAddress: state => state.meedAddress,
-    xMeedAddress: state => state.xMeedAddress,
-    xMeedsBalance: state => state.xMeedsBalance,
-    yearInMinutes: state => state.yearInMinutes,
-    rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
-    rewardedTotalAllocationPoints: state => state.rewardedTotalAllocationPoints,
-    rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
-    meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
-    xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
-    maxMeedSupplyReached: state => state.maxMeedSupplyReached,
-    rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
-    parentLocation: state => state.parentLocation,
-    xMeedsBalanceInMeeds() {
-      if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
-        return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
-      } else {
-        return 0;
-      }
-    },
-    xMeedRewardInfo() {
-      return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
-    },
-    meedsTotalBalanceOfXMeeds() {
-      return this.meedsBalanceOfXMeeds
-        && this.meedsPendingBalanceOfXMeeds
-        && this.meedsBalanceOfXMeeds.add(this.meedsPendingBalanceOfXMeeds)
-        || 0;
-    },
-    yearlyRewardedMeeds() {
-      if (this.xMeedRewardInfo) {
-        if (this.xMeedRewardInfo.fixedPercentage && !this.xMeedRewardInfo.fixedPercentage.isZero()) {
-          return new BigNumber(this.rewardedMeedPerMinute.toString())
-            .multipliedBy(this.yearInMinutes)
-            .multipliedBy(this.xMeedRewardInfo.fixedPercentage.toString())
-            .dividedBy(100);
-        } else if (this.xMeedRewardInfo.allocationPoint && !this.xMeedRewardInfo.allocationPoint.isZero()) {
-          return new BigNumber(this.rewardedMeedPerMinute.toString())
-            .multipliedBy(this.yearInMinutes)
-            .multipliedBy(this.xMeedRewardInfo.allocationPoint.toString())
-            .dividedBy(this.rewardedTotalAllocationPoints.toString())
-            .dividedBy(100)
-            .multipliedBy(100 - this.rewardedTotalFixedPercentage.toNumber());
-        }
-      }
-      return new BigNumber(0);
-    },
-    weeklyRewardedInXMeed() {
-      if (this.xMeedsBalance && this.apy) {
-        return new BigNumber(this.xMeedsBalance.toString())
-          .multipliedBy(this.apy)
-          .dividedBy(100)
-          .multipliedBy(7)
-          .dividedBy(365);
-      }
-      return new BigNumber(0);
-    },
-    weeklyRewardedInMeed() {
-      if (this.weeklyRewardedInXMeed && this.xMeedsTotalSupply && this.meedsBalanceOfXMeeds) {
-        return this.weeklyRewardedInXMeed
-          .dividedBy(this.xMeedsTotalSupply.toString())
-          .multipliedBy(this.meedsBalanceOfXMeeds.toString());
-      }
-      return 0;
-    },
-    apyLoading() {
-      return this.meedsBalanceOfXMeeds == null || this.rewardedFunds == null || !this.meedsPendingBalanceOfXMeeds == null;
-    },
-    apy() {
-      if (!this.meedsTotalBalanceOfXMeeds
-          || !this.yearlyRewardedMeeds
-          || this.meedsTotalBalanceOfXMeeds.isZero()
-          || this.yearlyRewardedMeeds.isZero()
-          || this.maxMeedSupplyReached) {
-        return 0;
-      }
-      return this.yearlyRewardedMeeds.dividedBy(this.meedsTotalBalanceOfXMeeds.toString()).multipliedBy(100);
+    loading() {
+      return this.poolsLoading || this.tokenLoading;
     },
     poolsLoading() {
-      return this.tokenLoading || this.lpLoading || (this.rewardedPools !== null && this.rewardedPools.filter(pool => pool.loading).length > 0);
+      return this.lpLoading || (this.rewardedPools !== null && this.rewardedPools.filter(pool => pool.loading).length > 0);
     },
     hasMeedBalance() {
-      return this.meedsBalance && !this.meedsBalance.isZero();
+      return !this.tokenLoading && this.meedsBalance && !this.meedsBalance.isZero();
     },
     hasXMeedBalance() {
-      return this.xMeedsBalance && !this.xMeedsBalance.isZero();
+      return !this.tokenLoading && this.xMeedsBalance && !this.xMeedsBalance.isZero();
     },
     hasLPTokens() {
-      return this.tokenCount && this.tokenCount > 0;
+      return !this.poolsLoading && this.rewardedPools?.length && this.rewardedPools.find(pool => {
+        const amount = pool?.userInfo?.amount;
+        return amount && !amount.isZero();
+      });
+    },
+    hasTokens() {
+      return !this.loading && (this.hasMeedBalance || this.hasXMeedBalance || this.hasLPTokens);
     },
   }),
-  watch: {
-    poolsLoading() {
-      this.updateTokenNumber();
-    },
-  },
-  mounted() {
-    this.updateTokenNumber();
-  },
-  methods: {
-    updateTokenNumber() {
-      if (this.rewardedPools && !this.poolsLoading) {
-        this.rewardedPools.filter(pool => {
-          if (!pool?.loadingUserInfo && pool?.userInfo?.amount && !pool?.userInfo?.amount?.isZero()) {
-            this.tokenCount ++;
-          }
-        });
-      }
-      if (this.meedsBalance && !this.meedsBalance.isZero()) {
-        this.tokenCount ++;
-      }
-      if (this.xMeedsBalance && !this.xMeedsBalance.isZero()) {
-        this.tokenCount ++;
-      }
-    }
-  },
 };
 </script>

@@ -17,26 +17,41 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <template v-if="!noCityLeft">
-      <div class="d-flex flex-column-reverse flex flex-sm-row mb-8">
-        <div class="d-flex flex-column">
-          <deeds-nft-introduction />
-          <deeds-points-simulator />
-        </div>
-        <deeds-earned-points class="ms-sm-auto me-sm-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
-      </div>
-    </template>
-    <deeds-owned v-if="!noCityLeft && !metamaskOffline" />
-    <deeds-redeem class="mb-8" />
-    <deeds-trade />
-  </div>
+  <v-row class="ms-4 d-flex flex-row">
+    <v-col class="pa-0" align-self="start">
+      <v-img 
+        height="100px"
+        width="140px"
+        :src="`/${parentLocation}/static/images/meeds.png`"
+        contain
+        eager />
+    </v-col>
+    <v-col cols="9">
+      <v-card flat>
+        <v-card-text class="py-0">
+          {{ $t('noTokensDescription') }}
+        </v-card-text>
+        <v-card-text class="d-flex">
+          <div class="pe-1">
+            {{ $t('see') }}
+          </div>
+          <a
+            class="text-decoration-underline"
+            @click="$root.$emit('switch-page', 'stake')">
+            {{ $t('there') }}
+          </a>
+          <div class="ps-1">
+            {{ $t('moreInformation') }}
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
-    noCityLeft: state => state.noCityLeft,
-    metamaskOffline: state => state.metamaskOffline,
+    parentLocation: state => state.parentLocation,
   }),
 };
 </script>
