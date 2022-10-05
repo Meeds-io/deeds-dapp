@@ -12,6 +12,7 @@
     <title>Meeds DAO</title>
     <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="version" content="<%=buildnumber%>">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>">
