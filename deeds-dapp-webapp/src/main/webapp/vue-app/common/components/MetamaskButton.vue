@@ -24,6 +24,7 @@
     target="_blank"
     rel="nofollow noreferrer noopener"
     color="tertiary"
+    class="grey lighten-4 border-color-inherit"
     outlined>
     <v-img
       :src="`/${parentLocation}/static/images/metamask.svg`"
@@ -36,15 +37,17 @@
   <v-btn
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
-    color="tertiary"
-    outlined
+    color="primary"
+    dark
+    class="elevation-0"
     @click="switchMetamaskNetwork">
-    <v-img
-      :src="`/${parentLocation}/static/images/metamask.svg`"
-      max-height="16px"
-      max-width="16px"
-      class="me-0 me-sm-3"
-      eager />
+    <div class="white pa-1 me-0 me-sm-3">
+      <v-img
+        :src="`/${parentLocation}/static/images/metamask.svg`"
+        max-height="16px"
+        max-width="16px"
+        eager />
+    </div>
     <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
