@@ -38,18 +38,14 @@
       disable-filtering
       hide-default-footer>
       <template #[`item.id`]="{item}">
-        <v-btn
+        <a
+          :name="`nftEtherscanLink${item.id}`"
           :href="`${etherscanBaseLink}/nft/${deedAddress}/${item.id}`"
-          name="nftEtherscanLink"
           target="_blank"
           rel="nofollow noreferrer noopener"
-          color="primary"
-          class="px-0 px-sm-3 d-inline d-sm-flex"
-          text
-          link
-          small>
+          class="px-0 px-sm-3 d-inline d-sm-flex link--color">
           #{{ item.id }}
-        </v-btn>
+        </a>
       </template>
       <template #[`item.status`]="{item}">
         <a

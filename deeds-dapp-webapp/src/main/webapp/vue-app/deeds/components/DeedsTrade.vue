@@ -22,12 +22,13 @@
       {{ $t('tradeDeeds') }}
       <v-divider class="my-auto ms-4" />
     </h3>
-    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: openSeaLink, 1: openSeaTarget})" />
+    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='link--color' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
     <v-card-actions class="ps-0 justify-center">
       <a
         :href="openSeaLink"
         :title="$t('sellOnOpenSea')"
-        :target="openSeaTarget">
+        :target="openSeaTarget"
+        rel="nofollow noreferrer noopener">
         <img
           :src="`/${parentLocation}/static/images/OpenSea-Badge.png`"
           class="openSea-badge"

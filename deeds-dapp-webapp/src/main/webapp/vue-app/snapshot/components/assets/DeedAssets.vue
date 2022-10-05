@@ -43,7 +43,7 @@
       </v-col>
       <v-col cols="9">
         <v-card flat>
-          <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: whitepaperLink})" />
+          <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
           <v-card-text class="d-flex">
             <div class="pe-1">
               {{ $t('howGetDeed') }}

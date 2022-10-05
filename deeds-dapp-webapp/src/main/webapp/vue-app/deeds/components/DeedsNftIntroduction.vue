@@ -23,7 +23,7 @@
         {{ $t('deedsNfts') }}
       </v-card-title>
     </flex>
-    <v-card-text class="ps-0" v-html="$t('deedPointsIntroduction', {0: whitepaperLink})" />
+    <v-card-text class="ps-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>
