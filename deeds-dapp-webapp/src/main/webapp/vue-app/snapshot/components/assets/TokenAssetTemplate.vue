@@ -20,7 +20,7 @@
   <v-row class="ps-8 pe-4 ma-0 d-flex flex-column flex-sm-row flex-grow-1">
     <v-col
       v-if="!isMobile || $slots.col1"
-      class="px-0 pb-0 pb-sm-3 text-no-wrap"
+      class="pa-0 py-sm-3 text-no-wrap"
       align-self="start">
       <slot name="col1"></slot>
     </v-col>
