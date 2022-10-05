@@ -17,7 +17,10 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div ref="echartCurrencies" id="echartCurrencies"></div>
+  <div
+    ref="echartCurrencies"
+    id="echartCurrencies"
+    class="d-flex align-center"></div>
 </template>
 <script>
 export default {
@@ -36,6 +39,7 @@ export default {
     comethPairAddress: state => state.comethPairAddress,
     vestingAddress: state => state.vestingAddress,
     language: state => state.language,
+    isMobile: state => state.isMobile,
     chartOptions() {
       const chartData = [];
       if (this.metrics) {
@@ -61,32 +65,31 @@ export default {
         });
       }
       return {
-        title: [{
+        title: {
           text: this.$t('distribution'),
-          left: '64%',
+          right: this.isMobile && 'center' || '43%',
+          top: this.isMobile && '7px' || 'center',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
             fontSize: '16',
+            textTransform: 'capitalize',
           },
-          top: '44%',
-          textAlign: 'center'
-        }],
-        tooltip: { 
+        },
+        tooltip: {
           trigger: 'item',
           show: true,
           formatter: this.labelFormatter,
         },
         legend: {
-          display: false,
           orient: 'vertical',
-          left: 82,
-          top: 12,
+          top: this.isMobile && '20px' || '0',
+          left: 'left'
         },
         series: [{
           type: 'pie',
-          radius: ['45%', '88%'],
+          radius: this.isMobile && '80%' || ['45%', '88%'],
           center: ['65%', '50%'],
           label: {
             show: false,
@@ -103,6 +106,11 @@ export default {
       }
     },
     language() {
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+      }
+    },
+    isMobile() {
       if (this.chart && this.chartOptions) {
         this.chart.setOption(this.chartOptions);
       }
