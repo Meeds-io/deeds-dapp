@@ -22,41 +22,55 @@
       {{ $t('meedToken') }}
       <v-divider class="my-auto ms-4" />
     </h3>
-    <v-list>
-      <v-list-item>
-        <v-list-item-content class="align-start">
-          <h4>{{ $t('marketCap') }}</h4>
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          {{ marketCap }}
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          <h4>{{ $t('circulatingSupply') }}</h4>
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          <deeds-number-format
-            :value="circulatingSupply"
-            :fractions="2"
-            no-decimals>
-            MEED
-          </deeds-number-format>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-content class="align-start">
-          <h4>{{ $t('meedPrice') }}</h4>
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          {{ meedsPriceToDisplay }}
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          <h4>TVL</h4>
-        </v-list-item-content>
-        <v-list-item-content class="align-end">
-          {{ totalValuelocked }}
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
+    <v-row>
+      <v-col cols="12" sm="6">
+        <v-list-item>
+          <v-list-item-content class="align-start">
+            <h4>{{ $t('marketCap') }}</h4>
+          </v-list-item-content>
+          <v-list-item-content class="align-end">
+            {{ marketCap }}
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-list-item>
+          <v-list-item-content class="align-end">
+            <h4>{{ $t('circulatingSupply') }}</h4>
+          </v-list-item-content>
+          <v-list-item-content class="align-end">
+            <deeds-number-format
+              :value="circulatingSupply"
+              :fractions="2"
+              no-decimals>
+              MEED
+            </deeds-number-format>
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" sm="6">
+        <v-list-item>
+          <v-list-item-content class="align-start">
+            <h4>{{ $t('meedPrice') }}</h4>
+          </v-list-item-content>
+          <v-list-item-content class="align-end">
+            {{ meedsPriceToDisplay }}
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <v-list-item>
+          <v-list-item-content class="align-end">
+            <h4>TVL</h4>
+          </v-list-item-content>
+          <v-list-item-content class="align-end">
+            {{ totalValuelocked }}
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+    </v-row>
     <div class="d-flex flex-column flex-sm-row">
       <deeds-price-chart class="mb-4 mb-sm-8" />
       <deeds-currencies-chart 
