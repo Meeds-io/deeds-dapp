@@ -21,11 +21,19 @@ import java.math.BigInteger;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.tuples.generated.Tuple4;
+import org.web3j.tuples.generated.Tuple5;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TenantProvisioningStrategy;
+import io.meeds.deeds.contract.TokenFactory;
+import io.meeds.deeds.contract.XMeedsNFTRewarding;
+import io.meeds.deeds.model.DeedCity;
+import io.meeds.deeds.model.FundInfo;
 
 @Component
 public class BlockchainService {
@@ -34,20 +42,27 @@ public class BlockchainService {
 
   private Deed                       deed;
 
+  private TokenFactory               tokenFactory;
+
+  private XMeedsNFTRewarding         xMeedsToken;
+
   private MeedsToken                 ethereumToken;
 
   private MeedsToken                 polygonToken;
 
-  public BlockchainService(TenantProvisioningStrategy tenantProvisioningStrategy,
-                           Deed deed,
-                           @Qualifier("ethereumMeedToken")
-                           MeedsToken ethereumToken,
-                           @Qualifier("polygonMeedToken")
-                           MeedsToken polygonToken) {
+  private ERC20                      sushiPairToken;
+
+  public BlockchainService(TenantProvisioningStrategy tenantProvisioningStrategy, Deed deed, @Qualifier("ethereumMeedToken")
+  MeedsToken ethereumToken, @Qualifier("polygonMeedToken")
+  MeedsToken polygonToken, XMeedsNFTRewarding xMeedsToken, TokenFactory tokenFactory, @Qualifier("sushiPairToken")
+  ERC20 sushiPairToken) {
     this.tenantProvisioningStrategy = tenantProvisioningStrategy;
     this.deed = deed;
     this.ethereumToken = ethereumToken;
     this.polygonToken = polygonToken;
+    this.xMeedsToken = xMeedsToken;
+    this.tokenFactory = tokenFactory;
+    this.sushiPairToken = sushiPairToken;
   }
 
   /**
@@ -59,11 +74,7 @@ public class BlockchainService {
    * @return true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
-    try {
-      return tenantProvisioningStrategy.isProvisioningManager(address, BigInteger.valueOf(nftId)).send();
-    } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'isTenantProvisioningManager' from Blockchain", e);
-    }
+    return blockchainCall(tenantProvisioningStrategy.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
   /**
@@ -119,50 +130,167 @@ public class BlockchainService {
 
   /**
    * @return {@link BigDecimal} representing the total supply of Meeds Token
-   *           which is retrieved from ethereum blockchain. The retrieved value
-   *           is divided by number of decimals of the token (10^18)
+   *         which is retrieved from ethereum blockchain. The retrieved value is
+   *         divided by number of decimals of the token (10^18)
    */
-  public BigDecimal totalSupply() {
-    try {
-      BigInteger totalSupply = ethereumToken.totalSupply().send();
-      return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18));
-    } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving total supply for MEED Token on Ethereum at address "
-          + ethereumToken.getContractAddress(),
-                                      e);
-    }
+  public BigDecimal meedsTotalSupplyNoDecimals() {
+    BigInteger totalSupply = meedsTotalSupply();
+    return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18));
+  }
+
+  /**
+   * @return {@link BigInteger} representing the total supply of Meeds Token
+   *         which is retrieved from ethereum blockchain.
+   */
+  public BigInteger meedsTotalSupply() {
+    return blockchainCall(ethereumToken.totalSupply());
+  }
+
+  /**
+   * @return {@link BigInteger} representing the total supply of xMeeds Token
+   *         which is retrieved from ethereum blockchain.
+   */
+  public BigInteger xMeedsTotalSupply() {
+    return blockchainCall(xMeedsToken.totalSupply());
+  }
+
+  /**
+   * @return {@link BigInteger} representing the total supply of xMeeds Token
+   *         which is retrieved from ethereum blockchain.
+   */
+  public BigInteger sushiPairTotalSupply() {
+    return blockchainCall(sushiPairToken.totalSupply());
+  }
+
+  /**
+   * @param address Fund Address to get its rewarding information
+   * @return {@link FundInfo} with rewarding parameters retrieved from Token
+   *         Factory
+   */
+  public FundInfo getFundInfo(String address) {
+    Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, Boolean> fundInfo = blockchainCall(tokenFactory.fundInfos(address));
+    return fundInfo == null ? null
+                            : new FundInfo(address,
+                                           fundInfo.component1(),
+                                           fundInfo.component2(),
+                                           fundInfo.component3(),
+                                           fundInfo.component4(),
+                                           fundInfo.component5());
+  }
+
+  /**
+   * @return {@link DeedCity} representing current minting city
+   */
+  public DeedCity getCurrentCity() {
+    BigInteger currentCityIndex = blockchainCall(xMeedsToken.currentCityIndex());
+    Tuple4<String, BigInteger, BigInteger, BigInteger> cityInfo = blockchainCall(xMeedsToken.cityInfo(currentCityIndex));
+    return cityInfo == null ? null
+                            : new DeedCity(currentCityIndex,
+                                           cityInfo.component1(),
+                                           cityInfo.component2(),
+                                           cityInfo.component3(),
+                                           cityInfo.component4());
+  }
+
+  /**
+   * @return {@link FundInfo} of xMeed Token with rewarding parameters retrieved
+   *         from Token Factory
+   */
+  public FundInfo getXMeedFundInfo() {
+    FundInfo fundInfo = getFundInfo(xMeedsToken.getContractAddress());
+    fundInfo.setTotalSupply(xMeedsTotalSupply());
+    fundInfo.setXMeedPendingReward(pendingRewardBalanceOf(xMeedsToken.getContractAddress()));
+    fundInfo.setMeedsBalance(meedBalanceOf(xMeedsToken.getContractAddress()));
+    return fundInfo;
+  }
+
+  /**
+   * @return {@link FundInfo} of Sushi Pair Token with rewarding parameters
+   *         retrieved from Token Factory
+   */
+  public FundInfo getSushiPairFundInfo() {
+    FundInfo fundInfo = getFundInfo(sushiPairToken.getContractAddress());
+    fundInfo.setSymbol(sushiPairSymbol());
+    fundInfo.setLpBalanceOfTokenFactory(stakedSushiPair());
+    fundInfo.setTotalSupply(sushiPairTotalSupply());
+    fundInfo.setMeedsBalance(meedBalanceOf(sushiPairToken.getContractAddress()));
+    return fundInfo;
+  }
+
+  /**
+   * @param address Address to get its pending rewardings not minted yet
+   * @return {@link BigInteger} for Meed Token value with decimals
+   */
+  public BigInteger pendingRewardBalanceOf(String address) {
+    return blockchainCall(tokenFactory.pendingRewardBalanceOf(address));
+  }
+
+  /**
+   * @return {@link BigInteger} for total allocation points configured in token
+   *         Factory
+   */
+  public BigInteger totalAllocationPoints() {
+    return blockchainCall(tokenFactory.totalAllocationPoints());
+  }
+
+  /**
+   * @return {@link BigInteger} for total fixed percentages configured in token
+   *         Factory
+   */
+  public BigInteger totalFixedPercentage() {
+    return blockchainCall(tokenFactory.totalFixedPercentage());
   }
 
   /**
    * @param address Ethereum address
-   * @return {@link BigDecimal} representing the balance of address
-   *           which is retrieved from ethereum blockchain. The retrieved value
-   *           is divided by number of decimals of the token (10^18)
+   * @return {@link BigDecimal} representing the balance of address which is
+   *         retrieved from ethereum blockchain. The retrieved value is divided
+   *         by number of decimals of the token (10^18)
    */
-  public BigDecimal balanceOfOnEthereum(String address) {
-    try {
-      BigInteger balance = ethereumToken.balanceOf(address).send();
-      return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
-    } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' on Ethereum Blockchain",
-                                      e);
-    }
+  public BigDecimal meedBalanceOfNoDecimals(String address) {
+    BigInteger balance = meedBalanceOf(address);
+    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
   }
 
   /**
    * @param address Ethereum address
-   * @return {@link BigDecimal} representing the balance of address
-   *           which is retrieved from polygon blockchain. The retrieved value
-   *           is divided by number of decimals of the token (10^18)
+   * @return {@link BigInteger} representing the balance of address which is
+   *         retrieved from ethereum blockchain.
    */
-  public BigDecimal balanceOfOnPolygon(String address) {
-    try {
-      BigInteger balance = polygonToken.balanceOf(address).send();
-      return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
-    } catch (Exception e) {
-      throw new IllegalStateException("Error retrieving information 'balanceOf(" + address + ")' from Polygon Blockchain",
-                                      e);
-    }
+  public BigInteger meedBalanceOf(String address) {
+    return blockchainCall(ethereumToken.balanceOf(address));
   }
 
+  /**
+   * @return Sushi Swap Pair token symbol
+   */
+  public String sushiPairSymbol() {
+    return blockchainCall(sushiPairToken.symbol());
+  }
+
+  /**
+   * @return total staked SLP amount in TokenFactory
+   */
+  public BigInteger stakedSushiPair() {
+    return blockchainCall(sushiPairToken.balanceOf(tokenFactory.getContractAddress()));
+  }
+
+  /**
+   * @param address Ethereum address
+   * @return {@link BigDecimal} representing the balance of address which is
+   *         retrieved from polygon blockchain. The retrieved value is divided
+   *         by number of decimals of the token (10^18)
+   */
+  public BigDecimal meedBalanceOfOnPolygon(String address) {
+    BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
+    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
+  }
+
+  private <T> T blockchainCall(RemoteFunctionCall<T> remoteCall) {
+    try {
+      return remoteCall.send();
+    } catch (Exception e) {
+      throw new IllegalStateException("Error calling blockchain", e);
+    }
+  }
 }

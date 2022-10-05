@@ -29,6 +29,8 @@
     <v-card-text class="d-flex flex-column flex-grow-1 pt-2">
       <v-text-field
         v-model="fromValue"
+        :disabled="hasInvalidAddress"
+        :filled="hasInvalidAddress"
         :loading="loadingAmount"
         :rules="fromValueValidator"
         :hide-details="isFromValueValid"
@@ -76,29 +78,32 @@
       </v-text-field>
       <v-card-actions>
         <div class="d-flex flex-column mx-auto mt-4">
-          <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
-          <v-btn
-            v-if="hasSufficientAllowedTokens"
-            :loading="!!sendingTransaction"
-            :disabled="disabledButton"
-            name="sendSwapTransactionButton"
-            class="ma-auto"
-            @click="sendSwapTransaction">
-            <span class="text-capitalize">
-              {{ swapButtonLabel }}
-            </span>
-          </v-btn>
-          <v-btn
-            v-else
-            :loading="!!sendingTransaction"
-            :disabled="disabledButton"
-            name="sendApproveTransactionButton"
-            class="ma-auto"
-            @click="sendApproveTransaction">
-            <span class="text-capitalize">
-              {{ approveButtonLabel }}
-            </span>
-          </v-btn>
+          <deeds-metamask-button v-if="hasInvalidAddress" />
+          <template v-else>
+            <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
+            <v-btn
+              v-if="hasSufficientAllowedTokens"
+              :loading="!!sendingTransaction"
+              :disabled="disabledButton"
+              name="sendSwapTransactionButton"
+              class="ma-auto"
+              @click="sendSwapTransaction">
+              <span class="text-capitalize">
+                {{ swapButtonLabel }}
+              </span>
+            </v-btn>
+            <v-btn
+              v-else
+              :loading="!!sendingTransaction"
+              :disabled="disabledButton"
+              name="sendApproveTransactionButton"
+              class="ma-auto"
+              @click="sendApproveTransaction">
+              <span class="text-capitalize">
+                {{ approveButtonLabel }}
+              </span>
+            </v-btn>
+          </template>
         </div>
       </v-card-actions>
     </v-card-text>
@@ -123,6 +128,7 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
+    appLoading: state => state.appLoading,
     language: state => state.language,
     tradeGasLimit: state => state.tradeGasLimit,
     approvalGasLimit: state => state.approvalGasLimit,
@@ -151,6 +157,9 @@ export default {
     },
     approveButtonLabel() {
       return this.sendingTransaction > 0 && this.$t('sellMeeds') || this.$t('approveMeeds');
+    },
+    hasInvalidAddress() {
+      return this.appLoading || !this.address;
     },
     disabledButton() {
       return !this.toValue || !this.isFromValueValid || !!this.sendingTransaction;

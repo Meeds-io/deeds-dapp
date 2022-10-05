@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ * Copyright (C) 2022 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import Drawer from './components/Drawer.vue';
-import NumberFormat from './components/NumberFormat.vue';
-import ContractAddress from './components/ContractAddress.vue';
-import MetamaskButton from './components/MetamaskButton.vue';
 
-const components = {
-  'deeds-drawer': Drawer,
-  'deeds-number-format': NumberFormat,
-  'deeds-contract-address': ContractAddress,
-  'deeds-metamask-button': MetamaskButton,
-};
-
-for (const key in components) {
-  Vue.component(key, components[key]);
+export function getMetrics() {
+  return fetch(`/${window.parentAppLocation}/api/token/assets`, {
+    method: 'GET',
+    credentials: 'include',
+  }).then((resp) => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error getting metrics');
+    }
+  });
 }

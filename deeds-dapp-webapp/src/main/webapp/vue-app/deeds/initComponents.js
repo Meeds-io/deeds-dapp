@@ -22,6 +22,7 @@ import DeedsPointsSimulator from './components/DeedsPointsSimulator.vue';
 import DeedsEarnedPoints from './components/DeedsEarnedPoints.vue';
 import DeedsRedeem from './components/DeedsRedeem.vue';
 import DeedsRedeemCard from './components/DeedsRedeemCard.vue';
+import DeedsEmptyCity from './components/DeedsEmptyCity.vue';
 import DeedsOwned from './components/DeedsOwned.vue';
 import DeedsOwnedActions from './components/DeedsOwnedActions.vue';
 import DeedsTimer from './components/DeedsTimer.vue';
@@ -36,6 +37,7 @@ const components = {
   'deeds-earned-points': DeedsEarnedPoints,
   'deeds-redeem': DeedsRedeem,
   'deeds-redeem-card': DeedsRedeemCard,
+  'deeds-empty-city': DeedsEmptyCity,
   'deeds-owned': DeedsOwned,
   'deeds-owned-actions': DeedsOwnedActions,
   'deeds-move-in-drawer': DeedMoveInDrawer,

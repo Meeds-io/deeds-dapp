@@ -35,10 +35,16 @@ public class BlockchainConfigurationProperties {
 
   private String tenantProvisioningAddress;
 
-  private String deedAddress;
+  private String deedAddress         = "0x0143b71443650aa8efa76bd82f35c22ebd558090";
 
-  private String meedAddress;
+  private String meedAddress         = "0x8503a7b00b4b52692cc6c14e5b96f142e30547b7";
 
-  private String polygonMeedAddress;
+  private String polygonMeedAddress  = "0x6aca77cf3bab0c4e8210a09b57b07854a995289a";
+
+  private String xMeedAddress        = "0x44d6d6ab50401dd846336e9c706a492f06e1bcd4";
+
+  private String tokenFactoryAddress = "0x1B37D04759aD542640Cc44Ff849a373040386050";
+
+  private String sushiPairAddress    = "0x960bd61d0b960b107ff5309a2dcced4705567070";
 
 }
