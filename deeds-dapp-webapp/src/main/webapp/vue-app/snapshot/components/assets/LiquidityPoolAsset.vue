@@ -19,10 +19,10 @@
 <template>
   <deeds-token-asset-template v-if="hasStakedToken">
     <template #col1>
-      <deeds-contract-address
-        :address="lpAddress"
+      <deeds-tab-link
         :label="poolName"
-        token />
+        tab-link="farm"
+        class="ms-n4 mb-n2 mt-n1" />
     </template>
     <template #col2>
       <div

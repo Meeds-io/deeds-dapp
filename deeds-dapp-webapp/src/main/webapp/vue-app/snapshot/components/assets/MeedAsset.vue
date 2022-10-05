@@ -17,16 +17,36 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <deeds-add-liquidity />
-    <deeds-rent-liquidity />
-    <deeds-liquidity-pools />
-  </div>
+  <deeds-token-asset-template>
+    <template #col1>
+      <deeds-tab-link
+        label="Meeds"
+        tab-link="stake"
+        class="ms-n4 mb-n2 mt-n1" />
+    </template>
+    <template #col2>
+      <deeds-number-format
+        :value="meedsBalance"
+        :fractions="2">
+        MEED
+      </deeds-number-format>
+    </template>
+    <template #col3>
+      <div class="ms-n15 d-flex justify-center">-</div>
+    </template>
+    <template #col4>
+      <deeds-number-format
+        :value="meedsBalance"
+        :fractions="2"
+        currency />
+    </template>
+  </deeds-token-asset-template>
 </template>
 <script>
 export default {
-  created() {
-    this.$store.commit('loadRewardedFunds', true);
-  },
+  computed: Vuex.mapState({
+    meedAddress: state => state.meedAddress,
+    meedsBalance: state => state.meedsBalance,
+  }),
 };
 </script>
