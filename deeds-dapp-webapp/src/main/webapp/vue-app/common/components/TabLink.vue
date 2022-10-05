@@ -17,16 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <deeds-add-liquidity />
-    <deeds-rent-liquidity />
-    <deeds-liquidity-pools />
-  </div>
+  <v-btn
+    color="tertiary"
+    text
+    @click="$root.$emit('switch-page', tabLink)">
+    <span class="text-none font-weight-bold mb-1 subtitle-1">{{ label }}</span>
+  </v-btn>
 </template>
 <script>
 export default {
-  created() {
-    this.$store.commit('loadRewardedFunds', true);
+  props: {
+    label: {
+      type: String,
+      default: null,
+    },
+    tabLink: {
+      type: String,
+      default: null,
+    },
   },
 };
 </script>

@@ -34,7 +34,12 @@
           <h4>{{ $t('circulatingSupply') }}</h4>
         </v-list-item-content>
         <v-list-item-content class="align-end">
-          {{ circulatingSupply }} MEED
+          <deeds-number-format
+            :value="circulatingSupply"
+            :fractions="2"
+            no-decimals>
+            MEED
+          </deeds-number-format>
         </v-list-item-content>
       </v-list-item>
       <v-list-item>
@@ -80,7 +85,7 @@ export default {
       }
     },
     circulatingSupply() {
-      return this.$ethUtils.toFixedDisplay(this.metrics?.circulatingSupply, 3, this.language);
+      return this.metrics?.circulatingSupply;
     },
     marketCap() {
       if (this.metrics) {

@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -71,9 +71,7 @@ export default {
     language: state => state.language,
     tokenLoading: state => state.tokenLoading,
     xMeedsBalance: state => state.xMeedsBalance,
-    xMeedsBalanceNoDecimals() {
-      return this.xMeedsBalance && this.$ethUtils.fromDecimals(this.xMeedsBalance, 18) || 0;
-    },
+    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     dailyPoints() {
       if (!this.xMeedAmount) {
         return 0;

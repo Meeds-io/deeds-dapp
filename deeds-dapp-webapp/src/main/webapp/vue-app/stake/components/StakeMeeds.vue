@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -150,12 +150,15 @@
                 max-height="17"
                 tile />
               <template v-else>
-                {{ meedsBalanceNoDecimals }}
-                <deeds-contract-address
-                  :address="meedAddress"
-                  :button-top="-2"
-                  label="MEED"
-                  token />
+                <deeds-number-format
+                  :value="meedsBalance"
+                  :fractions="2">
+                  <deeds-contract-address
+                    :address="meedAddress"
+                    :button-top="-2"
+                    label="MEED"
+                    token />
+                </deeds-number-format>
               </template>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -185,12 +188,15 @@
                   <div
                     v-bind="attrs"
                     v-on="on">
-                    {{ xMeedsBalanceNoDecimals }}
-                    <deeds-contract-address
-                      :address="xMeedAddress"
-                      :button-top="-2"
-                      label="xMEED"
-                      token />
+                    <deeds-number-format
+                      :value="xMeedsBalance"
+                      :fractions="2">
+                      <deeds-contract-address
+                        :address="xMeedAddress"
+                        :button-top="-2"
+                        label="xMEED"
+                        token />
+                    </deeds-number-format>
                   </div>
                 </template>
                 <deeds-number-format
@@ -199,12 +205,15 @@
                   label="equivalentXMeedBalanceInMeed" />
               </v-tooltip>
               <template v-else>
-                {{ xMeedsBalanceNoDecimals }}
-                <deeds-contract-address
-                  :address="xMeedAddress"
-                  :button-top="-2"
-                  label="xMEED"
-                  token />
+                <deeds-number-format
+                  :value="xMeedsBalance"
+                  :fractions="2">
+                  <deeds-contract-address
+                    :address="xMeedAddress"
+                    :button-top="-2"
+                    label="xMEED"
+                    token />
+                </deeds-number-format>
               </template>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -234,13 +243,11 @@ export default {
   computed: Vuex.mapState({
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     meedsBalance: state => state.meedsBalance,
-    meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     metamaskOffline: state => state.metamaskOffline,
     meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     rewardedMeedPerMinute: state => state.rewardedMeedPerMinute,
     rewardedFunds: state => state.rewardedFunds,
