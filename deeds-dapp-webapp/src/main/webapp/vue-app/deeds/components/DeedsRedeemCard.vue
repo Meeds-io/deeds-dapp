@@ -44,7 +44,7 @@
       <v-card-title class="justify-center pt-0">
         {{ cardName }}
       </v-card-title>
-      <v-card-text class="pt-0">
+      <v-card-text v-if="isRealNft" class="pt-0">
         <div class="text-subtitle-1">
           {{ $t('cardSupply') }}:
           <v-chip class="ms-2">{{ cardSupply }} / {{ cardMaxSupply }}</v-chip>
@@ -56,9 +56,10 @@
           {{ cardDescription }}
         </div>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions class="px-4">
         <v-spacer />
         <v-btn
+          v-if="isRealNft"
           :disabled="disableRedeemButton"
           :loading="sendingRedeem"
           name="redeemButton"
@@ -125,6 +126,9 @@ export default {
     },
     cardAmount() {
       return this.card && this.card.amount;
+    },
+    isRealNft() {
+      return this.card && this.card.maxSupply;
     },
     disableRedeemButton() {
       return this.sendingRedeem

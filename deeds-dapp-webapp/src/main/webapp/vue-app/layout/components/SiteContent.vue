@@ -20,16 +20,12 @@
   <v-sheet
     class="overflow-y-auto">
     <v-container class="siteContentLayout" :class="isMobile && 'mt-11' || 'mt-13'">
-      <v-progress-linear v-if="loading" indeterminate />
+      <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout pa-4">
-        <deeds-metamask />
-        <template v-if="validNetwork">
-          <deeds-navbar v-if="address" role="navigation" />
-          <deeds-page
-            v-if="address"
-            class="mt-8 mt-sm-10"
-            role="main" />
-        </template>
+        <deeds-navbar role="navigation" />
+        <deeds-page
+          class="mt-8 mt-sm-10"
+          role="main" />
       </div>
       <deeds-notifications />
     </v-container>
@@ -38,9 +34,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    address: state => state.address,
-    loading: state => state.appLoading,
-    validNetwork: state => state.validNetwork,
+    appLoading: state => state.appLoading,
     isMobile: state => state.isMobile,
   }),
 };

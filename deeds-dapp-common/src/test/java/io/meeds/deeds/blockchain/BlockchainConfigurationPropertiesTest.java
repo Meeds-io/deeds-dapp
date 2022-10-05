@@ -26,16 +26,17 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(classes = BlockchainConfigurationProperties.class)
 @EnableConfigurationProperties(value = BlockchainConfigurationProperties.class)
-@TestPropertySource(
-    properties = {
-        "meeds.blockchain.networkUrl=" + BlockchainConfigurationPropertiesTest.NETWORK_URL_VALUE,
-        "meeds.blockchain.polygonNetworkUrl=" + BlockchainConfigurationPropertiesTest.POLYGON_NETWORK_URL_VALUE,
-        "meeds.blockchain.tenantProvisioningAddress=" + BlockchainConfigurationPropertiesTest.TENANT_PROVISIONING_ADDRESS_VALUE,
-        "meeds.blockchain.deedAddress=" + BlockchainConfigurationPropertiesTest.DEED_ADDRESS_VALUE,
-        "meeds.blockchain.meedAddress=" + BlockchainConfigurationPropertiesTest.MAINNET_MEED_ADDRESS_VALUE,
-        "meeds.blockchain.polygonMeedAddress=" + BlockchainConfigurationPropertiesTest.POLYGON_MEED_ADDRESS_VALUE,
-    }
-)
+@TestPropertySource(properties = {
+    "meeds.blockchain.networkUrl=" + BlockchainConfigurationPropertiesTest.NETWORK_URL_VALUE,
+    "meeds.blockchain.polygonNetworkUrl=" + BlockchainConfigurationPropertiesTest.POLYGON_NETWORK_URL_VALUE,
+    "meeds.blockchain.tenantProvisioningAddress=" + BlockchainConfigurationPropertiesTest.TENANT_PROVISIONING_ADDRESS_VALUE,
+    "meeds.blockchain.deedAddress=" + BlockchainConfigurationPropertiesTest.DEED_ADDRESS_VALUE,
+    "meeds.blockchain.meedAddress=" + BlockchainConfigurationPropertiesTest.MAINNET_MEED_ADDRESS_VALUE,
+    "meeds.blockchain.polygonMeedAddress=" + BlockchainConfigurationPropertiesTest.POLYGON_MEED_ADDRESS_VALUE,
+    "meeds.blockchain.xMeedAddress=" + BlockchainConfigurationPropertiesTest.X_MEED_ADDRESS_VALUE,
+    "meeds.blockchain.tokenFactoryAddress=" + BlockchainConfigurationPropertiesTest.TOKEN_FACTORY_ADDRESS_VALUE,
+    "meeds.blockchain.sushiPairAddress=" + BlockchainConfigurationPropertiesTest.SUSHI_PAIR_ADDRESS_VALUE,
+})
 class BlockchainConfigurationPropertiesTest {
 
   public static final String                NETWORK_URL_VALUE                 = "NETWORK_URL";
@@ -49,6 +50,12 @@ class BlockchainConfigurationPropertiesTest {
   public static final String                MAINNET_MEED_ADDRESS_VALUE        = "MAINNET_MEED_ADDRESS";
 
   public static final String                POLYGON_MEED_ADDRESS_VALUE        = "POLYGON_MEED_ADDRESS";
+
+  public static final String                X_MEED_ADDRESS_VALUE              = "X_MEED_ADDRESS_VALUE";
+
+  public static final String                TOKEN_FACTORY_ADDRESS_VALUE       = "TOKEN_FACTORY_ADDRESS_VALUE";
+
+  public static final String                SUSHI_PAIR_ADDRESS_VALUE          = "SUSHI_PAIR_ADDRESS_VALUE";
 
   @Autowired
   private BlockchainConfigurationProperties blockchainConfigurationProperties;
@@ -68,7 +75,10 @@ class BlockchainConfigurationPropertiesTest {
                                                                                          TENANT_PROVISIONING_ADDRESS_VALUE,
                                                                                          DEED_ADDRESS_VALUE,
                                                                                          MAINNET_MEED_ADDRESS_VALUE,
-                                                                                         POLYGON_MEED_ADDRESS_VALUE);
+                                                                                         POLYGON_MEED_ADDRESS_VALUE,
+                                                                                         X_MEED_ADDRESS_VALUE,
+                                                                                         TOKEN_FACTORY_ADDRESS_VALUE,
+                                                                                         SUSHI_PAIR_ADDRESS_VALUE);
     assertEquals(properties, blockchainConfigurationProperties);
     assertEquals(properties.hashCode(), blockchainConfigurationProperties.hashCode());
     assertEquals(properties.toString(), blockchainConfigurationProperties.toString());
