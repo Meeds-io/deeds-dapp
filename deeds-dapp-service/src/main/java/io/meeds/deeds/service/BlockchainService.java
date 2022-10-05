@@ -52,10 +52,17 @@ public class BlockchainService {
 
   private ERC20                      sushiPairToken;
 
-  public BlockchainService(TenantProvisioningStrategy tenantProvisioningStrategy, Deed deed, @Qualifier("ethereumMeedToken")
-  MeedsToken ethereumToken, @Qualifier("polygonMeedToken")
-  MeedsToken polygonToken, XMeedsNFTRewarding xMeedsToken, TokenFactory tokenFactory, @Qualifier("sushiPairToken")
-  ERC20 sushiPairToken) {
+  public BlockchainService(
+                           TenantProvisioningStrategy tenantProvisioningStrategy,
+                           Deed deed,
+                           @Qualifier("ethereumMeedToken")
+                           MeedsToken ethereumToken,
+                           @Qualifier("polygonMeedToken")
+                           MeedsToken polygonToken,
+                           XMeedsNFTRewarding xMeedsToken,
+                           TokenFactory tokenFactory,
+                           @Qualifier("sushiPairToken")
+                           ERC20 sushiPairToken) {
     this.tenantProvisioningStrategy = tenantProvisioningStrategy;
     this.deed = deed;
     this.ethereumToken = ethereumToken;
