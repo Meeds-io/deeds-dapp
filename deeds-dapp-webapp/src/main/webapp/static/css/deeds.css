@@ -64,6 +64,10 @@ html {
   color: #0000ee;
 }
 
+.v-application .v-btn.border-color-inherit {
+  border-color: inherit!important;
+}
+
 .original-primary {
   background-color: #1867c0 !important;
   border-color: #1867c0 !important;
