@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2021 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@
                   tile />
               </template>
               <template v-else>
-                <deeds-number-format :value="xMeedsTotalSupply">
+                <deeds-number-format :value="xMeedsTotalSupply" :fractions="2">
                   <deeds-contract-address
                     :address="xMeedAddress"
                     :button-top="-2"
@@ -87,12 +87,13 @@
                 max-height="17"
                 tile />
               <template v-else>
-                {{ xMeedsBalanceNoDecimals }}
-                <deeds-contract-address
-                  :address="xMeedAddress"
-                  :button-top="-2"
-                  label="xMEED"
-                  token />
+                <deeds-number-format :value="xMeedsBalance" :fractions="2">
+                  <deeds-contract-address
+                    :address="xMeedAddress"
+                    :button-top="-2"
+                    label="xMEED"
+                    token />
+                </deeds-number-format>
               </template>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -134,7 +135,6 @@ export default {
     meedsBalance: state => state.meedsBalance,
     xMeedsBalance: state => state.xMeedsBalance,
     pointsBalance: state => state.pointsBalance,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
