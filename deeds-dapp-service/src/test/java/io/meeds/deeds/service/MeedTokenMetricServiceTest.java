@@ -1,4 +1,3 @@
-
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
@@ -98,7 +97,7 @@ class MeedTokenMetricServiceTest {
   @Test
   void testGetTotalSupply() {
     BigDecimal totalSupply = BigDecimal.valueOf(1997.190119975555D);
-    when(blockchainService.totalSupply()).thenReturn(totalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(totalSupply);
 
     meedTokenMetricService.computeTokenMetrics();
 
@@ -124,7 +123,7 @@ class MeedTokenMetricServiceTest {
 
     // when
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
-    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(expectedTotalSupply);
 
     meedTokenMetricService.computeTokenMetrics();
     BigDecimal totalLockedValue = meedTokenMetricService.getTotalValueLocked(null);
@@ -139,7 +138,7 @@ class MeedTokenMetricServiceTest {
   void testComputeTokenMetrics() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
-    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(expectedTotalSupply);
 
     HashMap<String, BigDecimal> expectedReserveBalances = new HashMap<>();
     BigDecimal expectedTotalReserves = mockReserveBalances(expectedReserveBalances);
@@ -166,7 +165,7 @@ class MeedTokenMetricServiceTest {
   void testGetLastMetric() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
-    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(expectedTotalSupply);
 
     HashMap<String, BigDecimal> expectedReserveBalances = new HashMap<>();
     BigDecimal expectedTotalReserves = mockReserveBalances(expectedReserveBalances);
@@ -198,7 +197,7 @@ class MeedTokenMetricServiceTest {
   void testGetCirculatingSupply() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
-    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(expectedTotalSupply);
 
     BigDecimal expectedTotalReserves = mockReserveBalances(new HashMap<>());
     BigDecimal expectedTotalLocked = mockLockedBalances(new HashMap<>());
@@ -216,7 +215,7 @@ class MeedTokenMetricServiceTest {
   void testGetMarketCapitalization() {
     // Given
     BigDecimal expectedTotalSupply = BigDecimal.valueOf(100);
-    when(blockchainService.totalSupply()).thenReturn(expectedTotalSupply);
+    when(blockchainService.meedsTotalSupplyNoDecimals()).thenReturn(expectedTotalSupply);
 
     BigDecimal expectedTotalReserves = mockReserveBalances(new HashMap<>());
     BigDecimal expectedTotalLocked = mockLockedBalances(new HashMap<>());
@@ -240,14 +239,14 @@ class MeedTokenMetricServiceTest {
     for (String address : meedTokenMetricService.getReserveEthereumAddresses()) {
       double value = Math.random() * 1000;
       BigDecimal valueBigDecimal = BigDecimal.valueOf(value);
-      when(blockchainService.balanceOfOnEthereum(address)).thenReturn(valueBigDecimal);
+      when(blockchainService.meedBalanceOfNoDecimals(address)).thenReturn(valueBigDecimal);
       expectedReserveBalances.put(address.toLowerCase(), valueBigDecimal);
       totalReserves = totalReserves.add(valueBigDecimal);
     }
     for (String address : meedTokenMetricService.getReservePolygonAddresses()) {
       double value = Math.random() * 1000;
       BigDecimal valueBigDecimal = BigDecimal.valueOf(value);
-      when(blockchainService.balanceOfOnPolygon(address)).thenReturn(valueBigDecimal);
+      when(blockchainService.meedBalanceOfOnPolygon(address)).thenReturn(valueBigDecimal);
       expectedReserveBalances.put(address.toLowerCase(), valueBigDecimal);
       totalReserves = totalReserves.add(valueBigDecimal);
     }
@@ -259,14 +258,14 @@ class MeedTokenMetricServiceTest {
     for (String address : meedTokenMetricService.getLockedEthereumAddresses()) {
       double value = Math.random() * 1000;
       BigDecimal valueBigDecimal = BigDecimal.valueOf(value);
-      when(blockchainService.balanceOfOnEthereum(address)).thenReturn(valueBigDecimal);
+      when(blockchainService.meedBalanceOfNoDecimals(address)).thenReturn(valueBigDecimal);
       expectedLockedBalances.put(address.toLowerCase(), valueBigDecimal);
       totallocked = totallocked.add(valueBigDecimal);
     }
     for (String address : meedTokenMetricService.getLockedPolygonAddresses()) {
       double value = Math.random() * 1000;
       BigDecimal valueBigDecimal = BigDecimal.valueOf(value);
-      when(blockchainService.balanceOfOnPolygon(address)).thenReturn(valueBigDecimal);
+      when(blockchainService.meedBalanceOfOnPolygon(address)).thenReturn(valueBigDecimal);
       expectedLockedBalances.put(address.toLowerCase(), valueBigDecimal);
       totallocked = totallocked.add(valueBigDecimal);
     }

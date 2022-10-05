@@ -20,7 +20,9 @@
   <v-card flat class="d-flex flex-column">
     <h3 class="d-flex flex-nowrap">
       {{ $t('deedsToRedeem') }}
-      <deeds-contract-address :address="deedAddress" token />
+      <deeds-contract-address
+        :address="deedAddress"
+        token />
       <v-divider class="my-auto ms-4" />
     </h3>
     <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
@@ -46,30 +48,27 @@
             @end="endCountDown" />
         </div>
       </small>
-      <template v-if="currentCardTypes">
-        <v-container class="mt-2">
-          <v-row class="mx-auto" no-gutters>
-            <v-col
-              v-for="card in currentCardTypes"
-              :key="card.name">
-              <deeds-redeem-card
-                :card="card"
-                :loading="loadingCityDetails" />
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
-      <template v-else>
-        <v-container class="grey lighten-5 mt-2">
-          <v-row class="mx-auto" no-gutters>
-            <v-col
-              v-for="i in 4"
-              :key="i">
-              <v-skeleton-loader type="card" class="mx-2" />
-            </v-col>
-          </v-row>
-        </v-container>
-      </template>
+      <v-container v-if="currentCardTypes" class="mt-2">
+        <v-row class="mx-auto" no-gutters>
+          <v-col
+            v-for="card in currentCardTypes"
+            :key="card.name">
+            <deeds-redeem-card
+              :card="card"
+              :loading="loadingCityDetails" />
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-container v-else-if="deedLoading" class="grey lighten-5 mt-2">
+        <v-row class="mx-auto" no-gutters>
+          <v-col
+            v-for="i in 4"
+            :key="i">
+            <v-skeleton-loader type="card" class="mx-2" />
+          </v-col>
+        </v-row>
+      </v-container>
+      <deeds-empty-city v-else />
     </template>
   </v-card>
 </template>
@@ -81,6 +80,7 @@ export default {
   computed: Vuex.mapState({
     deedAddress: state => state.deedAddress,
     xMeedAddress: state => state.xMeedAddress,
+    deedLoading: state => state.deedLoading,
     currentCity: state => state.currentCity,
     currentCardTypes: state => state.currentCardTypes,
     currentCityMintable: state => state.currentCityMintable,

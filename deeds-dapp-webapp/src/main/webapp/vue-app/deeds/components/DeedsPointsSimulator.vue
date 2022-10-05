@@ -50,7 +50,7 @@
         </template>
       </v-slider>
       <v-skeleton-loader
-        v-if="xMeedsBalance === null"
+        v-if="tokenLoading"
         type="chip"
         max-height="17"
         tile />
@@ -69,9 +69,10 @@ export default {
   }),
   computed: Vuex.mapState({
     language: state => state.language,
+    tokenLoading: state => state.tokenLoading,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsBalanceNoDecimals() {
-      return this.xMeedsBalance && this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
+      return this.xMeedsBalance && this.$ethUtils.fromDecimals(this.xMeedsBalance, 18) || 0;
     },
     dailyPoints() {
       if (!this.xMeedAmount) {
