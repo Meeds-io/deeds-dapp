@@ -31,7 +31,7 @@
         MEED
       </deeds-number-format>
     </template>
-    <template #col3>
+    <template v-if="!isMobile" #col3>
       <div class="ms-n15 d-flex justify-center">-</div>
     </template>
     <template #col4>
@@ -47,6 +47,7 @@ export default {
   computed: Vuex.mapState({
     meedAddress: state => state.meedAddress,
     meedsBalance: state => state.meedsBalance,
+    isMobile: state => state.isMobile,
   }),
 };
 </script>

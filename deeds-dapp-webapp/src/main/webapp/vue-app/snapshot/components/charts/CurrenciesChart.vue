@@ -17,7 +17,10 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div ref="echartCurrencies" id="echartCurrencies"></div>
+  <div
+    ref="echartCurrencies"
+    id="echartCurrencies"
+    class="d-flex align-center"></div>
 </template>
 <script>
 export default {
@@ -36,6 +39,7 @@ export default {
     comethPairAddress: state => state.comethPairAddress,
     vestingAddress: state => state.vestingAddress,
     language: state => state.language,
+    isMobile: state => state.isMobile,
     chartOptions() {
       const chartData = [];
       if (this.metrics) {
@@ -60,40 +64,51 @@ export default {
           chartData.push(serie);
         });
       }
-      return {
-        title: [{
+      const chartOptions = {
+        title: {
           text: this.$t('distribution'),
-          left: '64%',
           textStyle: {
             fontStyle: 'normal',
             color: '#4d5466',
             fontWeight: 'normal',
             fontSize: '16',
+            textTransform: 'capitalize',
           },
-          top: '44%',
-          textAlign: 'center'
-        }],
-        tooltip: { 
+        },
+        tooltip: {
           trigger: 'item',
           show: true,
           formatter: this.labelFormatter,
         },
         legend: {
-          display: false,
           orient: 'vertical',
-          left: 82,
-          top: 12,
         },
         series: [{
           type: 'pie',
-          radius: ['45%', '88%'],
           center: ['65%', '50%'],
           label: {
             show: false,
           },
           data: chartData,
         }],
-        color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']};
+        color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']
+      };
+      if (this.isMobile) {
+        chartOptions.title.right = 'center';
+        chartOptions.title.top = '7px';
+        chartOptions.legend.top = this.isMobile && '20px' || '0';
+        chartOptions.legend.left = 'left';
+        chartOptions.series[0].radius = '75%';
+      } else {
+        chartOptions.title.left = '64%';
+        chartOptions.title.top = '44%';
+        chartOptions.title.textAlign = 'center';
+        chartOptions.legend.display = false;
+        chartOptions.legend.left = 82;
+        chartOptions.legend.top = 12;
+        chartOptions.series[0].radius = ['45%', '88%'];
+      }
+      return chartOptions;
     },
   }),
   watch: {
@@ -103,6 +118,11 @@ export default {
       }
     },
     language() {
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+      }
+    },
+    isMobile() {
       if (this.chart && this.chartOptions) {
         this.chart.setOption(this.chartOptions);
       }
