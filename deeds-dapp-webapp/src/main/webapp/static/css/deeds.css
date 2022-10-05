@@ -34,6 +34,10 @@ html {
   left: -9999px;
 }
 
+#dappTopbar button.v-btn {
+  min-width: auto;
+}
+
 #priceChart, .priceChartParent {
   max-width: 100%;
   width: 600px;

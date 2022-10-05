@@ -47,10 +47,8 @@ export default {
     symbolFiatCurrencies: ['$', '€', 'Ξ']
   }),
   computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
-    isMobile() {
-      return this.$vuetify?.breakpoint?.smAndDown;
-    },
     selectedFiatCurrencyLabel() {
       return this.isMobile ? this.symbolFiatCurrencies[this.fiatCurrencies.indexOf(this.selectedFiatCurrency)] : this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
     },
