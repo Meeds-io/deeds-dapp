@@ -25,6 +25,7 @@ import * as authentication from './js/authentication.js';
 import * as tenantManagement from './js/tenantManagement.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
+import * as assetMetricService from './js/assetMetricService.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
@@ -68,14 +69,18 @@ window.parentAppLocation = window.location.pathname.split('/')[1];
 const store = new Vuex.Store({
   state: {
     parentLocation: window.parentAppLocation,
+    metamaskOffline: false,
     appLoading: true,
+    deedLoading: true,
+    tokenLoading: true,
+    lpLoading: true,
     ens: null,
     address: null,
     networkId: null,
     validNetwork: false,
-    etherscanBaseLink: null,
-    openSeaBaseLink: null,
-    openSeaCollectionLink: null,
+    etherscanBaseLink: 'https://etherscan.io/',
+    openSeaBaseLink: 'https://testnets.opensea.io/assets/rinkeby/0x0143b71443650aa8efa76bd82f35c22ebd558090',
+    openSeaCollectionLink: 'https://opensea.io/collection/meeds-dao',
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     provider: null,
     yearInMinutes: 365 * 24 * 60,
@@ -196,7 +201,6 @@ const store = new Vuex.Store({
     meedPrice: 0,
     // User balances
     etherBalance: null,
-    loadingMeedsBalance: true,
     meedsBalance: null,
     meedsBalanceNoDecimals: null,
     meedsRouteAllowance: null,
@@ -210,7 +214,6 @@ const store = new Vuex.Store({
     meedsPendingBalanceOfXMeeds: null,
     now: Date.now(),
     xMeedsBalance: null,
-    loadingXMeedsBalance: true,
     xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
     pointsBalanceNoDecimals: null,
@@ -221,14 +224,16 @@ const store = new Vuex.Store({
     currentCardTypes: null,
     currentCityMintable: null,
     lastCityMintingCompleteDate: null,
-    rewardedMeedPerMinute: null,
+    rewardedMeedPerMinute: new BigNumber('10000000000000000000'),
     rewardedFundsLength: null,
     rewardedFunds: null,
     rewardedPools: null,
     rewardedTotalFixedPercentage: null,
     rewardedTotalAllocationPoints: null,
-    addSushiswapLiquidityLink: null,
+    addSushiswapLiquidityLink: 'https://app.sushi.com/add/ETH/0x8503a7b00b4b52692cc6c14e5b96f142e30547b7?chainId=1',
     addUniswapLiquidityLink: null,
+    addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
+    rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
     isMobile: false,
   },
   mutations: {
@@ -245,9 +250,7 @@ const store = new Vuex.Store({
       ethUtils.getSelectedAddress()
         .then(addresses => {
           state.address = addresses && addresses.length && addresses[0] || null;
-          if (state.address && state.validNetwork) {
-            this.commit('setProvider');
-          }
+          this.commit('setProvider');
         })
         .finally(() => this.commit('loaded'));
     },
@@ -257,7 +260,6 @@ const store = new Vuex.Store({
           state.networkId = new BigNumber(networkId).toNumber();
           if (state.networkId === 1) {
             // Mainnet
-            state.etherscanBaseLink = 'https://etherscan.io/';
             state.sushiswapRouterAddress = '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F';
             state.sushiswapPairAddress = '0x960bd61d0b960b107ff5309a2dcced4705567070';
             state.wethAddress = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
@@ -268,11 +270,6 @@ const store = new Vuex.Store({
             state.comethPairAddress = '0xb82F8457fcf644803f4D74F677905F1d410Cd395';
             state.vestingAddress = '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa';
             state.tenantProvisioningAddress = null;
-
-            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-
-            state.openSeaCollectionLink = 'https://opensea.io/collection/meeds-dao';
-            state.openSeaBaseLink = `https://opensea.io/assets/${state.deedAddress}`;
           } else if (state.networkId === 4) {
             // Rinkeby
             state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
@@ -288,7 +285,6 @@ const store = new Vuex.Store({
 
             state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
 
-            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
             state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
 
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
@@ -306,17 +302,14 @@ const store = new Vuex.Store({
             state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
             state.tenantProvisioningAddress = '0x801FD0FB6f70FAF985410FCbc97FC72D0CC76d8C';
 
-            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}`;
-            state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
-
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
             state.openSeaCollectionLink = `https://testnets.opensea.io/collection/${state.deedAddress}`;
           } else {
+            this.commit('setMetamaskOffline');
             return;
           }
           state.validNetwork = true;
-          state.addComethLiquidityLink = 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a';
-          state.rentComethLiquidityLink = 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107';
+          state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}?chainId=${state.networkId}`;
           this.commit('setAddress');
         });
     },
@@ -396,12 +389,16 @@ const store = new Vuex.Store({
         state.currentCardTypes = [];
       }
     },
-    loadOwnedNfts(state) {
-      if (state.deedContract && state.xMeedContract) {
-        tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
-          .then(nfts => state.ownedNfts = nfts);
-      } else {
-        state.ownedNfts = [];
+    async loadOwnedNfts(state) {
+      try {
+        if (state.deedContract && state.xMeedContract) {
+          await tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
+            .then(nfts => state.ownedNfts = nfts);
+        } else {
+          state.ownedNfts = [];
+        }
+      } finally {
+        this.commit('deedLoaded');
       }
     },
     loadRewardedFunds(state, ignoreWhenLoaded) {
@@ -452,6 +449,7 @@ const store = new Vuex.Store({
     },
     loadLPTokenAssets(state) {
       state.rewardedPools.forEach(pool => {
+        pool.loadingUserInfo = true;
         pool.contract = new ethers.Contract(
           pool.address,
           state.erc20ABI,
@@ -461,6 +459,7 @@ const store = new Vuex.Store({
           .then(symbol => pool.symbol = symbol);
         this.commit('loadLPTokenAsset', pool);
       });
+      this.commit('lpLoaded');
     },
     loadLPTokenAsset(state, pool) {
       this.commit('refreshLPUserInfo', pool);
@@ -495,34 +494,7 @@ const store = new Vuex.Store({
           .then(totalSupply => pool.totalSupply = totalSupply)
       );
       Promise.all(promises)
-        .then(() => {
-          pool.stakedEquivalentMeedsBalanceOfPool = !pool.totalSupply.isZero()
-            && pool.meedsBalance.mul(pool.lpBalanceOfTokenFactory).mul(2).div(pool.totalSupply) || new BigNumber(0);
-          if (pool.fixedPercentage && !pool.fixedPercentage.isZero()) {
-            pool.yearlyRewardedMeeds = new BigNumber(state.rewardedMeedPerMinute.toString())
-              .multipliedBy(state.yearInMinutes)
-              .multipliedBy(pool.fixedPercentage.toString())
-              .dividedBy(100);
-          } else if (pool.allocationPoint && !pool.allocationPoint.isZero()) {
-            pool.yearlyRewardedMeeds = new BigNumber(state.rewardedMeedPerMinute.toString())
-              .multipliedBy(state.yearInMinutes)
-              .multipliedBy(pool.allocationPoint.toString())
-              .dividedBy(state.rewardedTotalAllocationPoints.toString())
-              .dividedBy(100)
-              .multipliedBy(100 - state.rewardedTotalFixedPercentage.toNumber());
-          } else {
-            pool.yearlyRewardedMeeds = new BigNumber(0);
-          }
-
-          if (state.noMeedSupplyForLPRemaining
-              || pool.stakedEquivalentMeedsBalanceOfPool.isZero()
-              || pool.yearlyRewardedMeeds.isZero()) {
-            pool.apy = 0;
-          } else {
-            pool.apy = pool.yearlyRewardedMeeds.dividedBy(pool.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
-          }
-          pool.refresh++;
-        })
+        .then(() => this.commit('computeLPApy', pool))
         .finally(() => {
           pool.loading = false;
           // Force reloading list of pools after updated
@@ -530,62 +502,109 @@ const store = new Vuex.Store({
           state.rewardedPools.splice(index, 1, pool);
         });
     },
-    loadMeedsBalances(state) {
-      state.loadingMeedsBalance = true;
-      state.meedContract.balanceOf(state.address)
-        .then(balance => this.commit('setMeedsBalance', balance))
-        .finally(() => state.loadingMeedsBalance = false);
-    },
-    loadXMeedsBalances(state) {
-      if (state.xMeedContract) {
-        state.loadingXMeedsBalance = true;
-        state.xMeedContract.balanceOf(state.address)
-          .then(balance => this.commit('setXMeedsBalance', balance))
-          .finally(() => state.loadingXMeedsBalance = false);
+    computeLPApy(state, pool) {
+      pool.stakedEquivalentMeedsBalanceOfPool = !pool.totalSupply.isZero()
+        && pool.meedsBalance.mul(pool.lpBalanceOfTokenFactory).mul(2).div(pool.totalSupply) || new BigNumber(0);
+      if (pool.fixedPercentage && !pool.fixedPercentage.isZero()) {
+        pool.yearlyRewardedMeeds = state.rewardedMeedPerMinute
+          .multipliedBy(state.yearInMinutes)
+          .multipliedBy(pool.fixedPercentage.toString())
+          .dividedBy(100);
+      } else if (pool.allocationPoint && !pool.allocationPoint.isZero()) {
+        pool.yearlyRewardedMeeds = state.rewardedMeedPerMinute
+          .multipliedBy(state.yearInMinutes)
+          .multipliedBy(pool.allocationPoint.toString())
+          .dividedBy(state.rewardedTotalAllocationPoints.toString())
+          .dividedBy(100)
+          .multipliedBy(100 - state.rewardedTotalFixedPercentage.toNumber());
       } else {
-        this.commit('setXMeedsBalance', 0);
-        state.loadingXMeedsBalance = false;
+        pool.yearlyRewardedMeeds = new BigNumber(0);
+      }
+
+      if (state.noMeedSupplyForLPRemaining
+          || pool.stakedEquivalentMeedsBalanceOfPool.isZero()
+          || pool.yearlyRewardedMeeds.isZero()) {
+        pool.apy = 0;
+      } else {
+        pool.apy = pool.yearlyRewardedMeeds.dividedBy(pool.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
+      }
+      pool.refresh++;
+    },
+    async loadMeedsBalances(state) {
+      try {
+        if (state.xMeedContract) {
+          state.loadingMeedsBalance = true;
+          await state.meedContract.balanceOf(state.address)
+            .then(balance => this.commit('setMeedsBalance', balance))
+            .finally(() => state.loadingMeedsBalance = false);
+        } else {
+          this.commit('setXMeedsBalance', 0);
+          state.loadingMeedsBalance = false;
+        }
+      } finally {
+        this.commit('tokenLoaded');
       }
     },
-    loadBalances(state) {
-      if (state.address && state.provider) {
-        state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
-        if (state.meedContract) {
-          this.commit('loadMeedsBalances');
-          if (state.xMeedAddress) {
-            state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
-            state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
-          } else {
-            state.meedsBalanceOfXMeeds = 0;
-            state.meedsStakeAllowance = 0;
-          }
-          state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
-          state.meedContract.totalSupply().then(totalSupply => {
-            state.meedsTotalSupply = totalSupply;
-            state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
-            if (totalSupply.gte('100000000000000000000000000')) {
-              state.meedContract.balanceOf(state.tokenFactoryAddress).then(balance => {
-                state.noMeedSupplyForLPRemaining = !balance || balance.isZero();
-              });
-            }
-          });
-        }
-        this.commit('loadXMeedsBalances');
+    async loadXMeedsBalances(state) {
+      try {
         if (state.xMeedContract) {
-          state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
-          if (state.tokenFactoryContract) {
-            state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
-              .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
-              .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
-          }
+          state.loadingXMeedsBalance = true;
+          await state.xMeedContract.balanceOf(state.address)
+            .then(balance => this.commit('setXMeedsBalance', balance))
+            .finally(() => state.loadingXMeedsBalance = false);
         } else {
-          state.xMeedsTotalSupply = 0;
-          state.meedsPendingBalanceOfXMeeds = 0;
+          this.commit('setXMeedsBalance', 0);
+          state.loadingXMeedsBalance = false;
+        }
+      } finally {
+        this.commit('tokenLoaded');
+      }
+    },
+    async loadBalances(state) {
+      if (state.address && state.provider) {
+        state.loadingBalances = true;
+        try {
+          state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
+          this.commit('loadMeedsBalances');
+          if (state.meedContract) {
+            if (state.xMeedAddress) {
+              await state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
+              await state.meedContract.allowance(state.address, state.xMeedAddress).then(balance => state.meedsStakeAllowance = balance);
+            } else {
+              state.meedsBalanceOfXMeeds = 0;
+              state.meedsStakeAllowance = 0;
+            }
+            await state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
+            await state.meedContract.totalSupply().then(totalSupply => {
+              state.meedsTotalSupply = totalSupply;
+              state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
+              if (totalSupply.gte('100000000000000000000000000')) {
+                state.meedContract.balanceOf(state.tokenFactoryAddress).then(balance => {
+                  state.noMeedSupplyForLPRemaining = !balance || balance.isZero();
+                });
+              }
+            });
+          }
+          this.commit('loadXMeedsBalances');
+          if (state.xMeedContract) {
+            await state.xMeedContract.totalSupply().then(totalSupply => state.xMeedsTotalSupply = totalSupply);
+            if (state.tokenFactoryContract) {
+              await state.tokenFactoryContract['pendingRewardBalanceOf(address)'](state.xMeedAddress)
+                .then(balance => state.meedsPendingBalanceOfXMeeds = balance)
+                .catch(() => state.meedsPendingBalanceOfXMeeds = 0);
+            }
+          } else {
+            state.xMeedsTotalSupply = 0;
+            state.meedsPendingBalanceOfXMeeds = 0;
+          }
+        } finally {
+          state.loadingBalances = false;
+          this.commit('tokenLoaded');
         }
       }
     },
     setProvider(state) {
-      if (state.address) {
+      if (state.address && state.validNetwork) {
         state.provider = new ethers.providers.Web3Provider(window.ethereum);
         state.sushiswapRouterContract = new ethers.Contract(
           state.sushiswapRouterAddress,
@@ -631,10 +650,6 @@ const store = new Vuex.Store({
           );
         }
 
-        if (state.tokenFactoryContract) {
-          state.tokenFactoryContract.meedPerMinute().then(balance => state.rewardedMeedPerMinute = balance);
-        }
-
         // eslint-disable-next-line new-cap
         const transferFilter = state.meedContract.filters.Transfer();
         state.meedContract.on(transferFilter, (from, to) => {
@@ -673,6 +688,8 @@ const store = new Vuex.Store({
         this.commit('loadPointsPeriodically');
         state.provider.lookupAddress(state.address)
           .then(name => state.ens = name);
+      } else {
+        this.commit('setMetamaskOffline');
       }
     },
     loadGasPrice(state) {
@@ -693,8 +710,69 @@ const store = new Vuex.Store({
           }
         });
     },
+    setMetamaskOffline(state) {
+      if (!state.metamaskOffline) {
+        state.metamaskOffline = true;
+        assetMetricService.getMetrics()
+          .then(metrics => {
+            if (!metrics) {
+              return;
+            }
+            state.rewardedTotalAllocationPoints = ethers.BigNumber.from(metrics.totalAllocationPoints);
+            state.rewardedTotalFixedPercentage = ethers.BigNumber.from(metrics.totalFixedPercentage);
+            const xMeedFund = metrics.pools.find(pool => !pool.isLPToken);
+            if (xMeedFund) {
+              state.xMeedsTotalSupply = ethers.BigNumber.from(xMeedFund.totalSupply);
+              state.meedsPendingBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.xmeedPendingReward);
+              state.meedsBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.meedsBalance);
+              state.xMeedAddress = xMeedFund.address;
+            }
+            state.rewardedFunds = metrics.pools.map((fundInfo, i) => {
+              const fund = {};
+              Object.keys(fundInfo).forEach(key => {
+                if (Number.isNaN(Number(key))) {
+                  if (fundInfo[key] && fundInfo[key] !== true && String(fundInfo[key]).indexOf('0x') < 0 && Number.isInteger(Number(fundInfo[key]))) {
+                    fund[key] = ethers.BigNumber.from(fundInfo[key]);
+                  } else {
+                    fund[key] = fundInfo[key];
+                  }
+                }
+              });
+              fund.index = i;
+              return fund;
+            });
+            const rewardedPools = state.rewardedFunds.filter(fund => fund.isLPToken);
+            rewardedPools.forEach(pool => this.commit('computeLPApy', pool));
+            state.rewardedPools = rewardedPools;
+
+            Object.keys(metrics.currentCity).forEach(key => {
+              if (Number.isNaN(Number(key))) {
+                if (metrics.currentCity[key] && metrics.currentCity[key] !== true && String(metrics.currentCity[key]).indexOf('0x') < 0 && Number.isInteger(Number(metrics.currentCity[key]))) {
+                  metrics.currentCity[key] = ethers.BigNumber.from(metrics.currentCity[key]);
+                }
+              }
+            });
+            state.currentCity = metrics.currentCity;
+          })
+          .finally(() => {
+            state.appLoading = false;
+            state.deedLoading = false;
+            state.tokenLoading = false;
+            state.lpLoading = false;
+          });
+      }
+    },
     loaded(state) {
       state.appLoading = false;
+    },
+    deedLoaded(state) {
+      state.deedLoading = false;
+    },
+    tokenLoaded(state) {
+      state.tokenLoading = state.loadingBalances || state.loadingXMeedsBalance || state.loadingMeedsBalance;
+    },
+    lpLoaded(state) {
+      state.lpLoading = false;
     },
     endTimer(state) {
       state.refreshNowIntervalUsage--;
@@ -733,11 +811,12 @@ function initialize() {
     store.commit('refreshMetamaskState');
 
     if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
-      window.ethereum._metamask.isUnlocked().then(unlocked => {
-        if (!unlocked) {
-          store.commit('loaded');
-        }
-      });
+      window.ethereum._metamask.isUnlocked()
+        .then(unlocked => {
+          if (!unlocked) {
+            store.commit('loaded');
+          }
+        });
     }
 
     window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
@@ -753,7 +832,7 @@ function initialize() {
   
     window.setInterval(() => store.commit('loadGasPrice'), 12000);
   } else {
-    store.commit('loaded');
+    store.commit('setMetamaskOffline');
 
     window.addEventListener('ethereum#initialized', initialize, {
       once: true,

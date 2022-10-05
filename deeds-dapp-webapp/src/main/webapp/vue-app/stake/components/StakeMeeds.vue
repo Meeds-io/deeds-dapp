@@ -18,6 +18,7 @@
 -->
 <template>
   <v-card
+    class="d-flex flex-column"
     width="340"
     height="350"
     outlined>
@@ -25,191 +26,204 @@
       <v-icon>mdi-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
-    <v-card-text>
-      <v-list-item>
-        <v-list-item-content class="pb-0">
-          <v-list-item-title>
-            {{ $t('apy') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="apyLoading"
-              type="chip"
-              max-height="17"
-              tile />
-            <v-tooltip v-else bottom>
-              <template #activator="{ on, attrs }">
-                <div
-                  class="d-flex flex-nowrap"
-                  v-bind="attrs"
-                  v-on="on">
-                  <deeds-number-format
-                    :value="apy"
-                    no-decimals>
-                    %
-                  </deeds-number-format>
-                </div>
-              </template>
-              <span v-if="maxMeedSupplyReached">
-                {{ $t('maxMeedsSupplyReached') }}
-              </span>
-              <ul v-else>
-                <li>
-                  <deeds-number-format
-                    :fractions="2"
-                    :value="yearlyRewardedMeeds"
-                    label="yearlyRewardedMeeds" />
-                </li>
-                <li>
-                  <deeds-number-format
-                    :fractions="2"
-                    :value="meedsTotalBalanceOfXMeeds"
-                    label="meedsTotalBalanceOfXMeeds" />
-                </li>
-              </ul>
-            </v-tooltip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item two-line>
-        <v-list-item-content class="pb-0">
-          <v-list-item-title>
-            {{ $t('totalHoldings') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <template v-if="meedsBalanceOfXMeeds === null || meedsPendingBalanceOfXMeeds == null">
+    <v-card
+      class="d-flex flex-column flex-grow-1"
+      flat
+      tile>
+      <v-list>
+        <v-list-item>
+          <v-list-item-content class="pb-0">
+            <v-list-item-title>
+              {{ $t('apy') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
               <v-skeleton-loader
+                v-if="apyLoading"
                 type="chip"
                 max-height="17"
                 tile />
-              <v-skeleton-loader
-                type="chip"
-                max-height="17"
-                tile />
-            </template>
-            <v-tooltip v-else bottom>
-              <template #activator="{ on, attrs }">
-                <div
-                  v-bind="attrs"
-                  v-on="on">
-                  <deeds-number-format :value="meedsTotalBalanceOfXMeeds" :fractions="2">
-                    <deeds-contract-address
-                      :address="meedAddress"
-                      :button-top="-2"
-                      label="MEED"
-                      token />
-                  </deeds-number-format>
-                  <deeds-number-format
-                    :value="meedsTotalBalanceOfXMeeds"
-                    class="caption"
-                    currency />
-                </div>
+              <v-tooltip v-else bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    class="d-flex flex-nowrap"
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-number-format
+                      :value="apy"
+                      no-decimals>
+                      %
+                    </deeds-number-format>
+                  </div>
+                </template>
+                <span v-if="maxMeedSupplyReached">
+                  {{ $t('maxMeedsSupplyReached') }}
+                </span>
+                <ul v-else>
+                  <li>
+                    <deeds-number-format
+                      :fractions="2"
+                      :value="yearlyRewardedMeeds"
+                      label="yearlyRewardedMeeds" />
+                  </li>
+                  <li>
+                    <deeds-number-format
+                      :fractions="2"
+                      :value="meedsTotalBalanceOfXMeeds"
+                      label="meedsTotalBalanceOfXMeeds" />
+                  </li>
+                </ul>
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content class="pb-0">
+            <v-list-item-title>
+              {{ $t('totalHoldings') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <template v-if="meedsBalanceOfXMeeds === null || meedsPendingBalanceOfXMeeds == null">
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
+                <v-skeleton-loader
+                  type="chip"
+                  max-height="17"
+                  tile />
               </template>
-              <ul>
-                <li>
-                  <deeds-number-format
-                    :fractions="2"
-                    :value="meedsBalanceOfXMeeds"
-                    label="xMeedCurrentBalance" />
-                </li>
-                <li v-if="!maxMeedSupplyReached">
-                  <deeds-number-format
-                    :fractions="2"
-                    :value="meedsPendingBalanceOfXMeeds"
-                    label="xMeedPendingRewards" />
-                </li>
-              </ul>
-            </v-tooltip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+              <v-tooltip v-else bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-number-format :value="meedsTotalBalanceOfXMeeds" :fractions="2">
+                      <deeds-contract-address
+                        :address="meedAddress"
+                        :button-top="-2"
+                        label="MEED"
+                        token />
+                    </deeds-number-format>
+                    <deeds-number-format
+                      :value="meedsTotalBalanceOfXMeeds"
+                      class="caption"
+                      currency />
+                  </div>
+                </template>
+                <ul>
+                  <li>
+                    <deeds-number-format
+                      :fractions="2"
+                      :value="meedsBalanceOfXMeeds"
+                      label="xMeedCurrentBalance" />
+                  </li>
+                  <li v-if="!maxMeedSupplyReached">
+                    <deeds-number-format
+                      :fractions="2"
+                      :value="meedsPendingBalanceOfXMeeds"
+                      label="xMeedPendingRewards" />
+                  </li>
+                </ul>
+              </v-tooltip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
       <strong class="d-flex flex-row">
         <v-divider class="ms-8 me-2 my-auto" />
         <h6>{{ $t('myAssets') }}</h6>
         <v-divider class="me-8 ms-2 my-auto" />
       </strong>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('availableToStake') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="meedsBalance === null"
-              type="chip"
-              max-height="17"
-              tile />
-            <template v-else>
-              {{ meedsBalanceNoDecimals }}
-              <deeds-contract-address
-                :address="meedAddress"
-                :button-top="-2"
-                label="MEED"
-                token />
-            </template>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            name="openStakeDrawerButton"
-            outlined
-            text
-            @click="openStakeDrawer(true)">
-            <span class="text-none">{{ $t('stake') }}</span>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-      <v-list-item two-line>
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ $t('balance') }}
-          </v-list-item-title>
-          <v-list-item-subtitle class="font-weight-bold ms-2">
-            <v-skeleton-loader
-              v-if="xMeedsBalance === null"
-              type="chip"
-              max-height="17"
-              tile />
-            <v-tooltip v-else-if="equivalentMeedBalance" bottom>
-              <template #activator="{ on, attrs }">
-                <div
-                  v-bind="attrs"
-                  v-on="on">
-                  {{ xMeedsBalanceNoDecimals }}
-                  <deeds-contract-address
-                    :address="xMeedAddress"
-                    :button-top="-2"
-                    label="xMEED"
-                    token />
-                </div>
+      <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
+        <deeds-metamask-button class="ma-auto" />
+      </div>
+      <template v-else>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('availableToStake') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="meedsBalance === null"
+                type="chip"
+                max-height="17"
+                tile />
+              <template v-else>
+                {{ meedsBalanceNoDecimals }}
+                <deeds-contract-address
+                  :address="meedAddress"
+                  :button-top="-2"
+                  label="MEED"
+                  token />
               </template>
-              <deeds-number-format
-                :value="equivalentMeedBalance"
-                :fractions="2"
-                label="equivalentXMeedBalanceInMeed" />
-            </v-tooltip>
-            <template v-else>
-              {{ xMeedsBalanceNoDecimals }}
-              <deeds-contract-address
-                :address="xMeedAddress"
-                :button-top="-2"
-                label="xMEED"
-                token />
-            </template>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            name="openUnstakeDrawerButton"
-            outlined
-            text
-            @click="openStakeDrawer(false)">
-            <span class="text-none">{{ $t('unstake') }}</span>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-    </v-card-text>
-    <deeds-stake-meeds-drawer ref="stakeDrawer" :stake="stake" />
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              name="openStakeDrawerButton"
+              outlined
+              text
+              @click="openStakeDrawer(true)">
+              <span class="text-none">{{ $t('stake') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ $t('balance') }}
+            </v-list-item-title>
+            <v-list-item-subtitle class="font-weight-bold ms-2">
+              <v-skeleton-loader
+                v-if="xMeedsBalance === null"
+                type="chip"
+                max-height="17"
+                tile />
+              <v-tooltip v-else-if="equivalentMeedBalance" bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    {{ xMeedsBalanceNoDecimals }}
+                    <deeds-contract-address
+                      :address="xMeedAddress"
+                      :button-top="-2"
+                      label="xMEED"
+                      token />
+                  </div>
+                </template>
+                <deeds-number-format
+                  :value="equivalentMeedBalance"
+                  :fractions="2"
+                  label="equivalentXMeedBalanceInMeed" />
+              </v-tooltip>
+              <template v-else>
+                {{ xMeedsBalanceNoDecimals }}
+                <deeds-contract-address
+                  :address="xMeedAddress"
+                  :button-top="-2"
+                  label="xMEED"
+                  token />
+              </template>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              name="openUnstakeDrawerButton"
+              outlined
+              text
+              @click="openStakeDrawer(false)">
+              <span class="text-none">{{ $t('unstake') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </template>
+    </v-card>
+    <deeds-stake-meeds-drawer
+      v-if="!metamaskOffline"
+      ref="stakeDrawer"
+      :stake="stake" />
   </v-card>
 </template>
 <script>
@@ -221,6 +235,7 @@ export default {
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     meedsBalance: state => state.meedsBalance,
     meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
+    metamaskOffline: state => state.metamaskOffline,
     meedAddress: state => state.meedAddress,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
@@ -273,8 +288,8 @@ export default {
     },
     apy() {
       if (!this.meedsTotalBalanceOfXMeeds
-          || !this.yearlyRewardedMeeds
           || this.meedsTotalBalanceOfXMeeds.isZero()
+          || !this.yearlyRewardedMeeds
           || this.yearlyRewardedMeeds.isZero()
           || this.maxMeedSupplyReached) {
         return 0;

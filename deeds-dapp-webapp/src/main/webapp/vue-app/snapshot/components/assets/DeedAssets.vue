@@ -22,52 +22,47 @@
       <h4>{{ $t('yourDeeds') }}</h4>
     </v-list-item>
     <v-skeleton-loader
-      v-if="!ownedNfts"
+      v-if="deedLoading"
       type="image"
       class="mx-auto ma-2"
       max-width="90%" />
-    <div v-else>
-      <template
-        v-if="ownedNfts && ownedNfts.length">
-        <deeds-deed-asset 
-          v-for="nft in nftsByCardType"
-          :key="nft.id"
-          :deed="nft" />
-      </template>
-      <v-row
-        v-else
-        class="ms-4 pt-4 d-flex flex-row">
-        <v-col class="pa-0" align-self="start">
-          <v-img 
-            height="100px"
-            width="140px"
-            :src="`/${parentLocation}/static/images/deeds.png`"
-            contain
-            eager />
-        </v-col>
-        <v-col cols="9">
-          <v-card flat>
-            <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: whitepaperLink})" />
-            <v-card-text class="d-flex">
-              <div class="pe-1">
-                {{ $t('howGetDeed') }}
-              </div>
-              <div class="pe-1">
-                {{ $t('see') }}
-              </div>
-              <a
-                class="text-decoration-underline"
-                @click="$root.$emit('switch-page', 'deeds')">
-                {{ $t('there') }}
-              </a>
-              <div class="ps-1">
-                {{ $t('moreInformation') }}
-              </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+    <div v-else-if="ownedNfts && ownedNfts.length">
+      <deeds-deed-asset 
+        v-for="nft in nftsByCardType"
+        :key="nft.id"
+        :deed="nft" />
     </div>
+    <v-row v-else class="ms-4 pt-4 d-flex flex-row">
+      <v-col class="pa-0" align-self="start">
+        <v-img 
+          height="100px"
+          width="140px"
+          :src="`/${parentLocation}/static/images/deeds.png`"
+          contain
+          eager />
+      </v-col>
+      <v-col cols="9">
+        <v-card flat>
+          <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: whitepaperLink})" />
+          <v-card-text class="d-flex">
+            <div class="pe-1">
+              {{ $t('howGetDeed') }}
+            </div>
+            <div class="pe-1">
+              {{ $t('see') }}
+            </div>
+            <a
+              class="text-decoration-underline"
+              @click="$root.$emit('switch-page', 'deeds')">
+              {{ $t('there') }}
+            </a>
+            <div class="ps-1">
+              {{ $t('moreInformation') }}
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-list>
 </template>
 <script>
@@ -77,6 +72,7 @@ export default {
     cardTypes: ['Common', 'Uncommon', 'Epic', 'Legendary'],
   }),
   computed: Vuex.mapState({
+    deedLoading: state => state.deedLoading,
     ownedNfts: state => state.ownedNfts,
     whitepaperLink: state => state.whitepaperLink,
     parentLocation: state => state.parentLocation,

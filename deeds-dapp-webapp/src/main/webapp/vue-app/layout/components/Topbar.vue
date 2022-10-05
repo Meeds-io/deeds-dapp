@@ -50,7 +50,7 @@
       </div>
     </template>
     <div v-else-if="!appLoading" class="ms-4">
-      <deeds-topbar-metamask-button />
+      <deeds-metamask-button />
     </div>
     <div class="ms-4">
       <deeds-topbar-fiat-currency-selector />

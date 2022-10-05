@@ -59,7 +59,7 @@ public class MeedTokenMetricService {
   @Getter
   private List<String>               lockedPolygonAddresses;
 
-  @Autowired(required = false)
+  @Autowired
   private BlockchainService          blockchainService;
 
   @Autowired
@@ -131,7 +131,7 @@ public class MeedTokenMetricService {
     if (metric == null) {
       metric = new MeedTokenMetric(getTodayId());
     }
-    BigDecimal totalSupply = blockchainService.totalSupply();
+    BigDecimal totalSupply = blockchainService.meedsTotalSupplyNoDecimals();
     metric.setTotalSupply(totalSupply);
 
     Map<String, BigDecimal> reserveBalances = getReserveBalances();
@@ -171,13 +171,13 @@ public class MeedTokenMetricService {
     reserveEthereumAddresses.stream()
                             .filter(StringUtils::isNotBlank)
                             .forEach(address -> {
-                              BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+                              BigDecimal balance = blockchainService.meedBalanceOfNoDecimals(address);
                               reserveBalances.put(address.toLowerCase(), balance);
                             });
     reservePolygonAddresses.stream()
                            .filter(StringUtils::isNotBlank)
                            .forEach(address -> {
-                             BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+                             BigDecimal balance = blockchainService.meedBalanceOfOnPolygon(address);
                              reserveBalances.put(address.toLowerCase(), balance);
                            });
     return reserveBalances;
@@ -193,13 +193,13 @@ public class MeedTokenMetricService {
     lockedEthereumAddresses.stream()
                            .filter(StringUtils::isNotBlank)
                            .forEach(address -> {
-                             BigDecimal balance = blockchainService.balanceOfOnEthereum(address);
+                             BigDecimal balance = blockchainService.meedBalanceOfNoDecimals(address);
                              lockedBalances.put(address.toLowerCase(), balance);
                            });
     lockedPolygonAddresses.stream()
                           .filter(StringUtils::isNotBlank)
                           .forEach(address -> {
-                            BigDecimal balance = blockchainService.balanceOfOnPolygon(address);
+                            BigDecimal balance = blockchainService.meedBalanceOfOnPolygon(address);
                             lockedBalances.put(address.toLowerCase(), balance);
                           });
     return lockedBalances;
