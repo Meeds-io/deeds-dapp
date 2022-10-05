@@ -17,7 +17,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents';
-import i18nMessages from './json/i18nMessages.json';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
@@ -55,16 +54,17 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 
 const language = localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
-const i18n = new VueI18n({
-  locale: language,
-  fallbackLocale: 'en',
-  messages: i18nMessages,
-});
+
 const selectedFiatCurrency = localStorage.getItem('deeds-selectedFiatCurrency') || 'usd';
 const isMetamaskInstalled = ethUtils.isMetamaskInstalled();
 const isMetamaskConnected = ethUtils.isMetamaskConnected();
 
 window.parentAppLocation = window.location.pathname.split('/')[1];
+
+const i18n = new VueI18n({
+  locale: language,
+  messages: {},
+});
 
 const store = new Vuex.Store({
   state: {
@@ -310,6 +310,7 @@ const store = new Vuex.Store({
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
+      initializeVueApp(language);
       state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
       state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 2, state.language);
     },
@@ -836,15 +837,38 @@ function initialize() {
 
 initialize();
 
-new Vue({
-  el: '#deedsApp',
-  template: '<deeds-site id="deedsApp" />',
-  store,
-  i18n,
-  vuetify: new Vuetify({
-    dark: true,
-    silent: true,
-    iconfont: 'mdi',
-    theme: { disable: true },
-  }),
-});
+const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
+let app = null;
+
+function initializeVueApp(language) {
+  fetch(`/${window.parentAppLocation}/static/i18n/messages_${language}.properties?_=${buildNumber}`)
+    .then(resp => resp && resp.ok && resp.text())
+    .then(i18nMessages => {
+      const data = i18nMessages
+        .split('\n')
+        .filter(Boolean)
+        .reduce((obj, line) => {
+          const pair = line.split(/=(.*)/s);
+          obj[pair[0]] = pair[1];
+          return obj;
+        }, {});
+
+      i18n.mergeLocaleMessage(language, data);
+      if (!app) {
+        app = new Vue({
+          el: '#deedsApp',
+          template: '<deeds-site id="deedsApp" />',
+          store,
+          i18n,
+          vuetify: new Vuetify({
+            dark: true,
+            silent: true,
+            iconfont: 'mdi',
+            theme: { disable: true },
+          }),
+        });
+      }
+    });
+}
+
+initializeVueApp(language);
