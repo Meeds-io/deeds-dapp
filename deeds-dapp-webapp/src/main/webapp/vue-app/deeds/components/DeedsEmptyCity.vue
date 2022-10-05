@@ -17,26 +17,43 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <template v-if="!noCityLeft">
-      <div class="d-flex flex-column-reverse flex flex-sm-row mb-8">
-        <div class="d-flex flex-column">
-          <deeds-nft-introduction />
-          <deeds-points-simulator />
-        </div>
-        <deeds-earned-points class="ms-sm-auto me-sm-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
-      </div>
-    </template>
-    <deeds-owned v-if="!noCityLeft && !metamaskOffline" />
-    <deeds-redeem class="mb-8" />
-    <deeds-trade />
-  </div>
+  <v-container class="mt-2">
+    <v-row class="mx-auto" no-gutters>
+      <v-col
+        v-for="card in cards"
+        :key="card.name">
+        <deeds-redeem-card
+          :card="card"
+          :loading="loadingCityDetails" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 export default {
-  computed: Vuex.mapState({
-    noCityLeft: state => state.noCityLeft,
-    metamaskOffline: state => state.metamaskOffline,
+  data: () => ({
+    cards: [
+      {
+        'name': 'Common',
+        'cardType': 0,
+        'amount': new BigNumber('0x01b1ae4d6e2ef5000000')
+      },
+      {
+        'name': 'Uncommon',
+        'cardType': '1',
+        'amount': new BigNumber('0x06c6b935b8bbd4000000')
+      },
+      {
+        'name': 'Rare',
+        'cardType': '2',
+        'amount': new BigNumber('0x0a968163f0a57b400000')
+      },
+      {
+        'name': 'Legendary',
+        'cardType': '3',
+        'amount': new BigNumber('0x152d02c7e14af6800000')
+      }
+    ],
   }),
 };
 </script>

@@ -18,12 +18,13 @@
  */
 package io.meeds.deeds.scheduling;
 
-import io.meeds.deeds.scheduling.task.MeedTokenMetricTask;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import io.meeds.deeds.scheduling.task.CurrencyExchangeTask;
+import io.meeds.deeds.scheduling.task.MeedAssetsMetricTask;
+import io.meeds.deeds.scheduling.task.MeedTokenMetricTask;
 import io.meeds.deeds.scheduling.task.MeedsExchangeTask;
 
 @Configuration
@@ -43,6 +44,11 @@ public class SchedulingConfig {
   @Bean
   public MeedTokenMetricTask meedsTokenMetricTask() {
     return new MeedTokenMetricTask();
+  }
+
+  @Bean
+  public MeedAssetsMetricTask meedsAssetsMetricTask() {
+    return new MeedAssetsMetricTask();
   }
 
 }

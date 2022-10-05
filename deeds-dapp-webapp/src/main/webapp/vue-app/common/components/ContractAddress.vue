@@ -10,6 +10,7 @@
       <span class="d-flex-inline position-relative pe-8">
         <span v-if="label">{{ label }}</span>
         <v-btn
+          v-if="!metamaskOffline"
           :style="buttonTop && {top: `${buttonTop}px`}"
           absolute
           icon
@@ -21,7 +22,7 @@
         </v-btn>
       </span>
     </template>
-    <v-card>
+    <v-card v-if="!metamaskOffline">
       <v-list-item class="px-2">
         <v-list-item-avatar class="elevation-1">
           <svg
@@ -79,6 +80,7 @@ export default {
   }),
   computed: Vuex.mapState({
     etherscanBaseLink: state => state.etherscanBaseLink,
+    metamaskOffline: state => state.metamaskOffline,
     etherscanLink() {
       return this.token && `${this.etherscanBaseLink}token/${this.address}` || `${this.etherscanBaseLink}address/${this.address}`;
     },

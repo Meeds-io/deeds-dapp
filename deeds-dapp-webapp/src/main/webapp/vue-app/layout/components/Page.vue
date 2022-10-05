@@ -24,18 +24,15 @@ export default {
     regex: /(\/)([a-zA-Z]+)(\/?)([a-zA-Z]*)/,
     currentRoute: '/',
   }),
-  computed: Vuex.mapState({
-    address: state => state.address,
-    viewComponent(state) {
+  computed: {
+    viewComponent() {
       if (!this.currentRoute) {
         return {template: '<p>Not Found</p>'};
-      } else if (state.address) {
-        return routes[this.currentRoute] || {template: '<p>Not Found</p>'};
       } else {
-        return {template: '<deeds-wallet-connect />'};
+        return routes[this.currentRoute] || {template: '<p>Not Found</p>'};
       }
     },
-  }),
+  },
   created() {
     this.$root.$on('location-change', this.refreshRoute);
     this.refreshRoute(window.location.pathname);

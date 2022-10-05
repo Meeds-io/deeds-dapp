@@ -36,30 +36,30 @@
           :key="`${pool.address}_${pool.refresh}`">
           <deeds-liquidity-pool :pool="pool" />
         </v-col>
-        <v-col key="cometh">
-          <deeds-liquidity-pool>
-            <template #icon>
-              <img
-                :src="`/${parentLocation}/static/images/cometh.ico`"
-                class="mx-auto addLiquidityIcon">
-            </template>
-            <template #title>
-              {{ $t('rentLiquidityOnCometh') }}
-            </template>
-            <template #content>
-              <v-btn
-                :href="rentComethLiquidityLink"
-                target="_blank"
-                rel="nofollow noreferrer noopener"
-                class="mx-auto d-flex"
-                link
-                text>
-                <span class="text-capitalize link--color">{{ $t('stake') }}</span>
-              </v-btn>
-            </template>
-          </deeds-liquidity-pool>
-        </v-col>
       </template>
+      <v-col key="cometh">
+        <deeds-liquidity-pool>
+          <template #icon>
+            <img
+              :src="`/${parentLocation}/static/images/cometh.ico`"
+              class="mx-auto addLiquidityIcon">
+          </template>
+          <template #title>
+            {{ $t('rentLiquidityOnCometh') }}
+          </template>
+          <template #content>
+            <v-btn
+              :href="rentComethLiquidityLink"
+              target="_blank"
+              rel="nofollow noreferrer noopener"
+              class="mx-auto d-flex"
+              link
+              text>
+              <span class="text-capitalize link--color">{{ $t('stake') }}</span>
+            </v-btn>
+          </template>
+        </deeds-liquidity-pool>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -71,7 +71,7 @@ export default {
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
     poolCount() {
-      return this.rewardedPools && this.rewardedPools.length || 2;
+      return this.rewardedPools && this.rewardedPools.length || 1;
     },
     loading() {
       return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
