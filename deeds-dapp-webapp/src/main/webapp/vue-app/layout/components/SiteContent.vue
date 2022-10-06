@@ -19,16 +19,17 @@
 <template>
   <v-sheet
     class="overflow-y-auto">
-    <v-container class="siteContentLayout mt-11 mt-sm-13">
+    <div class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout mx-auto pa-4">
-        <deeds-navbar role="navigation" />
+        <deeds-navbar id="navbar" role="navigation" />
         <deeds-page
+          id="mainPageContent"
           class="mt-8 mt-sm-10"
           role="main" />
       </div>
       <deeds-notifications />
-    </v-container>
+    </div>
   </v-sheet>
 </template>
 <script>
