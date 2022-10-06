@@ -20,13 +20,17 @@ html {
   overflow: auto;
 }
 
+#banner {
+  border-bottom: 1px #eee solid !important;
+}
+
 .siteContentLayout {
   height: auto;
 }
 
 .mainPageLayout, .headerLayout {
   width: 72rem;
-  max-width: 72rem;
+  max-width: 100%;
 }
 
 .copyToClipboardInput {

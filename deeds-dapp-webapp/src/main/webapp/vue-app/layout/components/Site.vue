@@ -19,8 +19,8 @@
 <template>
   <v-app>
     <v-card flat class="overflow-hidden">
-      <deeds-topbar role="banner" />
-      <deeds-site-content />
+      <deeds-topbar id="banner" role="banner" />
+      <deeds-site-content id="siteContent" />
     </v-card>
   </v-app>
 </template>
