@@ -19,7 +19,10 @@
 <template>
   <deeds-token-asset-template>
     <template #col1>
-      {{ cardName }} 
+      <deeds-tab-link
+        :label="cardName"
+        tab-link="deeds"
+        class="ms-n4 my-n1" />
     </template>
     <template #col2>
       {{ cityName }}
