@@ -20,7 +20,7 @@
   <v-app-bar
     id="dappTopbar"
     fixed
-    elevation="4"
+    elevation="0"
     color="white">
     <v-spacer />
     <div class="d-flex headerLayout px-4 mx-1">
@@ -34,10 +34,11 @@
         <div class="ps-2 pb-1">{{ $t('dao') }}</div>
         <v-chip
           v-if="isTestNetwork"
+          :small="!isMobile"
+          :x-small="isMobile"
           color="orange"
           dark
-          small
-          class="testnet-chip mt-1 ms-2">
+          class="testnet-chip mt-1 ms-4">
           {{ testnetName }}
         </v-chip>
       </v-toolbar-title>
@@ -72,6 +73,7 @@ export default {
     validNetwork: state => state.validNetwork,
     address: state => state.address,
     appLoading: state => state.appLoading,
+    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },

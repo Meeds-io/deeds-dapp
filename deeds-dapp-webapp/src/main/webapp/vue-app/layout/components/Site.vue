@@ -19,29 +19,70 @@
 <template>
   <v-app>
     <v-card flat class="overflow-hidden">
-      <deeds-topbar role="banner" />
-      <deeds-site-content />
+      <deeds-topbar id="banner" role="banner" />
+      <v-divider />
+      <deeds-site-content id="siteContent" />
     </v-card>
   </v-app>
 </template>
 <script>
 export default {
-  computed: {
+  computed: Vuex.mapState({
+    appLoading: state => state.appLoading,
     isMobile() {
       return this.$vuetify.breakpoint.smAndDown;
     },
-  },
+  }),
   watch: {
     isMobile() {
       this.refreshMobileValue();
     },
+    appLoading() {
+      this.$nextTick().then(() => this.installScrollControlListener());
+    },
   },
   created() {
     this.refreshMobileValue();
+    document.addEventListener('DOMContentLoaded', () => this.installScrollControlListener());
   },
   methods: {
     refreshMobileValue() {
       this.$store.commit('setMobile', this.isMobile);
+    },
+    installScrollControlListener() {
+      const siteBody = document.querySelector('#mainPageContent');
+      if (!siteBody) {
+        return;
+      }
+      if (!siteBody.getAttribute('data-scroll-control')) {
+        siteBody.setAttribute('data-scroll-control', 'true');
+        const shadowBox = document.createElement('div');
+        shadowBox.id = 'TopBarBoxShadow';
+        shadowBox.style.boxShadow = '0 6px 4px -4px rgb(0 0 0 / 30%)';
+        shadowBox.style.position = 'fixed';
+        shadowBox.style.width = '100vw';
+        shadowBox.style.height = this.isMobile && '56px' || '64px';
+        shadowBox.style.top = 0;
+        shadowBox.style.left = 0;
+        shadowBox.style.right = 0;
+        shadowBox.style.zIndex = 1;
+        shadowBox.style.visibility = 'hidden';
+        document.querySelector('#navbar').appendChild(shadowBox);
+        document.addEventListener('scroll', this.controlBodyScrollClass, false);
+        this.controlBodyScrollClass();
+      }
+    },
+    controlBodyScrollClass() {
+      const topBarBoxShadow = document.querySelector('#TopBarBoxShadow');
+      if (window.scrollY) {
+        if (topBarBoxShadow.style.visibility === 'hidden') {
+          document.querySelector('#TopBarBoxShadow').style.visibility = '';
+        }
+      } else {
+        if (topBarBoxShadow.style.visibility !== 'hidden') {
+          document.querySelector('#TopBarBoxShadow').style.visibility = 'hidden';
+        }
+      }
     },
   },
 };
