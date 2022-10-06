@@ -26,7 +26,7 @@
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-parent</artifactId>
-  <version>1.2.x-meed-SNAPSHOT</version>
+  <version>1.2.x-whitepaper-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Meeds:: Deeds Dapp</name>
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
@@ -52,7 +52,7 @@
     <org.exoplatform.wallet.ert-contract.version>1.3.0</org.exoplatform.wallet.ert-contract.version>
 
     <!-- Meeds Server Libraries -->
-    <org.exoplatform.platform-ui.version>6.6.x-meed-SNAPSHOT</org.exoplatform.platform-ui.version>
+    <org.exoplatform.platform-ui.version>6.6.x-whitepaper-SNAPSHOT</org.exoplatform.platform-ui.version>
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M7</version.surefire.plugin>
