@@ -72,16 +72,18 @@
     <finalName>deeds-dapp</finalName>
     <plugins>
       <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
         <configuration>
           <includeEmptyDirectories>false</includeEmptyDirectories>
           <packagingExcludes>vue-app/**</packagingExcludes>
+          <warSourceExcludes>**/vue-app/**</warSourceExcludes>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
