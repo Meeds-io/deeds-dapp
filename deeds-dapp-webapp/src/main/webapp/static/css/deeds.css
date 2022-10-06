@@ -24,9 +24,9 @@ html {
   height: auto;
 }
 
-.mainPageLayout {
+.mainPageLayout, .headerLayout {
+  width: 72rem;
   max-width: 72rem;
-  margin: 0 auto;
 }
 
 .copyToClipboardInput {
