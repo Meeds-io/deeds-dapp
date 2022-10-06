@@ -61,7 +61,7 @@ html {
 }
 
 .link--color {
-  color: #0000ee;
+  color: #0000ee !important;
 }
 
 .v-application .v-btn.border-color-inherit {
