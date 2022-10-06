@@ -19,9 +19,9 @@
 <template>
   <v-sheet
     class="overflow-y-auto">
-    <v-container class="siteContentLayout" :class="isMobile && 'mt-11' || 'mt-13'">
+    <v-container class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
-      <div v-else class="mainPageLayout pa-4">
+      <div v-else class="mainPageLayout mx-auto pa-4">
         <deeds-navbar role="navigation" />
         <deeds-page
           class="mt-8 mt-sm-10"
@@ -35,7 +35,6 @@
 export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
-    isMobile: state => state.isMobile,
   }),
 };
 </script>

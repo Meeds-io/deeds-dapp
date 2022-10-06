@@ -23,40 +23,42 @@
     elevation="4"
     color="white">
     <v-spacer />
-    <v-toolbar-title class="d-flex">
-      <v-img
-        max-height="64px"
-        max-width="64px"
-        :src="`/${parentLocation}/static/images/meeds.png`"
-        contain
-        eager />
-      <div class="ps-2 pb-1">{{ $t('dao') }}</div>
-      <v-chip
-        v-if="isTestNetwork"
-        color="orange"
-        dark
-        small
-        class="testnet-chip mt-1 ms-2">
-        {{ testnetName }}
-      </v-chip>
-    </v-toolbar-title>
-    <v-spacer />
-    <template v-if="validNetwork && address">
-      <div class="ms-4 d-none d-sm-inline-block">
-        <deeds-topbar-address-selector v-if="address" />
+    <div class="d-flex headerLayout px-4 mx-1">
+      <v-toolbar-title class="d-flex">
+        <v-img
+          max-height="64px"
+          max-width="64px"
+          :src="`/${parentLocation}/static/images/meeds.png`"
+          contain
+          eager />
+        <div class="ps-2 pb-1">{{ $t('dao') }}</div>
+        <v-chip
+          v-if="isTestNetwork"
+          color="orange"
+          dark
+          small
+          class="testnet-chip mt-1 ms-2">
+          {{ testnetName }}
+        </v-chip>
+      </v-toolbar-title>
+      <v-spacer />
+      <template v-if="validNetwork && address">
+        <div class="ms-4 d-none d-sm-inline-block">
+          <deeds-topbar-address-selector v-if="address" />
+        </div>
+        <div class="ms-4 d-none d-sm-inline-block">
+          <deeds-topbar-gas-price />
+        </div>
+      </template>
+      <div v-else-if="!appLoading" class="ms-4">
+        <deeds-metamask-button />
       </div>
-      <div class="ms-4 d-none d-sm-inline-block">
-        <deeds-topbar-gas-price />
+      <div class="ms-4">
+        <deeds-topbar-fiat-currency-selector />
       </div>
-    </template>
-    <div v-else-if="!appLoading" class="ms-4">
-      <deeds-metamask-button />
-    </div>
-    <div class="ms-4">
-      <deeds-topbar-fiat-currency-selector />
-    </div>
-    <div class="ms-4">
-      <deeds-topbar-language-selector />
+      <div class="ms-4">
+        <deeds-topbar-language-selector />
+      </div>
     </div>
     <v-spacer />
   </v-app-bar>
