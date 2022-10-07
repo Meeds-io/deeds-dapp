@@ -62,7 +62,7 @@
     </template>
     <template #col4>
       <deeds-number-format
-        :value="lpStaked"
+        :value="userStakedEquivalentMeeds"
         :fractions="2"
         currency />
     </template>
@@ -103,7 +103,12 @@ export default {
       return this.pool && this.pool.userInfo;
     },
     lpStaked() {
-      return this.userInfo && this.userInfo.amount || 0;
+      return this.userInfo && this.userInfo.amount || new BigNumber(0);
+    },
+    userStakedEquivalentMeeds() {
+      return this.lpStaked && !this.lpStaked.isZero()
+        && this.pool.meedsBalance.mul(this.lpStaked).mul(2).div(this.pool.totalSupply)
+        || new BigNumber(0);
     },
     lpTotalSupply() {
       return this.pool && this.pool.totalSupply;
