@@ -86,17 +86,26 @@ const store = new Vuex.Store({
     tokenFactoryAddress: '0x1B37D04759aD542640Cc44Ff849a373040386050',
     xMeedAddress: '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4',
     deedAddress: '0x0143b71443650aa8efa76bd82f35c22ebd558090',
+    polygonMeedAddress: '0x6aca77cf3bab0c4e8210a09b57b07854a995289a',
+    polygonWethAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
     comethPairAddress: '0xb82F8457fcf644803f4D74F677905F1d410Cd395',
+    comethRouterAddress: '0x93bcdc45f7e62f89a8e901dc4a0e2c6c427d9f25',
+    comethTokenFactoryAddress: '0x035a8a07bbae988893499e5c0d5b281b7967b107',
+    comethRewardPool: null,
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
     tenantProvisioningAddress: null,
     // External links
     etherscanBaseLink: 'https://etherscan.io/',
+    polygonscanBaseLink: 'https://polygonscan.com/',
     openSeaBaseLink: 'https://testnets.opensea.io/assets/rinkeby/0x0143b71443650aa8efa76bd82f35c22ebd558090',
     openSeaCollectionLink: 'https://opensea.io/collection/meeds-dao',
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     // Contract variables
     provider: null,
+    polygonProvider: new ethers.providers.JsonRpcProvider({
+      url: 'https://polygon-rpc.com/',
+    }),
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
@@ -105,6 +114,13 @@ const store = new Vuex.Store({
       'function balanceOf(address owner) view returns (uint256)',
       'function totalSupply() public view returns (uint256)',
       'function symbol() public view returns (string)',
+    ],
+    polygonTokenFactoryABI: [
+      'function balanceOf(address owner) view returns (uint256)',
+      'function earned(address owner) view returns (uint256[] memory earns)',
+      'function getRewardsForDuration() view returns (uint256[] memory rewards)',
+      'function rewardsDuration() public view returns (uint256)',
+      'function totalSupply() public view returns (uint256)',
     ],
     routerABI: [
       'function getAmountsOut(uint amountIn, address[] memory path) public view returns(uint[] memory amounts)',
@@ -178,6 +194,7 @@ const store = new Vuex.Store({
     deedContract: null,
     tokenFactoryContract: null,
     tenantProvisioningContract: null,
+    polygonMeedContract: null,
     // User preferred language
     language,
     // Metamask status
@@ -206,6 +223,7 @@ const store = new Vuex.Store({
     // User balances
     etherBalance: null,
     meedsBalance: null,
+    polygonMeedsBalance: null,
     meedsBalanceNoDecimals: null,
     meedsRouteAllowance: null,
     meedsStakeAllowance: null,
@@ -263,25 +281,6 @@ const store = new Vuex.Store({
           state.networkId = new BigNumber(networkId).toNumber();
           if (state.networkId === 1) {
             // Mainnet
-          } else if (state.networkId === 4) {
-            // Rinkeby
-            state.etherscanBaseLink = 'https://rinkeby.etherscan.io/';
-            state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-            state.sushiswapPairAddress = '0xccbaed81a22663c18602ec23f790d4ecee843b46';
-            state.wethAddress = '0xc778417e063141139fce010982780140aa0cd5ab';
-            state.meedAddress = '0xe25aD27222D84662D7484363B4c25da123A1cB20';
-            state.tokenFactoryAddress = '0xab87e14c13C37039f14e754beFDB77f679E2C8C0';
-
-            state.xMeedAddress = '0x664d1d851ea235f03Df14BfDa0B9f185fb0F94E3';
-            state.deedAddress = '0xDa91F50491AB8b3C82b43623fC317d9fF5207D9c';
-            state.tenantProvisioningAddress = '0x8b5B554985c4393eF30FDf33146A22a99A984C69';
-
-            state.univ2PairAddress = '0x24c6839a9db67c28ae9f493e4034d6ce82c571d6';
-
-            state.addUniswapLiquidityLink = `https://app.uniswap.org/#/add/v2/ETH/${state.meedAddress}`;
-
-            state.openSeaBaseLink = `https://testnets.opensea.io/assets/rinkeby/${state.deedAddress}`;
-            state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-deed-token-znroiz3lxb';
           } else if (state.networkId === 5) {
             // Goerli
             state.etherscanBaseLink = 'https://goerli.etherscan.io/';
@@ -290,11 +289,11 @@ const store = new Vuex.Store({
             state.wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
             state.meedAddress = '0x4998a63C7494afc4Ea96E7Ea86E88c59271914c1';
             state.tokenFactoryAddress = '0x13142F102152aBa8AD81281E7eC1374577D662EC';
-
             state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
             state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
             state.tenantProvisioningAddress = '0x801FD0FB6f70FAF985410FCbc97FC72D0CC76d8C';
 
+            // Opensea links
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
             state.openSeaCollectionLink = `https://testnets.opensea.io/collection/${state.deedAddress}`;
           } else {
@@ -305,6 +304,9 @@ const store = new Vuex.Store({
           state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}?chainId=${state.networkId}`;
           this.commit('setAddress');
         });
+    },
+    setComethRewardPool(state, comethRewardPool) {
+      state.comethRewardPool = comethRewardPool;
     },
     selectLanguage(state, language) {
       state.language = language;
@@ -323,6 +325,9 @@ const store = new Vuex.Store({
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
       state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
+    },
+    setPolygonMeedsBalance(state, balance) {
+      state.polygonMeedsBalance = balance;
     },
     setMeedsRouteAllowance(state, meedsRouteAllowance) {
       state.meedsRouteAllowance = meedsRouteAllowance;
@@ -392,7 +397,7 @@ const store = new Vuex.Store({
         this.commit('deedLoaded');
       }
     },
-    loadRewardedFunds(state, ignoreWhenLoaded) {
+    loadRewardedFunds(state, ignoreWhenLoaded, excludePools) {
       if (ignoreWhenLoaded && state.rewardedFunds) {
         // Avoid reloading only when necessary
         return;
@@ -431,8 +436,10 @@ const store = new Vuex.Store({
               pool.refresh = 0;
               pool.loading = true;
             });
-            state.rewardedPools = rewardedPools;
-            return this.commit('loadLPTokenAssets');
+            if (!excludePools) {
+              state.rewardedPools = rewardedPools;
+              return this.commit('loadLPTokenAssets', excludePools);
+            }
           });
         state.tokenFactoryContract.totalAllocationPoints().then(value => state.rewardedTotalAllocationPoints = value);
         state.tokenFactoryContract.totalFixedPercentage().then(value => state.rewardedTotalFixedPercentage = value);
@@ -536,6 +543,20 @@ const store = new Vuex.Store({
         this.commit('tokenLoaded');
       }
     },
+    async loadPolygonBalances(state) {
+      try {
+        if (state.polygonMeedContract) {
+          state.loadingPolygonMeedsBalance = true;
+          await state.polygonMeedContract.balanceOf(state.address)
+            .then(balance => this.commit('setPolygonMeedsBalance', balance))
+            .finally(() => state.loadingPolygonMeedsBalance = false);
+        } else {
+          state.loadingPolygonMeedsBalance = false;
+        }
+      } finally {
+        this.commit('tokenLoaded');
+      }
+    },
     async loadXMeedsBalances(state) {
       try {
         if (state.xMeedContract) {
@@ -557,6 +578,7 @@ const store = new Vuex.Store({
         try {
           state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
           this.commit('loadMeedsBalances');
+          this.commit('loadPolygonBalances');
           if (state.meedContract) {
             if (state.xMeedAddress) {
               await state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
@@ -606,6 +628,11 @@ const store = new Vuex.Store({
           state.meedAddress,
           state.erc20ABI,
           state.provider
+        );
+        state.polygonMeedContract = new ethers.Contract(
+          state.polygonMeedAddress,
+          state.erc20ABI,
+          state.polygonProvider
         );
         state.wethContract = new ethers.Contract(
           state.meedAddress,
@@ -659,6 +686,24 @@ const store = new Vuex.Store({
           }
         });
 
+        // eslint-disable-next-line new-cap
+        const polygonTransferFilter = state.polygonMeedContract.filters.Transfer();
+        state.polygonMeedContract.on(polygonTransferFilter, (from, to) => {
+          const address = state.address.toUpperCase();
+          if (from.toUpperCase() === address || to.toUpperCase() === address) {
+            this.commit('loadPolygonBalances');
+          }
+        });
+
+        // eslint-disable-next-line new-cap
+        const polygonApproveFilter = state.polygonMeedContract.filters.Approval();
+        state.meedContract.on(polygonApproveFilter, (from, to) => {
+          const address = state.address.toUpperCase();
+          if (from.toUpperCase() === address || to.toUpperCase() === address) {
+            this.commit('loadPolygonBalances');
+          }
+        });
+
         if (state.xMeedContract) {
           // eslint-disable-next-line new-cap
           const redeemFilter = state.xMeedContract.filters.Redeemed();
@@ -704,6 +749,11 @@ const store = new Vuex.Store({
     setMetamaskOffline(state) {
       if (!state.metamaskOffline) {
         state.metamaskOffline = true;
+        state.polygonMeedContract = new ethers.Contract(
+          state.polygonMeedAddress,
+          state.erc20ABI,
+          state.polygonProvider
+        );
         assetMetricService.getMetrics()
           .then(metrics => {
             if (!metrics) {
@@ -760,7 +810,10 @@ const store = new Vuex.Store({
       state.deedLoading = false;
     },
     tokenLoaded(state) {
-      state.tokenLoading = state.loadingBalances || state.loadingXMeedsBalance || state.loadingMeedsBalance;
+      state.tokenLoading = state.loadingBalances
+        || state.loadingXMeedsBalance
+        || state.loadingMeedsBalance
+        || state.loadingPolygonMeedsBalance;
     },
     lpLoaded(state) {
       state.lpLoading = false;

@@ -45,7 +45,6 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    meedAddress: state => state.meedAddress,
     meedsBalance: state => state.meedsBalance,
     isMobile: state => state.isMobile,
   }),

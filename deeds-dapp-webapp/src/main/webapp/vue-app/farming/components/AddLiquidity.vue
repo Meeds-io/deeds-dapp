@@ -71,7 +71,8 @@
         <span class="text-none">Cometh</span>
         <img
           :src="`/${parentLocation}/static/images/cometh.ico`"
-          class="my-3 addLiquidityIcon">
+          class="my-3 addLiquidityIcon"
+          alt="Cometh Icon">
       </v-btn>
     </v-bottom-navigation>
   </v-card>

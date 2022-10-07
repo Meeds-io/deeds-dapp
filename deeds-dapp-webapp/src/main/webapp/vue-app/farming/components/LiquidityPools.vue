@@ -38,27 +38,7 @@
         </v-col>
       </template>
       <v-col key="cometh">
-        <deeds-liquidity-pool>
-          <template #icon>
-            <img
-              :src="`/${parentLocation}/static/images/cometh.ico`"
-              class="mx-auto addLiquidityIcon">
-          </template>
-          <template #title>
-            {{ $t('rentLiquidityOnCometh') }}
-          </template>
-          <template #content>
-            <v-btn
-              :href="rentComethLiquidityLink"
-              target="_blank"
-              rel="nofollow noreferrer noopener"
-              class="mx-auto d-flex"
-              link
-              text>
-              <span class="text-capitalize link--color">{{ $t('stake') }}</span>
-            </v-btn>
-          </template>
-        </deeds-liquidity-pool>
+        <deeds-cometh-liquidity-pool />
       </v-col>
     </v-row>
   </v-container>
@@ -66,7 +46,6 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    rentComethLiquidityLink: state => state.rentComethLiquidityLink,
     parentLocation: state => state.parentLocation,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,

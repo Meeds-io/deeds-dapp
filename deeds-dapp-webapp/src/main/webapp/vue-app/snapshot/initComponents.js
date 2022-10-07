@@ -26,6 +26,7 @@ import TokenAssetTemplate from './components/assets/TokenAssetTemplate.vue';
 import LiquidityPoolAsset from './components/assets/LiquidityPoolAsset.vue';
 import XMeedAsset from './components/assets/XMeedAsset.vue';
 import MeedAsset from './components/assets/MeedAsset.vue';
+import PolygonMeedAsset from './components/assets/PolygonMeedAsset.vue';
 import DeedAssets from './components/assets/DeedAssets.vue';
 import DeedAsset from './components/assets/DeedAsset.vue';
 import MeedsInfo from './components/MeedsInfo.vue';
@@ -42,6 +43,7 @@ const components = {
   'deeds-liquidity-pool-asset': LiquidityPoolAsset,
   'deeds-x-meed-asset': XMeedAsset,
   'deeds-meed-asset': MeedAsset,
+  'deeds-polygon-meed-asset': PolygonMeedAsset,
   'deeds-deed-assets': DeedAssets,
   'deeds-deed-asset': DeedAsset,
   'deeds-meeds-info': MeedsInfo,
