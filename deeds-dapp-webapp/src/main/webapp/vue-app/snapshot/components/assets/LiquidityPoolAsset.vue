@@ -79,17 +79,23 @@ export default {
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
+    comethPairAddress: state => state.comethPairAddress,
     isSushiswapPool() {
       return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
     },
     isUniswapPool() {
       return this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase();
     },
+    isComethPool() {
+      return this.comethPairAddress && this.pool?.address?.toUpperCase() === this.comethPairAddress.toUpperCase();
+    },
     poolName() {
       if (this.isSushiswapPool) {
-        return 'Sushiswap';
+        return this.$t('poolFarming', {0: 'Sushiswap'});
       } else if (this.isUniswapPool) {
-        return 'Uniswap';
+        return this.$t('poolFarming', {0: 'Uniswap'});
+      } else if (this.isComethPool) {
+        return this.$t('poolFarming', {0: 'Cometh'});
       }
       return this.lpSymbol;
     },

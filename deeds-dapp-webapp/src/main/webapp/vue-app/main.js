@@ -91,7 +91,7 @@ const store = new Vuex.Store({
     comethPairAddress: '0xb82F8457fcf644803f4D74F677905F1d410Cd395',
     comethRouterAddress: '0x93bcdc45f7e62f89a8e901dc4a0e2c6c427d9f25',
     comethTokenFactoryAddress: '0x035a8a07bbae988893499e5c0d5b281b7967b107',
-    comethRewardPool: null,
+    comethPool: null,
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
     tenantProvisioningAddress: null,
@@ -303,9 +303,6 @@ const store = new Vuex.Store({
           this.commit('setAddress');
         });
     },
-    setComethRewardPool(state, comethRewardPool) {
-      state.comethRewardPool = comethRewardPool;
-    },
     selectLanguage(state, language) {
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
@@ -379,6 +376,73 @@ const store = new Vuex.Store({
         state.currentCityMintable = false;
         state.currentCardTypes = [];
       }
+    },
+    loadComethRewardPool(state) {
+      if (state.comethPool) {
+        return;
+      }
+      const pool = {
+        address: state.comethPairAddress,
+        contract: new ethers.Contract(
+          state.comethPairAddress,
+          state.erc20ABI,
+          state.polygonProvider
+        ),
+        symbol: 'UNI-V2',
+        userInfo: {},
+      };
+      const tokenFactoryContract = new ethers.Contract(
+        state.comethTokenFactoryAddress,
+        state.polygonTokenFactoryABI,
+        state.polygonProvider
+      );
+      const polygonMeedContract = new ethers.Contract(
+        state.polygonMeedAddress,
+        state.erc20ABI,
+        state.polygonProvider
+      );
+      const promises = [];
+      promises.push(
+        polygonMeedContract.balanceOf(pool.address)
+          .then(balance => pool.meedsBalance = balance)
+      );
+      promises.push(
+        tokenFactoryContract.totalSupply()
+          .then(balance => pool.lpBalanceOfTokenFactory = balance)
+      );
+      promises.push(
+        pool.contract.totalSupply()
+          .then(totalSupply => pool.totalSupply = totalSupply)
+      );
+      promises.push(
+        tokenFactoryContract.rewardsDuration()
+          .then(rewardsDuration => pool.rewardsDuration = rewardsDuration)
+      );
+      promises.push(
+        tokenFactoryContract.getRewardsForDuration()
+          .then(rewardsForDuration => pool.rewardsForDuration = rewardsForDuration && rewardsForDuration.length > 1 && rewardsForDuration[1] || new BigNumber(0))
+      );
+      if (state.address) {
+        promises.push(
+          tokenFactoryContract.balanceOf(state.address)
+            .then(balance => pool.userInfo.amount = balance)
+        );
+        promises.push(
+          pool.contract.balanceOf(state.address)
+            .then(balance => pool.userInfo.lpBalance = balance)
+        );
+        promises.push(
+          tokenFactoryContract.earned(state.address)
+            .then(balances => pool.userInfo.meedsPendingUserReward = balances && balances.length > 1 && balances[1] || 0)
+        );
+      }
+      Promise.all(promises)
+        .then(() => {
+          pool.yearlyRewardedMeeds = pool.rewardsForDuration.mul(state.yearInMinutes).mul(60).div(pool.rewardsDuration);
+          pool.stakedEquivalentMeedsBalanceOfPool = pool.meedsBalance.mul(pool.lpBalanceOfTokenFactory).mul(2).div(pool.totalSupply);
+          pool.apy = new BigNumber(pool.yearlyRewardedMeeds.toString()).dividedBy(pool.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
+        })
+        .finally(() => state.comethPool = pool);
     },
     async loadOwnedNfts(state) {
       try {
@@ -678,24 +742,6 @@ const store = new Vuex.Store({
           const address = state.address.toUpperCase();
           if (from.toUpperCase() === address || to.toUpperCase() === address) {
             this.commit('loadBalances');
-          }
-        });
-
-        // eslint-disable-next-line new-cap
-        const polygonTransferFilter = state.polygonMeedContract.filters.Transfer();
-        state.polygonMeedContract.on(polygonTransferFilter, (from, to) => {
-          const address = state.address.toUpperCase();
-          if (from.toUpperCase() === address || to.toUpperCase() === address) {
-            this.commit('loadPolygonBalances');
-          }
-        });
-
-        // eslint-disable-next-line new-cap
-        const polygonApproveFilter = state.polygonMeedContract.filters.Approval();
-        state.meedContract.on(polygonApproveFilter, (from, to) => {
-          const address = state.address.toUpperCase();
-          if (from.toUpperCase() === address || to.toUpperCase() === address) {
-            this.commit('loadPolygonBalances');
           }
         });
 
