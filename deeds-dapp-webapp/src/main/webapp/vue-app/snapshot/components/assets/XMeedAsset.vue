@@ -84,8 +84,8 @@ export default {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
     },
     xMeedsBalanceInMeeds() {
-      if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsBalanceOfXMeeds) {
-        return this.xMeedsBalance.mul(this.meedsBalanceOfXMeeds).div(this.xMeedsTotalSupply);
+      if (this.xMeedsBalance && this.xMeedsTotalSupply && !this.xMeedsTotalSupply.isZero() && this.meedsTotalBalanceOfXMeeds) {
+        return this.xMeedsBalance.mul(this.meedsTotalBalanceOfXMeeds).div(this.xMeedsTotalSupply);
       } else {
         return 0;
       }
