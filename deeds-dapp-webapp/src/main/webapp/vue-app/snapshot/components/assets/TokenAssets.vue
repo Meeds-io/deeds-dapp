@@ -42,6 +42,7 @@
 export default {
   computed: Vuex.mapState({
     meedsBalance: state => state.meedsBalance,
+    polygonMeedsBalance: state => state.polygonMeedsBalance,
     xMeedsBalance: state => state.xMeedsBalance,
     tokenLoading: state => state.tokenLoading,
     lpLoading: state => state.lpLoading,
@@ -54,6 +55,9 @@ export default {
     },
     hasMeedBalance() {
       return !this.tokenLoading && this.meedsBalance && !this.meedsBalance.isZero();
+    },
+    hasPolygonMeedBalance() {
+      return !this.tokenLoading && this.polygonMeedsBalance && !this.polygonMeedsBalance.isZero();
     },
     hasXMeedBalance() {
       return !this.tokenLoading && this.xMeedsBalance && !this.xMeedsBalance.isZero();

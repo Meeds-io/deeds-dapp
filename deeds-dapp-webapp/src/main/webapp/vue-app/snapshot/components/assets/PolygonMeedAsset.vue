@@ -17,20 +17,36 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column-reverse flex-sm-row">
-    <div class="d-flex flex-column">
-      <deeds-stake-yield />
-      <deeds-stake-governance />
-      <deeds-stake-deeds />
-      <deeds-stake-contribute />
-    </div>
-    <deeds-stake-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 flex-shrink-0 flex-grow-1" />
-  </div>
+  <deeds-token-asset-template>
+    <template #col1>
+      <deeds-tab-link
+        label="Meeds (Polygon)"
+        tab-link="farm"
+        class="ms-n4 my-n1" />
+    </template>
+    <template #col2>
+      <deeds-number-format
+        :value="polygonMeedsBalance"
+        :fractions="2">
+        MEED
+      </deeds-number-format>
+    </template>
+    <template v-if="!isMobile" #col3>
+      <div class="ms-n15 d-flex justify-center">-</div>
+    </template>
+    <template #col4>
+      <deeds-number-format
+        :value="polygonMeedsBalance"
+        :fractions="2"
+        currency />
+    </template>
+  </deeds-token-asset-template>
 </template>
 <script>
 export default {
-  created() {
-    this.$store.commit('loadRewardedFunds', true, true);
-  },
+  computed: Vuex.mapState({
+    polygonMeedsBalance: state => state.polygonMeedsBalance,
+    isMobile: state => state.isMobile,
+  }),
 };
 </script>

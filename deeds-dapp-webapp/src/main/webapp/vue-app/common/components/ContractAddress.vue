@@ -53,7 +53,7 @@
         <v-list-item-action class="d-flex flex-row">
           <v-btn
             :title="$t('viewOnEtherscan')"
-            :href="etherscanLink"
+            :href="blockchainExplorerLink"
             target="_blank"
             rel="nofollow noreferrer noopener"
             icon
@@ -92,15 +92,23 @@ export default {
       type: Number,
       default: 0,
     },
+    polygon: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     menu: false,
   }),
   computed: Vuex.mapState({
     etherscanBaseLink: state => state.etherscanBaseLink,
+    polygonscanBaseLink: state => state.polygonscanBaseLink,
     metamaskOffline: state => state.metamaskOffline,
-    etherscanLink() {
-      return this.token && `${this.etherscanBaseLink}token/${this.address}` || `${this.etherscanBaseLink}address/${this.address}`;
+    blockchainExplorerBase() {
+      return this.polygon && this.polygonscanBaseLink || this.etherscanBaseLink;
+    },
+    blockchainExplorerLink() {
+      return this.token && `${this.blockchainExplorerBase}token/${this.address}` || `${this.blockchainExplorerBase}address/${this.address}`;
     },
     addressAlias() {
       return this.address && `${this.address.substring(0, 10)}...${this.address.substring(this.address.length - 10)}`;
