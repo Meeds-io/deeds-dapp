@@ -15,6 +15,7 @@
     <meta name="version" content="<%=buildnumber%>">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=<%=buildnumber%>">
+    <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
@@ -24,6 +25,12 @@
     <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="preload" href="./static/fonts/KFOmCnqEu92Fr1Mu4mxK.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="preload" href="./static/fonts/materialdesignicons-webfont.woff2?v=6.5.95" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-brands-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-brands-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-regular-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-regular-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-solid-900.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./static/fonts/fa-solid-900.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
 
     <link rel="preload" href="./static/js/vue.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/vuetify.min.js?_=<%=buildnumber%>" as="script" type="text/javascript">
@@ -43,6 +50,7 @@
     <link rel="icon" href="./static/images/meedsicon.png" sizes="192x192">
     <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
     <link href="./static/css/fonts-roboto.css?_=<%=buildnumber%>" rel="stylesheet">
+    <link href="./static/css/font-awesome.min.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/materialdesignicons.min.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/vuetify.min.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
