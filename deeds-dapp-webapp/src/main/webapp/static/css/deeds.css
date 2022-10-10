@@ -80,6 +80,21 @@ html {
   padding-top: 2px !important;
 }
 
+.bottom-navigation {
+  z-index: 10 !important;
+}
+
+.mobile-menu-slider {
+  height: 2px;
+  position: absolute;
+  top: 0;
+  display: none;
+}
+
+.selected-item .mobile-menu-slider {
+  display: block;
+}
+
 .lp-badge {
   min-width: 10px;
   min-height: 10px;

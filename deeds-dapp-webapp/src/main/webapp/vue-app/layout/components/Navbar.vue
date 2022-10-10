@@ -17,7 +17,63 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tabs v-model="selectedTab">
+  <v-bottom-navigation
+    v-if="isMobile"
+    v-model="selectedTab"
+    active-class="selected-item"
+    class="bottom-navigation"
+    fixed
+    grow>
+    <v-btn
+      ref="overview"
+      id="overview"
+      :href="`/${parentLocation}/overview`"
+      value="overview"
+      link 
+      class="px-0"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
+      <v-icon>fas fa-home</v-icon>
+      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+    </v-btn>
+    <v-btn
+      ref="stake"
+      id="stake"
+      :href="`/${parentLocation}/stake`"
+      value="stake"
+      link 
+      class="px-0"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
+      <v-icon>fas fa-piggy-bank</v-icon>
+      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+    </v-btn>
+    <v-btn
+      ref="deeds"
+      id="deeds"
+      :href="`/${parentLocation}/deeds`"
+      value="deeds"
+      link 
+      class="px-0"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
+      <v-icon>fas fa-building</v-icon>
+      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+    </v-btn>
+    <v-btn
+      ref="farm"
+      id="farm"
+      :href="`/${parentLocation}/farm`"
+      value="farm"
+      link
+      class="px-0"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
+      <v-icon>fas fa-sack-dollar</v-icon>
+      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+    </v-btn>
+  </v-bottom-navigation>
+  <v-tabs v-else v-model="selectedTab">
     <v-tab
       ref="overview"
       id="overview"
@@ -63,6 +119,7 @@ export default {
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    isMobile: state => state.isMobile,
     defaultTab() {
       return `/${this.parentLocation}/overview`;
     }
@@ -70,7 +127,11 @@ export default {
   created() {
     const href = window.location.pathname;
     const hrefParts = href.split('/');
-    this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
+    if (this.isMobile) {
+      this.selectedTab = hrefParts[hrefParts.length - 1];
+    } else {
+      this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
+    }
     this.$root.$on('switch-page', this.switchPage);
   },
   methods: {
@@ -87,6 +148,9 @@ export default {
         if (link) {
           window.history.pushState({}, '', link);
           this.$root.$emit('location-change', `/${event.target.id}`);
+        }
+        if (this.isMobile) {
+          window.scrollTo(0, 0);
         }
       }
     }
