@@ -49,15 +49,14 @@
         </div>
       </small>
       <v-container v-if="currentCardTypes" class="mt-2">
-        <v-row class="mx-auto" no-gutters>
-          <v-col
+        <deeds-card-caroussel>
+          <div
             v-for="card in currentCardTypes"
-            :key="card.name">
-            <deeds-redeem-card
-              :card="card"
-              :loading="loadingCityDetails" />
-          </v-col>
-        </v-row>
+            :key="card.name"
+            class="mx-2">
+            <deeds-redeem-card :card="card" :loading="loadingCityDetails" />
+          </div>
+        </deeds-card-caroussel>
       </v-container>
       <v-container v-else-if="deedLoading" class="grey lighten-5 mt-2">
         <v-row class="mx-auto" no-gutters>
