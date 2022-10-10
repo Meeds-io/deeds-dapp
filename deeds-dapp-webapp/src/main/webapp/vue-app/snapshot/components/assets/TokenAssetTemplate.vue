@@ -17,10 +17,8 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row class="ps-8 pe-4 pt-4 ma-0 d-flex flex-column flex-sm-row flex-grow-1">
-    <v-col
-      class="pa-0 text-no-wrap"
-      align-self="start">
+  <v-row class="ps-3 ps-sm-8 pe-4 pt-4 ma-0 d-flex flex-grow-1">
+    <v-col class="pa-0">
       <v-list-item class="px-0">
         <v-list-item-avatar
           v-if="$slots.image"
@@ -28,7 +26,7 @@
           tile>
           <slot name="image"></slot>
         </v-list-item-avatar>
-        <v-list-item-content class="py-0">
+        <v-list-item-content class="py-0 flex-grow-1">
           <v-list-item-title class="token-asset-title d-flex mb-0 font-size-normal">
             <div class="my-auto me-auto">
               <slot name="col1"></slot>
@@ -40,14 +38,7 @@
             </div>
           </v-list-item-subtitle>
         </v-list-item-content>
-      </v-list-item>
-    </v-col>
-    <v-col
-      class="pa-0 text-no-wrap"
-      align-self="end"
-      cols="auto">
-      <v-list-item class="px-0">
-        <v-list-item-content class="py-0 overflow-visible">
+        <v-list-item-content class="py-0 flex-grow-0 overflow-visible">
           <v-list-item-title class="token-asset-title d-flex mb-0 font-size-normal overflow-visible">
             <div class="my-auto ms-auto">
               <slot name="col3"></slot>
