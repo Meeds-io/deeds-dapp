@@ -51,7 +51,7 @@
           <deeds-topbar-gas-price />
         </div>
       </template>
-      <div v-else-if="!appLoading" class="ms-4">
+      <div v-else-if="!appLoading" class="ms-4 d-none d-sm-block">
         <deeds-metamask-button />
       </div>
       <div class="ms-4">
