@@ -18,20 +18,26 @@
 -->
 <template>
   <deeds-token-asset-template>
+    <template #image>
+      <v-img
+        :src="imageSrc"
+        max-height="40px"
+        max-width="40px"
+        class="ps-1"
+        contain
+        eager />
+    </template>
     <template #col1>
       <deeds-tab-link
         :label="cardName"
         tab-link="deeds"
-        class="ms-n4 my-n1" />
+        class="ms-n4" />
     </template>
     <template #col2>
       {{ cityName }}
     </template>
     <template #col3>
       {{ count }}
-    </template>
-    <template #col4>
-      {{ }}
     </template>
   </deeds-token-asset-template>
 </template>
@@ -44,6 +50,7 @@ export default {
     },
   },
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     cityName() {
       return this.deed?.cityName;
     },
@@ -52,6 +59,9 @@ export default {
     },
     count() {
       return this.deed?.count;
+    },
+    imageSrc() {
+      return `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
     },
   }),
 };

@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list dense>
+  <v-list dense class="pb-4 pb-sm-0">
     <v-list-item>
       <h4>{{ $t('yourDeeds') }}</h4>
     </v-list-item>

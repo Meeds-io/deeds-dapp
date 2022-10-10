@@ -18,16 +18,25 @@
 -->
 <template>
   <v-btn
+    height="auto"
     color="tertiary"
+    class="font-size-normal"
     text
     @click="$root.$emit('switch-page', tabLink)">
-    <span class="text-none font-weight-bold mb-1 subtitle-1">{{ label }}</span>
+    <span class="text-none">
+      <span class="font-weight-bold">{{ label }}</span>
+      <span v-if="subLabel" class="font-weight-normal">({{ subLabel }})</span>
+    </span>
   </v-btn>
 </template>
 <script>
 export default {
   props: {
     label: {
+      type: String,
+      default: null,
+    },
+    subLabel: {
       type: String,
       default: null,
     },
