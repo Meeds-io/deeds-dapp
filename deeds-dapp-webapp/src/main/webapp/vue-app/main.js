@@ -897,7 +897,7 @@ function initializeVueApp(language) {
         .filter(Boolean)
         .reduce((obj, line) => {
           const pair = line.split(/=(.*)/s);
-          obj[pair[0]] = pair[1];
+          obj[pair[0]] = pair[1].replace( /\\u([a-fA-F0-9]{4})/g, (g, m1) => String.fromCharCode(parseInt(m1, 16)));
           return obj;
         }, {});
 
