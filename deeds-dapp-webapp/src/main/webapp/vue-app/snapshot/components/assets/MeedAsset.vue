@@ -18,21 +18,28 @@
 -->
 <template>
   <deeds-token-asset-template>
+    <template #image>
+      <v-img
+        :src="`/${parentLocation}/static/images/meedsToken.png`"
+        max-height="40px"
+        max-width="40px"
+        class="ps-1"
+        contain
+        eager />
+    </template>
     <template #col1>
       <deeds-tab-link
         label="Meeds"
+        sub-label="Mainnet"
         tab-link="stake"
-        class="ms-n4 my-n1" />
+        class="ms-n4" />
     </template>
-    <template #col2>
+    <template #col3>
       <deeds-number-format
         :value="meedsBalance"
         :fractions="2">
-        MEED
+        Ɱ
       </deeds-number-format>
-    </template>
-    <template v-if="!isMobile" #col3>
-      <div class="ms-n15 d-flex justify-center">-</div>
     </template>
     <template #col4>
       <deeds-number-format
@@ -45,6 +52,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     meedsBalance: state => state.meedsBalance,
     isMobile: state => state.isMobile,
   }),

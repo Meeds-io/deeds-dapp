@@ -17,8 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list 
-    dense>
+  <v-list dense class="pb-4">
     <v-list-item>
       <h4>{{ $t('yourTokens') }}</h4>
     </v-list-item>
@@ -29,11 +28,13 @@
       max-width="90%" />
     <div v-else-if="hasTokens">
       <deeds-meed-asset v-if="hasMeedBalance" />
+      <deeds-polygon-meed-asset v-if="hasPolygonMeedBalance" />
       <deeds-x-meed-asset v-if="hasXMeedBalance" />
       <deeds-liquidity-pool-asset
         v-for="pool in rewardedPools"
         :key="`${pool.address}_${pool.refresh}`"
         :pool="pool" />
+      <deeds-liquidity-pool-asset :pool="comethPool" />
     </div>
     <deeds-empty-token-assets v-else />
   </v-list>
@@ -47,6 +48,7 @@ export default {
     tokenLoading: state => state.tokenLoading,
     lpLoading: state => state.lpLoading,
     rewardedPools: state => state.rewardedPools,
+    comethPool: state => state.comethPool,
     loading() {
       return this.poolsLoading || this.tokenLoading;
     },
@@ -63,14 +65,17 @@ export default {
       return !this.tokenLoading && this.xMeedsBalance && !this.xMeedsBalance.isZero();
     },
     hasLPTokens() {
-      return !this.poolsLoading && this.rewardedPools?.length && this.rewardedPools.find(pool => {
+      return this.comethPool?.userInfo?.amount || (!this.poolsLoading && this.rewardedPools?.length && this.rewardedPools.find(pool => {
         const amount = pool?.userInfo?.amount;
         return amount && !amount.isZero();
-      });
+      }));
     },
     hasTokens() {
-      return !this.loading && (this.hasMeedBalance || this.hasXMeedBalance || this.hasLPTokens);
+      return !this.loading && (this.hasMeedBalance || this.hasPolygonMeedBalance || this.hasXMeedBalance || this.hasLPTokens);
     },
   }),
+  created() {
+    this.$store.commit('loadComethRewardPool');
+  },
 };
 </script>

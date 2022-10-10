@@ -7,8 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Meeds DAO</title>
     <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
