@@ -17,42 +17,40 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row class="ps-8 pe-4 ma-0 d-flex flex-column flex-sm-row flex-grow-1">
-    <v-col
-      v-if="!isMobile || $slots.col1"
-      class="pa-0 py-sm-3 text-no-wrap"
-      align-self="start">
-      <slot name="col1"></slot>
-    </v-col>
-    <v-divider class="d-block d-sm-none" />
-    <v-col
-      v-if="!isMobile || $slots.col2"
-      class="pe-0 ps-4 ps-sm-0 text-no-wrap"
-      cols="3">
-      <slot name="col2"></slot>
-      <template v-if="isMobile && $slots.col4">
-        <small class="d-flex text-no-wrap">
-          <slot name="col4"></slot>
-        </small>
-      </template>
-    </v-col>
-    <v-col
-      v-if="!isMobile || $slots.col3"
-      class="pe-0 ps-4 ps-sm-0 text-no-wrap"
-      cols="4">
-      <slot name="col3"></slot>
-    </v-col>
-    <v-col
-      v-if="!isMobile && $slots.col4"
-      class="pe-0 ps-4 ps-sm-0 text-no-wrap">
-      <slot name="col4"></slot>
+  <v-row class="ps-3 ps-sm-8 pe-4 pt-4 ma-0 d-flex flex-grow-1">
+    <v-col class="pa-0">
+      <v-list-item class="px-0">
+        <v-list-item-avatar
+          v-if="$slots.image"
+          class="my-0"
+          tile>
+          <slot name="image"></slot>
+        </v-list-item-avatar>
+        <v-list-item-content class="py-0 flex-grow-1">
+          <v-list-item-title class="token-asset-title d-flex mb-0 font-size-normal">
+            <div class="my-auto me-auto">
+              <slot name="col1"></slot>
+            </div>
+          </v-list-item-title>
+          <v-list-item-subtitle class="token-asset-subtitle d-flex caption">
+            <div class="my-auto me-auto">
+              <slot name="col2"></slot>
+            </div>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-content class="py-0 flex-grow-0 overflow-visible">
+          <v-list-item-title class="token-asset-title d-flex mb-0 font-size-normal overflow-visible">
+            <div class="my-auto ms-auto pt-2px">
+              <slot name="col3"></slot>
+            </div>
+          </v-list-item-title>
+          <v-list-item-subtitle class="token-asset-subtitle d-flex caption">
+            <div class="my-auto ms-auto">
+              <slot name="col4"></slot>
+            </div>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
     </v-col>
   </v-row>
 </template>
-<script>
-export default {
-  computed: Vuex.mapState({
-    isMobile: state => state.isMobile,
-  }),
-};
-</script>

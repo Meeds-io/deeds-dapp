@@ -296,11 +296,12 @@ export default {
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
     tokenFactoryContract: state => state.tokenFactoryContract,
+    poolsChanged: state => state.poolsChanged,
     isSushiswapPool() {
-      return this.metamaskOffline || this.pool?.address.toUpperCase() === this.sushiswapPairAddress?.toUpperCase();
+      return this.metamaskOffline || this.lpAddress?.toUpperCase() === this.sushiswapPairAddress?.toUpperCase();
     },
     isUniswapPool() {
-      return this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase();
+      return this.univ2PairAddress && this.lpAddress?.toUpperCase() === this.univ2PairAddress?.toUpperCase();
     },
     poolName() {
       if (this.isSushiswapPool) {
@@ -311,37 +312,37 @@ export default {
       return this.lpSymbol;
     },
     lpAddress() {
-      return this.pool && this.pool.address;
+      return this.poolsChanged > 1 && this.pool?.address;
     },
     lpContract() {
-      return this.pool && this.pool.contract;
+      return this.poolsChanged > 1 && this.pool?.contract;
     },
     lpSymbol() {
-      return this.pool && this.pool.symbol;
+      return this.poolsChanged > 1 && this.pool?.symbol;
     },
     lpBalanceOfTokenFactory() {
-      return this.pool && this.pool.lpBalanceOfTokenFactory;
+      return this.poolsChanged > 1 && this.pool?.lpBalanceOfTokenFactory;
     },
     userInfo() {
-      return this.pool && this.pool.userInfo;
+      return this.poolsChanged > 1 && this.pool?.userInfo;
     },
     lpStaked() {
       return this.userInfo && this.userInfo.amount || 0;
     },
     stakedEquivalentMeedsBalanceOfPool() {
-      return this.pool && this.pool.stakedEquivalentMeedsBalanceOfPool;
+      return this.poolsChanged > 1 && this.pool?.stakedEquivalentMeedsBalanceOfPool;
     },
     meedsBalanceOfPool() {
-      return this.pool && this.pool.meedsBalance;
+      return this.poolsChanged > 1 && this.pool?.meedsBalance;
     },
     loadingUserInfo() {
-      return this.pool && this.pool.loadingUserInfo;
+      return this.poolsChanged > 1 && this.pool?.loadingUserInfo;
     },
     loading() {
-      return this.pool && this.pool.loading;
+      return this.poolsChanged > 1 && this.pool?.loading;
     },
     apy() {
-      return this.pool && this.pool.apy;
+      return this.poolsChanged > 1 && this.pool?.apy;
     },
     lpContractBalanceOf() {
       return this.lpContract?.balanceOf;

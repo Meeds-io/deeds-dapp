@@ -246,27 +246,18 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    loading: true,
-    loadingUserInfo: true,
-    pool: null,
-  }),
   computed: Vuex.mapState({
-    metamaskOffline: state => state.metamaskOffline,
     parentLocation: state => state.parentLocation,
-    polygonProvider: state => state.polygonProvider,
-    erc20ABI: state => state.erc20ABI,
-    polygonTokenFactoryABI: state => state.polygonTokenFactoryABI,
     address: state => state.address,
-    tokenFactoryAddress: state => state.comethTokenFactoryAddress,
     polygonMeedAddress: state => state.polygonMeedAddress,
-    meedContract: state => state.polygonMeedContract,
     lpAddress: state => state.comethPairAddress,
-    yearInMinutes: state => state.yearInMinutes,
-    pool: state => state.pool,
     rentComethLiquidityLink: state => state.rentComethLiquidityLink,
+    pool: state => state.comethPool,
+    loading() {
+      return !this.pool;
+    },
     userInfo() {
-      return !this.loadingUserInfo && this.pool?.userInfo;
+      return this.pool?.userInfo;
     },
     lpStaked() {
       return this.userInfo?.amount || 0;
@@ -276,13 +267,6 @@ export default {
     },
     meedsPendingUserReward() {
       return this.userInfo?.meedsPendingUserReward || 0;
-    },
-    tokenFactoryContract() {
-      return this.tokenFactoryAddress && new ethers.Contract(
-        this.tokenFactoryAddress,
-        this.polygonTokenFactoryABI,
-        this.polygonProvider
-      );
     },
     stakedEquivalentMeedsBalanceOfPool() {
       return this.pool?.stakedEquivalentMeedsBalanceOfPool;
@@ -300,80 +284,8 @@ export default {
       return this.pool?.apy;
     },
   }),
-  watch: {
-    meedContract() {
-      this.initComethRewardPool();
-    },
-  },
   created() {
-    this.initComethRewardPool();
-  },
-  methods: {
-    initComethRewardPool() {
-      if (!this.meedContract || this.pool) {
-        return;
-      }
-      const pool = {
-        address: this.lpAddress,
-        contract: new ethers.Contract(
-          this.lpAddress,
-          this.erc20ABI,
-          this.polygonProvider
-        ),
-        symbol: 'UNI-V2',
-        userInfo: {},
-      }; 
-      const promises = [];
-      promises.push(
-        this.meedContract.balanceOf(pool.address)
-          .then(balance => pool.meedsBalance = balance)
-      );
-      promises.push(
-        this.tokenFactoryContract.totalSupply()
-          .then(balance => pool.lpBalanceOfTokenFactory = balance)
-      );
-      promises.push(
-        pool.contract.totalSupply()
-          .then(totalSupply => pool.totalSupply = totalSupply)
-      );
-      promises.push(
-        this.tokenFactoryContract.rewardsDuration()
-          .then(rewardsDuration => pool.rewardsDuration = rewardsDuration)
-      );
-      promises.push(
-        this.tokenFactoryContract.getRewardsForDuration()
-          .then(rewardsForDuration => pool.rewardsForDuration = rewardsForDuration && rewardsForDuration.length > 1 && rewardsForDuration[1] || new BigNumber(0))
-      );
-      Promise.all(promises)
-        .then(() => {
-          pool.yearlyRewardedMeeds = pool.rewardsForDuration.mul(this.yearInMinutes).mul(60).div(pool.rewardsDuration);
-          pool.stakedEquivalentMeedsBalanceOfPool = pool.meedsBalance.mul(pool.lpBalanceOfTokenFactory).mul(2).div(pool.totalSupply);
-          pool.apy = new BigNumber(pool.yearlyRewardedMeeds.toString()).dividedBy(pool.stakedEquivalentMeedsBalanceOfPool.toString()).multipliedBy(100);
-        })
-        .finally(() => this.loading = false);
-      this.pool = pool;
-      this.initComethRewardPoolUserInfo();
-    },
-    initComethRewardPoolUserInfo() {
-      if (this.metamaskOffline || !this.pool) {
-        this.loadingUserInfo = false;
-        return;
-      }
-      const promises = [];
-      promises.push(
-        this.tokenFactoryContract.balanceOf(this.address)
-          .then(balance => this.pool.userInfo.amount = balance)
-      );
-      promises.push(
-        this.pool.contract.balanceOf(this.address)
-          .then(balance => this.pool.userInfo.lpBalance = balance)
-      );
-      promises.push(
-        this.tokenFactoryContract.earned(this.address)
-          .then(balances => this.pool.userInfo.meedsPendingUserReward = balances && balances.length > 1 && balances[1] || 0)
-      );
-      Promise.all(promises).finally(() => this.loadingUserInfo = false);
-    },
+    this.$store.commit('loadComethRewardPool');
   },
 };
 </script>
