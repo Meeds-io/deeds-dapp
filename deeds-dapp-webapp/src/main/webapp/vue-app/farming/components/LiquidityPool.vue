@@ -332,6 +332,9 @@ export default {
     stakedEquivalentMeedsBalanceOfPool() {
       return this.poolsChanged > 1 && this.pool?.stakedEquivalentMeedsBalanceOfPool;
     },
+    yearlyRewardedMeeds() {
+      return this.poolsChanged > 1 && this.pool?.yearlyRewardedMeeds;
+    },
     meedsBalanceOfPool() {
       return this.poolsChanged > 1 && this.pool?.meedsBalance;
     },

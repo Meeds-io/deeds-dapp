@@ -23,7 +23,7 @@
     color="white"
     elevate-on-scroll>
     <v-spacer />
-    <div class="d-flex headerLayout px-4 mx-1">
+    <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
       <v-toolbar-title class="d-flex">
         <v-img
           max-height="64px"
