@@ -18,15 +18,14 @@
 -->
 <template>
   <v-container class="mt-2">
-    <v-row class="mx-auto" no-gutters>
-      <v-col
+    <deeds-card-caroussel>
+      <div
         v-for="card in cards"
-        :key="card.name">
-        <deeds-redeem-card
-          :card="card"
-          :loading="loadingCityDetails" />
-      </v-col>
-    </v-row>
+        :key="card.name"
+        class="mx-2">
+        <deeds-redeem-card :card="card" />
+      </div>
+    </deeds-card-caroussel>
   </v-container>
 </template>
 <script>

@@ -21,6 +21,7 @@ import NumberFormat from './components/NumberFormat.vue';
 import ContractAddress from './components/ContractAddress.vue';
 import TabLink from './components/TabLink.vue';
 import MetamaskButton from './components/MetamaskButton.vue';
+import CardCarousel from './components/CardCarousel.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -28,6 +29,7 @@ const components = {
   'deeds-contract-address': ContractAddress,
   'deeds-metamask-button': MetamaskButton,
   'deeds-tab-link': TabLink,
+  'deeds-card-caroussel': CardCarousel,
 };
 
 for (const key in components) {
