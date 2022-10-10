@@ -22,7 +22,7 @@
     vertical
     flat>
     <v-stepper-step
-      :complete="meedsBalanceNoDecimals > 0"
+      :complete="hasMeeds"
       editable
       step="1">
       {{ $t('approveMeeds') }}
@@ -41,7 +41,7 @@
         class="mb-12"
         flat>
         <v-card-text>
-          {{ $t('approveMeedsDescription', {0: meedsBalanceNoDecimals}) }}
+          {{ $t('approveMeedsDescription', {0: meedsBalanceToDisplay}) }}
           <v-text-field
             v-model="allowance"
             :rules="allowanceValueValidator"
@@ -153,7 +153,6 @@ export default {
     language: state => state.language,
     etherBalance: state => state.etherBalance,
     meedsBalance: state => state.meedsBalance,
-    meedsBalanceNoDecimals: state => state.meedsBalanceNoDecimals,
     meedsStakeAllowance: state => state.meedsStakeAllowance,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
@@ -239,8 +238,11 @@ export default {
     isStakeAmountValid() {
       return !this.stakeAmount || (this.isStakeAmountNumeric && this.isStakeAmountLessThanMax && this.hasSufficientGas);
     },
-    maxMeedsBalanceNoDecimals() {
-      return this.$ethUtils.fromDecimals(this.meedsBalance, 18);
+    hasMeeds() {
+      return this.meedsBalance && !this.meedsBalance.isZero();
+    },
+    meedsBalanceToDisplay() {
+      return this.meedsBalance && this.$ethUtils.computeTokenBalanceNoDecimals(this.meedsBalance, 2, this.language) || 0;
     },
     maxMeedsAllowanceNoDecimals() {
       return this.$ethUtils.fromDecimals(this.meedsStakeAllowance, 18);
@@ -249,7 +251,7 @@ export default {
       return [
         () => !!this.hasSufficientGas || this.$t('insufficientTransactionFee'),
         () => !!this.isAllowanceValueNumeric || this.$t('valueMustBeNumeric'),
-        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxMeedsBalanceNoDecimals}),
+        () => !!this.isAllowanceLessThanMax || this.$t('valueMustBeLessThan', {0: this.meedsBalanceToDisplay}),
       ];
     },
     stakeAmountValidator() {
