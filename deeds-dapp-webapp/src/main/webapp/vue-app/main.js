@@ -224,7 +224,6 @@ const store = new Vuex.Store({
     etherBalance: null,
     meedsBalance: null,
     polygonMeedsBalance: null,
-    meedsBalanceNoDecimals: null,
     meedsRouteAllowance: null,
     meedsStakeAllowance: null,
     meedsTotalSupply: null,
@@ -236,7 +235,6 @@ const store = new Vuex.Store({
     meedsPendingBalanceOfXMeeds: null,
     now: Date.now(),
     xMeedsBalance: null,
-    xMeedsBalanceNoDecimals: null,
     pointsBalance: null,
     ownedNfts: null,
     selectedFiatCurrency,
@@ -313,8 +311,6 @@ const store = new Vuex.Store({
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
       initializeVueApp(language);
-      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
-      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 2, state.language);
     },
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;
@@ -324,7 +320,6 @@ const store = new Vuex.Store({
     },
     setMeedsBalance(state, meedsBalance) {
       state.meedsBalance = meedsBalance;
-      state.meedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.meedsBalance, 2, state.language);
     },
     setPolygonMeedsBalance(state, balance) {
       state.polygonMeedsBalance = balance;
@@ -334,7 +329,7 @@ const store = new Vuex.Store({
     },
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
-      state.xMeedsBalanceNoDecimals = ethUtils.computeTokenBalanceNoDecimals(state.xMeedsBalance, 2, state.language);
+      state.loadingXMeedsBalance = false;
     },
     loadPointsPeriodically() {
       window.setInterval(() => this.commit('loadPointsBalance'), 20000);
