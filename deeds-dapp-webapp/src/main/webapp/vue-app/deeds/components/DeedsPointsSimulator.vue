@@ -71,7 +71,6 @@ export default {
     language: state => state.language,
     tokenLoading: state => state.tokenLoading,
     xMeedsBalance: state => state.xMeedsBalance,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     dailyPoints() {
       if (!this.xMeedAmount) {
         return 0;
@@ -95,11 +94,11 @@ export default {
     },
   }),
   watch: {
-    xMeedsBalanceNoDecimals: {
+    xMeedsBalance: {
       immediate: true,
       handler() {
-        if (this.xMeedAmount === 100000 && this.xMeedsBalanceNoDecimals) {
-          this.xMeedAmount = parseInt(this.xMeedsBalanceNoDecimals);
+        if ((!this.xMeedAmount || this.xMeedAmount === 100000) && this.xMeedsBalance) {
+          this.xMeedAmount = this.$ethUtils.fromDecimals(this.xMeedsBalance, 18);
         }
       },
     },

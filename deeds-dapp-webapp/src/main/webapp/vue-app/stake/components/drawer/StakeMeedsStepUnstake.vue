@@ -71,7 +71,6 @@ export default {
     language: state => state.language,
     etherBalance: state => state.etherBalance,
     xMeedsBalance: state => state.xMeedsBalance,
-    xMeedsBalanceNoDecimals: state => state.xMeedsBalanceNoDecimals,
     provider: state => state.provider,
     xMeedContract: state => state.xMeedContract,
     transactionGas: state => state.transactionGas,
@@ -84,6 +83,9 @@ export default {
     },
     disabledUnstakeButton() {
       return !this.unstakeAmount || !Number(this.unstakeAmount) || !this.isUnstakeAmountValid || this.sendingUnstake;
+    },
+    xMeedsBalanceNoDecimals() {
+      return this.xMeedsBalance && this.$ethUtils.computeTokenBalanceNoDecimals(this.xMeedsBalance, 2, this.language) || 0;
     },
     hasSufficientGas() {
       if (!this.unstakeAmount) {
