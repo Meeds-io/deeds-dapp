@@ -254,6 +254,7 @@ const store = new Vuex.Store({
     addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
     rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
     isMobile: false,
+    poolsChanged: 2,
   },
   mutations: {
     setMobile(state, value) {
@@ -532,9 +533,14 @@ const store = new Vuex.Store({
               user[key] = userInfo[key];
             }
           });
-          pool.userInfo = user;
+          return pool.contract.balanceOf(state.address)
+            .then(balance => user.lpBalance = balance)
+            .finally(() => pool.userInfo = user);
         })
-        .finally(() => pool.loadingUserInfo = false);
+        .finally(() => {
+          pool.loadingUserInfo = false;
+          state.poolsChanged++;
+        });
     },
     loadLPApy(state, pool) {
       const promises = [];
