@@ -18,33 +18,67 @@
 -->
 <template>
   <deeds-token-asset-template v-if="hasStakedToken">
+    <template #image>
+      <v-img
+        :src="imageSrc"
+        max-height="40px"
+        max-width="40px"
+        class="ps-1"
+        contain
+        eager />
+    </template>
     <template #col1>
       <deeds-tab-link
         :label="poolName"
         tab-link="farm"
-        class="ms-n4 my-n1" />
-    </template>
-    <template #col2>
-      <div
-        class="d-flex">
-        <deeds-number-format
-          :value="lpStaked"
-          :fractions="2" />
-        <span class="mx-1 text-no-wrap"> {{ lpSymbol }}  </span>
-      </div>
+        class="ms-n4" />
     </template>
     <template #col3>
+      <div class="d-flex">
+        <v-badge
+          overlap
+          color="transparent"
+          :value="hasUnstakedLp">
+          <template #badge>
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <div
+                  class="red rounded-circle ms-1 lp-badge"
+                  v-bind="attrs"
+                  v-on="on">
+                </div>
+              </template>
+              <div class="d-flex flex-nowrap">
+                <deeds-number-format
+                  :value="lpBalance"
+                  :fractions="2"
+                  class="me-1">
+                  {{ lpSymbol }}
+                </deeds-number-format>
+                {{ $t('availableToStake') }}
+              </div>
+            </v-tooltip>
+          </template>
+          <deeds-number-format
+            :value="lpStaked"
+            :fractions="2">
+            {{ lpSymbol }}
+          </deeds-number-format>
+        </v-badge>
+      </div>
+    </template>
+    <template #col2>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <div
-            class="d-flex flex-nowrap"
+            class="d-flex flex-nowrap me-auto"
             v-bind="attrs"
             v-on="on">
             <span class="mx-1">+</span>
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
               :fractions="2" />
-            <span class="mx-1 text-no-wrap">MEED / {{ $t('week') }}</span>
+            <span class="mx-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
         <span v-if="noMeedSupplyForLPRemaining">
@@ -77,19 +111,26 @@ export default {
     },
   },
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
+    comethPairAddress: state => state.comethPairAddress,
     isSushiswapPool() {
       return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
     },
     isUniswapPool() {
       return this.univ2PairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.univ2PairAddress.toUpperCase();
     },
+    isComethPool() {
+      return this.comethPairAddress && this.pool?.address?.toUpperCase() === this.comethPairAddress.toUpperCase();
+    },
     poolName() {
       if (this.isSushiswapPool) {
-        return 'Sushiswap';
+        return this.$t('poolFarming', {0: 'Sushiswap'});
       } else if (this.isUniswapPool) {
-        return 'Uniswap';
+        return this.$t('poolFarming', {0: 'Uniswap'});
+      } else if (this.isComethPool) {
+        return this.$t('poolFarming', {0: 'Cometh'});
       }
       return this.lpSymbol;
     },
@@ -104,6 +145,18 @@ export default {
     },
     lpStaked() {
       return this.userInfo && this.userInfo.amount || new BigNumber(0);
+    },
+    lpBalance() {
+      return this.userInfo?.lpBalance || 0;
+    },
+    lpBalanceNoDecimals() {
+      return this.lpBalance && this.$ethUtils.fromDecimals(this.lpBalance, 18);
+    },
+    hasUnstakedLp() {
+      return this.lpBalance && !this.lpBalance.isZero() && this.lpBalance.gte(ethers.BigNumber.from('10000000000000000'));
+    },
+    hasStakedToken() {
+      return this.lpStaked && !this.lpStaked.isZero();
     },
     userStakedEquivalentMeeds() {
       return this.lpStaked && !this.lpStaked.isZero()
@@ -141,8 +194,10 @@ export default {
       }
       return 0;
     },
-    hasStakedToken() {
-      return this.lpStaked && !this.lpStaked.isZero();
+    imageSrc() {
+      return this.isSushiswapPool && `/${this.parentLocation}/static/images/sushiswap.ico`
+        || this.isComethPool && `/${this.parentLocation}/static/images/cometh.ico`
+        || '';
     },
   }),
 };

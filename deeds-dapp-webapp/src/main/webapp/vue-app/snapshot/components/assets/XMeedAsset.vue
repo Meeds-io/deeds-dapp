@@ -18,20 +18,28 @@
 -->
 <template>
   <deeds-token-asset-template>
+    <template #image>
+      <v-img
+        :src="`/${parentLocation}/static/images/xMeedsToken.png`"
+        max-height="40px"
+        max-width="40px"
+        contain
+        eager />
+    </template>
     <template #col1>
       <deeds-tab-link
         label="xMeeds"
         tab-link="stake"
-        class="ms-n4 my-n1" />
+        class="ms-n4" />
     </template>
-    <template #col2>
+    <template #col3>
       <deeds-number-format
         :value="xMeedsBalance"
         :fractions="2">
-        xMEED
+        xⱮ
       </deeds-number-format>
     </template>
-    <template #col3>
+    <template #col2>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <div
@@ -42,7 +50,7 @@
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
               :fractions="2" />
-            <span class="mx-1">MEED / {{ $t('week') }}</span>
+            <span class="mx-1">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
         <span v-if="maxMeedSupplyReached">
@@ -69,6 +77,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     xMeedAddress: state => state.xMeedAddress,
     xMeedsBalance: state => state.xMeedsBalance,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
