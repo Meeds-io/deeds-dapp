@@ -43,7 +43,7 @@
               hide-details
               outlined
               dense
-              style="max-width: 185px"
+              style="max-width: 220px"
               dir="rtl" />
             <label for="xMeedAmount" class="my-auto">xMEED</label>
           </div>
