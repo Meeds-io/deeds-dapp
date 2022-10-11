@@ -44,14 +44,14 @@
       </v-toolbar-title>
       <v-spacer />
       <template v-if="validNetwork && address">
-        <div class="ms-4 d-none d-sm-inline-block">
+        <div class="ms-4 d-none d-md-inline-block">
           <deeds-topbar-address-selector v-if="address" />
         </div>
-        <div class="ms-4 d-none d-sm-inline-block">
+        <div class="ms-4 d-none d-md-inline-block">
           <deeds-topbar-gas-price />
         </div>
       </template>
-      <div v-else-if="!appLoading" class="ms-4 d-none d-sm-block">
+      <div v-else-if="!appLoading" class="ms-4 d-none d-md-block">
         <deeds-metamask-button />
       </div>
       <div class="ms-4">

@@ -17,8 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row class="ms-4 d-flex flex-row">
-    <v-col class="pa-0" align-self="start">
+  <v-row class="ps-4 ma-0 d-flex flex-row">
+    <v-col
+      cols="auto"
+      class="pa-0 me-4"
+      align-self="start">
       <v-img 
         height="100px"
         width="140px"
@@ -26,23 +29,19 @@
         contain
         eager />
     </v-col>
-    <v-col cols="9">
-      <v-card flat>
-        <v-card-text class="py-0">
+    <v-col align-self="end" class="pa-0 me-4">
+      <v-card min-width="240" flat>
+        <v-card-text class="pa-0">
           {{ $t('noTokensDescription') }}
         </v-card-text>
-        <v-card-text class="d-flex">
-          <div class="pe-1">
-            {{ $t('see') }}
-          </div>
+        <v-card-text class="px-0 text-no-wrap">
+          {{ $t('see') }}
           <a
             class="text-decoration-underline"
             @click="$root.$emit('switch-page', 'stake')">
             {{ $t('there') }}
           </a>
-          <div class="ps-1">
-            {{ $t('moreInformation') }}
-          </div>
+          {{ $t('moreInformation') }}
         </v-card-text>
       </v-card>
     </v-col>

@@ -32,8 +32,11 @@
         :key="nft.id"
         :deed="nft" />
     </div>
-    <v-row v-else class="ms-4 pt-4 d-flex flex-row">
-      <v-col class="pa-0" align-self="start">
+    <v-row v-else class="ps-4 ma-0 pt-4 d-flex flex-row">
+      <v-col
+        cols="auto"
+        class="pa-0 mb-4 me-4"
+        align-self="start">
         <v-img 
           height="100px"
           width="140px"
@@ -41,24 +44,18 @@
           contain
           eager />
       </v-col>
-      <v-col cols="9">
-        <v-card flat>
-          <v-card-text class="py-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
-          <v-card-text class="d-flex">
-            <div class="pe-1">
-              {{ $t('howGetDeed') }}
-            </div>
-            <div class="pe-1">
-              {{ $t('see') }}
-            </div>
+      <v-col align-self="end" class="pa-0 me-4">
+        <v-card min-width="240" flat>
+          <v-card-text class="pa-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+          <v-card-text class="px-0">
+            {{ $t('howGetDeed') }}
+            {{ $t('see') }}
             <a
               class="text-decoration-underline"
               @click="$root.$emit('switch-page', 'deeds')">
               {{ $t('there') }}
             </a>
-            <div class="ps-1">
-              {{ $t('moreInformation') }}
-            </div>
+            {{ $t('moreInformation') }}
           </v-card-text>
         </v-card>
       </v-col>
