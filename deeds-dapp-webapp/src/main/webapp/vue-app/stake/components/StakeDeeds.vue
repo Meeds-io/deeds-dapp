@@ -30,8 +30,22 @@
         outlined
         text
         @click="$root.$emit('switch-page', 'deeds')">
+        <v-img
+          :src="`/${parentLocation}/static/images/deed.png`"
+          height="30"
+          max-width="24"
+          class="me-2"
+          contain
+          eager />
         <span class="text-none">{{ $t('myDeeds') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
