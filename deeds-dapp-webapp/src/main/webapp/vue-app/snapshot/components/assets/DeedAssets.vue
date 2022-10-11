@@ -32,34 +32,16 @@
         :key="nft.id"
         :deed="nft" />
     </div>
-    <v-row v-else class="ps-4 ma-0 pt-4 d-flex flex-row">
-      <v-col
-        cols="auto"
-        class="pa-0 mb-4 me-4"
-        align-self="start">
-        <v-img 
-          height="100px"
-          width="140px"
-          :src="`/${parentLocation}/static/images/deeds.png`"
-          contain
-          eager />
-      </v-col>
-      <v-col align-self="end" class="pa-0 me-4">
-        <v-card min-width="240" flat>
-          <v-card-text class="pa-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
-          <v-card-text class="px-0">
-            {{ $t('howGetDeed') }}
-            {{ $t('see') }}
-            <a
-              class="text-decoration-underline"
-              @click="$root.$emit('switch-page', 'deeds')">
-              {{ $t('there') }}
-            </a>
-            {{ $t('moreInformation') }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <deeds-empty-assets
+      v-else
+      id="emptyDeedAssets"
+      image-desktop="deeds.png"
+      image-mobile="deed.png"
+      description-part1="noDeedsDescriptionPart1"
+      description-part2="noDeedsDescriptionPart2"
+      link-part1="becomingADeedOwner"
+      link-part2="deedTabLink"
+      target-tab="deeds" />
   </v-list>
 </template>
 <script>
