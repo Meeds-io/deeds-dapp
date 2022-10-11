@@ -28,7 +28,7 @@
 export default {
   computed: {
     isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
+      return this.$vuetify.breakpoint.xsOnly;
     },
   },
   watch: {

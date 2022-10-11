@@ -21,7 +21,7 @@ import PriceChart from './components/charts/PriceChart.vue';
 import TradeMeeds from './components/TradeMeeds.vue';
 import Assets from './components/Assets.vue';
 import TokenAssets from './components/assets/TokenAssets.vue';
-import EmptyTokenAssets from './components/assets/EmptyTokenAssets.vue';
+import EmptyAssets from './components/assets/EmptyAssets.vue';
 import TokenAssetTemplate from './components/assets/TokenAssetTemplate.vue';
 import LiquidityPoolAsset from './components/assets/LiquidityPoolAsset.vue';
 import XMeedAsset from './components/assets/XMeedAsset.vue';
@@ -38,7 +38,7 @@ const components = {
   'deeds-trade-meeds': TradeMeeds,
   'deeds-assets': Assets,
   'deeds-token-assets': TokenAssets,
-  'deeds-empty-token-assets': EmptyTokenAssets,
+  'deeds-empty-assets': EmptyAssets,
   'deeds-token-asset-template': TokenAssetTemplate,
   'deeds-liquidity-pool-asset': LiquidityPoolAsset,
   'deeds-x-meed-asset': XMeedAsset,
