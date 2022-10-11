@@ -17,10 +17,15 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div
-    ref="echartCurrencies"
-    id="echartCurrencies"
-    class="d-flex align-center"></div>
+  <v-card flat class="d-flex flex-column">
+    <v-card-title v-if="isMobile" class="ps-0 py-0 mx-auto">
+      {{ $t('distribution') }}
+    </v-card-title>
+    <div
+      ref="echartCurrencies"
+      id="echartCurrencies"
+      class="d-flex align-center"></div>
+  </v-card>
 </template>
 <script>
 export default {
@@ -65,16 +70,6 @@ export default {
         });
       }
       const chartOptions = {
-        title: {
-          text: this.$t('distribution'),
-          textStyle: {
-            fontStyle: 'normal',
-            color: '#4d5466',
-            fontWeight: 'normal',
-            fontSize: '16',
-            textTransform: 'capitalize',
-          },
-        },
         tooltip: {
           trigger: 'item',
           show: true,
@@ -94,19 +89,27 @@ export default {
         color: ['#53BF9D', '#F94C66', '#BD4291', '#FFC54D']
       };
       if (this.isMobile) {
-        chartOptions.title.right = 'center';
-        chartOptions.title.top = '7px';
         chartOptions.legend.top = this.isMobile && '20px' || '0';
         chartOptions.legend.left = 'left';
         chartOptions.series[0].radius = '75%';
       } else {
-        chartOptions.title.left = '64%';
-        chartOptions.title.top = '44%';
-        chartOptions.title.textAlign = 'center';
         chartOptions.legend.display = false;
         chartOptions.legend.left = 82;
         chartOptions.legend.top = 12;
         chartOptions.series[0].radius = ['45%', '88%'];
+        chartOptions.title = {
+          text: this.$t('distribution'),
+          top: '44%',
+          left: '64%',
+          textAlign: 'center',
+          textStyle: {
+            fontStyle: 'normal',
+            color: '#4d5466',
+            fontWeight: 'normal',
+            fontSize: '16',
+            textTransform: 'capitalize',
+          },
+        };
       }
       return chartOptions;
     },

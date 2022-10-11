@@ -77,7 +77,7 @@
       </v-col>
       <v-col cols="12" md="6">
         <deeds-currencies-chart 
-          class="mt-15 ms-0 ms-sm-8"
+          class="mt-0 mt-md-15 ms-0 ms-sm-8"
           :metrics="metrics" />
       </v-col>
     </v-row>
