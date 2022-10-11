@@ -17,14 +17,17 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column-reverse flex-sm-row">
-    <div class="d-flex flex-column">
-      <deeds-stake-yield />
-      <deeds-stake-governance />
-      <deeds-stake-deeds />
-      <deeds-stake-contribute />
+  <div>
+    <deeds-stake-introduction />
+    <div class="d-flex flex-column-reverse flex-md-row">
+      <div class="d-flex flex-column ms-0 ms-md-8">
+        <deeds-stake-yield />
+        <deeds-stake-governance />
+        <deeds-stake-deeds />
+        <deeds-stake-contribute />
+      </div>
+      <deeds-stake-meeds class="mx-auto ms-md-auto me-md-0 mb-8 flex-shrink-0 flex-grow-1" />
     </div>
-    <deeds-stake-meeds class="mx-auto ms-sm-auto me-sm-0 mb-8 flex-shrink-0 flex-grow-1" />
   </div>
 </template>
 <script>
