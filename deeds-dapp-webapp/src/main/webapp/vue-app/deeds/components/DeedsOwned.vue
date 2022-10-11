@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <h3 class="d-flex flex-nowrap">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('yourDeeds') }}
       <v-divider class="my-auto ms-4" />
-    </h3>
+    </v-card-title>
     <template v-if="ownedNfts && ownedNfts.length">
       <deeds-move-in-drawer />
       <deeds-move-out-drawer />

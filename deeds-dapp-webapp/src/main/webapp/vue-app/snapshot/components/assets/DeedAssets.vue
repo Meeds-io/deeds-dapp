@@ -18,14 +18,15 @@
 -->
 <template>
   <v-list dense class="pb-4 pb-sm-0">
-    <v-list-item>
-      <h4>{{ $t('yourDeeds') }}</h4>
-    </v-list-item>
+    <v-card-title class="d-flex flex-nowrap pa-0">
+      {{ $t('yourDeeds') }}
+    </v-card-title>
     <v-skeleton-loader
       v-if="deedLoading"
       type="image"
-      class="mx-auto ma-2"
-      max-width="90%" />
+      class="me-4 my-2"
+      max-width="100%"
+      max-height="80px" />
     <div v-else-if="ownedNfts && ownedNfts.length">
       <deeds-deed-asset 
         v-for="nft in nftsByCardType"

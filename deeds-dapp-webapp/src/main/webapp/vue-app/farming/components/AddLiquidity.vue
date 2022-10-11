@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 pt-0">
       {{ $t('addLiquidity') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 pt-0">
       {{ $t('addLiquidityIntroduction') }}
     </v-card-text>
     <v-bottom-navigation

@@ -18,13 +18,13 @@
 -->
 <template>
   <v-card flat class="d-flex flex-column">
-    <h3 class="d-flex flex-nowrap">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
         :address="deedAddress"
         token />
       <v-divider class="my-auto ms-4" />
-    </h3>
+    </v-card-title>
     <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
     <template v-if="xMeedAddress">
       <v-skeleton-loader

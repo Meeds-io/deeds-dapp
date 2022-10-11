@@ -18,14 +18,15 @@
 -->
 <template>
   <v-list dense class="pb-4">
-    <v-list-item>
-      <h4>{{ $t('yourTokens') }}</h4>
-    </v-list-item>
+    <v-card-title class="d-flex flex-nowrap pa-0">
+      {{ $t('yourTokens') }}
+    </v-card-title>
     <v-skeleton-loader
       v-if="loading"
       type="image"
-      class="mx-auto ma-2"
-      max-width="90%" />
+      class="me-4 my-2"
+      max-width="100%"
+      max-height="80px" />
     <div v-else-if="hasTokens">
       <deeds-meed-asset v-if="hasMeedBalance" />
       <deeds-polygon-meed-asset v-if="hasPolygonMeedBalance" />
