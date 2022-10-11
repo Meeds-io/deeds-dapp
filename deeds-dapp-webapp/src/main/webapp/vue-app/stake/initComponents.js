@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import Stake from './components/Stake.vue';
+import StakeIntroduction from './components/StakeIntroduction.vue';
 import StakeDeeds from './components/StakeDeeds.vue';
 import StakeGovernance from './components/StakeGovernance.vue';
 import StakeYield from './components/StakeYield.vue';
@@ -28,6 +29,7 @@ import StakeMeedsStepUnstake from './components/drawer/StakeMeedsStepUnstake.vue
 
 const components = {
   'deeds-stake': Stake,
+  'deeds-stake-introduction': StakeIntroduction,
   'deeds-stake-deeds': StakeDeeds,
   'deeds-stake-governance': StakeGovernance,
   'deeds-stake-yield': StakeYield,
