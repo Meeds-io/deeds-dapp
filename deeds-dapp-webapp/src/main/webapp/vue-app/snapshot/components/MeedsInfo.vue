@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <h3 class="d-flex flex-nowrap">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('meedToken') }}
       <v-divider class="my-auto ms-4" />
-    </h3>
+    </v-card-title>
     <v-row>
       <v-col cols="12" sm="6">
         <v-list-item>

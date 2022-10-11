@@ -18,12 +18,12 @@
 -->
 <template>
   <div class="mb-4 mb-md-8">
-    <h3 class="d-flex flex-nowrap">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('assets') }}
       <v-divider class="my-auto ms-4" />
-    </h3>
-    <div class="d-flex flex-column flex-md-row">
-      <v-card flat class="assets">
+    </v-card-title>
+    <div class="d-flex flex-column flex-md-row mt-4">
+      <v-card flat class="assets ms-0 ms-md-8">
         <deeds-token-assets />
         <deeds-deed-assets />
       </v-card>
