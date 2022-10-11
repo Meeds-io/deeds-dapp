@@ -47,6 +47,22 @@
             @click="setMaxValue">
             {{ $t('max') }}
           </v-chip>
+          <v-img
+            v-if="buy"
+            :src="`/${parentLocation}/static/images/ether.svg`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-1 mt-2px"
+            contain
+            eager />
+          <v-img
+            v-else
+            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-1 mt-2px"
+            contain
+            eager />
           <div class="mt-1">
             {{ buy && 'ETH' || 'MEED' }}
           </div>
@@ -71,6 +87,22 @@
         disabled
         filled>
         <template #append>
+          <v-img
+            v-if="buy"
+            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-1 mt-2px"
+            contain
+            eager />
+          <v-img
+            v-else
+            :src="`/${parentLocation}/static/images/ether.svg`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-1 mt-2px"
+            contain
+            eager />
           <div class="mt-1">
             {{ buy && 'MEED' || 'ETH' }}
           </div>
@@ -125,6 +157,7 @@ export default {
     endTypingKeywordTimeout: 50,
     startTypingKeywordTimeout: 0,
     typing: false,
+    maxIconsSize: '20px',
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -143,6 +176,7 @@ export default {
     transactionGas: state => state.transactionGas,
     meedsRouteAllowance: state => state.meedsRouteAllowance,
     provider: state => state.provider,
+    parentLocation: state => state.parentLocation,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
     },
