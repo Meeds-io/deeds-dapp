@@ -17,23 +17,13 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <deeds-stake-introduction />
-    <div class="d-flex flex-column-reverse flex-md-row">
-      <div class="d-flex flex-column ms-0 ms-md-8">
-        <deeds-stake-yield />
-        <deeds-stake-governance />
-        <deeds-stake-deeds />
-        <deeds-stake-contribute />
-      </div>
-      <deeds-stake-meeds class="mx-auto ms-md-auto me-md-0 mb-8 flex-shrink-0 flex-grow-1" />
+  <v-card flat>
+    <div class="d-flex flex-row">
+      <v-card-title class="ps-0 py-0">{{ $t('becomeHolder') }}</v-card-title>
+      <v-divider class="my-auto" />
     </div>
-  </div>
+    <v-card-text class="ps-0">
+      {{ $t('becomeHolderDescription') }}
+    </v-card-text>
+  </v-card>
 </template>
-<script>
-export default {
-  created() {
-    this.$store.commit('loadRewardedFunds', true, true);
-  },
-};
-</script>
