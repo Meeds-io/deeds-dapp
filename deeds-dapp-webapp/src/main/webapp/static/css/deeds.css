@@ -84,6 +84,10 @@ html {
   margin-top: 2px !important;
 }
 
+.letter-spacing-normal {
+  letter-spacing: normal!important;
+}
+
 .bottom-navigation {
   z-index: 10 !important;
 }

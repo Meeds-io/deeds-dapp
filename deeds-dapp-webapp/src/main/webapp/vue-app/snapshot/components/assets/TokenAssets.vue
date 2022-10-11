@@ -36,7 +36,16 @@
         :pool="pool" />
       <deeds-liquidity-pool-asset :pool="comethPool" />
     </div>
-    <deeds-empty-token-assets v-else />
+    <deeds-empty-assets
+      v-else
+      id="emptyTokenAssets"
+      image-desktop="meeds.png"
+      image-mobile="meedsToken.png"
+      description-part1="noTokensDescriptionPart1"
+      description-part2="noTokensDescriptionPart2"
+      link-part1="becomingAHolderLink"
+      link-part2="stakeTabLink"
+      target-tab="stake" />
   </v-list>
 </template>
 <script>

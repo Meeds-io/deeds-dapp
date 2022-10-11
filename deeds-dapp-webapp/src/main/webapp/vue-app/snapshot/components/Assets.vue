@@ -17,17 +17,17 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="mb-4 mb-sm-8">
+  <div class="mb-4 mb-md-8">
     <h3 class="d-flex flex-nowrap">
       {{ $t('assets') }}
       <v-divider class="my-auto ms-4" />
     </h3>
-    <div class="d-flex flex-column flex-sm-row">
+    <div class="d-flex flex-column flex-md-row">
       <v-card flat class="assets">
         <deeds-token-assets />
         <deeds-deed-assets />
       </v-card>
-      <deeds-trade-meeds class="mx-auto ms-sm-32 me-sm-15 mb-8 mb-sm-0 flex-shrink-0 flex-grow-0" />
+      <deeds-trade-meeds class="mx-auto ms-md-32 me-md-15 my-8 my-md-0 flex-shrink-0 flex-grow-0" />
     </div>
   </div>
 </template>
