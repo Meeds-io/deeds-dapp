@@ -18,6 +18,7 @@
  */
 import Deeds from './components/Deeds.vue';
 import DeedsNftIntroduction from './components/DeedsNftIntroduction.vue';
+import DeedsNftTitle from './components/DeedsNftTitle.vue';
 import DeedsPointsSimulator from './components/DeedsPointsSimulator.vue';
 import DeedsEarnedPoints from './components/DeedsEarnedPoints.vue';
 import DeedsRedeem from './components/DeedsRedeem.vue';
@@ -33,6 +34,7 @@ import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
 const components = {
   'deeds-deeds': Deeds,
   'deeds-nft-introduction': DeedsNftIntroduction,
+  'deeds-nft-title': DeedsNftTitle,
   'deeds-points-simulator': DeedsPointsSimulator,
   'deeds-earned-points': DeedsEarnedPoints,
   'deeds-redeem': DeedsRedeem,
