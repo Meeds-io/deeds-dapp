@@ -17,27 +17,18 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <deeds-nft-title />
-    <template v-if="!noCityLeft">
-      <div class="d-flex flex-column-reverse flex flex-md-row mb-8">
-        <div class="d-flex flex-column ms-0 ms-md-8">
-          <deeds-nft-introduction />
-          <deeds-points-simulator />
-        </div>
-        <deeds-earned-points class="ms-md-auto me-md-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
-      </div>
-    </template>
-    <deeds-owned v-if="!noCityLeft && !metamaskOffline" />
-    <deeds-redeem class="mb-8" />
-    <deeds-trade />
-  </div>
+  <v-card flat>
+    <div class="d-flex flex-row">
+      <v-card-title class="ps-0 py-0">{{ $t('becomeDeedOwner') }}</v-card-title>
+      <v-divider class="my-auto" />
+    </div>
+    <v-card-text class="ps-0" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+  </v-card>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
-    noCityLeft: state => state.noCityLeft,
-    metamaskOffline: state => state.metamaskOffline,
+    whitepaperLink: state => state.whitepaperLink,
   }),
 };
 </script>
