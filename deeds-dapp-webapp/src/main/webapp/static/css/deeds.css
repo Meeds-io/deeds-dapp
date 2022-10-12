@@ -84,6 +84,12 @@ html {
   margin-top: 2px !important;
 }
 
+.embedded-link-text {
+  display: inline;
+  line-height: inherit;
+  vertical-align: inherit;
+}
+
 .letter-spacing-normal {
   letter-spacing: normal!important;
 }
