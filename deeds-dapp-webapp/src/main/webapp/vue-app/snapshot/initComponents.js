@@ -22,7 +22,6 @@ import TradeMeeds from './components/TradeMeeds.vue';
 import Assets from './components/Assets.vue';
 import TokenAssets from './components/assets/TokenAssets.vue';
 import EmptyAssets from './components/assets/EmptyAssets.vue';
-import TokenAssetTemplate from './components/assets/TokenAssetTemplate.vue';
 import LiquidityPoolAsset from './components/assets/LiquidityPoolAsset.vue';
 import XMeedAsset from './components/assets/XMeedAsset.vue';
 import MeedAsset from './components/assets/MeedAsset.vue';
@@ -31,6 +30,11 @@ import DeedAssets from './components/assets/DeedAssets.vue';
 import DeedAsset from './components/assets/DeedAsset.vue';
 import MeedsInfo from './components/MeedsInfo.vue';
 import CurrenciesChart from './components/charts/CurrenciesChart.vue';
+import MarketCap from './components/metrics/MarketCap.vue';
+import MaxSupply from './components/metrics/MaxSupply.vue';
+import TotalSupply from './components/metrics/TotalSupply.vue';
+import TotalValueLocked from './components/metrics/TotalValueLocked.vue';
+import MeedPrice from './components/metrics/MeedPrice.vue';
 
 const components = {
   'deeds-overview': Overview,
@@ -39,7 +43,6 @@ const components = {
   'deeds-assets': Assets,
   'deeds-token-assets': TokenAssets,
   'deeds-empty-assets': EmptyAssets,
-  'deeds-token-asset-template': TokenAssetTemplate,
   'deeds-liquidity-pool-asset': LiquidityPoolAsset,
   'deeds-x-meed-asset': XMeedAsset,
   'deeds-meed-asset': MeedAsset,
@@ -48,6 +51,11 @@ const components = {
   'deeds-deed-asset': DeedAsset,
   'deeds-meeds-info': MeedsInfo,
   'deeds-currencies-chart': CurrenciesChart,
+  'deeds-market-cap': MarketCap,
+  'deeds-max-supply': MaxSupply,
+  'deeds-total-supply': TotalSupply,
+  'deeds-total-value-locked': TotalValueLocked,
+  'deeds-meed-price': MeedPrice,
 };
 
 for (const key in components) {
