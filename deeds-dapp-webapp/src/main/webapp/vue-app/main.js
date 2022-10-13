@@ -227,6 +227,7 @@ const store = new Vuex.Store({
     meedsRouteAllowance: null,
     meedsStakeAllowance: null,
     meedsTotalSupply: null,
+    meedsMaxTotalSupply: new BigNumber('100000000000000000000000000'),
     maxMeedSupplyReached: null,
     noMeedSupplyForLPRemaining: null,
     remainingMeedSupply: null,
@@ -655,8 +656,8 @@ const store = new Vuex.Store({
             await state.meedContract.allowance(state.address, state.sushiswapRouterAddress).then(balance => state.meedsRouteAllowance = balance);
             await state.meedContract.totalSupply().then(totalSupply => {
               state.meedsTotalSupply = totalSupply;
-              state.maxMeedSupplyReached = totalSupply.gte('100000000000000000000000000');
-              if (totalSupply.gte('100000000000000000000000000')) {
+              state.maxMeedSupplyReached = totalSupply.gte(state.meedsMaxTotalSupply.toFixed(0));
+              if (state.maxMeedSupplyReached) {
                 state.meedContract.balanceOf(state.tokenFactoryAddress).then(balance => {
                   state.noMeedSupplyForLPRemaining = !balance || balance.isZero();
                 });

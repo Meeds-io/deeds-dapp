@@ -22,6 +22,7 @@ import ContractAddress from './components/ContractAddress.vue';
 import TabLink from './components/TabLink.vue';
 import MetamaskButton from './components/MetamaskButton.vue';
 import CardCarousel from './components/CardCarousel.vue';
+import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -30,6 +31,7 @@ const components = {
   'deeds-metamask-button': MetamaskButton,
   'deeds-tab-link': TabLink,
   'deeds-card-caroussel': CardCarousel,
+  'deeds-token-asset-template': TokenAssetTemplate,
 };
 
 for (const key in components) {
