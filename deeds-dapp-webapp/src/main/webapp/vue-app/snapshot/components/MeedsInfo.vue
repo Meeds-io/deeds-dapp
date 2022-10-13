@@ -23,56 +23,48 @@
       <v-divider class="my-auto ms-4" />
     </v-card-title>
     <v-row>
-      <v-col cols="12" sm="6">
-        <v-list-item>
-          <v-list-item-content class="align-start">
-            <h4>{{ $t('marketCap') }}</h4>
-          </v-list-item-content>
-          <v-list-item-content class="align-end">
-            {{ marketCap }}
-          </v-list-item-content>
-        </v-list-item>
+      <v-col
+        cols="12"
+        md="5"
+        class="ps-md-0 py-0">
+        <deeds-max-supply />
       </v-col>
-      <v-col cols="12" sm="6">
-        <v-list-item>
-          <v-list-item-content class="align-end">
-            <h4>{{ $t('circulatingSupply') }}</h4>
-          </v-list-item-content>
-          <v-list-item-content class="align-end">
-            <deeds-number-format
-              :value="circulatingSupply"
-              :fractions="2"
-              no-decimals>
-              MEED
-            </deeds-number-format>
-          </v-list-item-content>
-        </v-list-item>
+      <v-col
+        cols="12"
+        md="5"
+        offset="0"
+        offset-md="2"
+        class="py-0">
+        <deeds-market-cap :metrics="metrics" />
       </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" sm="6">
-        <v-list-item>
-          <v-list-item-content class="align-start">
-            <h4>{{ $t('meedPrice') }}</h4>
-          </v-list-item-content>
-          <v-list-item-content class="align-end">
-            {{ meedsPriceToDisplay }}
-          </v-list-item-content>
-        </v-list-item>
+      <v-col
+        cols="12"
+        md="5"
+        class="ps-md-0 py-0">
+        <deeds-total-supply :metrics="metrics" />
       </v-col>
-      <v-col cols="12" sm="6">
-        <v-list-item>
-          <v-list-item-content class="align-end">
-            <h4>TVL</h4>
-          </v-list-item-content>
-          <v-list-item-content class="align-end">
-            {{ totalValuelocked }}
-          </v-list-item-content>
-        </v-list-item>
+      <v-col
+        cols="12"
+        md="5"
+        offset="0"
+        offset-md="2"
+        class="py-0">
+        <deeds-total-value-locked :metrics="metrics" />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12" md="6">
+    <v-row class="pb-0 pt-6">
+      <v-col
+        cols="12"
+        md="5"
+        class="ps-md-0 py-0 pb-0">
+        <deeds-meed-price />
+      </v-col>
+    </v-row>
+    <v-row class="pt-0">
+      <v-col
+        cols="12"
+        md="6"
+        class="pt-0">
         <deeds-price-chart class="mb-4 mb-sm-8" />
       </v-col>
       <v-col cols="12" md="6">
@@ -89,36 +81,7 @@ export default {
     metrics: null,
   }),
   computed: Vuex.mapState({
-    meedPrice: state => state.meedPrice,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
-    language: state => state.language,
-    selectedFiatCurrencyLabel() {
-      return this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
-    },
-    meedsPriceToDisplay() {
-      if (this.meedPrice) {
-        return this.currencyFormat(this.meedPrice);
-      } else {
-        return '';
-      }
-    },
-    circulatingSupply() {
-      return this.metrics?.circulatingSupply;
-    },
-    marketCap() {
-      if (this.metrics) {
-        return this.currencyFormat(this.metrics.marketCapitalization);
-      } else {
-        return '';
-      }
-    },
-    totalValuelocked() {
-      if (this.metrics) {
-        return this.currencyFormat(this.metrics.totalValuelocked);
-      } else {
-        return '';
-      }
-    },
   }),
   watch: {
     selectedFiatCurrency() {
@@ -134,14 +97,6 @@ export default {
         .then(metrics => {
           this.metrics = metrics;
         });
-    },
-    currencyFormat(currencyValue) {
-      const value = currencyValue && currencyValue.value || currencyValue;
-      if (this.selectedFiatCurrency === 'eth') {
-        return `${this.$ethUtils.toFixed(value, 8)} ${this.selectedFiatCurrencyLabel}`;
-      } else {
-        return this.$ethUtils.toCurrencyDisplay(this.$ethUtils.toFixed(value, 2), this.selectedFiatCurrency, this.language);
-      }
     },
   }
 };
