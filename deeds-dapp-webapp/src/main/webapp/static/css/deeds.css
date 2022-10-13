@@ -22,6 +22,7 @@ html {
 
 #banner {
   border-bottom: 1px #eee solid !important;
+  z-index: 15;
 }
 
 .siteContentLayout {
