@@ -27,9 +27,9 @@ import org.web3j.tuples.generated.Tuple5;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.contract.TenantProvisioningStrategy;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.deeds.model.DeedCity;
@@ -38,22 +38,22 @@ import io.meeds.deeds.model.FundInfo;
 @Component
 public class BlockchainService {
 
-  private TenantProvisioningStrategy tenantProvisioningStrategy;
+  private DeedTenantProvisioning deedTenantProvisioning;
 
-  private Deed                       deed;
+  private Deed                   deed;
 
-  private TokenFactory               tokenFactory;
+  private TokenFactory           tokenFactory;
 
-  private XMeedsNFTRewarding         xMeedsToken;
+  private XMeedsNFTRewarding     xMeedsToken;
 
-  private MeedsToken                 ethereumToken;
+  private MeedsToken             ethereumToken;
 
-  private MeedsToken                 polygonToken;
+  private MeedsToken             polygonToken;
 
-  private ERC20                      sushiPairToken;
+  private ERC20                  sushiPairToken;
 
   public BlockchainService(
-                           TenantProvisioningStrategy tenantProvisioningStrategy,
+                           DeedTenantProvisioning deedTenantProvisioning,
                            Deed deed,
                            @Qualifier("ethereumMeedToken")
                            MeedsToken ethereumToken,
@@ -63,7 +63,7 @@ public class BlockchainService {
                            TokenFactory tokenFactory,
                            @Qualifier("sushiPairToken")
                            ERC20 sushiPairToken) {
-    this.tenantProvisioningStrategy = tenantProvisioningStrategy;
+    this.deedTenantProvisioning = deedTenantProvisioning;
     this.deed = deed;
     this.ethereumToken = ethereumToken;
     this.polygonToken = polygonToken;
@@ -81,7 +81,7 @@ public class BlockchainService {
    * @return true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
-    return blockchainCall(tenantProvisioningStrategy.isProvisioningManager(address, BigInteger.valueOf(nftId)));
+    return blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
   /**
