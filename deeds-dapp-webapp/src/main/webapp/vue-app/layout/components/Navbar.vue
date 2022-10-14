@@ -116,6 +116,7 @@
 export default {
   data: () => ({
     selectedTab: null,
+    avoidAddToHistory: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -125,16 +126,25 @@ export default {
     }
   }),
   created() {
-    const href = window.location.pathname;
-    const hrefParts = href.split('/');
-    if (this.isMobile) {
-      this.selectedTab = hrefParts[hrefParts.length - 1];
-    } else {
-      this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
-    }
+    this.initSelectedTab();
     this.$root.$on('switch-page', this.switchPage);
+    window.addEventListener('popstate', (event) => this.initSelectedTab(event));
   },
   methods: {
+    initSelectedTab(event) {
+      const href = window.location.pathname;
+      const hrefParts = href.split('/');
+      if (event) {
+        this.avoidAddToHistory = true;
+        this.switchPage(hrefParts[hrefParts.length - 1] || 'overview');
+      } else {
+        if (this.isMobile) {
+          this.selectedTab = hrefParts[hrefParts.length - 1];
+        } else {
+          this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
+        }
+      }
+    },
     switchPage(tab) {
       if (tab && this.$refs[tab]) {
         this.$refs[tab].$el.click();
@@ -146,7 +156,10 @@ export default {
         event.stopPropagation();
         const link = event.target.href || event.target.parentElement && (event.target.parentElement.href || (event.target.parentElement.parentElement && event.target.parentElement.parentElement.href));
         if (link) {
-          window.history.pushState({}, '', link);
+          if (!this.avoidAddToHistory) {
+            window.history.pushState({}, '', link);
+          }
+          this.avoidAddToHistory = false;
           this.$root.$emit('location-change', `/${event.target.id}`);
         }
         if (this.isMobile) {
