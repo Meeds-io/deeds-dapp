@@ -22,7 +22,6 @@ html {
 
 #banner {
   border-bottom: 1px #eee solid !important;
-  z-index: 15;
 }
 
 .siteContentLayout {
@@ -57,7 +56,6 @@ html {
 .priceChartPeriodSelector {
   position: absolute;
   top: 0;
-  z-index: 12;
   width: 100%;
 }
 
