@@ -151,8 +151,6 @@ const store = new Vuex.Store({
       'function lastCityMintingCompleteDate() public view returns (uint256)',
     ],
     nftABI: [
-      'event StartedUsingNFT(address indexed account, uint256 indexed id, address indexed strategy)',
-      'event EndedUsingNFT(address indexed account, uint256 indexed id, address indexed strategy)',
       'function totalSupply() public view returns (uint256)',
       'function totalSupply(uint256 _id) public view returns (uint256)',
       'function uri(uint256 _id) public view returns (string)',
@@ -180,6 +178,8 @@ const store = new Vuex.Store({
       'function pendingRewardBalanceOf(address _fundAddress, address _userAddress) public view returns (uint256)',
     ],
     tenantProvisioningABI: [
+      'event TenantStarted(address indexed manager, uint256 indexed nftId)',
+      'event TenantStopped(address indexed manager, uint256 indexed nftId)',
       'function startTenant(uint256 _nftId) external',
       'function stopTenant(uint256 _nftId) external',
       'function delegatee(uint256 _nftId) public view returns(address)',
@@ -291,7 +291,7 @@ const store = new Vuex.Store({
             state.tokenFactoryAddress = '0x13142F102152aBa8AD81281E7eC1374577D662EC';
             state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
             state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
-            state.tenantProvisioningAddress = '0x801FD0FB6f70FAF985410FCbc97FC72D0CC76d8C';
+            state.tenantProvisioningAddress = '0x238758516d1521a4aE108966104Aa1C5cC088220';
 
             // Opensea links
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;

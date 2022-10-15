@@ -28,9 +28,9 @@ import org.web3j.tx.ReadonlyTransactionManager;
 import org.web3j.tx.gas.StaticGasProvider;
 
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.contract.TenantProvisioningStrategy;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 
@@ -57,13 +57,12 @@ public class BlockchainConfiguration {
   }
 
   @Bean
-  public TenantProvisioningStrategy getTenantProvisioningStrategy(
-                                                                  @Qualifier("ethereumNetwork")
-                                                                  Web3j web3j) {
-    return TenantProvisioningStrategy.load(properties.getTenantProvisioningAddress(),
-                                           web3j,
-                                           getTransactionManager(web3j),
-                                           CONTRACT_GAS_PROVIDER);
+  public DeedTenantProvisioning getTenantProvisioningStrategy(@Qualifier("ethereumNetwork")
+  Web3j web3j) {
+    return DeedTenantProvisioning.load(properties.getTenantProvisioningAddress(),
+                                       web3j,
+                                       getTransactionManager(web3j),
+                                       CONTRACT_GAS_PROVIDER);
   }
 
   @Bean
