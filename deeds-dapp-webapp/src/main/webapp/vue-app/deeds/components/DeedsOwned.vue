@@ -111,7 +111,6 @@ export default {
     provider: state => state.provider,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     tenantProvisioningAddress: state => state.tenantProvisioningAddress,
-    deedContract: state => state.deedContract,
     nftsList() {
       return Object.values(this.nfts).sort((nft1, nft2) => nft2.id - nft1.id)
         .map(nft => Object.assign(nft, {
@@ -157,39 +156,13 @@ export default {
   created() {
     this.refreshAuthentication();
 
-    if (this.deedContract) {
+    if (this.tenantProvisioningContract) {
       // eslint-disable-next-line new-cap
-      const startedUsingNFT = this.deedContract.filters.StartedUsingNFT();
-      this.deedContract.on(startedUsingNFT, (address, nftId, strategyAddress) => {
-        if (address.toUpperCase() === this.address.toUpperCase()) {
-          if (strategyAddress.toUpperCase() === this.tenantProvisioningAddress.toUpperCase()) {
-            if (this.ownedNfts) {
-              const id = nftId.toNumber();
-              const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-              if (nft) {
-                Promise.resolve(this.loadStatus(nft))
-                  .finally(() => this.nfts = Object.assign({}, this.nfts));
-              }
-            }
-          }
-        }
-      });
+      this.tenantProvisioningContract.on(this.tenantProvisioningContract.filters.TenantStarted(),
+        this.refreshTenantStatus);
       // eslint-disable-next-line new-cap
-      const endedUsingNFT = this.deedContract.filters.EndedUsingNFT();
-      this.deedContract.on(endedUsingNFT, (address, nftId, strategyAddress) => {
-        if (address.toUpperCase() === this.address.toUpperCase()) {
-          if (strategyAddress.toUpperCase() === this.tenantProvisioningAddress.toUpperCase()) {
-            if (this.ownedNfts) {
-              const id = nftId.toNumber();
-              const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-              if (nft) {
-                Promise.resolve(this.loadStatus(nft))
-                  .finally(() => this.nfts = Object.assign({}, this.nfts));
-              }
-            }
-          }
-        }
-      });
+      this.tenantProvisioningContract.on(this.tenantProvisioningContract.filters.TenantStopped(),
+        this.refreshTenantStatus);
     }
 
     this.$root.$on('nft-status-changed', (id, status, statusLabel) => {
@@ -198,6 +171,7 @@ export default {
         nft.status = status;
         nft.statusLabel = statusLabel;
         this.nfts = Object.assign({}, this.nfts);
+        this.$forceUpdate();
       }
     });
   },
@@ -215,6 +189,18 @@ export default {
       this.$ethUtils.signMessage(this.provider, this.address, message)
         .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
         .finally(() => this.refreshAuthentication());
+    },
+    refreshTenantStatus(address, nftId) {
+      if (address.toUpperCase() === this.address.toUpperCase()) {
+        if (this.ownedNfts) {
+          const id = nftId.toNumber();
+          const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
+          if (nft) {
+            Promise.resolve(this.loadStatus(nft))
+              .finally(() => this.nfts = Object.assign({}, this.nfts));
+          }
+        }
+      }
     },
     reloadStatus() {
       if (this.ownedNfts && this.ownedNfts.length) {

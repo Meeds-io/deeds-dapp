@@ -38,9 +38,9 @@ import org.web3j.tuples.generated.Tuple5;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.contract.TenantProvisioningStrategy;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.deeds.model.DeedCity;
@@ -50,28 +50,28 @@ import io.meeds.deeds.model.FundInfo;
 class BlockchainServiceTest {
 
   @MockBean
-  private TenantProvisioningStrategy tenantProvisioningStrategy;
+  private DeedTenantProvisioning deedTenantProvisioning;
 
   @MockBean
-  private Deed                       deed;
+  private Deed                   deed;
 
   @MockBean(name = "ethereumMeedToken")
-  private MeedsToken                 ethereumToken;
+  private MeedsToken             ethereumToken;
 
   @MockBean(name = "polygonMeedToken")
-  private MeedsToken                 polygonToken;
+  private MeedsToken             polygonToken;
 
   @MockBean
-  private XMeedsNFTRewarding         xMeedsToken;
+  private XMeedsNFTRewarding     xMeedsToken;
 
   @MockBean
-  private TokenFactory               tokenFactory;
+  private TokenFactory           tokenFactory;
 
   @MockBean(name = "sushiPairToken")
-  private ERC20                      sushiPairToken;
+  private ERC20                  sushiPairToken;
 
   @Autowired
-  private BlockchainService          blockchainService;
+  private BlockchainService      blockchainService;
 
   @Test
   void testGetDeedCardType() throws Exception {
@@ -127,7 +127,7 @@ class BlockchainServiceTest {
 
     String walletAddress = "walletAddress";
 
-    when(tenantProvisioningStrategy.isProvisioningManager(any(), any())).thenAnswer(invocation -> {
+    when(deedTenantProvisioning.isProvisioningManager(any(), any())).thenAnswer(invocation -> {
       String address = invocation.getArgument(0, String.class);
       BigInteger nftId = invocation.getArgument(1, BigInteger.class);
       if (nftId == null || nftId.shortValue() == 0 || !StringUtils.equals(address, walletAddress)) {
