@@ -17,7 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-drawer ref="drawer">
+  <deeds-drawer
+    ref="drawer"
+    second-level
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <template #title>
       <h4>{{ $t('removeTenantTitle') }}</h4>
     </template>

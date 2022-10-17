@@ -20,6 +20,8 @@
   <v-navigation-drawer
     v-model="drawer"
     :width="width"
+    :hide-overlay="firstLevel"
+    :permanent="firstLevel && drawer"
     temporary
     right
     fixed
@@ -49,8 +51,9 @@
                 <v-btn
                   :title="$t('label.close')"
                   name="closeDrawer"
-                  icon>
-                  <v-icon @click="close()">mdi-close</v-icon>
+                  icon
+                  @click="close">
+                  <v-icon>mdi-close</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -95,6 +98,14 @@ export default {
       default: false,
     },
     disablePullToRefresh: {
+      type: Boolean,
+      default: false,
+    },
+    secondLevel: {
+      type: Boolean,
+      default: false,
+    },
+    firstLevel: {
       type: Boolean,
       default: false,
     },
@@ -144,7 +155,11 @@ export default {
     open() {
       this.drawer = true;
     },
-    close() {
+    close(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
       this.drawer = false;
     },
     startLoading() {
