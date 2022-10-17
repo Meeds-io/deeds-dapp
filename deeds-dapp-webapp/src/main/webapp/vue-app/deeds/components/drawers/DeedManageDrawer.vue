@@ -23,7 +23,7 @@
     </template>
     <template v-if="cardTypeInfo" #content>
       <v-list-item two-line>
-        <v-list-item-avatar height="76" tile>
+        <v-list-item-avatar height="55" tile>
           <v-img
             :src="cardImage"
             contain />
