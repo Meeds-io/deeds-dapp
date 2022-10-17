@@ -78,6 +78,9 @@ const store = new Vuex.Store({
     networkId: null,
     validNetwork: false,
     yearInMinutes: 365 * 24 * 60,
+    cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
+    cardTypes: ['Common', 'Uncommon', 'Epic', 'Legendary'],
+    cardTypeInfos: {},
     // Contracts addresses
     sushiswapRouterAddress: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
     sushiswapPairAddress: '0x960bd61d0b960b107ff5309a2dcced4705567070',
@@ -894,9 +897,25 @@ const store = new Vuex.Store({
       this.commit('setMetamaskConnected');
       this.commit('setNetworkId');
     },
+    loadCardInfo(state, cardType) {
+      if (!state.cardTypeInfos[cardType]) {
+        Vue.set(state.cardTypeInfos, cardType, {loading: true});
+        const cityIndex = parseInt(cardType / 4);
+        const cardTypeIndex = parseInt(cardType % 4);
+        deedMetadata.getCardInfo(cityIndex, cardTypeIndex)
+          .then(cardInfo => {
+            Vue.set(state.cardTypeInfos, cardType, cardInfo);
+            return tokenUtils.getCityCardType(state.xMeedContract, cardType);
+          })
+          .then(card => {
+            const cardInfo = state.cardTypeInfos[cardType];
+            Object.assign(cardInfo, card, cardInfo);
+            Vue.set(state.cardTypeInfos, cardType, cardInfo);
+          });
+      }
+    },
   }
 });
-
 
 function initialize() {
   if (ethUtils.isMetamaskInstalled()) {

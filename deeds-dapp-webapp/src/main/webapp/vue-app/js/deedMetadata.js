@@ -33,3 +33,19 @@ export function getCardInfo(cityIndex, cardTypeIndex) {
     }
   });
 }
+
+export function getNftInfo(nftId) {
+  return fetch(`/${window.parentAppLocation}/api/deeds/${nftId}`, {
+    method: 'GET',
+    headers: {
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+  }).then(resp => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error(`Error getting NFT #${nftId} Metadata`);
+    }
+  });
+}
