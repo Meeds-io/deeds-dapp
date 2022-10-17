@@ -17,27 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <deeds-nft-title />
-    <template v-if="!noCityLeft">
-      <div class="d-flex flex-column-reverse flex flex-md-row mb-8">
-        <div class="d-flex flex-column ms-0 ms-md-8">
-          <deeds-nft-introduction />
-          <deeds-points-simulator />
-        </div>
-        <deeds-earned-points class="ms-md-auto me-md-0 mx-auto mb-8 flex-shrink-0 flex-grow-0" />
+  <v-tooltip bottom>
+    <template #activator="{ on, attrs }">
+      <div
+        v-bind="attrs"
+        v-on="on">
+        {{ nft.earnedRewardsNoDecimals }} MEED
       </div>
     </template>
-    <deeds-redeem class="mb-8" />
-    <deeds-owned-table v-if="!noCityLeft && !metamaskOffline" />
-    <deeds-trade />
-  </div>
+    <span>{{ nft.hasEarnedMeeds && $t('tooltipClaimRewardedMeeds', {0: nft.earnedRewardsNoDecimals}) || $t('tooltipClaimReward') }}</span>
+  </v-tooltip>
 </template>
 <script>
 export default {
-  computed: Vuex.mapState({
-    noCityLeft: state => state.noCityLeft,
-    metamaskOffline: state => state.metamaskOffline,
-  }),
+  props: {
+    nft: {
+      type: Object,
+      default: null,
+    },
+  },
 };
 </script>

@@ -95,8 +95,6 @@ export default {
   },
   data: () => ({
     sendingRedeem: false,
-    cardImage: null,
-    cardDescription: null,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -106,6 +104,16 @@ export default {
     pointsBalance: state => state.pointsBalance,
     redeemGasLimit: state => state.redeemGasLimit,
     currentCityMintable: state => state.currentCityMintable,
+    cardTypeInfos: state => state.cardTypeInfos,
+    cardTypeInfo() {
+      return this.cardTypeInfos[this.cardType];
+    },
+    cardImage() {
+      return this.cardTypeInfo?.image;
+    },
+    cardDescription() {
+      return this.cardTypeInfo?.description;
+    },
     cardName() {
       return this.card && this.card.name;
     },
@@ -118,17 +126,11 @@ export default {
     cardType() {
       return this.card && this.card.cardType;
     },
-    cityIndex() {
-      return parseInt(this.cardType / 4);
-    },
-    cardTypeIndex() {
-      return this.cardType % 4;
-    },
     cardAmount() {
       return this.card && this.card.amount;
     },
     isRealNft() {
-      return this.card && this.card.maxSupply;
+      return this.cardMaxSupply > 0;
     },
     disableRedeemButton() {
       return this.sendingRedeem
@@ -140,11 +142,7 @@ export default {
     },
   }),
   created() {
-    this.$deedMetadata.getCardInfo(this.cityIndex, this.cardTypeIndex)
-      .then(cardInfo => {
-        this.cardDescription = cardInfo.description;
-        this.cardImage = `${cardInfo.image}?_=3299479372153`;
-      });
+    this.$store.commit('loadCardInfo', this.cardType);
   },
   methods: {
     redeem() {
