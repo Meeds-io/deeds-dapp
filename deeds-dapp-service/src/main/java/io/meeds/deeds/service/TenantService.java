@@ -40,7 +40,7 @@ public class TenantService {
   private ListenerService             listenerService;
 
   /**
-   * Retrives Deed Tenant Last status by NFT Identifier
+   * Retrieves Deed Tenant Last status by NFT Identifier
    * 
    * @param managerAddress DEED Provisioning Manager wallet address
    * @param nftId Deed NFT Id
@@ -61,6 +61,17 @@ public class TenantService {
       }
     }
     return "";
+  }
+
+  /**
+   * Retrieves Deed Tenant Start date
+   * 
+   * @param nftId Deed NFT Id
+   * @return {@link LocalDateTime} if started, else null
+   */
+  public LocalDateTime getTenantStartDate(long nftId) {
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    return deedTenant == null ? null : deedTenant.getDate();
   }
 
   /**
