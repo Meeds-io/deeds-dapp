@@ -44,7 +44,7 @@ public class DeedMetadataController {
   public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
                                                                  @PathVariable(name = "nftId")
                                                                  Long nftId) {
-    DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
+    DeedMetadata deedMetadata = deedMetadataService.getDeedDynamicMetadata(nftId);
     return getDeedMetadataResponse(deedMetadata);
   }
 

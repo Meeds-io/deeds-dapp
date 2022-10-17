@@ -24,12 +24,16 @@ import DeedsEarnedPoints from './components/DeedsEarnedPoints.vue';
 import DeedsRedeem from './components/DeedsRedeem.vue';
 import DeedsRedeemCard from './components/DeedsRedeemCard.vue';
 import DeedsEmptyCity from './components/DeedsEmptyCity.vue';
-import DeedsOwned from './components/DeedsOwned.vue';
-import DeedsOwnedActions from './components/DeedsOwnedActions.vue';
+import DeedsOwnedTable from './components/DeedsOwnedTable.vue';
+import DeedsOwnedItemId from './components/deed-cells/DeedsOwnedItemId.vue';
+import DeedsOwnedItemStatus from './components/deed-cells/DeedsOwnedItemStatus.vue';
+import DeedsOwnedItemEarned from './components/deed-cells/DeedsOwnedItemEarned.vue';
+import DeedsOwnedItemMenu from './components/deed-cells/DeedsOwnedItemMenu.vue';
 import DeedsTimer from './components/DeedsTimer.vue';
 import DeedsTrade from './components/DeedsTrade.vue';
 import DeedMoveInDrawer from './components/drawers/DeedMoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
+import DeedManageDrawer from './components/drawers/DeedManageDrawer.vue';
 
 const components = {
   'deeds-deeds': Deeds,
@@ -40,10 +44,14 @@ const components = {
   'deeds-redeem': DeedsRedeem,
   'deeds-redeem-card': DeedsRedeemCard,
   'deeds-empty-city': DeedsEmptyCity,
-  'deeds-owned': DeedsOwned,
-  'deeds-owned-actions': DeedsOwnedActions,
+  'deeds-owned-table': DeedsOwnedTable,
+  'deeds-owned-item-id': DeedsOwnedItemId,
+  'deeds-owned-item-status': DeedsOwnedItemStatus,
+  'deeds-owned-item-earned': DeedsOwnedItemEarned,
+  'deeds-owned-item-menu': DeedsOwnedItemMenu,
   'deeds-move-in-drawer': DeedMoveInDrawer,
   'deeds-move-out-drawer': DeedMoveOutDrawer,
+  'deeds-manage-drawer': DeedManageDrawer,
   'deeds-timer': DeedsTimer,
   'deeds-trade': DeedsTrade,
 };
