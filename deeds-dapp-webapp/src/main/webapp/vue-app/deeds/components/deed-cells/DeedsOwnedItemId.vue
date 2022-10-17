@@ -17,14 +17,28 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <a
-    :name="`nftEtherscanLink${nft.id}`"
-    :href="`${etherscanBaseLink}/nft/${deedAddress}/${nft.id}`"
-    target="_blank"
-    rel="nofollow noreferrer noopener"
-    class="px-0 px-sm-3 d-inline d-sm-flex link--color">
-    #{{ nft.id }}
-  </a>
+  <v-list-item class="ps-0">
+    <v-list-item-avatar
+      class="ma-0"
+      height="55"
+      tile>
+      <v-img
+        :src="cardImage"
+        contain />
+    </v-list-item-avatar>
+    <v-list-item-content>
+      <v-list-item-title>
+        <a
+          :name="`nftEtherscanLink${nft.id}`"
+          :href="`${etherscanBaseLink}/nft/${deedAddress}/${nft.id}`"
+          target="_blank"
+          rel="nofollow noreferrer noopener"
+          class="px-0 px-sm-3 d-inline d-sm-flex link--color">
+          #{{ nft.id }}
+        </a>
+      </v-list-item-title>
+    </v-list-item-content>
+  </v-list-item>
 </template>
 <script>
 export default {
@@ -37,6 +51,16 @@ export default {
   computed: Vuex.mapState({
     etherscanBaseLink: state => state.etherscanBaseLink,
     deedAddress: state => state.deedAddress,
+    cardTypeInfos: state => state.cardTypeInfos,
+    cardType() {
+      return this.nft?.cardType;
+    },
+    cardTypeInfo() {
+      return this.cardTypeInfos[this.cardType];
+    },
+    cardImage() {
+      return this.cardTypeInfo?.image;
+    },
   }),
 };
 </script>
