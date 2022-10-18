@@ -15,13 +15,14 @@
  */
 package io.meeds.deeds.web.rest;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
+import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedMetadataResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.service.DeedMetadataService;
@@ -44,7 +45,7 @@ public class DeedMetadataController {
   public ResponseEntity<DeedMetadataPresentation> getNftMetadata(
                                                                  @PathVariable(name = "nftId")
                                                                  Long nftId) {
-    DeedMetadata deedMetadata = deedMetadataService.getDeedDynamicMetadata(nftId);
+    DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
     return getDeedMetadataResponse(deedMetadata);
   }
 
@@ -56,35 +57,6 @@ public class DeedMetadataController {
                                                                  short cardType) {
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadataOfCard(cityIndex, cardType);
     return getDeedMetadataResponse(deedMetadata);
-  }
-
-  private ResponseEntity<DeedMetadataPresentation> getDeedMetadataResponse(DeedMetadata deedMetadata) {
-    if (deedMetadata == null) {
-      return ResponseEntity.notFound().build();
-    }
-
-    return ResponseEntity.ok()
-                         .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
-                         .lastModified(ZonedDateTime.now())
-                         .headers(headers -> {
-                           headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-
-                           headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
-                                          Arrays.asList("Content-Type",
-                                                        "Range",
-                                                        "User-Agent",
-                                                        "X-Requested-With"));
-
-                           headers.addAll(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
-                                          Arrays.asList("Content-Range",
-                                                        "X-Chunked-Output",
-                                                        "X-Stream-Output"));
-
-                           headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                                          Arrays.asList("GET",
-                                                        "HEAD"));
-                         })
-                         .body(DeedMetadataPresentation.build(deedMetadata));
   }
 
 }

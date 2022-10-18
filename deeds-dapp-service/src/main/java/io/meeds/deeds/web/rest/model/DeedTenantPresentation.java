@@ -15,63 +15,41 @@
  */
 package io.meeds.deeds.web.rest.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.meeds.deeds.model.DeedMetadataAttribute;
+import io.meeds.deeds.constant.TenantProvisioningStatus;
+import io.meeds.deeds.constant.TenantStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-public class DeedMetadataPresentation {
+public class DeedTenantPresentation {
 
-  @JsonProperty("name")
-  @NonNull
+  @JsonProperty("nftId")
   @EqualsAndHashCode.Exclude
-  private String                     name;
+  private long                     nftId;
 
-  @JsonProperty("description")
-  @NonNull
+  @JsonProperty("managerAddress")
   @EqualsAndHashCode.Exclude
-  private String                     description;
+  private String                   managerAddress;
 
-  @JsonProperty("image")
-  @NonNull
+  @JsonProperty("provisioningStatus")
   @EqualsAndHashCode.Exclude
-  private String                     imageUrl;
+  private TenantProvisioningStatus provisioningStatus;
 
-  @JsonProperty("background_color")
+  @JsonProperty("status")
   @EqualsAndHashCode.Exclude
-  private String                     backgroundColor;
+  private TenantStatus             status;
 
-  @JsonProperty("external_url")
+  @JsonProperty("provisioningDate")
   @EqualsAndHashCode.Exclude
-  private String                     externalUrl;
-
-  @JsonProperty("external_link")
-  @EqualsAndHashCode.Exclude
-  private String                     externalLink;
-
-  @JsonProperty("seller_fee_basis_points")
-  @EqualsAndHashCode.Exclude
-  private String                     sellerFeeBasisPoints;
-
-  @JsonProperty("fee_recipient")
-  @EqualsAndHashCode.Exclude
-  private String                     feeRecipient;
-
-  @JsonProperty("attributes")
-  @EqualsAndHashCode.Exclude
-  private Set<DeedMetadataAttribute> attributes = new HashSet<>();
+  private long                     provisioningDate;
 
 }

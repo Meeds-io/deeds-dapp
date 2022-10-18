@@ -19,38 +19,29 @@
 <template>
   <deeds-drawer
     ref="drawer"
+    v-model="drawer"
     second-level
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4>{{ $t('requestTenantTitle') }}</h4>
+      <h4>{{ $t('deedMoveInDrawerTitle', {0: cardTypeName, 1: nftId}) }}</h4>
     </template>
     <template #content>
       <v-form ref="form" @submit="sendRequest">
         <v-card flat>
-          <v-card-text v-if="transactionHash">
-            <v-list-item class="px-0">
-              <v-list-item-avatar size="72">
-                <v-img :src="`/${parentLocation}/static/images/transactionInProgress.png`" eager />
-              </v-list-item-avatar>
-              <v-list-item-content class="d-inline">
-                {{ $t('requestTenantSentDescription') }}
-                <a
-                  :href="transactionLink"
-                  target="_blank"
-                  rel="nofollow noreferrer noopener">
-                  {{ transactionHashAlias }}
-                </a>
-              </v-list-item-content>
-            </v-list-item>
+          <v-card-text>
+            {{ $t('deedMoveInParagraph1') }}
           </v-card-text>
-          <v-card-text v-else>
-            {{ $t('requestTenantDescription') }}
+          <v-card-text class="pt-0">
+            {{ $t('deedOwnerMoveInParagraph2') }}
           </v-card-text>
-          <v-card-title>
+          <v-card-text class="pt-0">
+            {{ $t('deedMoveInParagraph3') }}
+          </v-card-text>
+          <v-card-title class="pt-0">
             {{ $t('email') }}
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pt-0">
             <label for="email">
               {{ $t('requestTenantEmailLabel') }}
             </label>
@@ -88,34 +79,78 @@
               </template>
             </v-text-field>
           </v-card-text>
-          <v-card-actions v-if="!transactionHash" class="ms-2">
-            <v-btn
-              :disabled="!validForm"
-              :loading="sending"
-              name="moveInConfirmButton"
-              type="submit"
-              color="primary">
-              <span class="text-capitalize">
-                {{ $t('requestTenantButton') }}
-              </span>
-            </v-btn>
-          </v-card-actions>
         </v-card>
       </v-form>
+      <template v-if="transactionHash">
+        <v-spacer />
+        <v-card-text>
+          {{ $t('deedMoveInConfirmMessage1') }}
+        </v-card-text>
+        <v-card-text>
+          {{ $t('deedMoveInConfirmMessage2') }}
+        </v-card-text>
+      </template>
+    </template>
+    <template v-if="transactionHash" #footer>
+      <deeds-move-out-button
+        :nft-id="nftId"
+        label="cancel"
+        class="ms-auto me-2"
+        @sending="$refs.drawer.startLoading()"
+        @end-sending="$refs.drawer.endLoading()" />
+      <v-btn
+        :min-width="minButtonsWidth"
+        name="moveInConfirmButton"
+        color="tertiary"
+        class="ms-auto"
+        depressed
+        dark
+        @click="closeAll()">
+        <span class="text-capitalize">
+          {{ $t('gotIt') }}
+        </span>
+      </v-btn>
+    </template>
+    <template v-else #footer>
+      <v-btn
+        outlined
+        text
+        class="ms-auto me-2"
+        name="cancelMoveIn"
+        min-width="120"
+        @click="close(nftId)">
+        <span class="text-capitalize">
+          {{ $t('cancel') }}
+        </span>
+      </v-btn>
+      <v-btn
+        :min-width="minButtonsWidth"
+        :disabled="!validForm"
+        :loading="sending"
+        name="moveInConfirmButton"
+        color="tertiary"
+        depressed
+        dark
+        @click="sendRequest">
+        <span class="text-capitalize">
+          {{ $t('requestTenantButton') }}
+        </span>
+      </v-btn>
     </template>
   </deeds-drawer>
 </template>
-
 <script>
 export default {
   data: () => ({
-    nftId: 0,
+    nft: null,
+    drawer: false,
     email: null,
     emailChanged: false,
     isEditingEmail: false,
     sending: false,
     sendingEmail: false,
     transactionHash: null,
+    minButtonsWidth: 120,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -126,6 +161,12 @@ export default {
     startTenantGasLimit: state => state.startTenantGasLimit,
     validForm() {
       return !this.email || !this.email.length || (this.$refs.form && this.$refs.form.$el.reportValidity());
+    },
+    nftId() {
+      return this.nft?.id;
+    },
+    cardTypeName() {
+      return this.nft?.cardTypeName;
     },
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;
@@ -162,10 +203,11 @@ export default {
   },
   created() {
     this.$root.$on('deeds-move-in-drawer', this.open);
+    this.$root.$on('deeds-move-drawer-close', this.close);
   },
   methods: {
-    open(nftId) {
-      this.nftId = nftId;
+    open(nft) {
+      this.nft = nft;
       this.transactionHash = null;
       this.sending = false;
       this.isEditingEmail = false;
@@ -176,6 +218,10 @@ export default {
             this.$refs.drawer.open();
           }
         });
+    },
+    closeAll() {
+      this.$refs.drawer.close();
+      this.$root.$emit('deeds-manage-drawer-close', this.nftId);
     },
     close(nftId) {
       if (nftId === this.nftId) {
@@ -239,8 +285,8 @@ export default {
           [this.nftId]
         ).then(receipt => {
           if (receipt) {
-            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.starting'));
             this.transactionHash = receipt.hash;
+            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash);
             this.$root.$emit('transaction-sent', this.transactionHash);
             this.saveStartTenantRequest();
           }

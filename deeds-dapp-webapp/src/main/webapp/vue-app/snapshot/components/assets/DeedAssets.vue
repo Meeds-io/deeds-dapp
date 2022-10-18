@@ -49,7 +49,7 @@
 export default {
   data: () => ({
     cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
-    cardTypes: ['Common', 'Uncommon', 'Epic', 'Legendary'],
+    cardTypes: ['Common', 'Uncommon', 'Rare', 'Legendary'],
   }),
   computed: Vuex.mapState({
     deedLoading: state => state.deedLoading,
