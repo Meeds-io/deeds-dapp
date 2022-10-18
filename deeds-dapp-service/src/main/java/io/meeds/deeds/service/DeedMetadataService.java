@@ -16,8 +16,6 @@
 package io.meeds.deeds.service;
 
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -32,9 +30,10 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import io.meeds.deeds.constant.*;
+import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.model.DeedMetadata;
-import io.meeds.deeds.model.DeedMetadataAttribute;
 import io.meeds.deeds.storage.DeedMetadataRepository;
 
 @Component
@@ -57,9 +56,6 @@ public class DeedMetadataService {
 
   @Autowired
   private BlockchainService         blockchainService;
-
-  @Autowired
-  private TenantService             tenantService;
 
   @Value("${meeds.deed.metadatas.path:metadatas.json}")
   private String                    metadatasFilePath;
@@ -102,28 +98,6 @@ public class DeedMetadataService {
   @Cacheable(cacheNames = "deedMetadata")
   public DeedMetadata getDeedMetadata(Long nftId) {
     return deedMetadataRepository.findById(nftId).orElseGet(() -> this.buildDeedMetadata(nftId));
-  }
-
-  /**
-   * @param nftId DEED NFT identifier
-   * @return DEED NFT metadatas of type {@link DeedMetadata}. If the Metadata entry doesn't exist in storage,
-   *           it will build a new one base on City and Card Type of the NFT.
-   *           In addition this will compute dynamic attributes of Deed such as
-   *           Tenant startup date.
-   */
-  public DeedMetadata getDeedDynamicMetadata(Long nftId) {
-    DeedMetadata deedMetadata = getDeedMetadata(nftId);
-    if (deedMetadata != null) {
-      LocalDateTime tenantStartDate = tenantService.getTenantStartDate(nftId);
-      if (tenantStartDate != null) {
-        deedMetadata.getAttributes()
-                    .add(new DeedMetadataAttribute("Tenant start date",
-                                                   DisplayType.DATE,
-                                                   tenantStartDate.toEpochSecond(ZoneOffset.UTC),
-                                                   null));
-      }
-    }
-    return deedMetadata;
   }
 
   /**

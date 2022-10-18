@@ -106,15 +106,14 @@ export default {
     ownedNfts: {
       immediate: true,
       handler() {
+        this.installListeners();
         this.reloadStatus(true);
       },
     },
     tenantProvisioningContract: {
       immediate: true,
       handler() {
-        if (!this.contractListenersInstalled) {
-          this.installListeners();
-        }
+        this.installListeners();
         this.reloadStatus(false);
       },
     },
@@ -122,14 +121,14 @@ export default {
   created() {
     this.installListeners();
 
-    this.$root.$on('nft-status-changed', (id, status, statusLabel) => {
+    this.$root.$on('nft-status-changed', (id, status, transactionHash) => {
       const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-      this.setStatus(nft, status, statusLabel);
+      this.setStatus(nft, status, transactionHash);
     });
   },
   methods: {
     installListeners() {
-      if (this.tenantProvisioningContract) {
+      if (this.tenantProvisioningContract && !this.contractListenersInstalled) {
         this.contractListenersInstalled = true;
 
         // eslint-disable-next-line new-cap
@@ -172,19 +171,17 @@ export default {
     },
     refreshTenantStatus(address, nftId) {
       if (address.toUpperCase() === this.address.toUpperCase()) {
-        if (this.hasDeeds) {
+        if (this.ownedNfts) {
           const id = nftId.toNumber();
           const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
           if (nft) {
-            this.loadStatus(nft);
+            Promise.resolve(this.loadStatus(nft))
+              .then(() => this.$root.$emit('deeds-move-drawer-close', id));
           }
         }
       }
     },
     loadStatus(nft) {
-      if (nft.loaded) {
-        return;
-      }
       if (!this.tenantProvisioningContract) {
         this.setStatus(nft, 'STOPPED');
         return;
@@ -206,11 +203,15 @@ export default {
           }
         });
     },
-    setStatus(nft, status, statusLabel) {
+    setStatus(nft, status, transactionHash) {
       if (nft) {
         nft.status = status;
-        nft.statusLabel = statusLabel;
         nft.loaded = true;
+        if (status === 'loading') {
+          nft.transactionHash = transactionHash;
+        } else {
+          nft.transactionHash = null;
+        }
         this.updateNft(nft);
       }
     },
@@ -223,6 +224,7 @@ export default {
         if (index > -1) {
           this.$set(this.ownedDeeds, index, nft);
         }
+        this.$root.$emit('deed-nft-updated', nft);
       }
       this.ownedDeeds = this.ownedDeeds.slice();
     },

@@ -15,14 +15,10 @@
  */
 package io.meeds.deeds.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,9 +53,6 @@ class DeedMetadataServiceTest {
 
   @MockBean
   private DeedMetadataRepository deedMetadataRepository;
-
-  @MockBean
-  private TenantService          tenantService;
 
   @Autowired
   private DeedMetadataService    deedMetadataService;
@@ -177,37 +170,6 @@ class DeedMetadataServiceTest {
 
     DeedMetadata deedMetadata = deedMetadataService.getDeedMetadata(nftId);
     assertEquals(metadata, deedMetadata);
-  }
-
-  @Test
-  void testGetDeedDynamicMetadataFromDB() throws Exception {
-    long nftId = 1l;
-
-    DeedMetadata metadata = new DeedMetadata();
-    metadata.setNftId(nftId);
-
-    when(deedMetadataRepository.findById(nftId)).thenReturn(Optional.of(metadata));
-
-    DeedMetadata deedMetadata = deedMetadataService.getDeedDynamicMetadata(nftId);
-    assertNotNull(metadata);
-    assertEquals(metadata, deedMetadata);
-    assertNull(deedMetadata.getAttributes()
-                           .stream()
-                           .filter(attr -> StringUtils.equals("Tenant start date", attr.getTraitType()))
-                           .findFirst()
-                           .orElse(null));
-
-    LocalDateTime startDate = LocalDateTime.now();
-    when(tenantService.getTenantStartDate(nftId)).thenReturn(startDate);
-
-    deedMetadata = deedMetadataService.getDeedDynamicMetadata(nftId);
-    assertEquals(startDate.toEpochSecond(ZoneOffset.UTC),
-                 deedMetadata.getAttributes()
-                             .stream()
-                             .filter(attr -> StringUtils.equals("Tenant start date", attr.getTraitType()))
-                             .map(DeedMetadataAttribute::getValue)
-                             .findFirst()
-                             .orElse(0l));
   }
 
   @Test

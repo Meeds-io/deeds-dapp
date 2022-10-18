@@ -19,6 +19,7 @@
 <template>
   <deeds-drawer
     ref="drawer"
+    v-model="drawer"
     :first-level="secondLevelOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -26,103 +27,108 @@
       <h4>{{ $t('manageDeedTitle', {0: cardTypeName, 1: nftId}) }}</h4>
     </template>
     <template v-if="cardTypeInfo" #content>
-      <v-list-item two-line>
-        <v-list-item-avatar height="55" tile>
-          <v-img
-            :src="cardImage"
-            contain />
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="font-weight-bold">{{ $t('deedName') }}:</v-list-item-title>
-          <v-list-item-subtitle class="text-truncate">{{ cardTypeName }} #{{ nftId }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="font-weight-bold">{{ $t('deedCharacteristics') }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsCity') }}: {{ cityName }}</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsScarcity') }}: {{ cardScarcity }}</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsPowerMinting') }}: {{ cardPowerMinting }}</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsMaxUsers') }}: {{ cardMaxUsers }}</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsCityVotingRights') }}: {{ cityVotingRights }}</v-list-item-subtitle>
-      </v-list-item>
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="font-weight-bold">{{ $t('deedTenantStatus') }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item class="ms-4 my-n2" dense>
-        <v-list-item-subtitle class="text-color">{{ $t('deedTenantStartedOn') }}: {{ cityStartDateFormatted }}</v-list-item-subtitle>
-      </v-list-item>
-      <template v-if="isProvisioningManager && authenticated">
+      <v-list>
+        <v-list-item two-line>
+          <v-list-item-avatar height="55" tile>
+            <v-img
+              :src="cardImage"
+              contain />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="font-weight-bold">{{ $t('deedName') }}:</v-list-item-title>
+            <v-list-item-subtitle class="text-truncate">{{ cardTypeName }} #{{ nftId }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="font-weight-bold">{{ $t('deedTenantAccess') }}</v-list-item-title>
+            <v-list-item-title class="font-weight-bold">{{ $t('deedCharacteristics') }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item
-          class="ms-4"
-          two-line
-          dense>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsCity') }}: {{ cityName }}</v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsScarcity') }}: {{ cardScarcity }}</v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsPowerMinting') }}: {{ cardPowerMinting }}</v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsMaxUsers') }}: {{ cardMaxUsers }}</v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsCityVotingRights') }}: {{ cityVotingRights }}</v-list-item-subtitle>
+        </v-list-item>
+        <v-list-item>
           <v-list-item-content>
-            <v-list-item-subtitle v-if="stopped" class="text-color">{{ $t('deedMoveInDescription') }}</v-list-item-subtitle>
-            <v-list-item-subtitle v-else-if="started" class="text-color">{{ $t('deedMoveOutDescription') }}</v-list-item-subtitle>
+            <v-list-item-title class="font-weight-bold">{{ $t('deedTenantStatus') }}</v-list-item-title>
           </v-list-item-content>
-          <v-list-item-action>
-            <v-btn
-              v-if="started"
-              :min-width="minButtonsWidth"
-              class="ms-auto"
-              color="tertiary"
-              depressed
-              dark
-              @click="$root.$emit('deeds-move-out-drawer')">
-              <span class="text-capitalize">{{ $t('moveOut') }}</span>
-            </v-btn>
-            <v-btn
-              v-else-if="stopped"
-              :min-width="minButtonsWidth"
-              class="ms-auto"
-              color="tertiary"
-              depressed
-              dark
-              @click="$root.$emit('deeds-move-in-drawer')">
-              <span class="text-capitalize">{{ $t('moveIn') }}</span>
-            </v-btn>
-          </v-list-item-action>
         </v-list-item>
-        <v-list-item
-          class="ms-4"
-          two-line
-          dense>
-          <v-list-item-content>
-            <v-list-item-subtitle class="text-color">{{ $t('deedSellDescription') }}</v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-btn
-              :href="`${openSeaBaseLink}/${nftId}/sell`"
-              :min-width="minButtonsWidth"
-              target="_blank"
-              rel="nofollow noreferrer noopener"
-              class="ms-auto"
-              outlined
-              text>
-              <span class="text-capitalize">{{ $t('deedSellButton') }}</span>
-            </v-btn>
-          </v-list-item-action>
+        <v-list-item class="ms-4 my-n2" dense>
+          <v-list-item-subtitle class="text-color">{{ $t('deedTenantStartedOn') }}: {{ cityStartDateFormatted }}</v-list-item-subtitle>
         </v-list-item>
-      </template>
+        <template v-if="showAccessPart">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title class="font-weight-bold">{{ $t('deedTenantAccess') }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            v-if="showMovePart"
+            class="ms-4"
+            two-line
+            dense>
+            <v-list-item-content>
+              <v-list-item-subtitle v-if="stopped" class="text-color">{{ $t('deedMoveInDescription') }}</v-list-item-subtitle>
+              <v-list-item-subtitle v-else-if="started" class="text-color">{{ $t('deedMoveOutDescription') }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                v-if="started"
+                :min-width="minButtonsWidth"
+                class="ms-auto"
+                color="tertiary"
+                depressed
+                dark
+                @click="$root.$emit('deeds-move-out-drawer', nftId)">
+                <span class="text-capitalize">{{ $t('moveOut') }}</span>
+              </v-btn>
+              <v-btn
+                v-else-if="stopped"
+                :min-width="minButtonsWidth"
+                class="ms-auto"
+                color="tertiary"
+                depressed
+                dark
+                @click="$root.$emit('deeds-move-in-drawer', nft)">
+                <span class="text-capitalize">{{ $t('moveIn') }}</span>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item
+            v-if="showSellPart"
+            class="ms-4"
+            two-line
+            dense>
+            <v-list-item-content>
+              <v-list-item-subtitle class="text-color">{{ $t('deedSellDescription') }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                :href="`${openSeaBaseLink}/${nftId}/sell`"
+                :min-width="minButtonsWidth"
+                target="_blank"
+                rel="nofollow noreferrer noopener"
+                class="ms-auto"
+                outlined
+                text>
+                <span class="text-capitalize">{{ $t('deedSellButton') }}</span>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </template>
+      </v-list>
+      <v-spacer />
     </template>
     <template v-if="isProvisioningManager" #footer>
       <v-btn
@@ -165,6 +171,7 @@ export default {
   },
   data: () => ({
     nft: null,
+    drawer: false,
     authenticated: false,
     deedInfo: null,
     minButtonsWidth: 120,
@@ -199,9 +206,6 @@ export default {
     cardTraits() {
       return this.cardTypeInfo?.attributes || [];
     },
-    deedTraits() {
-      return this.deedInfo?.attributes || [];
-    },
     cardMaxUsers() {
       return this.cardTraits.find(attr => attr.trait_type === 'Max users')?.value || '-';
     },
@@ -215,7 +219,10 @@ export default {
       return this.cardTraits.find(attr => attr.trait_type === 'City voting rights')?.value || '-';
     },
     cityStartDate() {
-      return this.deedTraits.find(attr => attr.trait_type === 'Tenant start date')?.value || 0;
+      return this.deedInfo?.provisioningDate;
+    },
+    provisioningStatus() {
+      return this.deedInfo?.provisioningStatus;
     },
     cityStartDateFormatted() {
       return this.loading && '-'
@@ -228,23 +235,65 @@ export default {
     isProvisioningManager() {
       return this.nft?.provisioningManager;
     },
+    isOwner() {
+      return this.nft?.owner;
+    },
+    status() {
+      return this.nft?.status;
+    },
     loading() {
-      return !this.nft?.status || this.nft.status === 'loading';
+      return this.status === 'loading' || this.provisioningStatus === 'PROVISIONING_STOP_IN_PROGRESS' || this.provisioningStatus === 'PROVISIONING_START_IN_PROGRESS';
     },
     stopped() {
-      return !this.nft?.status || this.nft.status === 'STOPPED';
+      return !this.loading && this.status === 'STOPPED';
     },
     started() {
-      return !this.nft?.status || this.nft.status === 'STARTED';
+      return !this.loading && this.status === 'STARTED';
+    },
+    rented() {
+      return this.isOwner && !this.isProvisioningManager;
+    },
+    showSellPart() {
+      return this.authenticated && this.isOwner && (this.rented || this.stopped);
+    },
+    showMovePart() {
+      return this.authenticated && this.isProvisioningManager && (this.started || this.stopped);
+    },
+    showAccessPart() {
+      return this.showSellPart || this.showMovePart;
     },
   }),
+  watch: {
+    status(newVal, oldVal) {
+      if (this.drawer && oldVal !== newVal) {
+        this.refreshDeedInfo();
+      }
+    },
+  },
   created() {
     this.$root.$on('deeds-manage-drawer', this.open);
     this.$root.$on('deeds-manage-drawer-close', this.close);
+    this.$root.$on('deed-nft-updated', this.refreshNft);
 
     this.refreshAuthentication();
   },
   methods: {
+    refreshNft(nft) {
+      if (this.drawer && this.nftId === nft.id) {
+        this.nft = Object.assign({}, nft);
+      }
+    },
+    refreshDeedInfo() {
+      if (this.authenticated) {
+        return this.$tenantManagement.getTenantInfo(this.nftId)
+          .then(deedInfo => this.deedInfo = deedInfo)
+          .catch(() => this.$tenantManagement.getTenantStartDate(this.nftId)
+            .then(startDate => this.deedInfo = {provisioningDate: startDate}));
+      } else {
+        return this.$tenantManagement.getTenantStartDate(this.nftId)
+          .then(startDate => this.deedInfo = {provisioningDate: startDate});
+      }
+    },
     open(nft) {
       this.nft = nft;
       this.transactionHash = null;
@@ -253,8 +302,7 @@ export default {
       this.isEditingEmail = false;
       this.emailChanged = false;
       this.$store.commit('loadCardInfo', this.cardType);
-      this.$deedMetadata.getNftInfo(this.nftId)
-        .then(deedInfo => this.deedInfo = deedInfo);
+      this.refreshDeedInfo();
       this.$nextTick()
         .then(() => {
           if (this.$refs.drawer) {
@@ -268,15 +316,17 @@ export default {
       }
     },
     logout() {
-      this.$authentication.logout(this.address)
-        .finally(() => this.refreshAuthentication());
+      return this.$authentication.logout(this.address)
+        .finally(() => this.refreshAuthentication())
+        .then(() => this.refreshDeedInfo());
     },
     login() {
       const token = document.querySelector('[name=loginMessage]').value;
-      const message = this.$t('signMessage', {0: token});
-      this.$ethUtils.signMessage(this.provider, this.address, message)
+      const message = this.$t('signMessage', {0: token}).replace(/\\n/g, '\n');
+      return this.$ethUtils.signMessage(this.provider, this.address, message)
         .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
-        .finally(() => this.refreshAuthentication());
+        .finally(() => this.refreshAuthentication())
+        .then(() => this.refreshDeedInfo());
     },
     refreshAuthentication() {
       this.authenticated = this.$authentication.isAuthenticated(this.address);
