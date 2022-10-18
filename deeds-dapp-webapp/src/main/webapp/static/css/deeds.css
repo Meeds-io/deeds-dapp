@@ -93,10 +93,6 @@ html {
   letter-spacing: normal!important;
 }
 
-.bottom-navigation {
-  z-index: 10 !important;
-}
-
 .mobile-menu-slider {
   height: 2px;
   position: absolute;

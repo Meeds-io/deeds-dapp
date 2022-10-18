@@ -85,6 +85,17 @@ public class BlockchainService {
   }
 
   /**
+   * Retrieves from blockchain whether an address is the owner of the deed
+   *
+   * @param address Ethereum address to check
+   * @param nftId Deed NFT identifier
+   * @return true if is owner else false
+   */
+  public boolean isDeedOwner(String address, long nftId) {
+    return blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
+  }
+
+  /**
    * Retrieves from Blockchain DEED card type:
    * - 0 : Common
    * - 1 : Uncommon

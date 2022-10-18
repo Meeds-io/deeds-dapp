@@ -83,8 +83,8 @@ export function stopTenant(nftId, transactionHash) {
   });
 }
 
-export function loadLastCommand(nftId) {
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}/lastCommand`, {
+export function getTenantStartDate(nftId) {
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}/startDate`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -94,7 +94,23 @@ export function loadLastCommand(nftId) {
     if (resp && resp.ok) {
       return resp.text();
     } else {
-      throw new Error(`Error changing sending email of nft with id ${nftId}`);
+      throw new Error(`Error getting Deed Tenant #${nftId} Start Date`);
+    }
+  });
+}
+
+export function getTenantInfo(nftId) {
+  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+    method: 'GET',
+    headers: {
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+  }).then(resp => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error(`Error getting Deed Tenant #${nftId} information`);
     }
   });
 }

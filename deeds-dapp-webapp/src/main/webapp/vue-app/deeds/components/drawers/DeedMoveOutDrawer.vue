@@ -19,6 +19,7 @@
 <template>
   <deeds-drawer
     ref="drawer"
+    v-model="drawer"
     second-level
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -53,36 +54,40 @@
             </v-list-item-content>
           </v-list-item>
         </v-card-text>
-        <v-card-actions v-if="!transactionHash" class="ms-2">
-          <v-btn
-            :loading="sending"
-            name="moveOutConfirmButton"
-            color="primary"
-            @click="sendRequest">
-            <span class="text-capitalize">
-              {{ $t('removeTenantButton') }}
-            </span>
-          </v-btn>
-        </v-card-actions>
       </v-card>
+    </template>
+    <template v-if="!transactionHash" #footer>
+      <v-btn
+        outlined
+        text
+        class="ms-auto me-2"
+        name="cancelMoveIn"
+        min-width="120"
+        @click="close(nftId)">
+        <span class="text-capitalize">
+          {{ $t('cancel') }}
+        </span>
+      </v-btn>
+      <deeds-move-out-button
+        v-model="transactionHash"
+        :nft-id="nftId"
+        label="removeTenantButton"
+        primary
+        @sending="$refs.drawer.startLoading()"
+        @end-sending="$refs.drawer.endLoading()" />
     </template>
   </deeds-drawer>
 </template>
-
 <script>
 export default {
   data: () => ({
     nftId: 0,
-    sending: false,
+    drawer: false,
     transactionHash: null,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    address: state => state.address,
-    provider: state => state.provider,
     etherscanBaseLink: state => state.etherscanBaseLink,
-    tenantProvisioningContract: state => state.tenantProvisioningContract,
-    stopTenantGasLimit: state => state.stopTenantGasLimit,
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;
     },
@@ -90,23 +95,14 @@ export default {
       return `${this.etherscanBaseLink}/tx/${this.transactionHash}`;
     },
   }),
-  watch: {
-    sending() {
-      if (this.sending) {
-        this.$refs.drawer.startLoading();
-      } else {
-        this.$refs.drawer.endLoading();
-      }
-    },
-  },
   created() {
     this.$root.$on('deeds-move-out-drawer', this.open);
+    this.$root.$on('deeds-move-drawer-close', this.close);
   },
   methods: {
     open(nftId) {
       this.nftId = nftId;
       this.transactionHash = null;
-      this.sending = false;
       this.$nextTick()
         .then(() => {
           if (this.$refs.drawer) {
@@ -114,45 +110,10 @@ export default {
           }
         });
     },
-    close() {
-      this.$refs.drawer.close();
-    },
-    sendRequest(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+    close(nftId) {
+      if (nftId === this.nftId) {
+        this.$refs.drawer.close();
       }
-      if (!this.transactionHash) {
-        return this.stopTenant();
-      }
-    },
-    stopTenant(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      if (this.nftId) {
-        this.sending = true;
-        const options = {
-          gasLimit: this.stopTenantGasLimit,
-        };
-        return this.$ethUtils.sendTransaction(
-          this.provider,
-          this.tenantProvisioningContract,
-          'stopTenant',
-          options,
-          [this.nftId]
-        ).then(receipt => {
-          this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.$t('tenant.stopping'));
-
-          this.transactionHash = receipt.hash;
-          this.$root.$emit('transaction-sent', this.transactionHash);
-          this.saveStopTenantRequest();
-        }).finally(() => this.sending = false);
-      }
-    },
-    saveStopTenantRequest() {
-      return this.$tenantManagement.stopTenant(this.nftId, this.transactionHash);
     },
   },
 };
