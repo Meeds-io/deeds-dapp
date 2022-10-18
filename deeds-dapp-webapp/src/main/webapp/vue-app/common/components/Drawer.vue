@@ -61,7 +61,6 @@
                   <v-icon v-text="expandIcon" size="18" />
                 </v-btn>
                 <v-btn
-                  v-else-if="!secondLevel"
                   :title="$t('label.close')"
                   name="closeDrawer"
                   icon
