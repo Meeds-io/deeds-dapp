@@ -18,7 +18,6 @@ package io.meeds.deeds.service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +29,12 @@ import io.meeds.deeds.storage.DeedTenantManagerRepository;
 @Component
 public class TenantService {
 
+  public static final String          DEED_EVENT_TENANT_EMAIL_UPDATED = "deed.event.tenantEmailUpdated";
+
+  public static final String          DEED_EVENT_TENANT_STOP          = "deed.event.tenantStop";
+
+  public static final String          DEED_EVENT_TENANT_START         = "deed.event.tenantStart";
+
   @Autowired(required = false)
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
@@ -40,38 +45,29 @@ public class TenantService {
   private ListenerService             listenerService;
 
   /**
-   * Retrieves Deed Tenant Last status by NFT Identifier
+   * Retrieves the {@link DeedTenant} information
    * 
-   * @param managerAddress DEED Provisioning Manager wallet address
-   * @param nftId Deed NFT Id
-   * @return Last Command Status (START/STOP)
+   * @param nftId DEED NFT id in the blockchain
+   * @param address wallet address
+   * @return {@link DeedTenant}
    * @throws UnauthorizedOperationException when the wallet isn't the DEED
-   *           manager who
+   *           manager nor the owner
    */
-  public String getLastTenantCommand(String managerAddress, long nftId) throws UnauthorizedOperationException {
-    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
-    if (deedTenant != null) {
-      if (!StringUtils.equals(managerAddress, deedTenant.getManagerAddress())) {
-        throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
-      }
-      if (StringUtils.isNotBlank(deedTenant.getStartupTransactionHash())) {
-        return "START";
-      } else if (StringUtils.isNotBlank(deedTenant.getShutdownTransactionHash())) {
-        return "STOP";
-      }
+  public DeedTenant getDeedTenant(String address, long nftId) throws UnauthorizedOperationException {
+    if (!isDeedManager(address, nftId) && !isDeedOwner(address, nftId)) {
+      throw new UnauthorizedOperationException(getUnauthorizedMessage(address, nftId));
     }
-    return "";
+    return getDeedTenant(nftId);
   }
 
   /**
-   * Retrieves Deed Tenant Start date
+   * Retrieves the {@link DeedTenant} information
    * 
-   * @param nftId Deed NFT Id
-   * @return {@link LocalDateTime} if started, else null
+   * @param nftId DEED NFT id in the blockchain
+   * @return {@link DeedTenant}
    */
-  public LocalDateTime getTenantStartDate(long nftId) {
-    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
-    return deedTenant == null ? null : deedTenant.getDate();
+  public DeedTenant getDeedTenant(long nftId) {
+    return deedTenantManagerRepository.findById(nftId).orElse(null);
   }
 
   /**
@@ -96,11 +92,13 @@ public class TenantService {
     deedTenant.setNftId(nftId);
     deedTenant.setManagerAddress(managerAddress.toLowerCase());
     deedTenant.setManagerEmail(email);
-    deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
+    if (deedTenant.getDate() == null) {
+      deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
+    }
     setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
-    listenerService.publishEvent("deed.event.tenantEmailUpdated", deedTenant);
+    listenerService.publishEvent(DEED_EVENT_TENANT_EMAIL_UPDATED, deedTenant);
   }
 
   /**
@@ -136,7 +134,7 @@ public class TenantService {
     setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
-    listenerService.publishEvent("deed.event.tenantStart", deedTenant);
+    listenerService.publishEvent(DEED_EVENT_TENANT_START, deedTenant);
   }
 
   /**
@@ -168,7 +166,7 @@ public class TenantService {
     setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
-    listenerService.publishEvent("deed.event.tenantStop", deedTenant);
+    listenerService.publishEvent(DEED_EVENT_TENANT_STOP, deedTenant);
   }
 
   /**
@@ -180,6 +178,17 @@ public class TenantService {
    */
   public boolean isDeedManager(String address, long nftId) {
     return blockchainService.isDeedProvisioningManager(address, nftId);
+  }
+
+  /**
+   * Checks if address is the DEED owner
+   * 
+   * @param nftId DEED NFT identifier
+   * @param address Wallet or Contract Ethereum address
+   * @return true if address is the owner of the DEED Tenant
+   */
+  public boolean isDeedOwner(String address, long nftId) {
+    return blockchainService.isDeedOwner(address, nftId);
   }
 
   private void setDeedNftProperties(DeedTenant deedTenant) throws ObjectNotFoundException {

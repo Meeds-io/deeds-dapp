@@ -15,7 +15,10 @@
  */
 package io.meeds.deeds.web.rest;
 
+import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedTenantResponse;
+
 import java.security.Principal;
+import java.time.ZoneOffset;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -23,12 +26,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
+import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 
 @RestController
@@ -40,21 +54,34 @@ public class TenantController {
   @Autowired
   private TenantService       tenantService;
 
-  @GetMapping("/{nftId}/lastCommand")
+  @GetMapping("/{nftId}")
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
-  public String lastCommand(
-                            @PathVariable(name = "nftId")
-                            long nftId,
-                            Principal principal) {
+  public ResponseEntity<DeedTenantPresentation> getDeedTenant(
+                                                              Principal principal,
+                                                              @PathVariable(name = "nftId")
+                                                              Long nftId) {
     if (principal == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
     String walletAddress = principal.getName();
     try {
-      return tenantService.getLastTenantCommand(walletAddress, nftId);
+      DeedTenant deedTenant = tenantService.getDeedTenant(walletAddress, nftId);
+      return getDeedTenantResponse(deedTenant);
     } catch (UnauthorizedOperationException e) {
-      LOG.warn("[SECURITY ALERT] {} attempts to get tenant status for Deed with id {}", walletAddress, nftId, e);
-      return "";
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @GetMapping("/{nftId}/startDate")
+  public ResponseEntity<String> getDeedTenantStartTime(
+                                                       @PathVariable(name = "nftId")
+                                                       Long nftId) {
+    DeedTenant deedTenant = tenantService.getDeedTenant(nftId);
+    if (deedTenant == null || deedTenant.getDate() == null
+        || deedTenant.getTenantProvisioningStatus() != TenantProvisioningStatus.START_CONFIRMED) {
+      return ResponseEntity.ok("");
+    } else {
+      return ResponseEntity.ok(String.valueOf(deedTenant.getDate().toEpochSecond(ZoneOffset.UTC)));
     }
   }
 

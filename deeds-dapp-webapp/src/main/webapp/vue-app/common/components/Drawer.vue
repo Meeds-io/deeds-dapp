@@ -20,7 +20,7 @@
   <v-navigation-drawer
     v-model="drawer"
     :width="width"
-    :hide-overlay="firstLevel"
+    :hide-overlay="firstLevel || isMobile"
     :permanent="firstLevel && drawer"
     temporary
     right
@@ -36,6 +36,18 @@
         <template v-if="$slots.title">
           <v-flex class="mx-0 drawerHeader flex-grow-0">
             <v-list-item class="pe-0">
+              <v-list-item-action
+                v-if="secondLevel"
+                class="me-2"
+                @click="close">
+                <v-btn
+                  :title="$t('label.close')"
+                  name="closeDrawer"
+                  icon
+                  @click="close">
+                  <v-icon class="heading">fas fa-arrow-left</v-icon>
+                </v-btn>
+              </v-list-item-action>
               <v-list-item-content class="drawerTitle align-start text-header-title text-truncate">
                 <slot name="title"></slot>
               </v-list-item-content>
@@ -49,6 +61,7 @@
                   <v-icon v-text="expandIcon" size="18" />
                 </v-btn>
                 <v-btn
+                  v-else-if="!secondLevel"
                   :title="$t('label.close')"
                   name="closeDrawer"
                   icon
@@ -64,7 +77,7 @@
             color="primary" />
           <v-divider v-else class="my-0" />
         </template>
-        <v-flex class="drawerContent flex-grow-1 overflow-auto border-box-sizing">
+        <v-flex class="drawerContent flex-grow-1 overflow-auto border-box-sizing d-flex flex-column">
           <slot name="content"></slot>
         </v-flex>
         <template v-if="$slots.footer">

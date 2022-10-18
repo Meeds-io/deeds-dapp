@@ -17,17 +17,14 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tooltip v-if="loading" bottom>
-    <template #activator="{ on, attrs }">
-      <v-progress-circular
-        size="24"
-        color="primary"
-        indeterminate
-        v-bind="attrs"
-        v-on="on" />
-    </template>
-    <div>{{ nft.statusLabel || '' }}</div>
-  </v-tooltip>
+  <a
+    v-if="transactionHash"
+    :href="`${etherscanBaseLink}/tx/${transactionHash}`"
+    target="_blank"
+    rel="nofollow noreferrer noopener"
+    class="d-inline d-sm-flex link--color">
+    {{ $t('transactionSent') }}
+  </a>
   <a
     v-else-if="started"
     :href="nft.link"
@@ -48,16 +45,26 @@ export default {
       default: null,
     },
   },
-  computed: {
+  computed: Vuex.mapState({
+    etherscanBaseLink: state => state.etherscanBaseLink,
+    nftId() {
+      return this.nft?.id;
+    },
+    status() {
+      return this.nft?.status;
+    },
+    transactionHash() {
+      return this.nft?.transactionHash;
+    },
     loading() {
-      return !this.nft?.status || this.nft.status === 'loading';
+      return this.transactionHash || !this.status || this.status === 'loading';
     },
     stopped() {
-      return !this.nft?.status || this.nft.status === 'STOPPED';
+      return !this.transactionHash && this.status === 'STOPPED';
     },
     started() {
-      return !this.nft?.status || this.nft.status === 'STARTED';
+      return !this.transactionHash && this.status === 'STARTED';
     },
-  },
+  }),
 };
 </script>

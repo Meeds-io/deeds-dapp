@@ -93,10 +93,6 @@ html {
   letter-spacing: normal!important;
 }
 
-.bottom-navigation {
-  z-index: 10 !important;
-}
-
 .mobile-menu-slider {
   height: 2px;
   position: absolute;
@@ -190,4 +186,14 @@ html {
 
 .assets {
   width: 690px;
+}
+
+.text-truncate-2 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: break-spaces;
 }

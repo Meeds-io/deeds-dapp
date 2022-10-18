@@ -109,10 +109,10 @@ export default {
         const meedsMaxPrice = Math.max(...this.chartData.map(values => values[1]));
         if (meedsMaxPrice) {
           const meedPriceLabel = this.currencyFormat(meedsMaxPrice);
-          return Math.max(meedPriceLabel.length * 6, 56);
+          return Math.max(meedPriceLabel.length * 6, 62);
         }
       }
-      return 56;
+      return 62;
     },
     chartOptions() {
       return {

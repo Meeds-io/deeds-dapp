@@ -22,10 +22,11 @@
     v-model="snackbar"
     :left="!$vuetify.rtl"
     :right="$vuetify.rtl"
-    timeout="20000"
+    :timeout="timeout"
     color="transparent"
     elevation="0"
-    app>
+    app
+    @click="cancelEvent">
     <v-alert
       :type="alertType"
       :max-width="maxWidth"
@@ -57,7 +58,7 @@
         icon
         small
         light
-        @click="toggle">
+        @click="cancelEvent($event);toggle($event);">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-alert>
@@ -67,6 +68,7 @@
 export default {
   data: () => ({
     snackbar: false,
+    timeout: 10000,
     alertMessage: null,
     alertType: null,
     alertLink: null,
@@ -90,6 +92,15 @@ export default {
       this.alertLinkTooltip = this.$t('viewOnEtherscan');
       window.setTimeout(() => this.snackbar = true, 500);
     });
+    window.setTimeout(() => this.snackbar = false, this.timeout);
+  },
+  methods: {
+    cancelEvent(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    },
   },
 };
 </script>

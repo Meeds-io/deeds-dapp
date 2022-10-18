@@ -19,45 +19,48 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
-import lombok.*;
+import io.meeds.deeds.constant.TenantProvisioningStatus;
+import io.meeds.deeds.constant.TenantStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "deed_tenant_manager", createIndex = true)
-@Setting(
-    sortFields = "date",
-    sortOrders = SortOrder.desc,
-    replicas = 0,
-    shards = 1
-)
+@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
 public class DeedTenant {
 
   @Id
-  private long                nftId;
+  private long                     nftId;
 
-  private short               cityIndex = -1;
+  private short                    cityIndex = -1;
 
-  private short               cardType  = -1;
+  private short                    cardType  = -1;
 
-  private String              managerAddress;
+  private String                   managerAddress;
 
-  private String              managerEmail;
+  private String                   managerEmail;
 
-  private String              startupTransactionHash;
+  private String                   startupTransactionHash;
 
-  private String              shutdownTransactionHash;
+  private String                   shutdownTransactionHash;
 
-  private String              provisioningStatus;
+  private TenantProvisioningStatus tenantProvisioningStatus;
 
-  private String              tenantStatus;
+  private TenantStatus             tenantStatus;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       date;
+  private LocalDateTime            date;
 
-  private Map<String, String> properties;
+  private Map<String, String>      properties;
 
 }
