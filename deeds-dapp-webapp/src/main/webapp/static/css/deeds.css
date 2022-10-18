@@ -63,6 +63,18 @@ html {
   margin: auto;
 }
 
+.v-btn[disabled].v-btn--disabled {
+  color: #c6c6c6  !important;
+}
+
+.v-btn[disabled].v-btn--disabled.primary {
+  background-color: #87001ade !important;
+}
+
+.v-btn[disabled].v-btn--disabled.tertiary {
+  background-color: #3f8487de !important;
+}
+
 .link--color {
   color: #0000ee !important;
 }

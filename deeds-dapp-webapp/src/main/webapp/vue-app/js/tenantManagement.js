@@ -18,28 +18,6 @@
  */
 import {getCookie} from './authentication';
 
-export function saveEmail(nftId, email) {
-  const formData = new FormData();
-  if (email) {
-    formData.append('email', email);
-  }
-  const params = new URLSearchParams(formData).toString();
-
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
-    },
-    credentials: 'include',
-    body: params,
-  }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error(`Error changing sending email of nft with id ${nftId}`);
-    }
-  });
-}
-
 export function startTenant(nftId, email, transactionHash) {
   const formData = new FormData();
   if (email) {

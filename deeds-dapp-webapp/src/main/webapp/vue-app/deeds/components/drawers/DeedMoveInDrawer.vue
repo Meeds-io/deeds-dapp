@@ -33,26 +33,24 @@
             {{ $t('deedMoveInParagraph1') }}
           </v-card-text>
           <v-card-text class="pt-0">
-            {{ $t('deedOwnerMoveInParagraph2') }}
-          </v-card-text>
-          <v-card-text class="pt-0">
-            {{ $t('deedMoveInParagraph3') }}
+            {{ $t('deedMoveInParagraph2') }}
           </v-card-text>
           <v-card-title class="pt-0">
             {{ $t('email') }}
           </v-card-title>
           <v-card-text class="pt-0">
             <label for="email">
-              {{ $t('requestTenantEmailLabel') }}
+              {{ $t('startTenantEmailLabel') }}
             </label>
             <v-text-field
               ref="email"
               v-model="email"
-              :placeholder="$t('requestTenantEmailPlaceholder')"
+              :placeholder="$t('startTenantEmailPlaceholder')"
               :readonly="disabledEmail"
               :disabled="sendingEmail"
               name="email"
               type="email"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
               class="align-center"
               hide-details
               large
@@ -60,21 +58,11 @@
               dense
               @focus="editEmail"
               @blur="cancelEditEmail">
-              <template v-if="transactionHash" #append-outer>
+              <template #append-outer>
                 <v-slide-x-reverse-transition mode="out-in">
-                  <v-btn
-                    ref="emailEditButton"
-                    :key="emailAppendIcon"
-                    :title="emailAppendIconTooltip"
-                    :loading="sendingEmail"
-                    :disabled="!emailChanged && isEditingEmail"
-                    name="emailAppendIcon"
-                    icon
-                    @click="isEditingEmail && sendEmail() || editEmail()">
-                    <v-icon :color="emailAppendIconColor">
-                      {{ emailAppendIcon }}
-                    </v-icon>
-                  </v-btn>
+                  <v-icon :key="emailAppendIcon" :color="emailAppendIconColor">
+                    {{ emailAppendIcon }}
+                  </v-icon>
                 </v-slide-x-reverse-transition>
               </template>
             </v-text-field>
@@ -92,12 +80,6 @@
       </template>
     </template>
     <template v-if="transactionHash" #footer>
-      <deeds-move-out-button
-        :nft-id="nftId"
-        label="cancel"
-        class="ms-auto me-2"
-        @sending="$refs.drawer.startLoading()"
-        @end-sending="$refs.drawer.endLoading()" />
       <v-btn
         :min-width="minButtonsWidth"
         name="moveInConfirmButton"
@@ -128,6 +110,7 @@
         :loading="sending"
         name="moveInConfirmButton"
         color="tertiary"
+        class="tertiary"
         depressed
         dark
         @click="sendRequest">
@@ -159,7 +142,7 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
     validForm() {
-      return !this.email || !this.email.length || (this.$refs.form && this.$refs.form.$el.reportValidity());
+      return this.email?.length && this.$refs.form?.$el.reportValidity();
     },
     nftId() {
       return this.nft?.id;
@@ -174,16 +157,16 @@ export default {
       return `${this.etherscanBaseLink}/tx/${this.transactionHash}`;
     },
     disabledEmail() {
-      return this.sending || this.transactionHash && !this.isEditingEmail;
+      return this.sending || this.transactionHash;
+    },
+    emailAppendDisplay() {
+      return this.email && !this.isEditingEmail;
     },
     emailAppendIcon() {
-      return this.isEditingEmail ? 'mdi-check-outline' : 'mdi-circle-edit-outline';
+      return !this.emailAppendDisplay && ' ' || this.validForm && 'fas fa-check' || 'fas fa-xmark';
     },
     emailAppendIconColor() {
-      return this.isEditingEmail && 'success' || 'info';
-    },
-    emailAppendIconTooltip() {
-      return this.isEditingEmail && this.$t('sendEmailButtonTooltip') || this.$t('editEmailButtonTooltip');
+      return this.validForm && 'success' || 'error';
     },
   }),
   watch: {
@@ -209,6 +192,7 @@ export default {
       this.nft = nft;
       this.transactionHash = null;
       this.sending = false;
+      this.email = null;
       this.isEditingEmail = false;
       this.emailChanged = false;
       this.$nextTick()
@@ -228,39 +212,18 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      if (!this.transactionHash) {
+      this.isEditingEmail = false;
+      if (!this.transactionHash && this.$refs.form?.$el.reportValidity()) {
         return this.startTenant();
-      } else if (this.isEditingEmail) {
-        this.sendEmail();
-      }
-    },
-    cancelEditEmail() {
-      if (this.transactionHash && !this.emailChanged) {
-        window.setTimeout(() => {
-          if (this.isEditingEmail && !this.sendingEmail) {
-            this.isEditingEmail = false;
-          }
-        }, 200);
       }
     },
     editEmail() {
-      if (this.transactionHash && !this.isEditingEmail) {
+      if (!this.email) {
         this.isEditingEmail = true;
-        this.emailChanged = false;
-        this.$nextTick().then(() => this.$refs.email.focus());
       }
     },
-    sendEmail(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      if (this.email) {
-        this.sendingEmail = true;
-        return this.$tenantManagement.saveEmail(this.nftId, this.email)
-          .then(() => this.emailChanged = false)
-          .finally(() => this.isEditingEmail = this.sendingEmail = false);
-      }
+    cancelEditEmail() {
+      this.isEditingEmail = false;
     },
     startTenant(event) {
       if (event) {
