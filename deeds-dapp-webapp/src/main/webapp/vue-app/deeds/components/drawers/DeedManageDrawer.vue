@@ -17,7 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-drawer ref="drawer">
+  <deeds-drawer
+    ref="drawer"
+    :first-level="secondLevelOpened"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <template #title>
       <h4>{{ $t('manageDeedTitle', {0: cardTypeName, 1: nftId}) }}</h4>
     </template>
@@ -61,11 +65,81 @@
       <v-list-item class="ms-4 my-n2" dense>
         <v-list-item-subtitle class="text-color">{{ $t('deedTenantStartedOn') }}: {{ cityStartDateFormatted }}</v-list-item-subtitle>
       </v-list-item>
+      <template v-if="isProvisioningManager && authenticated">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="font-weight-bold">{{ $t('deedTenantAccess') }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item
+          class="ms-4"
+          two-line
+          dense>
+          <v-list-item-content>
+            <v-list-item-subtitle v-if="stopped" class="text-color">{{ $t('deedMoveInDescription') }}</v-list-item-subtitle>
+            <v-list-item-subtitle v-else-if="started" class="text-color">{{ $t('deedMoveOutDescription') }}</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              v-if="started"
+              :min-width="minButtonsWidth"
+              class="ms-auto"
+              color="tertiary"
+              depressed
+              dark
+              @click="$root.$emit('deeds-move-out-drawer')">
+              <span class="text-capitalize">{{ $t('moveOut') }}</span>
+            </v-btn>
+            <v-btn
+              v-else-if="stopped"
+              :min-width="minButtonsWidth"
+              class="ms-auto"
+              color="tertiary"
+              depressed
+              dark
+              @click="$root.$emit('deeds-move-in-drawer')">
+              <span class="text-capitalize">{{ $t('moveIn') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item
+          class="ms-4"
+          two-line
+          dense>
+          <v-list-item-content>
+            <v-list-item-subtitle class="text-color">{{ $t('deedSellDescription') }}</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              :href="`${openSeaBaseLink}/${nftId}/sell`"
+              :min-width="minButtonsWidth"
+              target="_blank"
+              rel="nofollow noreferrer noopener"
+              class="ms-auto"
+              outlined
+              text>
+              <span class="text-capitalize">{{ $t('deedSellButton') }}</span>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </template>
     </template>
-    <template v-if="isProvisioningManager && !authenticated" #footer>
-      <v-tooltip top>
+    <template v-if="isProvisioningManager" #footer>
+      <v-btn
+        v-if="authenticated"
+        :min-width="minButtonsWidth"
+        class="ms-auto"
+        text
+        outlined
+        v-bind="attrs"
+        v-on="on"
+        @click="logout">
+        <span class="text-capitalize">{{ $t('signOut') }}</span>
+      </v-btn>
+      <v-tooltip v-else top>
         <template #activator="{ on, attrs }">
           <v-btn
+            :min-width="minButtonsWidth"
             color="tertiary"
             depressed
             dark
@@ -73,7 +147,7 @@
             v-bind="attrs"
             v-on="on"
             @click="login">
-            {{ $t('signIn') }}
+            <span class="text-capitalize">{{ $t('signIn') }}</span>
           </v-btn>
         </template>
         <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
@@ -83,17 +157,24 @@
 </template>
 <script>
 export default {
+  props: {
+    secondLevelOpened: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     nft: null,
     authenticated: false,
     deedInfo: null,
+    minButtonsWidth: 120,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
     language: state => state.language,
     provider: state => state.provider,
-    etherscanBaseLink: state => state.etherscanBaseLink,
+    openSeaBaseLink: state => state.openSeaBaseLink,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
     cardTypeInfos: state => state.cardTypeInfos,
@@ -137,7 +218,8 @@ export default {
       return this.deedTraits.find(attr => attr.trait_type === 'Tenant start date')?.value || 0;
     },
     cityStartDateFormatted() {
-      return this.cityStartDate && this.$ethUtils.formatDate(new Date(this.cityStartDate * 1000), this.language)
+      return this.loading && '-'
+        || this.started && this.cityStartDate && this.$ethUtils.formatDate(new Date(this.cityStartDate * 1000), this.language)
         || this.$t('deedTenantNotStartedYet');
     },
     cityName() {
@@ -145,6 +227,15 @@ export default {
     },
     isProvisioningManager() {
       return this.nft?.provisioningManager;
+    },
+    loading() {
+      return !this.nft?.status || this.nft.status === 'loading';
+    },
+    stopped() {
+      return !this.nft?.status || this.nft.status === 'STOPPED';
+    },
+    started() {
+      return !this.nft?.status || this.nft.status === 'STARTED';
     },
   }),
   created() {

@@ -23,9 +23,9 @@
       <v-divider class="my-auto ms-4" />
     </v-card-title>
     <template v-if="hasDeeds">
-      <deeds-move-in-drawer />
-      <deeds-move-out-drawer />
-      <deeds-manage-drawer />
+      <deeds-manage-drawer :second-level-opened="secondLevelOpened" />
+      <deeds-move-in-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
+      <deeds-move-out-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
     </template>
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
     <v-data-table
@@ -61,6 +61,7 @@ export default {
     ownedDeeds: [],
     authenticated: false,
     initialized: false,
+    secondLevelOpened: false,
     contractListenersInstalled: false,
   }),
   computed: Vuex.mapState({
