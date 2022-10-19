@@ -18,13 +18,8 @@
 -->
 <template>
   <v-list-item class="ps-0">
-    <v-list-item-avatar
-      class="ma-0"
-      height="55"
-      tile>
-      <v-img
-        :src="cardImage"
-        contain />
+    <v-list-item-avatar class="ma-0">
+      <v-img :src="cardImage" />
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>
