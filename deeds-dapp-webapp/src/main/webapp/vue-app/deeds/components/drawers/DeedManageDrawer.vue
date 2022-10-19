@@ -29,10 +29,8 @@
     <template v-if="cardTypeInfo" #content>
       <v-list>
         <v-list-item two-line>
-          <v-list-item-avatar height="55" tile>
-            <v-img
-              :src="cardImage"
-              contain />
+          <v-list-item-avatar>
+            <v-img :src="cardImage" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">{{ $t('deedName') }}:</v-list-item-title>
