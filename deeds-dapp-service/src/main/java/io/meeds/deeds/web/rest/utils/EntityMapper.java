@@ -19,6 +19,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +28,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 
+import io.meeds.deeds.constant.TenantProvisioningStatus;
+import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.model.DeedMetadataAttribute;
 import io.meeds.deeds.model.DeedTenant;
@@ -76,8 +79,9 @@ public class EntityMapper {
   private static DeedTenantPresentation build(DeedTenant deedTenant) {
     return new DeedTenantPresentation(deedTenant.getNftId(),
                                       deedTenant.getManagerAddress(),
-                                      deedTenant.getTenantProvisioningStatus(),
-                                      deedTenant.getTenantStatus(),
+                                      Objects.requireNonNullElse(deedTenant.getTenantProvisioningStatus(),
+                                                                 TenantProvisioningStatus.STOP_CONFIRMED),
+                                      Objects.requireNonNullElse(deedTenant.getTenantStatus(), TenantStatus.UNDEPLOYED),
                                       deedTenant.getDate().toEpochSecond(ZoneOffset.UTC));
   }
 
