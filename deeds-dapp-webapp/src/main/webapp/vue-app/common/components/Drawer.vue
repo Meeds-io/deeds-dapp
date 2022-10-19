@@ -76,7 +76,7 @@
             color="primary" />
           <v-divider v-else class="my-0" />
         </template>
-        <v-flex class="drawerContent flex-grow-1 overflow-auto border-box-sizing d-flex flex-column">
+        <v-flex class="drawerContent flex-grow-1 overflow-auto border-box-sizing d-flex flex-column overflow-x-hidden">
           <slot name="content"></slot>
         </v-flex>
         <template v-if="$slots.footer">
