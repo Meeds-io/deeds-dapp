@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents';
+import * as utils from './js/utils.js';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
@@ -78,6 +79,7 @@ const store = new Vuex.Store({
     networkId: null,
     validNetwork: false,
     yearInMinutes: 365 * 24 * 60,
+    scrollbarWidth: utils.getScrollbarWidth(),
     cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
     cardTypes: ['Common', 'Uncommon', 'Rare', 'Legendary'],
     cardTypeInfos: {},
