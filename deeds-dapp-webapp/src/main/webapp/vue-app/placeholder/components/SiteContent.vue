@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2022 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,32 +17,14 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <v-card flat class="overflow-hidden">
-      <deeds-topbar id="banner" role="banner" />
-      <deeds-site-content id="siteContent" />
-    </v-card>
-  </v-app>
+  <v-sheet
+    class="overflow-y-auto">
+    <div class="siteContentLayout mt-11 mt-sm-13">
+      <div class="mainPageLayout mx-auto pa-4">
+        <tenant-placeholder-page
+          id="mainPageContent"
+          role="main" />
+      </div>
+    </div>
+  </v-sheet>
 </template>
-<script>
-export default {
-  computed: {
-    isMobile() {
-      return this.$vuetify.breakpoint.xsOnly;
-    },
-  },
-  watch: {
-    isMobile() {
-      this.refreshMobileValue();
-    },
-  },
-  created() {
-    this.refreshMobileValue();
-  },
-  methods: {
-    refreshMobileValue() {
-      this.$store.commit('setMobile', this.isMobile);
-    },
-  },
-};
-</script>

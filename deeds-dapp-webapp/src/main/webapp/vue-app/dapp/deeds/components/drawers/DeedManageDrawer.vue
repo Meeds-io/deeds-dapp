@@ -166,11 +166,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    value: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     nft: null,
     drawer: false,
-    authenticated: false,
     deedInfo: null,
     minButtonsWidth: 120,
   }),
@@ -183,6 +186,9 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
     cardTypeInfos: state => state.cardTypeInfos,
+    authenticated() {
+      return this.value;
+    },
     cardTypeInfo() {
       return this.cardTypeInfos[this.cardType];
     },
@@ -327,7 +333,7 @@ export default {
         .then(() => this.refreshDeedInfo());
     },
     refreshAuthentication() {
-      this.authenticated = this.$authentication.isAuthenticated(this.address);
+      this.$emit('input', this.$authentication.isAuthenticated(this.address));
     },
   },
 };
