@@ -34,7 +34,6 @@ import DeedsTrade from './components/DeedsTrade.vue';
 import DeedMoveInDrawer from './components/drawers/DeedMoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
 import DeedManageDrawer from './components/drawers/DeedManageDrawer.vue';
-import DeedMoveOutButton from './components/drawers/buttons/DeedMoveOutButton.vue';
 
 const components = {
   'deeds-deeds': Deeds,
@@ -52,7 +51,6 @@ const components = {
   'deeds-owned-item-menu': DeedsOwnedItemMenu,
   'deeds-move-in-drawer': DeedMoveInDrawer,
   'deeds-move-out-drawer': DeedMoveOutDrawer,
-  'deeds-move-out-button': DeedMoveOutButton,
   'deeds-manage-drawer': DeedManageDrawer,
   'deeds-timer': DeedsTimer,
   'deeds-trade': DeedsTrade,
