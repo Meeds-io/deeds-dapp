@@ -76,7 +76,7 @@
             color="primary" />
           <v-divider v-else class="my-0" />
         </template>
-        <v-flex class="drawerContent flex-grow-1 overflow-auto border-box-sizing d-flex flex-column overflow-x-hidden">
+        <v-flex class="drawerContent flex-grow-1 border-box-sizing d-flex flex-column overflow-y-auto overflow-x-hidden">
           <slot name="content"></slot>
         </v-flex>
         <template v-if="$slots.footer">
@@ -129,6 +129,7 @@ export default {
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
+    scrollbarWidth: state => state.scrollbarWidth,
     width() {
       return this.expand && '100%' || this.drawerWidth;
     },
@@ -147,13 +148,21 @@ export default {
     drawer() {
       if (this.drawer) {
         this.$emit('opened');
-        if (this.disablePullToRefresh) {
-          document.body.style.overscrollBehaviorY = 'contain';
+        if (!this.secondLevel) {
+          if (this.disablePullToRefresh) {
+            document.body.style.overscrollBehaviorY = 'contain';
+          }
+          Object.assign(window.document.querySelector('html').style, {overflowY: 'hidden', marginRight: `${this.scrollbarWidth}px`});
+          Object.assign(window.document.querySelector('#banner').style, {overflowY: 'hidden', paddingRight: `${this.scrollbarWidth}px`});
         }
       } else {
         this.$emit('closed');
-        if (this.disablePullToRefresh) {
-          document.body.style.overscrollBehaviorY = '';
+        if (!this.secondLevel) {
+          if (this.disablePullToRefresh) {
+            document.body.style.overscrollBehaviorY = '';
+          }
+          Object.assign(window.document.querySelector('html').style, {overflowY: '', marginRight: ''});
+          Object.assign(window.document.querySelector('#banner').style, {overflowY: '', paddingRight: ''});
         }
       }
       this.$emit('input', this.drawer);
@@ -161,18 +170,31 @@ export default {
     },
   },
   created() {
-    this.$root.$on('close-drawer', this.close);
+    document.addEventListener('keydown', this.closeByEscape);
+    this.$root.$on('close-drawer', this.closeIfNotFirstLevel);
   },
   methods: {
     open() {
       this.drawer = true;
     },
-    close(event) {
-      if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+    closeByEscape(event) {
+      if (event?.key === 'Escape') {
+        this.closeIfNotFirstLevel(event);
       }
-      this.drawer = false;
+    },
+    closeIfNotFirstLevel(event) {
+      if (!this.firstLevel) {
+        this.close(event);
+      }
+    },
+    close(event) {
+      if (this.drawer) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        this.drawer = false;
+      }
     },
     startLoading() {
       this.loading = true;
