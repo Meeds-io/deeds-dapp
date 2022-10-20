@@ -18,12 +18,13 @@ package io.meeds.deeds.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.storage.DeedTenantManagerRepository;
@@ -225,6 +227,30 @@ class TenantServiceTest {
     assertThrows(UnauthorizedOperationException.class, () -> tenantService.saveEmail(address, nftId, email));
   }
 
+  @Test
+  void testIsTenantCommandStop() {
+    long nftId = 1l;
+
+    assertTrue(tenantService.isTenantCommandStop(nftId));
+
+    DeedTenant deedTenantMock = mock(DeedTenant.class);
+
+    when(deedTenantManagerRepository.findById(nftId)).thenReturn(Optional.of(deedTenantMock));
+    assertTrue(tenantService.isTenantCommandStop(nftId));
+
+    when(deedTenantMock.getTenantProvisioningStatus()).thenReturn(TenantProvisioningStatus.START_CONFIRMED);
+    assertFalse(tenantService.isTenantCommandStop(nftId));
+
+    when(deedTenantMock.getTenantProvisioningStatus()).thenReturn(TenantProvisioningStatus.START_IN_PROGRESS);
+    assertFalse(tenantService.isTenantCommandStop(nftId));
+
+    when(deedTenantMock.getTenantProvisioningStatus()).thenReturn(TenantProvisioningStatus.STOP_IN_PROGRESS);
+    assertFalse(tenantService.isTenantCommandStop(nftId));
+
+    when(deedTenantMock.getTenantProvisioningStatus()).thenReturn(TenantProvisioningStatus.STOP_CONFIRMED);
+    assertTrue(tenantService.isTenantCommandStop(nftId));
+  }
+  
   @Test
   void testSaveEmailByTenantManager() throws Exception {
     long nftId = 1l;

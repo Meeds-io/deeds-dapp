@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.storage.DeedTenantManagerRepository;
@@ -189,6 +190,18 @@ public class TenantService {
    */
   public boolean isDeedOwner(String address, long nftId) {
     return blockchainService.isDeedOwner(address, nftId);
+  }
+
+  /**
+   * Check if Deed Tenant is started or commanded to be started
+   * 
+   * @param nftId DEED NFT identifier
+   * @return true if the Tenant Provisioning status is START_CONFIRMED or START_IN_PROGRESS
+   */
+  public boolean isTenantCommandStop(long nftId) {
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    return deedTenant == null || deedTenant.getTenantProvisioningStatus() == null
+        || deedTenant.getTenantProvisioningStatus() == TenantProvisioningStatus.STOP_CONFIRMED;
   }
 
   private void setDeedNftProperties(DeedTenant deedTenant) throws ObjectNotFoundException {

@@ -249,7 +249,7 @@ export default {
         ).then(receipt => {
           if (receipt) {
             this.transactionHash = receipt.hash;
-            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash);
+            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash, 'start');
             this.$root.$emit('transaction-sent', this.transactionHash);
             this.saveStartTenantRequest();
           }
