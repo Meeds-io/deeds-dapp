@@ -18,24 +18,18 @@
 -->
 <template>
   <a
-    v-if="transactionHash"
-    :href="`${etherscanBaseLink}/tx/${transactionHash}`"
-    target="_blank"
-    rel="nofollow noreferrer noopener"
-    class="d-inline d-sm-flex link--color">
-    {{ $t('transactionSent') }}
-  </a>
-  <a
-    v-else-if="started"
-    :href="nft.link"
+    v-if="started || starting || stopping"
+    :href="cityLink"
     target="_blank"
     rel="nofollow noreferrer noopener">
-    {{ nft.linkLabel }}
+    <span v-if="starting" class="text-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
+    <span v-else-if="stopping" class="text-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
+    <span v-else class="text-lowercase">{{ cityLinkLabel }}</span>
   </a>
   <div v-else-if="stopped" class="text-capitalize">
     {{ $t('vacant') }}
   </div>
-  <div v-else></div>
+  <div v-else>-</div>
 </template>
 <script>
 export default {
@@ -46,7 +40,7 @@ export default {
     },
   },
   computed: Vuex.mapState({
-    etherscanBaseLink: state => state.etherscanBaseLink,
+    cities: state => state.cities,
     nftId() {
       return this.nft?.id;
     },
@@ -60,10 +54,28 @@ export default {
       return this.transactionHash || !this.status || this.status === 'loading';
     },
     stopped() {
-      return !this.transactionHash && this.status === 'STOPPED';
+      return this.status === 'STOPPED';
     },
     started() {
-      return !this.transactionHash && this.status === 'STARTED';
+      return this.status === 'STARTED';
+    },
+    starting() {
+      return this.loading && this.nft.starting;
+    },
+    stopping() {
+      return this.loading && this.nft.stopping;
+    },
+    cityIndex() {
+      return this.nft?.cityIndex;
+    },
+    cityName() {
+      return this.cities[this.cityIndex];
+    },
+    cityLink() {
+      return `https://${this.cityName}-${this.nftId}.wom.meeds.io`;
+    },
+    cityLinkLabel() {
+      return `${this.cityName}-${this.nftId}.wom.meeds.io`;
     },
   }),
 };

@@ -7,7 +7,8 @@ let config = {
   // set the entry point of the application
   // can use multiple entry
   entry: {
-    deeds: './src/main/webapp/vue-app/main.js',
+    deeds: './src/main/webapp/vue-app/dapp/main.js',
+    tenantPlaceholder: './src/main/webapp/vue-app/placeholder/main.js',
   },
   plugins: [
     new ESLintPlugin({
