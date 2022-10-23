@@ -63,4 +63,7 @@ public class DeedTenant {
 
   private Map<String, String>      properties;
 
+  public boolean isStartProvisioningStatus() {
+    return tenantProvisioningStatus != null && tenantProvisioningStatus.isStart();
+  }
 }

@@ -36,7 +36,7 @@ public class TenantService {
 
   public static final String          DEED_EVENT_TENANT_START         = "deed.event.tenantStart";
 
-  @Autowired(required = false)
+  @Autowired
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
   @Autowired
