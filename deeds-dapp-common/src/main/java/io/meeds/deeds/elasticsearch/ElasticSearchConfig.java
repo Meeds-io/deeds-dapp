@@ -24,20 +24,29 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration.ClientConfigurationBuilderWithRequiredEndpoint;
 import org.springframework.data.elasticsearch.client.ClientConfiguration.MaybeSecureClientConfigurationBuilder;
 import org.springframework.data.elasticsearch.client.RestClients;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
+import io.meeds.deeds.model.DeedMetadata;
+import io.meeds.deeds.model.DeedTenant;
+
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "io.meeds.deeds.elasticsearch")
+@EnableElasticsearchRepositories(basePackages = { "io.meeds.deeds", })
 public class ElasticSearchConfig {
 
   @Value("${meeds.elasticsearch.username:}")
-  private String esUsername;
+  private String  esUsername;
 
   @Value("${meeds.elasticsearch.password:}")
-  private String esPassword;
+  private String  esPassword;
 
   @Value("${meeds.elasticsearch.url:http://127.0.0.1:9200}")
-  private String esUrl;
+  private String  esUrl;
+
+  @Value("${meeds.elasticsearch.autoCreateIndex:true}")
+  private boolean createDeedIndexes;
 
   @Bean
   public RestHighLevelClient client() {
@@ -52,6 +61,27 @@ public class ElasticSearchConfig {
     }
     ClientConfiguration clientConfiguration = connectionBuilder.build();
     return RestClients.create(clientConfiguration).rest();// NOSONAR
+  }
+
+  @Bean
+  public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient client) {
+    ElasticsearchRestTemplate elasticsearchTemplate = new ElasticsearchRestTemplate(client);
+    createIndex(elasticsearchTemplate, DeedTenant.class);
+    createIndex(elasticsearchTemplate, DeedMetadata.class);
+    return elasticsearchTemplate;
+  }
+
+  private void createIndex(ElasticsearchRestTemplate elasticsearchTemplate, Class<?> esDocumentModelClass) {
+    IndexOperations indexOperations = elasticsearchTemplate.indexOps(esDocumentModelClass);
+    boolean indexExists = indexOperations.exists();
+    if (!indexExists) {
+      if (createDeedIndexes) {
+        indexOperations.create();
+      } else {
+        // Prevent Deed Tenants from creating indexes in their respective ES
+        throw new IllegalStateException("Make sure the `meeds.elasticsearch.*` configuration properties are set properly");
+      }
+    }
   }
 
 }

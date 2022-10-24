@@ -46,18 +46,6 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.reactivex.rxjava2</groupId>
-      <artifactId>rxjava</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.exoplatform.wallet</groupId>
       <artifactId>ert-contract</artifactId>
       <exclusions>
@@ -99,6 +87,8 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+
+    <!-- Provided artifacts in Server Shared library, used for compilation only -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -118,12 +108,5 @@
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
-    <!-- Used to add BuildNumber in application.properties -->
-    <resources>
-      <resource>
-        <directory>src/main/resources/</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
   </build>
 </project>

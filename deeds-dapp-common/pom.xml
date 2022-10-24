@@ -26,7 +26,7 @@
   <artifactId>deeds-dapp-common</artifactId>
   <name>Meeds:: Deeds Dapp - Common </name>
   <properties>
-    <exo.test.coverage.ratio>0.69</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.68</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>
@@ -51,10 +51,19 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava2</groupId>
+      <artifactId>rxjava</artifactId>
+    </dependency>
+
+    <!-- Provided artifacts in Server Shared library, used for compilation only -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -63,6 +72,11 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
     <!-- Test artifacts -->
@@ -74,5 +88,12 @@
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
+    <!-- Used to add BuildNumber in application.properties -->
+    <resources>
+      <resource>
+        <directory>src/main/resources/</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
   </build>
 </project>
