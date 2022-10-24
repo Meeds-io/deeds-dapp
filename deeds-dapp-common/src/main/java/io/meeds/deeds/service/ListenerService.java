@@ -32,9 +32,11 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.RedisClient;
@@ -50,11 +52,12 @@ public class ListenerService implements ApplicationContextAware {
 
   private static final Logger       LOG           = LoggerFactory.getLogger(ListenerService.class);
 
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final ObjectMapper OBJECT_MAPPER;
 
   static {
     // Workaround when Jackson is defined in shared library with different
     // version and without artifact jackson-datatype-jsr310
+    OBJECT_MAPPER = JsonMapper.builder().configure(JsonReadFeature.ALLOW_MISSING_VALUES, true).build();
     OBJECT_MAPPER.registerModule(new JavaTimeModule());
   }
 
@@ -244,7 +247,6 @@ public class ListenerService implements ApplicationContextAware {
         return null;
       }
     }
-
   }
 
   public class Listener implements RedisPubSubListener<String, String> {
