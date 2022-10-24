@@ -36,7 +36,7 @@ public class TenantService {
 
   public static final String          DEED_EVENT_TENANT_START         = "deed.event.tenantStart";
 
-  @Autowired(required = false)
+  @Autowired
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
   @Autowired
@@ -88,15 +88,18 @@ public class TenantService {
     if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
-    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId)
-                                                       .orElse(new DeedTenant());
-    deedTenant.setNftId(nftId);
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    if (deedTenant == null) {
+      deedTenant = buildDeedTenantFromBlockchain(nftId);
+    } else {
+      setDeedNftProperties(deedTenant);
+    }
+
     deedTenant.setManagerAddress(managerAddress.toLowerCase());
     deedTenant.setManagerEmail(email);
     if (deedTenant.getDate() == null) {
       deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
     }
-    setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent(DEED_EVENT_TENANT_EMAIL_UPDATED, deedTenant);
@@ -125,16 +128,21 @@ public class TenantService {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
     DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId)
-                                                       .orElse(new DeedTenant());
-    deedTenant.setNftId(nftId);
+                                                       .orElse(null);
+    if (deedTenant == null) {
+      deedTenant = buildDeedTenantFromBlockchain(nftId);
+      deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_IN_PROGRESS);
+    } else {
+      setDeedNftProperties(deedTenant);
+    }
+
     deedTenant.setManagerAddress(managerAddress.toLowerCase());
     deedTenant.setManagerEmail(email);
+    deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
     deedTenant.setStartupTransactionHash(transactionHash);
     deedTenant.setShutdownTransactionHash(null);
-    deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
-    setDeedNftProperties(deedTenant);
-
     deedTenantManagerRepository.save(deedTenant);
+
     listenerService.publishEvent(DEED_EVENT_TENANT_START, deedTenant);
   }
 
@@ -157,17 +165,37 @@ public class TenantService {
     if (!isDeedManager(managerAddress, nftId)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
-    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId)
-                                                       .orElse(new DeedTenant());
-    deedTenant.setNftId(nftId);
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    if (deedTenant == null) {
+      deedTenant = buildDeedTenantFromBlockchain(nftId);
+      deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_IN_PROGRESS);
+    } else {
+      setDeedNftProperties(deedTenant);
+    }
+
     deedTenant.setManagerAddress(managerAddress.toLowerCase());
     deedTenant.setStartupTransactionHash(null);
     deedTenant.setShutdownTransactionHash(transactionHash);
     deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
-    setDeedNftProperties(deedTenant);
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent(DEED_EVENT_TENANT_STOP, deedTenant);
+  }
+
+  /**
+   * Retrieve Deed Tenant information from blockchain
+   * 
+   * @param nftId DEED NFT id in the blockchain
+   * @return {@link DeedTenant}
+   * @throws ObjectNotFoundException when Deed NFT id is not recognized on
+   *           blockchain
+   */
+  public DeedTenant buildDeedTenantFromBlockchain(long nftId) throws ObjectNotFoundException {
+    DeedTenant deedTenant;
+    deedTenant = new DeedTenant();
+    deedTenant.setNftId(nftId);
+    setDeedNftProperties(deedTenant);
+    return deedTenant;
   }
 
   /**

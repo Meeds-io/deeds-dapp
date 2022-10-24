@@ -57,8 +57,9 @@ public class BlockchainConfiguration {
   }
 
   @Bean
-  public DeedTenantProvisioning getTenantProvisioningStrategy(@Qualifier("ethereumNetwork")
-  Web3j web3j) {
+  public DeedTenantProvisioning getDeedTenantProvisioning(
+                                                          @Qualifier("ethereumNetwork")
+                                                          Web3j web3j) {
     return DeedTenantProvisioning.load(properties.getTenantProvisioningAddress(),
                                        web3j,
                                        getTransactionManager(web3j),

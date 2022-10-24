@@ -18,10 +18,15 @@
  */
 package io.meeds.deeds.storage;
 
+import java.util.List;
+
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
+import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.model.DeedTenant;
 
 public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenant, Long> {
+
+  List<DeedTenant> findByTenantProvisioningStatusIn(List<TenantProvisioningStatus> provisioningPendingStatuses);
 
 }

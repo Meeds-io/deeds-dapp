@@ -24,7 +24,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
-import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
@@ -35,8 +34,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = true)
-@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
+@Document(indexName = "deed_tenant_manager")
+@Setting(replicas = 0, shards = 1)
 public class DeedTenant {
 
   @Id

@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
@@ -48,6 +49,9 @@ import io.meeds.deeds.model.FundInfo;
 
 @SpringBootTest(classes = { BlockchainService.class })
 class BlockchainServiceTest {
+
+  @MockBean(name = "ethereumNetwork")
+  private Web3j                  web3j;
 
   @MockBean
   private DeedTenantProvisioning deedTenantProvisioning;
