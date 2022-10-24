@@ -92,10 +92,10 @@ public class ExchangeService {
   @Value("${meeds.exchange.lpTokenAddress:0x960bd61d0b960b107ff5309a2dcced4705567070}")
   private String                         lpTokenAddress;
 
-  @Autowired(required = false)
+  @Autowired
   private CurrencyExchangeRateRepository currencyExchangeRateRepository;
 
-  @Autowired(required = false)
+  @Autowired
   private MeedExchangeRateRepository     meedExchangeRateRepository;
 
   /**

@@ -15,61 +15,185 @@
  */
 package io.meeds.deeds.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthLog;
+import org.web3j.protocol.core.methods.response.EthLog.LogObject;
+import org.web3j.protocol.core.methods.response.EthLog.LogResult;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
+import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStartedEventResponse;
+import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.deeds.model.DeedCity;
+import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.model.FundInfo;
 
 @Component
 public class BlockchainService {
 
-  private DeedTenantProvisioning deedTenantProvisioning;
+  @Autowired
+  @Qualifier("ethereumNetwork")
+  private Web3j                             web3j;
 
-  private Deed                   deed;
+  @Autowired(required = false)
+  private DeedTenantProvisioning            deedTenantProvisioning;
 
-  private TokenFactory           tokenFactory;
+  @Autowired
+  private Deed                              deed;
 
-  private XMeedsNFTRewarding     xMeedsToken;
+  @Autowired
+  private TokenFactory                      tokenFactory;
 
-  private MeedsToken             ethereumToken;
+  @Autowired
+  private XMeedsNFTRewarding                xMeedsToken;
 
-  private MeedsToken             polygonToken;
+  @Autowired
+  @Qualifier("ethereumMeedToken")
+  private MeedsToken                        ethereumToken;
 
-  private ERC20                  sushiPairToken;
+  @Autowired
+  @Qualifier("polygonMeedToken")
+  private MeedsToken                        polygonToken;
 
-  public BlockchainService(
-                           DeedTenantProvisioning deedTenantProvisioning,
-                           Deed deed,
-                           @Qualifier("ethereumMeedToken")
-                           MeedsToken ethereumToken,
-                           @Qualifier("polygonMeedToken")
-                           MeedsToken polygonToken,
-                           XMeedsNFTRewarding xMeedsToken,
-                           TokenFactory tokenFactory,
-                           @Qualifier("sushiPairToken")
-                           ERC20 sushiPairToken) {
-    this.deedTenantProvisioning = deedTenantProvisioning;
-    this.deed = deed;
-    this.ethereumToken = ethereumToken;
-    this.polygonToken = polygonToken;
-    this.xMeedsToken = xMeedsToken;
-    this.tokenFactory = tokenFactory;
-    this.sushiPairToken = sushiPairToken;
+  @Autowired
+  @Qualifier("sushiPairToken")
+  private ERC20                             sushiPairToken;
+
+  /**
+   * Return DEED Tenant Status from Blockchain Contract
+   *
+   * @param nftId Deed NFT identifier
+   * @return if marked as started else false
+   */
+  public boolean isDeedStarted(long nftId) {
+    try {
+      return deedTenantProvisioning.tenantStatus(BigInteger.valueOf(nftId)).send().booleanValue();
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving information 'getDeedCityIndex' from Blockchain", e);
+    }
+  }
+
+  /**
+   * Checks if transaction has been mined or not
+   * 
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Mined
+   */
+  public boolean isTransactionMined(String transactionHash) {
+    TransactionReceipt receipt = getTransactionReceipt(transactionHash);
+    return receipt != null;
+  }
+
+  /**
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Successful
+   */
+  public boolean isTransactionConfirmed(String transactionHash) {
+    TransactionReceipt receipt = getTransactionReceipt(transactionHash);
+    return receipt != null && receipt.isStatusOK();
+  }
+
+  /**
+   * @return last mined block number
+   */
+  public long getLastBlock() {
+    try {
+      return web3j.ethBlockNumber().send().getBlockNumber().longValue();
+    } catch (IOException e) {
+      throw new IllegalStateException("Error getting last block number", e);
+    }
+  }
+
+  /**
+   * Retrieves the list of mined provisioning transactions starting from a block
+   * to another
+   * 
+   * @param fromBlock Start block
+   * @param toBlock End Block to filter
+   * @return {@link List} od {@link DeedTenant}
+   */
+  public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
+    EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
+                                        new DefaultBlockParameterNumber(toBlock),
+                                        deedTenantProvisioning.getContractAddress());
+    try {
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      @SuppressWarnings("rawtypes")
+      List<LogResult> ethLogs = ethLog.getLogs();
+      if (CollectionUtils.isEmpty(ethLogs)) {
+        return Collections.emptyList();
+      }
+      return ethLogs.stream()
+                    .map(logResult -> (LogObject) logResult.get())
+                    .filter(logObject -> !logObject.isRemoved())
+                    .map(LogObject::getTransactionHash)
+                    .map(this::getTransactionReceipt)
+                    .filter(TransactionReceipt::isStatusOK)
+                    .map(transactionReceipt -> {
+                      List<TenantStartedEventResponse> startedEvents =
+                                                                     DeedTenantProvisioning.getTenantStartedEvents(transactionReceipt);
+                      if (startedEvents != null && !startedEvents.isEmpty()) {
+                        TenantStartedEventResponse tenantStartedEventResponse = startedEvents.get(0);
+                        DeedTenant deedTenant = new DeedTenant();
+                        deedTenant.setNftId(tenantStartedEventResponse.nftId.longValue());
+                        deedTenant.setStartupTransactionHash(transactionReceipt.getTransactionHash());
+                        deedTenant.setManagerAddress(tenantStartedEventResponse.manager);
+                        return deedTenant;
+                      }
+                      List<TenantStoppedEventResponse> endedEvents =
+                                                                   DeedTenantProvisioning.getTenantStoppedEvents(transactionReceipt);
+                      if (endedEvents != null && !endedEvents.isEmpty()) {
+                        TenantStoppedEventResponse tenantStoppedEventResponse = endedEvents.get(0);
+                        DeedTenant deedTenant = new DeedTenant();
+                        deedTenant.setNftId(tenantStoppedEventResponse.nftId.longValue());
+                        deedTenant.setShutdownTransactionHash(transactionReceipt.getTransactionHash());
+                        deedTenant.setManagerAddress(tenantStoppedEventResponse.manager);
+                        return deedTenant;
+                      }
+                      return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving event logs", e);
+    }
+  }
+
+  private TransactionReceipt getTransactionReceipt(String transactionHash) {
+    try {
+      EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
+      if (ethGetTransactionReceipt != null) {
+        return ethGetTransactionReceipt.getResult();
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving Receipt for Transaction with hash: " + transactionHash, e);
+    }
+    return null;
   }
 
   /**
@@ -96,11 +220,8 @@ public class BlockchainService {
   }
 
   /**
-   * Retrieves from Blockchain DEED card type:
-   * - 0 : Common
-   * - 1 : Uncommon
-   * - 2 : Rare
-   * - 3 : Legendary
+   * Retrieves from Blockchain DEED card type: - 0 : Common - 1 : Uncommon - 2 :
+   * Rare - 3 : Legendary
    *
    * @param nftId Deed NFT identifier
    * @return card type index
@@ -120,14 +241,8 @@ public class BlockchainService {
   }
 
   /**
-   * Retrieves from Blockchain DEED city index:
-   * - 0 : Tanit
-   * - 1 : Reshef
-   * - 2 : Ashtarte
-   * - 3 : Melqart
-   * - 4 : Eshmun
-   * - 5 : Kushor
-   * - 6 : Hammon
+   * Retrieves from Blockchain DEED city index: - 0 : Tanit - 1 : Reshef - 2 :
+   * Ashtarte - 3 : Melqart - 4 : Eshmun - 5 : Kushor - 6 : Hammon
    *
    * @param nftId Deed NFT identifier
    * @return card city index

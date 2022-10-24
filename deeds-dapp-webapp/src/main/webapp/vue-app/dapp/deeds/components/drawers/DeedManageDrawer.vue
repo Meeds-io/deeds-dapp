@@ -303,8 +303,6 @@ export default {
       this.transactionHash = null;
       this.deedInfo = null;
       this.sending = false;
-      this.isEditingEmail = false;
-      this.emailChanged = false;
       this.$store.commit('loadCardInfo', this.cardType);
       this.refreshDeedInfo();
       this.$nextTick()

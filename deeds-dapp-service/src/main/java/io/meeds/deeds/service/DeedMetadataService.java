@@ -51,7 +51,7 @@ public class DeedMetadataService {
 
   private static final Logger       LOG = LoggerFactory.getLogger(DeedMetadataService.class);
 
-  @Autowired(required = false)
+  @Autowired
   private DeedMetadataRepository    deedMetadataRepository;
 
   @Autowired
