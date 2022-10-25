@@ -19,12 +19,12 @@
 <template>
   <a
     v-if="started || starting || stopping"
-    :href="cityLink"
+    :href="deedTenantLink"
     target="_blank"
     rel="nofollow noreferrer noopener">
     <span v-if="starting" class="text-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
     <span v-else-if="stopping" class="text-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
-    <span v-else class="text-lowercase">{{ cityLinkLabel }}</span>
+    <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
   </a>
   <div v-else-if="stopped" class="text-capitalize">
     {{ $t('vacant') }}
@@ -71,10 +71,10 @@ export default {
     cityName() {
       return this.cities[this.cityIndex];
     },
-    cityLink() {
+    deedTenantLink() {
       return `https://${this.cityName}-${this.nftId}.wom.meeds.io`;
     },
-    cityLinkLabel() {
+    deedTenantLinkLabel() {
       return `${this.cityName}-${this.nftId}.wom.meeds.io`;
     },
   }),
