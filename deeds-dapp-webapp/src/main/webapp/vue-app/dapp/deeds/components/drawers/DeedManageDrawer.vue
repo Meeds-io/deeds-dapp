@@ -72,20 +72,57 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
+            v-if="showDeedLinkPart"
+            class="ms-4"
+            two-line
+            dense>
+            <v-list-item-content>
+              <v-list-item-subtitle
+                :title="$t('deedMoveInDescription')"
+                class="text-color text-truncate-2">
+                {{ $t('deedMoveInDescription') }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                :href="deedTenantLink"
+                :min-width="minButtonsWidth"
+                target="_blank"
+                rel="nofollow noreferrer noopener"
+                class="ms-auto"
+                color="tertiary"
+                depressed
+                dark>
+                <span class="text-capitalize">{{ $t('deedTenantAccess') }}</span>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item
             v-if="showMovePart"
             class="ms-4"
             two-line
             dense>
             <v-list-item-content>
-              <v-list-item-subtitle v-if="stopped" class="text-color text-truncate-2">{{ $t('deedMoveInDescription') }}</v-list-item-subtitle>
-              <v-list-item-subtitle v-else-if="started" class="text-color text-truncate-2">{{ $t('deedMoveOutDescription') }}</v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-if="stopped"
+                :title="$t('deedMoveInDescription')"
+                class="text-color text-truncate-2">
+                {{ $t('deedMoveInDescription') }}
+              </v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-else-if="started"
+                :title="$t('deedMoveOutDescription')"
+                class="text-color text-truncate-2">
+                {{ $t('deedMoveOutDescription') }}
+              </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-btn
                 v-if="started"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
-                color="tertiary"
+                color="error"
+                outlined
                 depressed
                 dark
                 @click="$root.$emit('deeds-move-out-drawer', nftId)">
@@ -109,7 +146,11 @@
             two-line
             dense>
             <v-list-item-content>
-              <v-list-item-subtitle class="text-color text-truncate-2">{{ $t('deedSellDescription') }}</v-list-item-subtitle>
+              <v-list-item-subtitle
+                :title="$t('deedSellDescription')"
+                class="text-color text-truncate-2">
+                {{ $t('deedSellDescription') }}
+              </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
               <v-btn
@@ -258,13 +299,19 @@ export default {
       return this.isOwner && !this.isProvisioningManager;
     },
     showSellPart() {
-      return this.authenticated && this.isOwner && (this.rented || this.stopped);
+      return this.authenticated && this.isOwner;
     },
     showMovePart() {
       return this.authenticated && this.isProvisioningManager && (this.started || this.stopped);
     },
+    showDeedLinkPart() {
+      return this.showMovePart && this.started;
+    },
     showAccessPart() {
       return this.showSellPart || this.showMovePart;
+    },
+    deedTenantLink() {
+      return `https://${this.cityName}-${this.nftId}.wom.meeds.io`;
     },
   }),
   watch: {
