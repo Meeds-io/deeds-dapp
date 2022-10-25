@@ -80,7 +80,7 @@
               <v-list-item-subtitle
                 :title="$t('deedMoveInDescription')"
                 class="text-color text-truncate-2">
-                {{ $t('deedMoveInDescription') }}
+                {{ $t('deedAccessDescription') }}
               </v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
