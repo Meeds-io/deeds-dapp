@@ -93,7 +93,7 @@
                 color="tertiary"
                 depressed
                 dark>
-                <span class="text-capitalize">{{ $t('deedTenantAccess') }}</span>
+                <span class="text-capitalize">{{ $t('deedTenantAccessButton') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
