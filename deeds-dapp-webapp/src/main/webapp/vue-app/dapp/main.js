@@ -99,7 +99,7 @@ const store = new Vuex.Store({
     comethPool: null,
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
-    tenantProvisioningAddress: null,
+    tenantProvisioningAddress: '0x49C0cF46C0Eb6FdF05A4E8C1FE344d510422E1F0',
     // External links
     etherscanBaseLink: 'https://etherscan.io/',
     polygonscanBaseLink: 'https://polygonscan.com/',
