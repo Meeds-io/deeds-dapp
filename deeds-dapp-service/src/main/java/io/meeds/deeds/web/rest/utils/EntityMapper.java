@@ -15,6 +15,7 @@
  */
 package io.meeds.deeds.web.rest.utils;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -77,12 +78,14 @@ public class EntityMapper {
   }
 
   private static DeedTenantPresentation build(DeedTenant deedTenant) {
+    LocalDateTime date = deedTenant.getDate();
+    long epochSecond = date == null ? 0 : date.toEpochSecond(ZoneOffset.UTC);
     return new DeedTenantPresentation(deedTenant.getNftId(),
                                       deedTenant.getManagerAddress(),
                                       Objects.requireNonNullElse(deedTenant.getTenantProvisioningStatus(),
                                                                  TenantProvisioningStatus.STOP_CONFIRMED),
                                       Objects.requireNonNullElse(deedTenant.getTenantStatus(), TenantStatus.UNDEPLOYED),
-                                      deedTenant.getDate().toEpochSecond(ZoneOffset.UTC));
+                                      epochSecond);
   }
 
   private static void applyCache(BodyBuilder response) {

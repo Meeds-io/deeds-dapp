@@ -57,6 +57,8 @@ public class DeedTenant {
 
   private TenantStatus             tenantStatus;
 
+  private boolean                  completed;
+
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
   private LocalDateTime            date;
 

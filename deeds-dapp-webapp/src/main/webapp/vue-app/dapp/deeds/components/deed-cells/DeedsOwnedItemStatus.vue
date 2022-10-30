@@ -72,10 +72,10 @@ export default {
       return this.cities[this.cityIndex];
     },
     deedTenantLink() {
-      return `https://${this.cityName}-${this.nftId}.wom.meeds.io`;
+      return `https://${this.cityName}-${this.nftId}.meeds.io`;
     },
     deedTenantLinkLabel() {
-      return `${this.cityName}-${this.nftId}.wom.meeds.io`;
+      return `${this.cityName}-${this.nftId}.meeds.io`;
     },
   }),
 };

@@ -20,6 +20,7 @@
   <deeds-drawer
     ref="drawer"
     v-model="drawer"
+    :permanent="sending"
     second-level
     @opened="$emit('opened')"
     @closed="$emit('closed')">
@@ -95,6 +96,7 @@
     </template>
     <template v-else #footer>
       <v-btn
+        :disabled="sending"
         outlined
         text
         class="ms-auto me-2"

@@ -125,7 +125,7 @@
                 outlined
                 depressed
                 dark
-                @click="$root.$emit('deeds-move-out-drawer', nftId)">
+                @click="openMoveOutDrawer">
                 <span class="text-capitalize">{{ $t('moveOut') }}</span>
               </v-btn>
               <v-btn
@@ -135,7 +135,7 @@
                 color="tertiary"
                 depressed
                 dark
-                @click="$root.$emit('deeds-move-in-drawer', nft)">
+                @click="openMoveInDrawer">
                 <span class="text-capitalize">{{ $t('moveIn') }}</span>
               </v-btn>
             </v-list-item-action>
@@ -311,7 +311,7 @@ export default {
       return this.showSellPart || this.showMovePart;
     },
     deedTenantLink() {
-      return `https://${this.cityName}-${this.nftId}.wom.meeds.io`;
+      return `https://${this.cityName}-${this.nftId}.meeds.io`;
     },
   }),
   watch: {
@@ -338,12 +338,36 @@ export default {
       if (this.authenticated) {
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
-          .catch(() => this.$tenantManagement.getTenantStartDate(this.nftId)
-            .then(startDate => this.deedInfo = {provisioningDate: startDate}));
+          .catch(() => {
+            return this.logout()
+              .then(() => this.$tenantManagement.getTenantStartDate(this.nftId))
+              .then(startDate => this.deedInfo = {provisioningDate: startDate});
+          });
       } else {
         return this.$tenantManagement.getTenantStartDate(this.nftId)
           .then(startDate => this.deedInfo = {provisioningDate: startDate});
       }
+    },
+    openMoveOutDrawer() {
+      this.openMoveDrawer(false);
+    },
+    openMoveInDrawer() {
+      this.openMoveDrawer(true);
+    },
+    openMoveDrawer(moveIn) {
+      this.refreshDeedInfo()
+        .then(() => this.$nextTick())
+        .then(() => {
+          if (this.authenticated && this.nft?.id) {
+            if (moveIn) {
+              this.$root.$emit('deeds-move-in-drawer', this.nft);
+            } else {
+              this.$root.$emit('deeds-move-out-drawer', this.nft.id);
+            }
+          } else {
+            this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
+          }
+        });
     },
     open(nft) {
       this.nft = nft;
@@ -351,8 +375,8 @@ export default {
       this.deedInfo = null;
       this.sending = false;
       this.$store.commit('loadCardInfo', this.cardType);
-      this.refreshDeedInfo();
-      this.$nextTick()
+      this.refreshDeedInfo()
+        .then(() => this.$nextTick())
         .then(() => {
           if (this.$refs.drawer) {
             this.$refs.drawer.open();
@@ -372,6 +396,7 @@ export default {
     login() {
       const token = document.querySelector('[name=loginMessage]').value;
       const message = this.$t('signMessage', {0: token}).replace(/\\n/g, '\n');
+      this.$root.$emit('close-alert-message');
       return this.$ethUtils.signMessage(this.provider, this.address, message)
         .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
         .finally(() => this.refreshAuthentication())
