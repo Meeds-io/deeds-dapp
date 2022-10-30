@@ -24,3 +24,25 @@
     </v-card>
   </v-app>
 </template>
+<script>
+export default {
+  computed: {
+    isMobile() {
+      return this.$vuetify.breakpoint.xsOnly;
+    },
+  },
+  watch: {
+    isMobile() {
+      this.refreshMobileValue();
+    },
+  },
+  created() {
+    this.refreshMobileValue();
+  },
+  methods: {
+    refreshMobileValue() {
+      this.$store.commit('setMobile', this.isMobile);
+    },
+  },
+};
+</script>
