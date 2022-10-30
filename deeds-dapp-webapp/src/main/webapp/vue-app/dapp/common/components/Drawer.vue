@@ -21,7 +21,7 @@
     v-model="drawer"
     :width="width"
     :hide-overlay="firstLevel || isMobile"
-    :permanent="firstLevel && drawer"
+    :permanent="permanent || firstLevel && drawer"
     temporary
     right
     fixed
@@ -121,6 +121,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    permanent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     drawer: false,
@@ -148,6 +152,7 @@ export default {
     drawer() {
       if (this.drawer) {
         this.$emit('opened');
+        this.$root.$emit('drawer-opened', this);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = 'contain';
@@ -157,6 +162,7 @@ export default {
         }
       } else {
         this.$emit('closed');
+        this.$root.$emit('drawer-closed', this);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = '';

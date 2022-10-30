@@ -16,6 +16,7 @@
 package io.meeds.deeds.rest;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -25,22 +26,30 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.meeds.deeds.model.MeedTokenMetric;
 import io.meeds.deeds.service.MeedTokenMetricService;
 import io.meeds.deeds.web.rest.MeedTokenMetricController;
+import io.meeds.deeds.web.security.DeedAuthenticationProvider;
+import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(
     classes = {
-        MeedTokenMetricController.class
+        MeedTokenMetricController.class,
+        DeedAuthenticationProvider.class,
+        WebSecurityConfig.class
     }
 )
 @AutoConfigureWebMvc
@@ -51,9 +60,19 @@ class MeedTokenMetricControllerTest {
   private MeedTokenMetricService meedTokenMetricService;
 
   @Autowired
+  private WebApplicationContext context;
+
   private MockMvc                mockMvc;
 
+  @BeforeEach
+  public void setup() {
+    mockMvc = MockMvcBuilders.webAppContextSetup(context)
+        .apply(springSecurity())
+        .build();
+  }
+
   @Test
+  @WithAnonymousUser
   void testGetLastMetric() throws Exception {
 
     LocalDate today = LocalDate.now();
@@ -82,6 +101,7 @@ class MeedTokenMetricControllerTest {
   }
 
   @Test
+  @WithAnonymousUser
   void testGetCirculatingSupply() throws Exception {
 
     BigDecimal circulatingSupply = new BigDecimal("2");
@@ -94,6 +114,7 @@ class MeedTokenMetricControllerTest {
   }
 
   @Test
+  @WithAnonymousUser
   void testGetMarketCapitalization() throws Exception {
 
     BigDecimal marketCapitalization = new BigDecimal("5");
@@ -106,6 +127,7 @@ class MeedTokenMetricControllerTest {
   }
 
   @Test
+  @WithAnonymousUser
   void testGetTotalLockedValue() throws Exception {
 
     BigDecimal totalValuelocked = new BigDecimal("4");
@@ -118,6 +140,7 @@ class MeedTokenMetricControllerTest {
   }
 
   @Test
+  @WithAnonymousUser
   void testGetTotalSupply() throws Exception {
 
     BigDecimal totalSupply = new BigDecimal("3");

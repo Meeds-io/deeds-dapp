@@ -92,6 +92,13 @@ export default {
       this.alertLinkTooltip = this.$t('viewOnEtherscan');
       window.setTimeout(() => this.snackbar = true, 500);
     });
+    this.$root.$on('alert-message', (message, type) => {
+      this.snackbar = false;
+      this.alertType = type;
+      this.alertMessage = message;
+      window.setTimeout(() => this.snackbar = true, 500);
+    });
+    this.$root.$on('close-alert-message', () => this.snackbar = false);
     window.setTimeout(() => this.snackbar = false, this.timeout);
   },
   methods: {

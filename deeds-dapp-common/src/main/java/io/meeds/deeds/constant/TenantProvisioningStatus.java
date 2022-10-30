@@ -32,7 +32,7 @@ public enum TenantProvisioningStatus {
   }
 
   public boolean isConfirmed() {
-    return this == STOP_IN_PROGRESS || this == START_IN_PROGRESS;
+    return this == START_CONFIRMED || this == STOP_CONFIRMED;
   }
 
 }

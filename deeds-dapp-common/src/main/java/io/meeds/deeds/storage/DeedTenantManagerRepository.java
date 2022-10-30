@@ -19,7 +19,10 @@
 package io.meeds.deeds.storage;
 
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
@@ -28,5 +31,16 @@ import io.meeds.deeds.model.DeedTenant;
 public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenant, Long> {
 
   List<DeedTenant> findByTenantProvisioningStatusIn(List<TenantProvisioningStatus> provisioningPendingStatuses);
+
+  List<DeedTenant> findByTenantProvisioningStatus(TenantProvisioningStatus provisioningStatus, Pageable pageable);
+
+  List<DeedTenant> findByTenantProvisioningStatusAndCompletedIsFalse(TenantProvisioningStatus provisioningStatus, Pageable pageable);
+
+  long countByTenantProvisioningStatus(TenantProvisioningStatus provisioningStatus);
+
+  long countByTenantProvisioningStatusAndCompletedIsFalse(TenantProvisioningStatus provisioningStatus);
+
+  @Query("{\"match\": {\"properties.currentTaskId\": {\"query\": \"?0\"}}}")
+  Stream<DeedTenant> findByTaskId(String taskId);
 
 }

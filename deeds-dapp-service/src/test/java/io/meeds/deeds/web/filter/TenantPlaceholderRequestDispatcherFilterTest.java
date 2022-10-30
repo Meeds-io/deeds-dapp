@@ -75,14 +75,14 @@ class TenantPlaceholderRequestDispatcherFilterTest {
 
   @Test
   void testReturnNotFoundResponseWhenNoDeedIdIdentifiedWithSimilarURL() throws Exception {
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-test.wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-test.meeds.io/test"));
     verifyNotFound();
   }
 
   @Test
   void testReturnNotFoundResponseWhenDeedIdInHostNameNotStopped() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     when(tenantServiceMock.isTenantCommandStop(nftId)).thenReturn(true);
     verifyNotFound();
   }
@@ -98,7 +98,7 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   @Test
   void testForwardResponseWhenDeedIdInHostNameNotStopped() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     verifyForwarded();
   }
 
@@ -113,7 +113,7 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   @Test
   void testNotFoundResponseWhenDeedCityInHostNameNotMatching() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setCityIndex((short) 1);
     when(tenantServiceMock.getDeedTenant(nftId)).thenReturn(deedTenant);

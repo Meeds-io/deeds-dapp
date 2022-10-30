@@ -15,34 +15,46 @@
  */
 package io.meeds.deeds.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisFuture;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
+import io.meeds.deeds.service.ListenerService.Event;
 import io.meeds.deeds.service.ListenerService.Listener;
 import io.meeds.deeds.service.ListenerServiceTest.FakeEventListener;
 import io.meeds.deeds.service.ListenerServiceTest.ListenerServiceTestConfiguration;
@@ -74,7 +86,12 @@ class ListenerServiceTest {
   private Listener                                 listener;
 
   @Autowired
-  private RedisPubSubAsyncCommands<String, String> async;
+  @Qualifier("asyncSub")
+  private RedisPubSubAsyncCommands<String, String> asyncSub;
+
+  @Autowired
+  @Qualifier("asyncPub")
+  private RedisPubSubAsyncCommands<String, String> asyncPub;
 
   @BeforeEach
   public void init() {
@@ -182,7 +199,6 @@ class ListenerServiceTest {
   @Test
   void testPublishEvent() {
     assertNotNull(listenerService);
-    assertNotNull(async);
 
     String eventListenerName = "eventListenerName";
 
@@ -231,7 +247,7 @@ class ListenerServiceTest {
 
     listenerService.addListener(eventListener);
 
-    when(async.publish(anyString(), anyString())).thenThrow(new RuntimeException());
+    when(asyncPub.publish(anyString(), anyString())).thenThrow(new RuntimeException());
 
     listenerService.publishEvent("unkownEvent", eventData);
     assertEquals(0, event1TriggerCount.get());
@@ -241,20 +257,29 @@ class ListenerServiceTest {
     assertEquals(1, event1TriggerCount.get());
     assertEquals(0, event2TriggerCount.get());
 
-    reset(async);
-    when(async.publish(anyString(), anyString())).thenAnswer(invocation -> {
+    reset(asyncPub);
+    RedisFuture<Long> publish = mock(RedisFuture.class);
+    when(asyncPub.publish(anyString(), anyString())).thenReturn(publish);
+
+    listenerService.publishEvent(eventName1, eventData);
+    assertEquals(1, event1TriggerCount.get());
+    assertEquals(0, event2TriggerCount.get());
+
+    reset(asyncPub);
+    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
       String channelName = invocation.getArgument(0, String.class);
       String message = invocation.getArgument(1, String.class);
       listener.message(channelName, message);
       return null;
     });
 
+    when(publish.getError()).thenReturn("FAKE PUBLICATION ERROR");
     listenerService.publishEvent(eventName1, eventData);
     assertEquals(2, event1TriggerCount.get());
     assertEquals(0, event2TriggerCount.get());
 
-    reset(async);
-    when(async.publish(anyString(), anyString())).thenAnswer(invocation -> {
+    reset(asyncPub);
+    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
       String channelName = invocation.getArgument(0, String.class);
       String message = invocation.getArgument(1, String.class);
       listener.message(null, channelName, message);
@@ -265,8 +290,8 @@ class ListenerServiceTest {
     assertEquals(2, event1TriggerCount.get());
     assertEquals(1, event2TriggerCount.get());
 
-    reset(async);
-    when(async.publish(anyString(), anyString())).thenAnswer(invocation -> {
+    reset(asyncPub);
+    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
       listener.message(null, null, null);
       return null;
     });
@@ -275,8 +300,8 @@ class ListenerServiceTest {
     assertEquals(2, event1TriggerCount.get());
     assertEquals(2, event2TriggerCount.get());
 
-    reset(async);
-    when(async.publish(anyString(), anyString())).thenAnswer(invocation -> {
+    reset(asyncPub);
+    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
       listener.message(null, null);
       return null;
     });
@@ -286,18 +311,57 @@ class ListenerServiceTest {
     assertEquals(3, event2TriggerCount.get());
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  void testTriggerEvent() {
+    String eventListenerName = "eventListenerName";
+    String eventName1 = "eventName1";
+    AtomicInteger triggerCount = new AtomicInteger(0);
+
+    class EventData {
+    }
+
+    EventListener<EventData> eventListener = new EventListener<>() {
+      @Override
+      public void onEvent(String eventName, EventData data) {
+        triggerCount.incrementAndGet();
+      }
+
+      @Override
+      public String getName() {
+        return eventListenerName;
+      }
+
+      @Override
+      public List<String> getSupportedEvents() {
+        return Arrays.asList(eventName1);
+      }
+    };
+    reset(asyncPub);
+
+    listenerService.addListener(eventListener);
+    listenerService.triggerEvent(new Event("anotherEvent", new EventData(), EventData.class.getName()));
+    assertEquals(0, triggerCount.get());
+
+    listenerService.triggerEvent(new Event(eventName1, new EventData(), EventData.class.getName()));
+    assertEquals(1, triggerCount.get());
+  }
+
   @Configuration
   public static class ListenerServiceTestConfiguration {
 
+    private RedisClient redisClient;
     private Listener                                 listener;
 
-    private RedisPubSubAsyncCommands<String, String> async;
+    private RedisPubSubAsyncCommands<String, String> asyncSub;
+
+    private RedisPubSubAsyncCommands<String, String> asyncPub;
 
     @Bean
     @Primary
     @SuppressWarnings("unchecked")
     public RedisClient redisClient() {
-      RedisClient redisClient = mock(RedisClient.class);
+      redisClient = mock(RedisClient.class);
       StatefulRedisPubSubConnection<String, String> connection = mock(StatefulRedisPubSubConnection.class);
       when(redisClient.connectPubSub()).thenReturn(connection);
       doAnswer(invocation -> {
@@ -305,8 +369,9 @@ class ListenerServiceTest {
         return null;
       }).when(connection).addListener(any(RedisPubSubListener.class));
 
-      async = mock(RedisPubSubAsyncCommands.class);
-      when(connection.async()).thenReturn(async);
+      asyncSub = mock(RedisPubSubAsyncCommands.class);
+      when(connection.async()).thenReturn(asyncSub);
+
       return redisClient;
     }
 
@@ -315,9 +380,19 @@ class ListenerServiceTest {
       return listener;
     }
 
-    @Bean
-    public RedisPubSubAsyncCommands<String, String> async() {
-      return async;
+    @Bean("asyncSub")
+    public RedisPubSubAsyncCommands<String, String> asyncSub() {
+      return asyncSub;
+    }
+
+    @Bean("asyncPub")
+    @SuppressWarnings("unchecked")
+    public RedisPubSubAsyncCommands<String, String> asyncPub(ListenerService listenerService) {
+      asyncPub = mock(RedisPubSubAsyncCommands.class);
+      listenerService.publicationConnection = mock(StatefulRedisPubSubConnection.class);
+      when(listenerService.publicationConnection.isOpen()).thenReturn(true);
+      when(listenerService.publicationConnection.async()).thenReturn(asyncPub);
+      return asyncPub;
     }
 
   }

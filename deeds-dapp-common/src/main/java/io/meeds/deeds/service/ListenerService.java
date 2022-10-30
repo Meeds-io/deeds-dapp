@@ -15,10 +15,15 @@
  */
 package io.meeds.deeds.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,45 +38,59 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisFuture;
+import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Component
 public class ListenerService implements ApplicationContextAware {
 
-  private static final Logger       LOG           = LoggerFactory.getLogger(ListenerService.class);
+  private static final Logger       LOG = LoggerFactory.getLogger(ListenerService.class);
 
   private static final ObjectMapper OBJECT_MAPPER;
 
   static {
     // Workaround when Jackson is defined in shared library with different
     // version and without artifact jackson-datatype-jsr310
-    OBJECT_MAPPER = JsonMapper.builder().configure(JsonReadFeature.ALLOW_MISSING_VALUES, true).build();
+    OBJECT_MAPPER = JsonMapper.builder()
+                              .configure(JsonReadFeature.ALLOW_MISSING_VALUES, true)
+                              .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                              .build();
     OBJECT_MAPPER.registerModule(new JavaTimeModule());
   }
 
-  @Autowired(required = false)
-  private RedisConfigurationProperties        redisProperties;
+  protected StatefulRedisPubSubConnection<String, String> subscriptionConnection;
+
+  protected StatefulRedisPubSubConnection<String, String> publicationConnection;
 
   @Autowired(required = false)
-  private RedisClient                         redisClient;
+  private RedisConfigurationProperties                  redisProperties;
 
-  private ApplicationContext                  applicationContext;
+  @Autowired(required = false)
+  private RedisClient                                   redisClient;
 
-  private List<EventListener<?>>              eventListeners = new ArrayList<>();
+  private ApplicationContext                            applicationContext;
 
-  private Map<String, List<EventListener<?>>> listeners;
+  private List<EventListener<?>>                        eventListeners = new ArrayList<>();
+
+  private Map<String, List<EventListener<?>>>           listeners;
 
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -83,6 +102,16 @@ public class ListenerService implements ApplicationContextAware {
     initSubscription();
   }
 
+  @PreDestroy
+  public void destroy() {
+    if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
+      this.subscriptionConnection.close();
+    }
+    if (this.publicationConnection != null && this.publicationConnection.isOpen()) {
+      this.publicationConnection.close();
+    }
+  }
+
   public void addListener(EventListener<?> listener) {
     List<String> supportedEvents = listener.getSupportedEvents();
     if (!CollectionUtils.isEmpty(supportedEvents)) {
@@ -91,8 +120,7 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   public void addListener(String eventName, EventListener<?> listener) {
-    getListeners().computeIfAbsent(eventName, key -> new ArrayList<>())
-                  .add(listener);
+    getListeners().computeIfAbsent(eventName, key -> new ArrayList<>()).add(listener);
   }
 
   public void removeListsner(String listenerName) {
@@ -125,10 +153,15 @@ public class ListenerService implements ApplicationContextAware {
 
     // Trigger Event Remotely
     try {
-      StatefulRedisPubSubConnection<String, String> connection = redisClient.connectPubSub();
-      RedisPubSubAsyncCommands<String, String> async = connection.async();
+      RedisAsyncCommands<String, String> async = getPublicationConnection().async();
       String eventJsonString = serializeObjectToJson(event);
-      async.publish(getChannelName(), eventJsonString);
+      RedisFuture<Long> publish = async.publish(getChannelName(), eventJsonString);
+      if (publish == null) {
+        throw new IllegalStateException("Redis returned null publication event");
+      }
+      if (StringUtils.isNotBlank(publish.getError())) {
+        throw new IllegalStateException("Redis returned an error while publishing event: " + publish.getError());
+      }
     } catch (Exception e) {
       LOG.warn("Redis connection failure, event {} will not be triggered remotely, try to trigger it locally only",
                event.getEventName(),
@@ -160,12 +193,15 @@ public class ListenerService implements ApplicationContextAware {
 
   protected void initSubscription() {
     try {
+      if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
+        return;
+      }
       // Add Redis Pub/Sub Listener
-      StatefulRedisPubSubConnection<String, String> connection = redisClient.connectPubSub();
-      connection.addListener(new Listener());
+      this.subscriptionConnection = redisClient.connectPubSub();
+      subscriptionConnection.addListener(new Listener());
 
       // Subscribe to channel
-      RedisPubSubAsyncCommands<String, String> async = connection.async();
+      RedisPubSubAsyncCommands<String, String> async = subscriptionConnection.async();
       async.subscribe(getChannelName());
     } catch (Exception e) {
       LOG.warn("Redis connection failure", e);
@@ -193,6 +229,13 @@ public class ListenerService implements ApplicationContextAware {
     if (!CollectionUtils.isEmpty(eventListeners)) {
       eventListeners.forEach(this::addListener);
     }
+  }
+
+  protected StatefulRedisPubSubConnection<String, String> getPublicationConnection() {
+    if (publicationConnection == null || !publicationConnection.isOpen()) {
+      publicationConnection = redisClient.connectPubSub();
+    }
+    return publicationConnection;
   }
 
   private String serializeObjectToJson(Event event) {
@@ -250,24 +293,33 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   public class Listener implements RedisPubSubListener<String, String> {
-
     @Override
     public void message(String channel, String message) {
+      Event event;
       try {
-        Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        triggerEvent(event);
+        event = OBJECT_MAPPER.readValue(message, Event.class);
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
+      }
+      try {
+        triggerEvent(event);
+      } catch (Exception e) {
+        throw new IllegalStateException("An error occurred while triggering event: " + message, e);
       }
     }
 
     @Override
     public void message(String pattern, String channel, String message) {
+      Event event;
       try {
-        Event event = OBJECT_MAPPER.readValue(message, Event.class);
-        triggerEvent(event);
+        event = OBJECT_MAPPER.readValue(message, Event.class);
       } catch (Exception e) {
         throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
+      }
+      try {
+        triggerEvent(event);
+      } catch (Exception e) {
+        throw new IllegalStateException("An error occurred while triggering event: " + message, e);
       }
     }
 
