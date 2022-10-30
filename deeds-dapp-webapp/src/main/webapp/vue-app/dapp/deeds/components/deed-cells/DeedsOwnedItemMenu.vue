@@ -20,10 +20,11 @@
   <v-tooltip bottom>
     <template #activator="{ on, attrs }">
       <v-btn
+        :loading="loading"
         icon
         v-bind="attrs"
         v-on="on"
-        @click="$root.$emit('deeds-manage-drawer', nft)">
+        @click="openManageDeedDrawer">
         <v-icon>fas fa-cog</v-icon>
       </v-btn>
     </template>
@@ -38,5 +39,17 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    loading: false,
+  }),
+  created() {
+    this.$root.$on('drawer-opened', () => this.loading = false);
+  },
+  methods: {
+    openManageDeedDrawer() {
+      this.loading = true;
+      this.$root.$emit('deeds-manage-drawer', this.nft);
+    },
+  }
 };
 </script>

@@ -59,10 +59,11 @@ export function logout() {
       throw new Error('Logout failed');
     }
   }).then(token => {
-    // Remove logged in address
-    document.querySelector('[name=login]').removeAttribute('value');
     // Refresh login Message
     document.querySelector('[name=loginMessage]').value = token || '';
+  }).finally(() => {
+    // Remove logged in address
+    document.querySelector('[name=login]').removeAttribute('value');
   });
 }
 
