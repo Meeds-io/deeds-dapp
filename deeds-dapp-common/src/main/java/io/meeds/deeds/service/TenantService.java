@@ -18,6 +18,7 @@ package io.meeds.deeds.service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -103,6 +104,27 @@ public class TenantService {
 
     deedTenantManagerRepository.save(deedTenant);
     listenerService.publishEvent(DEED_EVENT_TENANT_EMAIL_UPDATED, deedTenant);
+  }
+
+  public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId) throws ObjectNotFoundException,
+                                                                             UnauthorizedOperationException {
+    boolean isDeedManager = isDeedManager(managerAddress, nftId);
+    boolean isDeedOwner = isDeedOwner(managerAddress, nftId);
+    if (!isDeedManager && !isDeedOwner) {
+      throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
+    }
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    if (deedTenant == null) {
+      deedTenant = buildDeedTenantFromBlockchain(nftId);
+      if (isDeedManager) {
+        deedTenant.setManagerAddress(managerAddress.toLowerCase());
+      }
+      deedTenant = deedTenantManagerRepository.save(deedTenant);
+    } else if (!StringUtils.equals(managerAddress, deedTenant.getManagerAddress()) && isDeedManager) {
+      deedTenant.setManagerAddress(managerAddress.toLowerCase());
+      deedTenant = deedTenantManagerRepository.save(deedTenant);
+    }
+    return deedTenant;
   }
 
   /**
@@ -191,8 +213,7 @@ public class TenantService {
    *           blockchain
    */
   public DeedTenant buildDeedTenantFromBlockchain(long nftId) throws ObjectNotFoundException {
-    DeedTenant deedTenant;
-    deedTenant = new DeedTenant();
+    DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
     setDeedNftProperties(deedTenant);
     return deedTenant;

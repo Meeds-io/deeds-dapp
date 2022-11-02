@@ -17,8 +17,6 @@ package io.meeds.deeds.elasticsearch;
 
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +33,10 @@ import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.model.DeedTenant;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = { "io.meeds", })
+@EnableElasticsearchRepositories(basePackages = {
+    "io.meeds",
+})
 public class ElasticSearchConfig {
-
-  private static final Logger       LOG           = LoggerFactory.getLogger(ElasticSearchConfig.class);
 
   @Value("${meeds.elasticsearch.username:}")
   private String  esUsername;
@@ -51,9 +49,6 @@ public class ElasticSearchConfig {
 
   @Value("${meeds.elasticsearch.autoCreateIndex:true}")
   private boolean createDeedIndexes;
-
-  @Value("${meeds.elasticsearch.autoUpdateIndex:false}")
-  private boolean autoUpdateIndex;
 
   @Bean
   public RestHighLevelClient client() {
@@ -87,12 +82,6 @@ public class ElasticSearchConfig {
       } else {
         // Prevent Deed Tenants from creating indexes in their respective ES
         throw new IllegalStateException("Make sure the `meeds.elasticsearch.*` configuration properties are set properly");
-      }
-    } else if(createDeedIndexes && autoUpdateIndex) {
-      try {
-        indexOperations.putMapping();
-      } catch (Exception e) {
-        LOG.warn("Can't update Mapping of {}", esDocumentModelClass, e);
       }
     }
   }

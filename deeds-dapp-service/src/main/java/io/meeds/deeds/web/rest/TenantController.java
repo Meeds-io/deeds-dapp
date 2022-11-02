@@ -65,10 +65,12 @@ public class TenantController {
     }
     String walletAddress = principal.getName();
     try {
-      DeedTenant deedTenant = tenantService.getDeedTenant(walletAddress, nftId);
+      DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId);
       return getDeedTenantResponse(deedTenant);
     } catch (UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    } catch (ObjectNotFoundException e) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
   }
 
