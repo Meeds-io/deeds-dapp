@@ -119,6 +119,7 @@
             <v-list-item-action>
               <v-btn
                 v-if="started"
+                :loading="loadingMoveDeed"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
                 color="error"
@@ -130,6 +131,7 @@
               </v-btn>
               <v-btn
                 v-else-if="stopped"
+                :loading="loadingMoveDeed"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
                 color="tertiary"
@@ -217,6 +219,7 @@ export default {
     drawer: false,
     deedInfo: null,
     minButtonsWidth: 120,
+    loadingMoveDeed: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -358,6 +361,7 @@ export default {
       this.openMoveDrawer(true);
     },
     openMoveDrawer(moveIn) {
+      this.loadingMoveDeed = true;
       this.refreshDeedInfo()
         .then(() => this.$nextTick())
         .then(() => {
@@ -370,7 +374,8 @@ export default {
           } else {
             this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
           }
-        });
+        })
+        .finally(() => this.loadingMoveDeed = false);
     },
     open(nft) {
       this.nft = nft;

@@ -109,6 +109,58 @@ class TenantServiceTest {
   }
 
   @Test
+  void testGetDeedTenantOrImportByManagerWhenExists() throws Exception {
+    long nftId = 1l;
+    String address = "address";
+    DeedTenant deedTenantMock = mock(DeedTenant.class);
+    when(deedTenantMock.getNftId()).thenReturn(nftId);
+
+    when(deedTenantManagerRepository.findById(nftId)).thenReturn(Optional.of(deedTenantMock));
+    when(deedTenantManagerRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenant.class));
+    when(blockchainService.isDeedProvisioningManager(address, nftId)).thenReturn(true);
+    DeedTenant deedTenant = tenantService.getDeedTenantOrImport(address, nftId);
+    assertEquals(deedTenantMock, deedTenant);
+    verify(deedTenantMock, times(1)).setManagerAddress(address);
+  }
+
+  @Test
+  void testGetDeedTenantOrImportByManagerWhenNotExists() throws Exception {
+    long nftId = 1l;
+    String address = "address";
+    short cardType = 2;
+    short cityIndex = 3;
+    DeedTenant deedTenantMock = new DeedTenant();
+    deedTenantMock.setNftId(nftId);
+    deedTenantMock.setManagerAddress(address);
+    deedTenantMock.setCardType(cardType);
+    deedTenantMock.setCityIndex(cityIndex);
+
+    when(blockchainService.getDeedCardType(nftId)).thenReturn(cardType);
+    when(blockchainService.getDeedCityIndex(nftId)).thenReturn(cityIndex);
+    when(blockchainService.isDeedProvisioningManager(address, nftId)).thenReturn(true);
+    when(deedTenantManagerRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenant.class));
+
+    DeedTenant deedTenant = tenantService.getDeedTenantOrImport(address, nftId);
+
+    verify(deedTenantManagerRepository, times(1)).save(argThat(new ArgumentMatcher<DeedTenant>() {
+      @Override
+      public boolean matches(DeedTenant deedTenant) {
+        assertNotNull(deedTenant);
+        assertEquals(nftId, deedTenant.getNftId());
+        assertEquals(cardType, deedTenant.getCardType());
+        assertEquals(cityIndex, deedTenant.getCityIndex());
+        assertNull(deedTenant.getManagerEmail());
+        assertNull(deedTenant.getStartupTransactionHash());
+        assertNull(deedTenant.getShutdownTransactionHash());
+        assertNull(deedTenant.getDate());
+        return true;
+      }
+    }));
+    assertNotNull(deedTenant);
+    assertEquals(address, deedTenant.getManagerAddress());
+  }
+
+  @Test
   void testStartTenantByOwnerNotManager() throws Exception {
     long nftId = 1l;
     String address = "address";
