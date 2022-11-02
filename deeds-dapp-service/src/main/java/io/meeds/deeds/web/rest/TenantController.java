@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
@@ -77,7 +78,8 @@ public class TenantController {
                                                        Long nftId) {
     DeedTenant deedTenant = tenantService.getDeedTenant(nftId);
     if (deedTenant == null || deedTenant.getDate() == null || deedTenant.getTenantProvisioningStatus() == null
-        || deedTenant.getTenantProvisioningStatus().isStop()) {
+        || deedTenant.getTenantProvisioningStatus().isStop()
+        || deedTenant.getTenantStatus() != TenantStatus.DEPLOYED) {
       return ResponseEntity.ok("");
     } else {
       return ResponseEntity.ok(String.valueOf(deedTenant.getDate().toEpochSecond(ZoneOffset.UTC)));

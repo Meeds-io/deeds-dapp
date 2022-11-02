@@ -63,7 +63,7 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
-          <v-list-item-subtitle class="text-color">{{ $t('deedTenantStartedOn') }}: {{ cityStartDateFormatted }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="text-color">{{ $t('deedTenantStartedOn') }}: {{ deedTenantStartDate }}</v-list-item-subtitle>
         </v-list-item>
         <template v-if="showAccessPart">
           <v-list-item>
@@ -263,15 +263,18 @@ export default {
     cityVotingRights() {
       return this.cardTraits.find(attr => attr.trait_type === 'City voting rights')?.value || '-';
     },
-    cityStartDate() {
+    deedTenantDate() {
       return this.deedInfo?.provisioningDate;
+    },
+    deedTenantStatus() {
+      return this.deedInfo?.tenantStatus;
     },
     provisioningStatus() {
       return this.deedInfo?.provisioningStatus;
     },
-    cityStartDateFormatted() {
+    deedTenantStartDate() {
       return this.loading && '-'
-        || this.started && this.cityStartDate && this.$ethUtils.formatDate(new Date(this.cityStartDate * 1000), this.language)
+        || this.started && this.deedTenantDate && (!this.authenticated || this.deedTenantStatus === 'DEPLOYED') && this.$ethUtils.formatDate(new Date(this.deedTenantDate * 1000), this.language)
         || this.$t('deedTenantNotStartedYet');
     },
     cityName() {
