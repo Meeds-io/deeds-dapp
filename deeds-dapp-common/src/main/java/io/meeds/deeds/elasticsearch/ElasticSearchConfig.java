@@ -15,6 +15,8 @@
  */
 package io.meeds.deeds.elasticsearch;
 
+import java.time.Duration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,9 @@ public class ElasticSearchConfig {
   @Value("${meeds.elasticsearch.url:http://127.0.0.1:9200}")
   private String  esUrl;
 
+  @Value("${meeds.elasticsearch.connectTimeout:10}")
+  private int     connectionTimeout;
+
   @Value("${meeds.elasticsearch.autoCreateIndex:true}")
   private boolean createDeedIndexes;
 
@@ -61,6 +66,7 @@ public class ElasticSearchConfig {
     if (StringUtils.isNotBlank(esPassword) && StringUtils.isNotBlank(esUsername)) {
       connectionBuilder.withBasicAuth(esUsername, esPassword);
     }
+    connectionBuilder.withConnectTimeout(Duration.ofSeconds(connectionTimeout));
     ClientConfiguration clientConfiguration = connectionBuilder.build();
     return RestClients.create(clientConfiguration).rest();// NOSONAR
   }

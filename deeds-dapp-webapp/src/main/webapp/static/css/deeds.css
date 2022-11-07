@@ -209,3 +209,6 @@ html {
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+.content-box-sizing {
+  box-sizing: content-box;
+}
