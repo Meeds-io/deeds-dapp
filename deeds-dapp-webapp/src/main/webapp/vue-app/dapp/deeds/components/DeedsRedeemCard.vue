@@ -69,7 +69,7 @@
           <span class="text-none">{{ $t('redeem') }}</span>
         </v-btn>
         <v-chip
-          class="ms-2 primary"
+          class="ms-2 secondary"
           dark
           small>
           <deeds-number-format :value="cardAmount" :fractions="6">

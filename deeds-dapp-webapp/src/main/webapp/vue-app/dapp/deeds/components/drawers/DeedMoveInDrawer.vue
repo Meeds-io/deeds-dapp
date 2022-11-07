@@ -84,7 +84,7 @@
       <v-btn
         :min-width="minButtonsWidth"
         name="moveInConfirmButton"
-        color="tertiary"
+        color="primary"
         class="ms-auto"
         depressed
         dark
@@ -112,8 +112,8 @@
         :disabled="!validForm"
         :loading="sending"
         name="moveInConfirmButton"
-        color="tertiary"
-        class="tertiary"
+        color="primary"
+        class="primary"
         depressed
         dark
         @click="sendRequest">
