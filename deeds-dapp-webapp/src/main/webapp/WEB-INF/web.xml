@@ -46,6 +46,7 @@
     <filter-name>requestDispatcherFilter</filter-name>
     <url-pattern>/</url-pattern>
     <url-pattern>/overview</url-pattern>
+    <url-pattern>/marketplace</url-pattern>
     <url-pattern>/stake</url-pattern>
     <url-pattern>/deeds</url-pattern>
     <url-pattern>/farm</url-pattern>
