@@ -90,7 +90,7 @@
                 target="_blank"
                 rel="nofollow noreferrer noopener"
                 class="ms-auto"
-                color="tertiary"
+                color="primary"
                 depressed
                 dark>
                 <span class="text-capitalize">{{ $t('deedTenantAccessButton') }}</span>
@@ -122,7 +122,7 @@
                 :loading="loadingMoveDeed"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
-                color="error"
+                color="secondary"
                 outlined
                 depressed
                 dark
@@ -134,7 +134,7 @@
                 :loading="loadingMoveDeed"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
-                color="tertiary"
+                color="primary"
                 depressed
                 dark
                 @click="openMoveInDrawer">
@@ -160,7 +160,7 @@
                 :loading="loadingRentDrawer"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
-                color="tertiary"
+                color="primary"
                 depressed
                 outlined
                 @click="openRentDrawer">
@@ -213,7 +213,7 @@
         <template #activator="{ on, attrs }">
           <v-btn
             :min-width="minButtonsWidth"
-            color="tertiary"
+            color="primary"
             depressed
             dark
             class="ms-auto"

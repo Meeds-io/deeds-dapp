@@ -18,7 +18,7 @@
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=v2.6.4">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.4_0">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.4_1">
 
     <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmEU9fBBc4.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2" as="font" type="font/woff2" crossorigin="">
@@ -52,8 +52,8 @@
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
     <link href="./static/css/materialdesignicons.min.css?_=6.5.95" rel="stylesheet">
     <link href="./static/css/vuetify.min.css?_=v2.6.4" rel="stylesheet">
+    <link href="./static/css/vuetify-theme.css?_=v2.6.4_1" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
-    <link href="./static/css/vuetify-theme.css?_=v2.6.4_0" rel="stylesheet">
   </head>
   <body>
     <div id="deedsApp"></div>

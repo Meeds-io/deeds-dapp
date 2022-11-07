@@ -73,7 +73,7 @@
       <v-btn
         :loading="sending"
         name="moveOutConfirmButton"
-        color="tertiary"
+        color="primary"
         min-width="120"
         depressed
         dark

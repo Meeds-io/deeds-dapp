@@ -19,7 +19,7 @@
 <template>
   <v-btn
     height="auto"
-    color="tertiary"
+    color="primary"
     class="font-size-normal"
     text
     @click="$root.$emit('switch-page', tabLink)">
