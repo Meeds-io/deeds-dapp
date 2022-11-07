@@ -72,11 +72,28 @@ getI18N(language).then(() =>{
     store,
     i18n,
     vuetify: new Vuetify({
-      dark: true,
-      silent: true,
       iconfont: 'fa',
       theme: {
-        disable: true
+        dark: false,
+        disable: true,
+        themes: {
+          light: {
+            primary: '#3f8487',
+            secondary: '#e25d5d',
+            info: '#476a9c',
+            error: '#bc4343',
+            warning: '#ffb441',
+            success: '#2eb58c',
+          },
+          dark: {
+            primary: '#3f8487',
+            secondary: '#e25d5d',
+            info: '#476a9c',
+            error: '#bc4343',
+            warning: '#ffb441',
+            success: '#2eb58c',
+          },
+        },
       },
     }),
   });

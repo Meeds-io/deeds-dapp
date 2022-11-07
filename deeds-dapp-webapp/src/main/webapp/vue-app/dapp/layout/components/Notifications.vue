@@ -46,7 +46,7 @@
         name="closeSnackbarButton"
         target="_blank"
         rel="nofollow noreferrer noopener"
-        class="primary--text"
+        class="secondary--text"
         icon
         link>
         <v-icon>{{ alertLinkIcon }}</v-icon>

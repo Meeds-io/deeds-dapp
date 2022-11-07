@@ -35,6 +35,11 @@ import DeedMoveInDrawer from './components/drawers/DeedMoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
 import DeedRentDrawer from './components/drawers/DeedRentDrawer.vue';
 import DeedManageDrawer from './components/drawers/DeedManageDrawer.vue';
+import ExtendedTextarea from './components/form/ExtendedTextarea.vue';
+import MediaSelector from './components/form/MediaSelector.vue';
+import RentalExpirationDuration from './components/form/RentalExpirationDuration.vue';
+import RentalDuration from './components/form/RentalDuration.vue';
+import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
 
 const components = {
   'deeds-deeds': Deeds,
@@ -56,6 +61,11 @@ const components = {
   'deeds-manage-drawer': DeedManageDrawer,
   'deeds-timer': DeedsTimer,
   'deeds-trade': DeedsTrade,
+  'deeds-extended-textarea': ExtendedTextarea,
+  'deeds-media-selector': MediaSelector,
+  'deeds-renting-expiration-duration': RentalExpirationDuration,
+  'deeds-renting-duration': RentalDuration,
+  'deeds-button-group-item': ButtonGroupItem,
 };
 
 for (const key in components) {

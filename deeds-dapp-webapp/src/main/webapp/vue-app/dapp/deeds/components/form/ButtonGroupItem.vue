@@ -1,8 +1,9 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
- 
+
  Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
@@ -11,44 +12,57 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
-  <v-card
-    max-width="165px"
-    class="d-flex flex-column align-center text-center mx-sm-12 mx-auto"
-    flat>
-    <v-img
-      :src="`/${parentLocation}/static/images/${imageSrc}`"
-      max-height="65"
-      width="65"
-      contain
-      eager />
-    <strong class="primary--text mt-2 mb-1">{{ $t(title) }}</strong>
-    <v-card-subtitle class="pa-0 hidden-xs-only">{{ $t(subtitle) }}</v-card-subtitle>
-  </v-card>
+  <div>
+    <!-- Necessary to avoid applying default style of Vuetify -->
+    <v-btn
+      :outlined="outlined"
+      :dark="dark"
+      :value="value"
+      :color="color"
+      :class="borderClass"
+      class="px-2 elevation-0">
+      <span class="text-capitalize">
+        <slot></slot>
+      </span>
+    </v-btn>
+  </div>
 </template>
 <script>
 export default {
   props: {
-    imageSrc: {
+    value: {
       type: String,
       default: null,
     },
-    title: {
+    selectedValue: {
       type: String,
       default: null,
     },
-    subtitle: {
+    color: {
       type: String,
       default: null,
     },
   },
-  computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-  }),
+  computed: {
+    isSelected() {
+      return this.value === this.selectedValue;
+    },
+    dark() {
+      return this.isSelected;
+    },
+    outlined() {
+      return !this.isSelected;
+    },
+    borderClass() {
+      return this.isSelected && `${this.color}-border-color` || '';
+    },
+  },
 };
 </script>
