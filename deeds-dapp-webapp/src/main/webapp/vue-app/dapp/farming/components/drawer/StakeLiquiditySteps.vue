@@ -19,11 +19,13 @@
 <template>
   <v-stepper
     v-model="step"
+    color="secondary"
     vertical
     flat>
     <v-stepper-step
-      editable
-      step="1">
+      step="1"
+      color="secondary"
+      editable>
       {{ $t('approveLiquidity', {0: lpSymbol}) }}
     </v-stepper-step>
     <v-stepper-content step="1">
@@ -73,7 +75,7 @@
             :disabled="disabledApproveButton"
             :loading="sendingApproval"
             name="approveTokenButton"
-            color="primary"
+            color="secondary"
             @click="approve">
             {{ $t('approve') }}
           </v-btn>
@@ -82,6 +84,7 @@
     </v-stepper-content>
     <v-stepper-step
       step="2"
+      color="secondary"
       :editable="hasStakeAllowance">
       {{ $t('stakeLiquidity', {0: lpSymbol}) }}
     </v-stepper-step>
@@ -121,7 +124,7 @@
             :disabled="disabledStakeButton"
             :loading="sendingStake"
             name="stakeTokenButton"
-            color="primary"
+            color="secondary"
             @click="stake">
             {{ $t('stake') }}
           </v-btn>

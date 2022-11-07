@@ -28,6 +28,8 @@
       <v-slider
         v-model="xMeedAmount"
         id="xMeedAmountSlider"
+        color="secondary"
+        track-color="secondary lighten-3"
         name="xMeedAmountSlider"
         min="0"
         max="999999"

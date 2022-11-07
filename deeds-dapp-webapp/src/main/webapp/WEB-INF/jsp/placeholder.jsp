@@ -37,9 +37,9 @@
     <link rel="icon" href="./static/images/meedsicon.png" sizes="192x192">
     <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
     <link href="./static/css/vuetify.min.css?_=v2.6.4" rel="stylesheet">
-    <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
     <link href="./static/css/vuetify-theme.css?_=v2.6.4_0" rel="stylesheet">
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
+    <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
     <div id="tenantPlaceholder"></div>
