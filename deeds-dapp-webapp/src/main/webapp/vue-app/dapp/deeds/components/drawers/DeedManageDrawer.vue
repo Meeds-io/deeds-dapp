@@ -157,6 +157,7 @@
             <v-list-item-action>
               <v-btn
                 :disabled="!isRentingEnabled"
+                :loading="loadingRentDrawer"
                 :min-width="minButtonsWidth"
                 class="ms-auto"
                 color="tertiary"
@@ -245,6 +246,7 @@ export default {
     deedInfo: null,
     minButtonsWidth: 120,
     loadingMoveDeed: false,
+    loadingRentDrawer: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -389,27 +391,34 @@ export default {
       }
     },
     openMoveOutDrawer() {
-      this.openMoveDrawer(false);
+      this.loadingMoveDeed = true;
+      this.openDrawer(false, 'deeds-move-out-drawer')
+        .finally(() => this.loadingMoveDeed = false);
     },
     openMoveInDrawer() {
-      this.openMoveDrawer(true);
-    },
-    openMoveDrawer(moveIn) {
       this.loadingMoveDeed = true;
-      this.refreshDeedInfo()
+      this.openDrawer(true, 'deeds-move-in-drawer')
+        .finally(() => this.loadingMoveDeed = false);
+    },
+    openRentDrawer() {
+      this.loadingRentDrawer = true;
+      this.openDrawer(true, 'deeds-rent-drawer')
+        .finally(() => this.loadingRentDrawer = false);
+    },
+    openDrawer(sendNft, eventName) {
+      return this.refreshDeedInfo()
         .then(() => this.$nextTick())
         .then(() => {
           if (this.authenticated && this.nft?.id) {
-            if (moveIn) {
-              this.$root.$emit('deeds-move-in-drawer', this.nft);
+            if (sendNft) {
+              this.$root.$emit(eventName, this.nft);
             } else {
-              this.$root.$emit('deeds-move-out-drawer', this.nft.id);
+              this.$root.$emit(eventName, this.nft.id);
             }
           } else {
             this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
           }
-        })
-        .finally(() => this.loadingMoveDeed = false);
+        });
     },
     open(nft) {
       this.nft = nft;
