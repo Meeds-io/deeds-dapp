@@ -33,6 +33,7 @@ import DeedsTimer from './components/DeedsTimer.vue';
 import DeedsTrade from './components/DeedsTrade.vue';
 import DeedMoveInDrawer from './components/drawers/DeedMoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawers/DeedMoveOutDrawer.vue';
+import DeedRentDrawer from './components/drawers/DeedRentDrawer.vue';
 import DeedManageDrawer from './components/drawers/DeedManageDrawer.vue';
 
 const components = {
@@ -51,6 +52,7 @@ const components = {
   'deeds-owned-item-menu': DeedsOwnedItemMenu,
   'deeds-move-in-drawer': DeedMoveInDrawer,
   'deeds-move-out-drawer': DeedMoveOutDrawer,
+  'deeds-move-rent-drawer': DeedRentDrawer,
   'deeds-manage-drawer': DeedManageDrawer,
   'deeds-timer': DeedsTimer,
   'deeds-trade': DeedsTrade,

@@ -248,12 +248,12 @@
   caret-color: #004c90 !important;
 }
 .v-application .error {
-  background-color: #ff5252 !important;
-  border-color: #ff5252 !important;
+  background-color: #bc4343 !important;
+  border-color: #bc4343 !important;
 }
 .v-application .error--text {
-  color: #ff5252 !important;
-  caret-color: #ff5252 !important;
+  color: #bc4343 !important;
+  caret-color: #bc4343 !important;
 }
 .v-application .error.lighten-5 {
   background-color: #ffe4d5 !important;
@@ -408,12 +408,12 @@
   caret-color: #003784 !important;
 }
 .v-application .success {
-  background-color: #4caf50 !important;
-  border-color: #4caf50 !important;
+  background-color: #2eb58c !important;
+  border-color: #2eb58c !important;
 }
 .v-application .success--text {
-  color: #4caf50 !important;
-  caret-color: #4caf50 !important;
+  color: #2eb58c !important;
+  caret-color: #2eb58c !important;
 }
 .v-application .success.lighten-5 {
   background-color: #dcffd6 !important;

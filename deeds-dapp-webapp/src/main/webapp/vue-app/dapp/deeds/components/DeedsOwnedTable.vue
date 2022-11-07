@@ -26,6 +26,7 @@
       <deeds-manage-drawer v-model="authenticated" :second-level-opened="secondLevelOpened" />
       <deeds-move-in-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
       <deeds-move-out-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
+      <deeds-move-rent-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
     </template>
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
     <v-data-table
