@@ -19,6 +19,7 @@
 import './common/initComponents';
 import './layout/initComponents';
 import './snapshot/initComponents';
+import './marketplace/initComponents';
 import './deeds/initComponents';
 import './stake/initComponents';
 import './farming/initComponents';

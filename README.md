@@ -7,6 +7,7 @@
 | meeds.blockchain.networkUrl        | YES        |  | Blockchain HTTPs URL using infura or Alchemy by example |
 | meeds.blockchain.tenantProvisioningAddress        | NO        |  | Blockchain Address of TenantProvisioningStrategy.sol contract deployed on Mainnet |
 | meeds.blockchain.deedAddress        | NO        |  | Blockchain Address of Deed.sol contract deployed on Mainnet |
+| meeds.elasticsearch.connectTimeout  | YES        | 10 | Elasticsearch Connection timeout in Seconds. Default = 10 seconds. |
 | meeds.elasticsearch.url        | YES        | http://127.0.0.1:9200 | Elasticsearch API HTTP URL |
 | meeds.elasticsearch.username | NO        |  | Elasticsearch API Basic authentication username   |
 | meeds.elasticsearch.password | NO        |  | Elasticsearch API Basic authentication password   |

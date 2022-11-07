@@ -21,7 +21,8 @@
     v-if="isMobile"
     v-model="selectedTab"
     active-class="selected-item"
-    class="bottom-navigation"
+    class="bottom-navigation overflow-x-auto justify-start"
+    hide-on-scroll
     fixed
     grow>
     <v-btn
@@ -29,11 +30,23 @@
       id="overview"
       :href="`/${parentLocation}/overview`"
       value="overview"
-      link 
-      class="px-0"
+      class="content-box-sizing px-1"
+      link
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
-      <v-icon>fas fa-home</v-icon>
+      <v-icon class="mb-1">fas fa-home</v-icon>
+      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+    </v-btn>
+    <v-btn
+      ref="marketplace"
+      id="marketplace"
+      :href="`/${parentLocation}/marketplace`"
+      value="marketplace"
+      class="content-box-sizing px-1"
+      link
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.marketplace') }}</h3>
+      <v-icon class="mb-1">fas fa-store</v-icon>
       <v-tabs-slider color="primary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
@@ -41,11 +54,11 @@
       id="stake"
       :href="`/${parentLocation}/stake`"
       value="stake"
-      link 
-      class="px-0"
+      class="content-box-sizing px-0"
+      link
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
-      <v-icon>fas fa-piggy-bank</v-icon>
+      <v-icon class="mb-1">fas fa-piggy-bank</v-icon>
       <v-tabs-slider color="primary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
@@ -53,11 +66,11 @@
       id="deeds"
       :href="`/${parentLocation}/deeds`"
       value="deeds"
-      link 
-      class="px-0"
+      class="content-box-sizing px-0"
+      link
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
-      <v-icon>fas fa-building</v-icon>
+      <v-icon class="mb-1">fas fa-building</v-icon>
       <v-tabs-slider color="primary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
@@ -65,11 +78,11 @@
       id="farm"
       :href="`/${parentLocation}/farm`"
       value="farm"
+      class="content-box-sizing px-0"
       link
-      class="px-0"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
-      <v-icon>fas fa-sack-dollar</v-icon>
+      <v-icon class="mb-1">fas fa-sack-dollar</v-icon>
       <v-tabs-slider color="primary" class="mobile-menu-slider" />
     </v-btn>
   </v-bottom-navigation>
@@ -82,6 +95,15 @@
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
+    </v-tab>
+    <v-tab
+      ref="marketplace"
+      id="marketplace"
+      :href="`/${parentLocation}/marketplace`"
+      link 
+      class="px-2 me-2"
+      @click="openPage">
+      <h3 class="text-capitalize">{{ $t('page.marketplace') }}</h3>
     </v-tab>
     <v-tab
       ref="stake"
