@@ -35,7 +35,7 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
       <v-icon class="mb-1">fas fa-home</v-icon>
-      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
       ref="marketplace"
@@ -47,7 +47,7 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.marketplace') }}</h3>
       <v-icon class="mb-1">fas fa-store</v-icon>
-      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
       ref="stake"
@@ -59,7 +59,7 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
       <v-icon class="mb-1">fas fa-piggy-bank</v-icon>
-      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
       ref="deeds"
@@ -71,7 +71,7 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
       <v-icon class="mb-1">fas fa-building</v-icon>
-      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
     <v-btn
       ref="farm"
@@ -83,10 +83,13 @@
       @click="openPage">
       <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
       <v-icon class="mb-1">fas fa-sack-dollar</v-icon>
-      <v-tabs-slider color="primary" class="mobile-menu-slider" />
+      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
   </v-bottom-navigation>
-  <v-tabs v-else v-model="selectedTab">
+  <v-tabs
+    v-else
+    v-model="selectedTab"
+    color="secondary">
     <v-tab
       ref="overview"
       id="overview"

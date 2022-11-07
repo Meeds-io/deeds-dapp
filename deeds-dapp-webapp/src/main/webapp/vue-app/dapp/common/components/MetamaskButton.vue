@@ -23,7 +23,7 @@
     name="topbarInstallMetamaskLink"
     target="_blank"
     rel="nofollow noreferrer noopener"
-    color="tertiary"
+    color="primary"
     class="grey lighten-4 border-color-inherit"
     outlined>
     <v-img
@@ -37,7 +37,7 @@
   <v-btn
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
-    color="primary"
+    color="secondary"
     outlined
     @click="switchMetamaskNetwork">
     <v-img
@@ -51,7 +51,7 @@
   <v-btn
     v-else-if="!hasMetamaskConnectedAddress"
     name="topbarConnectMetamaskButton"
-    color="tertiary"
+    color="primary"
     outlined
     @click="connectToMetamask">
     <v-img

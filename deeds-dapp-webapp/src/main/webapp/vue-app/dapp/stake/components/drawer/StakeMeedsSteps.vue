@@ -19,10 +19,12 @@
 <template>
   <v-stepper
     v-model="step"
+    color="secondary"
     vertical
     flat>
     <v-stepper-step
-      :complete="hasMeeds"
+      :complete="hasMeedsStakeAllowance"
+      color="secondary"
       editable
       step="1">
       {{ $t('approveMeeds') }}
@@ -76,7 +78,7 @@
             :disabled="disabledApproveButton"
             :loading="sendingApproval"
             name="approveTokensButton"
-            color="primary"
+            color="secondary"
             @click="approve">
             {{ $t('approve') }}
           </v-btn>
@@ -85,6 +87,7 @@
     </v-stepper-content>
     <v-stepper-step
       step="2"
+      color="secondary"
       :editable="hasMeedsStakeAllowance">
       {{ $t('stakeMeeds') }}
     </v-stepper-step>
@@ -129,7 +132,7 @@
             :disabled="disabledStakeButton"
             :loading="sendingStake"
             name="stakeTokensButton"
-            color="primary"
+            color="secondary"
             @click="stake">
             {{ $t('stake') }}
           </v-btn>

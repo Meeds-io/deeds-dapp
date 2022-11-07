@@ -24,7 +24,7 @@
           name="displayThisWeekPricesButton"
           link
           text
-          color="primary"
+          color="secondary"
           x-small
           @click="period = '1w'">
           {{ $t('week') }}
@@ -33,7 +33,7 @@
           name="displayThisMonthPricesButton"
           link
           text
-          color="primary"
+          color="secondary"
           x-small
           @click="period = '1month'">
           {{ $t('month') }}
@@ -43,7 +43,7 @@
           link
           text
           x-small
-          color="primary"
+          color="secondary"
           @click="period = 'ytd'">
           {{ $t('year') }}
         </v-btn>
@@ -52,7 +52,7 @@
           link
           text
           x-small
-          color="primary"
+          color="secondary"
           @click="period = 'all'">
           {{ $t('all') }}
         </v-btn>
