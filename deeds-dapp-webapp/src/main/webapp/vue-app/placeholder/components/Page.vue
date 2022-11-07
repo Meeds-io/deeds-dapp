@@ -35,7 +35,7 @@
     <div class="d-flex flex-sm-row flex-column">
       <v-spacer />
       <v-btn
-        color="tertiary"
+        color="primary"
         :min-width="isMobile && 'auto' || '180px'"
         elevation="0"
         class="mb-2 mb-sm-0"

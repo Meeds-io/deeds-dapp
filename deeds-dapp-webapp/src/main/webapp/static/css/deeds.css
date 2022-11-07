@@ -68,11 +68,11 @@ html {
   color: #c6c6c6  !important;
 }
 
-.v-btn[disabled].v-btn--disabled.primary {
+.v-btn[disabled].v-btn--disabled.tertiary {
   background-color: #87001ade !important;
 }
 
-.v-btn[disabled].v-btn--disabled.tertiary {
+.v-btn[disabled].v-btn--disabled.primary {
   background-color: #3f8487de !important;
 }
 
@@ -164,9 +164,20 @@ html {
   border: 0 !important;
 }
 
-.border-color {
-  border: 1px solid #e1e8ee;
-  box-shadow: 0 0 0 0 rgb(0 0 0 / 20%), 0px 0 0 0 rgb(0 0 0 / 14%), 0px 0 0 0 rgb(0 0 0 / 12%);
+.tertiary-border-color {
+  border: 1px solid #e25d5d !important;
+}
+
+.primary-border-color {
+  border: 1px solid #3f8487 !important;
+}
+.mt-3px {
+  margin-top: 3px !important;
+}
+
+.v-application .border-color {
+  border: 1px solid #e1e8ee !important;
+  box-shadow: 0 0 0 0 rgb(0 0 0 / 20%), 0px 0 0 0 rgb(0 0 0 / 14%), 0px 0 0 0 rgb(0 0 0 / 12%) !important;
 }
 
 .v-btn--outlined.v-btn:before {
@@ -210,6 +221,13 @@ html {
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+
 .content-box-sizing {
   box-sizing: content-box;
+}
+
+.extended-textarea .v-counter {
+  position: absolute;
+  right: 17px;
+  bottom: 34px;
 }
