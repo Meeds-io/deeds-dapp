@@ -143,6 +143,31 @@
             </v-list-item-action>
           </v-list-item>
           <v-list-item
+            v-if="showRentPart"
+            class="ms-4"
+            two-line
+            dense>
+            <v-list-item-content>
+              <v-list-item-subtitle
+                :title="rentingDescription"
+                class="text-color text-truncate-2">
+                {{ rentingDescription }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                :disabled="!isRentingEnabled"
+                :min-width="minButtonsWidth"
+                class="ms-auto"
+                color="tertiary"
+                depressed
+                outlined
+                @click="openRentDrawer">
+                <span class="text-capitalize">{{ $t('deedRentButton') }}</span>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item
             v-if="showSellPart"
             class="ms-4"
             two-line
@@ -309,6 +334,15 @@ export default {
     },
     showMovePart() {
       return this.authenticated && this.isProvisioningManager && (this.started || this.stopped);
+    },
+    showRentPart() {
+      return this.authenticated && this.isOwner;
+    },
+    isRentingEnabled() {
+      return this.showRentPart && !this.started && !this.loading;
+    },
+    rentingDescription() {
+      return this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription');
     },
     showDeedLinkPart() {
       return this.showMovePart && this.started;
