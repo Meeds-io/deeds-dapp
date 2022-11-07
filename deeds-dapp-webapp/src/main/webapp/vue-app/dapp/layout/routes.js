@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 const Overview = { template: '<deeds-overview />' };
+const Marketplace = { template: '<deeds-marketplace />' };
 const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
@@ -24,6 +25,7 @@ const Farm = { template: '<deeds-farm />' };
 export default {
   '/': Overview,
   '/overview': Overview,
+  '/marketplace': Marketplace,
   '/stake': Stake,
   '/deeds': Deeds,
   '/farm': Farm,
