@@ -23,6 +23,7 @@ import TabLink from './components/TabLink.vue';
 import MetamaskButton from './components/MetamaskButton.vue';
 import CardCarousel from './components/CardCarousel.vue';
 import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
+import ExtendedTextarea from './components/ExtendedTextarea.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -32,6 +33,7 @@ const components = {
   'deeds-tab-link': TabLink,
   'deeds-card-caroussel': CardCarousel,
   'deeds-token-asset-template': TokenAssetTemplate,
+  'deeds-extended-textarea': ExtendedTextarea,
 };
 
 for (const key in components) {
