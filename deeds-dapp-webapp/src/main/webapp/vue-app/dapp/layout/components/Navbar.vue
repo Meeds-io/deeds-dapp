@@ -22,7 +22,6 @@
     v-model="selectedTab"
     active-class="selected-item"
     class="bottom-navigation overflow-x-auto justify-start"
-    hide-on-scroll
     fixed
     grow>
     <v-btn
