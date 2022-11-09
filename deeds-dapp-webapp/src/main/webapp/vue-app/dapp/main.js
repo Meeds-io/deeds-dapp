@@ -26,6 +26,7 @@ import * as tenantManagement from './js/tenantManagement.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
+import * as deedTenantOfferService from './js/deedTenantOfferService.js';
 
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
@@ -49,6 +50,10 @@ window.Object.defineProperty(Vue.prototype, '$deedMetadata', {
 
 window.Object.defineProperty(Vue.prototype, '$tokenMetricService', {
   value: tokenMetricService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$deedTenantOfferService', {
+  value: deedTenantOfferService,
 });
 
 Vue.use(Vuex);
