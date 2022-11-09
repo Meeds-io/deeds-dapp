@@ -23,7 +23,6 @@ import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
@@ -34,8 +33,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager")
-@Setting(replicas = 0, shards = 1)
+@Document(indexName = "deed_tenant_manager", createIndex = false)
 public class DeedTenant {
 
   @Id
@@ -44,6 +42,8 @@ public class DeedTenant {
   private short                    cityIndex = -1;
 
   private short                    cardType  = -1;
+
+  private String                   ownerAddress;
 
   private String                   managerAddress;
 

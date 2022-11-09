@@ -31,11 +31,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "deed_nft_metadata")
-@Setting(
-    replicas = 0,
-    shards = 1
-)
+@Document(indexName = "deed_nft_metadata", createIndex = false)
 @JsonInclude(value = Include.NON_EMPTY)
 public class DeedMetadata implements Cloneable {
 

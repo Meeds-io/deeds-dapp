@@ -15,14 +15,6 @@
  */
 package io.meeds.deeds.constant;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-public enum DeedCard {
-  COMMON(1.0d), UNCOMMON(1.1d), RARE(1.3d), LEGENDARY(2.0d);
-
-  @Getter
-  private double mintingPower;
-
+public enum OfferType {
+  RENTING, SALE;
 }

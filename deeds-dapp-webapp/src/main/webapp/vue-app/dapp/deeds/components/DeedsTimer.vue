@@ -17,7 +17,10 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <span class="ms-2 red--text">
+  <span v-if="shortFormat" :class="`${textColor} ${additionalClass}`">
+    {{ $t('timerShort', {0: days, 1: hours, 2: minutes, 3: seconds}) }}
+  </span>
+  <span v-else :class="`${textColor} ${additionalClass}`">
     {{ $t('timer', {0: days, 1: hours, 2: minutes, 3: seconds}) }}
   </span>
 </template>
@@ -27,6 +30,18 @@ export default {
     endTime: {
       type: Number,
       default: 0,
+    },
+    textColor: {
+      type: String,
+      default: () => 'red--text',
+    },
+    additionalClass: {
+      type: String,
+      default: () => 'ms-2',
+    },
+    shortFormat: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
