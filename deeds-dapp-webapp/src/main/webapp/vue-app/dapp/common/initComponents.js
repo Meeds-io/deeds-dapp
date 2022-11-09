@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import Drawer from './components/Drawer.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 import NumberFormat from './components/NumberFormat.vue';
 import ContractAddress from './components/ContractAddress.vue';
 import TabLink from './components/TabLink.vue';
@@ -26,6 +27,7 @@ import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
 
 const components = {
   'deeds-drawer': Drawer,
+  'deeds-confirm-dialog': ConfirmDialog,
   'deeds-number-format': NumberFormat,
   'deeds-contract-address': ContractAddress,
   'deeds-metamask-button': MetamaskButton,
