@@ -13,16 +13,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.constant;
+package io.meeds.deeds.storage;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@AllArgsConstructor
-public enum DeedCard {
-  COMMON(1.0d), UNCOMMON(1.1d), RARE(1.3d), LEGENDARY(2.0d);
+import io.meeds.deeds.model.DeedTenantOffer;
 
-  @Getter
-  private double mintingPower;
+public interface DeedTenantOfferRepository extends ElasticsearchRepository<DeedTenantOffer, Long> {
+
+  Page<DeedTenantOffer> findByNftIdAndEnabledTrue(long nftId, Pageable pageable);
+
+  Page<DeedTenantOffer> findByEnabledTrue(Pageable pageable);
+
+  void deleteByNftId(long nftId);
 
 }

@@ -27,25 +27,25 @@
     group>
     <deeds-button-group-item
       :selected-value="duration"
-      value="1M"
+      value="ONE_MONTH"
       color="primary">
       {{ $t('deedRentingDurationOneMonth') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
-      value="3M"
+      value="THREE_MONTHS"
       color="primary">
       {{ $t('deedRentingDurationThreeMonths') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
-      value="6M"
+      value="SIX_MONTHS"
       color="primary">
       {{ $t('deedRentingDurationSixMonths') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
-      value="12M"
+      value="ONE_YEAR"
       color="primary">
       {{ $t('deedRentingDurationOneYear') }}
     </deeds-button-group-item>
