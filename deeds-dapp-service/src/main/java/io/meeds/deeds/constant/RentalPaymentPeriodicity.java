@@ -15,14 +15,17 @@
  */
 package io.meeds.deeds.constant;
 
+import java.time.Period;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum DeedCard {
-  COMMON(1.0d), UNCOMMON(1.1d), RARE(1.3d), LEGENDARY(2.0d);
+public enum RentalPaymentPeriodicity {
+
+  ONE_MONTH(Period.ofMonths(1)), ONE_YEAR(Period.ofYears(1));
 
   @Getter
-  private double mintingPower;
+  private Period period;
 
 }

@@ -78,7 +78,7 @@
             dense>
             <v-list-item-content>
               <v-list-item-subtitle
-                :title="$t('deedMoveInDescription')"
+                :title="$t('deedAccessDescription')"
                 class="text-color text-truncate-2">
                 {{ $t('deedAccessDescription') }}
               </v-list-item-subtitle>
@@ -105,9 +105,9 @@
             <v-list-item-content>
               <v-list-item-subtitle
                 v-if="stopped"
-                :title="$t('deedMoveInDescription')"
+                :title="moveInDescription"
                 class="text-color text-truncate-2">
-                {{ $t('deedMoveInDescription') }}
+                {{ moveInDescription }}
               </v-list-item-subtitle>
               <v-list-item-subtitle
                 v-else-if="started"
@@ -131,8 +131,10 @@
               </v-btn>
               <v-btn
                 v-else-if="stopped"
+                :disabled="hasRentOffers"
                 :loading="loadingMoveDeed"
                 :min-width="minButtonsWidth"
+                :outlined="hasRentOffers"
                 class="ms-auto"
                 color="primary"
                 depressed
@@ -159,12 +161,13 @@
                 :disabled="!isRentingEnabled"
                 :loading="loadingRentDrawer"
                 :min-width="minButtonsWidth"
+                :outlined="!hasRentOffers"
+                :dark="hasRentOffers"
                 class="ms-auto"
                 color="primary"
                 depressed
-                outlined
                 @click="openRentDrawer">
-                <span class="text-capitalize">{{ $t('deedRentButton') }}</span>
+                <span class="text-capitalize">{{ rentingButtonName }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -247,6 +250,8 @@ export default {
     minButtonsWidth: 120,
     loadingMoveDeed: false,
     loadingRentDrawer: false,
+    loadingRentalOffers: false,
+    rentalOffers: null,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -340,11 +345,29 @@ export default {
     showRentPart() {
       return this.authenticated && this.isOwner;
     },
+    hasRentOffers() {
+      return !!this.rentalOffers?.length;
+    },
+    rentalOffer() {
+      return this.hasRentOffers && this.rentalOffers[0];
+    },
     isRentingEnabled() {
       return this.showRentPart && !this.started && !this.loading;
     },
+    moveInDescription() {
+      return this.hasRentOffers
+        && this.$t('deedMoveInDisabledDescription')
+        || this.$t('deedMoveInDescription');
+    },
     rentingDescription() {
-      return this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription');
+      return this.hasRentOffers
+        && this.$t('deedRentEditDescription')
+        || (this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription'));
+    },
+    rentingButtonName() {
+      return this.hasRentOffers
+        && this.$t('deedRentEditButton')
+        || this.$t('deedRentButton');
     },
     showDeedLinkPart() {
       return this.showMovePart && this.started;
@@ -362,11 +385,17 @@ export default {
         this.refreshDeedInfo();
       }
     },
+    loadingRentalOffers() {
+      this.loadingRentDrawer = this.loadingRentalOffers;
+    },
   },
   created() {
     this.$root.$on('deeds-manage-drawer', this.open);
     this.$root.$on('deeds-manage-drawer-close', this.close);
     this.$root.$on('deed-nft-updated', this.refreshNft);
+    this.$root.$on('deed-offer-renting-created', this.refreshOffers);
+    this.$root.$on('deed-offer-renting-updated', this.refreshOffers);
+    this.$root.$on('deed-offer-renting-deleted', this.refreshOffers);
 
     this.refreshAuthentication();
   },
@@ -376,10 +405,17 @@ export default {
         this.nft = Object.assign({}, nft);
       }
     },
+    refreshOffers() {
+      this.loadingRentalOffers = true;
+      return this.$deedTenantOfferService.getOffers(this.nftId)
+        .then(offers => this.rentalOffers = offers?._embedded?.deedTenantOfferDTOList)
+        .finally(() => this.loadingRentalOffers = false);
+    },
     refreshDeedInfo() {
       if (this.authenticated) {
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
+          .then(() => this.refreshOffers())
           .catch(() => {
             return this.logout()
               .then(() => this.$tenantManagement.getTenantStartDate(this.nftId))
@@ -396,22 +432,25 @@ export default {
         .finally(() => this.loadingMoveDeed = false);
     },
     openMoveInDrawer() {
+      if (this.hasRentOffers) {
+        return;
+      }
       this.loadingMoveDeed = true;
       this.openDrawer(true, 'deeds-move-in-drawer')
         .finally(() => this.loadingMoveDeed = false);
     },
     openRentDrawer() {
       this.loadingRentDrawer = true;
-      this.openDrawer(true, 'deeds-rent-drawer')
+      this.openDrawer(true, 'deeds-rent-drawer', this.rentalOffer)
         .finally(() => this.loadingRentDrawer = false);
     },
-    openDrawer(sendNft, eventName) {
+    openDrawer(sendNft, eventName, obj) {
       return this.refreshDeedInfo()
         .then(() => this.$nextTick())
         .then(() => {
           if (this.authenticated && this.nft?.id) {
             if (sendNft) {
-              this.$root.$emit(eventName, this.nft);
+              this.$root.$emit(eventName, this.nft, obj);
             } else {
               this.$root.$emit(eventName, this.nft.id);
             }
