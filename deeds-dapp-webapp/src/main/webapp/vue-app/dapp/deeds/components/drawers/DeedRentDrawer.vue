@@ -27,10 +27,11 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4>{{ $t('deedRentingTitle', {0: cardTypeName, 1: nftId}) }}</h4>
+      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeName, 1: nftId}) }}</h4>
+      <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
     </template>
     <template v-if="offer" #content>
-      <v-card-text>
+      <v-card-text v-if="isNew">
         {{ $t('deedRentingDescription1') }}
         <ul>
           <li>{{ $t('deedRentingDescriptionBulletPoint1') }}</li>
@@ -39,17 +40,25 @@
         </ul>
         <div class="pt-4">{{ $t('deedRentingDescription2') }}</div>
       </v-card-text>
+      <v-card-text v-else>
+        {{ $t('deedRentingEditDescription1') }}
+        <div class="pt-4">{{ $t('deedRentingEditDescription2') }}</div>
+        <deeds-rental-description :nft="nft" :offer="offer" />
+      </v-card-text>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
-        <div class="d-flex align-center">
+        <v-list-item
+          class="d-flex align-center flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="step = 1">
           <v-chip :color="step === 1 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedRentingStep1Title') }}</span>
-        </div>
+        </v-list-item>
         <v-expand-transition>
           <v-card
             v-show="step === 1"
             class="flex-grow-1"
             flat>
-            <div class="px-0 py-4">
+            <div class="px-0 pt-4">
               {{ $t('deedRentingStep1Description') }}
               <deeds-extended-textarea
                 v-model="offer.description"
@@ -59,10 +68,13 @@
             </div>
           </v-card>
         </v-expand-transition>
-        <div class="d-flex align-center mt-4">
+        <v-list-item
+          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="nextStep">
           <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedRentingStep2Title') }}</span>
-        </div>
+        </v-list-item>
         <v-expand-transition>
           <v-card
             v-show="step === 2"
@@ -71,7 +83,7 @@
             <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}:</div>
             <deeds-renting-duration v-model="offer.duration" />
             <div class="mb-2 mt-6">{{ $t('deedRentingExpirationDurationTitle') }}:</div>
-            <deeds-renting-expiration-duration v-model="offer.offerExpiration" />
+            <deeds-renting-expiration-duration v-model="offer.expirationDuration" />
             <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}:</div>
             <div class="d-flex">
               <v-text-field
@@ -96,7 +108,7 @@
             <div class="d-flex flex-column">
               <div class="d-flex">
                 <div class="flex-grow-1">
-                  <div class="secondary--text mb-n1">{{ offer.mintingPercentage }}%</div>
+                  <div class="secondary--text mb-n1">{{ offer.ownerMintingPercentage }}%</div>
                   <v-label>
                     <span class="caption">
                       {{ $t('deedRentingRewardDistributionForTheLender') }}
@@ -104,7 +116,7 @@
                   </v-label>
                 </div>
                 <div class="flex-grow-1">
-                  <div class="primary--text mb-n1">{{ (100 - offer.mintingPercentage) }}%</div>
+                  <div class="primary--text mb-n1">{{ (100 - offer.ownerMintingPercentage) }}%</div>
                   <v-label>
                     <span class="caption">
                       {{ $t('deedRentingRewardDistributionForTheTenant') }}
@@ -114,7 +126,7 @@
               </div>
               <div class="mx-n2">
                 <v-slider
-                  v-model="offer.mintingPercentage"
+                  v-model="offer.ownerMintingPercentage"
                   color="secondary py-1"
                   track-color="primary py-1"
                   thumb-color="white border-color mt-3px"
@@ -129,28 +141,54 @@
           </v-card>
         </v-expand-transition>
       </v-card-text>
+      <deeds-confirm-dialog
+        ref="confirmDialog"
+        :title="$t('deedRentalDeleteOfferConfirmTitle')"
+        :message="$t('deedRentalDeleteOfferConfirmDescription')"
+        :ok-label="$t('confirm')"
+        :cancel-label="$t('cancel')"
+        @ok="deleteOffer(true)" />
     </template>
     <template #footer>
       <v-btn
+        v-if="isNew"
+        :disabled="sending"
         :min-width="MIN_BUTTONS_WIDTH"
         outlined
         text
-        class="ms-auto me-2"
-        name="cancelMoveIn"
+        class="me-2 ms-auto"
+        name="cancelRent"
         @click="cancel">
         <span class="text-capitalize">
           {{ $t('cancel') }}
         </span>
       </v-btn>
       <v-btn
+        v-else
+        :loading="deleting"
+        :min-width="MIN_BUTTONS_WIDTH"
+        outlined
+        name="deleteConfirmButton"
+        color="error"
+        class="ms-auto me-2"
+        depressed
+        dark
+        @click="deleteOffer(false)">
+        <span class="text-capitalize">
+          {{ $t('deedRentingDeleteButton') }}
+        </span>
+      </v-btn>
+      <v-btn
+        :loading="sending"
         :disabled="buttonDisabled"
         :min-width="MIN_BUTTONS_WIDTH"
         :outlined="buttonOutlined"
-        name="moveInConfirmButton"
+        :class="buttonDisabled && 'primary'"
+        name="rentConfirmButton"
         color="primary"
         depressed
         dark
-        @click="confirm">
+        @click="saveOffer">
         <span class="text-capitalize">
           {{ buttonLabel }}
         </span>
@@ -163,15 +201,20 @@ export default {
   data: () => ({
     nft: null,
     drawer: false,
+    sending: false,
+    deleting: false,
+    isNew: false,
     step: 0,
     offer: null,
+    offerChanged: false,
     DEFAULT_OFFER: {
+      nftId: null,
       description: null,
       duration: null,
-      offerExpiration: null,
+      expirationDuration: null,
       amount: 10,
-      paymentPeriodicity: '1M',
-      mintingPercentage: 50,
+      paymentPeriodicity: 'ONE_MONTH',
+      ownerMintingPercentage: 50,
     },
     DESCRIPTION_MAX_LENGTH: 200,
     MIN_BUTTONS_WIDTH: 120,
@@ -185,10 +228,10 @@ export default {
     },
     periods() {
       return [{
-        value: '1M',
+        value: 'ONE_MONTH',
         text: this.$t('deedRentingDurationPerMonth'),
       }, {
-        value: '1Y',
+        value: 'ONE_YEAR',
         text: this.$t('deedRentingDurationPerYear'),
       }];
     },
@@ -196,30 +239,60 @@ export default {
       return this.step === 1;
     },
     buttonLabel() {
-      return this.step === 1 && this.$t('next') || this.$t('deedRentingSendButton');
+      return this.step === 1
+        && this.$t('next')
+        || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
     },
     buttonDisabled() {
       return this.step === 2
         && (
-          !this.offer?.duration
+          !this.offerChanged
+          || !this.offer?.duration
           || !this.offer?.amount
-          || !this.offer?.paymentPeriodicity
-          || !this.offer?.mintingPercentage
         );
     },
   }),
+  watch: {
+    sending() {
+      if (this.sending) {
+        this.$refs.drawer?.startLoading();
+      } else {
+        this.$refs.drawer?.endLoading();
+      }
+    },
+    deleting() {
+      if (this.deleting) {
+        this.$refs.drawer?.startLoading();
+      } else {
+        this.$refs.drawer?.endLoading();
+      }
+    },
+    offer: {
+      handler() {
+        this.offerChanged = true;
+      },
+      deep: true
+    },
+  },
   created() {
     this.$root.$on('deeds-rent-drawer', this.open);
     this.$root.$on('deeds-rent-close', this.close);
   },
   methods: {
-    open(nft) {
+    open(nft, offer) {
       this.nft = nft;
-      if (!this.offer) {
+      if (!this.offer || (offer?.id && this.offer?.id !== offer?.id)) {
         this.step = 1;
+      }
+      if (offer) {
+        this.offer = offer;
+      } else {
         this.offer = Object.assign({}, this.DEFAULT_OFFER);
       }
+      this.isNew = !offer;
+      this.offer.nftId = this.nftId;
       this.$refs.drawer.open();
+      this.$nextTick().then(() => this.offerChanged = false);
     },
     cancel() {
       this.close(this.nftId);
@@ -230,7 +303,25 @@ export default {
         this.$refs.drawer.close();
       }
     },
-    confirm() {
+    deleteOffer(confirmed) {
+      if (!confirmed) {
+        this.$refs.confirmDialog.open();
+        return;
+      }
+      this.deleting = true;
+      return this.$deedTenantOfferService.deleteOffer(this.offer.id)
+        .then(offer => {
+          this.$root.$emit('deed-offer-renting-deleted', offer);
+          this.deleting = false;
+          this.$root.$emit('alert-message', this.$t('deedRentingOfferDeleted'), 'success');
+          this.$nextTick().then(() => this.cancel());
+        })
+        .catch(() => {
+          this.deleting = false;
+          this.$root.$emit('alert-message', this.$t('deedRentingOfferDeletionError'), 'error');
+        });
+    },
+    nextStep() {
       if (this.step === 1) {
         this.step = 2;
         window.setTimeout(() => {
@@ -239,8 +330,26 @@ export default {
             block: 'end',
           });
         }, 200);
+      }
+    },
+    saveOffer() {
+      if (this.step === 1) {
+        this.nextStep();
       } else {
-        // TODO
+        this.sending = true;
+        const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer)
+          || this.$deedTenantOfferService.updateOffer(this.offer.id, this.offer);
+        return savePromise
+          .then(offer => {
+            this.$root.$emit(this.isNew && 'deed-offer-renting-created' || 'deed-offer-renting-updated', offer);
+            this.sending = false;
+            this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreated' || 'deedRentingOfferUpdated'), 'success');
+            this.$nextTick().then(() => this.cancel());
+          })
+          .catch(() => {
+            this.sending = false;
+            this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreationError' || 'deedRentingOfferUpdateError'), 'error');
+          });
       }
     },
   },
