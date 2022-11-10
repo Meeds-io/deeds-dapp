@@ -18,10 +18,17 @@
  */
 import {getCookie} from './authentication';
 
-export function getOffers(nftId) {
+export function getOffers(paramsObj) {
   const formData = new FormData();
-  if (nftId) {
-    formData.append('nftId', nftId);
+  if (paramsObj) {
+    Object.keys(paramsObj).forEach(key => {
+      const value = paramsObj[key];
+      if (window.Array && Array.isArray && Array.isArray(value)) {
+        value.forEach(val => formData.append(key, val));
+      } else {
+        formData.append(key, value);
+      }
+    });
   }
   const params = new URLSearchParams(formData).toString();
   return fetch(`/${window.parentAppLocation}/api/offers?${params}`, {
@@ -32,7 +39,7 @@ export function getOffers(nftId) {
     credentials: 'include',
   }).then(resp => {
     if (!resp || !resp.ok) {
-      throw new Error(`Error getting offers for nft with id ${nftId}`);
+      throw new Error(`Error getting offers for nft with params ${paramsObj}`);
     } else {
       return resp.json();
     }
