@@ -15,36 +15,46 @@
  */
 package io.meeds.deeds.service;
 
+import static io.meeds.deeds.redis.model.EventSerialization.OBJECT_MAPPER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.net.URL;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.TestPropertySource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
@@ -52,32 +62,36 @@ import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.model.DeedMetadata;
+import io.meeds.deeds.model.DeedTenantEvent;
+import io.meeds.deeds.redis.Listener;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
-import io.meeds.deeds.service.ListenerService.Event;
-import io.meeds.deeds.service.ListenerService.Listener;
+import io.meeds.deeds.redis.model.Event;
 import io.meeds.deeds.service.ListenerServiceTest.FakeEventListener;
 import io.meeds.deeds.service.ListenerServiceTest.ListenerServiceTestConfiguration;
+import io.meeds.deeds.storage.DeedTenantEventRepository;
+import lombok.Getter;
+import lombok.Setter;
 
-@SpringBootTest(
-    classes = {
-        ListenerServiceTestConfiguration.class,
-        ListenerService.class,
-        FakeEventListener.class,
-        RedisConfigurationProperties.class
-    }
-)
+@SpringBootTest(classes = {
+    ListenerServiceTestConfiguration.class,
+    ListenerService.class,
+    FakeEventListener.class,
+})
+@EnableConfigurationProperties(value = RedisConfigurationProperties.class)
+@TestPropertySource(properties = {
+    "meeds.redis.channelName=" + ListenerServiceTest.CHANNEL_NAME_VALUE,
+    "meeds.redis.clientName=" + ListenerServiceTest.CLIENT_NAME,
+})
 class ListenerServiceTest {
 
-  public static final String       FAKE_EVENT_LISTENER_NAME = "fakeEventListener";
+  public static final String                       CHANNEL_NAME_VALUE       = "CHANNEL_NAME";
 
-  public static final ObjectMapper OBJECT_MAPPER            = new ObjectMapper();
+  public static final String                       CLIENT_NAME              = "CLIENT_NAME";
 
-  static {
-    // Workaround when Jackson is defined in shared library with different
-    // version and without artifact jackson-datatype-jsr310
-    OBJECT_MAPPER.registerModule(new JavaTimeModule());
-  }
+  public static final String                       FAKE_EVENT_LISTENER_NAME = "fakeEventListener";
+
+  @MockBean
+  private DeedTenantEventRepository                deedTenantEventRepository;
 
   @Autowired
   private ListenerService                          listenerService;
@@ -95,9 +109,8 @@ class ListenerServiceTest {
 
   @BeforeEach
   public void init() {
-    if (listenerService != null && listenerService.getListeners() != null) {
-      listenerService.getListeners().clear();
-    }
+    listenerService.redisListener = listener;
+    listenerService.getListeners().clear();
   }
 
   @Test
@@ -197,7 +210,7 @@ class ListenerServiceTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  void testPublishEvent() {
+  void testPublishEvent() throws IOException {
     assertNotNull(listenerService);
 
     String eventListenerName = "eventListenerName";
@@ -208,20 +221,8 @@ class ListenerServiceTest {
     AtomicInteger event1TriggerCount = new AtomicInteger(0);
     AtomicInteger event2TriggerCount = new AtomicInteger(0);
 
-    class EventData {
-      Map<String, DeedMetadata> data;
-    }
-
-    EventData eventData;
-    try {
-      URL deedMetadatasResource = getClass().getClassLoader().getResource("metadatas.json");
-      Map<String, DeedMetadata> eventDataMap = OBJECT_MAPPER.readerForMapOf(DeedMetadata.class).readValue(deedMetadatasResource);
-      eventData = new EventData();
-      eventData.data = eventDataMap;
-    } catch (IOException e) {
-      fail(e);
-      return;
-    }
+    EventData eventData = new EventData();
+    eventData.data = 5;
 
     EventListener<EventData> eventListener = new EventListener<>() {
       @Override
@@ -265,46 +266,18 @@ class ListenerServiceTest {
     assertEquals(1, event1TriggerCount.get());
     assertEquals(0, event2TriggerCount.get());
 
-    reset(asyncPub);
-    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
-      String channelName = invocation.getArgument(0, String.class);
-      String message = invocation.getArgument(1, String.class);
-      listener.message(channelName, message);
-      return null;
-    });
-
     when(publish.getError()).thenReturn("FAKE PUBLICATION ERROR");
     listenerService.publishEvent(eventName1, eventData);
     assertEquals(2, event1TriggerCount.get());
     assertEquals(0, event2TriggerCount.get());
 
-    reset(asyncPub);
-    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
-      String channelName = invocation.getArgument(0, String.class);
-      String message = invocation.getArgument(1, String.class);
-      listener.message(null, channelName, message);
-      return null;
-    });
-
     listenerService.publishEvent(eventName2, eventData);
     assertEquals(2, event1TriggerCount.get());
     assertEquals(1, event2TriggerCount.get());
 
-    reset(asyncPub);
-    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
-      listener.message(null, null, null);
-      return null;
-    });
-
     listenerService.publishEvent(eventName2, eventData);
     assertEquals(2, event1TriggerCount.get());
     assertEquals(2, event2TriggerCount.get());
-
-    reset(asyncPub);
-    when(asyncPub.publish(anyString(), anyString())).thenAnswer(invocation -> {
-      listener.message(null, null);
-      return null;
-    });
 
     listenerService.publishEvent(eventName2, eventData);
     assertEquals(2, event1TriggerCount.get());
@@ -317,9 +290,6 @@ class ListenerServiceTest {
     String eventListenerName = "eventListenerName";
     String eventName1 = "eventName1";
     AtomicInteger triggerCount = new AtomicInteger(0);
-
-    class EventData {
-    }
 
     EventListener<EventData> eventListener = new EventListener<>() {
       @Override
@@ -347,10 +317,92 @@ class ListenerServiceTest {
     assertEquals(1, triggerCount.get());
   }
 
+  @Test
+  void testInitElasticsearchEventScanning() throws JsonProcessingException {
+    String id = "eventId";
+    String eventName = "eventName";
+    String existingConsumer = "anotherClient";
+
+    DeedTenantEvent deedTenantEvent = createDeedTenantEvent(id, eventName, new EventData(), existingConsumer);
+    @SuppressWarnings("unchecked")
+    Page<DeedTenantEvent> page = mock(Page.class);
+    when(deedTenantEventRepository.findByConsumersNotOrderByDateDesc(CLIENT_NAME, Pageable.ofSize(1))).thenReturn(page);
+    when(page.getContent()).thenReturn(Collections.singletonList(deedTenantEvent));
+    when(page.getSize()).thenReturn(1);
+
+    assertNotEquals(deedTenantEvent.getDate(), listenerService.getLastEventScanDate());
+    listenerService.initElasticsearchEventScanning();
+    assertEquals(deedTenantEvent.getDate(), listenerService.getLastEventScanDate());
+  }
+
+  @Test
+  void testTriggerElasticSearchEvents() throws JsonProcessingException {
+    String id = "eventId";
+    String eventName = "eventName";
+    String existingConsumer = "anotherClient";
+
+    EventData eventData = new EventData();
+    eventData.data = 2;
+    DeedTenantEvent deedTenantEvent = createDeedTenantEvent(id, eventName, eventData, existingConsumer);
+    when(deedTenantEventRepository.findByDateGreaterThanEqualAndConsumersNotOrderByDateAsc(listenerService.getLastEventScanDate(),
+                                                                                           CLIENT_NAME)).thenReturn(Stream.of(deedTenantEvent));
+
+    AtomicInteger triggerCount = new AtomicInteger(0);
+    EventListener<EventData> eventListener = new EventListener<>() {
+      @Override
+      public void onEvent(String eventName, EventData data) {
+        triggerCount.incrementAndGet();
+      }
+
+      @Override
+      public String getName() {
+        return "FAKE_EVENT";
+      }
+
+      @Override
+      public List<String> getSupportedEvents() {
+        return Arrays.asList(eventName);
+      }
+    };
+    listenerService.addListener(eventListener);
+
+    listenerService.triggerElasticSearchEvents();
+    assertEquals(1, triggerCount.get());
+    assertEquals(deedTenantEvent.getDate(), listenerService.getLastEventScanDate());
+  }
+
+  @Test
+  void testCleanupElasticSearchEvents() throws JsonProcessingException {
+    String id = "eventId";
+    String eventName = "eventName";
+    String existingConsumer = "anotherClient";
+
+    EventData eventData = new EventData();
+    eventData.data = 2;
+    DeedTenantEvent deedTenantEvent = createDeedTenantEvent(id, eventName, eventData, existingConsumer);
+    when(deedTenantEventRepository.findByDateLessThan(listenerService.getLastEventScanDate()
+                                                                     .minus(12, ChronoUnit.HOURS)))
+                                                                                                   .thenReturn(Stream.of(deedTenantEvent));
+
+    listenerService.cleanupElasticsearchEvents();
+    verify(deedTenantEventRepository, times(1)).deleteById(deedTenantEvent.getId());
+  }
+
+  private DeedTenantEvent createDeedTenantEvent(String id, String eventName, EventData eventData,
+                                                String existingConsumer) throws JsonProcessingException {
+    Event event = new Event(eventName, eventData, EventData.class.getName());
+    String objectJson = OBJECT_MAPPER.writeValueAsString(event);
+    List<String> consumers = Arrays.asList(existingConsumer);
+    Instant date = listenerService.getLastEventScanDate().plus(2, ChronoUnit.SECONDS);
+    DeedTenantEvent deedTenantEvent = new DeedTenantEvent(id, eventName, objectJson, consumers, date);
+    return deedTenantEvent;
+  }
+
   @Configuration
   public static class ListenerServiceTestConfiguration {
 
-    private RedisClient redisClient;
+    private RedisClient                              redisClient;
+
     private Listener                                 listener;
 
     private RedisPubSubAsyncCommands<String, String> asyncSub;
@@ -416,4 +468,9 @@ class ListenerServiceTest {
     }
   }
 
+  public static class EventData {
+    @Getter
+    @Setter
+    int data;
+  }
 }

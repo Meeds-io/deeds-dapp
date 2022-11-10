@@ -22,13 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfToken;
 
@@ -36,22 +34,22 @@ import io.meeds.deeds.web.utils.Utils;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
-  private static final Logger        LOG                 = LoggerFactory.getLogger(WebSecurityConfig.class);
+  private static final Logger       LOG                 = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-  private CookieCsrfTokenRepository  csrfTokenRepository = new CookieCsrfTokenRepository();
+  private CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
 
-  @Autowired
-  private DeedAuthenticationProvider authProvider;
-
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http, DeedAuthenticationProvider authProvider) throws Exception {
     http
+        .authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/static/**", "/api/deeds/**").permitAll())
+        .authenticationProvider(authProvider)
         .csrf(csrf -> {
           csrfTokenRepository.setCookiePath("/");
           csrfTokenRepository.setCookieHttpOnly(false);
           csrf.csrfTokenRepository(csrfTokenRepository);
+          csrf.ignoringAntMatchers("/static/**", "/api/deeds/**");
         })
         .headers(headers -> {
           headers.frameOptions().disable();
@@ -69,17 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .logout(logout -> logout
                                 .logoutUrl("/logout")
                                 .logoutSuccessHandler((request, response, authentication) -> handleLogout(request, response)));
-  }
-
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.authenticationProvider(authProvider);
-  }
-
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring()
-       .antMatchers("/static/**", "/api/deeds/**");
+    return http.build();
   }
 
   private void handleLogout(HttpServletRequest request, HttpServletResponse response) {
