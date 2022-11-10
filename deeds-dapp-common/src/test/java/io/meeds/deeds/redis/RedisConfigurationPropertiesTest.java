@@ -26,14 +26,15 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(classes = RedisConfigurationProperties.class)
 @EnableConfigurationProperties(value = RedisConfigurationProperties.class)
-@TestPropertySource(
-    properties = {
-        "meeds.redis.channelName=" + RedisConfigurationPropertiesTest.CHANNEL_NAME_VALUE,
-    }
-)
+@TestPropertySource(properties = {
+    "meeds.redis.channelName=" + RedisConfigurationPropertiesTest.CHANNEL_NAME_VALUE,
+    "meeds.redis.clientName=" + RedisConfigurationPropertiesTest.CLIENT_NAME,
+})
 class RedisConfigurationPropertiesTest {
 
   public static final String           CHANNEL_NAME_VALUE = "CHANNEL_NAME";
+
+  public static final String           CLIENT_NAME        = "CLIENT_NAME";
 
   @Autowired
   private RedisConfigurationProperties redisConfigurationProperties;
@@ -43,7 +44,7 @@ class RedisConfigurationPropertiesTest {
     assertNotNull(redisConfigurationProperties);
     assertEquals(CHANNEL_NAME_VALUE, redisConfigurationProperties.getChannelName());
 
-    RedisConfigurationProperties properties = new RedisConfigurationProperties(CHANNEL_NAME_VALUE);
+    RedisConfigurationProperties properties = new RedisConfigurationProperties(CHANNEL_NAME_VALUE, CLIENT_NAME);
     assertEquals(properties, redisConfigurationProperties);
     assertEquals(properties.hashCode(), redisConfigurationProperties.hashCode());
     assertEquals(properties.toString(), redisConfigurationProperties.toString());

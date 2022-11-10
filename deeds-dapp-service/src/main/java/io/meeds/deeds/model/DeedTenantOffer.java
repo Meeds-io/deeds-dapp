@@ -22,6 +22,7 @@ import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.ExpirationDuration;
@@ -36,6 +37,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "deed_tenant_offer", createIndex = true)
+@Setting(replicas = 0, shards = 1)
 public class DeedTenantOffer {
 
   @Id
