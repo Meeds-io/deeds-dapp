@@ -19,53 +19,46 @@
 
 -->
 <template>
-  <v-card flat>
-    <deeds-marketplace-deeds-selector />
-    <v-row class="pa-0">
-      <v-col
-        v-for="offer in offers"
-        :key="offer.id"
-        cols="12"
-        md="6"
-        lg="4"
-        xl="3">
-        <v-card flat>
-          <deeds-renting-offer-card
-            :offer="offer" />
-        </v-card>
-      </v-col>
-      <v-col v-if="hasMore" cols="12">
-        <v-btn
-          outlined
-          text
-          block
-          @click="$root.$emit('deeds-offers-load-more')">
-          <span class="text-capitalize">{{ $t('loadMore') }}</span>
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-card>
+  <v-chip
+    :small="small"
+    class="px-1 text-capitalize"
+    label
+    outlined>
+    <v-list-item-avatar
+      class="me-1"
+      :min-width="`${avatarSize}px !important`"
+      :height="`${avatarSize}px !important`"
+      :width="`${avatarSize}px !important`">
+      <v-img :src="cardImage" />
+    </v-list-item-avatar>
+    {{ card }}
+  </v-chip>
 </template>
 <script>
 export default {
   props: {
-    offers: {
-      type: Array,
+    card: {
+      type: String,
       default: null,
     },
-    totalSize: {
-      type: Number,
-      default: () => 0,
+    city: {
+      type: String,
+      default: () => 'tanit',
     },
-    loading: {
+    avatarSize: {
+      type: Number,
+      default: null,
+    },
+    small: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    hasMore() {
-      return this.totalSize > this.offers?.length;
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+    cardImage() {
+      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
     },
-  },
+  }),
 };
 </script>

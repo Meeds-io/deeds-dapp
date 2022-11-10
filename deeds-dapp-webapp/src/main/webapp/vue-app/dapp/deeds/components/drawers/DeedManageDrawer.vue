@@ -407,7 +407,9 @@ export default {
     },
     refreshOffers() {
       this.loadingRentalOffers = true;
-      return this.$deedTenantOfferService.getOffers(this.nftId)
+      return this.$deedTenantOfferService.getOffers({
+        nftId: this.nftId,
+      })
         .then(offers => this.rentalOffers = offers?._embedded?.deedTenantOfferDTOList)
         .finally(() => this.loadingRentalOffers = false);
     },

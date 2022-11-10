@@ -16,6 +16,7 @@
 package io.meeds.deeds.web.rest;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -40,7 +41,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.service.DeedTenantOfferService;
@@ -60,13 +63,17 @@ public class DeedTenantOfferController {
   @GetMapping
   public PagedModel<EntityModel<DeedTenantOfferDTO>> getOffers(Pageable pageable,
                                                                PagedResourcesAssembler<DeedTenantOfferDTO> assembler,
-                                                               @RequestParam(name = "nftId")
-                                                               Long nftId) {
+                                                               @RequestParam(name = "nftId", required = false)
+                                                               Long nftId,
+                                                               @RequestParam(name = "cardType", required = false)
+                                                               List<DeedCard> cardTypes,
+                                                               @RequestParam(name = "offerType", required = false)
+                                                               List<OfferType> offerTypes) {
     Page<DeedTenantOfferDTO> offers;
     if (nftId != null && nftId > 0) {
       offers = deedTenantOfferService.getOffersList(nftId, pageable);
     } else {
-      offers = deedTenantOfferService.getOffersList(pageable);
+      offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, pageable);
     }
     return assembler.toModel(offers);
   }
