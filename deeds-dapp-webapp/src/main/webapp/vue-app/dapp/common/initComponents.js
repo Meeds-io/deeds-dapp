@@ -24,6 +24,9 @@ import TabLink from './components/TabLink.vue';
 import MetamaskButton from './components/MetamaskButton.vue';
 import CardCarousel from './components/CardCarousel.vue';
 import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
+import RentalOfferCard from './components/RentalOfferCard.vue';
+import CardTypeChip from './components/CardTypeChip.vue';
+import OfferTypeChip from './components/OfferTypeChip.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -34,6 +37,9 @@ const components = {
   'deeds-tab-link': TabLink,
   'deeds-card-caroussel': CardCarousel,
   'deeds-token-asset-template': TokenAssetTemplate,
+  'deeds-renting-offer-card': RentalOfferCard,
+  'deeds-card-type-chip': CardTypeChip,
+  'deeds-offer-type-chip': OfferTypeChip,
 };
 
 for (const key in components) {
