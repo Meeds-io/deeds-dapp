@@ -22,6 +22,7 @@ import DeedsMarketplaceIntroductionItem from './components/DeedsMarketplaceIntro
 import DeedsMarketplaceDeeds from './components/DeedsMarketplaceDeeds.vue';
 import DeedsMarketplaceDeedsEmpty from './components/DeedsMarketplaceDeedsEmpty.vue';
 import DeedsMarketplaceDeedsList from './components/DeedsMarketplaceDeedsList.vue';
+import DeedsMarketplaceDeedsSelector from './components/DeedsMarketplaceDeedsSelector.vue';
 
 const components = {
   'deeds-marketplace': DeedsMarketplace,
@@ -30,6 +31,7 @@ const components = {
   'deeds-marketplace-deeds': DeedsMarketplaceDeeds,
   'deeds-marketplace-deeds-empty': DeedsMarketplaceDeedsEmpty,
   'deeds-marketplace-deeds-list': DeedsMarketplaceDeedsList,
+  'deeds-marketplace-deeds-selector': DeedsMarketplaceDeedsSelector,
 };
 
 for (const key in components) {

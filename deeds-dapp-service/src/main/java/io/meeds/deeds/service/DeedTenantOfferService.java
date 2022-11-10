@@ -17,11 +17,15 @@ package io.meeds.deeds.service;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
@@ -48,8 +52,16 @@ public class DeedTenantOfferService {
     return deedTenantOffers.map(Mapper::toDTO);
   }
 
-  public Page<DeedTenantOfferDTO> getOffersList(Pageable pageable) {
-    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByEnabledTrue(pageable);
+  public Page<DeedTenantOfferDTO> getOffersList(List<DeedCard> cardTypes, List<OfferType> offerTypes, Pageable pageable) {
+    if (CollectionUtils.isEmpty(cardTypes)) {
+      cardTypes = Stream.of(DeedCard.values()).collect(Collectors.toList());
+    }
+    if (CollectionUtils.isEmpty(offerTypes)) {
+      offerTypes = Stream.of(OfferType.values()).collect(Collectors.toList());
+    }
+    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndEnabledTrue(offerTypes,
+                                                                                                              cardTypes,
+                                                                                                              pageable);
     return deedTenantOffers.map(Mapper::toDTO);
   }
 
