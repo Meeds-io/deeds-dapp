@@ -13,28 +13,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.redis;
+package io.meeds.deeds.storage;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import java.time.Instant;
+import java.util.stream.Stream;
 
-import lombok.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.redis")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class RedisConfigurationProperties extends RedisProperties {
+import io.meeds.deeds.model.DeedTenantEvent;
 
-  @Getter
-  @Setter
-  private String channelName = "channel";
+public interface DeedTenantEventRepository extends ElasticsearchRepository<DeedTenantEvent, String> {
 
-  @Getter
-  @Setter
-  private String clientName;
+  Stream<DeedTenantEvent> findByDateGreaterThanEqualAndConsumersNotOrderByDateAsc(Instant lastEventScanDate, String clientName);
+
+  Page<DeedTenantEvent> findByConsumersNotOrderByDateDesc(String clientName, Pageable ofSize);
+
+  Stream<DeedTenantEvent> findByDateLessThan(Instant minus);
 
 }

@@ -13,28 +13,29 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.redis;
+package io.meeds.deeds.scheduling.task;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import lombok.*;
+import io.meeds.deeds.service.ListenerService;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.redis")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class RedisConfigurationProperties extends RedisProperties {
+public class ListenerEventCleanupTask {
 
-  @Getter
-  @Setter
-  private String channelName = "channel";
+  private static final Logger    LOG = LoggerFactory.getLogger(ListenerEventCleanupTask.class);
 
-  @Getter
-  @Setter
-  private String clientName;
+  @Autowired
+  private ListenerService listenerService;
+
+  @Scheduled(cron = "0 0 0/12 * * *")
+  public synchronized void triggerCleanupEvents() {
+    try {
+      listenerService.cleanupElasticsearchEvents();
+    } catch (Exception e) {
+      LOG.warn("An error occurred while cleaning events on elasticsearch", e);
+    }
+  }
 
 }
