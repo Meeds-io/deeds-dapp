@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -92,11 +93,11 @@ class DeedTenantOfferServiceTest {
     Pageable pageable = mock(Pageable.class);
     Page<DeedTenantOffer> page = mock(Page.class);
     Page pageDTO = mock(Page.class);
-    when(deedTenantOfferRepository.findByEnabledTrue(pageable)).thenReturn(page);
+    when(deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndEnabledTrue(any(), any(), eq(pageable))).thenReturn(page);
 
     when(page.map(any())).thenReturn(pageDTO);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(pageable);
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(null, null, pageable);
     assertNotNull(result);
   }
 

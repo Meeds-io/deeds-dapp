@@ -87,6 +87,7 @@ const store = new Vuex.Store({
     scrollbarWidth: utils.getScrollbarWidth(),
     cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
     cardTypes: ['Common', 'Uncommon', 'Rare', 'Legendary'],
+    offerTypes: ['RENTING', 'SALE'],
     cardTypeInfos: {},
     // Contracts addresses
     sushiswapRouterAddress: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
