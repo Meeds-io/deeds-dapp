@@ -15,8 +15,8 @@
  */
 package io.meeds.deeds.model;
 
-import java.time.LocalDateTime;
-import java.util.Map;
+import java.time.Instant;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -25,45 +25,40 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = false)
+@AllArgsConstructor
+@Document(indexName = "deed_tenant_events", createIndex = false)
 @Setting(replicas = 0, shards = 1)
-public class DeedTenant {
+@JsonInclude(value = Include.NON_EMPTY)
+public class DeedTenantEvent {
 
   @Id
-  private long                     nftId;
+  private String       id;
 
-  private short                    cityIndex = -1;
+  @Field(type = FieldType.Keyword)
+  private String       eventName;
 
-  private short                    cardType  = -1;
+  private String       objectJson;
 
-  private String                   ownerAddress;
+  @Field(type = FieldType.Keyword)
+  private List<String> consumers;
 
-  private String                   managerAddress;
+  @Field(type = FieldType.Date, format = DateFormat.epoch_millis)
+  private Instant      date;
 
-  private String                   managerEmail;
-
-  private String                   startupTransactionHash;
-
-  private String                   shutdownTransactionHash;
-
-  private TenantProvisioningStatus tenantProvisioningStatus;
-
-  private TenantStatus             tenantStatus;
-
-  private boolean                  completed;
-
-  @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime            date;
-
-  private Map<String, String>      properties;
+  public DeedTenantEvent(String eventName, String objectJson, List<String> consumers, Instant date) {
+    this.eventName = eventName;
+    this.objectJson = objectJson;
+    this.consumers = consumers;
+    this.date = date;
+  }
 
 }
