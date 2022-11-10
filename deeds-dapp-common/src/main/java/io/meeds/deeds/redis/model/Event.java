@@ -13,28 +13,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.redis;
+package io.meeds.deeds.redis.model;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.redis")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class RedisConfigurationProperties extends RedisProperties {
+@JsonDeserialize(using = EventSerialization.class)
+public class Event {
 
-  @Getter
-  @Setter
-  private String channelName = "channel";
+  private String eventName;
 
-  @Getter
-  @Setter
-  private String clientName;
+  private Object data;
+
+  private String dataClassName;
 
 }
