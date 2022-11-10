@@ -22,11 +22,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @SpringBootApplication(exclude = RedisAutoConfiguration.class)
 @EnableCaching
 @EnableSpringDataWebSupport
+@PropertySource("classpath:dApp.properties")
+@PropertySource("classpath:application.properties")
 public class DeedApplication extends SpringBootServletInitializer {
 
   @Override

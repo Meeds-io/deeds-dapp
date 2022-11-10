@@ -33,6 +33,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 import io.meeds.deeds.model.DeedMetadata;
 import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.model.DeedTenantEvent;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = {
@@ -76,6 +77,7 @@ public class ElasticSearchConfig {
     ElasticsearchRestTemplate elasticsearchTemplate = new ElasticsearchRestTemplate(client);
     createIndex(elasticsearchTemplate, DeedTenant.class);
     createIndex(elasticsearchTemplate, DeedMetadata.class);
+    createIndex(elasticsearchTemplate, DeedTenantEvent.class);
     return elasticsearchTemplate;
   }
 

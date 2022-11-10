@@ -13,28 +13,31 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.redis;
+package io.meeds.deeds.scheduling.task;
 
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import java.util.concurrent.TimeUnit;
 
-import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 
-@Configuration
-@ConfigurationProperties(prefix = "meeds.redis")
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@EqualsAndHashCode(callSuper = false)
-public class RedisConfigurationProperties extends RedisProperties {
+import io.meeds.deeds.service.ListenerService;
 
-  @Getter
-  @Setter
-  private String channelName = "channel";
+public class ListenerEventTriggerTask {
 
-  @Getter
-  @Setter
-  private String clientName;
+  private static final Logger    LOG = LoggerFactory.getLogger(ListenerEventTriggerTask.class);
+
+  @Autowired
+  private ListenerService listenerService;
+
+  @Scheduled(fixedDelay = 20, timeUnit = TimeUnit.SECONDS, initialDelay = 30)
+  public synchronized void triggerEvents() {
+    try {
+      listenerService.triggerElasticSearchEvents();
+    } catch (Exception e) {
+      LOG.warn("An error occurred while triggering events coming from elasticsearch", e);
+    }
+  }
 
 }
