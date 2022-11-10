@@ -43,7 +43,7 @@
       <v-card-text v-else>
         {{ $t('deedRentingEditDescription1') }}
         <div class="pt-4">{{ $t('deedRentingEditDescription2') }}</div>
-        <deeds-rental-description :nft="nft" :offer="offer" />
+        <deeds-renting-offer-card :nft="nft" :offer="offer" />
       </v-card-text>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
         <v-list-item
@@ -227,12 +227,15 @@ export default {
       return this.nft?.cardTypeName;
     },
     periods() {
-      return [{
+      return this.offer.duration?.includes('YEAR') && [{
         value: 'ONE_MONTH',
         text: this.$t('deedRentingDurationPerMonth'),
       }, {
         value: 'ONE_YEAR',
         text: this.$t('deedRentingDurationPerYear'),
+      }] || [{
+        value: 'ONE_MONTH',
+        text: this.$t('deedRentingDurationPerMonth'),
       }];
     },
     buttonOutlined() {

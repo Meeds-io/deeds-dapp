@@ -19,55 +19,35 @@
 
 -->
 <template>
-  <v-card :loading="loading" flat>
-    <deeds-marketplace-deeds-selector :has-offers="hasOffers" />
-    <v-row v-if="hasOffers" class="pa-0">
-      <v-col
-        v-for="offer in offers"
-        :key="offer.id"
-        cols="12"
-        md="6"
-        lg="4">
-        <v-card flat>
-          <deeds-renting-offer-card
-            :offer="offer" />
-        </v-card>
-      </v-col>
-      <v-col v-if="hasMore" cols="12">
-        <v-btn
-          outlined
-          text
-          block
-          @click="$root.$emit('deeds-offers-load-more')">
-          <span class="text-capitalize">{{ $t('loadMore') }}</span>
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-card>
+  <v-chip
+    :color="color"
+    :text-color="color"
+    :class="active && 'v-chip--active'"
+    :small="small"
+    class="px-1"
+    label
+    outlined>
+    {{ label }}
+  </v-chip>
 </template>
 <script>
 export default {
   props: {
-    offers: {
-      type: Array,
+    label: {
+      type: String,
       default: null,
     },
-    totalSize: {
-      type: Number,
-      default: () => 0,
+    color: {
+      type: String,
+      default: null,
     },
-    loading: {
+    active: {
       type: Boolean,
       default: false,
     },
-    hasOffers: {
+    small: {
       type: Boolean,
       default: false,
-    },
-  },
-  computed: {
-    hasMore() {
-      return this.totalSize > this.offers?.length;
     },
   },
 };
