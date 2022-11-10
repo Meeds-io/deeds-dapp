@@ -31,14 +31,14 @@
         <v-img :src="cardImage" />
       </v-list-item-avatar>
       <v-card class="flex-grow-1" flat>
-        <v-card-title class="px-0 py-2">
-          {{ $t('deedRentalNftTypeTitle', {0: cardTypeName, 1: nftId}) }}
+        <v-card-title class="px-0 py-2 text-capitalize">
+          {{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="ps-0 pb-6">
           <v-list dense>
             <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
-                {{ $t('cityName', {0: cityName}) }}
+              <v-list-item-content class="py-0 text-capitalize">
+                {{ $t('cityName', {0: city}) }}
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
                 {{ maxUsersLabel }}
@@ -49,15 +49,21 @@
                 {{ $t('deedMintingPower') }}
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
-                <v-progress-circular
-                  :title="$t('deedMintingPowerDetails', {0: rentalTenantMintingPower})"
-                  :rotate="-90"
-                  :size="30"
-                  :width="5"
-                  :value="rentalTenantMintingPowerPercentage"
-                  color="primary">
-                  <small>{{ rentalTenantMintingPower }}</small>
-                </v-progress-circular>
+                <v-tooltip bottom>
+                  <template #activator="{ on, attrs }">
+                    <v-progress-circular
+                      :rotate="-90"
+                      :size="30"
+                      :width="5"
+                      :value="rentalTenantMintingPowerPercentage"
+                      color="primary"
+                      v-bind="attrs"
+                      v-on="on">
+                      <small>{{ rentalTenantMintingPower }}</small>
+                    </v-progress-circular>
+                  </template>
+                  <span>{{ $t('deedMintingPowerDetails', {0: rentalTenantMintingPower}) }}</span>
+                </v-tooltip>
               </v-list-item-action-text>
             </v-list-item>
             <v-list-item class="pa-0 my-n3">
@@ -73,20 +79,35 @@
                 {{ $t('deedRentingRewardDistribution') }}
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
-                <div class="ms-1">{{ rentalTenantMintingPercentage }}%</div>
+                <v-card min-width="50" flat>
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-progress-linear
+                        :value="rentalTenantMintingPercentage"
+                        color="primary"
+                        background-color="secondary"
+                        height="6"
+                        rounded
+                        v-bind="attrs"
+                        v-on="on" />
+                    </template>
+                    <span>{{ $t('deedMintingPercentageDetails', {0: rentalTenantMintingPercentage, 1: rentalOwnerMintingPercentage}) }}</span>
+                  </v-tooltip>
+                </v-card>
               </v-list-item-action-text>
             </v-list-item>
             <v-list-item class="pa-0 my-n3">
               <v-list-item-content class="py-0">
-                {{ $t('deedRentingPeriodicAmount') }}
+                {{ $t('deedRentingPeriodicRentPrice') }}
               </v-list-item-content>
-              <v-list-item-action-text class="py-0">
+              <v-list-item-action-text class="py-0 d-flex">
                 <deeds-number-format
                   :value="tokenAmount"
                   :fractions="2"
                   no-decimals>
                   <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
                 </deeds-number-format>
+                <span class="ms-1 text-lowercase">{{ rentPeriodicityLabel }}</span>
               </v-list-item-action-text>
             </v-list-item>
           </v-list>
@@ -97,36 +118,25 @@
       <v-list-item class="pa-0 my-n3">
         <v-list-item-content class="py-0">
           <v-list-item-subtitle class="d-flex">
-            <v-chip
-              class="v-chip--active me-2"
+            <deeds-offer-type-chip
+              :label="$t('rentalsTag')"
               color="secondary"
-              text-color="secondary"
-              label
-              outlined>
-              {{ $t('rentalsTag') }}
-            </v-chip>
-            <v-chip
-              class="me-2 pa-2"
-              label
-              outlined>
-              <v-list-item-avatar
-                class="me-2"
-                height="35"
-                width="35">
-                <v-img :src="cardImage" />
-              </v-list-item-avatar>
-              {{ cardTypeName }}
-            </v-chip>
+              active
+              small />
+            <deeds-card-type-chip
+              :card="cardType"
+              :city="city"
+              class="mx-2"
+              avatar-size="18"
+              small />
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action-text class="d-flex py-0">
+        <v-list-item-action-text v-if="expirationDate" class="d-flex py-0">
           <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
           <deeds-timer
-            v-if="expirationDate"
             :end-time="expirationDate"
             text-color=""
             short-format />
-          <span v-else class="ms-2">{{ $t('deedRentalNeverExpires') }}</span>
         </v-list-item-action-text>
       </v-list-item>
     </v-card-text>
@@ -150,37 +160,40 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     nftId() {
-      return this.nft?.id;
+      return this.offer?.nftId;
     },
     cardType() {
-      return this.nft?.cardType;
+      return this.offer?.cardType?.toLowerCase() || '';
     },
-    cardTypeName() {
-      return this.nft?.cardTypeName || '';
+    city() {
+      return this.offer?.city?.toLowerCase() || '';
     },
-    cityName() {
-      return this.nft?.cityName || '';
+    paymentPeriodicity() {
+      return this.offer?.paymentPeriodicity || '';
     },
     maxUsersLabel() {
       switch (this.cardType){
-      case 0: return this.$t('cardTypeMaxUsers', {0: 100});
-      case 1: return this.$t('cardTypeMaxUsers', {0: 1000});
-      case 2: return this.$t('cardTypeMaxUsers', {0: 10000});
-      case 3: return this.$t('unlimited');
+      case 'common': return this.$t('cardTypeMaxUsers', {0: 100});
+      case 'uncommon': return this.$t('cardTypeMaxUsers', {0: 1000});
+      case 'rare': return this.$t('cardTypeMaxUsers', {0: 10000});
+      case 'legendary': return this.$t('unlimited');
       default: return '';
       }
     },
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardTypeName.toLowerCase()}.png`;
+      return `/${this.parentLocation}/static/images/nft/${this.city}-${this.cardType}.png`;
     },
     rentalTenantMintingPower() {
       return this.originalOffer?.mintingPower;
     },
     rentalTenantMintingPowerPercentage() {
-      return (this.rentalTenantMintingPower * 100 / 2);
+      return parseInt((this.rentalTenantMintingPower - 1) * 100);
+    },
+    rentalOwnerMintingPercentage() {
+      return this.originalOffer?.ownerMintingPercentage || 0;
     },
     rentalTenantMintingPercentage() {
-      return 100 - this.originalOffer?.ownerMintingPercentage || 0;
+      return 100 - this.rentalOwnerMintingPercentage;
     },
     rentalDuration() {
       return this.originalOffer?.duration;
@@ -190,6 +203,13 @@ export default {
     },
     tokenAmount() {
       return this.originalOffer?.amount || 0;
+    },
+    rentPeriodicityLabel() {
+      switch (this.paymentPeriodicity){
+      case 'ONE_MONTH': return this.$t('deedRentingDurationPerMonth');
+      case 'ONE_YEAR': return this.$t('deedRentingDurationPerYear');
+      default: return '';
+      }
     },
     rentalDurationLabelKey() {
       switch (this.rentalDuration){
