@@ -15,12 +15,18 @@
  */
 package io.meeds.deeds.service;
 
+import static io.meeds.deeds.redis.model.EventSerialization.OBJECT_MAPPER;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -32,65 +38,58 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.api.async.RedisAsyncCommands;
-import io.lettuce.core.pubsub.RedisPubSubListener;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.listener.EventListener;
+import io.meeds.deeds.model.DeedTenantEvent;
+import io.meeds.deeds.redis.Listener;
 import io.meeds.deeds.redis.RedisConfigurationProperties;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.meeds.deeds.redis.model.Event;
+import io.meeds.deeds.storage.DeedTenantEventRepository;
+import lombok.Getter;
 
 @Component
 public class ListenerService implements ApplicationContextAware {
 
-  private static final Logger       LOG = LoggerFactory.getLogger(ListenerService.class);
-
-  private static final ObjectMapper OBJECT_MAPPER;
-
-  static {
-    // Workaround when Jackson is defined in shared library with different
-    // version and without artifact jackson-datatype-jsr310
-    OBJECT_MAPPER = JsonMapper.builder()
-                              .configure(JsonReadFeature.ALLOW_MISSING_VALUES, true)
-                              .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                              .build();
-    OBJECT_MAPPER.registerModule(new JavaTimeModule());
-  }
+  private static final Logger                             LOG               = LoggerFactory.getLogger(ListenerService.class);
 
   protected StatefulRedisPubSubConnection<String, String> subscriptionConnection;
 
   protected StatefulRedisPubSubConnection<String, String> publicationConnection;
 
-  @Autowired(required = false)
-  private RedisConfigurationProperties                  redisProperties;
+  protected Listener                                      redisListener;
+
+  @Autowired
+  private RedisConfigurationProperties                    redisProperties;
 
   @Autowired(required = false)
-  private RedisClient                                   redisClient;
+  private RedisClient                                     redisClient;
 
-  private ApplicationContext                            applicationContext;
+  @Autowired
+  private DeedTenantEventRepository                       deedTenantEventRepository;
 
-  private List<EventListener<?>>                        eventListeners = new ArrayList<>();
+  private ApplicationContext                              applicationContext;
 
-  private Map<String, List<EventListener<?>>>           listeners;
+  private List<EventListener<?>>                          eventListeners    = new ArrayList<>();
+
+  private Map<String, List<EventListener<?>>>             listeners;
+
+  @Getter
+  private Instant                                         lastEventScanDate = Instant.now();
+
+  public ListenerService() {
+    redisListener = new Listener(this);
+  }
 
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -100,6 +99,7 @@ public class ListenerService implements ApplicationContextAware {
   @PostConstruct
   public void init() {
     initSubscription();
+    initElasticsearchEventScanning();
   }
 
   @PreDestroy
@@ -164,24 +164,15 @@ public class ListenerService implements ApplicationContextAware {
       }
     } catch (Exception e) {
       LOG.warn("Redis connection failure, event {} will not be triggered remotely, try to trigger it locally only",
-               event.getEventName(),
-               e);
+               event.getEventName());
 
-      // Trigger events locally
-      publishEventLocally(event);
+      // Trigger events locally and using ES
+      publishEventFallback(event);
     }
   }
 
   @SuppressWarnings("deprecation")
-  protected void publishEventLocally(Event event) {
-    List<EventListener<?>> listenerList = getListeners().get(event.getEventName());
-    if (!CollectionUtils.isEmpty(listenerList)) {
-      listenerList.forEach(listener -> listener.handleEvent(event.getEventName(), event.getData()));
-    }
-  }
-
-  @SuppressWarnings("deprecation")
-  protected void triggerEvent(Event event) {
+  public void triggerEvent(Event event) {
     String eventName = event.getEventName();
     Object data = event.getData();
 
@@ -191,6 +182,53 @@ public class ListenerService implements ApplicationContextAware {
     }
   }
 
+  protected void publishEventFallback(Event event) {
+    triggerEvent(event);
+    publishEventOnElasticsearch(event);
+  }
+
+  protected void publishEventOnElasticsearch(Event event) {
+    String eventJsonString = serializeObjectToJson(event);
+    boolean hasClientName = StringUtils.isNotBlank(getClientName());
+    List<String> consumers = hasClientName ? Collections.singletonList(redisProperties.getClientName())
+                                           : Collections.emptyList();
+    DeedTenantEvent deedTenantEvent = new DeedTenantEvent(event.getEventName(),
+                                                          eventJsonString,
+                                                          consumers,
+                                                          Instant.now());
+    deedTenantEventRepository.save(deedTenantEvent);
+  }
+
+  public void triggerElasticSearchEvents() {
+    Stream<DeedTenantEvent> events =
+                                   deedTenantEventRepository.findByDateGreaterThanEqualAndConsumersNotOrderByDateAsc(lastEventScanDate,
+                                                                                                                     getClientName());
+    events.forEach(event -> {
+      try {
+        if (hasListeners(event.getEventName())) {
+          triggerElasticsearchEvent(event);
+          addElasticsearchEventCurrentConsumer(event);
+        }
+      } finally {
+        if (lastEventScanDate.isBefore(event.getDate())) {
+          lastEventScanDate = event.getDate();
+        }
+      }
+    });
+  }
+
+  public void cleanupElasticsearchEvents() {
+    Stream<DeedTenantEvent> oldEvents =
+                                      deedTenantEventRepository.findByDateLessThan(lastEventScanDate.minus(12, ChronoUnit.HOURS));
+    oldEvents.forEach(event -> {
+      try {
+        deedTenantEventRepository.deleteById(event.getId());
+      } catch (Exception e) {
+        LOG.warn("An error occurred while deleting event with id {}/{}", event.getId(), event.getEventName());
+      }
+    });
+  }
+
   protected void initSubscription() {
     try {
       if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
@@ -198,13 +236,21 @@ public class ListenerService implements ApplicationContextAware {
       }
       // Add Redis Pub/Sub Listener
       this.subscriptionConnection = redisClient.connectPubSub();
-      subscriptionConnection.addListener(new Listener());
+      subscriptionConnection.addListener(redisListener);
 
       // Subscribe to channel
       RedisPubSubAsyncCommands<String, String> async = subscriptionConnection.async();
       async.subscribe(getChannelName());
     } catch (Exception e) {
       LOG.warn("Redis connection failure", e);
+    }
+  }
+
+  protected void initElasticsearchEventScanning() {
+    Page<DeedTenantEvent> page = deedTenantEventRepository.findByConsumersNotOrderByDateDesc(getClientName(), Pageable.ofSize(1));
+    if (page != null && page.getSize() > 0 && !page.getContent().isEmpty()) {
+      DeedTenantEvent lastTriggeredEvent = page.getContent().get(0);
+      lastEventScanDate = lastTriggeredEvent.getDate();
     }
   }
 
@@ -238,6 +284,32 @@ public class ListenerService implements ApplicationContextAware {
     return publicationConnection;
   }
 
+  private void triggerElasticsearchEvent(DeedTenantEvent event) {
+    try {
+      redisListener.message(getChannelName(), event.getObjectJson());
+    } catch (Exception e) {
+      LOG.warn("Error while triggering event from ES {}/{}", event.getId(), event.getEventName(), e);
+    }
+  }
+
+  private void addElasticsearchEventCurrentConsumer(DeedTenantEvent event) {
+    try {
+      // Get a fresh event detail
+      event = deedTenantEventRepository.findById(event.getId()).orElse(event);
+      List<String> consumers = CollectionUtils.isEmpty(event.getConsumers()) ? new ArrayList<>()
+                                                                             : new ArrayList<>(event.getConsumers());
+      consumers.add(getClientName());
+      event.setConsumers(consumers);
+      deedTenantEventRepository.save(event);
+    } catch (Exception e) {
+      LOG.warn("Error saving client {} in consumers list of event {}/{}", getClientName(), event.getId(), event.getEventName());
+    }
+  }
+
+  private boolean hasListeners(String eventName) {
+    return !CollectionUtils.isEmpty(getListeners().get(eventName));
+  }
+
   private String serializeObjectToJson(Event event) {
     try {
       return OBJECT_MAPPER.writeValueAsString(event);
@@ -250,98 +322,8 @@ public class ListenerService implements ApplicationContextAware {
     return redisProperties.getChannelName();
   }
 
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @JsonDeserialize(using = EventDeserializer.class)
-  public static class Event {
-
-    private String eventName;
-
-    private Object data;
-
-    private String dataClassName;
-
-  }
-
-  public static class EventDeserializer extends StdDeserializer<Event> {
-
-    private static final long serialVersionUID = -5369587672932623714L;
-
-    public EventDeserializer() {
-      this(null);
-    }
-
-    public EventDeserializer(Class<?> vc) {
-      super(vc);
-    }
-
-    @Override
-    public Event deserialize(JsonParser p, DeserializationContext ctxt) {
-      try {
-        JsonNode node = p.getCodec().readTree(p);
-        String eventName = node.get("eventName").asText();
-        String dataClassName = node.get("dataClassName").asText();
-        String dataJson = node.get("data").toString();
-        Object data = OBJECT_MAPPER.readValue(dataJson, Class.forName(dataClassName));
-        return new Event(eventName, data, dataClassName);
-      } catch (Exception e) {
-        LOG.debug("Error reading value of event", e);
-        return null;
-      }
-    }
-  }
-
-  public class Listener implements RedisPubSubListener<String, String> {
-    @Override
-    public void message(String channel, String message) {
-      Event event;
-      try {
-        event = OBJECT_MAPPER.readValue(message, Event.class);
-      } catch (Exception e) {
-        throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
-      }
-      try {
-        triggerEvent(event);
-      } catch (Exception e) {
-        throw new IllegalStateException("An error occurred while triggering event: " + message, e);
-      }
-    }
-
-    @Override
-    public void message(String pattern, String channel, String message) {
-      Event event;
-      try {
-        event = OBJECT_MAPPER.readValue(message, Event.class);
-      } catch (Exception e) {
-        throw new IllegalStateException("An error occurred while parsing JSON to POJO object:" + message, e);
-      }
-      try {
-        triggerEvent(event);
-      } catch (Exception e) {
-        throw new IllegalStateException("An error occurred while triggering event: " + message, e);
-      }
-    }
-
-    @Override
-    public void subscribed(String channel, long count) {
-      LOG.info("ListenerService subscribed to channel '{}', count = {}", channel, count);
-    }
-
-    @Override
-    public void psubscribed(String pattern, long count) {
-      LOG.info("ListenerService psubscribed to pattern '{}', count = {}", pattern, count);
-    }
-
-    @Override
-    public void unsubscribed(String channel, long count) {
-      LOG.info("ListenerService unsubscribed to channel '{}', count = {}", channel, count);
-    }
-
-    @Override
-    public void punsubscribed(String pattern, long count) {
-      LOG.info("ListenerService punsubscribed to pattern '{}', count = {}", pattern, count);
-    }
+  private String getClientName() {
+    return redisProperties.getClientName();
   }
 
 }
