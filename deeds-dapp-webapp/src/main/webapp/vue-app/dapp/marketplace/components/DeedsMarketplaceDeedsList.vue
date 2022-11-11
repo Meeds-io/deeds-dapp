@@ -25,7 +25,7 @@
       <v-col
         v-for="offer in offers"
         :key="offer.id"
-        class="d-flex justify-center justify-lg-start">
+        class="d-flex justify-center">
         <v-card
           width="357"
           max-width="100%"

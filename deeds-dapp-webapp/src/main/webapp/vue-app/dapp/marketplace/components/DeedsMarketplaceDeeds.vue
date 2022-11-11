@@ -32,7 +32,9 @@
       :selected-cards="cardTypes"
       :selected-offers="offerTypes"
       @load-more="loadMore" />
-    <deeds-marketplace-deeds-empty v-if="!hasOffers && !loading" />
+    <deeds-marketplace-deeds-empty
+      v-if="!hasOffers && !loading"
+      :has-filter="hasFilter" />
   </v-card>
 </template>
 <script>
@@ -53,6 +55,9 @@ export default {
     availableOfferTypes: state => state.offerTypes,
     hasOffers() {
       return this.offers.length > 0;
+    },
+    hasFilter() {
+      return this.offerTypes?.length > 0 || this.cardTypes?.length > 0;
     },
   }),
   watch: {
