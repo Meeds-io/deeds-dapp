@@ -40,7 +40,7 @@
         {{ alertMessage }}
       </span>
       <v-btn
-        v-if="alertLink"
+        v-if="alertLink || alertLinkCallback"
         :href="alertLink"
         :title="alertLinkTooltip"
         name="closeSnackbarButton"
@@ -48,7 +48,8 @@
         rel="nofollow noreferrer noopener"
         class="secondary--text"
         icon
-        link>
+        link
+        @click="linkCallback">
         <v-icon>{{ alertLinkIcon }}</v-icon>
       </v-btn>
       <v-btn
@@ -72,6 +73,7 @@ export default {
     alertMessage: null,
     alertType: null,
     alertLink: null,
+    alertLinkCallback: null,
     alertLinkIcon: null,
     alertLinkTooltip: null,
   }),
@@ -85,23 +87,36 @@ export default {
   created() {
     this.$root.$on('transaction-sent', transactionHash => {
       this.snackbar = false;
-      this.alertLink = `${this.etherscanBaseLink}/tx/${transactionHash}`;
-      this.alertLinkIcon = 'mdi-open-in-new';
-      this.alertType = 'success';
-      this.alertMessage = this.$t('transactionSent');
-      this.alertLinkTooltip = this.$t('viewOnEtherscan');
-      window.setTimeout(() => this.snackbar = true, 500);
+      this.$nextTick().then(() => {
+        this.alertLink = `${this.etherscanBaseLink}/tx/${transactionHash}`;
+        this.alertLinkIcon = 'mdi-open-in-new';
+        this.alertType = 'success';
+        this.alertMessage = this.$t('transactionSent');
+        this.alertLinkTooltip = this.$t('viewOnEtherscan');
+        window.setTimeout(() => this.snackbar = true, 500);
+      });
     });
-    this.$root.$on('alert-message', (message, type) => {
+    this.$root.$on('alert-message', (message, type, linkCallback, linkIcon, linkTooltip) => {
       this.snackbar = false;
-      this.alertType = type;
-      this.alertMessage = message;
-      window.setTimeout(() => this.snackbar = true, 500);
+      this.$nextTick().then(() => {
+        this.alertType = type;
+        this.alertMessage = message;
+        this.alertLink = null;
+        this.alertLinkCallback = linkCallback;
+        this.alertLinkIcon = linkIcon;
+        this.alertLinkTooltip = linkTooltip;
+        window.setTimeout(() => this.snackbar = true, 500);
+      });
     });
     this.$root.$on('close-alert-message', () => this.snackbar = false);
     window.setTimeout(() => this.snackbar = false, this.timeout);
   },
   methods: {
+    linkCallback() {
+      if (this.alertLinkCallback) {
+        this.alertLinkCallback();
+      }
+    },
     cancelEvent(event) {
       if (event) {
         event.stopPropagation();

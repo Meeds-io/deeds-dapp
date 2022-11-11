@@ -24,8 +24,7 @@
     :value="card"
     :small="small"
     selected-color="grey"
-    color="black"
-    class="px-1">
+    color="black">
     <v-list-item-avatar
       class="ms-0 me-1 my-auto"
       :min-width="`${avatarSize}px !important`"
