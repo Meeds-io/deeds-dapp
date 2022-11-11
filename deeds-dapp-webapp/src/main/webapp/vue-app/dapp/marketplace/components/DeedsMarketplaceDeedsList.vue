@@ -25,10 +25,11 @@
       <v-col
         v-for="offer in offers"
         :key="offer.id"
-        cols="12"
-        md="6"
-        lg="4">
-        <v-card flat>
+        class="d-flex justify-center">
+        <v-card
+          width="357"
+          max-width="100%"
+          flat>
           <deeds-renting-offer-card
             :offer="offer" />
         </v-card>
