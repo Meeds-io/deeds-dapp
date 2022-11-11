@@ -21,69 +21,81 @@
     v-if="isMobile"
     v-model="selectedTab"
     active-class="selected-item"
-    class="bottom-navigation overflow-x-auto justify-start"
+    class="bottom-navigation content-box-sizing overflow-x-auto justify-start"
     fixed
     grow>
-    <v-btn
-      ref="overview"
-      id="overview"
-      :href="`/${parentLocation}/overview`"
-      value="overview"
-      class="content-box-sizing px-1"
-      link
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
-      <v-icon class="mb-1">fas fa-home</v-icon>
-      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-    </v-btn>
-    <v-btn
-      ref="marketplace"
-      id="marketplace"
-      :href="`/${parentLocation}/marketplace`"
-      value="marketplace"
-      class="content-box-sizing px-1"
-      link
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
-      <v-icon class="mb-1">fas fa-store</v-icon>
-      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-    </v-btn>
-    <v-btn
-      ref="stake"
-      id="stake"
-      :href="`/${parentLocation}/stake`"
-      value="stake"
-      class="content-box-sizing px-0"
-      link
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.stake') }}</h3>
-      <v-icon class="mb-1">fas fa-piggy-bank</v-icon>
-      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-    </v-btn>
-    <v-btn
-      ref="deeds"
-      id="deeds"
-      :href="`/${parentLocation}/deeds`"
-      value="deeds"
-      class="content-box-sizing px-0"
-      link
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.deeds') }}</h3>
-      <v-icon class="mb-1">fas fa-building</v-icon>
-      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-    </v-btn>
-    <v-btn
-      ref="farm"
-      id="farm"
-      :href="`/${parentLocation}/farm`"
-      value="farm"
-      class="content-box-sizing px-0"
-      link
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.farm') }}</h3>
-      <v-icon class="mb-1">fas fa-sack-dollar</v-icon>
-      <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-    </v-btn>
+    <v-row class="ma-0 pa-0 flex-nowrap" no-gutters>
+      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="overview"
+          id="overview"
+          :href="`/${parentLocation}/overview`"
+          value="overview"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-home</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="marketplace"
+          id="marketplace"
+          :href="`/${parentLocation}/marketplace`"
+          value="marketplace"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="stake"
+          id="stake"
+          :href="`/${parentLocation}/stake`"
+          value="stake"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.stake') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-piggy-bank</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="deeds"
+          id="deeds"
+          :href="`/${parentLocation}/deeds`"
+          value="deeds"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.deeds') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-building</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="farm"
+          id="farm"
+          :href="`/${parentLocation}/farm`"
+          value="farm"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.farm') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-sack-dollar</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-bottom-navigation>
   <v-tabs
     v-else
@@ -171,7 +183,9 @@ export default {
     },
     switchPage(tab) {
       if (tab && this.$refs[tab]) {
-        this.$refs[tab].$el.click();
+        this.$root.$emit('close-drawer');
+        this.$root.$emit('close-alert-message');
+        this.$nextTick().then(() => this.$refs[tab].$el.click());
       }
     },
     openPage(event) {

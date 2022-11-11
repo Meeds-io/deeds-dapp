@@ -82,6 +82,9 @@ export default {
     selectOfferTypes(offerTypes) {
       this.offerTypes = offerTypes;
     },
+    selectRecentOffer(offerId) {
+      this.offerId = offerId;
+    },
     refresh() {
       this.loading = true;
       this.$deedTenantOfferService.getOffers({

@@ -38,7 +38,7 @@ html {
   left: -9999px;
 }
 
-#dappTopbar button.v-btn {
+#dappTopbar button.v-btn, #navbar a.v-btn {
   min-width: auto;
 }
 
@@ -227,6 +227,10 @@ html {
 
 .content-box-sizing {
   box-sizing: content-box;
+}
+
+.border-box-sizing {
+  box-sizing: border-box;
 }
 
 .extended-textarea .v-counter {
