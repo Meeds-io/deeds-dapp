@@ -29,25 +29,25 @@
       :selected-value="duration"
       value="ONE_MONTH"
       color="primary">
-      {{ $t('deedRentingDurationOneMonth') }}
+      <span class="text-ordinary-capitalize">{{ $t('deedRentingDurationOneMonth') }}</span>
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
       value="THREE_MONTHS"
       color="primary">
-      {{ $t('deedRentingDurationThreeMonths') }}
+      <span class="text-ordinary-capitalize">{{ $t('deedRentingDurationThreeMonths') }}</span>
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
       value="SIX_MONTHS"
       color="primary">
-      {{ $t('deedRentingDurationSixMonths') }}
+      <span class="text-ordinary-capitalize">{{ $t('deedRentingDurationSixMonths') }}</span>
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="duration"
       value="ONE_YEAR"
       color="primary">
-      {{ $t('deedRentingDurationOneYear') }}
+      <span class="text-ordinary-capitalize">{{ $t('deedRentingDurationOneYear') }}</span>
     </deeds-button-group-item>
   </v-btn-toggle>
 </template>

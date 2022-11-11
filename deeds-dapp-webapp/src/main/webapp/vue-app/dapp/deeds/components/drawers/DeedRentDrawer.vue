@@ -27,7 +27,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeName, 1: nftId}) }}</h4>
+      <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardName, 1: nftId}) }}</h4>
       <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
     </template>
     <template v-if="offer" #content>
@@ -159,7 +159,7 @@
         class="me-2 ms-auto"
         name="cancelRent"
         @click="cancel">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('cancel') }}
         </span>
       </v-btn>
@@ -174,7 +174,7 @@
         depressed
         dark
         @click="deleteOffer(false)">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('deedRentingDeleteButton') }}
         </span>
       </v-btn>
@@ -189,7 +189,7 @@
         depressed
         dark
         @click="saveOffer">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ buttonLabel }}
         </span>
       </v-btn>
@@ -223,8 +223,8 @@ export default {
     nftId() {
       return this.nft?.id;
     },
-    cardTypeName() {
-      return this.nft?.cardTypeName;
+    cardName() {
+      return this.nft?.cardName;
     },
     periods() {
       return this.offer.duration?.includes('YEAR') && [{

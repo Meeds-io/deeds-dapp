@@ -21,33 +21,39 @@
 <template>
   <v-layout v-if="displaySelector" class="d-flex flex-column align-center mx-2 mt-4 mb-8">
     <v-row class="ma-0">
-      <v-chip-group v-model="offerTypes" multiple>
-        <v-chip
-          class="px-2"
+      <v-btn-toggle
+        v-model="offerTypes"
+        multiple
+        outlined
+        dense
+        group>
+        <deeds-offer-type-chip
+          :selected-offers="offerTypes"
+          :label="$t('rentalsTag')"
+          offer-type="RENTING"
           color="secondary"
-          text-color="secondary"
-          label
-          outlined>
-          {{ $t('rentalsTag') }}
-        </v-chip>
-      </v-chip-group>
+          class="mx-2" />
+      </v-btn-toggle>
     </v-row>
-    <v-row class="ma-0">
-      <v-chip-group
+    <v-row class="mt-4 mb-0 mx-0">
+      <v-btn-toggle
         v-model="types"
-        active-class="primary primary--text lighten-3"
-        multiple>
+        multiple
+        outlined
+        dense
+        group>
         <v-row no-gutters>
           <v-col
             v-for="cardType in cardTypes"
             :key="cardType">
             <deeds-card-type-chip
               :card="cardType"
-              avatar-size="18"
+              :selected-cards="types"
+              avatar-size="24"
               class="mx-2" />
           </v-col>
         </v-row>
-      </v-chip-group>
+      </v-btn-toggle>
     </v-row>
   </v-layout>
 </template>
@@ -70,10 +76,10 @@ export default {
   }),
   watch: {
     types() {
-      this.$root.$emit('deeds-offers-select-card-types', this.types.map(index => this.cardTypes[index].toUpperCase()));
+      this.$root.$emit('deeds-offers-select-card-types', this.types.map(type => type.toUpperCase()));
     },
     offerTypes() {
-      this.$root.$emit('deeds-offers-select-offer-types', this.offerTypes.map(index => this.availableOfferTypes[index]));
+      this.$root.$emit('deeds-offers-select-offer-types', this.offerTypes.map(type => type.toUpperCase()));
     },
     hasOffers() {
       if (this.hasOffers) {

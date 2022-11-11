@@ -29,6 +29,8 @@
       :has-offers="hasOffers"
       :total-size="totalSize"
       :loading="loading"
+      :selected-cards="cardTypes"
+      :selected-offers="offerTypes"
       @load-more="loadMore" />
     <deeds-marketplace-deeds-empty v-if="!hasOffers && !loading" />
   </v-card>
@@ -39,6 +41,8 @@ export default {
     offers: [],
     cardTypes: [],
     offerTypes: [],
+    sortField: 'modifiedDate',
+    sortDirection: 'desc',
     pageSize: 9,
     limit: 0,
     totalSize: 0,
@@ -83,6 +87,7 @@ export default {
       this.$deedTenantOfferService.getOffers({
         page: 0,
         size: this.limit,
+        sort: `${this.sortField},${this.sortDirection}`,
         cardType: this.cardTypes,
         offerType: this.offerTypes,
       })

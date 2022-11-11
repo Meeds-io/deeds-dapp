@@ -22,7 +22,7 @@
       {{ $t('meedToken') }}
       <v-divider class="my-auto ms-4" />
     </v-card-title>
-    <v-row>
+    <v-row class="mt-4">
       <v-col
         cols="12"
         md="5"

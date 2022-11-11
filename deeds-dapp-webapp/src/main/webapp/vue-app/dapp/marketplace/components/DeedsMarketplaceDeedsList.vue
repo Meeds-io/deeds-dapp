@@ -25,13 +25,15 @@
       <v-col
         v-for="offer in offers"
         :key="offer.id"
-        class="d-flex justify-center">
+        class="d-flex justify-center justify-lg-start">
         <v-card
           width="357"
           max-width="100%"
           flat>
           <deeds-renting-offer-card
-            :offer="offer" />
+            :offer="offer"
+            :selected-cards="selectedCards"
+            :selected-offers="selectedOffers" />
         </v-card>
       </v-col>
       <v-col v-if="hasMore" cols="12">
@@ -40,7 +42,7 @@
           text
           block
           @click="$root.$emit('deeds-offers-load-more')">
-          <span class="text-capitalize">{{ $t('loadMore') }}</span>
+          <span class="text-ordinary-capitalize">{{ $t('loadMore') }}</span>
         </v-btn>
       </v-col>
     </v-row>
@@ -64,6 +66,14 @@ export default {
     hasOffers: {
       type: Boolean,
       default: false,
+    },
+    selectedOffers: {
+      type: Array,
+      default: null,
+    },
+    selectedCards: {
+      type: Array,
+      default: null,
     },
   },
   computed: {

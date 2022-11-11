@@ -39,17 +39,17 @@ export default {
       },
       {
         'name': 'Uncommon',
-        'cardType': '1',
+        'cardType': 1,
         'amount': new BigNumber('0x06c6b935b8bbd4000000')
       },
       {
         'name': 'Rare',
-        'cardType': '2',
+        'cardType': 2,
         'amount': new BigNumber('0x0a968163f0a57b400000')
       },
       {
         'name': 'Legendary',
-        'cardType': '3',
+        'cardType': 3,
         'amount': new BigNumber('0x152d02c7e14af6800000')
       }
     ],

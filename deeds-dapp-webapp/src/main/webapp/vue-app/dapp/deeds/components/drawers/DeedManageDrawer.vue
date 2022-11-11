@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4>{{ $t('manageDeedTitle', {0: cardTypeName, 1: nftId}) }}</h4>
+      <h4 class="text-capitalize">{{ $t('manageDeedTitle', {0: cardName, 1: nftId}) }}</h4>
     </template>
     <template v-if="cardTypeInfo" #content>
       <v-list>
@@ -34,7 +34,7 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">{{ $t('deedName') }}:</v-list-item-title>
-            <v-list-item-subtitle class="text-truncate">{{ cardTypeName }} #{{ nftId }}</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-truncate">{{ cardName }} #{{ nftId }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
@@ -43,10 +43,10 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
-          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsCity') }}: {{ cityName }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="text-color text-capitalize">{{ $t('deedCharacteristicsCity') }}: {{ cityName }}</v-list-item-subtitle>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
-          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsScarcity') }}: {{ cardScarcity }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="text-color text-capitalize">{{ $t('deedCharacteristicsScarcity') }}: {{ cardScarcity }}</v-list-item-subtitle>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
           <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsPowerMinting') }}: {{ cardPowerMinting }}</v-list-item-subtitle>
@@ -93,7 +93,7 @@
                 color="primary"
                 depressed
                 dark>
-                <span class="text-capitalize">{{ $t('deedTenantAccessButton') }}</span>
+                <span class="text-ordinary-capitalize">{{ $t('deedTenantAccessButton') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -127,7 +127,7 @@
                 depressed
                 dark
                 @click="openMoveOutDrawer">
-                <span class="text-capitalize">{{ $t('moveOut') }}</span>
+                <span class="text-ordinary-capitalize">{{ $t('moveOut') }}</span>
               </v-btn>
               <v-btn
                 v-else-if="stopped"
@@ -140,7 +140,7 @@
                 depressed
                 dark
                 @click="openMoveInDrawer">
-                <span class="text-capitalize">{{ $t('moveIn') }}</span>
+                <span class="text-ordinary-capitalize">{{ $t('moveIn') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -167,7 +167,7 @@
                 color="primary"
                 depressed
                 @click="openRentDrawer">
-                <span class="text-capitalize">{{ rentingButtonName }}</span>
+                <span class="text-ordinary-capitalize">{{ rentingButtonName }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -192,7 +192,7 @@
                 class="ms-auto"
                 outlined
                 text>
-                <span class="text-capitalize">{{ $t('deedSellButton') }}</span>
+                <span class="text-ordinary-capitalize">{{ $t('deedSellButton') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -210,7 +210,7 @@
         v-bind="attrs"
         v-on="on"
         @click="logout">
-        <span class="text-capitalize">{{ $t('signOut') }}</span>
+        <span class="text-ordinary-capitalize">{{ $t('signOut') }}</span>
       </v-btn>
       <v-tooltip v-else top>
         <template #activator="{ on, attrs }">
@@ -223,7 +223,7 @@
             v-bind="attrs"
             v-on="on"
             @click="login">
-            <span class="text-capitalize">{{ $t('signIn') }}</span>
+            <span class="text-ordinary-capitalize">{{ $t('signIn') }}</span>
           </v-btn>
         </template>
         <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
@@ -274,8 +274,8 @@ export default {
     cardType() {
       return this.nft?.cardType;
     },
-    cardTypeName() {
-      return this.nft?.cardTypeName;
+    cardName() {
+      return this.nft?.cardName;
     },
     cardImage() {
       return this.cardTypeInfo?.image;
@@ -293,7 +293,7 @@ export default {
       return this.cardTraits.find(attr => attr.trait_type === 'Minting Power')?.value || '-';
     },
     cardScarcity() {
-      return this.cardTypeName;
+      return this.cardName;
     },
     cityVotingRights() {
       return this.cardTraits.find(attr => attr.trait_type === 'City voting rights')?.value || '-';
