@@ -19,7 +19,7 @@
 
 -->
 <template>
-  <v-layout v-if="displaySelector" class="d-flex flex-column align-center mx-2 my-8">
+  <v-layout v-if="displaySelector" class="d-flex flex-column align-center mx-2 mt-4 mb-8">
     <v-row class="ma-0">
       <v-chip-group v-model="offerTypes" multiple>
         <v-chip
@@ -37,12 +37,16 @@
         v-model="types"
         active-class="primary primary--text lighten-3"
         multiple>
-        <deeds-card-type-chip
-          v-for="cardType in cardTypes"
-          :key="cardType"
-          :card="cardType"
-          avatar-size="18"
-          class="mx-2" />
+        <v-row no-gutters>
+          <v-col
+            v-for="cardType in cardTypes"
+            :key="cardType">
+            <deeds-card-type-chip
+              :card="cardType"
+              avatar-size="18"
+              class="mx-2" />
+          </v-col>
+        </v-row>
       </v-chip-group>
     </v-row>
   </v-layout>
