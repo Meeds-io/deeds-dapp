@@ -38,7 +38,7 @@ html {
   left: -9999px;
 }
 
-#dappTopbar button.v-btn {
+#dappTopbar button.v-btn, #navbar a.v-btn {
   min-width: auto;
 }
 
@@ -68,7 +68,7 @@ html {
   color: #c6c6c6  !important;
 }
 
-.v-btn[disabled].v-btn--disabled.tertiary {
+.v-btn[disabled].v-btn--disabled.secondary {
   background-color: #87001ade !important;
 }
 
@@ -167,8 +167,12 @@ html {
   border: 0 !important;
 }
 
-.tertiary-border-color {
+.secondary-border-color {
   border: 1px solid #e25d5d !important;
+}
+
+.grey-border-color {
+  border: 1px solid grey !important;
 }
 
 .primary-border-color {
@@ -227,6 +231,10 @@ html {
 
 .content-box-sizing {
   box-sizing: content-box;
+}
+
+.border-box-sizing {
+  box-sizing: border-box;
 }
 
 .extended-textarea .v-counter {

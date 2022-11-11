@@ -182,6 +182,7 @@ export default {
   methods: {
     open() {
       this.drawer = true;
+      this.$nextTick().then(() => this.$root.$emit('close-alert-message'));
     },
     closeByEscape(event) {
       if (event?.key === 'Escape') {

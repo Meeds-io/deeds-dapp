@@ -19,7 +19,10 @@
 
 -->
 <template>
-  <v-card :loading="loading" flat>
+  <v-card
+    id="marketplaceOffersList"
+    :loading="loading"
+    flat>
     <deeds-marketplace-deeds-selector :has-offers="hasOffers" />
     <v-row v-if="hasOffers" class="pa-0">
       <v-col
@@ -30,7 +33,7 @@
           width="357"
           max-width="100%"
           flat>
-          <deeds-renting-offer-card
+          <deeds-marketplace-offer-card
             :offer="offer"
             :selected-cards="selectedCards"
             :selected-offers="selectedOffers" />

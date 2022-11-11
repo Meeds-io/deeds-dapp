@@ -50,7 +50,7 @@
               :card="cardType"
               :selected-cards="types"
               avatar-size="24"
-              class="mx-2" />
+              class="ma-2" />
           </v-col>
         </v-row>
       </v-btn-toggle>
