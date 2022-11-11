@@ -12,12 +12,19 @@
         width="200"
         contain
         eager />
-      <div class="pa-0">{{ $t('dapp.marketplace.deedsListEmptyTitle') }}</div>
+      <div v-if="hasFilter" class="pa-0">{{ $t('dapp.marketplace.deedsFilterListEmptyTitle') }}</div>
+      <div v-else class="pa-0">{{ $t('dapp.marketplace.deedsListEmptyTitle') }}</div>
     </v-card>
   </v-card>
 </template>
 <script>
 export default {
+  props: {
+    hasFilter: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
   }),
