@@ -25,7 +25,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4>{{ $t('deedMoveInDrawerTitle', {0: cardTypeName, 1: nftId}) }}</h4>
+      <h4 class="text-capitalize">{{ $t('deedMoveInDrawerTitle', {0: cardName, 1: nftId}) }}</h4>
     </template>
     <template #content>
       <v-form ref="form" @submit="sendRequest">
@@ -89,7 +89,7 @@
         depressed
         dark
         @click="closeAll()">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('gotIt') }}
         </span>
       </v-btn>
@@ -103,7 +103,7 @@
         name="cancelMoveIn"
         min-width="120"
         @click="close(nftId)">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('cancel') }}
         </span>
       </v-btn>
@@ -117,7 +117,7 @@
         depressed
         dark
         @click="sendRequest">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('requestTenantButton') }}
         </span>
       </v-btn>
@@ -150,8 +150,8 @@ export default {
     nftId() {
       return this.nft?.id;
     },
-    cardTypeName() {
-      return this.nft?.cardTypeName;
+    cardName() {
+      return this.nft?.cardName;
     },
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;

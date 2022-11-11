@@ -32,7 +32,7 @@
       class="content-box-sizing px-1"
       link
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
       <v-icon class="mb-1">fas fa-home</v-icon>
       <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
@@ -44,7 +44,7 @@
       class="content-box-sizing px-1"
       link
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.marketplace') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
       <v-icon class="mb-1">fas fa-store</v-icon>
       <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
@@ -56,7 +56,7 @@
       class="content-box-sizing px-0"
       link
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.stake') }}</h3>
       <v-icon class="mb-1">fas fa-piggy-bank</v-icon>
       <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
@@ -68,7 +68,7 @@
       class="content-box-sizing px-0"
       link
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.deeds') }}</h3>
       <v-icon class="mb-1">fas fa-building</v-icon>
       <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
@@ -80,7 +80,7 @@
       class="content-box-sizing px-0"
       link
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.farm') }}</h3>
       <v-icon class="mb-1">fas fa-sack-dollar</v-icon>
       <v-tabs-slider color="secondary" class="mobile-menu-slider" />
     </v-btn>
@@ -96,7 +96,7 @@
       link 
       class="px-0 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.overview') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
     </v-tab>
     <v-tab
       ref="marketplace"
@@ -105,7 +105,7 @@
       link 
       class="px-2 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.marketplace') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
     </v-tab>
     <v-tab
       ref="stake"
@@ -114,7 +114,7 @@
       link 
       class="px-0 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.stake') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.stake') }}</h3>
     </v-tab>
     <v-tab
       ref="deeds"
@@ -123,7 +123,7 @@
       link 
       class="px-0 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.deeds') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.deeds') }}</h3>
     </v-tab>
     <v-tab
       ref="farm"
@@ -132,7 +132,7 @@
       link
       class="px-0 me-2"
       @click="openPage">
-      <h3 class="text-capitalize">{{ $t('page.farm') }}</h3>
+      <h3 class="text-ordinary-capitalize">{{ $t('page.farm') }}</h3>
     </v-tab>
   </v-tabs>
 </template>

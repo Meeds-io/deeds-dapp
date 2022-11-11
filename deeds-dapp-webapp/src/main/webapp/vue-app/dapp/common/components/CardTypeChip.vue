@@ -19,24 +19,30 @@
 
 -->
 <template>
-  <v-chip
+  <deeds-button-group-item
+    :selected-values="selectedCards"
+    :value="card"
     :small="small"
-    class="px-1 text-capitalize"
-    label
-    outlined>
+    selected-color="grey"
+    color="black"
+    class="px-1">
     <v-list-item-avatar
-      class="me-1"
+      class="ms-0 me-1 my-auto"
       :min-width="`${avatarSize}px !important`"
       :height="`${avatarSize}px !important`"
       :width="`${avatarSize}px !important`">
       <v-img :src="cardImage" />
     </v-list-item-avatar>
-    {{ card }}
-  </v-chip>
+    <span class="text-capitalize">{{ card }}</span>
+  </deeds-button-group-item>
 </template>
 <script>
 export default {
   props: {
+    selectedCards: {
+      type: Array,
+      default: null,
+    },
     card: {
       type: String,
       default: null,
