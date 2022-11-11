@@ -41,7 +41,7 @@
           mdi-image-size-select-actual
         </v-icon>
       </v-card-text>
-      <v-card-title class="justify-center pt-0">
+      <v-card-title class="justify-center pt-0 text-capitalize">
         {{ cardName }}
       </v-card-title>
       <v-card-text v-if="isRealNft" class="pt-0">

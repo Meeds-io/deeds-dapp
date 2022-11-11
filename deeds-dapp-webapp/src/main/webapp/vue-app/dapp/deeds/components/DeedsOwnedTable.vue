@@ -153,7 +153,7 @@ export default {
             Object.assign(ownedNft, {
               key: ownedNft.id,
               cityName: this.cities[ownedNft.cityIndex],
-              cardTypeName: this.cardTypes[ownedNft.cardType % 4],
+              cardName: this.cardTypes[ownedNft.cardType % 4],
               earnedRewardsNoDecimals: 0,
               hasEarnedMeeds: false,
               owner: true,

@@ -56,10 +56,10 @@
                       :size="30"
                       :width="5"
                       :value="rentalTenantMintingPowerPercentage"
-                      color="primary"
+                      color="success"
                       v-bind="attrs"
                       v-on="on">
-                      <small>{{ rentalTenantMintingPower }}</small>
+                      <small class="primary--text">{{ rentalTenantMintingPower }}</small>
                     </v-progress-circular>
                   </template>
                   <span>{{ $t('deedMintingPowerDetails', {0: rentalTenantMintingPower}) }}</span>
@@ -84,8 +84,8 @@
                     <template #activator="{ on, attrs }">
                       <v-progress-linear
                         :value="rentalTenantMintingPercentage"
-                        color="primary"
-                        background-color="secondary"
+                        color="success"
+                        background-color="error"
                         height="6"
                         rounded
                         v-bind="attrs"
@@ -120,12 +120,15 @@
           <v-list-item-subtitle class="d-flex">
             <deeds-offer-type-chip
               :label="$t('rentalsTag')"
+              :selected-offers="selectedOffers"
               color="secondary"
+              offer-type="RENTING"
               active
               small />
             <deeds-card-type-chip
               :card="cardType"
               :city="city"
+              :selected-cards="selectedCards"
               class="mx-2"
               avatar-size="18"
               small />
@@ -153,6 +156,14 @@ export default {
       type: Object,
       default: null,
     },
+    selectedOffers: {
+      type: Array,
+      default: null,
+    },
+    selectedCards: {
+      type: Array,
+      default: null,
+    },
   },
   data: () => ({
     originalOffer: null,
@@ -163,25 +174,25 @@ export default {
       return this.offer?.nftId;
     },
     cardType() {
-      return this.offer?.cardType?.toLowerCase() || '';
+      return this.offer?.cardType?.toUpperCase() || '';
     },
     city() {
-      return this.offer?.city?.toLowerCase() || '';
+      return this.offer?.city?.toUpperCase() || '';
     },
     paymentPeriodicity() {
       return this.offer?.paymentPeriodicity || '';
     },
     maxUsersLabel() {
       switch (this.cardType){
-      case 'common': return this.$t('cardTypeMaxUsers', {0: 100});
-      case 'uncommon': return this.$t('cardTypeMaxUsers', {0: 1000});
-      case 'rare': return this.$t('cardTypeMaxUsers', {0: 10000});
-      case 'legendary': return this.$t('unlimited');
+      case 'COMMON': return this.$t('cardTypeMaxUsers', {0: 100});
+      case 'UNCOMMON': return this.$t('cardTypeMaxUsers', {0: 1000});
+      case 'RARE': return this.$t('cardTypeMaxUsers', {0: 10000});
+      case 'LEGENDARY': return this.$t('unlimited');
       default: return '';
       }
     },
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city}-${this.cardType}.png`;
+      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
     },
     rentalTenantMintingPower() {
       return this.originalOffer?.mintingPower;
