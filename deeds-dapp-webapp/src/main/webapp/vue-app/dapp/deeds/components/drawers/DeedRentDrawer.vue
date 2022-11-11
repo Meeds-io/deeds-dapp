@@ -294,7 +294,7 @@ export default {
       }
       this.isNew = !offer;
       this.offer.nftId = this.nftId;
-      this.$refs.drawer.open();
+      this.$refs.drawer?.open();
       this.$nextTick().then(() => this.offerChanged = false);
     },
     cancel() {
@@ -346,7 +346,13 @@ export default {
           .then(offer => {
             this.$root.$emit(this.isNew && 'deed-offer-renting-created' || 'deed-offer-renting-updated', offer);
             this.sending = false;
-            this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreated' || 'deedRentingOfferUpdated'), 'success');
+            const message = this.$t(this.isNew && 'deedRentingOfferCreated' || 'deedRentingOfferUpdated');
+            this.$root.$emit('alert-message',
+              message,
+              'success', 
+              () => this.openOfferInMarketplace(offer.id),
+              'fas fa-magnifying-glass primary--text mx-4 ps-1',
+              this.$t('deedRentingOpenOfferInMarketplace'));
             this.$nextTick().then(() => this.cancel());
           })
           .catch(() => {
@@ -354,6 +360,10 @@ export default {
             this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreationError' || 'deedRentingOfferUpdateError'), 'error');
           });
       }
+    },
+    openOfferInMarketplace(offerId) {
+      this.$store.commit('setOfferId', offerId);
+      this.$root.$emit('switch-page', 'marketplace');
     },
   },
 };

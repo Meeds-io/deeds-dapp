@@ -117,10 +117,11 @@
     <v-card-text class="ps-2 pt-0">
       <v-list-item class="pa-0 my-n3">
         <v-list-item-content class="py-0">
-          <v-list-item-subtitle class="d-flex">
+          <v-list-item-subtitle class="d-flex flex-wrap">
             <deeds-offer-type-chip
               :label="$t('rentalsTag')"
               :selected-offers="selectedOffers"
+              class="my-1 my-sm-0 me-2"
               color="secondary"
               offer-type="RENTING"
               active
@@ -129,7 +130,7 @@
               :card="cardType"
               :city="city"
               :selected-cards="selectedCards"
-              class="mx-2"
+              class="my-1 my-sm-0 me-2"
               avatar-size="18"
               small />
           </v-list-item-subtitle>
