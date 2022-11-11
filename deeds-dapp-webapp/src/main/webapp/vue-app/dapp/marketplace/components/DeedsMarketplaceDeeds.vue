@@ -33,7 +33,7 @@
       :selected-offers="offerTypes"
       @load-more="loadMore" />
     <deeds-marketplace-deeds-empty
-      v-if="!hasOffers && !loading"
+      v-if="showEmptyBlock"
       :has-filter="hasFilter" />
   </v-card>
 </template>
@@ -49,6 +49,7 @@ export default {
     limit: 0,
     totalSize: 0,
     loading: false,
+    showEmptyBlock: false,
   }),
   computed: Vuex.mapState({
     availableCardTypes: state => state.cardTypes,
@@ -70,6 +71,11 @@ export default {
     offerTypes() {
       this.refresh();
     },
+    loading() {
+      if (!this.loading) {
+        this.showEmptyBlock = !this.hasOffers;
+      }
+    },
   },
   created() {
     this.limit = this.pageSize;
@@ -86,6 +92,9 @@ export default {
     },
     selectOfferTypes(offerTypes) {
       this.offerTypes = offerTypes;
+    },
+    selectRecentOffer(offerId) {
+      this.offerId = offerId;
     },
     refresh() {
       this.loading = true;
