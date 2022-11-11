@@ -47,15 +47,13 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
-    cardTypes: ['Common', 'Uncommon', 'Rare', 'Legendary'],
-  }),
   computed: Vuex.mapState({
     deedLoading: state => state.deedLoading,
     ownedNfts: state => state.ownedNfts,
     whitepaperLink: state => state.whitepaperLink,
     parentLocation: state => state.parentLocation,
+    cities: state => state.cities,
+    cardTypes: state => state.cardTypes,
     nftsByCardType() {
       const nftsByCardType = {};
       if (this.ownedNfts) {

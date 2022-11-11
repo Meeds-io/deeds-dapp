@@ -22,11 +22,11 @@
     :href="deedTenantLink"
     target="_blank"
     rel="nofollow noreferrer noopener">
-    <span v-if="starting" class="text-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
-    <span v-else-if="stopping" class="text-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
+    <span v-if="starting" class="text-ordinary-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
+    <span v-else-if="stopping" class="text-ordinary-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
     <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
   </a>
-  <div v-else-if="stopped" class="text-capitalize">
+  <div v-else-if="stopped" class="text-ordinary-capitalize">
     {{ $t('vacant') }}
   </div>
   <div v-else>-</div>
@@ -72,10 +72,10 @@ export default {
       return this.cities[this.cityIndex];
     },
     deedTenantLink() {
-      return `https://${this.cityName}-${this.nftId}.meeds.io`;
+      return `https://${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
     },
     deedTenantLinkLabel() {
-      return `${this.cityName}-${this.nftId}.meeds.io`;
+      return `${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
     },
   }),
 };
