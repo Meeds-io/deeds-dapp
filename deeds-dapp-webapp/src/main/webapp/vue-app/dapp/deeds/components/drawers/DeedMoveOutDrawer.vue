@@ -66,7 +66,7 @@
         name="cancelMoveIn"
         min-width="120"
         @click="close(nftId)">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('cancel') }}
         </span>
       </v-btn>
@@ -78,7 +78,7 @@
         depressed
         dark
         @click="sendRequest">
-        <span class="text-capitalize">
+        <span class="text-ordinary-capitalize">
           {{ $t('removeTenantButton') }}
         </span>
       </v-btn>

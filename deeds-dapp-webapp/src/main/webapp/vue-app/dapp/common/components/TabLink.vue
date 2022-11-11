@@ -24,7 +24,8 @@
     text
     @click="$root.$emit('switch-page', tabLink)">
     <span class="text-none">
-      <span class="font-weight-bold">{{ label }}</span>
+      <span v-if="noTitleTextTransform" class="font-weight-bold">{{ label }}</span>
+      <span v-else class="font-weight-bold text-capitalize">{{ label }}</span>
       <span v-if="subLabel" class="font-weight-normal">({{ subLabel }})</span>
     </span>
   </v-btn>
@@ -43,6 +44,10 @@ export default {
     tabLink: {
       type: String,
       default: null,
+    },
+    noTitleTextTransform: {
+      type: Boolean,
+      default: false,
     },
   },
 };
