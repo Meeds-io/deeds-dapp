@@ -249,7 +249,7 @@
                 outlined
                 text
                 @click="claimReward()">
-                <span class="text-capitalize">{{ $t('claim') }}</span>
+                <span class="text-ordinary-capitalize">{{ $t('claim') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
