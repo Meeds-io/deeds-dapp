@@ -234,3 +234,14 @@ html {
   right: 17px;
   bottom: 34px;
 }
+
+.v-application .text-capitalize {
+  text-transform: lowercase !important;
+  display: inline-block;
+}
+.v-application .text-capitalize:first-letter {
+  text-transform: uppercase !important;
+}
+.v-application .text-ordinary-capitalize {
+  text-transform: capitalize !important;
+}

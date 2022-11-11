@@ -151,7 +151,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="text-capitalize">{{ $t('stake') }}</span>
+              <span class="text-ordinary-capitalize">{{ $t('stake') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -188,7 +188,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="text-capitalize">{{ $t('unstake') }}</span>
+              <span class="text-ordinary-capitalize">{{ $t('unstake') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -236,7 +236,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="text-capitalize">{{ $t('claim') }}</span>
+              <span class="text-ordinary-capitalize">{{ $t('claim') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>

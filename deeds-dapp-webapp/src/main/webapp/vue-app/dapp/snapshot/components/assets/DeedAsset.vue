@@ -34,7 +34,7 @@
         class="ms-n4" />
     </template>
     <template #col2>
-      {{ cityName }}
+      <span class="text-capitalize">{{ cityName }}</span>
     </template>
     <template #col3>
       {{ count }}

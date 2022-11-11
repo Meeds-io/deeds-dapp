@@ -30,7 +30,8 @@
       <deeds-tab-link
         label="xMeeds"
         tab-link="stake"
-        class="ms-n4" />
+        class="ms-n4"
+        no-title-text-transform />
     </template>
     <template #col3>
       <deeds-number-format

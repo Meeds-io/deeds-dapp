@@ -37,7 +37,7 @@
           class="primary me-4"
           depressed
           @click="ok">
-          <span class="text-capitalize">
+          <span class="text-ordinary-capitalize">
             {{ okLabel }}
           </span>
         </v-btn>
@@ -48,7 +48,7 @@
           outlined
           text
           @click="close">
-          <span class="text-capitalize">
+          <span class="text-ordinary-capitalize">
             {{ cancelLabel }}
           </span>
         </v-btn>

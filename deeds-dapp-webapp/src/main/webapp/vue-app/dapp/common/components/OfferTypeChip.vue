@@ -19,20 +19,25 @@
 
 -->
 <template>
-  <v-chip
-    :color="color"
-    :text-color="color"
-    :class="active && 'v-chip--active'"
+  <deeds-button-group-item
+    :selected-values="selectedOffers"
+    :value="offerType"
     :small="small"
-    class="px-1"
-    label
-    outlined>
-    {{ label }}
-  </v-chip>
+    :color="color">
+    <span class="text-capitalize">{{ label }}</span>
+  </deeds-button-group-item>
 </template>
 <script>
 export default {
   props: {
+    selectedOffers: {
+      type: Array,
+      default: null,
+    },
+    offerType: {
+      type: String,
+      default: null,
+    },
     label: {
       type: String,
       default: null,

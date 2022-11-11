@@ -85,8 +85,8 @@ const store = new Vuex.Store({
     validNetwork: false,
     yearInMinutes: 365 * 24 * 60,
     scrollbarWidth: utils.getScrollbarWidth(),
-    cities: ['Tanit', 'Reshef', 'Ashtarte', 'Melqart', 'Eshmun', 'Kushor', 'Hammon'],
-    cardTypes: ['Common', 'Uncommon', 'Rare', 'Legendary'],
+    cities: ['TANIT', 'RESHEF', 'ASHTARTE', 'MELQART', 'ESHMUN', 'KUSHOR', 'HAMMON'],
+    cardTypes: ['COMMON', 'UNCOMMON', 'RARE', 'LEGENDARY'],
     offerTypes: ['RENTING', 'SALE'],
     cardTypeInfos: {},
     // Contracts addresses

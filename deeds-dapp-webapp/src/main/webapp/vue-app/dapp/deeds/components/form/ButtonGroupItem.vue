@@ -25,12 +25,11 @@
       :outlined="outlined"
       :dark="dark"
       :value="value"
-      :color="color"
-      :class="borderClass"
-      class="px-2 elevation-0">
-      <span class="text-capitalize">
-        <slot></slot>
-      </span>
+      :color="contextualColor"
+      :class="`${borderClass} ${paddingClass}`"
+      :small="small"
+      class="elevation-0">
+      <slot></slot>
     </v-btn>
   </div>
 </template>
@@ -45,14 +44,29 @@ export default {
       type: String,
       default: null,
     },
+    selectedValues: {
+      type: Array,
+      default: null,
+    },
     color: {
       type: String,
       default: null,
     },
+    selectedColor: {
+      type: String,
+      default: null,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     isSelected() {
-      return this.value === this.selectedValue;
+      return (this.value && this.value === this.selectedValue) || (this.selectedValues?.indexOf(this.value) >= 0) || false;
+    },
+    contextualColor() {
+      return this.isSelected && this.selectedColor || this.color;
     },
     dark() {
       return this.isSelected;
@@ -60,8 +74,11 @@ export default {
     outlined() {
       return !this.isSelected;
     },
+    paddingClass() {
+      return this.small && 'px-1' || 'px-2';
+    },
     borderClass() {
-      return this.isSelected && `${this.color}-border-color` || '';
+      return this.isSelected && `${this.contextualColor}-border-color` || '';
     },
   },
 };

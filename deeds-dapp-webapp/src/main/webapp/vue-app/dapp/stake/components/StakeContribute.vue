@@ -39,7 +39,7 @@
           class="me-2"
           contain
           eager />
-        <span class="text-capitalize">{{ $t('getInvolved') }}</span>
+        <span class="text-ordinary-capitalize">{{ $t('getInvolved') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>
