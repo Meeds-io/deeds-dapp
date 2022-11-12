@@ -31,9 +31,29 @@
         width="70">
         <v-img :src="cardImage" />
       </v-list-item-avatar>
-      <v-card class="flex-grow-1" flat>
-        <v-card-title class="px-0 py-2 text-capitalize">
-          {{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}
+      <v-card
+        :id="cardElementId"
+        class="flex-grow-1"
+        flat>
+        <v-card-title class="d-flex ps-0 py-2">
+          <span class="text-capitalize">{{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}</span>
+          <v-spacer />
+          <v-tooltip
+            v-if="isOwner"
+            :attach="`#${cardElementId}`"
+            bottom>
+            <template #activator="{on, bind}">
+              <v-btn
+                color="amber lighten-2"
+                icon
+                x-small
+                v-on="on"
+                v-bind="bind">
+                <v-icon>fa-crown</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-no-wrap">{{ $t('deedsOfferOwner') }}</span>
+          </v-tooltip>
         </v-card-title>
         <v-card-text class="ps-0 pb-6">
           <v-list dense>
@@ -168,8 +188,12 @@ export default {
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    address: state => state.address,
     nftId() {
       return this.offer?.nftId;
+    },
+    cardElementId() {
+      return `deedOfferCard-${this.offer.id}`;
     },
     cardType() {
       return this.offer?.cardType?.toUpperCase() || '';
@@ -231,6 +255,9 @@ export default {
     },
     rentalDurationLabel() {
       return this.$t(this.rentalDurationLabelKey);
+    },
+    isOwner() {
+      return this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
     },
   }),
   created() {
