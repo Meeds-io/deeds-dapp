@@ -1,6 +1,10 @@
 <template>
-  <v-card class="d-flex flex-column justify-center align-center" flat>
+  <v-card
+    min-height="210px"
+    class="d-flex flex-column justify-center align-center"
+    flat>
     <v-card
+      v-if="!loading"
       width="350px"
       max-width="100%"
       class="d-flex flex-column align-center text-center mx-12"
@@ -12,7 +16,8 @@
         width="200"
         contain
         eager />
-      <div v-if="hasFilter" class="pa-0">{{ $t('dapp.marketplace.deedsFilterListEmptyTitle') }}</div>
+      <div v-if="offerNotFound" class="pa-0">{{ $t('dapp.marketplace.deedsOfferNotFound') }}</div>
+      <div v-else-if="hasFilter" class="pa-0">{{ $t('dapp.marketplace.deedsFilterListEmptyTitle') }}</div>
       <div v-else class="pa-0">{{ $t('dapp.marketplace.deedsListEmptyTitle') }}</div>
     </v-card>
   </v-card>
@@ -21,6 +26,14 @@
 export default {
   props: {
     hasFilter: {
+      type: Boolean,
+      default: false,
+    },
+    offerNotFound: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
       type: Boolean,
       default: false,
     },

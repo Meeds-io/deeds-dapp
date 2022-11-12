@@ -17,14 +17,45 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
-    <deeds-marketplace-introduction class="mt-n4" />
+  <div class="d-flex flex-column mt-8">
+    <v-scale-transition>
+      <div v-show="!selectedStandaloneOfferId">
+        <deeds-marketplace-introduction />
+      </div>
+    </v-scale-transition>
     <deeds-marketplace-deeds />
   </div>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
+    selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
   }),
+  watch: {
+    selectedStandaloneOfferId() {
+      this.refreshUrl();
+    },
+  },
+  created() {
+    window.addEventListener('popstate', (event) => this.refreshSelectedOfferId(event));
+  },
+  methods: {
+    refreshSelectedOfferId() {
+      const offerId = this.$utils.getQueryParam('offer');
+      if (offerId) {
+        this.$store.commit('setStandaloneOfferId', Number(offerId));
+      } else {
+        this.$store.commit('setStandaloneOfferId', null);
+      }
+    },
+    refreshUrl() {
+      const link = this.selectedStandaloneOfferId
+          && `${window.location.pathname}?offer=${this.selectedStandaloneOfferId}`
+          || window.location.pathname;
+      if (!window.location.href.endsWith(link)) {
+        window.history.pushState({}, '', `${origin}${link}`);
+      }
+    },
+  }
 };
 </script>

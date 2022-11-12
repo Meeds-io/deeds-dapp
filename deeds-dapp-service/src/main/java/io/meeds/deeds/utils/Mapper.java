@@ -25,6 +25,9 @@ public class Mapper {
   }
 
   public static DeedTenantOfferDTO toDTO(DeedTenantOffer deedTenantOffer) {
+    if (deedTenantOffer == null) {
+      return null;
+    }
     return new DeedTenantOfferDTO(deedTenantOffer.getId(),
                                   deedTenantOffer.getNftId(),
                                   deedTenantOffer.getCity(),
@@ -45,6 +48,9 @@ public class Mapper {
   }
 
   public static DeedTenantOffer fromDTO(DeedTenantOfferDTO deedTenantOfferDTO) {
+    if (deedTenantOfferDTO == null) {
+      return null;
+    }
     return new DeedTenantOffer(deedTenantOfferDTO.getId(),
                                deedTenantOfferDTO.getNftId(),
                                deedTenantOfferDTO.getCity(),

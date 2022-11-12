@@ -24,6 +24,12 @@ import DeedsMarketplaceDeedsEmpty from './components/DeedsMarketplaceDeedsEmpty.
 import DeedsMarketplaceDeedsList from './components/DeedsMarketplaceDeedsList.vue';
 import DeedsMarketplaceDeedsSelector from './components/DeedsMarketplaceDeedsSelector.vue';
 import DeedsMarketplaceOfferCard from './components/MarketplaceOfferCard.vue';
+import DeedsMarketplaceOfferCardDetails from './components/MarketplaceOfferCardDetails.vue';
+import DeedsMarketplaceOfferCardDetailsTopbar from './components/MarketplaceOfferCardDetailsTopbar.vue';
+import DeedsMarketplaceOfferCardDetailsNav from './components/MarketplaceOfferCardDetailsNav.vue';
+import DeedsMarketplaceOfferCardDetailsCharacteristics from './components/MarketplaceOfferCardDetailsCharacteristics.vue';
+import DeedsMarketplaceOfferCardDetailsRental from './components/MarketplaceOfferCardDetailsRental.vue';
+import DeedsMarketplaceOfferCardDetailsFooter from './components/MarketplaceOfferCardDetailsFooter.vue';
 
 const components = {
   'deeds-marketplace': DeedsMarketplace,
@@ -34,6 +40,12 @@ const components = {
   'deeds-marketplace-deeds-list': DeedsMarketplaceDeedsList,
   'deeds-marketplace-deeds-selector': DeedsMarketplaceDeedsSelector,
   'deeds-marketplace-offer-card': DeedsMarketplaceOfferCard,
+  'deeds-marketplace-offer-card-details': DeedsMarketplaceOfferCardDetails,
+  'deeds-marketplace-offer-card-details-topbar': DeedsMarketplaceOfferCardDetailsTopbar,
+  'deeds-marketplace-offer-card-details-nav': DeedsMarketplaceOfferCardDetailsNav,
+  'deeds-marketplace-offer-card-details-charcteristics': DeedsMarketplaceOfferCardDetailsCharacteristics,
+  'deeds-marketplace-offer-card-details-rental': DeedsMarketplaceOfferCardDetailsRental,
+  'deeds-marketplace-offer-card-details-footer': DeedsMarketplaceOfferCardDetailsFooter,
 };
 
 for (const key in components) {

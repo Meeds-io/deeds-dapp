@@ -25,7 +25,7 @@
         <deeds-navbar id="navbar" role="navigation" />
         <deeds-page
           id="mainPageContent"
-          class="mt-8 mt-sm-10 mb-12 mb-sm-0"
+          class="mb-12 mb-sm-0"
           role="main" />
       </div>
       <deeds-notifications />

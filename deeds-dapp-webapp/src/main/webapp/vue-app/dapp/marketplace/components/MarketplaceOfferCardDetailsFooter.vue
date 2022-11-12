@@ -19,50 +19,38 @@
 
 -->
 <template>
-  <deeds-button-group-item
-    :selected-values="selectedCards"
-    :value="card"
-    :small="small"
-    selected-color="grey"
-    color="black">
-    <v-list-item-avatar
-      class="deed-avatar ms-0 me-1 my-auto"
-      :min-width="`${avatarSize}px !important`"
-      :height="`${avatarSize}px !important`"
-      :width="`${avatarSize}px !important`">
-      <v-img :src="cardImage" />
-    </v-list-item-avatar>
-    <span class="text-capitalize">{{ card }}</span>
-  </deeds-button-group-item>
+  <v-list-item class="d-flex flex-column flex-sm-row justify-end px-0 mt-4 mt-sm-auto">
+    <v-list-item-action-text v-if="expirationDate" class="d-flex py-0 subtitle-1">
+      <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
+    </v-list-item-action-text>
+    <v-list-item-action-text v-if="expirationDate" class="d-flex py-0 subtitle-1">
+      <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
+      <deeds-timer
+        :end-time="expirationDate"
+        class="ms-sm-1"
+        text-color=""
+        short-format />
+    </v-list-item-action-text>
+    <v-list-item-action class="ms-0 ms-sm-8 align-self-end">
+      <v-btn
+        color="primary"
+        @click="close">
+        {{ $t('deedsOfferRentingButton') }}
+      </v-btn>
+    </v-list-item-action>
+  </v-list-item>
 </template>
 <script>
 export default {
   props: {
-    selectedCards: {
-      type: Array,
+    offer: {
+      type: Object,
       default: null,
-    },
-    card: {
-      type: String,
-      default: null,
-    },
-    city: {
-      type: String,
-      default: () => 'tanit',
-    },
-    avatarSize: {
-      type: Number,
-      default: null,
-    },
-    small: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-    cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
+    expirationDate() {
+      return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
     },
   }),
 };
