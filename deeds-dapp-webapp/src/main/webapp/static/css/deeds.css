@@ -76,6 +76,10 @@ html {
   background-color: #3f8487de !important;
 }
 
+.v-btn {
+  text-transform: capitalize;
+}
+
 .link--color {
   color: #0000ee !important;
 }
@@ -123,6 +127,10 @@ html {
 .lp-badge {
   min-width: 10px;
   min-height: 10px;
+}
+
+.min-height-auto {
+  min-height: auto !important;
 }
 
 .font-weight-normal {
@@ -208,6 +216,9 @@ html {
 .position-relative {
   position: relative;
 }
+.position-absolute {
+  position: absolute;
+}
 
 #echartCurrencies {
   width: 500px;
@@ -235,6 +246,9 @@ html {
 
 .border-box-sizing {
   box-sizing: border-box;
+}
+.deed-avatar .v-image__image {
+  background-size: 105%;
 }
 
 .extended-textarea .v-counter {

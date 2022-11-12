@@ -29,12 +29,12 @@
     <template v-if="cardTypeInfo" #content>
       <v-list>
         <v-list-item two-line>
-          <v-list-item-avatar>
+          <v-list-item-avatar class="deed-avatar">
             <v-img :src="cardImage" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="font-weight-bold">{{ $t('deedName') }}:</v-list-item-title>
-            <v-list-item-subtitle class="text-truncate">{{ cardName }} #{{ nftId }}</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-truncate text-capitalize">{{ cardName }} #{{ nftId }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
@@ -49,7 +49,7 @@
           <v-list-item-subtitle class="text-color text-capitalize">{{ $t('deedCharacteristicsScarcity') }}: {{ cardScarcity }}</v-list-item-subtitle>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
-          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsPowerMinting') }}: {{ cardPowerMinting }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsPowerMinting') }}: {{ cardMintingPower }}</v-list-item-subtitle>
         </v-list-item>
         <v-list-item class="ms-4 my-n2" dense>
           <v-list-item-subtitle class="text-color">{{ $t('deedCharacteristicsMaxUsers') }}: {{ cardMaxUsers }}</v-list-item-subtitle>
@@ -93,7 +93,7 @@
                 color="primary"
                 depressed
                 dark>
-                <span class="text-ordinary-capitalize">{{ $t('deedTenantAccessButton') }}</span>
+                {{ $t('deedTenantAccessButton') }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -127,7 +127,7 @@
                 depressed
                 dark
                 @click="openMoveOutDrawer">
-                <span class="text-ordinary-capitalize">{{ $t('moveOut') }}</span>
+                {{ $t('moveOut') }}
               </v-btn>
               <v-btn
                 v-else-if="stopped"
@@ -140,7 +140,7 @@
                 depressed
                 dark
                 @click="openMoveInDrawer">
-                <span class="text-ordinary-capitalize">{{ $t('moveIn') }}</span>
+                {{ $t('moveIn') }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -167,7 +167,7 @@
                 color="primary"
                 depressed
                 @click="openRentDrawer">
-                <span class="text-ordinary-capitalize">{{ rentingButtonName }}</span>
+                {{ rentingButtonName }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -192,7 +192,7 @@
                 class="ms-auto"
                 outlined
                 text>
-                <span class="text-ordinary-capitalize">{{ $t('deedSellButton') }}</span>
+                {{ $t('deedSellButton') }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -210,7 +210,7 @@
         v-bind="attrs"
         v-on="on"
         @click="logout">
-        <span class="text-ordinary-capitalize">{{ $t('signOut') }}</span>
+        {{ $t('signOut') }}
       </v-btn>
       <v-tooltip v-else top>
         <template #activator="{ on, attrs }">
@@ -223,7 +223,7 @@
             v-bind="attrs"
             v-on="on"
             @click="login">
-            <span class="text-ordinary-capitalize">{{ $t('signIn') }}</span>
+            {{ $t('signIn') }}
           </v-btn>
         </template>
         <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
@@ -289,7 +289,7 @@ export default {
     cardMaxUsers() {
       return this.cardTraits.find(attr => attr.trait_type === 'Max users')?.value || '-';
     },
-    cardPowerMinting() {
+    cardMintingPower() {
       return this.cardTraits.find(attr => attr.trait_type === 'Minting Power')?.value || '-';
     },
     cardScarcity() {

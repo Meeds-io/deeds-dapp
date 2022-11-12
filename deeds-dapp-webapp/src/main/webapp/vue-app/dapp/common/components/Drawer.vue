@@ -73,7 +73,7 @@
           <v-progress-linear
             v-if="loading"
             indeterminate
-            color="secondary" />
+            color="primary" />
           <v-divider v-else class="my-0" />
         </template>
         <v-flex class="drawerContent flex-grow-1 border-box-sizing d-flex flex-column overflow-y-auto overflow-x-hidden">

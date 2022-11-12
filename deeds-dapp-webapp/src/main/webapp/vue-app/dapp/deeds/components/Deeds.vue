@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column mt-8 mt-sm-10">
     <deeds-nft-title />
     <template v-if="!noCityLeft">
       <div class="d-flex flex-column-reverse flex flex-md-row mb-8">

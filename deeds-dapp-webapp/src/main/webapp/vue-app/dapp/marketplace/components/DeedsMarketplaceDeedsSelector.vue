@@ -19,43 +19,45 @@
 
 -->
 <template>
-  <v-layout v-if="displaySelector" class="d-flex flex-column align-center mx-2 mt-4 mb-8">
-    <v-row class="ma-0">
-      <v-btn-toggle
-        v-model="offerTypes"
-        multiple
-        outlined
-        dense
-        group>
-        <deeds-offer-type-chip
-          :selected-offers="offerTypes"
-          :label="$t('rentalsTag')"
-          offer-type="RENTING"
-          color="secondary"
-          class="mx-2" />
-      </v-btn-toggle>
-    </v-row>
-    <v-row class="mt-4 mb-0 mx-0">
-      <v-btn-toggle
-        v-model="types"
-        multiple
-        outlined
-        dense
-        group>
-        <v-row no-gutters>
-          <v-col
-            v-for="cardType in cardTypes"
-            :key="cardType">
-            <deeds-card-type-chip
-              :card="cardType"
-              :selected-cards="types"
-              avatar-size="24"
-              class="ma-2" />
-          </v-col>
-        </v-row>
-      </v-btn-toggle>
-    </v-row>
-  </v-layout>
+  <div v-show="displaySelector">
+    <v-layout class="d-flex flex-column align-center mx-2 mt-4 mb-8">
+      <v-row class="ma-0">
+        <v-btn-toggle
+          v-model="offerTypes"
+          multiple
+          outlined
+          dense
+          group>
+          <deeds-offer-type-chip
+            :selected-offers="offerTypes"
+            :label="$t('rentalsTag')"
+            offer-type="RENTING"
+            color="secondary"
+            class="mx-2" />
+        </v-btn-toggle>
+      </v-row>
+      <v-row class="mt-4 mb-0 mx-0">
+        <v-btn-toggle
+          v-model="types"
+          multiple
+          outlined
+          dense
+          group>
+          <v-row no-gutters>
+            <v-col
+              v-for="cardType in cardTypes"
+              :key="cardType">
+              <deeds-card-type-chip
+                :card="cardType"
+                :selected-cards="types"
+                avatar-size="24"
+                class="ma-2" />
+            </v-col>
+          </v-row>
+        </v-btn-toggle>
+      </v-row>
+    </v-layout>
+  </div>
 </template>
 <script>
 export default {
@@ -86,6 +88,9 @@ export default {
         this.displaySelector = true;
       }
     },
+  },
+  created() {
+    this.displaySelector = this.hasOffers;
   },
 };
 </script>
