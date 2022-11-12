@@ -22,7 +22,10 @@
   <v-card id="marketplaceOffersList" flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
-        <deeds-marketplace-deeds-selector :has-offers="hasOffers" />
+        <deeds-marketplace-deeds-selector
+          :has-offers="hasOffers"
+          :selected-card-types="selectedCardTypes"
+          :selected-offer-types="selectedOfferTypes" />
       </div>
     </v-scale-transition>
     <v-progress-linear
@@ -41,8 +44,8 @@
           flat>
           <deeds-marketplace-offer-card
             :offer="offer"
-            :selected-cards="selectedCards"
-            :selected-offers="selectedOffers" />
+            :selected-cards="selectedCardTypes"
+            :selected-offers="selectedOfferTypes" />
         </v-card>
       </v-col>
       <v-col v-if="hasMore" cols="12">
@@ -64,6 +67,14 @@ export default {
       type: Array,
       default: null,
     },
+    selectedOfferTypes: {
+      type: Array,
+      default: null,
+    },
+    selectedCardTypes: {
+      type: Array,
+      default: null,
+    },
     totalSize: {
       type: Number,
       default: () => 0,
@@ -71,14 +82,6 @@ export default {
     hasOffers: {
       type: Boolean,
       default: false,
-    },
-    selectedOffers: {
-      type: Array,
-      default: null,
-    },
-    selectedCards: {
-      type: Array,
-      default: null,
     },
     loading: {
       type: Boolean,

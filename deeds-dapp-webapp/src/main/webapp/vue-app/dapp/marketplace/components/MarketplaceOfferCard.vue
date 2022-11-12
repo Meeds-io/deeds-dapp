@@ -21,11 +21,15 @@
 <template>
   <v-fab-transition>
     <div v-show="!standaloneDisplay && (!selected || animateOffer)">
-      <deeds-renting-offer-card
-        :offer="offer"
-        :selected-cards="selectedCards"
-        :selected-offers="selectedOffers"
-        @select="select" />
+      <v-hover v-slot="{ hover }">
+        <v-card :elevation="hover && 8 || 0" flat>
+          <deeds-renting-offer-card
+            :offer="offer"
+            :selected-cards="selectedCards"
+            :selected-offers="selectedOffers"
+            @select="select" />
+        </v-card>
+      </v-hover>
     </div>
   </v-fab-transition>
 </template>
