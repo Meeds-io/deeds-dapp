@@ -120,9 +120,7 @@
               name="sendSwapTransactionButton"
               class="ma-auto"
               @click="sendSwapTransaction">
-              <span class="text-ordinary-capitalize">
-                {{ swapButtonLabel }}
-              </span>
+              {{ swapButtonLabel }}
             </v-btn>
             <v-btn
               v-else
@@ -131,9 +129,7 @@
               name="sendApproveTransactionButton"
               class="ma-auto"
               @click="sendApproveTransaction">
-              <span class="text-ordinary-capitalize">
-                {{ approveButtonLabel }}
-              </span>
+              {{ approveButtonLabel }}
             </v-btn>
           </template>
         </div>

@@ -46,6 +46,22 @@ export function getOffers(paramsObj) {
   });
 }
 
+export function getOffer(offerId) {
+  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
+    method: 'GET',
+    headers: {
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error(`Error getting offer with id ${offerId}`);
+    } else {
+      return resp.json();
+    }
+  });
+}
+
 export function createOffer(offer) {
   return fetch(`/${window.parentAppLocation}/api/offers/`, {
     method: 'POST',

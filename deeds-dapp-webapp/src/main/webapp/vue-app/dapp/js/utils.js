@@ -28,3 +28,9 @@ export function getScrollbarWidth() {
   outer.parentNode.removeChild(outer);
   return scrollbarWidth;
 }
+
+export function getQueryParam(paramName) {
+  const uri = window.location.search.substring(1);
+  const params = new URLSearchParams(uri);
+  return params.get(paramName);
+}

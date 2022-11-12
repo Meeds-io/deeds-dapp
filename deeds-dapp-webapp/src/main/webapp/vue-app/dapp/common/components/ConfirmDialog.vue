@@ -37,9 +37,7 @@
           class="primary me-4"
           depressed
           @click="ok">
-          <span class="text-ordinary-capitalize">
-            {{ okLabel }}
-          </span>
+          {{ okLabel }}
         </v-btn>
         <v-btn
           :disabled="loading"
@@ -48,9 +46,7 @@
           outlined
           text
           @click="close">
-          <span class="text-ordinary-capitalize">
-            {{ cancelLabel }}
-          </span>
+          {{ cancelLabel }}
         </v-btn>
         <v-spacer />
       </v-card-actions>

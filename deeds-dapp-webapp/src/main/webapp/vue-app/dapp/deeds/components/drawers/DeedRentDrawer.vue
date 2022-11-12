@@ -43,7 +43,7 @@
       <v-card-text v-else>
         {{ $t('deedRentingEditDescription1') }}
         <div class="pt-4">{{ $t('deedRentingEditDescription2') }}</div>
-        <deeds-renting-offer-card :nft="nft" :offer="offer" />
+        <deeds-renting-offer-card :offer="offer" />
       </v-card-text>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
         <v-list-item
@@ -159,9 +159,7 @@
         class="me-2 ms-auto"
         name="cancelRent"
         @click="cancel">
-        <span class="text-ordinary-capitalize">
-          {{ $t('cancel') }}
-        </span>
+        {{ $t('cancel') }}
       </v-btn>
       <v-btn
         v-else
@@ -174,9 +172,7 @@
         depressed
         dark
         @click="deleteOffer(false)">
-        <span class="text-ordinary-capitalize">
-          {{ $t('deedRentingDeleteButton') }}
-        </span>
+        {{ $t('deedRentingDeleteButton') }}
       </v-btn>
       <v-btn
         :loading="sending"
@@ -189,9 +185,7 @@
         depressed
         dark
         @click="saveOffer">
-        <span class="text-ordinary-capitalize">
-          {{ buttonLabel }}
-        </span>
+        {{ buttonLabel }}
       </v-btn>
     </template>
   </deeds-drawer>

@@ -29,25 +29,25 @@
       :selected-value="expirationDuration"
       value="ONE_DAY"
       color="secondary">
-      <span class="text-ordinary-capitalize">{{ $t('deedRentingExpirationDurationOneDay') }}</span>
+      {{ $t('deedRentingExpirationDurationOneDay') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="THREE_DAYS"
       color="secondary">
-      <span class="text-ordinary-capitalize">{{ $t('deedRentingExpirationDurationThreeDays') }}</span>
+      {{ $t('deedRentingExpirationDurationThreeDays') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_WEEK"
       color="secondary">
-      <span class="text-ordinary-capitalize">{{ $t('deedRentingExpirationDurationOneWeek') }}</span>
+      {{ $t('deedRentingExpirationDurationOneWeek') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_MONTH"
       color="secondary">
-      <span class="text-ordinary-capitalize">{{ $t('deedRentingExpirationDurationOneMonth') }}</span>
+      {{ $t('deedRentingExpirationDurationOneMonth') }}
     </deeds-button-group-item>
   </v-btn-toggle>
 </template>
