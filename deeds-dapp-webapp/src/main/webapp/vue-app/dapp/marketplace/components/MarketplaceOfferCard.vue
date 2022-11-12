@@ -19,19 +19,15 @@
 
 -->
 <template>
-  <v-fab-transition v-if="isSelected || showOffer">
-    <div v-show="showOffer" id="marketplaceSelectedOffer">
+  <v-fab-transition>
+    <div v-show="!standaloneDisplay && (!selected || animateOffer)">
       <deeds-renting-offer-card
         :offer="offer"
         :selected-cards="selectedCards"
-        :selected-offers="selectedOffers" />
+        :selected-offers="selectedOffers"
+        @select="select" />
     </div>
   </v-fab-transition>
-  <deeds-renting-offer-card
-    v-else
-    :offer="offer"
-    :selected-cards="selectedCards"
-    :selected-offers="selectedOffers" />
 </template>
 <script>
 export default {
@@ -50,33 +46,45 @@ export default {
     },
   },
   data: () => ({
-    showOffer: false,
+    animateOffer: false,
+    standaloneDisplay: false,
   }),
   computed: Vuex.mapState({
     selectedOfferId: state => state.selectedOfferId,
     offerId() {
       return this.offer?.id;
     },
-    isSelected() {
+    selected() {
       return this.offerId === this.selectedOfferId;
     },
+    selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
   }),
   watch: {
-    isSelected() {
+    selected() {
       this.animateSelectedOffer();
+    },
+    selectedStandaloneOfferId() {
+      if (this.selectedStandaloneOfferId) {
+        window.setTimeout(() => this.standaloneDisplay = true, 200);
+      } else {
+        this.standaloneDisplay = false;
+      }
     },
   },
   mounted() {
     this.animateSelectedOffer();
   },
   methods: {
+    select() {
+      this.$store.commit('setStandaloneOfferId', this.offerId);
+    },
     animateSelectedOffer() {
-      if (this.isSelected) {
+      if (this.selected) {
         document.querySelector('#marketplaceOffersList').scrollIntoView({
           block: 'start',
         });
         window.setTimeout(() => {
-          this.showOffer = true;
+          this.animateOffer = true;
           this.$store.commit('setOfferId', null);
         }, 200);
       }

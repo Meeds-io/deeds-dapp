@@ -28,6 +28,10 @@ import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
 import * as deedTenantOfferService from './js/deedTenantOfferService.js';
 
+window.Object.defineProperty(Vue.prototype, '$utils', {
+  value: utils,
+});
+
 window.Object.defineProperty(Vue.prototype, '$ethUtils', {
   value: ethUtils,
 });
@@ -268,10 +272,14 @@ const store = new Vuex.Store({
     isMobile: false,
     poolsChanged: 2,
     selectedOfferId: null,
+    selectedStandaloneOfferId: null,
   },
   mutations: {
     setOfferId(state, value) {
       state.selectedOfferId = value;
+    },
+    setStandaloneOfferId(state, value) {
+      state.selectedStandaloneOfferId = value;
     },
     setMobile(state, value) {
       state.isMobile = value;

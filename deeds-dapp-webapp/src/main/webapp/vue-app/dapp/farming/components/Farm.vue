@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column">
+  <div class="d-flex flex-column mt-8 mt-sm-10">
     <deeds-add-liquidity />
     <deeds-rent-liquidity />
     <deeds-liquidity-pools />

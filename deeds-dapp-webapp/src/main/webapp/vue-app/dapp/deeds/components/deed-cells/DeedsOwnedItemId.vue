@@ -18,7 +18,7 @@
 -->
 <template>
   <v-list-item class="ps-0">
-    <v-list-item-avatar class="ma-0">
+    <v-list-item-avatar class="deed-avatar ma-0">
       <v-img :src="cardImage" />
     </v-list-item-avatar>
     <v-list-item-content>

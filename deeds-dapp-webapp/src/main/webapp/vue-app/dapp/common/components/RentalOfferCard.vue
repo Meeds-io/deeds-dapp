@@ -22,10 +22,11 @@
   <v-card
     class="d-flex flex-column"
     elevation="0"
-    outlined>
+    outlined
+    @click="$emit('select')">
     <div class="d-flex">
       <v-list-item-avatar
-        class="mx-2 mt-3 mb-auto"
+        class="deed-avatar mx-2 mt-3 mb-auto"
         height="70"
         width="70">
         <v-img :src="cardImage" />
@@ -150,10 +151,6 @@
 export default {
   props: {
     offer: {
-      type: Object,
-      default: null,
-    },
-    nft: {
       type: Object,
       default: null,
     },

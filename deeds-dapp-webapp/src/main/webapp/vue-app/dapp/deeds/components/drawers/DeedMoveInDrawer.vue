@@ -89,9 +89,7 @@
         depressed
         dark
         @click="closeAll()">
-        <span class="text-ordinary-capitalize">
-          {{ $t('gotIt') }}
-        </span>
+        {{ $t('gotIt') }}
       </v-btn>
     </template>
     <template v-else #footer>
@@ -103,9 +101,7 @@
         name="cancelMoveIn"
         min-width="120"
         @click="close(nftId)">
-        <span class="text-ordinary-capitalize">
-          {{ $t('cancel') }}
-        </span>
+        {{ $t('cancel') }}
       </v-btn>
       <v-btn
         :min-width="minButtonsWidth"
@@ -117,9 +113,7 @@
         depressed
         dark
         @click="sendRequest">
-        <span class="text-ordinary-capitalize">
-          {{ $t('requestTenantButton') }}
-        </span>
+        {{ $t('requestTenantButton') }}
       </v-btn>
     </template>
   </deeds-drawer>

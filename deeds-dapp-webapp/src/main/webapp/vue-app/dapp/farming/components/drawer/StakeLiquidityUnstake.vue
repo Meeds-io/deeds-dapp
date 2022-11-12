@@ -47,7 +47,7 @@
         :disabled="disabledUnstakeButton"
         :loading="sendingUnstake"
         name="unstakeTokenButton"
-        color="secondary"
+        color="primary"
         @click="unstake">
         {{ $t('unstake') }}
       </v-btn>
