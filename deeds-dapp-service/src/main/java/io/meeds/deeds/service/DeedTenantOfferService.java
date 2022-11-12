@@ -65,6 +65,11 @@ public class DeedTenantOfferService {
     return deedTenantOffers.map(Mapper::toDTO);
   }
 
+  public DeedTenantOfferDTO getOffer(Long offerId) {
+    DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
+    return Mapper.toDTO(offer);
+  }
+
   public DeedTenantOfferDTO createRentingOffer(String walletAddress,
                                                DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
                                                                                       UnauthorizedOperationException {

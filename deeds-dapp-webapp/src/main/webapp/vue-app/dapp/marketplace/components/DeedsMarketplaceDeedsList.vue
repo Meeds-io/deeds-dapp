@@ -19,12 +19,18 @@
 
 -->
 <template>
-  <v-card
-    id="marketplaceOffersList"
-    :loading="loading"
-    flat>
-    <deeds-marketplace-deeds-selector :has-offers="hasOffers" />
-    <v-row v-if="hasOffers" class="pa-0">
+  <v-card id="marketplaceOffersList" flat>
+    <v-scale-transition>
+      <div v-show="!selectedStandaloneOfferId">
+        <deeds-marketplace-deeds-selector :has-offers="hasOffers" />
+      </div>
+    </v-scale-transition>
+    <v-progress-linear
+      v-if="loading"
+      color="primary"
+      class="position-absolute"
+      indeterminate />
+    <v-row v-if="hasOffers" class="pa-0 my-0">
       <v-col
         v-for="offer in offers"
         :key="offer.id"
@@ -45,7 +51,7 @@
           text
           block
           @click="$root.$emit('deeds-offers-load-more')">
-          <span class="text-ordinary-capitalize">{{ $t('loadMore') }}</span>
+          {{ $t('loadMore') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -62,10 +68,6 @@ export default {
       type: Number,
       default: () => 0,
     },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
     hasOffers: {
       type: Boolean,
       default: false,
@@ -78,11 +80,16 @@ export default {
       type: Array,
       default: null,
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
-  computed: {
+  computed: Vuex.mapState({
+    selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
     hasMore() {
       return this.totalSize > this.offers?.length;
     },
-  },
+  }),
 };
 </script>

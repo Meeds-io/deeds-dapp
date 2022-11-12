@@ -22,11 +22,11 @@
     :href="deedTenantLink"
     target="_blank"
     rel="nofollow noreferrer noopener">
-    <span v-if="starting" class="text-ordinary-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
-    <span v-else-if="stopping" class="text-ordinary-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
+    <span v-if="starting" class="text-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
+    <span v-else-if="stopping" class="text-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
     <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
   </a>
-  <div v-else-if="stopped" class="text-ordinary-capitalize">
+  <div v-else-if="stopped" class="text-capitalize">
     {{ $t('vacant') }}
   </div>
   <div v-else>-</div>
