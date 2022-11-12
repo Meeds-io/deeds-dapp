@@ -159,6 +159,10 @@ export default {
       if (offerId) {
         this.standaloneDisplay = true;
         this.$store.commit('setStandaloneOfferId', Number(offerId));
+      } else if (this.selectedStandaloneOfferId) {
+        this.standaloneDisplay = true;
+        this.$store.commit('setStandaloneOfferId', Number(this.selectedStandaloneOfferId));
+        this.loadSelectedOffer();
       } else {
         this.loadFirstPage();
       }
