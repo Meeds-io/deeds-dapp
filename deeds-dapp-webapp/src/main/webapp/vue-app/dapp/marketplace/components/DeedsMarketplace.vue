@@ -38,6 +38,7 @@ export default {
   },
   created() {
     window.addEventListener('popstate', (event) => this.refreshSelectedOfferId(event));
+    this.refreshUrl();
   },
   methods: {
     refreshSelectedOfferId() {
@@ -53,7 +54,10 @@ export default {
           && `${window.location.pathname}?offer=${this.selectedStandaloneOfferId}`
           || window.location.pathname;
       if (!window.location.href.endsWith(link)) {
-        window.history.pushState({}, '', `${origin}${link}`);
+        const fullLink = `${origin}${link}`;
+        this.$nextTick().then(() =>
+          window.history.pushState({}, '', fullLink)
+        );
       }
     },
   }

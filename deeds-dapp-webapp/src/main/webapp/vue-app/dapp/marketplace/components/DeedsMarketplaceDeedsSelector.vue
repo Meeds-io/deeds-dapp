@@ -38,18 +38,18 @@
       </v-row>
       <v-row class="mt-4 mb-0 mx-0">
         <v-btn-toggle
-          v-model="types"
+          v-model="cardTypes"
           multiple
           outlined
           dense
           group>
           <v-row no-gutters>
             <v-col
-              v-for="cardType in cardTypes"
+              v-for="cardType in availableCardTypes"
               :key="cardType">
               <deeds-card-type-chip
                 :card="cardType"
-                :selected-cards="types"
+                :selected-cards="cardTypes"
                 avatar-size="24"
                 class="ma-2" />
             </v-col>
@@ -66,19 +66,27 @@ export default {
       type: Boolean,
       default: false,
     },
+    selectedCardTypes: {
+      type: Array,
+      default: null,
+    },
+    selectedOfferTypes: {
+      type: Array,
+      default: null,
+    },
   },
   data: () => ({
     displaySelector: false,
-    types: [],
+    cardTypes: [],
     offerTypes: [],
   }),
   computed: Vuex.mapState({
-    cardTypes: state => state.cardTypes,
+    availableCardTypes: state => state.cardTypes,
     availableOfferTypes: state => state.offerTypes,
   }),
   watch: {
-    types() {
-      this.$root.$emit('deeds-offers-select-card-types', this.types.map(type => type.toUpperCase()));
+    cardTypes() {
+      this.$root.$emit('deeds-offers-select-card-types', this.cardTypes.map(type => type.toUpperCase()));
     },
     offerTypes() {
       this.$root.$emit('deeds-offers-select-offer-types', this.offerTypes.map(type => type.toUpperCase()));
@@ -90,6 +98,8 @@ export default {
     },
   },
   created() {
+    this.cardTypes = this.selectedCardTypes || [];
+    this.offerTypes = this.selectedOfferTypes || [];
     this.displaySelector = this.hasOffers;
   },
 };

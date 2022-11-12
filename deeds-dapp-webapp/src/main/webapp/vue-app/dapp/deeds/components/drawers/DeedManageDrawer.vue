@@ -93,6 +93,7 @@
                 color="primary"
                 depressed
                 dark>
+                <v-icon class="me-2" small>fa-external-link</v-icon>
                 {{ $t('deedTenantAccessButton') }}
               </v-btn>
             </v-list-item-action>
@@ -145,6 +146,30 @@
             </v-list-item-action>
           </v-list-item>
           <v-list-item
+            v-if="showSeeRentPart"
+            class="ms-4"
+            two-line
+            dense>
+            <v-list-item-content>
+              <v-list-item-subtitle
+                :title="$t('deedRentSeeRentDescription')"
+                class="text-color text-truncate-2">
+                {{ $t('deedRentSeeRentDescription') }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                :min-width="minButtonsWidth"
+                class="ms-auto"
+                color="primary"
+                outlined
+                depressed
+                @click="openRentDetails">
+                {{ $t('deedRentSeeRentButton') }}
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item
             v-if="showRentPart"
             class="ms-4"
             two-line
@@ -192,6 +217,7 @@
                 class="ms-auto"
                 outlined
                 text>
+                <v-icon class="me-2" small>fa-external-link</v-icon>
                 {{ $t('deedSellButton') }}
               </v-btn>
             </v-list-item-action>
@@ -345,6 +371,9 @@ export default {
     showRentPart() {
       return this.authenticated && this.isOwner;
     },
+    showSeeRentPart() {
+      return this.authenticated && this.isOwner && this.hasRentOffers;
+    },
     hasRentOffers() {
       return !!this.rentalOffers?.length;
     },
@@ -496,6 +525,10 @@ export default {
     },
     refreshAuthentication() {
       this.$emit('input', this.$authentication.isAuthenticated(this.address));
+    },
+    openRentDetails() {
+      this.$store.commit('setStandaloneOfferId', this.rentalOffers[0].id);
+      this.$root.$emit('switch-page', 'marketplace');
     },
   },
 };

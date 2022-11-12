@@ -108,7 +108,7 @@
             <div class="d-flex flex-column">
               <div class="d-flex">
                 <div class="flex-grow-1">
-                  <div class="secondary--text mb-n1">{{ offer.ownerMintingPercentage }}%</div>
+                  <div class="error--text mb-n1">{{ offer.ownerMintingPercentage }}%</div>
                   <v-label>
                     <span class="caption">
                       {{ $t('deedRentingRewardDistributionForTheLender') }}
@@ -116,7 +116,7 @@
                   </v-label>
                 </div>
                 <div class="flex-grow-1">
-                  <div class="primary--text mb-n1">{{ (100 - offer.ownerMintingPercentage) }}%</div>
+                  <div class="green--text mb-n1">{{ (100 - offer.ownerMintingPercentage) }}%</div>
                   <v-label>
                     <span class="caption">
                       {{ $t('deedRentingRewardDistributionForTheTenant') }}
@@ -127,8 +127,8 @@
               <div class="mx-n2">
                 <v-slider
                   v-model="offer.ownerMintingPercentage"
-                  color="secondary py-1"
-                  track-color="primary py-1"
+                  color="error py-1"
+                  track-color="success py-1"
                   thumb-color="white border-color mt-3px"
                   loader-height="8px"
                   height="8px"
