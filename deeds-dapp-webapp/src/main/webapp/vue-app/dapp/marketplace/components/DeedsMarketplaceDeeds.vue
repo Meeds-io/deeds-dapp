@@ -48,8 +48,8 @@
       :offers="offers"
       :has-offers="hasOffers"
       :total-size="totalSize"
-      :selected-cards="cardTypes"
-      :selected-offers="offerTypes"
+      :selected-card-types="cardTypes"
+      :selected-offer-types="offerTypes"
       :loading="loading"
       @load-more="loadMore" />
     <deeds-marketplace-deeds-empty
@@ -114,11 +114,15 @@ export default {
         this.refresh();
       }
     },
-    cardTypes() {
-      this.refresh();
+    cardTypes(newCardTypes, oldCardTypes) {
+      if (newCardTypes.length !== oldCardTypes.length) {
+        this.refresh();
+      }
     },
-    offerTypes() {
-      this.refresh();
+    offerTypes(newOfferTypes, oldOfferTypes) {
+      if (newOfferTypes.length !== oldOfferTypes.length) {
+        this.refresh();
+      }
     },
     loading() {
       if (!this.loading) {
@@ -159,6 +163,10 @@ export default {
       if (offerId) {
         this.standaloneDisplay = true;
         this.$store.commit('setStandaloneOfferId', Number(offerId));
+      } else if (this.selectedStandaloneOfferId) {
+        this.standaloneDisplay = true;
+        this.$store.commit('setStandaloneOfferId', Number(this.selectedStandaloneOfferId));
+        this.loadSelectedOffer();
       } else {
         this.loadFirstPage();
       }

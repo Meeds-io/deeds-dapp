@@ -32,7 +32,12 @@
         short-format />
     </v-list-item-action-text>
     <v-list-item-action class="ms-0 ms-sm-8 align-self-end">
+      <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
+        <deeds-metamask-button class="ma-auto" />
+      </div>
       <v-btn
+        v-else
+        :disabled="isOwner"
         color="primary"
         @click="close">
         {{ $t('deedsOfferRentingButton') }}
@@ -49,8 +54,16 @@ export default {
     },
   },
   computed: Vuex.mapState({
+    address: state => state.address,
+    metamaskOffline: state => state.metamaskOffline,
     expirationDate() {
       return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
+    },
+    isOwner() {
+      return this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+    },
+    displayActions() {
+      return this.metamaskOffline || !this.isOwner;
     },
   }),
 };
