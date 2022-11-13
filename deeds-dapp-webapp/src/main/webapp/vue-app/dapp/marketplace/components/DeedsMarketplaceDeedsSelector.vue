@@ -21,7 +21,7 @@
 <template>
   <div v-show="displaySelector">
     <v-layout class="d-flex flex-column align-center mx-2 mt-4 mb-8">
-      <v-row class="ma-0">
+      <v-row class="ma-0 text-center">
         <v-btn-toggle
           v-model="offerTypes"
           multiple
@@ -36,7 +36,7 @@
             class="mx-2" />
         </v-btn-toggle>
       </v-row>
-      <v-row class="mt-4 mb-0 mx-0">
+      <v-row class="mt-4 mb-0 mx-0 text-center">
         <v-btn-toggle
           v-model="cardTypes"
           multiple

@@ -19,9 +19,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +43,11 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 
+import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
+import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStartedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse;
@@ -135,7 +141,7 @@ public class BlockchainService {
    * 
    * @param fromBlock Start block
    * @param toBlock End Block to filter
-   * @return {@link List} od {@link DeedTenant}
+   * @return {@link List} of {@link DeedTenant}
    */
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -154,29 +160,7 @@ public class BlockchainService {
                     .map(LogObject::getTransactionHash)
                     .map(this::getTransactionReceipt)
                     .filter(TransactionReceipt::isStatusOK)
-                    .map(transactionReceipt -> {
-                      List<TenantStartedEventResponse> startedEvents =
-                                                                     DeedTenantProvisioning.getTenantStartedEvents(transactionReceipt);
-                      if (startedEvents != null && !startedEvents.isEmpty()) {
-                        TenantStartedEventResponse tenantStartedEventResponse = startedEvents.get(0);
-                        DeedTenant deedTenant = new DeedTenant();
-                        deedTenant.setNftId(tenantStartedEventResponse.nftId.longValue());
-                        deedTenant.setStartupTransactionHash(transactionReceipt.getTransactionHash());
-                        deedTenant.setManagerAddress(tenantStartedEventResponse.manager);
-                        return deedTenant;
-                      }
-                      List<TenantStoppedEventResponse> endedEvents =
-                                                                   DeedTenantProvisioning.getTenantStoppedEvents(transactionReceipt);
-                      if (endedEvents != null && !endedEvents.isEmpty()) {
-                        TenantStoppedEventResponse tenantStoppedEventResponse = endedEvents.get(0);
-                        DeedTenant deedTenant = new DeedTenant();
-                        deedTenant.setNftId(tenantStoppedEventResponse.nftId.longValue());
-                        deedTenant.setShutdownTransactionHash(transactionReceipt.getTransactionHash());
-                        deedTenant.setManagerAddress(tenantStoppedEventResponse.manager);
-                        return deedTenant;
-                      }
-                      return null;
-                    })
+                    .map(this::getMinedDeedTenant)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
     } catch (IOException e) {
@@ -184,16 +168,39 @@ public class BlockchainService {
     }
   }
 
-  private TransactionReceipt getTransactionReceipt(String transactionHash) {
+  /**
+   * Retrieves the list of mined ownership transfer of a Deed transactions
+   * starting from a block to another
+   * 
+   * @param  fromBlock Start block
+   * @param  toBlock   End Block to filter
+   * @return           {@link Set} of NFT ID of type
+   *                   {@link DeedOwnershipTransferEvent}
+   */
+  public Set<DeedOwnershipTransferEvent> getMinedTransferOwnershipDeedTransactions(long fromBlock, long toBlock) {
+    EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
+                                        new DefaultBlockParameterNumber(toBlock),
+                                        deed.getContractAddress());
     try {
-      EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
-      if (ethGetTransactionReceipt != null) {
-        return ethGetTransactionReceipt.getResult();
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      @SuppressWarnings("rawtypes")
+      List<LogResult> ethLogs = ethLog.getLogs();
+      if (CollectionUtils.isEmpty(ethLogs)) {
+        return Collections.emptySet();
       }
+      List<DeedOwnershipTransferEvent> events = ethLogs.stream()
+                                                       .map(logResult -> (LogObject) logResult.get())
+                                                       .filter(logObject -> !logObject.isRemoved())
+                                                       .map(LogObject::getTransactionHash)
+                                                       .map(this::getTransactionReceipt)
+                                                       .filter(TransactionReceipt::isStatusOK)
+                                                       .flatMap(this::getTransferOwnershipEvents)
+                                                       .filter(Objects::nonNull)
+                                                       .collect(Collectors.toList());
+      return new LinkedHashSet<>(events);
     } catch (IOException e) {
-      throw new IllegalStateException("Error retrieving Receipt for Transaction with hash: " + transactionHash, e);
+      throw new IllegalStateException("Error retrieving event logs", e);
     }
-    return null;
   }
 
   /**
@@ -417,6 +424,64 @@ public class BlockchainService {
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
+  }
+
+  private Stream<DeedOwnershipTransferEvent> getTransferOwnershipEvents(TransactionReceipt transactionReceipt) {
+    List<TransferSingleEventResponse> transferSingleEvents = Deed.getTransferSingleEvents(transactionReceipt);
+    if (transferSingleEvents != null && !transferSingleEvents.isEmpty()) {
+      return transferSingleEvents.stream()
+                                 .map(transferSingleEventResponse -> new DeedOwnershipTransferEvent(transferSingleEventResponse._id.longValue(),
+                                                                                                    transferSingleEventResponse._from,
+                                                                                                    transferSingleEventResponse._to));
+    }
+    List<TransferBatchEventResponse> transferBatchEvents = Deed.getTransferBatchEvents(transactionReceipt);
+    if (transferBatchEvents != null && !transferBatchEvents.isEmpty()) {
+      return transferBatchEvents.stream().flatMap(transferBatchEventResponse -> {
+        String from = transferBatchEventResponse._from;
+        String to = transferBatchEventResponse._to;
+        return transferBatchEventResponse._ids.stream()
+                                              .map(nftId -> new DeedOwnershipTransferEvent(nftId.longValue(),
+                                                                                           from,
+                                                                                           to));
+      });
+    }
+    return Stream.empty();
+  }
+
+  private DeedTenant getMinedDeedTenant(TransactionReceipt transactionReceipt) {
+    List<TenantStartedEventResponse> startedEvents =
+                                                   DeedTenantProvisioning.getTenantStartedEvents(transactionReceipt);
+    if (startedEvents != null && !startedEvents.isEmpty()) {
+      TenantStartedEventResponse tenantStartedEventResponse = startedEvents.get(0);
+      DeedTenant deedTenant = new DeedTenant();
+      deedTenant.setNftId(tenantStartedEventResponse.nftId.longValue());
+      deedTenant.setStartupTransactionHash(transactionReceipt.getTransactionHash());
+      deedTenant.setManagerAddress(tenantStartedEventResponse.manager);
+      return deedTenant;
+    }
+    List<TenantStoppedEventResponse> endedEvents =
+                                                 DeedTenantProvisioning.getTenantStoppedEvents(transactionReceipt);
+    if (endedEvents != null && !endedEvents.isEmpty()) {
+      TenantStoppedEventResponse tenantStoppedEventResponse = endedEvents.get(0);
+      DeedTenant deedTenant = new DeedTenant();
+      deedTenant.setNftId(tenantStoppedEventResponse.nftId.longValue());
+      deedTenant.setShutdownTransactionHash(transactionReceipt.getTransactionHash());
+      deedTenant.setManagerAddress(tenantStoppedEventResponse.manager);
+      return deedTenant;
+    }
+    return null;
+  }
+
+  private TransactionReceipt getTransactionReceipt(String transactionHash) {
+    try {
+      EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
+      if (ethGetTransactionReceipt != null) {
+        return ethGetTransactionReceipt.getResult();
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving Receipt for Transaction with hash: " + transactionHash, e);
+    }
+    return null;
   }
 
   private <T> T blockchainCall(RemoteFunctionCall<T> remoteCall) {
