@@ -156,13 +156,18 @@
               small />
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action-text v-if="expirationDate" class="d-flex py-0">
-          <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
-          <deeds-timer
-            :end-time="expirationDate"
-            text-color=""
-            short-format />
-        </v-list-item-action-text>
+        <template v-if="expirationTime">
+          <v-list-item-action-text v-if="hasExpired" class="d-flex py-0">
+            <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
+          </v-list-item-action-text>
+          <v-list-item-action-text v-else class="d-flex py-0">
+            <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
+            <deeds-timer
+              :end-time="expirationTime"
+              text-color=""
+              short-format />
+          </v-list-item-action-text>
+        </template>
       </v-list-item>
     </v-card-text>
   </v-card>
@@ -189,6 +194,7 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
+    now: state => state.now,
     nftId() {
       return this.offer?.nftId;
     },
@@ -231,8 +237,11 @@ export default {
     rentalDuration() {
       return this.originalOffer?.duration;
     },
-    expirationDate() {
+    expirationTime() {
       return this.originalOffer?.expirationDate && new Date(this.originalOffer.expirationDate).getTime() || 0;
+    },
+    hasExpired() {
+      return this.expirationTime < this.now;
     },
     tokenAmount() {
       return this.originalOffer?.amount || 0;

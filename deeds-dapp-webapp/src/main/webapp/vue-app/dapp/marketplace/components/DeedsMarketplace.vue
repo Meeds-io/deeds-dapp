@@ -36,7 +36,7 @@ export default {
       this.refreshUrl();
     },
   },
-  created() {
+  mounted() {
     window.addEventListener('popstate', (event) => this.refreshSelectedOfferId(event));
     this.refreshUrl();
   },

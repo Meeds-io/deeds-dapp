@@ -22,23 +22,36 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
+import org.web3j.protocol.core.Request;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthLog;
+import org.web3j.protocol.core.methods.response.EthLog.LogObject;
+import org.web3j.protocol.core.methods.response.EthLog.LogResult;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 
+import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
+import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
@@ -447,6 +460,75 @@ class BlockchainServiceTest {
     });
     assertEquals(new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18)),
                  blockchainService.meedBalanceOfNoDecimals(address));
+  }
+
+  @SuppressWarnings({
+      "unchecked", "rawtypes"
+  })
+  @Test
+  void testGetMinedTransferOwnershipDeedTransactions() throws Exception {
+    long fromBlock = 15l;
+    long toBlock = 20l;
+
+    Request getLogsRequest = mock(Request.class);
+    EthLog ethLogs = mock(EthLog.class);
+    when(web3j.ethGetLogs(any())).thenReturn(getLogsRequest);
+    when(getLogsRequest.send()).thenReturn(ethLogs);
+    Set<DeedOwnershipTransferEvent> minedTransactions = blockchainService.getMinedTransferOwnershipDeedTransactions(fromBlock,
+                                                                                                                    toBlock);
+    assertNotNull(minedTransactions);
+    assertTrue(minedTransactions.isEmpty());
+
+    String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
+    LogResult logResult = mock(LogResult.class);
+    LogObject logObject = mock(LogObject.class);
+    when(logResult.get()).thenReturn(logObject);
+    when(ethLogs.getLogs()).thenReturn(Collections.singletonList(logResult));
+
+    when(logObject.getTransactionHash()).thenReturn(transactionHash);
+    Request getTransactionReceiptRequest = mock(Request.class);
+    when(web3j.ethGetTransactionReceipt(transactionHash)).thenReturn(getTransactionReceiptRequest);
+    EthGetTransactionReceipt ethGetTransactionReceipt = mock(EthGetTransactionReceipt.class);
+    when(getTransactionReceiptRequest.send()).thenReturn(ethGetTransactionReceipt);
+    TransactionReceipt transactionReceipt = mock(TransactionReceipt.class);
+    when(ethGetTransactionReceipt.getResult()).thenReturn(transactionReceipt);
+    when(transactionReceipt.isStatusOK()).thenReturn(false);
+
+    minedTransactions = blockchainService.getMinedTransferOwnershipDeedTransactions(fromBlock, toBlock);
+    assertNotNull(minedTransactions);
+    assertTrue(minedTransactions.isEmpty());
+
+    when(transactionReceipt.isStatusOK()).thenReturn(true);
+    MockedStatic<Deed> mockDeedContract = mockStatic(Deed.class);
+    String fromAddress = "fromAddress";
+    String toAddress = "toAddress";
+    long nftId = 2l;
+
+    mockDeedContract.when(() -> Deed.getTransferSingleEvents(transactionReceipt))
+                    .thenReturn(Arrays.asList(newTransferSingleEvent(nftId, fromAddress, toAddress),
+                                              newTransferSingleEvent(nftId, fromAddress, toAddress),
+                                              newTransferSingleEvent(nftId, fromAddress, toAddress)));
+
+    minedTransactions = blockchainService.getMinedTransferOwnershipDeedTransactions(fromBlock, toBlock);
+    assertNotNull(minedTransactions);
+    assertEquals(1, minedTransactions.size());
+
+    mockDeedContract.when(() -> Deed.getTransferSingleEvents(transactionReceipt))
+                    .thenReturn(Arrays.asList(newTransferSingleEvent(nftId, fromAddress, toAddress),
+                                              newTransferSingleEvent(nftId + 1, fromAddress, toAddress),
+                                              newTransferSingleEvent(nftId + 2, fromAddress, toAddress)));
+
+    minedTransactions = blockchainService.getMinedTransferOwnershipDeedTransactions(fromBlock, toBlock);
+    assertNotNull(minedTransactions);
+    assertEquals(3, minedTransactions.size());
+  }
+
+  private TransferSingleEventResponse newTransferSingleEvent(long nftId, String fromAddress, String toAddress) {
+    TransferSingleEventResponse eventResponse = new TransferSingleEventResponse();
+    eventResponse._id = BigInteger.valueOf(nftId);
+    eventResponse._from = fromAddress;
+    eventResponse._to = toAddress;
+    return eventResponse;
   }
 
 }
