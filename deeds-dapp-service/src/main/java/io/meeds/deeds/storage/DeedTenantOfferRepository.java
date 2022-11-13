@@ -16,6 +16,7 @@
 package io.meeds.deeds.storage;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,9 +30,18 @@ public interface DeedTenantOfferRepository extends ElasticsearchRepository<DeedT
 
   Page<DeedTenantOffer> findByNftIdAndEnabledTrue(long nftId, Pageable pageable);
 
+  Page<DeedTenantOffer> findByNftIdAndOwnerAndEnabledTrue(Long nftId, String ownerAddress, Pageable pageable);
+
   Page<DeedTenantOffer> findByOfferTypeInAndCardTypeInAndEnabledTrue(Collection<OfferType> offerTypes,
                                                                      Collection<DeedCard> cardTypes,
                                                                      Pageable pageable);
+
+  Page<DeedTenantOffer> findByOfferTypeInAndCardTypeInAndOwnerAndEnabledTrue(List<OfferType> offerTypes,
+                                                                             List<DeedCard> cardTypes,
+                                                                             String ownerAddress,
+                                                                             Pageable pageable);
+
+  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
 
   void deleteByNftId(long nftId);
 

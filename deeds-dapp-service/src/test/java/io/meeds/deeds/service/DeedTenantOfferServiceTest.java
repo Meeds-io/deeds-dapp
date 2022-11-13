@@ -31,6 +31,8 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -65,6 +67,9 @@ class DeedTenantOfferServiceTest {
   @MockBean
   private TenantService             tenantService;
 
+  @MockBean
+  private ListenerService           listenerService;
+
   @Autowired
   private DeedTenantOfferService    deedTenantOfferService;
 
@@ -89,6 +94,24 @@ class DeedTenantOfferServiceTest {
   @SuppressWarnings({
       "rawtypes", "unchecked"
   })
+  void testGetOffersListByNftIdAndOwned() {
+    long nftId = 2l;
+    String address = "address";
+    Pageable pageable = mock(Pageable.class);
+    Page<DeedTenantOffer> page = mock(Page.class);
+    Page pageDTO = mock(Page.class);
+    when(deedTenantOfferRepository.findByNftIdAndOwnerAndEnabledTrue(nftId, address, pageable)).thenReturn(page);
+
+    when(page.map(any())).thenReturn(pageDTO);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(nftId, address, pageable);
+    assertNotNull(result);
+  }
+
+  @Test
+  @SuppressWarnings({
+      "rawtypes", "unchecked"
+  })
   void testGetOffersList() {
     Pageable pageable = mock(Pageable.class);
     Page<DeedTenantOffer> page = mock(Page.class);
@@ -97,7 +120,34 @@ class DeedTenantOfferServiceTest {
 
     when(page.map(any())).thenReturn(pageDTO);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(null, null, pageable);
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(Collections.emptyList(),
+                                                                           Collections.emptyList(),
+                                                                           pageable);
+    assertNotNull(result);
+  }
+
+  @Test
+  @SuppressWarnings({
+      "rawtypes", "unchecked"
+  })
+  void testGetOwnedOffersList() {
+    String address = "address";
+    Pageable pageable = mock(Pageable.class);
+    Page<DeedTenantOffer> page = mock(Page.class);
+    Page pageDTO = mock(Page.class);
+    List<DeedCard> cards = Collections.singletonList(DeedCard.COMMON);
+    List<OfferType> offerTypes = Collections.singletonList(OfferType.RENTING);
+    when(deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndOwnerAndEnabledTrue(offerTypes,
+                                                                                        cards,
+                                                                                        address,
+                                                                                        pageable)).thenReturn(page);
+
+    when(page.map(any())).thenReturn(pageDTO);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(cards,
+                                                                           offerTypes,
+                                                                           address,
+                                                                           pageable);
     assertNotNull(result);
   }
 
@@ -405,6 +455,21 @@ class DeedTenantOfferServiceTest {
     when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(deedTenantOffer));
     deedTenantOfferService.deleteRentingOffer(walletAddress, nftId);
     verify(deedTenantOfferRepository, times(1)).deleteById(nftId);
+  }
+  
+  @Test
+  void testCancelRentingOfferWhenExists() throws Exception {
+    long nftId = 2l;
+    String walletAddress = "address";
+    DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
+    deedTenantOffer.setNftId(nftId);
+
+    List<DeedTenantOffer> offers = Collections.singletonList(deedTenantOffer);
+    when(deedTenantOfferRepository.findByOwnerNotAndNftIdAndEnabledTrue(walletAddress, nftId)).thenReturn(offers);
+
+    deedTenantOfferService.cancelOffers(walletAddress, nftId);
+
+    verify(deedTenantOfferRepository, times(1)).deleteAll(offers);
   }
 
 }
