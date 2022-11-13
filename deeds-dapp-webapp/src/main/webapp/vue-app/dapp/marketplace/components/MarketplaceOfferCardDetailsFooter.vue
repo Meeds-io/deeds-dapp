@@ -20,18 +20,25 @@
 -->
 <template>
   <v-list-item class="d-flex flex-column flex-sm-row justify-end px-0 mt-4 mt-sm-auto">
-    <v-list-item-action-text v-if="expirationDate" class="d-flex py-0 subtitle-1">
-      <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
-    </v-list-item-action-text>
-    <v-list-item-action-text v-if="expirationDate" class="d-flex py-0 subtitle-1">
-      <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
-      <deeds-timer
-        :end-time="expirationDate"
-        class="ms-sm-1"
-        text-color=""
-        short-format />
-    </v-list-item-action-text>
-    <v-list-item-action class="ms-0 ms-sm-8 align-self-end">
+    <template v-if="expirationTime">
+      <v-list-item-action-text v-if="hasExpired" class="d-flex py-0 subtitle-1">
+        <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
+      </v-list-item-action-text>
+      <template v-else>
+        <v-list-item-action-text class="d-flex py-0 subtitle-1">
+          <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
+        </v-list-item-action-text>
+        <v-list-item-action-text class="d-flex py-0 subtitle-1">
+          <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
+          <deeds-timer
+            :end-time="expirationTime"
+            class="ms-sm-1"
+            text-color=""
+            short-format />
+        </v-list-item-action-text>
+      </template>
+    </template>
+    <v-list-item-action v-if="!hasExpired" class="ms-0 ms-sm-8 align-self-center align-self-sm-end">
       <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
         <deeds-metamask-button class="ma-auto" />
       </div>
@@ -56,8 +63,12 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     metamaskOffline: state => state.metamaskOffline,
-    expirationDate() {
+    now: state => state.now,
+    expirationTime() {
       return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
+    },
+    hasExpired() {
+      return this.expirationTime && this.expirationTime < this.now;
     },
     isOwner() {
       return this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();

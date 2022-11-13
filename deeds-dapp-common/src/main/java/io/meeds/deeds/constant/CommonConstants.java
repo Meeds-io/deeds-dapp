@@ -13,29 +13,32 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.scheduling.task;
+package io.meeds.deeds.constant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import io.meeds.deeds.service.ListenerService;
+public class CommonConstants {
 
-public class ListenerEventCleanupTask {
-
-  private static final Logger    LOG = LoggerFactory.getLogger(ListenerEventCleanupTask.class);
-
-  @Autowired
-  private ListenerService listenerService;
-
-  @Scheduled(cron = "0 0 0/12 * * *")
-  public synchronized void triggerCleanupEvents() {
-    try {
-      listenerService.cleanupElasticsearchEvents();
-    } catch (Exception e) {
-      LOG.warn("An error occurred while cleaning events on elasticsearch", e);
-    }
+  private CommonConstants() {
+    // Static elements only, not instantiable
   }
 
+  public static final String DEED_OWNERSHIP_TRANSFERRED_BLOCKCHAIN_EVENT = "deed.event.transferOwnershipFromBlockchain";
+
+  public static final String DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT     = "deed.event.transferOwnershipFromDeedTenant";
+
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Data
+  public static class DeedOwnershipTransferEvent {
+
+    private long   nftId;
+
+    private String from;
+
+    private String to;
+
+  }
 }
