@@ -438,6 +438,7 @@ export default {
       this.loadingRentalOffers = true;
       return this.$deedTenantOfferService.getOffers({
         nftId: this.nftId,
+        onlyOwned: true,
       })
         .then(offers => this.rentalOffers = offers?._embedded?.deedTenantOfferDTOList)
         .finally(() => this.loadingRentalOffers = false);

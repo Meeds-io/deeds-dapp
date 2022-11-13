@@ -41,14 +41,32 @@ import io.meeds.deeds.utils.Mapper;
 @Component
 public class DeedTenantOfferService {
 
+  private static final String       OFFER_CREATED_EVENT  = "deed.event.offerCreated";
+
+  private static final String       OFFER_UPDATED_EVENT  = "deed.event.offerUpdated";
+
+  private static final String       OFFER_DELETED_EVENT  = "deed.event.offerDeleted";
+
+  private static final String       OFFER_CANCELED_EVENT = "deed.event.offerCanceled";
+
   @Autowired
   private DeedTenantOfferRepository deedTenantOfferRepository;
 
   @Autowired
   private TenantService             tenantService;
 
+  @Autowired
+  private ListenerService           listenerService;
+
   public Page<DeedTenantOfferDTO> getOffersList(long nftId, Pageable pageable) {
     Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByNftIdAndEnabledTrue(nftId, pageable);
+    return deedTenantOffers.map(Mapper::toDTO);
+  }
+
+  public Page<DeedTenantOfferDTO> getOffersList(Long nftId, String ownerAddress, Pageable pageable) {
+    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByNftIdAndOwnerAndEnabledTrue(nftId,
+                                                                                                         ownerAddress,
+                                                                                                         pageable);
     return deedTenantOffers.map(Mapper::toDTO);
   }
 
@@ -60,9 +78,26 @@ public class DeedTenantOfferService {
       offerTypes = Stream.of(OfferType.values()).collect(Collectors.toList());
     }
     Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndEnabledTrue(offerTypes,
-                                                                                                              cardTypes,
-                                                                                                              pageable);
+                                                                                                                    cardTypes,
+                                                                                                                    pageable);
     return deedTenantOffers.map(Mapper::toDTO);
+  }
+
+  public Page<DeedTenantOfferDTO> getOffersList(List<DeedCard> cardTypes,
+                                                List<OfferType> offerTypes,
+                                                String ownerAddress,
+                                                Pageable pageable) {
+    if (CollectionUtils.isEmpty(cardTypes)) {
+      cardTypes = Stream.of(DeedCard.values()).collect(Collectors.toList());
+    }
+    if (CollectionUtils.isEmpty(offerTypes)) {
+      offerTypes = Stream.of(OfferType.values()).collect(Collectors.toList());
+    }
+    Page<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndOwnerAndEnabledTrue(offerTypes,
+                                                                                                                  cardTypes,
+                                                                                                                  ownerAddress,
+                                                                                                                  pageable);
+    return offers.map(Mapper::toDTO);
   }
 
   public DeedTenantOfferDTO getOffer(Long offerId) {
@@ -110,6 +145,7 @@ public class DeedTenantOfferService {
     }
     deedTenantOffer.setEnabled(true);
     deedTenantOffer = saveOffer(deedTenantOffer);
+    listenerService.publishEvent(OFFER_CREATED_EVENT, deedTenantOffer);
     return Mapper.toDTO(deedTenantOffer);
   }
 
@@ -145,6 +181,7 @@ public class DeedTenantOfferService {
     }
 
     existingDeedTenantOffer = saveOffer(existingDeedTenantOffer);
+    listenerService.publishEvent(OFFER_UPDATED_EVENT, existingDeedTenantOffer);
     return Mapper.toDTO(existingDeedTenantOffer);
   }
 
@@ -157,7 +194,16 @@ public class DeedTenantOfferService {
     if (!tenantService.isDeedOwner(walletAddress, existingDeedTenantOffer.getNftId())) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, existingDeedTenantOffer.getNftId()));
     }
+    listenerService.publishEvent(OFFER_DELETED_EVENT, existingDeedTenantOffer);
     deedTenantOfferRepository.deleteById(id);
+  }
+
+  public void cancelOffers(String newOwner, long nftId) {
+    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOwnerNotAndNftIdAndEnabledTrue(newOwner, nftId);
+    if (!CollectionUtils.isEmpty(offers)) {
+      deedTenantOfferRepository.deleteAll(offers);
+      offers.forEach(offer -> listenerService.publishEvent(OFFER_CANCELED_EVENT, offer));
+    }
   }
 
   private DeedTenantOffer saveOffer(DeedTenantOffer deedTenantOffer) {

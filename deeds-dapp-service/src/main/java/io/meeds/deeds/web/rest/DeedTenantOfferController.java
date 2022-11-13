@@ -60,19 +60,33 @@ public class DeedTenantOfferController {
   private DeedTenantOfferService deedTenantOfferService;
 
   @GetMapping
-  public PagedModel<EntityModel<DeedTenantOfferDTO>> getOffers(Pageable pageable,
+  public PagedModel<EntityModel<DeedTenantOfferDTO>> getOffers(Principal principal,
+                                                               Pageable pageable,
                                                                PagedResourcesAssembler<DeedTenantOfferDTO> assembler,
                                                                @RequestParam(name = "nftId", required = false)
                                                                Long nftId,
                                                                @RequestParam(name = "cardType", required = false)
                                                                List<DeedCard> cardTypes,
                                                                @RequestParam(name = "offerType", required = false)
-                                                               List<OfferType> offerTypes) {
+                                                               List<OfferType> offerTypes,
+                                                               @RequestParam(name = "onlyOwned", required = false)
+                                                               boolean onlyOwned) {
+    String ownerAddress = principal == null ? null : principal.getName();
     Page<DeedTenantOfferDTO> offers;
-    if (nftId != null && nftId > 0) {
-      offers = deedTenantOfferService.getOffersList(nftId, pageable);
+    if (onlyOwned && StringUtils.isBlank(ownerAddress)) {
+      offers = Page.empty();
+    } else if (nftId != null && nftId > 0) {
+      if (onlyOwned) {
+        offers = deedTenantOfferService.getOffersList(nftId, ownerAddress, pageable);
+      } else {
+        offers = deedTenantOfferService.getOffersList(nftId, pageable);
+      }
     } else {
-      offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, pageable);
+      if (onlyOwned) {
+        offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, ownerAddress, pageable);
+      } else {
+        offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, pageable);
+      }
     }
     return assembler.toModel(offers);
   }

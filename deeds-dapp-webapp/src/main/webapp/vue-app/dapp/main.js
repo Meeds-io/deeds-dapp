@@ -276,9 +276,11 @@ const store = new Vuex.Store({
   },
   mutations: {
     setOfferId(state, value) {
+      state.selectedStandaloneOfferId = null;
       state.selectedOfferId = value;
     },
     setStandaloneOfferId(state, value) {
+      state.selectedOfferId = null;
       state.selectedStandaloneOfferId = value;
     },
     setMobile(state, value) {
