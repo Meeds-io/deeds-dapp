@@ -22,7 +22,6 @@
   <v-list-item class="px-0">
     <v-list-item-action class="me-2">
       <v-btn
-        small
         icon
         @click="close">
         <v-icon>fas fa-arrow-left</v-icon>
@@ -52,6 +51,7 @@
     <v-list-item-action class="ms-0">
       <v-btn
         :title="$t('deedsMarketPlaceBackToList')"
+        class="mr-n2px"
         icon
         @click="close">
         <v-icon>fas fa-times</v-icon>

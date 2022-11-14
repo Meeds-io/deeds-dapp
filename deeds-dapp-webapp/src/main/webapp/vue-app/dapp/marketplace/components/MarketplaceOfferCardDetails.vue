@@ -47,7 +47,7 @@
                 @previous="moveToPrevious" />
             </div>
             <template v-if="!loading">
-              <template v-if="offer">
+              <div v-if="offer" class="px-2">
                 <deeds-marketplace-offer-card-details-charcteristics
                   :offer="selectedOffer"
                   :image-size="imageSize"
@@ -62,7 +62,7 @@
                   <deeds-marketplace-offer-card-details-footer
                     :offer="selectedOffer" />
                 </div>
-              </template>
+              </div>
               <template v-else>
                 <deeds-marketplace-deeds-empty offer-not-found />
               </template>
