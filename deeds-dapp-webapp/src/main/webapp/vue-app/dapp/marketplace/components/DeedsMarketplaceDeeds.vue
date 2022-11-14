@@ -155,6 +155,8 @@ export default {
     this.$root.$on('deeds-offers-load-more', this.loadMore);
     this.$root.$on('deeds-offers-select-card-types', this.selectCardTypes);
     this.$root.$on('deeds-offers-select-offer-types', this.selectOfferTypes);
+    this.$root.$on('deed-offer-renting-updated', this.handleOfferUpdated);
+    this.$root.$on('deed-offer-renting-deleted', this.handleOfferDeleted);
     this.init();
   },
   methods: {
@@ -233,6 +235,30 @@ export default {
           }
         })
         .finally(() => this.loading = false);
+    },
+    handleOfferUpdated(offer) {
+      const index = this.offers.findIndex(displayedOffer => displayedOffer.id === offer.id);
+      if (index >= 0) {
+        this.offers.splice(index, 1, offer);
+        this.offers.sort((offer1, offer2) => new Date(offer2.modifiedDate || offer2.createdDate).getTime() - new Date(offer1.modifiedDate || offer1.createdDate).getTime());
+      }
+    },
+    handleOfferDeleted(offer) {
+      if (this.totalSize > 0) {
+        this.totalSize --;
+      }
+      const index = this.offers.findIndex(displayedOffer => displayedOffer.id === offer.id);
+      if (index >= 0) {
+        if (this.selectedStandaloneOfferId === offer.id) {
+          this.$store.commit('setStandaloneOfferId', null);
+          this.$nextTick().then(() => {
+            document.querySelector('#marketplaceOffersList').scrollIntoView({
+              block: 'start',
+            });
+          })
+        }
+        this.offers.splice(index, 1);
+      }
     },
   },
 };

@@ -266,7 +266,7 @@ export default {
       return this.$t(this.rentalDurationLabelKey);
     },
     isOwner() {
-      return this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+      return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
     },
   }),
   created() {

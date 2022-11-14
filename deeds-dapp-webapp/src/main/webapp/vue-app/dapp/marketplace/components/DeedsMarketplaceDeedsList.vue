@@ -35,8 +35,8 @@
       indeterminate />
     <v-row v-if="hasOffers" class="pa-0 my-0">
       <v-col
-        v-for="offer in offers"
-        :key="offer.id"
+        v-for="(offer, index) in offers"
+        :key="`${offer.id}-${offer.updatedDate}-${index}`"
         class="d-flex justify-center">
         <v-card
           width="357"
