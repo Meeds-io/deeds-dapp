@@ -25,7 +25,7 @@
         <v-btn
           v-if="hasPrevious"
           color="secondary"
-          class="px-0"
+          class="pa-2"
           text
           x-small
           @click="$emit('previous')">
@@ -39,7 +39,7 @@
           v-if="hasNext"
           :loading="loading"
           color="secondary"
-          class="px-0"
+          class="pa-2"
           text
           x-small
           @click="$emit('next')">

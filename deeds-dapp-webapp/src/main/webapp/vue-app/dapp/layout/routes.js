@@ -16,16 +16,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-const Overview = { template: '<deeds-overview />' };
 const Marketplace = { template: '<deeds-marketplace />' };
+const Overview = { template: '<deeds-overview />' };
 const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 
 export default {
-  '/': Overview,
-  '/overview': Overview,
+  '/': Marketplace,
   '/marketplace': Marketplace,
+  '/overview': Overview,
   '/stake': Stake,
   '/deeds': Deeds,
   '/farm': Farm,
