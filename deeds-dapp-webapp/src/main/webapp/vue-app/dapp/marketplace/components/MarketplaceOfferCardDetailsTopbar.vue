@@ -33,7 +33,15 @@
         {{ $t('deedsMarketPlaceBackToList') }}
       </v-list-item-title>
     </v-list-item-content>
-    <v-list-item-action v-if="offer" class="me-2">
+    <v-list-item-action v-if="isAuthenticatedOwner" class="me-2 ms-0">
+      <v-btn
+        :title="$t('deedRentEditButton')"
+        icon
+        @click="$root.$emit('deeds-rent-drawer', null, offer)">
+        <v-icon>fas fa-edit</v-icon>
+      </v-btn>
+    </v-list-item-action>
+    <v-list-item-action v-if="offer" class="me-2 ms-0">
       <v-btn
         :title="$t('deedsMarketPlaceCopyOfferLink')"
         icon
@@ -59,6 +67,16 @@ export default {
       default: null,
     },
   },
+  computed: Vuex.mapState({
+    address: state => state.address,
+    authenticated: state => state.authenticated,
+    isOwner() {
+      return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+    },
+    isAuthenticatedOwner() {
+      return this.authenticated && this.isOwner;
+    },
+  }),
   methods: {
     close() {
       this.$store.commit('setStandaloneOfferId', null);
