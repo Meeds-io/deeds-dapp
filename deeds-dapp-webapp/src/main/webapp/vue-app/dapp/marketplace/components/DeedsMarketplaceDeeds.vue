@@ -19,10 +19,7 @@
 
 -->
 <template>
-  <v-responsive
-    v-if="standaloneDisplay"
-    aspect-ratio="16/10"
-    class="mt-n4">
+  <div v-if="standaloneDisplay" class="mt-n4 mx-n2">
     <v-fab-transition>
       <div v-show="standaloneDisplayAnimate">
         <deeds-marketplace-offer-card-details
@@ -34,7 +31,7 @@
           @previous="previousOffer" />
       </div>
     </v-fab-transition>
-  </v-responsive>
+  </div>
   <v-card v-else flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">

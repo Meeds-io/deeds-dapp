@@ -27,20 +27,6 @@
     <v-row class="ma-0 pa-0 flex-nowrap" no-gutters>
       <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
         <v-btn
-          ref="overview"
-          id="overview"
-          :href="`/${parentLocation}/overview`"
-          value="overview"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-home</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
           ref="marketplace"
           id="marketplace"
           :href="`/${parentLocation}/marketplace`"
@@ -50,6 +36,20 @@
           @click="openPage">
           <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
           <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
+          ref="overview"
+          id="overview"
+          :href="`/${parentLocation}/overview`"
+          value="overview"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-home</v-icon>
           <v-tabs-slider color="secondary" class="mobile-menu-slider" />
         </v-btn>
       </v-col>
@@ -102,15 +102,6 @@
     v-model="selectedTab"
     color="secondary">
     <v-tab
-      ref="overview"
-      id="overview"
-      :href="`/${parentLocation}/overview`"
-      link 
-      class="px-0 me-2"
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
-    </v-tab>
-    <v-tab
       ref="marketplace"
       id="marketplace"
       :href="`/${parentLocation}/marketplace`"
@@ -118,6 +109,15 @@
       class="px-2 me-2"
       @click="openPage">
       <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
+    </v-tab>
+    <v-tab
+      ref="overview"
+      id="overview"
+      :href="`/${parentLocation}/overview`"
+      link 
+      class="px-0 me-2"
+      @click="openPage">
+      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
     </v-tab>
     <v-tab
       ref="stake"
@@ -158,7 +158,7 @@ export default {
     parentLocation: state => state.parentLocation,
     isMobile: state => state.isMobile,
     defaultTab() {
-      return `/${this.parentLocation}/overview`;
+      return `/${this.parentLocation}/marketplace`;
     }
   }),
   created() {
@@ -172,7 +172,7 @@ export default {
       const hrefParts = href.split('/');
       if (event) {
         this.avoidAddToHistory = true;
-        this.switchPage(hrefParts[hrefParts.length - 1] || 'overview');
+        this.switchPage(hrefParts[hrefParts.length - 1] || 'marketplace');
       } else {
         if (this.isMobile) {
           this.selectedTab = hrefParts[hrefParts.length - 1];
