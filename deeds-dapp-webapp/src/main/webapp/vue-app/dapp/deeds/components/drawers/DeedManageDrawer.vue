@@ -264,10 +264,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    value: {
-      type: Boolean,
-      default: false,
-    },
   },
   data: () => ({
     nft: null,
@@ -288,9 +284,7 @@ export default {
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
     cardTypeInfos: state => state.cardTypeInfos,
-    authenticated() {
-      return this.value;
-    },
+    authenticated: state => state.authenticated,
     cardTypeInfo() {
       return this.cardTypeInfos[this.cardType];
     },
@@ -425,8 +419,6 @@ export default {
     this.$root.$on('deed-offer-renting-created', this.refreshOffers);
     this.$root.$on('deed-offer-renting-updated', this.refreshOffers);
     this.$root.$on('deed-offer-renting-deleted', this.refreshOffers);
-
-    this.refreshAuthentication();
   },
   methods: {
     refreshNft(nft) {
@@ -473,7 +465,7 @@ export default {
     },
     openRentDrawer() {
       this.loadingRentDrawer = true;
-      this.openDrawer(true, 'deeds-rent-drawer', this.rentalOffer)
+      this.openDrawer(false, 'deeds-rent-drawer', this.rentalOffer)
         .finally(() => this.loadingRentDrawer = false);
     },
     openDrawer(sendNft, eventName, obj) {
@@ -484,7 +476,7 @@ export default {
             if (sendNft) {
               this.$root.$emit(eventName, this.nft, obj);
             } else {
-              this.$root.$emit(eventName, this.nft.id);
+              this.$root.$emit(eventName, this.nft.id, obj);
             }
           } else {
             this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
@@ -525,7 +517,7 @@ export default {
         .then(() => this.refreshDeedInfo());
     },
     refreshAuthentication() {
-      this.$emit('input', this.$authentication.isAuthenticated(this.address));
+      this.$store.commit('refreshAuthentication');
     },
     openRentDetails() {
       this.$store.commit('setStandaloneOfferId', this.rentalOffers[0].id);

@@ -19,8 +19,14 @@ import static io.meeds.deeds.redis.model.EventSerialization.OBJECT_MAPPER;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,6 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.Filter;
+
 import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +53,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -60,16 +70,29 @@ import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.rest.DeedTenantOfferController;
+import io.meeds.deeds.web.security.DeedAuthenticationProvider;
+import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(classes = {
-    DeedTenantOfferController.class
+    DeedTenantOfferController.class,
+    DeedAuthenticationProvider.class
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {
+    WebSecurityConfig.class
+})
 class DeedTenantOfferControllerTest {
+
+  private static final String    TEST_PASSWORD = "testPassword";
+
+  private static final String    TEST_USER     = "testUser";
 
   @MockBean
   private DeedTenantOfferService deedTenantOfferService;
+
+  @Autowired
+  private SecurityFilterChain    filterChain;
 
   @Autowired
   private WebApplicationContext  context;
@@ -79,6 +102,7 @@ class DeedTenantOfferControllerTest {
   @BeforeEach
   public void setup() {
     mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                             .addFilters(filterChain.getFilters().toArray(new Filter[0]))
                              .build();
   }
 
@@ -152,10 +176,23 @@ class DeedTenantOfferControllerTest {
                                                                  .contentType(MediaType.APPLICATION_JSON)
                                                                  .accept(MediaType.APPLICATION_JSON));
     response.andExpect(status().isForbidden());
+    verify(deedTenantOfferService, never()).createRentingOffer(any(), any());
   }
 
   @Test
-  @WithAnonymousUser
+  void testCreateOfferWithUser() throws Exception {
+    long nftId = 3l;
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(nftId);
+    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
+                                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                                 .accept(MediaType.APPLICATION_JSON)
+                                                                 .with(testUser())
+                                                                 .with(csrf()));
+    response.andExpect(status().isOk());
+    verify(deedTenantOfferService, times(1)).createRentingOffer(TEST_USER, deedTenantOfferDTO);
+  }
+
+  @Test
   void testUpdateOfferWithAnonymousUser() throws Exception {
     long offerId = 2l;
     long nftId = 3l;
@@ -164,14 +201,39 @@ class DeedTenantOfferControllerTest {
                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                           .accept(MediaType.APPLICATION_JSON));
     response.andExpect(status().isForbidden());
+    verify(deedTenantOfferService, never()).updateRentingOffer(any(), any());
   }
 
   @Test
-  @WithAnonymousUser
+  void testUpdateOfferWithUser() throws Exception {
+    long offerId = 2l;
+    long nftId = 3l;
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(nftId);
+    deedTenantOfferDTO.setId(offerId);
+    ResultActions response = mockMvc.perform(put("/api/offers/" + offerId).content(asJsonString(deedTenantOfferDTO))
+                                                                          .contentType(MediaType.APPLICATION_JSON)
+                                                                          .accept(MediaType.APPLICATION_JSON)
+                                                                          .with(testUser())
+                                                                          .with(csrf()));
+    response.andExpect(status().isOk());
+    verify(deedTenantOfferService, times(1)).updateRentingOffer(TEST_USER, deedTenantOfferDTO);
+  }
+
+  @Test
   void testDeleteOfferWithAnonymousUser() throws Exception {
     long offerId = 2l;
     ResultActions response = mockMvc.perform(delete("/api/offers/" + offerId));
     response.andExpect(status().isForbidden());
+    verify(deedTenantOfferService, never()).deleteRentingOffer(any(), anyLong());
+  }
+
+  @Test
+  void testDeleteOfferWithUser() throws Exception {
+    long offerId = 2l;
+    ResultActions response = mockMvc.perform(delete("/api/offers/" + offerId).with(testUser())
+                                                                             .with(csrf()));
+    response.andExpect(status().isOk());
+    verify(deedTenantOfferService, times(1)).deleteRentingOffer(TEST_USER, offerId);
   }
 
   private DeedTenantOfferDTO getTenantOfferDTO(long nftId) {
@@ -200,6 +262,10 @@ class DeedTenantOfferControllerTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  private RequestPostProcessor testUser() {
+    return user(TEST_USER).password(TEST_PASSWORD).roles(DeedAuthenticationProvider.USER_ROLE_NAME);
   }
 
 }

@@ -18,6 +18,8 @@ package io.meeds.deeds.web.rest;
 import java.security.Principal;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,6 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,7 +104,7 @@ public class DeedTenantOfferController {
   }
 
   @PostMapping
-  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantOfferDTO createRentingOffer(Principal principal,
                                                @RequestBody
                                                DeedTenantOfferDTO deedTenantOfferDTO) {
@@ -128,7 +129,7 @@ public class DeedTenantOfferController {
   }
 
   @PutMapping("/{id}")
-  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantOfferDTO updateRentingOffer(Principal principal,
                                                @PathVariable("id")
                                                Long id,
@@ -159,7 +160,7 @@ public class DeedTenantOfferController {
   }
 
   @DeleteMapping("/{id}")
-  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public void deleteRentingOffer(Principal principal,
                                  @PathVariable("id")
                                  Long id) {
