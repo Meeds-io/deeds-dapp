@@ -23,10 +23,22 @@
       <v-divider class="my-auto ms-4" />
     </v-card-title>
     <template v-if="hasDeeds">
-      <deeds-manage-drawer v-model="authenticated" :second-level-opened="secondLevelOpened" />
-      <deeds-move-in-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
-      <deeds-move-out-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
-      <deeds-move-rent-drawer @opened="secondLevelOpened = true" @closed="secondLevelOpened = false" />
+      <deeds-manage-drawer
+        :second-level-opened="secondLevelOpened"
+        @opened="firstLevelOpened = true"
+        @closed="firstLevelOpened = false" />
+      <template v-if="firstLevelOpened">
+        <deeds-move-in-drawer
+          @opened="secondLevelOpened = true"
+          @closed="secondLevelOpened = false" />
+        <deeds-move-out-drawer
+          @opened="secondLevelOpened = true"
+          @closed="secondLevelOpened = false" />
+        <deeds-move-rent-drawer
+          :second-level="firstLevelOpened"
+          @opened="secondLevelOpened = true"
+          @closed="secondLevelOpened = false" />
+      </template>
     </template>
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
     <v-data-table
@@ -60,8 +72,8 @@
 export default {
   data: () => ({
     ownedDeeds: [],
-    authenticated: false,
     initialized: false,
+    firstLevelOpened: false,
     secondLevelOpened: false,
     contractListenersInstalled: false,
   }),
@@ -126,8 +138,6 @@ export default {
       const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
       this.setStatus(nft, status, transactionHash, command);
     });
-
-    this.refreshAuthentication();
   },
   methods: {
     installListeners() {
@@ -233,9 +243,6 @@ export default {
         this.$root.$emit('deed-nft-updated', nft);
       }
       this.ownedDeeds = this.ownedDeeds.slice();
-    },
-    refreshAuthentication() {
-      this.authenticated = this.$authentication.isAuthenticated(this.address);
     },
   },
 };

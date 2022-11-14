@@ -23,11 +23,11 @@
     ref="drawer"
     v-model="drawer"
     :permanent="sending"
-    second-level
+    :second-level="secondLevel"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardName, 1: nftId}) }}</h4>
+      <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardType, 1: nftId}) }}</h4>
       <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
     </template>
     <template v-if="offer" #content>
@@ -192,8 +192,13 @@
 </template>
 <script>
 export default {
+  props: {
+    secondLevel: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
-    nft: null,
     drawer: false,
     sending: false,
     deleting: false,
@@ -202,7 +207,6 @@ export default {
     offer: null,
     offerChanged: false,
     DEFAULT_OFFER: {
-      nftId: null,
       description: null,
       duration: null,
       expirationDuration: null,
@@ -215,10 +219,10 @@ export default {
   }),
   computed: Vuex.mapState({
     nftId() {
-      return this.nft?.id;
+      return this.offer?.nftId;
     },
-    cardName() {
-      return this.nft?.cardName;
+    cardType() {
+      return this.offer?.cardType;
     },
     periods() {
       return this.offer.duration?.includes('YEAR') && [{
@@ -276,18 +280,18 @@ export default {
     this.$root.$on('deeds-rent-close', this.close);
   },
   methods: {
-    open(nft, offer) {
-      this.nft = nft;
+    open(nftId, offer) {
       if (!this.offer || (offer?.id && this.offer?.id !== offer?.id)) {
         this.step = 1;
       }
       if (offer) {
-        this.offer = offer;
+        this.offer = Object.assign({}, this.DEFAULT_OFFER, offer);
       } else {
-        this.offer = Object.assign({}, this.DEFAULT_OFFER);
+        this.offer = Object.assign({
+          nftId,
+        }, this.DEFAULT_OFFER);
       }
       this.isNew = !offer;
-      this.offer.nftId = this.nftId;
       this.$refs.drawer?.open();
       this.$nextTick().then(() => this.offerChanged = false);
     },
@@ -307,8 +311,8 @@ export default {
       }
       this.deleting = true;
       return this.$deedTenantOfferService.deleteOffer(this.offer.id)
-        .then(offer => {
-          this.$root.$emit('deed-offer-renting-deleted', offer);
+        .then(() => {
+          this.$root.$emit('deed-offer-renting-deleted', this.offer);
           this.deleting = false;
           this.$root.$emit('alert-message', this.$t('deedRentingOfferDeleted'), 'success');
           this.$nextTick().then(() => this.cancel());

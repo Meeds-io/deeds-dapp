@@ -71,7 +71,7 @@ export default {
       return this.expirationTime && this.expirationTime < this.now;
     },
     isOwner() {
-      return this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+      return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
     },
     displayActions() {
       return this.metamaskOffline || !this.isOwner;

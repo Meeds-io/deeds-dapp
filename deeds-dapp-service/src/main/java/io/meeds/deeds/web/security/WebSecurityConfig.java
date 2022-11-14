@@ -41,7 +41,7 @@ public class WebSecurityConfig {
   private CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http, DeedAuthenticationProvider authProvider) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, DeedAuthenticationProvider authProvider) throws Exception {
     http
         .authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/static/**", "/api/deeds/**").permitAll())
         .authenticationProvider(authProvider)

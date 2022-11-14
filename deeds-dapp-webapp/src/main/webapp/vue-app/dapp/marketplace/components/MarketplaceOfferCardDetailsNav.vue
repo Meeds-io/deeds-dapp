@@ -66,14 +66,30 @@ export default {
       default: false,
     },
   },
+  data: () => ({
+    drawer: false,
+  }),
   created() {
     document.addEventListener('keydown', this.moveToOffer);
+    this.$root.$on('drawer-opened', this.drawerOpened);
+    this.$root.$on('drawer-closed', this.drawerClosed);
   },
   beforeDestroy() {
     document.removeEventListener('keydown', this.moveToOffer);
+    this.$root.$off('drawer-opened', this.drawerOpened);
+    this.$root.$off('drawer-closed', this.drawerClosed);
   },
   methods: {
+    drawerOpened() {
+      this.drawer = true;
+    },
+    drawerClosed() {
+      window.setTimeout(() => this.drawer = false, 50);
+    },
     moveToOffer(event) {
+      if (this.drawer) {
+        return;
+      }
       switch (event?.key) {
       case 'Left': // IE/Edge specific value
       case 'ArrowLeft':

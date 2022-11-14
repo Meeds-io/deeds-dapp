@@ -273,6 +273,7 @@ const store = new Vuex.Store({
     poolsChanged: 2,
     selectedOfferId: null,
     selectedStandaloneOfferId: null,
+    authenticated: false,
   },
   mutations: {
     setOfferId(state, value) {
@@ -282,6 +283,16 @@ const store = new Vuex.Store({
     setStandaloneOfferId(state, value) {
       state.selectedOfferId = null;
       state.selectedStandaloneOfferId = value;
+    },
+    refreshAuthentication(state) {
+      const authenticated = state.address && authentication.isAuthenticated(state.address);
+      this.commit('setAuthenticated', authenticated);
+      if (!authenticated && authentication.hasAuthenticatedLogin()) {
+        authentication.logout();
+      }
+    },
+    setAuthenticated(state, value) {
+      state.authenticated = value;
     },
     setMobile(state, value) {
       state.isMobile = value;
@@ -296,6 +307,7 @@ const store = new Vuex.Store({
       ethUtils.getSelectedAddress()
         .then(addresses => {
           state.address = addresses && addresses.length && addresses[0] || null;
+          this.commit('refreshAuthentication');
           this.commit('setProvider');
         })
         .finally(() => this.commit('loaded'));
