@@ -156,15 +156,22 @@ export default {
     this.$root.$on('deed-offer-renting-deleted', this.handleOfferDeleted);
     this.init();
   },
+  beforeDestroy() {
+    this.$root.$off('deeds-offers-load-more', this.loadMore);
+    this.$root.$off('deeds-offers-select-card-types', this.selectCardTypes);
+    this.$root.$off('deeds-offers-select-offer-types', this.selectOfferTypes);
+    this.$root.$off('deed-offer-renting-updated', this.handleOfferUpdated);
+    this.$root.$off('deed-offer-renting-deleted', this.handleOfferDeleted);
+  },
   methods: {
     init() {
       const offerId = this.$utils.getQueryParam('offer');
       if (offerId) {
         this.standaloneDisplay = true;
-        this.$store.commit('setStandaloneOfferId', Number(offerId));
+        this.$store.commit('setStandaloneOfferId', offerId);
       } else if (this.selectedStandaloneOfferId) {
         this.standaloneDisplay = true;
-        this.$store.commit('setStandaloneOfferId', Number(this.selectedStandaloneOfferId));
+        this.$store.commit('setStandaloneOfferId', this.selectedStandaloneOfferId);
         this.loadSelectedOffer();
       } else {
         this.loadFirstPage();
@@ -183,11 +190,11 @@ export default {
       this.offerTypes = offerTypes;
     },
     nextOffer() {
-      const newIndex = Number(this.selectedStandaloneOfferIndex) + 1;
+      const newIndex = this.selectedStandaloneOfferIndex + 1;
       if (newIndex < this.totalSize) {
         if (newIndex < this.loadedOffersLength) {
           const nextOfferId = this.offers[newIndex]?.id;
-          this.$store.commit('setStandaloneOfferId', Number(nextOfferId));
+          this.$store.commit('setStandaloneOfferId', nextOfferId);
         } else {
           this.loading = true;
           this.loadMore();
@@ -201,7 +208,7 @@ export default {
       const newIndex = this.selectedStandaloneOfferIndex - 1;
       if (newIndex >= 0) {
         const previousOfferId = this.offers[newIndex]?.id;
-        this.$store.commit('setStandaloneOfferId', Number(previousOfferId));
+        this.$store.commit('setStandaloneOfferId', previousOfferId);
       }
     },
     refresh() {
@@ -250,9 +257,12 @@ export default {
         if (this.selectedStandaloneOfferId === offer.id) {
           this.$store.commit('setStandaloneOfferId', null);
           this.$nextTick().then(() => {
-            document.querySelector('#marketplaceOffersList').scrollIntoView({
-              block: 'start',
-            });
+            const parentListElement = document.querySelector('#marketplaceOffersList');
+            if (parentListElement) {
+              parentListElement.scrollIntoView({
+                block: 'start',
+              });
+            }
           });
         }
         this.offers.splice(index, 1);

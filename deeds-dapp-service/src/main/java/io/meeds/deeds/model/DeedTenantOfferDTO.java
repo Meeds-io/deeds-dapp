@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeedTenantOfferDTO {
 
-  private long                             id;
+  private String                           id;
 
   private long                             nftId;
 

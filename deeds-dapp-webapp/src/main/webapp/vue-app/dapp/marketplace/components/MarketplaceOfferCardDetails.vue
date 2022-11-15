@@ -36,7 +36,9 @@
             class="d-flex flex-column"
             flat>
             <div class="flex-grow-0">
-              <deeds-marketplace-offer-card-details-topbar :offer="selectedOffer" />
+              <deeds-marketplace-offer-card-details-topbar
+                :offer="selectedOffer"
+                :invalid-offer="invalidOffer" />
             </div>
             <div>
               <deeds-marketplace-offer-card-details-nav
@@ -47,7 +49,7 @@
                 @previous="moveToPrevious" />
             </div>
             <template v-if="!loading">
-              <deeds-marketplace-deeds-empty v-if="hasExpired" offer-not-available />
+              <deeds-marketplace-deeds-empty v-if="invalidOffer" offer-not-available />
               <div v-else-if="offer" class="px-2">
                 <deeds-marketplace-offer-card-details-charcteristics
                   :offer="selectedOffer"
@@ -64,7 +66,6 @@
                     :offer="selectedOffer" />
                 </div>
               </div>
-              <deeds-marketplace-deeds-empty v-else offer-not-found />
             </template>
           </v-card>
         </div>
@@ -109,6 +110,9 @@ export default {
     },
     hasExpired() {
       return this.offer?.expirationDate && this.expirationTime < this.now;
+    },
+    invalidOffer() {
+      return this.hasExpired || !this.offer;
     },
   }),
   watch: {
