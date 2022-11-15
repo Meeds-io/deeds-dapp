@@ -79,7 +79,7 @@ public class DeedTenantOffer {
   @Field(type = FieldType.Double)
   private double                           mintingPower;
 
-  @Field(type = FieldType.Date, format = DateFormat.basic_date_time)
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant                          expirationDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time)

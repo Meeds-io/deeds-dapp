@@ -241,7 +241,7 @@ export default {
       return this.originalOffer?.expirationDate && new Date(this.originalOffer.expirationDate).getTime() || 0;
     },
     hasExpired() {
-      return this.expirationTime < this.now;
+      return this.originalOffer?.expirationDate && this.expirationTime < this.now;
     },
     tokenAmount() {
       return this.originalOffer?.amount || 0;
