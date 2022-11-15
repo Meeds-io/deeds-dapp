@@ -35,6 +35,7 @@ import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
@@ -104,14 +105,15 @@ public class DeedTenantOfferService {
                      .map(Mapper::toDTO);
   }
 
-  public DeedTenantOfferDTO getOffer(Long offerId) {
+  public DeedTenantOfferDTO getOffer(String offerId) {
     DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
     return Mapper.toDTO(offer);
   }
 
   public DeedTenantOfferDTO createRentingOffer(String walletAddress,
                                                DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
-                                                                                      UnauthorizedOperationException {
+                                                                                      UnauthorizedOperationException,
+                                                                                      ObjectAlreadyExistsException {
     long nftId = deedTenantOfferDTO.getNftId();
     if (!tenantService.isDeedOwner(walletAddress, nftId)) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, nftId));
@@ -129,7 +131,6 @@ public class DeedTenantOfferService {
     DeedTenantOffer deedTenantOffer = Mapper.fromDTO(deedTenantOfferDTO);
     // When multiple offers will be supported, then make the id
     // auto incremented
-    deedTenantOffer.setId(nftId);
     if (deedTenant.getCardType() >= 0) {
       DeedCard cardType = DeedCard.values()[deedTenant.getCardType()];
       deedTenantOffer.setCardType(cardType);
@@ -148,6 +149,11 @@ public class DeedTenantOfferService {
       deedTenantOffer.setExpirationDate(expirationDate);
     }
     deedTenantOffer.setEnabled(true);
+    DeedTenantOfferFilter enabledNftOffersFilter = DeedTenantOfferFilter.ofNftId(nftId).withExcludeDisabled(true);
+    Page<DeedTenantOfferDTO> offersList = getOffersList(enabledNftOffersFilter, Pageable.ofSize(1));
+    if (offersList.getTotalElements() > 0) {
+      throw new ObjectAlreadyExistsException("NFT with ID " + nftId + " already exists");
+    }
     deedTenantOffer = saveOffer(deedTenantOffer);
     listenerService.publishEvent(OFFER_CREATED_EVENT, deedTenantOffer);
     return Mapper.toDTO(deedTenantOffer);
@@ -189,17 +195,17 @@ public class DeedTenantOfferService {
     return Mapper.toDTO(existingDeedTenantOffer);
   }
 
-  public void deleteRentingOffer(String walletAddress, Long id) throws ObjectNotFoundException,
-                                                                UnauthorizedOperationException {
-    DeedTenantOffer existingDeedTenantOffer = deedTenantOfferRepository.findById(id).orElse(null);
+  public void deleteRentingOffer(String walletAddress, String offerId) throws ObjectNotFoundException,
+                                                                       UnauthorizedOperationException {
+    DeedTenantOffer existingDeedTenantOffer = deedTenantOfferRepository.findById(offerId).orElse(null);
     if (existingDeedTenantOffer == null) {
-      throw new ObjectNotFoundException("Offer with id  " + id + " doesn't exist");
+      throw new ObjectNotFoundException("Offer with id  " + offerId + " doesn't exist");
     }
     if (!tenantService.isDeedOwner(walletAddress, existingDeedTenantOffer.getNftId())) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, existingDeedTenantOffer.getNftId()));
     }
     listenerService.publishEvent(OFFER_DELETED_EVENT, existingDeedTenantOffer);
-    deedTenantOfferRepository.deleteById(id);
+    deedTenantOfferRepository.deleteById(offerId);
   }
 
   public void cancelOffers(String newOwner, long nftId) {

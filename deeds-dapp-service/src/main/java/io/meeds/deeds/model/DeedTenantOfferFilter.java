@@ -22,22 +22,32 @@ import io.meeds.deeds.constant.OfferType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeedTenantOfferFilter {
 
+  @With
   private long            nftId = -1;
 
+  @With
   private String          ownerAddress;
 
+  @With
   private List<DeedCard>  cardTypes;
 
+  @With
   private List<OfferType> offerTypes;
 
+  @With
   private boolean         excludeExpired;
 
+  @With
   private boolean         excludeDisabled;
 
+  public static DeedTenantOfferFilter ofNftId(long nftId) {
+    return new DeedTenantOfferFilter().withNftId(nftId);
+  }
 }
