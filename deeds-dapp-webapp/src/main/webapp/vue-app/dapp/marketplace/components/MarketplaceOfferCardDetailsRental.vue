@@ -20,7 +20,7 @@
 -->
 <template>
   <div class="mt-4">
-    <v-list-item class="px-0 align-start">
+    <v-list-item v-if="offer.description" class="px-0 align-start">
       <v-list-item-action-text>
         <v-card
           :width="leftSize"
