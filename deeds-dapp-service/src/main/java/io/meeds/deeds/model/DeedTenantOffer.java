@@ -41,7 +41,7 @@ import lombok.NoArgsConstructor;
 public class DeedTenantOffer {
 
   @Id
-  private long                             id;
+  private String                           id;
 
   @Field(type = FieldType.Long)
   private long                             nftId;

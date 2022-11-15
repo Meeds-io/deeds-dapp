@@ -13,18 +13,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.storage;
+package io.meeds.deeds.constant;
 
-import java.util.List;
+public class ObjectAlreadyExistsException extends Exception {
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+  private static final long serialVersionUID = 7591778451906308058L;
 
-import io.meeds.deeds.model.DeedTenantOffer;
+  public ObjectAlreadyExistsException() {
+  }
 
-public interface DeedTenantOfferRepository extends ElasticsearchRepository<DeedTenantOffer, String> {
-
-  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
-
-  void deleteByNftId(long nftId);
+  public ObjectAlreadyExistsException(String message) {
+    super(message);
+  }
 
 }
