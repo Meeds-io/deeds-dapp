@@ -17,6 +17,7 @@
         contain
         eager />
       <div v-if="offerNotFound" class="pa-0">{{ $t('dapp.marketplace.deedsOfferNotFound') }}</div>
+      <div v-else-if="offerNotAvailable" class="pa-0">{{ $t('dapp.marketplace.deedsOfferNotAvailableAnyMore') }}</div>
       <div v-else-if="hasFilter" class="pa-0">{{ $t('dapp.marketplace.deedsFilterListEmptyTitle') }}</div>
       <div v-else class="pa-0">{{ $t('dapp.marketplace.deedsListEmptyTitle') }}</div>
     </v-card>
@@ -30,6 +31,10 @@ export default {
       default: false,
     },
     offerNotFound: {
+      type: Boolean,
+      default: false,
+    },
+    offerNotAvailable: {
       type: Boolean,
       default: false,
     },

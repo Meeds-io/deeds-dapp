@@ -47,7 +47,8 @@
                 @previous="moveToPrevious" />
             </div>
             <template v-if="!loading">
-              <div v-if="offer" class="px-2">
+              <deeds-marketplace-deeds-empty v-if="hasExpired" offer-not-available />
+              <div v-else-if="offer" class="px-2">
                 <deeds-marketplace-offer-card-details-charcteristics
                   :offer="selectedOffer"
                   :image-size="imageSize"
@@ -63,9 +64,7 @@
                     :offer="selectedOffer" />
                 </div>
               </div>
-              <template v-else>
-                <deeds-marketplace-deeds-empty offer-not-found />
-              </template>
+              <deeds-marketplace-deeds-empty v-else offer-not-found />
             </template>
           </v-card>
         </div>
@@ -100,11 +99,18 @@ export default {
     showOffer: true,
     reverseAnimation: false,
   }),
-  computed: {
+  computed: Vuex.mapState({
+    now: state => state.now,
     animationTransition() {
       return this.reverseAnimation && 'v-slide-x-reverse-transition' || 'v-slide-x-transition';
     },
-  },
+    expirationTime() {
+      return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
+    },
+    hasExpired() {
+      return this.offer?.expirationDate && this.expirationTime < this.now;
+    },
+  }),
   watch: {
     offer() {
       if (this.selectedOffer && this.offer) {

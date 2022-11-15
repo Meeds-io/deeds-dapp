@@ -456,7 +456,7 @@ public class BlockchainService {
       DeedTenant deedTenant = new DeedTenant();
       deedTenant.setNftId(tenantStartedEventResponse.nftId.longValue());
       deedTenant.setStartupTransactionHash(transactionReceipt.getTransactionHash());
-      deedTenant.setManagerAddress(tenantStartedEventResponse.manager);
+      deedTenant.setManagerAddress(tenantStartedEventResponse.manager.toLowerCase());
       return deedTenant;
     }
     List<TenantStoppedEventResponse> endedEvents =
@@ -466,7 +466,7 @@ public class BlockchainService {
       DeedTenant deedTenant = new DeedTenant();
       deedTenant.setNftId(tenantStoppedEventResponse.nftId.longValue());
       deedTenant.setShutdownTransactionHash(transactionReceipt.getTransactionHash());
-      deedTenant.setManagerAddress(tenantStoppedEventResponse.manager);
+      deedTenant.setManagerAddress(tenantStoppedEventResponse.manager.toLowerCase());
       return deedTenant;
     }
     return null;

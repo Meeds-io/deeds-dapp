@@ -46,6 +46,7 @@ import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
+import io.meeds.deeds.model.DeedTenantOfferFilter;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 
@@ -71,25 +72,27 @@ public class DeedTenantOfferController {
                                                                @RequestParam(name = "offerType", required = false)
                                                                List<OfferType> offerTypes,
                                                                @RequestParam(name = "onlyOwned", required = false)
-                                                               boolean onlyOwned) {
+                                                               boolean onlyOwned,
+                                                               @RequestParam(name = "excludeExpired", required = false)
+                                                               boolean excludeExpired) {
     String ownerAddress = principal == null ? null : principal.getName();
-    Page<DeedTenantOfferDTO> offers;
     if (onlyOwned && StringUtils.isBlank(ownerAddress)) {
-      offers = Page.empty();
-    } else if (nftId != null && nftId > 0) {
-      if (onlyOwned) {
-        offers = deedTenantOfferService.getOffersList(nftId, ownerAddress, pageable);
-      } else {
-        offers = deedTenantOfferService.getOffersList(nftId, pageable);
-      }
+      return assembler.toModel(Page.empty(pageable));
     } else {
+      DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
       if (onlyOwned) {
-        offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, ownerAddress, pageable);
-      } else {
-        offers = deedTenantOfferService.getOffersList(cardTypes, offerTypes, pageable);
+        offerFilter.setOwnerAddress(ownerAddress);
       }
+      if (nftId != null && nftId > 0) {
+        offerFilter.setNftId(nftId);
+      }
+      offerFilter.setExcludeExpired(excludeExpired);
+      offerFilter.setExcludeDisabled(true);
+      offerFilter.setCardTypes(cardTypes);
+      offerFilter.setOfferTypes(offerTypes);
+      Page<DeedTenantOfferDTO> offers = deedTenantOfferService.getOffersList(offerFilter, pageable);
+      return assembler.toModel(offers);
     }
-    return assembler.toModel(offers);
   }
 
   @GetMapping("/{id}")

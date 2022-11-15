@@ -18,12 +18,18 @@ package io.meeds.deeds.service;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHitSupport;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.SearchPage;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -35,6 +41,7 @@ import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
+import io.meeds.deeds.model.DeedTenantOfferFilter;
 import io.meeds.deeds.storage.DeedTenantOfferRepository;
 import io.meeds.deeds.utils.Mapper;
 
@@ -53,51 +60,48 @@ public class DeedTenantOfferService {
   private DeedTenantOfferRepository deedTenantOfferRepository;
 
   @Autowired
+  private ElasticsearchOperations   elasticsearchOperations;
+
+  @Autowired
   private TenantService             tenantService;
 
   @Autowired
   private ListenerService           listenerService;
 
-  public Page<DeedTenantOfferDTO> getOffersList(long nftId, Pageable pageable) {
-    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByNftIdAndEnabledTrue(nftId, pageable);
-    return deedTenantOffers.map(Mapper::toDTO);
-  }
+  public Page<DeedTenantOfferDTO> getOffersList(DeedTenantOfferFilter offerFilter, Pageable pageable) {
+    Criteria criteria = null;
+    if (StringUtils.isNotBlank(offerFilter.getOwnerAddress())) {
+      criteria = addAndCriteria(criteria, new Criteria("owner").is(offerFilter.getOwnerAddress().toLowerCase()));
+    }
+    if (offerFilter.isExcludeDisabled()) {
+      Criteria enabledCriteria = new Criteria("enabled").is(true);
+      criteria = addAndCriteria(criteria, enabledCriteria);
+    }
+    if (offerFilter.getNftId() >= 0) {
+      Criteria nftIdCriteria = new Criteria("nftId").is(offerFilter.getNftId());
+      criteria = addAndCriteria(criteria, nftIdCriteria);
+    }
+    if (!CollectionUtils.isEmpty(offerFilter.getCardTypes())) {
+      Criteria cardTypeCriteria = new Criteria("cardType").in(offerFilter.getCardTypes());
+      criteria = addAndCriteria(criteria, cardTypeCriteria);
+    }
+    if (!CollectionUtils.isEmpty(offerFilter.getOfferTypes())) {
+      Criteria offerCriteria = new Criteria("offerType").in(offerFilter.getOfferTypes());
+      criteria = addAndCriteria(criteria, offerCriteria);
+    }
 
-  public Page<DeedTenantOfferDTO> getOffersList(Long nftId, String ownerAddress, Pageable pageable) {
-    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByNftIdAndOwnerAndEnabledTrue(nftId,
-                                                                                                         ownerAddress,
-                                                                                                         pageable);
-    return deedTenantOffers.map(Mapper::toDTO);
-  }
-
-  public Page<DeedTenantOfferDTO> getOffersList(List<DeedCard> cardTypes, List<OfferType> offerTypes, Pageable pageable) {
-    if (CollectionUtils.isEmpty(cardTypes)) {
-      cardTypes = Stream.of(DeedCard.values()).collect(Collectors.toList());
+    if (offerFilter.isExcludeExpired()) {
+      Criteria expirationDateCriteria = new Criteria("expirationDate").greaterThan(Instant.now());
+      criteria = addAndCriteria(criteria, expirationDateCriteria);
     }
-    if (CollectionUtils.isEmpty(offerTypes)) {
-      offerTypes = Stream.of(OfferType.values()).collect(Collectors.toList());
+    if (criteria == null) {
+      criteria = new Criteria("nftId").exists();
     }
-    Page<DeedTenantOffer> deedTenantOffers = deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndEnabledTrue(offerTypes,
-                                                                                                                    cardTypes,
-                                                                                                                    pageable);
-    return deedTenantOffers.map(Mapper::toDTO);
-  }
-
-  public Page<DeedTenantOfferDTO> getOffersList(List<DeedCard> cardTypes,
-                                                List<OfferType> offerTypes,
-                                                String ownerAddress,
-                                                Pageable pageable) {
-    if (CollectionUtils.isEmpty(cardTypes)) {
-      cardTypes = Stream.of(DeedCard.values()).collect(Collectors.toList());
-    }
-    if (CollectionUtils.isEmpty(offerTypes)) {
-      offerTypes = Stream.of(OfferType.values()).collect(Collectors.toList());
-    }
-    Page<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndOwnerAndEnabledTrue(offerTypes,
-                                                                                                                  cardTypes,
-                                                                                                                  ownerAddress,
-                                                                                                                  pageable);
-    return offers.map(Mapper::toDTO);
+    CriteriaQuery query = new CriteriaQuery(criteria, pageable);
+    SearchHits<DeedTenantOffer> result = elasticsearchOperations.search(query, DeedTenantOffer.class);
+    SearchPage<DeedTenantOffer> searchPage = SearchHitSupport.searchPageFor(result, pageable);
+    return searchPage.map(SearchHit::getContent)
+                     .map(Mapper::toDTO);
   }
 
   public DeedTenantOfferDTO getOffer(Long offerId) {
@@ -216,6 +220,15 @@ public class DeedTenantOfferService {
 
   private String getNotOwnerMessage(String walletAddress, long nftId) {
     return walletAddress + " isn't owner of Deed NFT #" + nftId;
+  }
+
+  private Criteria addAndCriteria(Criteria criteria, Criteria ownerCriteria) {
+    if (criteria == null) {
+      criteria = ownerCriteria;
+    } else {
+      criteria.and(ownerCriteria);
+    }
+    return criteria;
   }
 
 }
