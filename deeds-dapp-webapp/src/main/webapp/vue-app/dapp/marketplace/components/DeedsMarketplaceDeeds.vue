@@ -210,6 +210,7 @@ export default {
         page: 0,
         size: this.limit,
         sort: `${this.sortField},${this.sortDirection}`,
+        excludeExpired: true,
         cardType: this.cardTypes,
         offerType: this.offerTypes,
       })

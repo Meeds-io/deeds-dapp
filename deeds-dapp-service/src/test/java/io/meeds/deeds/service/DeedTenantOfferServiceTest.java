@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -31,16 +32,24 @@ import static org.mockito.Mockito.when;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
@@ -54,7 +63,9 @@ import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
+import io.meeds.deeds.model.DeedTenantOfferFilter;
 import io.meeds.deeds.storage.DeedTenantOfferRepository;
+import io.meeds.deeds.utils.Mapper;
 
 @SpringBootTest(classes = {
     DeedTenantOfferService.class,
@@ -63,6 +74,9 @@ class DeedTenantOfferServiceTest {
 
   @MockBean
   private DeedTenantOfferRepository deedTenantOfferRepository;
+
+  @MockBean
+  private ElasticsearchOperations   elasticsearchOperations;
 
   @MockBean
   private TenantService             tenantService;
@@ -75,80 +89,145 @@ class DeedTenantOfferServiceTest {
 
   @Test
   @SuppressWarnings({
-      "rawtypes", "unchecked"
+      "unchecked"
   })
   void testGetOffersListByNftId() {
     long nftId = 2l;
+    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+
     Pageable pageable = mock(Pageable.class);
-    Page<DeedTenantOffer> page = mock(Page.class);
-    Page pageDTO = mock(Page.class);
-    when(deedTenantOfferRepository.findByNftIdAndEnabledTrue(nftId, pageable)).thenReturn(page);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
 
-    when(page.map(any())).thenReturn(pageDTO);
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(nftId, pageable);
+    assertElasticSearchQuery(searchHits, "nftId", 2l);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setNftId(nftId);
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
     assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
   @SuppressWarnings({
-      "rawtypes", "unchecked"
+      "unchecked"
   })
-  void testGetOffersListByNftIdAndOwned() {
+  void testGetOffersListByOwned() {
     long nftId = 2l;
-    String address = "address";
+    String ownerAddress = "ownerAddress";
+    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+
     Pageable pageable = mock(Pageable.class);
-    Page<DeedTenantOffer> page = mock(Page.class);
-    Page pageDTO = mock(Page.class);
-    when(deedTenantOfferRepository.findByNftIdAndOwnerAndEnabledTrue(nftId, address, pageable)).thenReturn(page);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
 
-    when(page.map(any())).thenReturn(pageDTO);
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(nftId, address, pageable);
+    assertElasticSearchQuery(searchHits, "owner", ownerAddress.toLowerCase());
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setOwnerAddress(ownerAddress);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
     assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
   @SuppressWarnings({
-      "rawtypes", "unchecked"
+      "unchecked"
   })
-  void testGetOffersList() {
+  void testGetOffersListByCardTypes() {
+    long nftId = 2l;
+    List<DeedCard> cardTypes = Arrays.asList(DeedCard.COMMON, DeedCard.RARE);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+
     Pageable pageable = mock(Pageable.class);
-    Page<DeedTenantOffer> page = mock(Page.class);
-    Page pageDTO = mock(Page.class);
-    when(deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndEnabledTrue(any(), any(), eq(pageable))).thenReturn(page);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
 
-    when(page.map(any())).thenReturn(pageDTO);
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(Collections.emptyList(),
-                                                                           Collections.emptyList(),
-                                                                           pageable);
+    assertElasticSearchQuery(searchHits, "cardType", cardTypes);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setCardTypes(cardTypes);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
     assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
   @SuppressWarnings({
-      "rawtypes", "unchecked"
+      "unchecked"
   })
-  void testGetOwnedOffersList() {
-    String address = "address";
+  void testGetOffersListByOfferTypes() {
+    long nftId = 2l;
+    List<OfferType> offerTypes = Arrays.asList(OfferType.RENTING, OfferType.SALE);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+
     Pageable pageable = mock(Pageable.class);
-    Page<DeedTenantOffer> page = mock(Page.class);
-    Page pageDTO = mock(Page.class);
-    List<DeedCard> cards = Collections.singletonList(DeedCard.COMMON);
-    List<OfferType> offerTypes = Collections.singletonList(OfferType.RENTING);
-    when(deedTenantOfferRepository.findByOfferTypeInAndCardTypeInAndOwnerAndEnabledTrue(offerTypes,
-                                                                                        cards,
-                                                                                        address,
-                                                                                        pageable)).thenReturn(page);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
 
-    when(page.map(any())).thenReturn(pageDTO);
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(cards,
-                                                                           offerTypes,
-                                                                           address,
-                                                                           pageable);
+    assertElasticSearchQuery(searchHits, "offerType", offerTypes);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setOfferTypes(offerTypes);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
     assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked"
+  })
+  void testGetOffersListByEnabled() {
+    long nftId = 2l;
+    boolean enabled = true;
+    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+
+    Pageable pageable = mock(Pageable.class);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
+
+    assertElasticSearchQuery(searchHits, "enabled", enabled);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setExcludeDisabled(true);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
+    assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -310,24 +389,7 @@ class DeedTenantOfferServiceTest {
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenantOffer.class));
 
-    DeedTenantOffer existingDeedTenantOffer = new DeedTenantOffer();
-    existingDeedTenantOffer.setId(nftId);
-    existingDeedTenantOffer.setNftId(nftId);
-    existingDeedTenantOffer.setCardType(DeedCard.UNCOMMON);
-    existingDeedTenantOffer.setCity(DeedCity.MELQART);
-    existingDeedTenantOffer.setOwner("otherWallet");
-    existingDeedTenantOffer.setDescription("description");
-    existingDeedTenantOffer.setAmount(12);
-    existingDeedTenantOffer.setOfferType(OfferType.RENTING);
-    existingDeedTenantOffer.setExpirationDuration(ExpirationDuration.ONE_MONTH);
-    existingDeedTenantOffer.setDuration(RentalDuration.SIX_MONTHS);
-    existingDeedTenantOffer.setPaymentPeriodicity(RentalPaymentPeriodicity.ONE_MONTH);
-    existingDeedTenantOffer.setOwnerMintingPercentage(50);
-    existingDeedTenantOffer.setMintingPower(DeedCard.UNCOMMON.getMintingPower());
-    existingDeedTenantOffer.setExpirationDate(Instant.now().plus(5, ChronoUnit.DAYS));
-    existingDeedTenantOffer.setCreatedDate(Instant.now());
-    existingDeedTenantOffer.setModifiedDate(Instant.now());
-    existingDeedTenantOffer.setEnabled(true);
+    DeedTenantOffer existingDeedTenantOffer = newDeedTenant(nftId);
     when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(existingDeedTenantOffer));
 
     DeedTenantOfferDTO updatedRentingOffer = deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
@@ -456,7 +518,7 @@ class DeedTenantOfferServiceTest {
     deedTenantOfferService.deleteRentingOffer(walletAddress, nftId);
     verify(deedTenantOfferRepository, times(1)).deleteById(nftId);
   }
-  
+
   @Test
   void testCancelRentingOfferWhenExists() throws Exception {
     long nftId = 2l;
@@ -472,4 +534,47 @@ class DeedTenantOfferServiceTest {
     verify(deedTenantOfferRepository, times(1)).deleteAll(offers);
   }
 
+  private DeedTenantOffer newDeedTenant(long nftId) {
+    DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
+    deedTenantOffer.setId(nftId);
+    deedTenantOffer.setNftId(nftId);
+    deedTenantOffer.setCardType(DeedCard.UNCOMMON);
+    deedTenantOffer.setCity(DeedCity.MELQART);
+    deedTenantOffer.setOwner("otherWallet");
+    deedTenantOffer.setDescription("description");
+    deedTenantOffer.setAmount(12);
+    deedTenantOffer.setOfferType(OfferType.RENTING);
+    deedTenantOffer.setExpirationDuration(ExpirationDuration.ONE_MONTH);
+    deedTenantOffer.setDuration(RentalDuration.SIX_MONTHS);
+    deedTenantOffer.setPaymentPeriodicity(RentalPaymentPeriodicity.ONE_MONTH);
+    deedTenantOffer.setOwnerMintingPercentage(50);
+    deedTenantOffer.setMintingPower(DeedCard.UNCOMMON.getMintingPower());
+    deedTenantOffer.setExpirationDate(Instant.now().plus(5, ChronoUnit.DAYS));
+    deedTenantOffer.setCreatedDate(Instant.now());
+    deedTenantOffer.setModifiedDate(Instant.now());
+    deedTenantOffer.setEnabled(true);
+    return deedTenantOffer;
+  }
+
+  private void assertElasticSearchQuery(SearchHits<DeedTenantOffer> searchHits, String filedName, Object fieldValue) {
+    when(elasticsearchOperations.search(argThat(new ArgumentMatcher<Query>() {
+      @Override
+      public boolean matches(Query query) {
+        assertQueryCriteriaIs(query, filedName, fieldValue);
+        return true;
+      }
+    }), eq(DeedTenantOffer.class))).thenReturn(searchHits);
+  }
+
+  private void assertQueryCriteriaIs(Query query, String filedName, Object fieldValue) {
+    CriteriaQuery criteriaQuery = (CriteriaQuery) query;
+    Criteria criteria = criteriaQuery.getCriteria();
+    List<Criteria> criteriaChain = criteria.getCriteriaChain();
+    assertNotNull(criteriaChain);
+    assertEquals(1, criteriaChain.size());
+    Criteria nftIdCriteria = criteriaChain.get(0);
+    assertNotNull(nftIdCriteria);
+    assertEquals(filedName, nftIdCriteria.getField().getName());
+    assertEquals(fieldValue, nftIdCriteria.getQueryCriteriaEntries().iterator().next().getValue());
+  }
 }

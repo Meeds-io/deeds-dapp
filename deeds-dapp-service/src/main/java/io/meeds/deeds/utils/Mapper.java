@@ -15,10 +15,15 @@
  */
 package io.meeds.deeds.utils;
 
+import java.time.Instant;
+
+import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 
 public class Mapper {
+
+  private static final Instant MAX_ES_DATE_VALUE = Instant.ofEpochSecond(165241780471l);
 
   private Mapper() {
     // Class with Static methods
@@ -28,6 +33,8 @@ public class Mapper {
     if (deedTenantOffer == null) {
       return null;
     }
+    ExpirationDuration expirationDuration = deedTenantOffer.getExpirationDuration();
+    Instant expirationDate = expirationDuration == null ? null : deedTenantOffer.getExpirationDate();
     return new DeedTenantOfferDTO(deedTenantOffer.getId(),
                                   deedTenantOffer.getNftId(),
                                   deedTenantOffer.getCity(),
@@ -36,12 +43,12 @@ public class Mapper {
                                   deedTenantOffer.getDescription(),
                                   deedTenantOffer.getAmount(),
                                   deedTenantOffer.getOfferType(),
-                                  deedTenantOffer.getExpirationDuration(),
+                                  expirationDuration,
                                   deedTenantOffer.getDuration(),
                                   deedTenantOffer.getPaymentPeriodicity(),
                                   deedTenantOffer.getOwnerMintingPercentage(),
                                   deedTenantOffer.getMintingPower(),
-                                  deedTenantOffer.getExpirationDate(),
+                                  expirationDate,
                                   deedTenantOffer.getCreatedDate(),
                                   deedTenantOffer.getModifiedDate(),
                                   deedTenantOffer.isEnabled());
@@ -51,6 +58,8 @@ public class Mapper {
     if (deedTenantOfferDTO == null) {
       return null;
     }
+    ExpirationDuration expirationDuration = deedTenantOfferDTO.getExpirationDuration();
+    Instant expirationDate = expirationDuration == null ? MAX_ES_DATE_VALUE : deedTenantOfferDTO.getExpirationDate();
     return new DeedTenantOffer(deedTenantOfferDTO.getId(),
                                deedTenantOfferDTO.getNftId(),
                                deedTenantOfferDTO.getCity(),
@@ -59,14 +68,15 @@ public class Mapper {
                                deedTenantOfferDTO.getDescription(),
                                deedTenantOfferDTO.getAmount(),
                                deedTenantOfferDTO.getOfferType(),
-                               deedTenantOfferDTO.getExpirationDuration(),
+                               expirationDuration,
                                deedTenantOfferDTO.getDuration(),
                                deedTenantOfferDTO.getPaymentPeriodicity(),
                                deedTenantOfferDTO.getOwnerMintingPercentage(),
                                deedTenantOfferDTO.getMintingPower(),
-                               deedTenantOfferDTO.getExpirationDate(),
+                               expirationDate,
                                deedTenantOfferDTO.getCreatedDate(),
                                deedTenantOfferDTO.getModifiedDate(),
                                deedTenantOfferDTO.isEnabled());
   }
+
 }

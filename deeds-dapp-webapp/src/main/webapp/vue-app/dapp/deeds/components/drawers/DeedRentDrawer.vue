@@ -71,7 +71,7 @@
         <v-list-item
           class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="nextStep">
+          @click="goToStep2">
           <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedRentingStep2Title') }}</span>
         </v-list-item>
@@ -179,12 +179,12 @@
         :disabled="buttonDisabled"
         :min-width="MIN_BUTTONS_WIDTH"
         :outlined="buttonOutlined"
-        :class="buttonDisabled && 'primary'"
+        :class="!buttonOutlined && buttonDisabled && 'primary'"
         name="rentConfirmButton"
         color="primary"
         depressed
         dark
-        @click="saveOffer">
+        @click="confirmOffer">
         {{ buttonLabel }}
       </v-btn>
     </template>
@@ -244,13 +244,18 @@ export default {
         && this.$t('next')
         || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
     },
+    step1ButtonDisabled() {
+      return this.offer?.description?.length > this.DESCRIPTION_MAX_LENGTH;
+    },
+    step2ButtonDisabled() {
+      return this.step1ButtonDisabled
+        || !this.offerChanged
+        || !this.offer?.duration
+        || !this.offer?.amount;
+    },
     buttonDisabled() {
-      return this.step === 2
-        && (
-          !this.offerChanged
-          || !this.offer?.duration
-          || !this.offer?.amount
-        );
+      return (this.step === 1 && this.step1ButtonDisabled)
+        || (this.step === 2 && this.step2ButtonDisabled);
     },
   }),
   watch: {
@@ -322,8 +327,8 @@ export default {
           this.$root.$emit('alert-message', this.$t('deedRentingOfferDeletionError'), 'error');
         });
     },
-    nextStep() {
-      if (this.step === 1) {
+    goToStep2() {
+      if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
         this.step = 2;
         window.setTimeout(() => {
           this.$refs.drawer.$el.querySelector('.rental-steps').scrollIntoView({
@@ -333,9 +338,9 @@ export default {
         }, 200);
       }
     },
-    saveOffer() {
+    confirmOffer() {
       if (this.step === 1) {
-        this.nextStep();
+        this.goToStep2();
       } else {
         this.sending = true;
         const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer)

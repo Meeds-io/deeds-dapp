@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -111,7 +110,7 @@ class DeedTenantOfferControllerTest {
     long nftId = 2l;
     DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(nftId);
 
-    when(deedTenantOfferService.getOffersList(eq(nftId), any(Pageable.class))).thenAnswer(invocation -> {
+    when(deedTenantOfferService.getOffersList(any(), any(Pageable.class))).thenAnswer(invocation -> {
       Pageable pageable = invocation.getArgument(1, Pageable.class);
       return new PageImpl<>(Collections.singletonList(deedTenantOfferDTO), pageable, 1);
     });
@@ -131,8 +130,8 @@ class DeedTenantOfferControllerTest {
     List<DeedCard> cardTypes = Arrays.asList(DeedCard.COMMON, DeedCard.UNCOMMON);
     List<OfferType> offerTypes = Arrays.asList(OfferType.RENTING, OfferType.SALE);
 
-    when(deedTenantOfferService.getOffersList(eq(cardTypes), eq(offerTypes), any(Pageable.class))).thenAnswer(invocation -> {
-      Pageable pageable = invocation.getArgument(2, Pageable.class);
+    when(deedTenantOfferService.getOffersList(any(), any(Pageable.class))).thenAnswer(invocation -> {
+      Pageable pageable = invocation.getArgument(1, Pageable.class);
       return new PageImpl<>(Collections.singletonList(deedTenantOfferDTO), pageable, 1);
     });
 
