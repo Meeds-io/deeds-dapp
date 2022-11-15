@@ -21,14 +21,14 @@
 <template>
   <v-list-item class="d-flex flex-column flex-sm-row justify-end px-0 mt-4 mt-sm-auto">
     <template v-if="expirationTime">
-      <v-list-item-action-text v-if="hasExpired" class="d-flex py-0 subtitle-1">
+      <v-list-item-action-text v-if="hasExpired" class="d-flex py-0 me-0 me-sm-8 subtitle-1">
         <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
       </v-list-item-action-text>
       <template v-else>
         <v-list-item-action-text class="d-flex py-0 subtitle-1">
           <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
         </v-list-item-action-text>
-        <v-list-item-action-text class="d-flex py-0 subtitle-1">
+        <v-list-item-action-text class="d-flex py-0 me-0 me-sm-8 subtitle-1">
           <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
           <deeds-timer
             :end-time="expirationTime"
@@ -38,7 +38,7 @@
         </v-list-item-action-text>
       </template>
     </template>
-    <v-list-item-action v-if="!hasExpired" class="ms-0 ms-sm-8 align-self-center align-self-sm-end">
+    <v-list-item-action v-if="!hasExpired" class="mx-0 align-self-center align-self-sm-end">
       <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
         <deeds-metamask-button class="ma-auto" />
       </div>

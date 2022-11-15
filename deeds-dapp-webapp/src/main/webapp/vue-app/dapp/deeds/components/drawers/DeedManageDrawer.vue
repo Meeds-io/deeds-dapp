@@ -177,7 +177,8 @@
             <v-list-item-content>
               <v-list-item-subtitle
                 :title="rentingDescription"
-                class="text-color text-truncate-2">
+                :class="hasOnlyExpiredOffers && 'error--text'"
+                class="text-truncate-2">
                 {{ rentingDescription }}
               </v-list-item-subtitle>
             </v-list-item-content>
@@ -235,7 +236,7 @@
         outlined
         v-bind="attrs"
         v-on="on"
-        @click="logout">
+        @click="logout()">
         {{ $t('signOut') }}
       </v-btn>
       <v-tooltip v-else top>
@@ -285,6 +286,7 @@ export default {
     startTenantGasLimit: state => state.startTenantGasLimit,
     cardTypeInfos: state => state.cardTypeInfos,
     authenticated: state => state.authenticated,
+    now: state => state.now,
     cardTypeInfo() {
       return this.cardTypeInfos[this.cardType];
     },
@@ -366,10 +368,16 @@ export default {
       return this.authenticated && this.isOwner;
     },
     showSeeRentPart() {
-      return this.authenticated && this.isOwner && this.hasRentOffers;
+      return this.authenticated && this.isOwner && this.hasAvailableRentOffers;
     },
     hasRentOffers() {
       return !!this.rentalOffers?.length;
+    },
+    hasAvailableRentOffers() {
+      return !!this.rentalOffers?.filter(offer => !offer.expirationDate || new Date(offer.expirationDate).getTime() > this.now)?.length;
+    },
+    hasOnlyExpiredOffers() {
+      return this.hasRentOffers && !this.hasAvailableRentOffers;
     },
     rentalOffer() {
       return this.hasRentOffers && this.rentalOffers[0];
@@ -383,9 +391,11 @@ export default {
         || this.$t('deedMoveInDescription');
     },
     rentingDescription() {
-      return this.hasRentOffers
+      return this.hasOnlyExpiredOffers
+        && this.$t('deedRentOfferExpired')
+        || (this.hasRentOffers
         && this.$t('deedRentEditDescription')
-        || (this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription'));
+        || (this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription')));
     },
     rentingButtonName() {
       return this.hasRentOffers
@@ -439,12 +449,12 @@ export default {
       if (this.authenticated) {
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
-          .then(() => this.refreshOffers())
           .catch(() => {
-            return this.logout()
+            return this.logout(true)
               .then(() => this.$tenantManagement.getTenantStartDate(this.nftId))
               .then(startDate => this.deedInfo = {provisioningDate: startDate});
-          });
+          })
+          .then(() => this.refreshOffers());
       } else {
         return this.$tenantManagement.getTenantStartDate(this.nftId)
           .then(startDate => this.deedInfo = {provisioningDate: startDate});
@@ -470,18 +480,19 @@ export default {
     },
     openDrawer(sendNft, eventName, obj) {
       return this.refreshDeedInfo()
-        .then(() => this.$nextTick())
-        .then(() => {
-          if (this.authenticated && this.nft?.id) {
-            if (sendNft) {
-              this.$root.$emit(eventName, this.nft, obj);
+        .finally(() =>
+          this.$nextTick().then(() => {
+            if (this.authenticated && this.nft?.id) {
+              if (sendNft) {
+                this.$root.$emit(eventName, this.nft, obj);
+              } else {
+                this.$root.$emit(eventName, this.nft.id, obj);
+              }
             } else {
-              this.$root.$emit(eventName, this.nft.id, obj);
+              this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
             }
-          } else {
-            this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning');
-          }
-        });
+          })
+        );
     },
     open(nft) {
       this.nft = nft;
@@ -490,22 +501,23 @@ export default {
       this.sending = false;
       this.$store.commit('loadCardInfo', this.cardType);
       this.refreshDeedInfo()
-        .then(() => this.$nextTick())
-        .then(() => {
-          if (this.$refs.drawer) {
-            this.$refs.drawer.open();
-          }
-        });
+        .finally(() =>
+          this.$nextTick().then(() => this.$refs.drawer?.open())
+        );
     },
     close(nftId) {
       if (nftId === this.nftId) {
         this.$refs.drawer.close();
       }
     },
-    logout() {
+    logout(avoidRefreshInfo) {
       return this.$authentication.logout(this.address)
         .finally(() => this.refreshAuthentication())
-        .then(() => this.refreshDeedInfo());
+        .then(() => {
+          if (!avoidRefreshInfo) {
+            return this.refreshDeedInfo();
+          }
+        });
     },
     login() {
       const token = document.querySelector('[name=loginMessage]').value;

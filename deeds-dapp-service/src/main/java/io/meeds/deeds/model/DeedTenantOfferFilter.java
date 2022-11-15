@@ -13,18 +13,31 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.storage;
+package io.meeds.deeds.model;
 
 import java.util.List;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.constant.OfferType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import io.meeds.deeds.model.DeedTenantOffer;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class DeedTenantOfferFilter {
 
-public interface DeedTenantOfferRepository extends ElasticsearchRepository<DeedTenantOffer, Long> {
+  private long            nftId = -1;
 
-  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
+  private String          ownerAddress;
 
-  void deleteByNftId(long nftId);
+  private List<DeedCard>  cardTypes;
+
+  private List<OfferType> offerTypes;
+
+  private boolean         excludeExpired;
+
+  private boolean         excludeDisabled;
 
 }
