@@ -62,9 +62,11 @@ import org.springframework.web.context.WebApplicationContext;
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ExpirationDuration;
+import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
+import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.rest.DeedTenantOfferController;
@@ -250,6 +252,8 @@ class DeedTenantOfferControllerTest {
                                   ExpirationDuration.ONE_DAY,
                                   RentalDuration.ONE_MONTH,
                                   RentalPaymentPeriodicity.ONE_YEAR,
+                                  SecurityDepositPeriod.THREE_MONTHS,
+                                  NoticePeriod.ONE_MONTH,
                                   1,
                                   1.1d,
                                   Instant.now(),

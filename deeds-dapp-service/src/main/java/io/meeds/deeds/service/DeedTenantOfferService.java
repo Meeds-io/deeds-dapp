@@ -179,6 +179,8 @@ public class DeedTenantOfferService {
     existingDeedTenantOffer.setDuration(deedTenantOfferDTO.getDuration());
     existingDeedTenantOffer.setExpirationDuration(deedTenantOfferDTO.getExpirationDuration());
     existingDeedTenantOffer.setPaymentPeriodicity(deedTenantOfferDTO.getPaymentPeriodicity());
+    existingDeedTenantOffer.setSecurityDepositPeriod(deedTenantOfferDTO.getSecurityDepositPeriod());
+    existingDeedTenantOffer.setNoticePeriod(deedTenantOfferDTO.getNoticePeriod());
     existingDeedTenantOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
     if (deedTenantOfferDTO.getExpirationDuration() == null) {
       existingDeedTenantOffer.setExpirationDate(null);
