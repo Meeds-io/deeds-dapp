@@ -19,9 +19,11 @@ import java.time.Instant;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.ExpirationDuration;
+import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
+import io.meeds.deeds.constant.SecurityDepositPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,6 +54,10 @@ public class DeedTenantOfferDTO {
   private RentalDuration                   duration;
 
   private RentalPaymentPeriodicity         paymentPeriodicity;
+
+  private SecurityDepositPeriod            securityDepositPeriod;
+
+  private NoticePeriod                     noticePeriod;
 
   private int                              ownerMintingPercentage;
 

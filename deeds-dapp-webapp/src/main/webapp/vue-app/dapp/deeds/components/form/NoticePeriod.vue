@@ -20,35 +20,35 @@
 -->
 <template>
   <v-btn-toggle
-    v-model="duration"
+    v-model="period"
     class="flex-grow-1 d-flex justify-space-between"
     mandatory
     outlined
     dense
     group>
     <deeds-button-group-item
-      :selected-value="duration"
+      :selected-value="period"
+      value="NO_PERIOD"
+      color="primary">
+      {{ $t('deedRentingDurationNoNotice') }}
+    </deeds-button-group-item>
+    <deeds-button-group-item
+      :selected-value="period"
       value="ONE_MONTH"
       color="primary">
       {{ $t('deedRentingDurationOneMonth') }}
     </deeds-button-group-item>
     <deeds-button-group-item
-      :selected-value="duration"
+      :selected-value="period"
+      value="TWO_MONTHS"
+      color="primary">
+      {{ $t('deedRentingDurationTwoMonths') }}
+    </deeds-button-group-item>
+    <deeds-button-group-item
+      :selected-value="period"
       value="THREE_MONTHS"
       color="primary">
       {{ $t('deedRentingDurationThreeMonths') }}
-    </deeds-button-group-item>
-    <deeds-button-group-item
-      :selected-value="duration"
-      value="SIX_MONTHS"
-      color="primary">
-      {{ $t('deedRentingDurationSixMonths') }}
-    </deeds-button-group-item>
-    <deeds-button-group-item
-      :selected-value="duration"
-      value="ONE_YEAR"
-      color="primary">
-      {{ $t('deedRentingDurationOneYear') }}
     </deeds-button-group-item>
   </v-btn-toggle>
 </template>
@@ -61,15 +61,15 @@ export default {
     }
   },
   data: () => ({
-    duration: null,
+    period: null,
   }),
   watch: {
-    duration() {
-      this.$emit('input', this.duration);
+    period() {
+      this.$emit('input', this.period);
     },
   },
   created() {
-    this.duration = this.value;
+    this.period = this.value;
   },
 };
 </script>

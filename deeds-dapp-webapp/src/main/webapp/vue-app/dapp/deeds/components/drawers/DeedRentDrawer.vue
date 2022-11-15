@@ -138,6 +138,12 @@
                   dense />
               </div>
             </div>
+            <div class="mt-6">{{ $t('deedRentingSecurityDepositPeriodTitle') }}:</div>
+            <div class="mb-2 caption text--disabled">{{ $t('deedRentingSecurityDepositPeriodSubtitle') }}:</div>
+            <deeds-security-deposit-period v-model="offer.securityDepositPeriod" />
+            <div class="mt-6">{{ $t('deedRentingNoticePeriodTitle') }}:</div>
+            <div class="mb-2 caption text--disabled">{{ $t('deedRentingNoticePeriodSubtitle') }}:</div>
+            <deeds-notice-period v-model="offer.noticePeriod" />
           </v-card>
         </v-expand-transition>
       </v-card-text>
@@ -212,6 +218,8 @@ export default {
       expirationDuration: null,
       amount: 10,
       paymentPeriodicity: 'ONE_MONTH',
+      noticePeriod: 'ONE_MONTH',
+      securityDepositPeriod: 'ONE_MONTH',
       ownerMintingPercentage: 50,
     },
     DESCRIPTION_MAX_LENGTH: 200,
@@ -251,7 +259,9 @@ export default {
       return this.step1ButtonDisabled
         || !this.offerChanged
         || !this.offer?.duration
-        || !this.offer?.amount;
+        || !this.offer?.amount
+        || !this.offer?.noticePeriod
+        || !this.offer?.securityDepositPeriod;
     },
     buttonDisabled() {
       return (this.step === 1 && this.step1ButtonDisabled)
