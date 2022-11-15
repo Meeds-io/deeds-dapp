@@ -40,7 +40,7 @@
         <v-icon>fas fa-edit</v-icon>
       </v-btn>
     </v-list-item-action>
-    <v-list-item-action v-if="offer" class="me-2 ms-0">
+    <v-list-item-action v-if="!invalidOffer" class="me-2 ms-0">
       <v-btn
         :title="$t('deedsMarketPlaceCopyOfferLink')"
         icon
@@ -66,6 +66,10 @@ export default {
       type: Object,
       default: null,
     },
+    invalidOffer: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: Vuex.mapState({
     address: state => state.address,
@@ -74,7 +78,7 @@ export default {
       return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
     },
     isAuthenticatedOwner() {
-      return this.authenticated && this.isOwner;
+      return this.authenticated && this.isOwner && !this.invalidOffer;
     },
   }),
   methods: {

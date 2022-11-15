@@ -84,8 +84,13 @@ export default {
     },
     animateSelectedOffer() {
       if (this.selected) {
-        document.querySelector('#marketplaceOffersList').scrollIntoView({
-          block: 'start',
+        this.$nextTick().then(() => {
+          const parentListElement = this.$el?.parentElement;
+          if (parentListElement) {
+            parentListElement.scrollIntoView({
+              block: 'start',
+            });
+          }
         });
         window.setTimeout(() => {
           this.animateOffer = true;

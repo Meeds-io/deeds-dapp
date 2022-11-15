@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,6 +55,7 @@ import org.springframework.data.elasticsearch.core.query.Query;
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ExpirationDuration;
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
@@ -93,7 +95,8 @@ class DeedTenantOfferServiceTest {
   })
   void testGetOffersListByNftId() {
     long nftId = 2l;
-    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+    String offerId = "offerId";
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
 
     Pageable pageable = mock(Pageable.class);
     SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
@@ -120,8 +123,9 @@ class DeedTenantOfferServiceTest {
   })
   void testGetOffersListByOwned() {
     long nftId = 2l;
+    String offerId = "offerId";
     String ownerAddress = "ownerAddress";
-    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
 
     Pageable pageable = mock(Pageable.class);
     SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
@@ -149,8 +153,9 @@ class DeedTenantOfferServiceTest {
   })
   void testGetOffersListByCardTypes() {
     long nftId = 2l;
+    String offerId = "offerId";
     List<DeedCard> cardTypes = Arrays.asList(DeedCard.COMMON, DeedCard.RARE);
-    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
 
     Pageable pageable = mock(Pageable.class);
     SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
@@ -178,8 +183,9 @@ class DeedTenantOfferServiceTest {
   })
   void testGetOffersListByOfferTypes() {
     long nftId = 2l;
+    String offerId = "offerId";
     List<OfferType> offerTypes = Arrays.asList(OfferType.RENTING, OfferType.SALE);
-    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
 
     Pageable pageable = mock(Pageable.class);
     SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
@@ -207,8 +213,9 @@ class DeedTenantOfferServiceTest {
   })
   void testGetOffersListByEnabled() {
     long nftId = 2l;
+    String offerId = "offerId";
     boolean enabled = true;
-    DeedTenantOffer deedTenantOffer = newDeedTenant(nftId);
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
 
     Pageable pageable = mock(Pageable.class);
     SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
@@ -228,6 +235,47 @@ class DeedTenantOfferServiceTest {
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
     assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked"
+  })
+  void testGetOffersListByDateExpiration() {
+    long nftId = 2l;
+    String offerId = "offerId";
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
+
+    Pageable pageable = mock(Pageable.class);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
+
+    assertElasticSearchQuery(searchHits, "expirationDate");
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setExcludeExpired(true);
+
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
+    assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+  }
+
+  @Test
+  void testGetOffer() {
+    String offerId = "offerId";
+    DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
+    deedTenantOffer.setId(offerId);
+
+    when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
+    DeedTenantOfferDTO deedTenantOfferDTO = deedTenantOfferService.getOffer(offerId);
+    assertNotNull(deedTenantOfferDTO);
+    assertEquals(offerId, deedTenantOfferDTO.getId());
   }
 
   @Test
@@ -277,9 +325,11 @@ class DeedTenantOfferServiceTest {
     assertThrows(IllegalStateException.class, () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   void testCreateRentingOfferByOwnerWhenTenantNotUsed() throws Exception {
     long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
@@ -306,13 +356,20 @@ class DeedTenantOfferServiceTest {
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(tenantService.getDeedTenantOrImport(walletAddress, nftId)).thenReturn(deedTenant);
-    when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenantOffer.class));
+    when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> {
+      DeedTenantOffer offer = invocation.getArgument(0, DeedTenantOffer.class);
+      offer.setId(offerId);
+      return offer;
+    });
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.emptyList());
+    when(searchHits.getTotalHits()).thenReturn(0l);
+    when(elasticsearchOperations.search(any(Query.class), eq(DeedTenantOffer.class))).thenReturn(searchHits);
 
     DeedTenantOfferDTO createdRentingOffer = deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO);
     assertNotNull(createdRentingOffer);
-    assertEquals(nftId,
-                 createdRentingOffer.getId(),
-                 "Knowing that one single offer is allowed for now for a Deed Tenant, the id must be the same as NFT Identifier");
+    assertEquals(offerId, createdRentingOffer.getId());
     assertEquals(OfferType.RENTING, createdRentingOffer.getOfferType());
     assertEquals(DeedCity.MELQART, createdRentingOffer.getCity());
     assertEquals(DeedCard.UNCOMMON, createdRentingOffer.getCardType());
@@ -329,6 +386,53 @@ class DeedTenantOfferServiceTest {
     assertNotEquals(deedTenantOfferDTO.getExpirationDate(), createdRentingOffer.getExpirationDate());
     assertNotEquals(deedTenantOfferDTO.getCreatedDate(), createdRentingOffer.getCreatedDate());
     assertNotEquals(deedTenantOfferDTO.getModifiedDate(), createdRentingOffer.getModifiedDate());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testCreateRentingOfferByOwnerWhenAlreadyExists() throws Exception {
+    long nftId = 2l;
+    String offerId = "offerId";
+    String walletAddress = "address";
+    DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
+    deedTenantOfferDTO.setNftId(nftId);
+    deedTenantOfferDTO.setCardType(DeedCard.LEGENDARY);
+    deedTenantOfferDTO.setCity(DeedCity.ASHTARTE);
+    deedTenantOfferDTO.setOwner("otherWallet");
+    deedTenantOfferDTO.setDescription("description");
+    deedTenantOfferDTO.setAmount(12);
+    deedTenantOfferDTO.setOfferType(OfferType.SALE);
+    deedTenantOfferDTO.setExpirationDuration(ExpirationDuration.ONE_MONTH);
+    deedTenantOfferDTO.setDuration(RentalDuration.SIX_MONTHS);
+    deedTenantOfferDTO.setPaymentPeriodicity(RentalPaymentPeriodicity.ONE_MONTH);
+    deedTenantOfferDTO.setOwnerMintingPercentage(50);
+    deedTenantOfferDTO.setMintingPower(50);
+    deedTenantOfferDTO.setExpirationDate(Instant.now().plus(500, ChronoUnit.DAYS));
+    deedTenantOfferDTO.setCreatedDate(Instant.now().plus(500, ChronoUnit.DAYS));
+    deedTenantOfferDTO.setModifiedDate(Instant.now().plus(700, ChronoUnit.DAYS));
+    deedTenantOfferDTO.setEnabled(false);
+    DeedTenant deedTenant = new DeedTenant();
+    deedTenant.setNftId(nftId);
+    deedTenant.setCardType((short) DeedCard.UNCOMMON.ordinal());
+    deedTenant.setCityIndex((short) DeedCity.MELQART.ordinal());
+
+    when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
+    when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
+    when(tenantService.getDeedTenantOrImport(walletAddress, nftId)).thenReturn(deedTenant);
+
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
+
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
+    when(elasticsearchOperations.search(any(Query.class), eq(DeedTenantOffer.class))).thenReturn(searchHits);
+
+    assertThrows(ObjectAlreadyExistsException.class,
+                 () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
+    verify(deedTenantOfferRepository, never()).save(any());
   }
 
   @Test
@@ -365,9 +469,10 @@ class DeedTenantOfferServiceTest {
   @Test
   void testUpdateRentingOfferByOwnerWhenTenantNotUsed() throws Exception {
     long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
-    deedTenantOfferDTO.setId(nftId);
+    deedTenantOfferDTO.setId(offerId);
     deedTenantOfferDTO.setNftId(nftId);
     deedTenantOfferDTO.setCardType(DeedCard.LEGENDARY);
     deedTenantOfferDTO.setCity(DeedCity.ASHTARTE);
@@ -389,14 +494,12 @@ class DeedTenantOfferServiceTest {
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenantOffer.class));
 
-    DeedTenantOffer existingDeedTenantOffer = newDeedTenant(nftId);
-    when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(existingDeedTenantOffer));
+    DeedTenantOffer existingDeedTenantOffer = newDeedTenant(offerId, nftId);
+    when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(existingDeedTenantOffer));
 
     DeedTenantOfferDTO updatedRentingOffer = deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     assertNotNull(updatedRentingOffer);
-    assertEquals(nftId,
-                 updatedRentingOffer.getId(),
-                 "Knowing that one single offer is allowed for now for a Deed Tenant, the id must be the same as NFT Identifier");
+    assertEquals(offerId, updatedRentingOffer.getId());
     assertEquals(OfferType.RENTING, updatedRentingOffer.getOfferType());
     assertEquals(DeedCity.MELQART, updatedRentingOffer.getCity());
     assertEquals(DeedCard.UNCOMMON, updatedRentingOffer.getCardType());
@@ -418,9 +521,10 @@ class DeedTenantOfferServiceTest {
   @Test
   void testUpdateRentingOfferByOwnerWhenNeverExpires() throws Exception {
     long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
-    deedTenantOfferDTO.setId(nftId);
+    deedTenantOfferDTO.setId(offerId);
     deedTenantOfferDTO.setNftId(nftId);
     deedTenantOfferDTO.setCardType(DeedCard.LEGENDARY);
     deedTenantOfferDTO.setCity(DeedCity.ASHTARTE);
@@ -442,7 +546,7 @@ class DeedTenantOfferServiceTest {
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenantOffer.class));
 
     DeedTenantOffer existingDeedTenantOffer = new DeedTenantOffer();
-    existingDeedTenantOffer.setId(nftId);
+    existingDeedTenantOffer.setId(String.valueOf(nftId));
     existingDeedTenantOffer.setNftId(nftId);
     existingDeedTenantOffer.setCardType(DeedCard.UNCOMMON);
     existingDeedTenantOffer.setCity(DeedCity.MELQART);
@@ -459,13 +563,10 @@ class DeedTenantOfferServiceTest {
     existingDeedTenantOffer.setCreatedDate(Instant.now());
     existingDeedTenantOffer.setModifiedDate(Instant.now());
     existingDeedTenantOffer.setEnabled(true);
-    when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(existingDeedTenantOffer));
+    when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(existingDeedTenantOffer));
 
     DeedTenantOfferDTO updatedRentingOffer = deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     assertNotNull(updatedRentingOffer);
-    assertEquals(nftId,
-                 updatedRentingOffer.getId(),
-                 "Knowing that one single offer is allowed for now for a Deed Tenant, the id must be the same as NFT Identifier");
     assertEquals(OfferType.RENTING, updatedRentingOffer.getOfferType());
     assertEquals(DeedCity.MELQART, updatedRentingOffer.getCity());
     assertEquals(DeedCard.UNCOMMON, updatedRentingOffer.getCardType());
@@ -486,37 +587,39 @@ class DeedTenantOfferServiceTest {
 
   @Test
   void testDeleteRentingOfferWhenNotExists() throws Exception {
-    long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     assertThrows(ObjectNotFoundException.class,
-                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, nftId));
+                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId));
   }
 
   @Test
   void testDeleteRentingOfferWhenExistsAndNotOwner() throws Exception {
     long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
     deedTenantOffer.setNftId(nftId);
 
     lenient().when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
-    when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(deedTenantOffer));
+    when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, nftId),
+                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId),
                  "even Deed Manager shouldn't be able to delete Offer");
   }
 
   @Test
   void testDeleteRentingOfferWhenExistsAndOwner() throws Exception {
     long nftId = 2l;
+    String offerId = "offerId";
     String walletAddress = "address";
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
     deedTenantOffer.setNftId(nftId);
 
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
-    when(deedTenantOfferRepository.findById(nftId)).thenReturn(Optional.of(deedTenantOffer));
-    deedTenantOfferService.deleteRentingOffer(walletAddress, nftId);
-    verify(deedTenantOfferRepository, times(1)).deleteById(nftId);
+    when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
+    deedTenantOfferService.deleteRentingOffer(walletAddress, offerId);
+    verify(deedTenantOfferRepository, times(1)).deleteById(offerId);
   }
 
   @Test
@@ -534,9 +637,9 @@ class DeedTenantOfferServiceTest {
     verify(deedTenantOfferRepository, times(1)).deleteAll(offers);
   }
 
-  private DeedTenantOffer newDeedTenant(long nftId) {
+  private DeedTenantOffer newDeedTenant(String offerId, long nftId) {
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
-    deedTenantOffer.setId(nftId);
+    deedTenantOffer.setId(offerId);
     deedTenantOffer.setNftId(nftId);
     deedTenantOffer.setCardType(DeedCard.UNCOMMON);
     deedTenantOffer.setCity(DeedCity.MELQART);
@@ -554,6 +657,16 @@ class DeedTenantOfferServiceTest {
     deedTenantOffer.setModifiedDate(Instant.now());
     deedTenantOffer.setEnabled(true);
     return deedTenantOffer;
+  }
+
+  private void assertElasticSearchQuery(SearchHits<DeedTenantOffer> searchHits, String filedName) {
+    when(elasticsearchOperations.search(argThat(new ArgumentMatcher<Query>() {
+      @Override
+      public boolean matches(Query query) {
+        assertQueryCriteriaNotNull(query, filedName);
+        return true;
+      }
+    }), eq(DeedTenantOffer.class))).thenReturn(searchHits);
   }
 
   private void assertElasticSearchQuery(SearchHits<DeedTenantOffer> searchHits, String filedName, Object fieldValue) {
@@ -576,5 +689,17 @@ class DeedTenantOfferServiceTest {
     assertNotNull(nftIdCriteria);
     assertEquals(filedName, nftIdCriteria.getField().getName());
     assertEquals(fieldValue, nftIdCriteria.getQueryCriteriaEntries().iterator().next().getValue());
+  }
+
+  private void assertQueryCriteriaNotNull(Query query, String filedName) {
+    CriteriaQuery criteriaQuery = (CriteriaQuery) query;
+    Criteria criteria = criteriaQuery.getCriteria();
+    List<Criteria> criteriaChain = criteria.getCriteriaChain();
+    assertNotNull(criteriaChain);
+    assertEquals(1, criteriaChain.size());
+    Criteria nftIdCriteria = criteriaChain.get(0);
+    assertNotNull(nftIdCriteria);
+    assertEquals(filedName, nftIdCriteria.getField().getName());
+    assertNotNull(nftIdCriteria.getQueryCriteriaEntries().iterator().next().getValue());
   }
 }

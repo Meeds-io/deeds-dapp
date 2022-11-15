@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
@@ -54,7 +55,9 @@ import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 @RequestMapping("/api/offers")
 public class DeedTenantOfferController {
 
-  private static final String    NFT_DOESN_T_EXIST_MESSAGE = "NFT doesn't exist";
+  private static final String    NFT_DOESN_T_EXIST_MESSAGE    = "NFT doesn't exist";
+
+  private static final String    OFFER_ALREADY_EXISTS_MESSAGE = "NFT has already an offer";
 
   private static final Logger    LOG                       = LoggerFactory.getLogger(DeedTenantOfferController.class);
 
@@ -95,10 +98,10 @@ public class DeedTenantOfferController {
     }
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{offerId}")
   public DeedTenantOfferDTO getOffer(
-                                     @PathVariable(name = "id", required = true)
-                                     Long offerId) {
+                                     @PathVariable(name = "offerId", required = true)
+                                     String offerId) {
     DeedTenantOfferDTO offer = deedTenantOfferService.getOffer(offerId);
     if (offer == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -122,6 +125,8 @@ public class DeedTenantOfferController {
       return deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
+    } catch (ObjectAlreadyExistsException e) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, OFFER_ALREADY_EXISTS_MESSAGE);
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to create Deed tenant offer while not owner {}",
                walletAddress,
@@ -131,25 +136,25 @@ public class DeedTenantOfferController {
     }
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/{offerId}")
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantOfferDTO updateRentingOffer(Principal principal,
-                                               @PathVariable("id")
-                                               Long id,
+                                               @PathVariable("offerId")
+                                               String offerId,
                                                @RequestBody
                                                DeedTenantOfferDTO deedTenantOfferDTO) {
     if (principal == null || StringUtils.isBlank(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
-    if (id == null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Object id is missing");
+    if (StringUtils.isBlank(offerId)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Offer id is missing");
     }
     if (deedTenantOfferDTO == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Object is missing");
     }
     String walletAddress = principal.getName();
     try {
-      deedTenantOfferDTO.setId(id);
+      deedTenantOfferDTO.setId(offerId);
       return deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
@@ -162,26 +167,26 @@ public class DeedTenantOfferController {
     }
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{offerId}")
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public void deleteRentingOffer(Principal principal,
-                                 @PathVariable("id")
-                                 Long id) {
+                                 @PathVariable("offerId")
+                                 String offerId) {
     if (principal == null || StringUtils.isBlank(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
-    if (id == null || id == 0) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Object id is missing");
+    if (StringUtils.isBlank(offerId)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Offer id is missing");
     }
     String walletAddress = principal.getName();
     try {
-      deedTenantOfferService.deleteRentingOffer(walletAddress, id);
+      deedTenantOfferService.deleteRentingOffer(walletAddress, offerId);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to delete Deed tenant offer while not owner of offer with id {}",
                walletAddress,
-               id,
+               offerId,
                e);
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
