@@ -26,9 +26,11 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.ExpirationDuration;
+import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
+import io.meeds.deeds.constant.SecurityDepositPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -72,6 +74,12 @@ public class DeedTenantOffer {
 
   @Field(type = FieldType.Keyword)
   private RentalPaymentPeriodicity         paymentPeriodicity;
+
+  @Field(type = FieldType.Keyword)
+  private SecurityDepositPeriod            securityDepositPeriod;
+
+  @Field(type = FieldType.Keyword)
+  private NoticePeriod                     noticePeriod;
 
   @Field(type = FieldType.Integer)
   private int                              ownerMintingPercentage;

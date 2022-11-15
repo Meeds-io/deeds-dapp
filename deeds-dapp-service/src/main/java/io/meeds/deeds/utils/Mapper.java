@@ -18,6 +18,8 @@ package io.meeds.deeds.utils;
 import java.time.Instant;
 
 import io.meeds.deeds.constant.ExpirationDuration;
+import io.meeds.deeds.constant.NoticePeriod;
+import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 
@@ -46,6 +48,8 @@ public class Mapper {
                                   expirationDuration,
                                   deedTenantOffer.getDuration(),
                                   deedTenantOffer.getPaymentPeriodicity(),
+                                  deedTenantOffer.getSecurityDepositPeriod(),
+                                  deedTenantOffer.getNoticePeriod(),
                                   deedTenantOffer.getOwnerMintingPercentage(),
                                   deedTenantOffer.getMintingPower(),
                                   expirationDate,
@@ -60,6 +64,8 @@ public class Mapper {
     }
     ExpirationDuration expirationDuration = deedTenantOfferDTO.getExpirationDuration();
     Instant expirationDate = expirationDuration == null ? MAX_ES_DATE_VALUE : deedTenantOfferDTO.getExpirationDate();
+    SecurityDepositPeriod securityDepositPeriod = deedTenantOfferDTO.getSecurityDepositPeriod();
+    NoticePeriod noticePeriod = deedTenantOfferDTO.getNoticePeriod();
     return new DeedTenantOffer(deedTenantOfferDTO.getId(),
                                deedTenantOfferDTO.getNftId(),
                                deedTenantOfferDTO.getCity(),
@@ -71,6 +77,8 @@ public class Mapper {
                                expirationDuration,
                                deedTenantOfferDTO.getDuration(),
                                deedTenantOfferDTO.getPaymentPeriodicity(),
+                               securityDepositPeriod == null ? SecurityDepositPeriod.NO_PERIOD : securityDepositPeriod,
+                               noticePeriod == null ? NoticePeriod.NO_PERIOD : noticePeriod,
                                deedTenantOfferDTO.getOwnerMintingPercentage(),
                                deedTenantOfferDTO.getMintingPower(),
                                expirationDate,

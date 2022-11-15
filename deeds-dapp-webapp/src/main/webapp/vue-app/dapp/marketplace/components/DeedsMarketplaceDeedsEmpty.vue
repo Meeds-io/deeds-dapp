@@ -1,6 +1,6 @@
 <template>
   <v-card
-    min-height="210px"
+    min-height="300px"
     class="d-flex flex-column justify-center align-center"
     flat>
     <v-card
