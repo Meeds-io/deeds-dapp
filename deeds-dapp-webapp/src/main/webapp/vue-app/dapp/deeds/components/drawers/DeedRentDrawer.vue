@@ -146,6 +146,58 @@
             <deeds-notice-period v-model="offer.noticePeriod" />
           </v-card>
         </v-expand-transition>
+        <v-list-item
+          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="goToStep3">
+          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedRentingStep3Title') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-show="step === 3"
+            class="flex-grow-1 mb-8"
+            flat>
+            <div class="font-weight-bold my-3">
+              {{ $t('deedRentalOfferSummary') }}
+            </div>
+            <div class="d-flex my-2">
+              <div class="flex-grow-1">{{ $t('deedRentingDurationTitle') }}</div>
+              <div>{{ rentalDurationLabel }}</div>
+            </div>
+            <div class="d-flex mt-2">
+              <div class="flex-grow-1">{{ $t('deedRentingPeriodicRentPrice') }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="offer.amount"
+                  :fractions="2"
+                  no-decimals>
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+                <span class="ms-1 text-lowercase">{{ rentPeriodicityLabel }}</span>
+              </div>
+            </div>
+            <div class="caption font-italic mb-4">
+              {{ $t('deedRentingPeriodicRentPriceSummarySubtitle', {0: paymentPeriodicityLabel}) }}
+            </div>
+            <div class="d-flex mt-2">
+              <div class="flex-grow-1">{{ $t('deedRentingRewardDistribution') }}</div>
+              {{ $t('deedTenantMintingPercentage', {0: rewardTenantMintingPercentage}) }}
+            </div>
+            <div class="caption font-italic mb-4">
+              {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
+            </div>
+            <template v-if="hasSecurityDepositPeriod">
+              <div class="d-flex mt-2">
+                <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
+                {{ securityDepositPeriodLabel }}
+              </div>
+              <div class="caption font-italic mb-4">
+                {{ $t('deedRentingSecurityDepositPeriodSummarySubtitle') }}
+              </div>
+            </template>
+          </v-card>
+        </v-expand-transition>
       </v-card-text>
       <deeds-confirm-dialog
         ref="confirmDialog"
@@ -184,8 +236,8 @@
         :loading="sending"
         :disabled="buttonDisabled"
         :min-width="MIN_BUTTONS_WIDTH"
-        :outlined="buttonOutlined"
-        :class="!buttonOutlined && buttonDisabled && 'primary'"
+        :outlined="intermediateStep"
+        :class="!intermediateStep && buttonDisabled && 'primary'"
         name="rentConfirmButton"
         color="primary"
         depressed
@@ -244,11 +296,11 @@ export default {
         text: this.$t('deedRentingDurationPerMonth'),
       }];
     },
-    buttonOutlined() {
-      return this.step === 1;
+    intermediateStep() {
+      return this.step < 3;
     },
     buttonLabel() {
-      return this.step === 1
+      return this.intermediateStep
         && this.$t('next')
         || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
     },
@@ -257,15 +309,83 @@ export default {
     },
     step2ButtonDisabled() {
       return this.step1ButtonDisabled
-        || !this.offerChanged
         || !this.offer?.duration
         || !this.offer?.amount
         || !this.offer?.noticePeriod
         || !this.offer?.securityDepositPeriod;
     },
+    step3ButtonDisabled() {
+      return this.step1ButtonDisabled
+        || this.step2ButtonDisabled
+        || !this.offerChanged;
+    },
     buttonDisabled() {
       return (this.step === 1 && this.step1ButtonDisabled)
-        || (this.step === 2 && this.step2ButtonDisabled);
+        || (this.step === 2 && this.step2ButtonDisabled)
+        || (this.step === 3 && this.step3ButtonDisabled);
+    },
+    paymentPeriodicityLabel() {
+      if (!this.offer?.paymentPeriodicity) {
+        return null;
+      }
+      switch (this.offer?.paymentPeriodicity) {
+      case 'ONE_MONTH': return this.$t('month');
+      case 'ONE_YEAR': return this.$t('year');
+      }
+      return null;
+    },
+    rentPeriodicityLabel() {
+      if (!this.offer?.paymentPeriodicity) {
+        return null;
+      }
+      switch (this.offer?.paymentPeriodicity){
+      case 'ONE_MONTH': return this.$t('deedRentingDurationPerMonth');
+      case 'ONE_YEAR': return this.$t('deedRentingDurationPerYear');
+      }
+      return null;
+    },
+    noticePeriodLabel() {
+      if (!this.offer?.noticePeriod) {
+        return null;
+      }
+      switch (this.offer?.noticePeriod) {
+      case 'ONE_MONTH': return this.$t('month');
+      case 'TWO_MONTHS': return this.$t('twoMonths');
+      case 'THREE_MONTHS': return this.$t('threeMonths');
+      }
+      return null;
+    },
+    rentalDurationLabel() {
+      if (!this.offer?.duration) {
+        return null;
+      }
+      switch (this.offer?.duration) {
+      case 'ONE_MONTH': return this.$t('deedRentingDurationOneMonth');
+      case 'THREE_MONTHS': return this.$t('deedRentingDurationThreeMonths');
+      case 'SIX_MONTHS': return this.$t('deedRentingDurationSixMonths');
+      case 'ONE_YEAR': return this.$t('deedRentingDurationOneYear');
+      }
+      return null;
+    },
+    hasSecurityDepositPeriod() {
+      return this.offer?.securityDepositPeriod && this.offer?.securityDepositPeriod !== 'NO_PERIOD';
+    },
+    securityDepositPeriodLabel() {
+      if (!this.offer?.securityDepositPeriod) {
+        return null;
+      }
+      switch (this.offer?.securityDepositPeriod) {
+      case 'ONE_MONTH': return this.$t('deedRentingDurationOneMonth');
+      case 'TWO_MONTHS': return this.$t('deedRentingDurationTwoMonths');
+      case 'THREE_MONTHS': return this.$t('deedRentingDurationThreeMonths');
+      }
+      return null;
+    },
+    rentalOwnerMintingPercentage() {
+      return this.offer?.ownerMintingPercentage || 0;
+    },
+    rewardTenantMintingPercentage() {
+      return 100 - this.rentalOwnerMintingPercentage;
     },
   }),
   watch: {
@@ -348,9 +468,24 @@ export default {
         }, 200);
       }
     },
+    goToStep3() {
+      if (this.step !== 3
+          && (this.step !== 1 || !this.step1ButtonDisabled)
+          && (this.step !== 2 || !this.step2ButtonDisabled)) {
+        this.step = 3;
+        window.setTimeout(() => {
+          this.$refs.drawer.$el.querySelector('.rental-steps').scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+          });
+        }, 200);
+      }
+    },
     confirmOffer() {
       if (this.step === 1) {
         this.goToStep2();
+      } else if (this.step === 2) {
+        this.goToStep3();
       } else {
         this.sending = true;
         const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer)
