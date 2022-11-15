@@ -111,15 +111,6 @@
       <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
     </v-tab>
     <v-tab
-      ref="overview"
-      id="overview"
-      :href="`/${parentLocation}/overview`"
-      link 
-      class="px-0 me-2"
-      @click="openPage">
-      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
-    </v-tab>
-    <v-tab
       ref="stake"
       id="stake"
       :href="`/${parentLocation}/stake`"
@@ -145,6 +136,15 @@
       class="px-0 me-2"
       @click="openPage">
       <h3 class="text-ordinary-capitalize">{{ $t('page.farm') }}</h3>
+    </v-tab>
+    <v-tab
+      ref="overview"
+      id="overview"
+      :href="`/${parentLocation}/overview`"
+      link 
+      class="px-0 ms-auto"
+      @click="openPage">
+      <h3 class="text-ordinary-capitalize">{{ $t('page.overview') }}</h3>
     </v-tab>
   </v-tabs>
 </template>
