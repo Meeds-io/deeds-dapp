@@ -15,6 +15,10 @@
  */
 package io.meeds.deeds.service;
 
+import static io.meeds.deeds.constant.CommonConstants.DEED_EVENT_TENANT_EMAIL_UPDATED;
+import static io.meeds.deeds.constant.CommonConstants.TENANT_COMMAND_START_EVENT;
+import static io.meeds.deeds.constant.CommonConstants.TENANT_COMMAND_STOP_EVENT;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -30,12 +34,6 @@ import io.meeds.deeds.storage.DeedTenantManagerRepository;
 
 @Component
 public class TenantService {
-
-  public static final String          DEED_EVENT_TENANT_EMAIL_UPDATED = "deed.event.tenantEmailUpdated";
-
-  public static final String          DEED_EVENT_TENANT_STOP          = "deed.event.tenantStop";
-
-  public static final String          DEED_EVENT_TENANT_START         = "deed.event.tenantStart";
 
   @Autowired
   private DeedTenantManagerRepository deedTenantManagerRepository;
@@ -180,7 +178,7 @@ public class TenantService {
     deedTenant.setShutdownTransactionHash(null);
     deedTenant = saveDeedTenant(deedTenant);
 
-    listenerService.publishEvent(DEED_EVENT_TENANT_START, deedTenant);
+    listenerService.publishEvent(TENANT_COMMAND_START_EVENT, deedTenant);
   }
 
   /**
@@ -217,7 +215,7 @@ public class TenantService {
     deedTenant.setDate(LocalDateTime.now(ZoneOffset.UTC));
 
     saveDeedTenant(deedTenant);
-    listenerService.publishEvent(DEED_EVENT_TENANT_STOP, deedTenant);
+    listenerService.publishEvent(TENANT_COMMAND_STOP_EVENT, deedTenant);
   }
 
   /**

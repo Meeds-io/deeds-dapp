@@ -205,6 +205,25 @@
                 {{ $t('deedRentingNoticePeriodSummarySubtitle') }}
               </div>
             </template>
+            <template v-if="isNew && drawer">
+              <div class="font-weight-bold d-flex mt-6">
+                {{ $t('deedEmailConfirmTitle') }}
+              </div>
+              <div class="caption font-italic my-2">
+                {{ $t('deedEmailConfirmSubTitle') }}
+              </div>
+                <deeds-email-field
+                  ref="email"
+                  v-model="email"
+                  :placeholder="$t('deedEmailContactPlaceholder')"
+                  :readonly="sending"
+                  :disabled="disabledEmail"
+                  @valid-email="validEmail = $event"
+                  @email-confirmation-success="emailCode = $event"
+                  @email-confirmation-error="emailCodeError = true"
+                  @loading="sending = $event"
+                  @submit="sendRequest" />
+            </template>
           </v-card>
         </v-expand-transition>
       </v-card-text>
@@ -273,6 +292,10 @@ export default {
     step: 0,
     offer: null,
     offerChanged: false,
+    email: null,
+    emailCode: null,
+    emailCodeSent: false,
+    validEmail: false,
     DEFAULT_OFFER: {
       description: null,
       duration: null,
@@ -309,8 +332,8 @@ export default {
       return this.step < 3;
     },
     buttonLabel() {
-      return this.intermediateStep
-        && this.$t('next')
+      return (this.intermediateStep && this.$t('next'))
+        || (this.confirmEmailStep && (this.emailCodeSent && this.$t('resend') || this.$t('send')))
         || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
     },
     step1ButtonDisabled() {
@@ -326,7 +349,11 @@ export default {
     step3ButtonDisabled() {
       return this.step1ButtonDisabled
         || this.step2ButtonDisabled
-        || !this.offerChanged;
+        || (!this.isNew && !this.offerChanged)
+        || (this.isNew && !this.validEmail);
+    },
+    confirmEmailStep() {
+      return this.isNew && !this.emailCode;
     },
     buttonDisabled() {
       return (this.step === 1 && this.step1ButtonDisabled)
@@ -338,8 +365,8 @@ export default {
         return null;
       }
       switch (this.offer?.paymentPeriodicity) {
-      case 'ONE_MONTH': return this.$t('month');
-      case 'ONE_YEAR': return this.$t('year');
+      case 'ONE_MONTH': return this.$t('month').toLowerCase();
+      case 'ONE_YEAR': return this.$t('year').toLowerCase();
       }
       return null;
     },
@@ -439,6 +466,8 @@ export default {
         }, this.DEFAULT_OFFER);
       }
       this.isNew = !offer;
+      this.emailCode = null;
+      this.emailCodeSent = false;
       this.$refs.drawer?.open();
       this.$nextTick().then(() => this.offerChanged = false);
     },
@@ -473,7 +502,7 @@ export default {
       if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
         this.step = 2;
         window.setTimeout(() => {
-          this.$refs.drawer.$el.querySelector('.rental-steps').scrollIntoView({
+          this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
             behavior: 'smooth',
             block: 'end',
           });
@@ -486,21 +515,27 @@ export default {
           && (this.step !== 2 || !this.step2ButtonDisabled)) {
         this.step = 3;
         window.setTimeout(() => {
-          this.$refs.drawer.$el.querySelector('.rental-steps').scrollIntoView({
+          this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
             behavior: 'smooth',
             block: 'end',
           });
         }, 200);
       }
     },
+    sendEmailConfirmation() {
+      this.$refs.email?.sendConfirmation();
+      this.emailCodeSent = true;
+    },
     confirmOffer() {
       if (this.step === 1) {
         this.goToStep2();
       } else if (this.step === 2) {
         this.goToStep3();
+      } else if (this.confirmEmailStep) {
+        this.sendEmailConfirmation();
       } else {
         this.sending = true;
-        const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer)
+        const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer, this.emailCode)
           || this.$deedTenantOfferService.updateOffer(this.offer.id, this.offer);
         return savePromise
           .then(offer => {

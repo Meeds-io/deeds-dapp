@@ -27,49 +27,32 @@
     <template #title>
       <h4 class="text-capitalize">{{ $t('deedMoveInDrawerTitle', {0: cardName, 1: nftId}) }}</h4>
     </template>
-    <template #content>
-      <v-form ref="form" @submit="sendRequest">
-        <v-card flat>
-          <v-card-text>
-            {{ $t('deedMoveInParagraph1') }}
-          </v-card-text>
-          <v-card-text class="pt-0">
-            {{ $t('deedMoveInParagraph2') }}
-          </v-card-text>
-          <v-card-title class="pt-0">
-            {{ $t('email') }}
-          </v-card-title>
-          <v-card-text class="pt-0">
-            <label for="email">
-              {{ $t('startTenantEmailLabel') }}
-            </label>
-            <v-text-field
-              ref="email"
-              v-model="email"
-              :placeholder="$t('startTenantEmailPlaceholder')"
-              :readonly="disabledEmail"
-              :disabled="sendingEmail"
-              name="email"
-              type="email"
-              pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
-              class="align-center"
-              hide-details
-              large
-              outlined
-              dense
-              @focus="editEmail"
-              @blur="cancelEditEmail">
-              <template #append-outer>
-                <v-slide-x-reverse-transition mode="out-in">
-                  <v-icon :key="emailAppendIcon" :color="emailAppendIconColor">
-                    {{ emailAppendIcon }}
-                  </v-icon>
-                </v-slide-x-reverse-transition>
-              </template>
-            </v-text-field>
-          </v-card-text>
-        </v-card>
-      </v-form>
+    <template v-if="drawer" #content>
+      <v-card flat>
+        <v-card-text>
+          {{ $t('deedMoveInParagraph1') }}
+        </v-card-text>
+        <v-card-text class="pt-0">
+          {{ $t('deedMoveInParagraph2') }}
+        </v-card-text>
+        <v-card-title class="pt-0">
+          {{ $t('email') }}
+        </v-card-title>
+        <v-card-text class="pt-0">
+          <label for="email">
+            {{ $t('startTenantEmailLabel') }}
+          </label>
+          <deeds-email-field
+            ref="email"
+            v-model="email"
+            :placeholder="$t('deedEmailContactPlaceholder')"
+            :readonly="sending"
+            :disabled="disabledEmail"
+            :reset="drawer"
+            @submit="sendRequest"
+            @valid-email="validEmail = $event" />
+        </v-card-text>
+      </v-card>
       <template v-if="transactionHash">
         <v-spacer />
         <v-card-text>
@@ -105,7 +88,7 @@
       </v-btn>
       <v-btn
         :min-width="minButtonsWidth"
-        :disabled="!validForm"
+        :disabled="!validEmail"
         :loading="sending"
         name="moveInConfirmButton"
         color="primary"
@@ -125,7 +108,7 @@ export default {
     drawer: false,
     email: null,
     emailChanged: false,
-    isEditingEmail: false,
+    validEmail: false,
     sending: false,
     sendingEmail: false,
     transactionHash: null,
@@ -138,9 +121,6 @@ export default {
     etherscanBaseLink: state => state.etherscanBaseLink,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
-    validForm() {
-      return this.email?.length && this.$refs.form?.$el.reportValidity();
-    },
     nftId() {
       return this.nft?.id;
     },
@@ -156,22 +136,13 @@ export default {
     disabledEmail() {
       return this.sending || this.transactionHash;
     },
-    emailAppendDisplay() {
-      return this.email && !this.isEditingEmail;
-    },
-    emailAppendIcon() {
-      return !this.emailAppendDisplay && ' ' || this.validForm && 'fas fa-check' || 'fas fa-xmark';
-    },
-    emailAppendIconColor() {
-      return this.validForm && 'success' || 'error';
-    },
   }),
   watch: {
     sending() {
       if (this.sending) {
-        this.$refs.drawer.startLoading();
+        this.$refs.drawer?.startLoading();
       } else {
-        this.$refs.drawer.endLoading();
+        this.$refs.drawer?.endLoading();
       }
     },
     email(newVal, oldVal) {
@@ -190,22 +161,20 @@ export default {
       this.transactionHash = null;
       this.sending = false;
       this.email = null;
-      this.isEditingEmail = false;
       this.emailChanged = false;
       this.$nextTick()
-        .then(() => {
-          if (this.$refs.drawer) {
-            this.$refs.drawer.open();
-          }
-        });
+        .then(() => this.$refs.drawer?.open());
     },
     closeAll() {
-      this.$refs.drawer.close();
-      this.$root.$emit('deeds-manage-drawer-close', this.nftId);
+      const nftId = this.nftId;
+      window.setTimeout(() => {
+        this.$root.$emit('deeds-manage-drawer-close', nftId);
+      }, 50);
+      this.close(nftId);
     },
     close(nftId) {
       if (nftId === this.nftId) {
-        this.$refs.drawer.close();
+        this.$refs.drawer?.close();
       }
     },
     sendRequest(event) {
@@ -213,25 +182,16 @@ export default {
         event.preventDefault();
         event.stopPropagation();
       }
-      this.isEditingEmail = false;
-      if (!this.transactionHash && this.$refs.form?.$el.reportValidity()) {
+      if (!this.transactionHash && this.$refs.email?.isValid()) {
         return this.startTenant();
       }
-    },
-    editEmail() {
-      if (!this.email) {
-        this.isEditingEmail = true;
-      }
-    },
-    cancelEditEmail() {
-      this.isEditingEmail = false;
     },
     startTenant(event) {
       if (event) {
         event.preventDefault();
         event.stopPropagation();
       }
-      if (this.nftId && this.$refs.form.$el.checkValidity()) {
+      if (this.nftId && this.$refs.email?.isValid()) {
         this.sending = true;
         const options = {
           gasLimit: this.startTenantGasLimit,
@@ -254,9 +214,9 @@ export default {
     },
     saveStartTenantRequest() {
       this.sendingEmail = true;
-      return this.$tenantManagement.startTenant(this.nftId, this.email, this.transactionHash)
+      return this.$tenantManagement.startTenant(this.nftId, this.email?.trim(), this.transactionHash)
         .then(() => this.emailChanged = false)
-        .finally(() => this.isEditingEmail = this.sendingEmail = false);
+        .finally(() => this.sendingEmail = false);
     },
   },
 };

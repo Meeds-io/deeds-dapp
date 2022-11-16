@@ -57,6 +57,9 @@ public class DeedTenantOffer {
   @Field(type = FieldType.Keyword)
   private String                           owner;
 
+  @Field(type = FieldType.Keyword)
+  private String                           ownerEmail;
+
   @Field(type = FieldType.Text)
   private String                           description;
 
