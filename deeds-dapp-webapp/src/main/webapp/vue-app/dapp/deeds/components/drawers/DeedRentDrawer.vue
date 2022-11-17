@@ -30,7 +30,7 @@
       <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardType, 1: nftId}) }}</h4>
       <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
     </template>
-    <template v-if="offer" #content>
+    <template v-if="offer && authenticated" #content>
       <v-card-text v-if="isNew">
         {{ $t('deedRentingDescription1') }}
         <ul>
@@ -212,17 +212,17 @@
               <div class="caption font-italic my-2">
                 {{ $t('deedEmailConfirmSubTitle') }}
               </div>
-                <deeds-email-field
-                  ref="email"
-                  v-model="email"
-                  :placeholder="$t('deedEmailContactPlaceholder')"
-                  :readonly="sending"
-                  :disabled="disabledEmail"
-                  @valid-email="validEmail = $event"
-                  @email-confirmation-success="emailCode = $event"
-                  @email-confirmation-error="emailCodeError = true"
-                  @loading="sending = $event"
-                  @submit="sendRequest" />
+              <deeds-email-field
+                ref="email"
+                v-model="email"
+                :placeholder="$t('deedEmailContactPlaceholder')"
+                :readonly="sending"
+                :disabled="disabledEmail"
+                @valid-email="validEmail = $event"
+                @email-confirmation-success="emailCode = $event"
+                @email-confirmation-error="emailCodeError = true"
+                @loading="sending = $event"
+                @submit="sendRequest" />
             </template>
           </v-card>
         </v-expand-transition>
@@ -235,7 +235,7 @@
         :cancel-label="$t('cancel')"
         @ok="deleteOffer(true)" />
     </template>
-    <template #footer>
+    <template v-if="authenticated" #footer>
       <v-btn
         v-if="isNew"
         :disabled="sending"
@@ -274,6 +274,10 @@
         {{ buttonLabel }}
       </v-btn>
     </template>
+    <template v-else #footer>
+      <deeds-login-button
+        :login-tooltip="$t('authenticateToEditOfferTooltip')" />
+    </template>
   </deeds-drawer>
 </template>
 <script>
@@ -310,6 +314,7 @@ export default {
     MIN_BUTTONS_WIDTH: 120,
   }),
   computed: Vuex.mapState({
+    authenticated: state => state.authenticated,
     nftId() {
       return this.offer?.nftId;
     },

@@ -187,9 +187,7 @@ public class DeedTenantOfferService {
     existingDeedTenantOffer.setSecurityDepositPeriod(deedTenantOfferDTO.getSecurityDepositPeriod());
     existingDeedTenantOffer.setNoticePeriod(deedTenantOfferDTO.getNoticePeriod());
     existingDeedTenantOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
-    if (deedTenantOfferDTO.getExpirationDuration() == null) {
-      existingDeedTenantOffer.setExpirationDate(null);
-    } else {
+    if (deedTenantOfferDTO.getExpirationDuration() != null) {
       Instant expirationDate = Instant.now()
                                       .atZone(ZoneOffset.UTC)
                                       .plus(deedTenantOfferDTO.getExpirationDuration().getPeriod())
@@ -224,6 +222,9 @@ public class DeedTenantOfferService {
   }
 
   private DeedTenantOffer saveOffer(DeedTenantOffer deedTenantOffer) {
+    if (deedTenantOffer.getExpirationDuration() == null) {
+      deedTenantOffer.setExpirationDate(DeedTenantOfferMapper.MAX_DATE_VALUE);
+    }
     return deedTenantOfferRepository.save(deedTenantOffer);
   }
 

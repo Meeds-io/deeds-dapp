@@ -163,7 +163,7 @@ public class ListenerService implements ApplicationContextAware {
         throw new IllegalStateException("Redis returned an error while publishing event: " + publish.getError());
       }
     } catch (Exception e) {
-      LOG.warn("Redis connection failure, event {} will not be triggered remotely, try to trigger it locally only",
+      LOG.info("Redis connection failure, event {} will not be triggered remotely, try to trigger it locally only",
                event.getEventName());
 
       // Trigger events locally and using ES

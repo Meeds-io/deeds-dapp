@@ -25,7 +25,7 @@ import io.meeds.deeds.model.DeedTenantOfferDTO;
 
 public class DeedTenantOfferMapper {
 
-  private static final Instant MAX_ES_DATE_VALUE = Instant.ofEpochSecond(165241780471l);
+  public static final Instant MAX_DATE_VALUE = Instant.ofEpochSecond(165241780471l);
 
   private DeedTenantOfferMapper() {
     // Class with Static methods
@@ -63,7 +63,7 @@ public class DeedTenantOfferMapper {
       return null;
     }
     ExpirationDuration expirationDuration = deedTenantOfferDTO.getExpirationDuration();
-    Instant expirationDate = expirationDuration == null ? MAX_ES_DATE_VALUE : deedTenantOfferDTO.getExpirationDate();
+    Instant expirationDate = expirationDuration == null ? MAX_DATE_VALUE : deedTenantOfferDTO.getExpirationDate();
     SecurityDepositPeriod securityDepositPeriod = deedTenantOfferDTO.getSecurityDepositPeriod();
     NoticePeriod noticePeriod = deedTenantOfferDTO.getNoticePeriod();
     return new DeedTenantOffer(deedTenantOfferDTO.getId(),
