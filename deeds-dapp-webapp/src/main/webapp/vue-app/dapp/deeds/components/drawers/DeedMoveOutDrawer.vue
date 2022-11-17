@@ -121,15 +121,11 @@ export default {
       this.sending = false;
       this.transactionHash = null;
       this.$nextTick()
-        .then(() => {
-          if (this.$refs.drawer) {
-            this.$refs.drawer.open();
-          }
-        });
+        .then(() => this.$refs.drawer?.open());
     },
     close(nftId) {
       if (nftId === this.nftId) {
-        this.$refs.drawer.close();
+        this.$refs.drawer?.close();
       }
     },
     sendRequest(event) {

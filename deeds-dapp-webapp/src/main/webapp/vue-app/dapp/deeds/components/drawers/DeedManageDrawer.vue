@@ -507,7 +507,7 @@ export default {
     },
     close(nftId) {
       if (nftId === this.nftId) {
-        this.$refs.drawer.close();
+        this.$refs.drawer?.close();
       }
     },
     logout(avoidRefreshInfo) {

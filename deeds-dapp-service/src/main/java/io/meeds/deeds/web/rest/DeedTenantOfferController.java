@@ -15,6 +15,8 @@
  */
 package io.meeds.deeds.web.rest;
 
+import static io.meeds.deeds.constant.CommonConstants.*;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +51,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferFilter;
+import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 
@@ -55,14 +59,17 @@ import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 @RequestMapping("/api/offers")
 public class DeedTenantOfferController {
 
-  private static final String    NFT_DOESN_T_EXIST_MESSAGE    = "NFT doesn't exist";
+  private static final String      NFT_DOESN_T_EXIST_MESSAGE    = "NFT doesn't exist";
 
-  private static final String    OFFER_ALREADY_EXISTS_MESSAGE = "NFT has already an offer";
+  private static final String      OFFER_ALREADY_EXISTS_MESSAGE = "NFT has already an offer";
 
-  private static final Logger    LOG                       = LoggerFactory.getLogger(DeedTenantOfferController.class);
+  private static final Logger      LOG                          = LoggerFactory.getLogger(DeedTenantOfferController.class);
 
   @Autowired
-  private DeedTenantOfferService deedTenantOfferService;
+  private DeedTenantOfferService   deedTenantOfferService;
+
+  @Autowired
+  private AuthorizationCodeService authorizationCodeService;
 
   @GetMapping
   public PagedModel<EntityModel<DeedTenantOfferDTO>> getOffers(Principal principal,
@@ -112,23 +119,26 @@ public class DeedTenantOfferController {
   @PostMapping
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantOfferDTO createRentingOffer(Principal principal,
+                                               @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
+                                               int code,
                                                @RequestBody
                                                DeedTenantOfferDTO deedTenantOfferDTO) {
     if (principal == null || StringUtils.isBlank(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
+    String walletAddress = StringUtils.lowerCase(principal.getName());
     if (deedTenantOfferDTO == null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Object is missing");
     }
-    String walletAddress = principal.getName();
     try {
-      return deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO);
+      String email = (String) authorizationCodeService.validateAndGetData(walletAddress, code);
+      return deedTenantOfferService.createRentingOffer(walletAddress, email, deedTenantOfferDTO);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
     } catch (ObjectAlreadyExistsException e) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, OFFER_ALREADY_EXISTS_MESSAGE);
-    } catch (UnauthorizedOperationException e) {
-      LOG.warn("[SECURITY ALERT] {} attempts to create Deed tenant offer while not owner {}",
+    } catch (UnauthorizedOperationException | IllegalAccessException e) {
+      LOG.warn("[SECURITY ALERT] {} attempts to create Deed tenant offer while not allowed {}",
                walletAddress,
                deedTenantOfferDTO,
                e);

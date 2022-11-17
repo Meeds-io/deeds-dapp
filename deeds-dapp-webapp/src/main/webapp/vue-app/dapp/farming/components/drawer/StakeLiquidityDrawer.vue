@@ -80,7 +80,7 @@ export default {
   }),
   methods: {
     open() {
-      this.$refs.drawer.open();
+      this.$refs.drawer?.open();
     },
   },
 };

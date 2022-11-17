@@ -23,11 +23,11 @@ import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 
-public class Mapper {
+public class DeedTenantOfferMapper {
 
   private static final Instant MAX_ES_DATE_VALUE = Instant.ofEpochSecond(165241780471l);
 
-  private Mapper() {
+  private DeedTenantOfferMapper() {
     // Class with Static methods
   }
 
@@ -71,6 +71,7 @@ public class Mapper {
                                deedTenantOfferDTO.getCity(),
                                deedTenantOfferDTO.getCardType(),
                                deedTenantOfferDTO.getOwner(),
+                               null,
                                deedTenantOfferDTO.getDescription(),
                                deedTenantOfferDTO.getAmount(),
                                deedTenantOfferDTO.getOfferType(),

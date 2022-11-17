@@ -44,18 +44,18 @@ import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferFilter;
 import io.meeds.deeds.storage.DeedTenantOfferRepository;
-import io.meeds.deeds.utils.Mapper;
+import io.meeds.deeds.utils.DeedTenantOfferMapper;
 
 @Component
 public class DeedTenantOfferService {
 
-  private static final String       OFFER_CREATED_EVENT  = "deed.event.offerCreated";
+  public static final String        OFFER_CREATED_EVENT  = "deed.event.offerCreated";
 
-  private static final String       OFFER_UPDATED_EVENT  = "deed.event.offerUpdated";
+  public static final String        OFFER_UPDATED_EVENT  = "deed.event.offerUpdated";
 
-  private static final String       OFFER_DELETED_EVENT  = "deed.event.offerDeleted";
+  public static final String        OFFER_DELETED_EVENT  = "deed.event.offerDeleted";
 
-  private static final String       OFFER_CANCELED_EVENT = "deed.event.offerCanceled";
+  public static final String        OFFER_CANCELED_EVENT = "deed.event.offerCanceled";
 
   @Autowired
   private DeedTenantOfferRepository deedTenantOfferRepository;
@@ -102,33 +102,37 @@ public class DeedTenantOfferService {
     SearchHits<DeedTenantOffer> result = elasticsearchOperations.search(query, DeedTenantOffer.class);
     SearchPage<DeedTenantOffer> searchPage = SearchHitSupport.searchPageFor(result, pageable);
     return searchPage.map(SearchHit::getContent)
-                     .map(Mapper::toDTO);
+                     .map(DeedTenantOfferMapper::toDTO);
   }
 
   public DeedTenantOfferDTO getOffer(String offerId) {
     DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
-    return Mapper.toDTO(offer);
+    return DeedTenantOfferMapper.toDTO(offer);
   }
 
-  public DeedTenantOfferDTO createRentingOffer(String walletAddress,
+  public DeedTenantOfferDTO createRentingOffer(String ownerAddress,
+                                               String ownerEmail,
                                                DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
                                                                                       UnauthorizedOperationException,
                                                                                       ObjectAlreadyExistsException {
     long nftId = deedTenantOfferDTO.getNftId();
-    if (!tenantService.isDeedOwner(walletAddress, nftId)) {
-      throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, nftId));
+    if (!tenantService.isDeedOwner(ownerAddress, nftId)) {
+      throw new UnauthorizedOperationException(getNotOwnerMessage(ownerAddress, nftId));
     }
-    if (!tenantService.isDeedManager(walletAddress, nftId)) {
+    if (!tenantService.isDeedManager(ownerAddress, nftId)) {
       throw new IllegalStateException("Deed Tenant is currently used by another manager, thus can't be rented");
     }
-    DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId);
+    if (StringUtils.isBlank(ownerEmail)) {
+      throw new UnauthorizedOperationException("Owner email is empty");
+    }
+    DeedTenant deedTenant = tenantService.getDeedTenantOrImport(ownerAddress, nftId);
     if (deedTenant == null) {
       throw new ObjectNotFoundException(getNftNotExistsMessage(nftId));
     }
     if (deedTenant.getTenantProvisioningStatus() != null && deedTenant.getTenantProvisioningStatus().isStart()) {
       throw new IllegalStateException("Deed Tenant is currently used, thus can't be rented");
     }
-    DeedTenantOffer deedTenantOffer = Mapper.fromDTO(deedTenantOfferDTO);
+    DeedTenantOffer deedTenantOffer = DeedTenantOfferMapper.fromDTO(deedTenantOfferDTO);
     // When multiple offers will be supported, then make the id
     // auto incremented
     if (deedTenant.getCardType() >= 0) {
@@ -139,8 +143,9 @@ public class DeedTenantOfferService {
     if (deedTenant.getCityIndex() >= 0) {
       deedTenantOffer.setCity(DeedCity.values()[deedTenant.getCityIndex()]);
     }
-    deedTenantOffer.setOwner(walletAddress.toLowerCase());
+    deedTenantOffer.setOwner(ownerAddress.toLowerCase());
     Instant now = Instant.now();
+    deedTenantOffer.setOwnerEmail(ownerEmail);
     deedTenantOffer.setCreatedDate(now);
     deedTenantOffer.setModifiedDate(now);
     deedTenantOffer.setOfferType(OfferType.RENTING);
@@ -156,7 +161,7 @@ public class DeedTenantOfferService {
     }
     deedTenantOffer = saveOffer(deedTenantOffer);
     listenerService.publishEvent(OFFER_CREATED_EVENT, deedTenantOffer);
-    return Mapper.toDTO(deedTenantOffer);
+    return DeedTenantOfferMapper.toDTO(deedTenantOffer);
   }
 
   public DeedTenantOfferDTO updateRentingOffer(String walletAddress,
@@ -194,7 +199,7 @@ public class DeedTenantOfferService {
 
     existingDeedTenantOffer = saveOffer(existingDeedTenantOffer);
     listenerService.publishEvent(OFFER_UPDATED_EVENT, existingDeedTenantOffer);
-    return Mapper.toDTO(existingDeedTenantOffer);
+    return DeedTenantOfferMapper.toDTO(existingDeedTenantOffer);
   }
 
   public void deleteRentingOffer(String walletAddress, String offerId) throws ObjectNotFoundException,

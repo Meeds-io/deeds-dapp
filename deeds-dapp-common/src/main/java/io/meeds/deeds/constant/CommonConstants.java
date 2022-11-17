@@ -25,9 +25,25 @@ public class CommonConstants {
     // Static elements only, not instantiable
   }
 
+  public static final String DEED_USER_PROFILE_SAVED_EVENT               = "deed.event.userProfileSaved";
+
+  public static final String DEED_EMAIL_SEND_COMMAND_EVENT               = "deed.event.sendEmailTemplateCommand";
+
   public static final String DEED_OWNERSHIP_TRANSFERRED_BLOCKCHAIN_EVENT = "deed.event.transferOwnershipFromBlockchain";
 
   public static final String DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT     = "deed.event.transferOwnershipFromDeedTenant";
+
+  public static final String DEED_EMAIL_CODE_CONFIRMATION_TEMPLATE       = "EMAIL_CONFIRMATION_CODE";
+
+  public static final String DEED_EMAIL_CODE_PARAM_NAME                  = "emailCode";
+
+  public static final String TENANT_COMMAND_START_EVENT                  = "deed.event.tenantStart";
+
+  public static final String TENANT_COMMAND_STOP_EVENT                   = "deed.event.tenantStop";
+
+  public static final String DEED_EVENT_TENANT_EMAIL_UPDATED             = "deed.event.tenantEmailUpdated";
+
+  public static final String CODE_VERIFICATION_HTTP_HEADER               = "X-AUTHORIZATION";
 
   @NoArgsConstructor
   @AllArgsConstructor
