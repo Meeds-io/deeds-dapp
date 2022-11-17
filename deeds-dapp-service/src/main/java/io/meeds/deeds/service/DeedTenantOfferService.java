@@ -17,6 +17,7 @@ package io.meeds.deeds.service;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +44,7 @@ import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferFilter;
+import io.meeds.deeds.model.DeedTenantOfferUpdateDTO;
 import io.meeds.deeds.storage.DeedTenantOfferRepository;
 import io.meeds.deeds.utils.DeedTenantOfferMapper;
 
@@ -154,7 +156,11 @@ public class DeedTenantOfferService {
       deedTenantOffer.setExpirationDate(expirationDate);
     }
     deedTenantOffer.setEnabled(true);
-    DeedTenantOfferFilter enabledNftOffersFilter = DeedTenantOfferFilter.ofNftId(nftId).withExcludeDisabled(true);
+    DeedTenantOfferFilter enabledNftOffersFilter = DeedTenantOfferFilter.ofNftId(nftId)
+                                                                        .withExcludeDisabled(true)
+                                                                        .withExcludeExpired(true)
+                                                                        .withOfferTypes(Collections.singletonList(OfferType.RENTING))
+                                                                        .withOwnerAddress(ownerAddress);
     Page<DeedTenantOfferDTO> offersList = getOffersList(enabledNftOffersFilter, Pageable.ofSize(1));
     if (offersList.getTotalElements() > 0) {
       throw new ObjectAlreadyExistsException("NFT with ID " + nftId + " already exists");
@@ -165,7 +171,7 @@ public class DeedTenantOfferService {
   }
 
   public DeedTenantOfferDTO updateRentingOffer(String walletAddress,
-                                               DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
+                                               DeedTenantOfferUpdateDTO deedTenantOfferDTO) throws ObjectNotFoundException,
                                                                                       UnauthorizedOperationException {
     if (!tenantService.isDeedOwner(walletAddress, deedTenantOfferDTO.getNftId())) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, deedTenantOfferDTO.getNftId()));
@@ -177,8 +183,9 @@ public class DeedTenantOfferService {
     if (existingDeedTenantOffer == null) {
       throw new ObjectNotFoundException("Offer with id  " + deedTenantOfferDTO.getId() + " doesn't exist");
     }
+    boolean hasExpirationDate = existingDeedTenantOffer.getExpirationDuration() != null;
+    boolean expirationDurationChanged = existingDeedTenantOffer.getExpirationDuration() != deedTenantOfferDTO.getExpirationDuration();
     existingDeedTenantOffer.setOwner(walletAddress.toLowerCase());
-    existingDeedTenantOffer.setModifiedDate(Instant.now());
     existingDeedTenantOffer.setDescription(deedTenantOfferDTO.getDescription());
     existingDeedTenantOffer.setAmount(deedTenantOfferDTO.getAmount());
     existingDeedTenantOffer.setDuration(deedTenantOfferDTO.getDuration());
@@ -187,11 +194,13 @@ public class DeedTenantOfferService {
     existingDeedTenantOffer.setSecurityDepositPeriod(deedTenantOfferDTO.getSecurityDepositPeriod());
     existingDeedTenantOffer.setNoticePeriod(deedTenantOfferDTO.getNoticePeriod());
     existingDeedTenantOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
-    if (deedTenantOfferDTO.getExpirationDuration() != null) {
-      Instant expirationDate = Instant.now()
-                                      .atZone(ZoneOffset.UTC)
-                                      .plus(deedTenantOfferDTO.getExpirationDuration().getPeriod())
-                                      .toInstant();
+
+    if (deedTenantOfferDTO.getExpirationDuration() != null && expirationDurationChanged) {
+      Instant expirationStartInstant = (deedTenantOfferDTO.isUpdateExpirationDate()
+          || !hasExpirationDate) ? Instant.now() : existingDeedTenantOffer.getCreatedDate();
+      Instant expirationDate = expirationStartInstant.atZone(ZoneOffset.UTC)
+                                                     .plus(deedTenantOfferDTO.getExpirationDuration().getPeriod())
+                                                     .toInstant();
       existingDeedTenantOffer.setExpirationDate(expirationDate);
     }
 

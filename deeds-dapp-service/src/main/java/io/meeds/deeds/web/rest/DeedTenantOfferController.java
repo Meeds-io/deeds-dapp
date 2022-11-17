@@ -51,6 +51,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferFilter;
+import io.meeds.deeds.model.DeedTenantOfferUpdateDTO;
 import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
@@ -152,7 +153,7 @@ public class DeedTenantOfferController {
                                                @PathVariable("offerId")
                                                String offerId,
                                                @RequestBody
-                                               DeedTenantOfferDTO deedTenantOfferDTO) {
+                                               DeedTenantOfferUpdateDTO deedTenantOfferDTO) {
     if (principal == null || StringUtils.isBlank(principal.getName())) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }

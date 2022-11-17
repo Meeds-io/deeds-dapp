@@ -70,6 +70,10 @@ export default {
     this.$root.$on('deed-dapp-login', this.login);
     this.$root.$on('deed-dapp-logout', this.logout);
   },
+  beforeDestroy() {
+    this.$root.$off('deed-dapp-login', this.login);
+    this.$root.$off('deed-dapp-logout', this.logout);
+  },
   methods: {
     logout(avoidRefreshInfo) {
       return this.$authentication.logout(this.address)

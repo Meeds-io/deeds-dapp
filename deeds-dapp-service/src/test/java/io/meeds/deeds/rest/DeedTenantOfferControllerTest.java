@@ -69,6 +69,7 @@ import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
+import io.meeds.deeds.model.DeedTenantOfferUpdateDTO;
 import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.rest.DeedTenantOfferController;
@@ -255,7 +256,7 @@ class DeedTenantOfferControllerTest {
   void testUpdateOfferWithUser() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferUpdateDTO deedTenantOfferDTO = getTenantOfferUpdateDTO(offerId, nftId);
     deedTenantOfferDTO.setId(offerId);
     ResultActions response = mockMvc.perform(put("/api/offers/" + offerId).content(asJsonString(deedTenantOfferDTO))
                                                                           .contentType(MediaType.APPLICATION_JSON)
@@ -303,6 +304,29 @@ class DeedTenantOfferControllerTest {
                                   Instant.now(),
                                   Instant.now(),
                                   false);
+  }
+
+  private DeedTenantOfferUpdateDTO getTenantOfferUpdateDTO(String offerId, long nftId) {
+    return new DeedTenantOfferUpdateDTO(offerId,
+                                        nftId,
+                                        DeedCity.ASHTARTE,
+                                        DeedCard.UNCOMMON,
+                                        "owner",
+                                        "description",
+                                        5d,
+                                        OfferType.RENTING,
+                                        ExpirationDuration.ONE_DAY,
+                                        RentalDuration.ONE_MONTH,
+                                        RentalPaymentPeriodicity.ONE_YEAR,
+                                        SecurityDepositPeriod.THREE_MONTHS,
+                                        NoticePeriod.ONE_MONTH,
+                                        1,
+                                        1.1d,
+                                        Instant.now(),
+                                        Instant.now(),
+                                        Instant.now(),
+                                        false,
+                                        false);
   }
 
   public static String asJsonString(final Object obj) {

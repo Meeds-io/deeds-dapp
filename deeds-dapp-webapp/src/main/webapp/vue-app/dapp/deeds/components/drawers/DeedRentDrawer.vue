@@ -151,7 +151,9 @@
           dense
           @click="goToStep3">
           <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
-          <span class="subtitle-1 ms-4">{{ $t('deedRentingStep3Title') }}</span>
+          <span class="subtitle-1 ms-4">
+            {{ isNew && $t('deedRentingStep3TitleCreation') || $t('deedRentingStep3TitleUpdate') }}
+          </span>
         </v-list-item>
         <v-expand-transition>
           <v-card
@@ -205,24 +207,45 @@
                 {{ $t('deedRentingNoticePeriodSummarySubtitle') }}
               </div>
             </template>
-            <template v-if="isNew && drawer">
-              <div class="font-weight-bold d-flex mt-6">
-                {{ $t('deedEmailConfirmTitle') }}
+            <template v-if="drawer">
+              <template v-if="isNew">
+                <div class="font-weight-bold d-flex mt-6">
+                  {{ $t('deedEmailConfirmTitle') }}
+                </div>
+                <div class="caption font-italic my-2">
+                  {{ $t('deedEmailConfirmSubTitle') }}
+                </div>
+                <deeds-email-field
+                  ref="email"
+                  v-model="email"
+                  :placeholder="$t('deedEmailContactPlaceholder')"
+                  :readonly="sending"
+                  :disabled="disabledEmail"
+                  @valid-email="validEmail = $event"
+                  @email-confirmation-success="emailCode = $event"
+                  @email-confirmation-error="emailCodeError = true"
+                  @loading="sending = $event"
+                  @submit="sendRequest" />
+              </template>
+              <div v-else-if="expirationDuration" class="d-flex align-center">
+                <div class="flex-grow-1">
+                  <v-switch
+                    v-model="offer.updateExpirationDate"
+                    :disabled="forceUpdateExpiration"
+                    class="ma-0 pa-0"
+                    hide-details
+                    dense>
+                    <template #label>
+                      <span class="text--color subtitle-2 font-weight-normal">
+                        {{ expirationDateChoiceLabel }}
+                      </span>
+                    </template>
+                  </v-switch>
+                </div>
+                <div class="flex-grow-0 pt-2px">
+                  <deeds-date-format :value="expirationDate" />
+                </div>
               </div>
-              <div class="caption font-italic my-2">
-                {{ $t('deedEmailConfirmSubTitle') }}
-              </div>
-              <deeds-email-field
-                ref="email"
-                v-model="email"
-                :placeholder="$t('deedEmailContactPlaceholder')"
-                :readonly="sending"
-                :disabled="disabledEmail"
-                @valid-email="validEmail = $event"
-                @email-confirmation-success="emailCode = $event"
-                @email-confirmation-error="emailCodeError = true"
-                @loading="sending = $event"
-                @submit="sendRequest" />
             </template>
           </v-card>
         </v-expand-transition>
@@ -300,6 +323,7 @@ export default {
     emailCode: null,
     emailCodeSent: false,
     validEmail: false,
+    forceUpdateExpiration: false,
     DEFAULT_OFFER: {
       description: null,
       duration: null,
@@ -309,6 +333,7 @@ export default {
       noticePeriod: 'ONE_MONTH',
       securityDepositPeriod: 'ONE_MONTH',
       ownerMintingPercentage: 50,
+      updateExpirationDate: false,
     },
     DESCRIPTION_MAX_LENGTH: 200,
     MIN_BUTTONS_WIDTH: 120,
@@ -431,6 +456,32 @@ export default {
     rewardTenantMintingPercentage() {
       return 100 - this.rentalOwnerMintingPercentage;
     },
+    isUpdateExpirationDate() {
+      return this.offer.updateExpirationDate;
+    },
+    expirationDateChoiceLabel() {
+      return this.isUpdateExpirationDate
+        && this.$t('deedUpdateExpirationDate')
+        || this.$t('deedKeepExpirationDate');
+    },
+    expirationDuration() {
+      return this.offer.expirationDuration;
+    },
+    expirationDurationInMillis() {
+      if (!this.expirationDuration) {
+        return 0;
+      }
+      switch (this.expirationDuration) {
+      case 'ONE_DAY': return 24 * 60 * 60 * 1000;
+      case 'THREE_DAYS': return 3 * 24 * 60 * 60 * 1000;
+      case 'ONE_WEEK': return 7 * 24 * 60 * 60 * 1000;
+      case 'ONE_MONTH': return 30 * 24 * 60 * 60 * 1000;
+      }
+      return 0;
+    },
+    expirationDate() {
+      return this.isUpdateExpirationDate && (Date.now() + this.expirationDurationInMillis) || (new Date(this.offer.createdDate).getTime() + this.expirationDurationInMillis);
+    },
   }),
   watch: {
     sending() {
@@ -458,6 +509,10 @@ export default {
     this.$root.$on('deeds-rent-drawer', this.open);
     this.$root.$on('deeds-rent-close', this.close);
   },
+  beforeDestroy() {
+    this.$root.$off('deeds-rent-drawer', this.open);
+    this.$root.$off('deeds-rent-close', this.close);
+  },
   methods: {
     open(nftId, offer) {
       if (!this.offer || (offer?.id && this.offer?.id !== offer?.id)) {
@@ -465,6 +520,13 @@ export default {
       }
       if (offer) {
         this.offer = Object.assign({}, this.DEFAULT_OFFER, offer);
+        if (this.offer.expirationDuration) {
+          this.forceUpdateExpiration = false;
+          this.offer.updateExpirationDate = false;
+        } else {
+          this.forceUpdateExpiration = true;
+          this.offer.updateExpirationDate = true;
+        }
       } else {
         this.offer = Object.assign({
           nftId,

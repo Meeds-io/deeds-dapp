@@ -1,8 +1,9 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
- 
+
  Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
@@ -11,48 +12,39 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
-  <v-tooltip bottom>
-    <template #activator="{ on, attrs }">
-      <v-btn
-        :loading="loading"
-        icon
-        v-bind="attrs"
-        v-on="on"
-        @click="openManageDeedDrawer">
-        <v-icon>fas fa-cog</v-icon>
-      </v-btn>
-    </template>
-    <span>{{ $t('manageYourDeedTooltip') }}</span>
-  </v-tooltip>
+  <div>{{ displayedDate }}</div>
 </template>
 <script>
 export default {
   props: {
-    nft: {
+    value: {
+      type: Number,
+      default: () => 0,
+    },
+    format: {
       type: Object,
-      default: null,
+      default: function() {
+        return {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        };
+      },
     },
   },
-  data: () => ({
-    loading: false,
+  computed: Vuex.mapState({
+    language: state => state.language,
+    displayedDate() {
+      return this.value && new window.Intl.DateTimeFormat(this.language, this.format)
+        .format(new Date(this.value));
+    },
   }),
-  created() {
-    this.$root.$on('drawer-opened', () => this.loading = false);
-  },
-  beforeDestroy() {
-    this.$root.$off('drawer-opened', () => this.loading = false);
-  },
-  methods: {
-    openManageDeedDrawer() {
-      this.loading = true;
-      this.$root.$emit('deeds-manage-drawer', this.nft);
-    },
-  }
 };
 </script>

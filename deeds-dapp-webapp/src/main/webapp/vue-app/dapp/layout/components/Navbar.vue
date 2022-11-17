@@ -166,6 +166,9 @@ export default {
     this.$root.$on('switch-page', this.switchPage);
     window.addEventListener('popstate', (event) => this.initSelectedTab(event));
   },
+  beforeDestroy() {
+    this.$root.$off('switch-page', this.switchPage);
+  },
   methods: {
     initSelectedTab(event) {
       const href = window.location.pathname;

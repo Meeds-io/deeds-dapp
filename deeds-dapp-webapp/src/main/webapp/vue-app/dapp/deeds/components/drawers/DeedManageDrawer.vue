@@ -409,6 +409,14 @@ export default {
     this.$root.$on('deed-offer-renting-updated', this.refreshOffers);
     this.$root.$on('deed-offer-renting-deleted', this.refreshOffers);
   },
+  beforeDestroy() {
+    this.$root.$off('deeds-manage-drawer', this.open);
+    this.$root.$off('deeds-manage-drawer-close', this.close);
+    this.$root.$off('deed-nft-updated', this.refreshNft);
+    this.$root.$off('deed-offer-renting-created', this.refreshOffers);
+    this.$root.$off('deed-offer-renting-updated', this.refreshOffers);
+    this.$root.$off('deed-offer-renting-deleted', this.refreshOffers);
+  },
   methods: {
     refreshNft(nft) {
       if (this.drawer && this.nftId === nft.id) {

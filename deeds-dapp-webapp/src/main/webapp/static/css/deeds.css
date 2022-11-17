@@ -84,6 +84,10 @@ html {
   color: #0000ee !important;
 }
 
+.text--color {
+  color: #000000de !important;
+}
+
 .font-size-normal {
   font-size: 1rem !important;
 }

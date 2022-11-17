@@ -24,8 +24,8 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -58,16 +58,16 @@ public class AuthorizationCodeService {
 
   private Duration                       maxCodeValidity;
 
-  private Map<String, AuthorizationCode> authorizationCodes = new HashMap<>();
+  private Map<String, AuthorizationCode> authorizationCodes = new ConcurrentHashMap<>();
 
   @Autowired
   private ListenerService                listenerService;
 
   public AuthorizationCodeService() throws NoSuchAlgorithmException {
     try {
-      secureRandomCodeGenerator = SecureRandom.getInstanceStrong();
-    } catch (NoSuchAlgorithmException e) {
       secureRandomCodeGenerator = SecureRandom.getInstance("SHA1PRNG");
+    } catch (NoSuchAlgorithmException e) {
+      secureRandomCodeGenerator = SecureRandom.getInstanceStrong();
     }
   }
 
@@ -99,7 +99,7 @@ public class AuthorizationCodeService {
    */
   public void generateCode(String key, String email, Object data) throws IllegalAccessException {
     if (!hasValidDateCode(key)) {
-      authorizationCodes.put(key, new AuthorizationCode());
+      authorizationCodes.put(key, newAuthorizationCode());
     }
     AuthorizationCode authorizationCode = authorizationCodes.get(key);
     authorizationCode.incrementSendingCount();
@@ -162,6 +162,10 @@ public class AuthorizationCodeService {
                                                                                         String.format("%06d",
                                                                                                       authorizationCode.getCode())));
     listenerService.publishEvent(DEED_EMAIL_SEND_COMMAND_EVENT, emailCommand);
+  }
+
+  private synchronized AuthorizationCode newAuthorizationCode() {
+    return new AuthorizationCode();
   }
 
   public class AuthorizationCode {
