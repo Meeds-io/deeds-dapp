@@ -32,22 +32,24 @@
         {{ $t('deedsMarketPlaceBackToList') }}
       </v-list-item-title>
     </v-list-item-content>
-    <v-list-item-action v-if="isAuthenticatedOwner" class="me-2 ms-0">
-      <v-btn
-        :title="$t('deedRentEditButton')"
-        icon
-        @click="$root.$emit('deeds-rent-drawer', null, offer)">
-        <v-icon>fas fa-edit</v-icon>
-      </v-btn>
-    </v-list-item-action>
-    <v-list-item-action v-if="!invalidOffer" class="me-2 ms-0">
-      <v-btn
-        :title="$t('deedsMarketPlaceCopyOfferLink')"
-        icon
-        @click="copyLink">
-        <v-icon>fas fa-clone</v-icon>
-      </v-btn>
-    </v-list-item-action>
+    <template v-if="!invalidOffer">
+      <v-list-item-action v-if="isOwner" class="me-2 ms-0">
+        <v-btn
+          :title="$t('deedRentEditButton')"
+          icon
+          @click="$root.$emit('deeds-rent-drawer', null, offer)">
+          <v-icon>fas fa-edit</v-icon>
+        </v-btn>
+      </v-list-item-action>
+      <v-list-item-action class="me-2 ms-0">
+        <v-btn
+          :title="$t('deedsMarketPlaceCopyOfferLink')"
+          icon
+          @click="copyLink">
+          <v-icon>fas fa-clone</v-icon>
+        </v-btn>
+      </v-list-item-action>
+    </template>
     <v-list-item-action class="ms-0">
       <v-btn
         :title="$t('deedsMarketPlaceBackToList')"
@@ -73,12 +75,8 @@ export default {
   },
   computed: Vuex.mapState({
     address: state => state.address,
-    authenticated: state => state.authenticated,
     isOwner() {
       return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
-    },
-    isAuthenticatedOwner() {
-      return this.authenticated && this.isOwner && !this.invalidOffer;
     },
   }),
   methods: {

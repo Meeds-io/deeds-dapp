@@ -228,33 +228,11 @@
       <v-spacer />
     </template>
     <template v-if="isProvisioningManager" #footer>
-      <v-btn
-        v-if="authenticated"
-        :min-width="minButtonsWidth"
-        class="ms-auto"
-        text
-        outlined
-        v-bind="attrs"
-        v-on="on"
-        @click="logout()">
-        {{ $t('signOut') }}
-      </v-btn>
-      <v-tooltip v-else top>
-        <template #activator="{ on, attrs }">
-          <v-btn
-            :min-width="minButtonsWidth"
-            color="primary"
-            depressed
-            dark
-            class="ms-auto"
-            v-bind="attrs"
-            v-on="on"
-            @click="login">
-            {{ $t('signIn') }}
-          </v-btn>
-        </template>
-        <span>{{ $t('authenticateToCommandTenantTooltip') }}</span>
-      </v-tooltip>
+      <deeds-login-button
+        ref="loginButton"
+        :login-tooltip="$t('authenticateToCommandTenantTooltip')"
+        @logged-in="refreshDeedInfo"
+        @logged-out="refreshDeedInfo" />
     </template>
   </deeds-drawer>
 </template>
@@ -275,6 +253,7 @@ export default {
     loadingRentDrawer: false,
     loadingRentalOffers: false,
     rentalOffers: null,
+    location: 'manage-deed-drawer',
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -450,9 +429,11 @@ export default {
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
           .catch(() => {
-            return this.logout(true)
-              .then(() => this.$tenantManagement.getTenantStartDate(this.nftId))
-              .then(startDate => this.deedInfo = {provisioningDate: startDate});
+            if (this.$refs.loginButton) {
+              return this.$refs.loginButton.logout(true)
+                .then(() => this.$tenantManagement.getTenantStartDate(this.nftId))
+                .then(startDate => this.deedInfo = {provisioningDate: startDate});
+            }
           })
           .then(() => this.refreshOffers());
       } else {
@@ -509,27 +490,6 @@ export default {
       if (nftId === this.nftId) {
         this.$refs.drawer?.close();
       }
-    },
-    logout(avoidRefreshInfo) {
-      return this.$authentication.logout(this.address)
-        .finally(() => this.refreshAuthentication())
-        .then(() => {
-          if (!avoidRefreshInfo) {
-            return this.refreshDeedInfo();
-          }
-        });
-    },
-    login() {
-      const token = document.querySelector('[name=loginMessage]').value;
-      const message = this.$t('signMessage', {0: token}).replace(/\\n/g, '\n');
-      this.$root.$emit('close-alert-message');
-      return this.$ethUtils.signMessage(this.provider, this.address, message)
-        .then(signedMessage => this.$authentication.login(this.address, message, signedMessage))
-        .finally(() => this.refreshAuthentication())
-        .then(() => this.refreshDeedInfo());
-    },
-    refreshAuthentication() {
-      this.$store.commit('refreshAuthentication');
     },
     openRentDetails() {
       this.$store.commit('setStandaloneOfferId', this.rentalOffers[0].id);

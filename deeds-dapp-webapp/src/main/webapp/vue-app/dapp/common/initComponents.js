@@ -28,6 +28,7 @@ import RentalOfferCard from './components/RentalOfferCard.vue';
 import CardTypeChip from './components/CardTypeChip.vue';
 import OfferTypeChip from './components/OfferTypeChip.vue';
 import EmailField from './components/EmailField.vue';
+import LoginButton from './components/LoginButton.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -42,6 +43,7 @@ const components = {
   'deeds-card-type-chip': CardTypeChip,
   'deeds-offer-type-chip': OfferTypeChip,
   'deeds-email-field': EmailField,
+  'deeds-login-button': LoginButton,
 };
 
 for (const key in components) {
