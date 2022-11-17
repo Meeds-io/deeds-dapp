@@ -15,6 +15,7 @@
  */
 package io.meeds.deeds.rest;
 
+import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 import static io.meeds.deeds.redis.model.EventSerialization.OBJECT_MAPPER;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -68,6 +69,7 @@ import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
+import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.DeedTenantOfferService;
 import io.meeds.deeds.web.rest.DeedTenantOfferController;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
@@ -84,20 +86,23 @@ import io.meeds.deeds.web.security.WebSecurityConfig;
 })
 class DeedTenantOfferControllerTest {
 
-  private static final String    TEST_PASSWORD = "testPassword";
+  private static final String      TEST_PASSWORD = "testPassword";
 
-  private static final String    TEST_USER     = "testUser";
+  private static final String      TEST_USER     = "testUser";
 
   @MockBean
-  private DeedTenantOfferService deedTenantOfferService;
+  private DeedTenantOfferService   deedTenantOfferService;
+
+  @MockBean
+  private AuthorizationCodeService authorizationCodeService;
 
   @Autowired
-  private SecurityFilterChain    filterChain;
+  private SecurityFilterChain      filterChain;
 
   @Autowired
-  private WebApplicationContext  context;
+  private WebApplicationContext    context;
 
-  private MockMvc                mockMvc;
+  private MockMvc                  mockMvc;
 
   @BeforeEach
   public void setup() {
@@ -179,11 +184,11 @@ class DeedTenantOfferControllerTest {
                                                                  .contentType(MediaType.APPLICATION_JSON)
                                                                  .accept(MediaType.APPLICATION_JSON));
     response.andExpect(status().isForbidden());
-    verify(deedTenantOfferService, never()).createRentingOffer(any(), any());
+    verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
   }
 
   @Test
-  void testCreateOfferWithUser() throws Exception {
+  void testCreateOfferWithUserWithoutVerificationCode() throws Exception {
     long nftId = 3l;
     String offerId = "offerId";
     DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
@@ -192,8 +197,46 @@ class DeedTenantOfferControllerTest {
                                                                  .accept(MediaType.APPLICATION_JSON)
                                                                  .with(testUser())
                                                                  .with(csrf()));
+    response.andExpect(status().isBadRequest());
+    verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
+  }
+
+  @Test
+  void testCreateOfferWithUserWithInvalidVerificationCode() throws Exception {
+    long nftId = 3l;
+    int code = 588865;
+    String offerId = "offerId";
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+
+    when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenThrow(IllegalAccessException.class);
+    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
+                                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                                 .accept(MediaType.APPLICATION_JSON)
+                                                                 .with(testUser())
+                                                                 .with(csrf())
+                                                                 .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                         String.valueOf(code)));
+    response.andExpect(status().isForbidden());
+    verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
+  }
+
+  @Test
+  void testCreateOfferWithUserWithValidVerificationCode() throws Exception {
+    long nftId = 3l;
+    String offerId = "offerId";
+    String email = "email";
+    int code = 588865;
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenReturn(email);
+    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
+                                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                                 .accept(MediaType.APPLICATION_JSON)
+                                                                 .with(testUser())
+                                                                 .with(csrf())
+                                                                 .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                         String.valueOf(code)));
     response.andExpect(status().isOk());
-    verify(deedTenantOfferService, times(1)).createRentingOffer(TEST_USER, deedTenantOfferDTO);
+    verify(deedTenantOfferService, times(1)).createRentingOffer(TEST_USER.toLowerCase(), email, deedTenantOfferDTO);
   }
 
   @Test

@@ -62,12 +62,13 @@ export function getOffer(offerId) {
   });
 }
 
-export function createOffer(offer) {
+export function createOffer(offer, code) {
   return fetch(`/${window.parentAppLocation}/api/offers/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+      'X-AUTHORIZATION': code,
     },
     credentials: 'include',
     body: JSON.stringify(offer),

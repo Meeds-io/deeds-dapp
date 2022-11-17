@@ -69,12 +69,16 @@ import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferFilter;
 import io.meeds.deeds.storage.DeedTenantOfferRepository;
-import io.meeds.deeds.utils.Mapper;
+import io.meeds.deeds.utils.DeedTenantOfferMapper;
 
 @SpringBootTest(classes = {
     DeedTenantOfferService.class,
 })
 class DeedTenantOfferServiceTest {
+
+  private static final String       ADDRESS = "address";
+
+  private static final String       EMAIL   = "email";
 
   @MockBean
   private DeedTenantOfferRepository deedTenantOfferRepository;
@@ -116,7 +120,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -146,7 +150,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -176,7 +180,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -206,7 +210,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -236,7 +240,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -265,7 +269,7 @@ class DeedTenantOfferServiceTest {
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
-    assertEquals(Mapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
   }
 
   @Test
@@ -283,38 +287,38 @@ class DeedTenantOfferServiceTest {
   @Test
   void testCreateRentingOfferBySimpleUser() {
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.createRentingOffer("address", new DeedTenantOfferDTO()));
+                 () -> deedTenantOfferService.createRentingOffer(ADDRESS, EMAIL, new DeedTenantOfferDTO()));
   }
 
   @Test
   void testCreateRentingOfferByOwnerButNotManager() {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
 
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     assertThrows(IllegalStateException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
+                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @Test
   void testCreateRentingOfferByOwnerWhenNftNotExists() throws Exception {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
 
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     assertThrows(ObjectNotFoundException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
+                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @Test
   void testCreateRentingOfferByOwnerWhenTenantIsUsed() throws Exception {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
     DeedTenant deedTenant = new DeedTenant();
@@ -324,7 +328,8 @@ class DeedTenantOfferServiceTest {
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(tenantService.getDeedTenantOrImport(walletAddress, nftId)).thenReturn(deedTenant);
-    assertThrows(IllegalStateException.class, () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
+    assertThrows(IllegalStateException.class,
+                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @SuppressWarnings("unchecked")
@@ -332,7 +337,7 @@ class DeedTenantOfferServiceTest {
   void testCreateRentingOfferByOwnerWhenTenantNotUsed() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
     deedTenantOfferDTO.setCardType(DeedCard.LEGENDARY);
@@ -369,7 +374,7 @@ class DeedTenantOfferServiceTest {
     when(searchHits.getTotalHits()).thenReturn(0l);
     when(elasticsearchOperations.search(any(Query.class), eq(DeedTenantOffer.class))).thenReturn(searchHits);
 
-    DeedTenantOfferDTO createdRentingOffer = deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO);
+    DeedTenantOfferDTO createdRentingOffer = deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO);
     assertNotNull(createdRentingOffer);
     assertEquals(offerId, createdRentingOffer.getId());
     assertEquals(OfferType.RENTING, createdRentingOffer.getOfferType());
@@ -395,7 +400,7 @@ class DeedTenantOfferServiceTest {
   void testCreateRentingOfferByOwnerWhenAlreadyExists() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
     deedTenantOfferDTO.setCardType(DeedCard.LEGENDARY);
@@ -435,20 +440,20 @@ class DeedTenantOfferServiceTest {
     when(elasticsearchOperations.search(any(Query.class), eq(DeedTenantOffer.class))).thenReturn(searchHits);
 
     assertThrows(ObjectAlreadyExistsException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, deedTenantOfferDTO));
+                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
     verify(deedTenantOfferRepository, never()).save(any());
   }
 
   @Test
   void testUpdateRentingOfferBySimpleUser() {
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.updateRentingOffer("address", new DeedTenantOfferDTO()));
+                 () -> deedTenantOfferService.updateRentingOffer(ADDRESS, new DeedTenantOfferDTO()));
   }
 
   @Test
   void testUpdateRentingOfferByOwnerButNotManager() {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
 
@@ -460,7 +465,7 @@ class DeedTenantOfferServiceTest {
   @Test
   void testUpdateRentingOfferByOwnerWhenNftNotExists() throws Exception {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setNftId(nftId);
 
@@ -474,7 +479,7 @@ class DeedTenantOfferServiceTest {
   void testUpdateRentingOfferByOwnerWhenTenantNotUsed() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setId(offerId);
     deedTenantOfferDTO.setNftId(nftId);
@@ -530,7 +535,7 @@ class DeedTenantOfferServiceTest {
   void testUpdateRentingOfferByOwnerWhenNeverExpires() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOfferDTO deedTenantOfferDTO = new DeedTenantOfferDTO();
     deedTenantOfferDTO.setId(offerId);
     deedTenantOfferDTO.setNftId(nftId);
@@ -596,7 +601,7 @@ class DeedTenantOfferServiceTest {
   @Test
   void testDeleteRentingOfferWhenNotExists() throws Exception {
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     assertThrows(ObjectNotFoundException.class,
                  () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId));
   }
@@ -605,7 +610,7 @@ class DeedTenantOfferServiceTest {
   void testDeleteRentingOfferWhenExistsAndNotOwner() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
     deedTenantOffer.setNftId(nftId);
 
@@ -620,7 +625,7 @@ class DeedTenantOfferServiceTest {
   void testDeleteRentingOfferWhenExistsAndOwner() throws Exception {
     long nftId = 2l;
     String offerId = "offerId";
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
     deedTenantOffer.setNftId(nftId);
 
@@ -633,7 +638,7 @@ class DeedTenantOfferServiceTest {
   @Test
   void testCancelRentingOfferWhenExists() throws Exception {
     long nftId = 2l;
-    String walletAddress = "address";
+    String walletAddress = ADDRESS;
     DeedTenantOffer deedTenantOffer = new DeedTenantOffer();
     deedTenantOffer.setNftId(nftId);
 

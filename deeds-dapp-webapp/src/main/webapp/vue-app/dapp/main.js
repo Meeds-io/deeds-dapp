@@ -22,6 +22,8 @@ import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
 import * as exchange from './js/exchange.js';
 import * as authentication from './js/authentication.js';
+import * as authorizationCodeService from './js/authorizationCodeService.js';
+import * as userProfileService from './js/userProfileService.js';
 import * as tenantManagement from './js/tenantManagement.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
@@ -42,6 +44,14 @@ window.Object.defineProperty(Vue.prototype, '$exchange', {
 
 window.Object.defineProperty(Vue.prototype, '$authentication', {
   value: authentication,
+});
+
+window.Object.defineProperty(Vue.prototype, '$authorizationCodeService', {
+  value: authorizationCodeService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$userProfileService', {
+  value: userProfileService,
 });
 
 window.Object.defineProperty(Vue.prototype, '$tenantManagement', {

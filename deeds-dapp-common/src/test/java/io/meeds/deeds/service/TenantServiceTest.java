@@ -15,17 +15,22 @@
  */
 package io.meeds.deeds.service;
 
+import static io.meeds.deeds.constant.CommonConstants.DEED_EVENT_TENANT_EMAIL_UPDATED;
+import static io.meeds.deeds.constant.CommonConstants.TENANT_COMMAND_START_EVENT;
+import static io.meeds.deeds.constant.CommonConstants.TENANT_COMMAND_STOP_EVENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -333,7 +338,7 @@ class TenantServiceTest {
       }
     }));
 
-    verify(listenerService, times(1)).publishEvent(eq(TenantService.DEED_EVENT_TENANT_START), any());
+    verify(listenerService, times(1)).publishEvent(eq(TENANT_COMMAND_START_EVENT), any());
   }
 
   @Test
@@ -378,7 +383,7 @@ class TenantServiceTest {
       }
     }));
 
-    verify(listenerService, times(1)).publishEvent(eq(TenantService.DEED_EVENT_TENANT_START), any());
+    verify(listenerService, times(1)).publishEvent(eq(TENANT_COMMAND_START_EVENT), any());
   }
 
   @Test
@@ -430,7 +435,7 @@ class TenantServiceTest {
       }
     }));
 
-    verify(listenerService, times(1)).publishEvent(eq(TenantService.DEED_EVENT_TENANT_STOP), any());
+    verify(listenerService, times(1)).publishEvent(eq(TENANT_COMMAND_STOP_EVENT), any());
   }
 
   @Test
@@ -473,7 +478,7 @@ class TenantServiceTest {
       }
     }));
 
-    verify(listenerService, times(1)).publishEvent(eq(TenantService.DEED_EVENT_TENANT_STOP), any());
+    verify(listenerService, times(1)).publishEvent(eq(TENANT_COMMAND_STOP_EVENT), any());
   }
 
   @Test
@@ -551,7 +556,7 @@ class TenantServiceTest {
       }
     }));
 
-    verify(listenerService, times(1)).publishEvent(eq(TenantService.DEED_EVENT_TENANT_EMAIL_UPDATED), any());
+    verify(listenerService, times(1)).publishEvent(eq(DEED_EVENT_TENANT_EMAIL_UPDATED), any());
   }
 
 }

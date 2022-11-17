@@ -27,6 +27,7 @@ import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
 import RentalOfferCard from './components/RentalOfferCard.vue';
 import CardTypeChip from './components/CardTypeChip.vue';
 import OfferTypeChip from './components/OfferTypeChip.vue';
+import EmailField from './components/EmailField.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -40,6 +41,7 @@ const components = {
   'deeds-renting-offer-card': RentalOfferCard,
   'deeds-card-type-chip': CardTypeChip,
   'deeds-offer-type-chip': OfferTypeChip,
+  'deeds-email-field': EmailField,
 };
 
 for (const key in components) {

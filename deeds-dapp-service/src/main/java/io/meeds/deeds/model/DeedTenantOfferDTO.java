@@ -17,6 +17,9 @@ package io.meeds.deeds.model;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.constant.NoticePeriod;
@@ -31,6 +34,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(value = Include.NON_EMPTY)
 public class DeedTenantOfferDTO {
 
   private String                           id;
