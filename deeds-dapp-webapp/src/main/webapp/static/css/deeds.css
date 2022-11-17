@@ -105,6 +105,10 @@ html {
 .max-height-40px {
   max-height:40px;
 }
+.full-width {
+  width: 100%;
+  max-width: 100%;
+}
 
 .embedded-link-text {
   display: inline;
