@@ -179,6 +179,9 @@ export default {
     document.addEventListener('keydown', this.closeByEscape);
     this.$root.$on('close-drawer', this.closeIfNotFirstLevel);
   },
+  beforeDestroy() {
+    this.$root.$off('close-drawer', this.closeIfNotFirstLevel);
+  },
   methods: {
     open() {
       this.drawer = true;

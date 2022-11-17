@@ -133,13 +133,16 @@ export default {
   },
   created() {
     this.installListeners();
-
-    this.$root.$on('nft-status-changed', (id, status, transactionHash, command) => {
-      const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-      this.setStatus(nft, status, transactionHash, command);
-    });
+    this.$root.$on('nft-status-changed', this.handleStatusChanged);
+  },
+  beforeDestroy() {
+    this.$root.$off('nft-status-changed', this.handleStatusChanged);
   },
   methods: {
+    handleStatusChanged(id, status, transactionHash, command) {
+      const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
+      this.setStatus(nft, status, transactionHash, command);
+    },
     installListeners() {
       if (this.tenantProvisioningContract && !this.contractListenersInstalled) {
         this.contractListenersInstalled = true;

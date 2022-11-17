@@ -29,6 +29,7 @@ import CardTypeChip from './components/CardTypeChip.vue';
 import OfferTypeChip from './components/OfferTypeChip.vue';
 import EmailField from './components/EmailField.vue';
 import LoginButton from './components/LoginButton.vue';
+import DateFormat from './components/DateFormat.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -44,6 +45,7 @@ const components = {
   'deeds-offer-type-chip': OfferTypeChip,
   'deeds-email-field': EmailField,
   'deeds-login-button': LoginButton,
+  'deeds-date-format': DateFormat,
 };
 
 for (const key in components) {

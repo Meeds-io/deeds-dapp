@@ -155,6 +155,10 @@ export default {
     this.$root.$on('deeds-move-in-drawer', this.open);
     this.$root.$on('deeds-move-drawer-close', this.close);
   },
+  beforeDestroy() {
+    this.$root.$off('deeds-move-in-drawer', this.open);
+    this.$root.$off('deeds-move-drawer-close', this.close);
+  },
   methods: {
     open(nft) {
       this.nft = nft;
