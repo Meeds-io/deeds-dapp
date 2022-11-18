@@ -41,6 +41,20 @@
       </v-col>
       <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
         <v-btn
+          ref="tenants"
+          id="tenants"
+          :href="`/${parentLocation}/tenants`"
+          value="tenants"
+          class="box-box-sizing px-2"
+          link
+          @click="openPage">
+          <h3 class="text-ordinary-capitalize">{{ $t('page.tenants') }}</h3>
+          <v-icon class="mb-1 mt-2">fas fa-building-user</v-icon>
+          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+        </v-btn>
+      </v-col>
+      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
+        <v-btn
           ref="overview"
           id="overview"
           :href="`/${parentLocation}/overview`"
@@ -111,6 +125,15 @@
       <h3 class="text-ordinary-capitalize">{{ $t('page.marketplace') }}</h3>
     </v-tab>
     <v-tab
+      ref="tenants"
+      id="tenants"
+      :href="`/${parentLocation}/tenants`"
+      link
+      class="px-2 me-2"
+      @click="openPage">
+      <h3 class="text-ordinary-capitalize">{{ $t('page.tenants') }}</h3>
+    </v-tab>
+    <v-tab
       ref="stake"
       id="stake"
       :href="`/${parentLocation}/stake`"
@@ -161,6 +184,11 @@ export default {
       return `/${this.parentLocation}/marketplace`;
     }
   }),
+  watch: {
+    isMobile() {
+      this.initSelectedTab();
+    },
+  },
   created() {
     this.initSelectedTab();
     this.$root.$on('switch-page', this.switchPage);
