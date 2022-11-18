@@ -18,10 +18,14 @@
  */
 import DeedsTenants from './components/Tenants.vue';
 import DeedsTenantsIntroduction from './components/DeedsTenantsIntroduction.vue';
+import DeedsTenantsList from './components/DeedsTenantsList.vue';
+import DeedsTenantCard from './components/DeedsTenantCard.vue';
 
 const components = {
   'deeds-tenants': DeedsTenants,
   'deeds-tenants-introduction': DeedsTenantsIntroduction,
+  'deeds-tenants-list': DeedsTenantsList,
+  'deeds-tenant-card': DeedsTenantCard,
 };
 
 for (const key in components) {
