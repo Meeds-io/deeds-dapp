@@ -24,7 +24,8 @@
       </div>
     </v-scale-transition>
     <deeds-marketplace-deeds />
-    <deeds-move-rent-drawer />
+    <deeds-manage-rent-offer-drawer />
+    <deeds-marketplace-offer-rent-drawer />
   </div>
 </template>
 <script>

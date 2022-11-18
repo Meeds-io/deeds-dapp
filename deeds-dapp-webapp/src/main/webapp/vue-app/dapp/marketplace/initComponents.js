@@ -30,6 +30,7 @@ import DeedsMarketplaceOfferCardDetailsNav from './components/MarketplaceOfferCa
 import DeedsMarketplaceOfferCardDetailsCharacteristics from './components/MarketplaceOfferCardDetailsCharacteristics.vue';
 import DeedsMarketplaceOfferCardDetailsRental from './components/MarketplaceOfferCardDetailsRental.vue';
 import DeedsMarketplaceOfferCardDetailsFooter from './components/MarketplaceOfferCardDetailsFooter.vue';
+import DeedsMarketplaceOfferRentDrawer from './components/drawers/DeedOfferRentDrawer.vue';
 
 const components = {
   'deeds-marketplace': DeedsMarketplace,
@@ -46,6 +47,7 @@ const components = {
   'deeds-marketplace-offer-card-details-charcteristics': DeedsMarketplaceOfferCardDetailsCharacteristics,
   'deeds-marketplace-offer-card-details-rental': DeedsMarketplaceOfferCardDetailsRental,
   'deeds-marketplace-offer-card-details-footer': DeedsMarketplaceOfferCardDetailsFooter,
+  'deeds-marketplace-offer-rent-drawer': DeedsMarketplaceOfferRentDrawer,
 };
 
 for (const key in components) {
