@@ -16,11 +16,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import './common/initComponents';
-import './layout/initComponents';
-import './marketplace/initComponents';
-import './tenants/initComponents';
-import './snapshot/initComponents';
-import './deeds/initComponents';
-import './stake/initComponents';
-import './farming/initComponents';
+import DeedsTenants from './components/Tenants.vue';
+import DeedsTenantsIntroduction from './components/DeedsTenantsIntroduction.vue';
+
+const components = {
+  'deeds-tenants': DeedsTenants,
+  'deeds-tenants-introduction': DeedsTenantsIntroduction,
+};
+
+for (const key in components) {
+  Vue.component(key, components[key]);
+}
