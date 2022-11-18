@@ -46,7 +46,7 @@
         v-else
         :disabled="isOwner"
         color="primary"
-        @click="close">
+        @click="openOfferRentingDrawer">
         {{ $t('deedsOfferRentingButton') }}
       </v-btn>
     </v-list-item-action>
@@ -77,5 +77,10 @@ export default {
       return this.metamaskOffline || !this.isOwner;
     },
   }),
+  methods: {
+    openOfferRentingDrawer() {
+      this.$root.$emit('deeds-rent-offer-drawer', this.offer);
+    },
+  },
 };
 </script>

@@ -81,6 +81,10 @@ export function createOffer(offer, code) {
   });
 }
 
+export function rentOffer() {
+  return Promise.resolve();
+}
+
 export function updateOffer(offerId, offer) {
   return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
     method: 'PUT',
