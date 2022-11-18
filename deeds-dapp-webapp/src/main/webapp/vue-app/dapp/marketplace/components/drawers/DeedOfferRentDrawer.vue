@@ -119,6 +119,27 @@
             @submit="confirmOffer" />
         </template>
       </v-card-text>
+      <v-card-text
+        v-if="sent"
+        id="paymentTransactionConfirmation"
+        class="mt-2 mt-sm-4">
+        <div class="mb-4">
+          {{ $t('deedRentOfferConfirmationSuccessPart1') }}
+        </div>
+        <div>
+          {{ $t('deedRentOfferConfirmationSuccessPart2') }}
+        </div>
+        <ul class="mt-4">
+          <li class="ps-0 ps-sm-4">
+            {{ $t('deedRentOfferConfirmationSuccessPart3') }}
+          </li>
+          <li
+            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
+            class="ps-0 ps-sm-4"
+            @click.prevent.stop="openTenants">
+          </li>
+        </ul>
+      </v-card-text>
     </template>
     <template #footer>
       <v-btn
@@ -145,6 +166,7 @@ export default {
   data: () => ({
     drawer: false,
     sending: false,
+    sent: false,
     email: null,
     emailCode: null,
     emailCodeSent: false,
@@ -267,6 +289,7 @@ export default {
     },
     buttonLabel() {
       return (!this.emailCode && (this.emailCodeSent && this.$t('resend') || this.$t('send')))
+        || (this.sent && this.$t('gotIt'))
         || this.$t('deedsOfferRentingButton');
     },
   }),
@@ -298,6 +321,8 @@ export default {
       this.email = null;
       this.emailCode = null;
       this.emailCodeSent = false;
+      this.sent = false;
+      this.sending = false;
       this.validEmail = false;
       this.$refs.drawer?.open();
     },
@@ -305,7 +330,9 @@ export default {
       this.$refs.drawer.close();
     },
     confirmRenting() {
-      if (!this.emailCode) {
+      if (this.sent) {
+        this.openTenants();
+      } else if (!this.emailCode) {
         this.$refs.email?.sendConfirmation();
         this.emailCodeSent = true;
       } else {
@@ -313,15 +340,29 @@ export default {
         return this.$deedTenantOfferService.rentOffer(this.offer.id, this.offer)
           .then(offer => {
             this.$root.$emit('deed-offer-rented', offer);
-            this.$root.$emit('alert-message', this.$t('deedOfferRentingSuccess'), 'success');
             this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
+            this.sent = true;
             return this.$nextTick();
           })
-          .then(() => this.close())
+          .then(() => {
+            window.setTimeout(() => {
+              const element = document.querySelector('#paymentTransactionConfirmation');
+              if (element) {
+                element.scrollIntoView({
+                  block: 'end',
+                });
+              }
+            }, 200);
+          })
           .catch(() => {
             this.sending = false;
             this.$root.$emit('alert-message', this.$t('deedOfferRentingError'), 'error');
           });
+      }
+    },
+    openTenants(event) {
+      if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
+        this.$root.$emit('switch-page', 'tenants');
       }
     },
   },

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import DeedsMarketplace from './components/DeedsMarketplace.vue';
+import DeedsMarketplace from './components/Marketplace.vue';
 import DeedsMarketplaceIntroduction from './components/DeedsMarketplaceIntroduction.vue';
 import DeedsMarketplaceIntroductionItem from './components/DeedsMarketplaceIntroductionItem.vue';
 import DeedsMarketplaceDeeds from './components/DeedsMarketplaceDeeds.vue';
