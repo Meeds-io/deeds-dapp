@@ -92,3 +92,7 @@ export function getTenantInfo(nftId) {
     }
   });
 }
+
+export function getRentedTenants() {
+  return Promise.resolve();
+}

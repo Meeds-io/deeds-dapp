@@ -21,28 +21,48 @@
     <div class="d-flex flex-row flex-grow-1">
       <v-card-title class="ps-0 py-0">{{ $t('dapp.tenants.tenantsListTitle') }}</v-card-title>
       <v-divider class="my-auto" />
+      <div v-if="hasTenants">
+        <v-btn
+          icon
+          @click="showIntroduction = !showIntroduction">
+          <v-icon size="18">fas fa-chevron-{{ showIntroduction && 'up' || 'down' }}</v-icon>
+        </v-btn>
+      </div>
     </div>
-    <v-card-text class="px-0">
-      {{ $t('deedsTenantsCommunityIntroductionPart1') }}
-      <ul class="mt-4">
-        <ol
-          v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
-          class="ps-0 ps-sm-4"
-          @click.prevent.stop="openMarketplace">
-        </ol>
-        <ol class="ps-0 ps-sm-4">
-          {{ $t('deedsTenantsCommunityIntroductionPart3') }}
-        </ol>
-      </ul>
-    </v-card-text>
+    <v-expand-transition>
+      <v-card-text v-show="!hasTenants || showIntroduction" class="px-0">
+        {{ $t('deedsTenantsCommunityIntroductionPart1') }}
+        <ul class="mt-4">
+          <ol
+            v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
+            class="ps-0 ps-sm-4"
+            @click.prevent.stop="openMarketplace">
+          </ol>
+          <ol class="ps-0 ps-sm-4">{{ $t('deedsTenantsCommunityIntroductionPart3') }}</ol>
+        </ul>
+      </v-card-text>
+    </v-expand-transition>
   </v-card>
 </template>
 <script>
 export default {
+  data: () => ({
+    showIntroduction: false,
+    hasTenants: false,
+  }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
   }),
+  created() {
+    this.$root.$on('deed-tenants-loaded', this.computeTenantsLength);
+  },
+  beforeDestroy() {
+    this.$root.$off('deed-tenants-loaded', this.computeTenantsLength);
+  },
   methods: {
+    computeTenantsLength(_tenants, totalSize) {
+      this.hasTenants = totalSize > 0;
+    },
     openMarketplace(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
         this.$store.commit('setStandaloneOfferId', null);
