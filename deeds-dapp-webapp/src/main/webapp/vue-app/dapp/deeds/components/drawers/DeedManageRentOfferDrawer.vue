@@ -225,7 +225,7 @@
                   @email-confirmation-success="emailCode = $event"
                   @email-confirmation-error="emailCodeError = true"
                   @loading="sending = $event"
-                  @submit="sendRequest" />
+                  @submit="confirmOffer" />
               </template>
               <div v-else-if="expirationDuration" class="d-flex align-center">
                 <div class="flex-grow-1">
@@ -322,6 +322,7 @@ export default {
     email: null,
     emailCode: null,
     emailCodeSent: false,
+    emailCodeError: false,
     validEmail: false,
     forceUpdateExpiration: false,
     DEFAULT_OFFER: {
@@ -607,7 +608,6 @@ export default {
         return savePromise
           .then(offer => {
             this.$root.$emit(this.isNew && 'deed-offer-renting-created' || 'deed-offer-renting-updated', offer);
-            this.sending = false;
             const message = this.$t(this.isNew && 'deedRentingOfferCreated' || 'deedRentingOfferUpdated');
             this.$root.$emit('alert-message',
               message,
@@ -615,8 +615,10 @@ export default {
               () => this.openOfferInMarketplace(offer.id),
               'fas fa-magnifying-glass primary--text mx-4 ps-1',
               this.$t('deedRentingOpenOfferInMarketplace'));
-            this.$nextTick().then(() => this.cancel());
+            this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
+            return this.$nextTick();
           })
+          .then(() => this.cancel())
           .catch(() => {
             this.sending = false;
             this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreationError' || 'deedRentingOfferUpdateError'), 'error');

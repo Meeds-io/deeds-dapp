@@ -34,7 +34,7 @@
         <deeds-move-out-drawer
           @opened="secondLevelOpened = true"
           @closed="secondLevelOpened = false" />
-        <deeds-move-rent-drawer
+        <deeds-manage-rent-offer-drawer
           :second-level="firstLevelOpened"
           @opened="secondLevelOpened = true"
           @closed="secondLevelOpened = false" />
