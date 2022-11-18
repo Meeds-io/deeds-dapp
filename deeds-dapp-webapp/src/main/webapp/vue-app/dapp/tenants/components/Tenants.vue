@@ -20,5 +20,7 @@
   <div class="d-flex flex-column mt-8">
     <deeds-tenants-introduction />
     <deeds-tenants-list />
+    <deeds-move-in-drawer />
+    <deeds-move-out-drawer />
   </div>
 </template>
