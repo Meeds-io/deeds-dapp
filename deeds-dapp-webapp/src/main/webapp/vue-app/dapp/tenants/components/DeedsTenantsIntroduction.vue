@@ -30,7 +30,7 @@
       </div>
     </div>
     <v-expand-transition>
-      <v-card-text v-show="!hasTenants || showIntroduction" class="px-0">
+      <v-card-text v-show="showIntroduction" class="px-0">
         {{ $t('deedsTenantsCommunityIntroductionPart1') }}
         <ul class="mt-4">
           <ol
@@ -62,6 +62,7 @@ export default {
   methods: {
     computeTenantsLength(_tenants, totalSize) {
       this.hasTenants = totalSize > 0;
+      this.showIntroduction = !this.hasTenants;
     },
     openMarketplace(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
