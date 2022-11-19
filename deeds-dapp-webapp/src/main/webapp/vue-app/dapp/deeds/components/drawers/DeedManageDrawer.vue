@@ -258,6 +258,7 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
+    networkId: state => state.networkId,
     language: state => state.language,
     openSeaBaseLink: state => state.openSeaBaseLink,
     cardTypeInfos: state => state.cardTypeInfos,
@@ -425,7 +426,8 @@ export default {
       return this.$deedTenantOfferService.getOffers({
         nftId: this.nftId,
         onlyOwned: true,
-      })
+        excludeExpired: true,
+      }, this.networkId)
         .then(offers => this.rentalOffers = offers?._embedded?.deedTenantOfferDTOList)
         .finally(() => this.loadingRentalOffers = false);
     },

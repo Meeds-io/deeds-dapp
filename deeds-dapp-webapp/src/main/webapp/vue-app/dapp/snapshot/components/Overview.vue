@@ -26,6 +26,7 @@
 export default {
   created() {
     this.$store.commit('loadRewardedFunds', true);
+    this.$store.commit('loadPolygonBalances', true);
   },
 };
 </script>

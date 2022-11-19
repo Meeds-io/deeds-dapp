@@ -154,9 +154,7 @@ const store = new Vuex.Store({
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     // Contract variables
     provider: null,
-    polygonProvider: new ethers.providers.JsonRpcProvider({
-      url: 'https://polygon-rpc.com/',
-    }),
+    polygonProvider: null,
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
@@ -461,10 +459,23 @@ const store = new Vuex.Store({
         state.currentCardTypes = [];
       }
     },
+    setPolygonProvider(state) {
+      if (!state.polygonProvider) {
+        state.polygonProvider = new ethers.providers.JsonRpcProvider({
+          url: 'https://polygon-rpc.com/',
+        });
+        state.polygonMeedContract = new ethers.Contract(
+          state.polygonMeedAddress,
+          state.erc20ABI,
+          state.polygonProvider
+        );
+      }
+    },
     loadComethRewardPool(state) {
       if (state.comethPool) {
         return;
       }
+      this.commit('setPolygonProvider');
       const pool = {
         address: state.comethPairAddress,
         contract: new ethers.Contract(
@@ -480,14 +491,10 @@ const store = new Vuex.Store({
         state.polygonTokenFactoryABI,
         state.polygonProvider
       );
-      const polygonMeedContract = new ethers.Contract(
-        state.polygonMeedAddress,
-        state.erc20ABI,
-        state.polygonProvider
-      );
       const promises = [];
+      this.commit('setPolygonProvider');
       promises.push(
-        polygonMeedContract.balanceOf(pool.address)
+        state.polygonMeedContract.balanceOf(pool.address)
           .then(balance => pool.meedsBalance = balance)
       );
       promises.push(
@@ -726,7 +733,6 @@ const store = new Vuex.Store({
         try {
           state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
           this.commit('loadMeedsBalances');
-          this.commit('loadPolygonBalances');
           if (state.meedContract) {
             if (state.xMeedAddress) {
               await state.meedContract.balanceOf(state.xMeedAddress).then(balance => state.meedsBalanceOfXMeeds = balance);
@@ -776,11 +782,6 @@ const store = new Vuex.Store({
           state.meedAddress,
           state.erc20ABI,
           state.provider
-        );
-        state.polygonMeedContract = new ethers.Contract(
-          state.polygonMeedAddress,
-          state.erc20ABI,
-          state.polygonProvider
         );
         state.wethContract = new ethers.Contract(
           state.meedAddress,
@@ -879,11 +880,6 @@ const store = new Vuex.Store({
     setMetamaskOffline(state) {
       if (!state.metamaskOffline) {
         state.metamaskOffline = true;
-        state.polygonMeedContract = new ethers.Contract(
-          state.polygonMeedAddress,
-          state.erc20ABI,
-          state.polygonProvider
-        );
         assetMetricService.getMetrics()
           .then(metrics => {
             if (!metrics) {

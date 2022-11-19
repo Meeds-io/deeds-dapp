@@ -85,7 +85,9 @@ public class DeedTenantOfferController {
                                                                @RequestParam(name = "onlyOwned", required = false)
                                                                boolean onlyOwned,
                                                                @RequestParam(name = "excludeExpired", required = false)
-                                                               boolean excludeExpired) {
+                                                               boolean excludeExpired,
+                                                               @RequestParam(name = "networkId", required = true)
+                                                               long networkId) {
     String ownerAddress = principal == null ? null : principal.getName();
     if (onlyOwned && StringUtils.isBlank(ownerAddress)) {
       return assembler.toModel(Page.empty(pageable));
@@ -101,6 +103,7 @@ public class DeedTenantOfferController {
       offerFilter.setExcludeDisabled(true);
       offerFilter.setCardTypes(cardTypes);
       offerFilter.setOfferTypes(offerTypes);
+      offerFilter.setNetworkId(networkId);
       Page<DeedTenantOfferDTO> offers = deedTenantOfferService.getOffersList(offerFilter, pageable);
       return assembler.toModel(offers);
     }
