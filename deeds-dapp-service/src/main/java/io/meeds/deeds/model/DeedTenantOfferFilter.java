@@ -33,6 +33,9 @@ public class DeedTenantOfferFilter {
   private long            nftId = -1;
 
   @With
+  private long            networkId;
+
+  @With
   private String          ownerAddress;
 
   @With

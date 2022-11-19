@@ -18,7 +18,7 @@
  */
 import {getCookie} from './authentication';
 
-export function getOffers(paramsObj) {
+export function getOffers(paramsObj, networkId) {
   const formData = new FormData();
   if (paramsObj) {
     Object.keys(paramsObj).forEach(key => {
@@ -30,6 +30,7 @@ export function getOffers(paramsObj) {
       }
     });
   }
+  formData.append('networkId', networkId);
   const params = new URLSearchParams(formData).toString();
   return fetch(`/${window.parentAppLocation}/api/offers?${params}`, {
     method: 'GET',

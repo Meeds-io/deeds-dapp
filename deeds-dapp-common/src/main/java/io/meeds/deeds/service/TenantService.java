@@ -23,6 +23,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ import io.meeds.deeds.storage.DeedTenantManagerRepository;
 
 @Component
 public class TenantService {
+
+  private static final Logger         LOG = LoggerFactory.getLogger(TenantService.class);
 
   @Autowired
   private DeedTenantManagerRepository deedTenantManagerRepository;
@@ -269,7 +273,27 @@ public class TenantService {
         || deedTenant.getTenantProvisioningStatus() == TenantProvisioningStatus.STOP_CONFIRMED;
   }
 
-  public DeedTenant saveDeedTenant(DeedTenant deedTenant) {
+  /**
+   * @param  networkId Blockchain Network identifier to check
+   * @return           true if Network is valid else return false
+   */
+  public boolean isBlockchainNetworkValid(long networkId) {
+    return networkId == getBlockchainNetworkId();
+  }
+
+  /**
+   * @return Blockchain network identifier
+   */
+  public long getBlockchainNetworkId() {
+    try {
+      return blockchainService.getNetworkId();
+    } catch (Exception e) {
+      LOG.warn("Error getting network id: {}", e.getMessage());
+      return 1l; // Default Etheureum Mainnet
+    }
+  }
+
+  private DeedTenant saveDeedTenant(DeedTenant deedTenant) {
     return deedTenantManagerRepository.save(deedTenant);
   }
 
