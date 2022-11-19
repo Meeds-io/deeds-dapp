@@ -24,6 +24,7 @@
     rel="nofollow noreferrer noopener">
     <span v-if="starting" class="text-capitalize">{{ $t('tenantDeployTransactionInProgress') }}</span>
     <span v-else-if="stopping" class="text-capitalize">{{ $t('tenantUndeployTransactionInProgress') }}</span>
+    <span v-else-if="beingPrepared" class="text-capitalize">{{ $t('tenantBeingPrepared') }}</span>
     <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
   </a>
   <div v-else-if="stopped" class="text-capitalize">
@@ -47,11 +48,14 @@ export default {
     status() {
       return this.nft?.status;
     },
+    tenantStatus() {
+      return this.nft?.tenantStatus;
+    },
     transactionHash() {
       return this.nft?.transactionHash;
     },
     loading() {
-      return this.transactionHash || !this.status || this.status === 'loading';
+      return this.nft.loading || this.transactionHash || !this.status || this.status === 'loading';
     },
     stopped() {
       return this.nft.stopped || this.status === 'STOPPED';
@@ -64,6 +68,9 @@ export default {
     },
     stopping() {
       return this.nft.stopping && this.loading;
+    },
+    beingPrepared() {
+      return this.started && this.nft.beingPrepared;
     },
     cityIndex() {
       return this.nft?.cityIndex;

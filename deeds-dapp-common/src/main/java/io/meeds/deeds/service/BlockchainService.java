@@ -64,37 +64,39 @@ public class BlockchainService {
 
   @Autowired
   @Qualifier("ethereumNetwork")
-  private Web3j                             web3j;
+  private Web3j                  web3j;
 
   @Autowired(required = false)
-  private DeedTenantProvisioning            deedTenantProvisioning;
+  private DeedTenantProvisioning deedTenantProvisioning;
 
   @Autowired
-  private Deed                              deed;
+  private Deed                   deed;
 
   @Autowired
-  private TokenFactory                      tokenFactory;
+  private TokenFactory           tokenFactory;
 
   @Autowired
-  private XMeedsNFTRewarding                xMeedsToken;
+  private XMeedsNFTRewarding     xMeedsToken;
 
   @Autowired
   @Qualifier("ethereumMeedToken")
-  private MeedsToken                        ethereumToken;
+  private MeedsToken             ethereumToken;
 
   @Autowired
   @Qualifier("polygonMeedToken")
-  private MeedsToken                        polygonToken;
+  private MeedsToken             polygonToken;
 
   @Autowired
   @Qualifier("sushiPairToken")
-  private ERC20                             sushiPairToken;
+  private ERC20                  sushiPairToken;
+
+  private long                   networkId;
 
   /**
    * Return DEED Tenant Status from Blockchain Contract
    *
-   * @param nftId Deed NFT identifier
-   * @return if marked as started else false
+   * @param  nftId Deed NFT identifier
+   * @return       if marked as started else false
    */
   public boolean isDeedStarted(long nftId) {
     try {
@@ -107,8 +109,8 @@ public class BlockchainService {
   /**
    * Checks if transaction has been mined or not
    * 
-   * @param transactionHash Blockchain Transaction Hash
-   * @return true if Transaction is Mined
+   * @param  transactionHash Blockchain Transaction Hash
+   * @return                 true if Transaction is Mined
    */
   public boolean isTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
@@ -116,8 +118,8 @@ public class BlockchainService {
   }
 
   /**
-   * @param transactionHash Blockchain Transaction Hash
-   * @return true if Transaction is Successful
+   * @param  transactionHash Blockchain Transaction Hash
+   * @return                 true if Transaction is Successful
    */
   public boolean isTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
@@ -139,9 +141,9 @@ public class BlockchainService {
    * Retrieves the list of mined provisioning transactions starting from a block
    * to another
    * 
-   * @param fromBlock Start block
-   * @param toBlock End Block to filter
-   * @return {@link List} of {@link DeedTenant}
+   * @param  fromBlock Start block
+   * @param  toBlock   End Block to filter
+   * @return           {@link List} of {@link DeedTenant}
    */
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -207,9 +209,9 @@ public class BlockchainService {
    * Retrieves from blockchain whether an address is the provisioning manager of
    * the deed or not
    *
-   * @param address Ethereum address to check
-   * @param nftId Deed NFT identifier
-   * @return true if is manager else false
+   * @param  address Ethereum address to check
+   * @param  nftId   Deed NFT identifier
+   * @return         true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
     return blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
@@ -218,9 +220,9 @@ public class BlockchainService {
   /**
    * Retrieves from blockchain whether an address is the owner of the deed
    *
-   * @param address Ethereum address to check
-   * @param nftId Deed NFT identifier
-   * @return true if is owner else false
+   * @param  address Ethereum address to check
+   * @param  nftId   Deed NFT identifier
+   * @return         true if is owner else false
    */
   public boolean isDeedOwner(String address, long nftId) {
     return blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
@@ -230,10 +232,10 @@ public class BlockchainService {
    * Retrieves from Blockchain DEED card type: - 0 : Common - 1 : Uncommon - 2 :
    * Rare - 3 : Legendary
    *
-   * @param nftId Deed NFT identifier
-   * @return card type index
+   * @param  nftId                   Deed NFT identifier
+   * @return                         card type index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
-   *           exists
+   *                                   exists
    */
   public short getDeedCardType(long nftId) throws ObjectNotFoundException {
     try {
@@ -251,10 +253,10 @@ public class BlockchainService {
    * Retrieves from Blockchain DEED city index: - 0 : Tanit - 1 : Reshef - 2 :
    * Ashtarte - 3 : Melqart - 4 : Eshmun - 5 : Kushor - 6 : Hammon
    *
-   * @param nftId Deed NFT identifier
-   * @return card city index
+   * @param  nftId                   Deed NFT identifier
+   * @return                         card city index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
-   *           exists
+   *                                   exists
    */
   public short getDeedCityIndex(long nftId) throws ObjectNotFoundException {
     try {
@@ -303,9 +305,9 @@ public class BlockchainService {
   }
 
   /**
-   * @param address Fund Address to get its rewarding information
-   * @return {@link FundInfo} with rewarding parameters retrieved from Token
-   *         Factory
+   * @param  address Fund Address to get its rewarding information
+   * @return         {@link FundInfo} with rewarding parameters retrieved from
+   *                 Token Factory
    */
   public FundInfo getFundInfo(String address) {
     Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, Boolean> fundInfo = blockchainCall(tokenFactory.fundInfos(address));
@@ -358,8 +360,8 @@ public class BlockchainService {
   }
 
   /**
-   * @param address Address to get its pending rewardings not minted yet
-   * @return {@link BigInteger} for Meed Token value with decimals
+   * @param  address Address to get its pending rewardings not minted yet
+   * @return         {@link BigInteger} for Meed Token value with decimals
    */
   public BigInteger pendingRewardBalanceOf(String address) {
     return blockchainCall(tokenFactory.pendingRewardBalanceOf(address));
@@ -382,10 +384,10 @@ public class BlockchainService {
   }
 
   /**
-   * @param address Ethereum address
-   * @return {@link BigDecimal} representing the balance of address which is
-   *         retrieved from ethereum blockchain. The retrieved value is divided
-   *         by number of decimals of the token (10^18)
+   * @param  address Ethereum address
+   * @return         {@link BigDecimal} representing the balance of address
+   *                 which is retrieved from ethereum blockchain. The retrieved
+   *                 value is divided by number of decimals of the token (10^18)
    */
   public BigDecimal meedBalanceOfNoDecimals(String address) {
     BigInteger balance = meedBalanceOf(address);
@@ -393,9 +395,9 @@ public class BlockchainService {
   }
 
   /**
-   * @param address Ethereum address
-   * @return {@link BigInteger} representing the balance of address which is
-   *         retrieved from ethereum blockchain.
+   * @param  address Ethereum address
+   * @return         {@link BigInteger} representing the balance of address
+   *                 which is retrieved from ethereum blockchain.
    */
   public BigInteger meedBalanceOf(String address) {
     return blockchainCall(ethereumToken.balanceOf(address));
@@ -416,14 +418,21 @@ public class BlockchainService {
   }
 
   /**
-   * @param address Ethereum address
-   * @return {@link BigDecimal} representing the balance of address which is
-   *         retrieved from polygon blockchain. The retrieved value is divided
-   *         by number of decimals of the token (10^18)
+   * @param  address Ethereum address
+   * @return         {@link BigDecimal} representing the balance of address
+   *                 which is retrieved from polygon blockchain. The retrieved
+   *                 value is divided by number of decimals of the token (10^18)
    */
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
+  }
+
+  public long getNetworkId() throws IOException {
+    if (networkId == 0) {
+      networkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
+    }
+    return networkId;
   }
 
   private Stream<DeedOwnershipTransferEvent> getTransferOwnershipEvents(TransactionReceipt transactionReceipt) {
@@ -491,4 +500,5 @@ public class BlockchainService {
       throw new IllegalStateException("Error calling blockchain", e);
     }
   }
+
 }

@@ -75,6 +75,7 @@ export default {
   computed: Vuex.mapState({
     availableCardTypes: state => state.cardTypes,
     availableOfferTypes: state => state.offerTypes,
+    networkId: state => state.networkId,
     loadedOffersLength() {
       return this.offers?.length || 0;
     },
@@ -220,7 +221,7 @@ export default {
         excludeExpired: true,
         cardType: this.cardTypes,
         offerType: this.offerTypes,
-      })
+      }, this.networkId)
         .then(offers => {
           this.offers = offers?._embedded?.deedTenantOfferDTOList || [];
           this.totalSize = offers?.page?.totalElements || 0;

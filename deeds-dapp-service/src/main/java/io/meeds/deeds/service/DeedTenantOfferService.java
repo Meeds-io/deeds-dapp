@@ -72,6 +72,9 @@ public class DeedTenantOfferService {
   private ListenerService           listenerService;
 
   public Page<DeedTenantOfferDTO> getOffersList(DeedTenantOfferFilter offerFilter, Pageable pageable) {
+    if (!tenantService.isBlockchainNetworkValid(offerFilter.getNetworkId())) {
+      return Page.empty(pageable);
+    }
     Criteria criteria = null;
     if (StringUtils.isNotBlank(offerFilter.getOwnerAddress())) {
       criteria = addAndCriteria(criteria, new Criteria("owner").is(offerFilter.getOwnerAddress().toLowerCase()));

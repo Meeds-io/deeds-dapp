@@ -397,6 +397,7 @@ export default {
     buttonsWidth: '100%',
     maxButtonsWidth: '250px',
     loadingMoveDeed: false,
+    loading: true,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -406,12 +407,13 @@ export default {
       return this.tenant?.nftId;
     },
     nft() {
-      return {
+      return this.loading && {} || {
         id: this.nftId,
         stopped: this.stopped,
         started: this.started,
         starting: this.starting,
         stopping: this.stopping,
+        beingPrepared: this.tenantStatus === 'UNDEPLOYED',
         cityName: this.city,
       };
     },
@@ -673,13 +675,15 @@ export default {
     },
     refreshDeedInfo() {
       if (this.authenticated) {
+        this.loading = true;
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
           .catch(() => {
             if (this.$refs.loginButton) {
               return this.$refs.loginButton.logout(true);
             }
-          });
+          })
+          .finally(() => this.loading = false);
       }
     },
   },
