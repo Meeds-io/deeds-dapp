@@ -69,11 +69,7 @@
                           {{ $t('deedRentingRentedTenantStatus') }}
                         </v-list-item-content>
                         <v-list-item-action-text class="d-flex py-0">
-                          <div v-if="tenantStarted" class="d-flex flex-nowrap">
-                            {{ $t('deedRentingRentedTenantStartedSinceShort') }}
-                            <deeds-date-format :value="tenantStartDate" class="ms-1" />
-                          </div>
-                          <template v-else>{{ $t('deedTenantNotStartedYet') }}</template>
+                          <deeds-owned-item-status :nft="nft" />
                         </v-list-item-action-text>
                       </v-list-item>
 
@@ -124,6 +120,7 @@
                       </v-list-item>
                     </v-list>
                   </v-col>
+
                   <v-col
                     class="py-0 ps-0 ps-md-2 mt-2 mt-md-0"
                     cols="12"
@@ -134,11 +131,7 @@
                           {{ $t('deedRentingRentedTenantStatus') }}
                         </v-list-item-content>
                         <v-list-item-action-text class="d-flex py-0">
-                          <div v-if="tenantStarted" class="d-flex flex-nowrap">
-                            <span>{{ $t('deedRentingRentedTenantStartedSince') }}</span>
-                            <deeds-date-format :value="tenantStartDate" class="ms-1" />
-                          </div>
-                          <template v-else>{{ $t('deedTenantNotStartedYet') }}</template>
+                          <deeds-owned-item-status :nft="nft" />
                         </v-list-item-action-text>
                       </v-list-item>
 
@@ -239,7 +232,7 @@
                     </v-list>
                   </v-col>
                   <v-col
-                    class="py-0 d-flex flex-column mt-8 mt-md-0 justify-space-between align-end"
+                    class="d-flex flex-row flex-md-column flex-wrap py-0 mt-8 mt-md-0 justify-space-between"
                     cols="12"
                     md="2">
                     <template v-if="authenticated">
@@ -247,9 +240,10 @@
                         <v-btn
                           v-if="accessButtonDisabled"
                           :min-width="minButtonsWidth"
+                          :width="buttonsWidth"
                           :max-width="maxButtonsWidth"
                           disabled
-                          class="primary ms-auto"
+                          class="primary mx-auto mt-2 mt-md-0"
                           depressed
                           dark>
                           <v-icon class="me-2" small>fa-external-link</v-icon>
@@ -259,12 +253,13 @@
                           v-else
                           :href="deedTenantLink"
                           :min-width="minButtonsWidth"
+                          :width="buttonsWidth"
                           :max-width="maxButtonsWidth"
                           :disabled="accessButtonDisabled"
                           :class="accessButtonDisabled && 'primary'"
                           target="_blank"
                           rel="nofollow noreferrer noopener"
-                          class="ms-auto"
+                          class="mx-auto mt-2 mt-md-0"
                           color="primary"
                           depressed
                           dark>
@@ -277,9 +272,11 @@
                         v-if="started"
                         :loading="loadingMoveDeed"
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
                         :disabled="!hasPaidCurrentPeriod"
-                        class="ms-auto"
+                        :title="$t('moveOut')"
+                        class="mx-auto mt-2 mt-md-0"
                         color="secondary"
                         outlined
                         depressed
@@ -290,10 +287,13 @@
                       <v-btn
                         v-else-if="stopped"
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
                         :loading="loadingMoveDeed"
                         :disabled="!hasPaidCurrentPeriod"
                         :class="!hasPaidCurrentPeriod && 'primary'"
+                        :title="$t('moveIn')"
+                        class="mx-auto mt-2 mt-md-0"
                         color="primary"
                         depressed
                         dark
@@ -301,9 +301,12 @@
                         <span class="text-truncate position-absolute full-width">{{ $t('moveIn') }}</span>
                       </v-btn>
                       <v-btn
-                        v-else
+                        v-else-if="starting"
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
+                        :title="$t('moveInProgress')"
+                        class="mx-auto mt-2 mt-md-0"
                         outlined
                         disabled
                         color="primary"
@@ -311,11 +314,28 @@
                         dark>
                         <span class="text-truncate position-absolute full-width">{{ $t('moveInProgress') }}</span>
                       </v-btn>
+                      <v-btn
+                        v-else-if="stopping"
+                        :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
+                        :max-width="maxButtonsWidth"
+                        :title="$t('moveOutInProgress')"
+                        class="mx-auto mt-2 mt-md-0"
+                        outlined
+                        disabled
+                        color="primary"
+                        depressed
+                        dark>
+                        <span class="text-truncate position-absolute full-width">{{ $t('moveOutInInProgress') }}</span>
+                      </v-btn>
 
                       <v-btn
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
+                        :title="$t('payTheRent')"
                         color="primary"
+                        class="mx-auto mt-2 mt-md-0"
                         outlined
                         depressed
                         dark>
@@ -324,7 +344,10 @@
                       <v-btn
                         :disabled="!hasPaidCurrentPeriod"
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
+                        :title="$t('claimRewards')"
+                        class="mx-auto mt-2 mt-md-0"
                         color="primary"
                         outlined
                         depressed
@@ -333,7 +356,10 @@
                       </v-btn>
                       <v-btn
                         :min-width="minButtonsWidth"
+                        :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
+                        :title="$t('endRental')"
+                        class="mx-auto mt-2 mt-md-0"
                         color="secondary"
                         outlined
                         depressed
@@ -366,19 +392,28 @@ export default {
     },
   },
   data: () => ({
-    nft: null,
-    deedInfo: null,
-    minButtonsWidth: '100%',
-    maxButtonsWidth: '100%',
+    deedInfo: {},
+    minButtonsWidth: '150px',
+    buttonsWidth: '100%',
+    maxButtonsWidth: '250px',
     loadingMoveDeed: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
     authenticated: state => state.authenticated,
-    now: state => state.now,
     nftId() {
       return this.tenant?.nftId;
+    },
+    nft() {
+      return {
+        id: this.nftId,
+        stopped: this.stopped,
+        started: this.started,
+        starting: this.starting,
+        stopping: this.stopping,
+        cityName: this.city,
+      };
     },
     cardElementId() {
       return `deedTenantCard-${this.tenant.id}`;
@@ -549,14 +584,17 @@ export default {
     deedTenantLink() {
       return `https://${this.city}-${this.nftId}.wom.meeds.io`;
     },
-    loading() {
-      return this.status === 'loading' || this.provisioningStatus === 'PROVISIONING_STOP_IN_PROGRESS' || this.provisioningStatus === 'PROVISIONING_START_IN_PROGRESS';
-    },
     stopped() {
-      return !this.loading && this.provisioningStatus === 'STOP_CONFIRMED';
+      return !this.provisioningStatus || this.provisioningStatus === 'STOP_CONFIRMED';
     },
     started() {
-      return !this.loading && this.provisioningStatus === 'START_CONFIRMED';
+      return this.provisioningStatus === 'START_CONFIRMED';
+    },
+    starting() {
+      return this.provisioningStatus === 'START_IN_PROGRESS';
+    },
+    stopping() {
+      return this.provisioningStatus === 'STOP_IN_PROGRESS';
     },
   }),
   watch: {
@@ -564,12 +602,46 @@ export default {
       // TO DELETE Once Backend Works
       this.refreshDeedInfo();
     },
+    tenantProvisioningContract: {
+      immediate: true,
+      handler() {
+        this.installListeners();
+      },
+    },
   },
   created() {
     // TO DELETE Once Backend Works
     this.refreshDeedInfo();
+
+    this.installListeners();
+    this.$root.$on('nft-status-changed', this.handleStatusChanged);
+    document.addEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
+  },
+  beforeDestroy() {
+    this.$root.$off('nft-status-changed', this.handleStatusChanged);
+    document.removeEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
   },
   methods: {
+    installListeners() {
+      this.$store.commit('installProvisioningListeners');
+    },
+    handleBlockchainStatusChanged(event) {
+      const detail = event?.detail;
+      if (detail) {
+        this.handleStatusChanged(detail.nftId, null, null, detail.command);
+      }
+    },
+    handleStatusChanged(id, status, _transactionHash, command) {
+      if (id && Number(this.nftId) === Number(id)) {
+        const isInProgress = status === 'loading';
+        const isStartCommand = command === 'start';
+        const provisioningStatus = isInProgress && (isStartCommand && 'START_IN_PROGRESS' || 'STOP_IN_PROGRESS')
+          || (isStartCommand && 'START_CONFIRMED' || 'STOP_CONFIRMED');
+        this.deedInfo = Object.assign(this.deedInfo, {
+          provisioningStatus,
+        });
+      }
+    },
     openMoveOutDrawer() {
       this.loadingMoveDeed = true;
       this.openDrawer(false, 'deeds-move-out-drawer')
@@ -600,7 +672,7 @@ export default {
         );
     },
     refreshDeedInfo() {
-      if (this.authenticated && (this.isOwner || this.isProvisioningManager)) {
+      if (this.authenticated) {
         return this.$tenantManagement.getTenantInfo(this.nftId)
           .then(deedInfo => this.deedInfo = deedInfo)
           .catch(() => {

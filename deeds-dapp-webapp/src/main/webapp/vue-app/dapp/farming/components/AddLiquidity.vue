@@ -27,7 +27,8 @@
     <v-bottom-navigation
       width="auto"
       height="auto"
-      class="elevation-0 mt-4">
+      class="elevation-0 mt-4"
+      background-color="transparent">
       <v-btn
         :href="addSushiswapLiquidityLink"
         name="addSushiswapLiquidityLink"

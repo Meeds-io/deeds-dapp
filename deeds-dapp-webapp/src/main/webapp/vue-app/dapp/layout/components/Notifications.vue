@@ -31,12 +31,10 @@
       :type="alertType"
       :max-width="maxWidth"
       border="left"
-      class="white"
       elevation="2"
       dismissible
-      colored-border
-      outlined>
-      <span class="black--text">
+      colored-border>
+      <span class="text--lighten-1">
         {{ alertMessage }}
       </span>
       <v-btn

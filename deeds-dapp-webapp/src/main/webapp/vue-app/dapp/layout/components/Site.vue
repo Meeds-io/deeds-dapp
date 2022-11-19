@@ -19,29 +19,42 @@
 <template>
   <v-app>
     <v-card flat class="overflow-hidden">
-      <deeds-topbar id="banner" role="banner" />
-      <deeds-site-content id="siteContent" />
+      <deeds-topbar />
+      <deeds-site-content />
     </v-card>
   </v-app>
 </template>
 <script>
 export default {
-  computed: {
+  computed: Vuex.mapState({
+    networkId: state => state.networkId,
+    validNetwork: state => state.validNetwork,
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
-  },
+    isTestNetwork() {
+      return this.networkId !== 1 && this.validNetwork;
+    },
+  }),
   watch: {
     isMobile() {
       this.refreshMobileValue();
     },
+    isTestNetwork() {
+      this.refreshTheme();
+    },
   },
   created() {
     this.refreshMobileValue();
+    this.refreshTheme();
   },
   methods: {
     refreshMobileValue() {
       this.$store.commit('setMobile', this.isMobile);
+    },
+    refreshTheme() {
+      const preferredThemeColors =  this.isTestNetwork && window.localStorage.getItem('preferred-theme-colors') === 'dark';
+      this.$store.commit('setDark', preferredThemeColors);
     },
   },
 };
