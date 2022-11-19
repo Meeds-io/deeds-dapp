@@ -38,7 +38,7 @@ html {
   left: -9999px;
 }
 
-#dappTopbar button.v-btn, #navbar a.v-btn {
+#b button.v-btn, #navbar a.v-btn {
   min-width: auto;
 }
 

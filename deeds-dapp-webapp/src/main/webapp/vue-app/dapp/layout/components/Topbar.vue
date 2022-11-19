@@ -18,9 +18,10 @@
 -->
 <template>
   <v-app-bar
-    id="dappTopbar"
+    id="banner"
+    :color="whiteThemeColor"
+    role="banner"
     fixed
-    color="white"
     elevate-on-scroll>
     <v-spacer />
     <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
@@ -60,12 +61,26 @@
       <div class="ms-4">
         <deeds-topbar-language-selector />
       </div>
+      <div v-if="isTestNetwork" class="ms-4 me-n4 d-none d-md-flex">
+        <v-switch
+          v-model="darkMode"
+          class="my-auto"
+          append-icon="fas fa-moon ms-n8"
+          prepend-icon="far fa-sun me-2"
+          inset
+          dense
+          hide-details
+          @click="storePreference" />
+      </div>
     </div>
     <v-spacer />
   </v-app-bar>
 </template>
 <script>
 export default {
+  data: () => ({
+    darkMode: false,
+  }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     isMetamaskInstalled: state => state.isMetamaskInstalled,
@@ -74,6 +89,8 @@ export default {
     address: state => state.address,
     appLoading: state => state.appLoading,
     isMobile: state => state.isMobile,
+    whiteThemeColor: state => state.whiteThemeColor,
+    dark: state => state.dark,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },
@@ -91,5 +108,21 @@ export default {
       }
     },
   }),
+  watch: {
+    darkMode() {
+      this.$store.commit('setDark', this.darkMode);
+    },
+    dark() {
+      this.darkMode = this.dark;
+    },
+  },
+  created() {
+    this.darkMode = this.dark;
+  },
+  methods: {
+    storePreference() {
+      window.localStorage.setItem('preferred-theme-colors', this.darkMode && 'dark' || 'light');
+    },
+  },
 };
 </script>

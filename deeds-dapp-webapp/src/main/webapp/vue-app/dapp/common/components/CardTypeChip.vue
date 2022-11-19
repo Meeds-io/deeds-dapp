@@ -23,8 +23,8 @@
     :selected-values="selectedCards"
     :value="card"
     :small="small"
-    selected-color="grey"
-    color="black">
+    :color="blackThemeColor"
+    selected-color="grey">
     <v-list-item-avatar
       class="deed-avatar ms-0 me-1 my-auto"
       :min-width="`${avatarSize}px !important`"
@@ -61,6 +61,7 @@ export default {
   },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    blackThemeColor: state => state.blackThemeColor,
     cardImage() {
       return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
     },

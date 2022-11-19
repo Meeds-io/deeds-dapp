@@ -29,7 +29,7 @@
           <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
         </v-list-item-action-text>
         <v-list-item-action-text class="d-flex py-0 me-0 me-sm-8 subtitle-1">
-          <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
+          <v-icon :color="blackThemeColor" size="16">fas fa-stopwatch</v-icon>
           <deeds-timer
             :end-time="expirationTime"
             class="ms-sm-1"
@@ -64,6 +64,7 @@ export default {
     address: state => state.address,
     metamaskOffline: state => state.metamaskOffline,
     now: state => state.now,
+    blackThemeColor: state => state.blackThemeColor,
     expirationTime() {
       return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
     },

@@ -54,28 +54,28 @@ export default {
       return this.transactionHash || !this.status || this.status === 'loading';
     },
     stopped() {
-      return this.status === 'STOPPED';
+      return this.nft.stopped || this.status === 'STOPPED';
     },
     started() {
-      return this.status === 'STARTED';
+      return this.nft.started || this.status === 'STARTED';
     },
     starting() {
-      return this.loading && this.nft.starting;
+      return this.nft.starting && this.loading;
     },
     stopping() {
-      return this.loading && this.nft.stopping;
+      return this.nft.stopping && this.loading;
     },
     cityIndex() {
       return this.nft?.cityIndex;
     },
     cityName() {
-      return this.cities[this.cityIndex];
+      return this.nft?.cityName || this.cities[this.cityIndex];
     },
     deedTenantLink() {
-      return `https://${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
+      return `https://${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
     },
     deedTenantLinkLabel() {
-      return `${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
+      return `${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
     },
   }),
 };

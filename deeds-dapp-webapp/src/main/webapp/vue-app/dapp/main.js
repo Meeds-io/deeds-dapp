@@ -73,6 +73,32 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantOfferService', {
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
+const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || false;
+const vuetify = new Vuetify({
+  iconfont: 'fa',
+  theme: {
+    dark,
+    disable: true,
+    themes: {
+      light: {
+        primary: '#3f8487',
+        secondary: '#e25d5d',
+        info: '#476a9c',
+        error: '#bc4343',
+        warning: '#ffb441',
+        success: '#2eb58c',
+      },
+      dark: {
+        primary: '#3f8487',
+        secondary: '#e25d5d',
+        info: '#476a9c',
+        error: '#bc4343',
+        warning: '#ffb441',
+        success: '#2eb58c',
+      },
+    },
+  },
+});
 const language = localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
 
 const selectedFiatCurrency = localStorage.getItem('deeds-selectedFiatCurrency') || 'usd';
@@ -284,6 +310,9 @@ const store = new Vuex.Store({
     selectedOfferId: null,
     selectedStandaloneOfferId: null,
     authenticated: false,
+    dark,
+    blackThemeColor: dark && 'white' || 'black',
+    whiteThemeColor: dark && 'black' || 'white',
   },
   mutations: {
     setOfferId(state, value) {
@@ -306,6 +335,12 @@ const store = new Vuex.Store({
     },
     setMobile(state, value) {
       state.isMobile = value;
+    },
+    setDark(state, value) {
+      state.dark = value;
+      vuetify.framework.theme.dark = value;
+      state.blackThemeColor = value && 'white' || 'black';
+      state.whiteThemeColor = value && '#303030' || 'white';
     },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();
@@ -958,6 +993,31 @@ const store = new Vuex.Store({
           });
       }
     },
+    installProvisioningListeners(state) {
+      if (!state.provisioningListenersInstalled && state.address && state.tenantProvisioningContract) {
+        state.provisioningListenersInstalled = true;
+
+        // eslint-disable-next-line new-cap
+        state.tenantProvisioningContract.on(state.tenantProvisioningContract.filters.TenantStarted(), (address, nftId)  => {
+          if (address.toUpperCase() === state.address?.toUpperCase()) {
+            document.dispatchEvent(new CustomEvent('nft-tenant-provisioning-changed', {detail: {
+              nftId: nftId.toNumber(),
+              command: 'start',
+            }}));
+          }
+        });
+
+        // eslint-disable-next-line new-cap
+        state.tenantProvisioningContract.on(state.tenantProvisioningContract.filters.TenantStopped(), (address, nftId)  => {
+          if (address.toUpperCase() === state.address?.toUpperCase()) {
+            document.dispatchEvent(new CustomEvent('nft-tenant-provisioning-changed', {detail: {
+              nftId: nftId.toNumber(),
+              command: 'stop',
+            }}));
+          }
+        });
+      }
+    },
   }
 });
 
@@ -1026,31 +1086,7 @@ function initializeVueApp(language) {
           template: '<deeds-site id="deedsApp" />',
           store,
           i18n,
-          vuetify: new Vuetify({
-            iconfont: 'fa',
-            theme: {
-              dark: false,
-              disable: true,
-              themes: {
-                light: {
-                  primary: '#3f8487',
-                  secondary: '#e25d5d',
-                  info: '#476a9c',
-                  error: '#bc4343',
-                  warning: '#ffb441',
-                  success: '#2eb58c',
-                },
-                dark: {
-                  primary: '#3f8487',
-                  secondary: '#e25d5d',
-                  info: '#476a9c',
-                  error: '#bc4343',
-                  warning: '#ffb441',
-                  success: '#2eb58c',
-                },
-              },
-            },
-          }),
+          vuetify,
         });
       }
     });

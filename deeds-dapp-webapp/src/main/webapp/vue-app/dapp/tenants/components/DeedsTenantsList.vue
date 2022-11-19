@@ -52,7 +52,7 @@
 <script>
 export default {
   data: () => ({
-    tenants: [{
+    tenantsMock: [{
       'id': '5z-So4QBvtG_sqDaIOWo',
       'nftId': 5,
       'city': 'TANIT',
@@ -101,7 +101,7 @@ export default {
       'createdDate': '2022-11-17T15:01:25.903Z',
       'modifiedDate': '2022-11-17T17:52:02.522Z',
     }, {
-      'id': '7z-So4QBvtG_sqDaIOAd',
+      'id': '7z-So4QBvtG_sqDaIOe',
       'nftId': 9,
       'city': 'TANIT',
       'cardType': 'RARE',
@@ -125,6 +125,7 @@ export default {
       'createdDate': '2022-11-17T15:01:25.903Z',
       'modifiedDate': '2022-11-17T17:52:02.522Z',
     }],
+    tenants: [],
     sortField: 'acquiredDate',
     sortDirection: 'desc',
     pageSize: 9,
@@ -178,7 +179,7 @@ export default {
         address: this.address,
       })
         .then(tenants => {
-          this.tenants = tenants || this.tenants.filter(tenant => tenant.managerAddress.toLowerCase() === this.address.toLowerCase());
+          this.tenants = tenants || this.tenantsMock.filter(tenant => tenant.managerAddress.toLowerCase() === this.address.toLowerCase());
           this.totalSize = tenants?.page?.totalElements || this.tenants.length;
           this.$root.$emit('deed-tenants-loaded', this.tenants, this.totalSize);
         })

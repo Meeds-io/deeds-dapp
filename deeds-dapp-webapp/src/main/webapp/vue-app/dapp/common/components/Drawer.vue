@@ -22,6 +22,8 @@
     :width="width"
     :hide-overlay="firstLevel || isMobile"
     :permanent="permanent || firstLevel && drawer"
+    :color="whiteThemeColor"
+    :overlay-opacity="overlayOpacity"
     temporary
     right
     fixed
@@ -134,11 +136,16 @@ export default {
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     scrollbarWidth: state => state.scrollbarWidth,
+    whiteThemeColor: state => state.whiteThemeColor,
+    dark: state => state.dark,
     width() {
       return this.expand && '100%' || this.drawerWidth;
     },
     expandIcon() {
       return this.expand && 'mdi-arrow-collapse' || 'mdi-arrow-expand';
+    },
+    overlayOpacity() {
+      return this.dark && '0.8' || '0.46';
     },
   }),
   watch: {

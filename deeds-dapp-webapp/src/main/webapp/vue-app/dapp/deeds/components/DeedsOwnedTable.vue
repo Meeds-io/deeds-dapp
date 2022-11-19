@@ -134,27 +134,25 @@ export default {
   created() {
     this.installListeners();
     this.$root.$on('nft-status-changed', this.handleStatusChanged);
+    document.addEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
   },
   beforeDestroy() {
     this.$root.$off('nft-status-changed', this.handleStatusChanged);
+    document.removeEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
   },
   methods: {
+    installListeners() {
+      this.$store.commit('installProvisioningListeners');
+    },
+    handleBlockchainStatusChanged(event) {
+      const detail = event?.detail;
+      if (detail) {
+        this.refreshTenantStatus(detail.nftId);
+      }
+    },
     handleStatusChanged(id, status, transactionHash, command) {
       const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
       this.setStatus(nft, status, transactionHash, command);
-    },
-    installListeners() {
-      if (this.tenantProvisioningContract && !this.contractListenersInstalled) {
-        this.contractListenersInstalled = true;
-
-        // eslint-disable-next-line new-cap
-        this.tenantProvisioningContract.on(this.tenantProvisioningContract.filters.TenantStarted(),
-          this.refreshTenantStatus);
-
-        // eslint-disable-next-line new-cap
-        this.tenantProvisioningContract.on(this.tenantProvisioningContract.filters.TenantStopped(),
-          this.refreshTenantStatus);
-      }
     },
     reloadStatus(markInitialized) {
       if (this.hasDeeds) {
@@ -185,15 +183,13 @@ export default {
         }
       }
     },
-    refreshTenantStatus(address, nftId) {
-      if (address.toUpperCase() === this.address.toUpperCase()) {
-        if (this.ownedNfts) {
-          const id = nftId.toNumber();
-          const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-          if (nft) {
-            Promise.resolve(this.loadStatus(nft))
-              .then(() => this.$root.$emit('deeds-move-drawer-close', id));
-          }
+    refreshTenantStatus(nftId) {
+      if (this.ownedNfts) {
+        const id = nftId.toNumber();
+        const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
+        if (nft) {
+          Promise.resolve(this.loadStatus(nft))
+            .then(() => this.$root.$emit('deeds-move-drawer-close', id));
         }
       }
     },

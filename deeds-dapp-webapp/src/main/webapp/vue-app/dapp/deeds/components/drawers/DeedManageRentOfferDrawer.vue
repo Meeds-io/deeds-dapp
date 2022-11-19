@@ -127,9 +127,9 @@
               <div class="mx-n2">
                 <v-slider
                   v-model="offer.ownerMintingPercentage"
+                  :thumb-color="`${whiteThemeColor} border-color mt-3px`"
                   color="error py-1"
                   track-color="success py-1"
-                  thumb-color="white border-color mt-3px"
                   loader-height="8px"
                   height="8px"
                   min="0"
@@ -341,6 +341,7 @@ export default {
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
+    whiteThemeColor: state => state.whiteThemeColor,
     nftId() {
       return this.offer?.nftId;
     },

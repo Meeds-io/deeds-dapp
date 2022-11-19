@@ -161,7 +161,7 @@
             <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
           </v-list-item-action-text>
           <v-list-item-action-text v-else class="d-flex py-0">
-            <v-icon color="black" size="16">fas fa-stopwatch</v-icon>
+            <v-icon :color="blackThemeColor" size="16">fas fa-stopwatch</v-icon>
             <deeds-timer
               :end-time="expirationTime"
               text-color=""
@@ -195,6 +195,7 @@ export default {
     parentLocation: state => state.parentLocation,
     address: state => state.address,
     now: state => state.now,
+    blackThemeColor: state => state.blackThemeColor,
     nftId() {
       return this.offer?.nftId;
     },
