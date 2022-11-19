@@ -413,7 +413,9 @@ export default {
         started: this.started,
         starting: this.starting,
         stopping: this.stopping,
-        beingPrepared: this.tenantStatus === 'UNDEPLOYED',
+        beingPrepared: this.started && this.tenantStatus === 'UNDEPLOYED',
+        beingStopped: this.stopped && this.tenantStatus === 'DEPLOYED',
+        isProvisioningManager: this.isProvisioningManager,
         cityName: this.city,
       };
     },
