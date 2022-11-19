@@ -27,8 +27,11 @@
     <span v-else-if="beingPrepared" class="text-capitalize">{{ $t('tenantBeingPrepared') }}</span>
     <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
   </a>
+  <div v-else-if="beingStopped" class="text-capitalize">
+    {{ $t('tenantBeingStopped') }}
+  </div>
   <div v-else-if="stopped" class="text-capitalize">
-    {{ $t('vacant') }}
+    {{ isProvisioningManager && $t('deedTenantNotStartedYet') || $t('vacant') }}
   </div>
   <div v-else>-</div>
 </template>
@@ -55,28 +58,34 @@ export default {
       return this.nft?.transactionHash;
     },
     loading() {
-      return this.nft.loading || this.transactionHash || !this.status || this.status === 'loading';
+      return this.nft?.loading || this.transactionHash || !this.status || this.status === 'loading';
     },
     stopped() {
-      return this.nft.stopped || this.status === 'STOPPED';
+      return this.nft?.stopped || this.status === 'STOPPED';
     },
     started() {
-      return this.nft.started || this.status === 'STARTED';
+      return this.nft?.started || this.status === 'STARTED';
     },
     starting() {
-      return this.nft.starting && this.loading;
+      return this.nft?.starting && this.loading;
     },
     stopping() {
-      return this.nft.stopping && this.loading;
+      return this.nft?.stopping && this.loading;
     },
     beingPrepared() {
-      return this.started && this.nft.beingPrepared;
+      return this.nft?.beingPrepared;
+    },
+    beingStopped() {
+      return this.nft?.beingStopped;
     },
     cityIndex() {
       return this.nft?.cityIndex;
     },
     cityName() {
       return this.nft?.cityName || this.cities[this.cityIndex];
+    },
+    isProvisioningManager() {
+      return this.nft?.isProvisioningManager;
     },
     deedTenantLink() {
       return `https://${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
