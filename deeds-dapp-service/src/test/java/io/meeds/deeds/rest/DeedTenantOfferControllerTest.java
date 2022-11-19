@@ -123,7 +123,7 @@ class DeedTenantOfferControllerTest {
       return new PageImpl<>(Collections.singletonList(deedTenantOfferDTO), pageable, 1);
     });
 
-    ResultActions response = mockMvc.perform(get("/api/offers?nftId=" + nftId));
+    ResultActions response = mockMvc.perform(get("/api/offers?networkId=1&nftId=" + nftId + "&networkId=1"));
     response.andExpect(status().isOk())
             .andExpect(jsonPath("$._embedded", notNullValue()))
             .andExpect(jsonPath("$._embedded.deedTenantOfferDTOList", notNullValue()))
@@ -144,7 +144,7 @@ class DeedTenantOfferControllerTest {
       return new PageImpl<>(Collections.singletonList(deedTenantOfferDTO), pageable, 1);
     });
 
-    String link = "/api/offers?";
+    String link = "/api/offers?networkId=1&";
     link += StringUtils.join(cardTypes.stream().map(cardType -> "cardType=" + cardType.name()).collect(Collectors.toList()), '&');
     link += "&";
     link += StringUtils.join(offerTypes.stream().map(offerType -> "offerType=" + offerType.name()).collect(Collectors.toList()),

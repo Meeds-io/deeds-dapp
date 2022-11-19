@@ -128,6 +128,41 @@ class DeedTenantOfferServiceTest {
   @SuppressWarnings({
       "unchecked"
   })
+  void testGetOffersListWithInvalidNetworkId() {
+    long nftId = 2l;
+    String offerId = "offerId";
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
+
+    Pageable pageable = mock(Pageable.class);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
+    when(tenantService.isBlockchainNetworkValid(2l)).thenReturn(true);
+
+    assertElasticSearchQuery(searchHits, "nftId", 2l);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+    offerFilter.setNftId(nftId);
+    offerFilter.setNetworkId(5l);
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
+    assertNotNull(result);
+    assertEquals(0, result.getSize());
+
+    offerFilter.setNetworkId(2l);
+    result = deedTenantOfferService.getOffersList(offerFilter, pageable);
+    assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked"
+  })
   void testGetOffersListByOwned() {
     long nftId = 2l;
     String offerId = "offerId";
