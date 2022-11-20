@@ -24,7 +24,7 @@
       :placeholder="placeholder"
       :loading="emailLoading"
       :readonly="readonly"
-      :disabled="disabled || sending || emailConfirmationNeeded"
+      :disabled="disabledField"
       name="email"
       type="email"
       pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
@@ -100,6 +100,9 @@ export default {
     validEmailCheckIndex: 1,
   }),
   computed: Vuex.mapState({
+    disabledField() {
+      return this.disabled || this.sending || this.emailConfirmationNeeded;
+    },
     validEmail() {
       return this.validEmailCheckIndex && this.email?.trim().length && this.isValid();
     },
@@ -193,6 +196,11 @@ export default {
         && this.$refs.form?.$el.checkValidity();
     },
     sendConfirmation() {
+      if (!this.email?.length) {
+        this.$refs.form?.$el.reportValidity();
+        this.$root.$emit('alert-message', this.$t('deedEmailConfirmMandatory'), 'warning');
+        return this.$nextTick();
+      }
       this.sending = true;
       this.$nextTick()
         .then(() => this.$authorizationCodeService.sendEmailConfirmation(this.email))
