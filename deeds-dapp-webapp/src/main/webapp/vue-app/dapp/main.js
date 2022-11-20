@@ -73,7 +73,8 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantOfferService', {
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
-const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || false;
+const themePreference = window.localStorage.getItem('preferred-theme-colors');
+const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || themePreference !== 'light';
 const vuetify = new Vuetify({
   iconfont: 'fa',
   theme: {
@@ -146,6 +147,7 @@ const store = new Vuex.Store({
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
     tenantProvisioningAddress: '0x49C0cF46C0Eb6FdF05A4E8C1FE344d510422E1F0',
+    tenantRentingAddress: null,
     // External links
     etherscanBaseLink: 'https://etherscan.io/',
     polygonscanBaseLink: 'https://polygonscan.com/',
@@ -243,6 +245,7 @@ const store = new Vuex.Store({
     deedContract: null,
     tokenFactoryContract: null,
     tenantProvisioningContract: null,
+    tenantRentingContract: null,
     polygonMeedContract: null,
     // User preferred language
     language,
@@ -372,6 +375,7 @@ const store = new Vuex.Store({
             state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
             state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
             state.tenantProvisioningAddress = '0x238758516d1521a4aE108966104Aa1C5cC088220';
+            state.tenantRentingAddress = null;
 
             // Opensea links
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;

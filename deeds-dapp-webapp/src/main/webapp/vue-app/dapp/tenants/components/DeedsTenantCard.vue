@@ -242,8 +242,8 @@
                           :min-width="minButtonsWidth"
                           :width="buttonsWidth"
                           :max-width="maxButtonsWidth"
+                          class="primary mx-auto mt-2 my-md-auto"
                           disabled
-                          class="primary mx-auto mt-2 mt-md-0"
                           depressed
                           dark>
                           <v-icon class="me-2" small>fa-external-link</v-icon>
@@ -257,9 +257,9 @@
                           :max-width="maxButtonsWidth"
                           :disabled="accessButtonDisabled"
                           :class="accessButtonDisabled && 'primary'"
+                          class="mx-auto mt-2  my-md-auto"
                           target="_blank"
                           rel="nofollow noreferrer noopener"
-                          class="mx-auto mt-2 mt-md-0"
                           color="primary"
                           depressed
                           dark>
@@ -276,7 +276,7 @@
                         :max-width="maxButtonsWidth"
                         :disabled="!hasPaidCurrentPeriod"
                         :title="$t('moveOut')"
-                        class="mx-auto mt-2 mt-md-0"
+                        class="mx-auto mt-2 my-md-auto"
                         color="secondary"
                         outlined
                         depressed
@@ -293,7 +293,7 @@
                         :disabled="!hasPaidCurrentPeriod"
                         :class="!hasPaidCurrentPeriod && 'primary'"
                         :title="$t('moveIn')"
-                        class="mx-auto mt-2 mt-md-0"
+                        class="mx-auto mt-2 my-md-auto"
                         color="primary"
                         depressed
                         dark
@@ -306,7 +306,7 @@
                         :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
                         :title="$t('moveInProgress')"
-                        class="mx-auto mt-2 mt-md-0"
+                        class="mx-auto mt-2 my-md-auto"
                         outlined
                         disabled
                         color="primary"
@@ -320,7 +320,7 @@
                         :width="buttonsWidth"
                         :max-width="maxButtonsWidth"
                         :title="$t('moveOutInProgress')"
-                        class="mx-auto mt-2 mt-md-0"
+                        class="mx-auto mt-2 my-md-auto"
                         outlined
                         disabled
                         color="primary"
@@ -329,43 +329,45 @@
                         <span class="text-truncate position-absolute full-width">{{ $t('moveOutInInProgress') }}</span>
                       </v-btn>
 
-                      <v-btn
-                        :min-width="minButtonsWidth"
-                        :width="buttonsWidth"
-                        :max-width="maxButtonsWidth"
-                        :title="$t('payTheRent')"
-                        color="primary"
-                        class="mx-auto mt-2 mt-md-0"
-                        outlined
-                        depressed
-                        dark>
-                        <span class="text-truncate position-absolute full-width">{{ $t('payTheRent') }}</span>
-                      </v-btn>
-                      <v-btn
-                        :disabled="!hasPaidCurrentPeriod"
-                        :min-width="minButtonsWidth"
-                        :width="buttonsWidth"
-                        :max-width="maxButtonsWidth"
-                        :title="$t('claimRewards')"
-                        class="mx-auto mt-2 mt-md-0"
-                        color="primary"
-                        outlined
-                        depressed
-                        dark>
-                        <span class="text-truncate position-absolute full-width">{{ $t('claimRewards') }}</span>
-                      </v-btn>
-                      <v-btn
-                        :min-width="minButtonsWidth"
-                        :width="buttonsWidth"
-                        :max-width="maxButtonsWidth"
-                        :title="$t('endRental')"
-                        class="mx-auto mt-2 mt-md-0"
-                        color="secondary"
-                        outlined
-                        depressed
-                        dark>
-                        <span class="text-truncate position-absolute full-width">{{ $t('endRental') }}</span>
-                      </v-btn>
+                      <template v-if="hasRentingContract">
+                        <v-btn
+                          :min-width="minButtonsWidth"
+                          :width="buttonsWidth"
+                          :max-width="maxButtonsWidth"
+                          :title="$t('payTheRent')"
+                          color="primary"
+                          class="mx-auto mt-2 mt-md-0"
+                          outlined
+                          depressed
+                          dark>
+                          <span class="text-truncate position-absolute full-width">{{ $t('payTheRent') }}</span>
+                        </v-btn>
+                        <v-btn
+                          :disabled="!hasPaidCurrentPeriod"
+                          :min-width="minButtonsWidth"
+                          :width="buttonsWidth"
+                          :max-width="maxButtonsWidth"
+                          :title="$t('claimRewards')"
+                          class="mx-auto mt-2 mt-md-0"
+                          color="primary"
+                          outlined
+                          depressed
+                          dark>
+                          <span class="text-truncate position-absolute full-width">{{ $t('claimRewards') }}</span>
+                        </v-btn>
+                        <v-btn
+                          :min-width="minButtonsWidth"
+                          :width="buttonsWidth"
+                          :max-width="maxButtonsWidth"
+                          :title="$t('endRental')"
+                          class="mx-auto mt-2 mt-md-0"
+                          color="secondary"
+                          outlined
+                          depressed
+                          dark>
+                          <span class="text-truncate position-absolute full-width">{{ $t('endRental') }}</span>
+                        </v-btn>
+                      </template>
                     </template>
                     <div v-show="!authenticated" class="mt-auto">
                       <deeds-login-button
@@ -403,6 +405,10 @@ export default {
     parentLocation: state => state.parentLocation,
     address: state => state.address,
     authenticated: state => state.authenticated,
+    tenantRentingAddress: state => state.tenantRentingAddress,
+    hasRentingContract() {
+      return !!this.tenantRentingAddress;
+    },
     nftId() {
       return this.tenant?.nftId;
     },

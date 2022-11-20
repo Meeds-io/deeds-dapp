@@ -278,3 +278,11 @@ html {
 .v-application .text-ordinary-capitalize {
   text-transform: capitalize !important;
 }
+
+.v-application.theme--dark .text--color {
+  color: #fff !important;
+}
+
+.v-application.theme--light .text--color {
+  color: #000000de !important;
+}

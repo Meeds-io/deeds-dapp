@@ -60,11 +60,11 @@
     <template v-if="!transactionHash" #footer>
       <v-btn
         :disabled="sending"
+        name="cancelMoveOut"
+        class="ms-auto me-2"
+        min-width="120"
         outlined
         text
-        class="ms-auto me-2"
-        name="cancelMoveIn"
-        min-width="120"
         @click="close(nftId)">
         {{ $t('cancel') }}
       </v-btn>

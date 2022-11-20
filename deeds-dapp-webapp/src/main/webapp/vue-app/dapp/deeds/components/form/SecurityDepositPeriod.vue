@@ -34,18 +34,21 @@
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
+      :disabled="maxValueIndex < 1"
       value="ONE_MONTH"
       color="primary">
       {{ $t('deedRentingDurationOneMonth') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
+      :disabled="maxValueIndex < 2"
       value="TWO_MONTHS"
       color="primary">
       {{ $t('deedRentingDurationTwoMonths') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
+      :disabled="maxValueIndex < 3"
       value="THREE_MONTHS"
       color="primary">
       {{ $t('deedRentingDurationThreeMonths') }}
@@ -58,18 +61,68 @@ export default {
     value: {
       type: String,
       default: null,
-    }
+    },
+    maxValue: {
+      type: String,
+      default: null,
+    },
+    maxValueExclusive: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     period: null,
+    maxValueIndex: 1000,
   }),
+  computed: {
+    selectedPeriodIndex() {
+      return this.getValueIndex(this.period);
+    },
+  },
   watch: {
     period() {
       this.$emit('input', this.period);
     },
+    maxValue() {
+      this.adjustValue();
+    },
+    maxValueIndex() {
+      if (this.selectedPeriodIndex && this.selectedPeriodIndex > this.maxValueIndex) {
+        switch (this.maxValue) {
+        case 'THREE_MONTHS': this.period = 'TWO_MONTHS'; break;
+        case 'TWO_MONTHS': this.period = 'ONE_MONTH'; break;
+        case 'ONE_MONTH': this.period = 'NO_PERIOD'; break;
+        case 'NO_PERIOD': this.period = 'NO_PERIOD'; break;
+        }
+      }
+    },
   },
   created() {
     this.period = this.value;
+    this.$nextTick().then(() => this.adjustValue());
+  },
+  methods: {
+    adjustValue() {
+      if (this.maxValue) {
+        let months = this.getValueIndex(this.maxValue);
+        if (this.maxValueExclusive) {
+          months--;
+        }
+        this.maxValueIndex = months;
+      }
+    },
+    getValueIndex(value) {
+      switch (value) {
+      case 'NO_PERIOD': return 0;
+      case 'ONE_MONTH': return 1;
+      case 'TWO_MONTHS': return 2;
+      case 'THREE_MONTHS': return 3;
+      case 'SIX_MONTHS': return 6;
+      case 'ONE_YEAR': return 12;
+      }
+      return 1000;
+    },
   },
 };
 </script>
