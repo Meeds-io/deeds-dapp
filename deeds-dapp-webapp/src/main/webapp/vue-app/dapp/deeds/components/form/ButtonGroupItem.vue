@@ -22,6 +22,7 @@
   <div>
     <!-- Necessary to avoid applying default style of Vuetify -->
     <v-btn
+      :disabled="disabled"
       :outlined="outlined"
       :dark="dark"
       :value="value"
@@ -57,6 +58,10 @@ export default {
       default: null,
     },
     small: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

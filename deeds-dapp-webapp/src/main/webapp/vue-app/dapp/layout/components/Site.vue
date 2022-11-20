@@ -53,7 +53,8 @@ export default {
       this.$store.commit('setMobile', this.isMobile);
     },
     refreshTheme() {
-      const preferredThemeColors =  this.isTestNetwork && window.localStorage.getItem('preferred-theme-colors') === 'dark';
+      const themePreference = window.localStorage.getItem('preferred-theme-colors');
+      const preferredThemeColors =  this.isTestNetwork && themePreference !== 'light';
       this.$store.commit('setDark', preferredThemeColors);
     },
   },

@@ -64,9 +64,8 @@
       <div v-if="isTestNetwork" class="ms-4 me-n4 d-none d-md-flex">
         <v-switch
           v-model="darkMode"
+          :append-icon="`${darkMode && 'fas fa-moon' || 'far fa-sun'} ms-n8`"
           class="my-auto"
-          append-icon="fas fa-moon ms-n8"
-          prepend-icon="far fa-sun me-2"
           inset
           dense
           hide-details

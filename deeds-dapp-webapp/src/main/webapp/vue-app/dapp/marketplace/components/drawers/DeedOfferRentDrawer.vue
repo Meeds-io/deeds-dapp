@@ -25,99 +25,209 @@
       <h4 class="text-capitalize">{{ $t('deedGetOfferRentingTitle', {0: cardType, 1: nftId}) }}</h4>
     </template>
     <template v-if="offer" #content>
-      <v-card-text>
+      <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
         <div class="mb-2">
           {{ $t('deedRentOfferSummary') }}
         </div>
-        <div class="font-weight-bold my-3">
-          {{ $t('deedRentOfferConditions') }}
-        </div>
-        <div class="d-flex my-2">
-          <div class="flex-grow-1">{{ $t('deedRentingDurationTitle') }}</div>
-          <div>{{ rentalDurationLabel }}</div>
-        </div>
-        <div class="d-flex mt-2">
-          <div class="flex-grow-1">{{ $t('deedRentingPeriodicRentPrice') }}</div>
-          <div class="d-flex">
-            <deeds-number-format
-              :value="offer.amount"
-              :fractions="2"
-              no-decimals>
-              <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
-            </deeds-number-format>
-            <span class="ms-1 text-lowercase">{{ rentPeriodicityLabel }}</span>
-          </div>
-        </div>
-        <div class="caption font-italic mb-4">
-          {{ $t('deedRentingPeriodicRentPriceSummarySubtitle', {0: paymentPeriodicityLabel}) }}
-        </div>
-        <div class="d-flex mt-2">
-          <div class="flex-grow-1">{{ $t('deedRentingRewardDistribution') }}</div>
-          {{ $t('deedTenantMintingPercentage', {0: rewardTenantMintingPercentage}) }}
-        </div>
-        <div class="caption font-italic mb-4">
-          {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
-        </div>
-        <template v-if="hasSecurityDepositPeriod">
-          <div class="d-flex mt-2">
-            <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
-            {{ securityDepositPeriodLabel }}
-          </div>
-          <div class="caption font-italic mb-4">
-            {{ $t('deedRentingSecurityDepositPeriodSummarySubtitle') }}
-          </div>
-        </template>
-        <div class="d-flex mt-2">
-          <div class="flex-grow-1">{{ $t('deedRentingEndDateTitle') }}</div>
-          <deeds-date-format :value="rentalEndDate" />
-        </div>
-        <div v-if="hasNoticePeriod" class="caption font-italic mb-4">
-          {{ $t('deedRentingEndDateSummarySubtitle', {0: noticePeriodLabel}) }}
-        </div>
-        <template v-if="authenticated">
-          <div class="font-weight-bold mt-6 mb-3">
-            {{ $t('deedRentOfferAgreement') }}
-          </div>
-          <v-checkbox
-            v-model="agreeCondition1"
-            class="mx-0 my-3 pa-0"
-            hide-details
-            dense>
-            <template #label>
-              <span class="text--color subtitle-2 font-weight-normal">
-                {{ $t('deedRentOfferAgreementCondition1') }}
-              </span>
+        <v-list-item
+          v-if="authenticated"
+          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="step = 1">
+          <v-chip :color="step === 1 && 'secondary' || 'secondary lighten-2'">
+            <span class="font-weight-bold">1</span>
+          </v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedRentOfferConditions') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-show="step === 1"
+            class="flex-grow-1 mb-8"
+            color="transparent"
+            flat>
+            <div class="d-flex my-2">
+              <div class="flex-grow-1">{{ $t('deedRentingDurationTitle') }}</div>
+              <div>{{ rentalDurationLabel }}</div>
+            </div>
+            <div class="d-flex mt-2">
+              <div class="flex-grow-1">{{ $t('deedRentingPeriodicRentPrice') }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="offer.amount"
+                  :fractions="2"
+                  no-decimals>
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+                <span class="ms-1 text-lowercase">{{ rentPeriodicityLabel }}</span>
+              </div>
+            </div>
+            <div class="caption font-italic mb-4">
+              {{ $t('deedRentingPeriodicRentPriceSummarySubtitle', {0: paymentPeriodicityLabel}) }}
+            </div>
+            <div class="d-flex mt-2">
+              <div class="flex-grow-1">{{ $t('deedRentingRewardDistribution') }}</div>
+              {{ $t('deedTenantMintingPercentage', {0: rewardTenantMintingPercentage}) }}
+            </div>
+            <div class="caption font-italic mb-4">
+              {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
+            </div>
+            <template v-if="hasSecurityDepositPeriod">
+              <div class="d-flex mt-2">
+                <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
+                {{ securityDepositPeriodLabel }}
+              </div>
+              <div class="caption font-italic mb-4">
+                {{ $t('deedRentingSecurityDepositPeriodSummarySubtitle') }}
+              </div>
             </template>
-          </v-checkbox>
-          <v-checkbox
-            v-model="agreeCondition2"
-            class="mx-0 my-3 pa-0"
-            hide-details
-            dense>
-            <template #label>
-              <span class="text--color subtitle-2 font-weight-normal">
-                {{ $t('deedRentOfferAgreementCondition2') }}
-              </span>
-            </template>
-          </v-checkbox>
-          <div class="font-weight-bold d-flex mt-6">
-            {{ $t('deedEmailConfirmTitle') }}
-          </div>
-          <div class="caption font-italic my-2">
-            {{ $t('deedEmailConfirmSubTitle') }}
-          </div>
-          <deeds-email-field
-            ref="email"
-            v-model="email"
-            :placeholder="$t('deedEmailContactPlaceholder')"
-            :readonly="sending"
-            :disabled="disabledEmail"
-            @valid-email="validEmail = $event"
-            @email-confirmation-success="emailCode = $event"
-            @email-confirmation-error="emailCodeError = true"
-            @loading="sending = $event"
-            @submit="confirmOffer" />
-        </template>
+            <div class="d-flex mt-2">
+              <div class="flex-grow-1">{{ $t('deedRentingEndDateTitle') }}</div>
+              <deeds-date-format :value="rentalEndDate" />
+            </div>
+            <div v-if="hasNoticePeriod" class="caption font-italic mb-4">
+              {{ $t('deedRentingEndDateSummarySubtitle', {0: noticePeriodLabel}) }}
+            </div>
+          </v-card>
+        </v-expand-transition>
+        <v-list-item
+          v-if="authenticated"
+          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="goToStep2">
+          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'">
+            <span class="font-weight-bold">2</span>
+          </v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedRentOfferAgreement') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-if="authenticated"
+            v-show="step === 2"
+            class="flex-grow-1 mb-8"
+            color="transparent"
+            flat>
+            <div class="font-weight-bold mt-6 mb-3">
+              {{ $t('deedRentOfferAgreement') }}
+            </div>
+            <v-checkbox
+              v-model="agreeCondition1"
+              class="mx-0 my-3 pa-0"
+              hide-details
+              dense>
+              <template #label>
+                <span class="text--color subtitle-2 font-weight-normal">
+                  {{ $t('deedRentOfferAgreementCondition1') }}
+                </span>
+              </template>
+            </v-checkbox>
+            <v-checkbox
+              v-model="agreeCondition2"
+              class="mx-0 my-3 pa-0"
+              hide-details
+              dense>
+              <template #label>
+                <span class="text--color subtitle-2 font-weight-normal">
+                  {{ $t('deedRentOfferAgreementCondition2') }}
+                </span>
+              </template>
+            </v-checkbox>
+            <div class="font-weight-bold d-flex mt-6">
+              {{ $t('deedEmailConfirmTitle') }}
+            </div>
+            <div class="caption font-italic my-2">
+              {{ $t('deedEmailConfirmSubTitle') }}
+            </div>
+            <deeds-email-field
+              ref="email"
+              v-model="email"
+              :placeholder="$t('deedEmailContactPlaceholder')"
+              :readonly="sending"
+              :disabled="disabledEmail"
+              @valid-email="validEmail = $event"
+              @email-confirmation-success="emailCode = $event"
+              @email-confirmation-error="emailCodeError = true"
+              @loading="sending = $event"
+              @submit="confirmOffer" />
+          </v-card>
+        </v-expand-transition>
+        <v-list-item
+          v-if="authenticated"
+          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="goToStep3">
+          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'">
+            <span class="font-weight-bold">3</span>
+          </v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedRentOfferPayment') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-if="authenticated"
+            v-show="step === 3"
+            class="flex-grow-1 mb-8"
+            color="transparent"
+            flat>
+            <div class="mt-8">
+              {{ $t('deedRentalOfferPaymentSummary') }}
+            </div>
+
+            <div class="font-weight-bold mb-3 mt-8">
+              {{ $t('deedRentalOfferPaymentTitle') }}
+            </div>
+            <div class="d-flex mb-2">
+              <div class="flex-grow-1">{{ paymentFirstPeriodLabel }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="offer.amount"
+                  :fractions="2"
+                  no-decimals>
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+              </div>
+            </div>
+            <div v-if="hasSecurityDepositPeriod" class="d-flex mb-2">
+              <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="securityDepositAmount"
+                  :fractions="2"
+                  no-decimals>
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+              </div>
+            </div>
+            <div class="d-flex mb-2">
+              <div class="flex-grow-1 font-weight-bold">{{ $t('deedRentingPaymentTotal') }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="totalAmountToPay"
+                  :fractions="2"
+                  no-decimals>
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+              </div>
+            </div>
+
+            <div class="font-weight-bold mb-3 mt-8">
+              {{ $t('deedRentingPaymentYourBalance') }}
+            </div>
+            <div class="d-flex mb-2">
+              <div class="flex-grow-1">{{ $t('meeds') }}</div>
+              <div class="d-flex">
+                <deeds-number-format
+                  :value="meedsBalance"
+                  :fractions="2">
+                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+                </deeds-number-format>
+              </div>
+            </div>
+            <div
+              v-html="buyMeedProposalLabel"
+              class="d-flex mb-2"
+              @click.stop.prevent="openBuyMeeds">
+            </div>
+          </v-card>
+        </v-expand-transition>
       </v-card-text>
       <v-card-text
         v-if="sent"
@@ -142,19 +252,32 @@
       </v-card-text>
     </template>
     <template #footer>
-      <v-btn
-        v-if="authenticated"
-        :loading="sending"
-        :disabled="disabledButton"
-        :min-width="MIN_BUTTONS_WIDTH"
-        :class="disabledButton && 'primary'"
-        name="rentConfirmButton"
-        color="primary"
-        depressed
-        dark
-        @click="confirmRenting">
-        {{ buttonLabel }}
-      </v-btn>
+      <template v-if="authenticated">
+        <v-btn
+          v-if="!sent"
+          :disabled="sending"
+          name="cancelRentButton"
+          class="ms-auto me-2"
+          min-width="120"
+          outlined
+          text
+          @click="close">
+          {{ $t('cancel') }}
+        </v-btn>
+        <v-btn
+          :loading="sending"
+          :disabled="buttonDisabled"
+          :min-width="MIN_BUTTONS_WIDTH"
+          :outlined="intermediateStep"
+          :class="!intermediateStep && buttonDisabled && 'primary'"
+          name="rentConfirmButton"
+          color="primary"
+          depressed
+          dark
+          @click="confirmRenting">
+          {{ buttonLabel }}
+        </v-btn>
+      </template>
       <deeds-login-button
         v-else
         :login-tooltip="$t('authenticateToEditOfferTooltip')" />
@@ -175,10 +298,12 @@ export default {
     agreeCondition1: false,
     agreeCondition2: false,
     offer: null,
+    step: 1,
     MIN_BUTTONS_WIDTH: 120,
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
+    meedsBalance: state => state.meedsBalance,
     nftId() {
       return this.offer?.nftId;
     },
@@ -206,6 +331,16 @@ export default {
       case 'ONE_YEAR': return this.$t('year').toLowerCase();
       }
       return null;
+    },
+    paymentFirstPeriodLabel() {
+      if (!this.offer?.paymentPeriodicity) {
+        return null;
+      }
+      if (this.offer?.paymentPeriodicity === this.offer?.duration) {
+        return this.$t('deedRentalOfferPaymentPeriodRent', {0: this.paymentPeriodicityLabel});
+      } else {
+        return this.$t('deedRentingPeriodicRentPriceSummarySubtitle', {0: this.paymentPeriodicityLabel});
+      }
     },
     rentPeriodicityLabel() {
       if (!this.offer?.paymentPeriodicity) {
@@ -242,6 +377,27 @@ export default {
       case 'THREE_MONTHS': return this.$t('deedRentingDurationThreeMonths');
       }
       return null;
+    },
+    securityDepositAmount() {
+      if (!this.offer?.securityDepositPeriod) {
+        return 0;
+      }
+      switch (this.offer?.securityDepositPeriod) {
+      case 'ONE_MONTH': return this.offer.amount;
+      case 'TWO_MONTHS': return this.offer.amount * 2;
+      case 'THREE_MONTHS': return this.offer.amount * 3;
+      }
+      return 0;
+    },
+    buyMeedProposalLabel() {
+      return this.$t('deedRentingPaymentMeedsBuyProposal', {
+        0: '<a id="buyMeeds" class="mx-1 primary--text font-weight-bold">',
+        1: this.$t('meeds'),
+        2: '</a>',
+      });
+    },
+    totalAmountToPay() {
+      return this.securityDepositAmount + this.offer.amount;
     },
     hasNoticePeriod() {
       return this.offer?.noticePeriod && this.offer?.noticePeriod !== 'NO_PERIOD';
@@ -284,11 +440,27 @@ export default {
     disabledEmail() {
       return !this.agreeCondition1 || !this.agreeCondition2;
     },
-    disabledButton() {
-      return !this.agreeCondition1 || !this.agreeCondition2;
+    confirmEmailStep() {
+      return this.step === 2 && !this.emailCode;
+    },
+    step2ButtonDisabled() {
+      return !this.agreeCondition1
+        || !this.agreeCondition2
+        || !this.validEmail;
+    },
+    step3ButtonDisabled() {
+      return this.step2ButtonDisabled || !this.emailCode;
+    },
+    buttonDisabled() {
+      return (this.step === 2 && this.step2ButtonDisabled)
+        || (this.step === 3 && this.step3ButtonDisabled);
+    },
+    intermediateStep() {
+      return this.step < 3;
     },
     buttonLabel() {
-      return (!this.emailCode && (this.emailCodeSent && this.$t('resend') || this.$t('send')))
+      return (this.confirmEmailStep && (this.emailCodeSent && this.$t('resend') || this.$t('send')))
+        || (this.intermediateStep && this.$t('next'))
         || (this.sent && this.$t('gotIt'))
         || this.$t('deedsOfferRentingButton');
     },
@@ -322,6 +494,7 @@ export default {
       this.emailCode = null;
       this.emailCodeSent = false;
       this.sent = false;
+      this.step = 1;
       this.sending = false;
       this.validEmail = false;
       this.$refs.drawer?.open();
@@ -329,12 +502,27 @@ export default {
     close() {
       this.$refs.drawer.close();
     },
+    goToStep2() {
+      if (this.step !== 2) {
+        this.step = 2;
+        this.scrollDrawerContent();
+      }
+    },
+    goToStep3() {
+      if (this.step !== 3 && (this.step !== 2 || !this.step2ButtonDisabled)) {
+        this.step = 3;
+        this.scrollDrawerContent();
+      }
+    },
     confirmRenting() {
-      if (this.sent) {
+      if (this.confirmEmailStep) {
+        this.sendEmailConfirmation();
+      } else if (this.step === 1) {
+        this.goToStep2();
+      } else if (this.step === 2) {
+        this.goToStep3();
+      } else if (this.sent) {
         this.openTenants();
-      } else if (!this.emailCode) {
-        this.$refs.email?.sendConfirmation();
-        this.emailCodeSent = true;
       } else {
         this.sending = true;
         return this.$deedTenantOfferService.rentOffer(this.offer.id, this.offer)
@@ -364,6 +552,23 @@ export default {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
         this.$root.$emit('switch-page', 'tenants');
       }
+    },
+    openBuyMeeds(event) {
+      if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
+        this.$root.$emit('open-buy-meed-drawer');
+      }
+    },
+    scrollDrawerContent() {
+      window.setTimeout(() => {
+        this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
+      }, 200);
+    },
+    sendEmailConfirmation() {
+      this.$refs.email?.sendConfirmation();
+      this.emailCodeSent = true;
     },
   },
 };

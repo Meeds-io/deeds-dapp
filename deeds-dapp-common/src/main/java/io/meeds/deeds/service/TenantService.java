@@ -293,7 +293,13 @@ public class TenantService {
     }
   }
 
-  private DeedTenant saveDeedTenant(DeedTenant deedTenant) {
+  /**
+   * Stores Tenant information
+   * 
+   * @param deedTenant {@link DeedTenant}
+   * @return {@link DeedTenant}
+   */
+  public DeedTenant saveDeedTenant(DeedTenant deedTenant) {
     return deedTenantManagerRepository.save(deedTenant);
   }
 

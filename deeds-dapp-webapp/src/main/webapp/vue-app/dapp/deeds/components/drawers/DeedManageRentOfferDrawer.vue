@@ -56,6 +56,7 @@
         <v-expand-transition>
           <v-card
             v-show="step === 1"
+            color="transparent"
             class="flex-grow-1"
             flat>
             <div class="px-0 pt-4">
@@ -78,6 +79,7 @@
         <v-expand-transition>
           <v-card
             v-show="step === 2"
+            color="transparent"
             class="flex-grow-1 mb-8"
             flat>
             <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}:</div>
@@ -140,10 +142,16 @@
             </div>
             <div class="mt-6">{{ $t('deedRentingSecurityDepositPeriodTitle') }}:</div>
             <div class="mb-2 caption text--disabled">{{ $t('deedRentingSecurityDepositPeriodSubtitle') }}:</div>
-            <deeds-security-deposit-period v-model="offer.securityDepositPeriod" />
+            <deeds-security-deposit-period
+              v-model="offer.securityDepositPeriod"
+              :max-value="offer.duration"
+              max-value-exclusive />
             <div class="mt-6">{{ $t('deedRentingNoticePeriodTitle') }}:</div>
             <div class="mb-2 caption text--disabled">{{ $t('deedRentingNoticePeriodSubtitle') }}:</div>
-            <deeds-notice-period v-model="offer.noticePeriod" />
+            <deeds-notice-period
+              v-model="offer.noticePeriod"
+              :max-value="offer.duration"
+              max-value-exclusive />
           </v-card>
         </v-expand-transition>
         <v-list-item
@@ -158,6 +166,7 @@
         <v-expand-transition>
           <v-card
             v-show="step === 3"
+            color="transparent"
             class="flex-grow-1 mb-8"
             flat>
             <div class="font-weight-bold my-3">
@@ -570,12 +579,7 @@ export default {
     goToStep2() {
       if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
         this.step = 2;
-        window.setTimeout(() => {
-          this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
-            behavior: 'smooth',
-            block: 'end',
-          });
-        }, 200);
+        this.scrollDrawerContent();
       }
     },
     goToStep3() {
@@ -583,13 +587,16 @@ export default {
           && (this.step !== 1 || !this.step1ButtonDisabled)
           && (this.step !== 2 || !this.step2ButtonDisabled)) {
         this.step = 3;
-        window.setTimeout(() => {
-          this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
-            behavior: 'smooth',
-            block: 'end',
-          });
-        }, 200);
+        this.scrollDrawerContent();
       }
+    },
+    scrollDrawerContent() {
+      window.setTimeout(() => {
+        this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
+      }, 200);
     },
     sendEmailConfirmation() {
       this.$refs.email?.sendConfirmation();
