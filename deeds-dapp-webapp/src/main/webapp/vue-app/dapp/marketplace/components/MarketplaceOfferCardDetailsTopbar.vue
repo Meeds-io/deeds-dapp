@@ -20,16 +20,21 @@
 -->
 <template>
   <v-list-item class="px-0">
-    <v-list-item-action class="me-2">
+    <v-list-item-action class="me-2" @click="close">
       <v-btn
-        icon
-        @click="close">
+        icon>
         <v-icon>fas fa-arrow-left</v-icon>
       </v-btn>
     </v-list-item-action>
     <v-list-item-content>
-      <v-list-item-title>
-        {{ $t('deedsMarketPlaceBackToList') }}
+      <v-list-item-title class="d-flex">
+        <v-card
+          class="flex-grow-0"
+          color="transparent"
+          flat
+          @click="close">
+          {{ $t('deedsMarketPlaceBackToList') }}
+        </v-card>
       </v-list-item-title>
     </v-list-item-content>
     <template v-if="!invalidOffer">
