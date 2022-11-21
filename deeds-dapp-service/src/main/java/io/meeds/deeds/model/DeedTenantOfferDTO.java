@@ -27,6 +27,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
+import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,8 @@ public class DeedTenantOfferDTO {
 
   private String                           id;
 
+  private long                             offerId;
+
   private long                             nftId;
 
   private io.meeds.deeds.constant.DeedCity city;
@@ -46,6 +49,8 @@ public class DeedTenantOfferDTO {
   private DeedCard                         cardType;
 
   private String                           owner;
+
+  private String                           hostAddress;
 
   private String                           description;
 
@@ -66,6 +71,10 @@ public class DeedTenantOfferDTO {
   private int                              ownerMintingPercentage;
 
   private double                           mintingPower;
+
+  private String                           offerTransactionHash;
+
+  private TransactionStatus                offerTransactionStatus;
 
   private Instant                          expirationDate;
 

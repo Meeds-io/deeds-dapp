@@ -38,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,6 +213,40 @@ class DeedTenantOfferServiceTest {
     DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
     offerFilter.setCardTypes(cardTypes);
 
+    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
+    assertNotNull(result);
+    assertEquals(1, result.getSize());
+    assertEquals(1, result.getTotalElements());
+    assertEquals(DeedTenantOfferMapper.toDTO(deedTenantOffer), result.get().findFirst().orElse(null));
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked"
+  })
+  void testGetOffersListWithCurrentAddress() {
+    long nftId = 2l;
+    String offerId = "offerId";
+    DeedTenantOffer deedTenantOffer = newDeedTenant(offerId, nftId);
+
+    Pageable pageable = mock(Pageable.class);
+    SearchHit<DeedTenantOffer> searchHit = mock(SearchHit.class);
+    when(searchHit.getContent()).thenReturn(deedTenantOffer);
+
+    SearchHits<DeedTenantOffer> searchHits = mock(SearchHits.class);
+    when(searchHits.getSearchHits()).thenReturn(Collections.singletonList(searchHit));
+    when(searchHits.getTotalHits()).thenReturn(1l);
+
+    String currentAddress = "address";
+    assertElasticSearchQuery(searchHits,
+                             "viewAddresses",
+                             Arrays.asList(StringUtils.lowerCase(currentAddress),
+                                           DeedTenantOfferMapper.EVERYONE),
+                             1);
+
+    DeedTenantOfferFilter offerFilter = new DeedTenantOfferFilter();
+
+    offerFilter.setCurrentAddress(currentAddress);
     Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffersList(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
@@ -718,21 +753,25 @@ class DeedTenantOfferServiceTest {
   }
 
   private void assertElasticSearchQuery(SearchHits<DeedTenantOffer> searchHits, String filedName, Object fieldValue) {
+    assertElasticSearchQuery(searchHits, filedName, fieldValue, 2);
+  }
+
+  private void assertElasticSearchQuery(SearchHits<DeedTenantOffer> searchHits, String filedName, Object fieldValue, int expected) {
     when(elasticsearchOperations.search(argThat(new ArgumentMatcher<Query>() {
       @Override
       public boolean matches(Query query) {
-        assertQueryCriteriaIs(query, filedName, fieldValue);
+        assertQueryCriteriaIs(query, filedName, fieldValue, expected);
         return true;
       }
     }), eq(DeedTenantOffer.class))).thenReturn(searchHits);
   }
 
-  private void assertQueryCriteriaIs(Query query, String filedName, Object fieldValue) {
+  private void assertQueryCriteriaIs(Query query, String filedName, Object fieldValue, int expected) {
     CriteriaQuery criteriaQuery = (CriteriaQuery) query;
     Criteria criteria = criteriaQuery.getCriteria();
     List<Criteria> criteriaChain = criteria.getCriteriaChain();
     assertNotNull(criteriaChain);
-    assertEquals(1, criteriaChain.size());
+    assertEquals(expected, criteriaChain.size());
     Criteria nftIdCriteria = criteriaChain.get(0);
     assertNotNull(nftIdCriteria);
     assertEquals(filedName, nftIdCriteria.getField().getName());
@@ -744,7 +783,7 @@ class DeedTenantOfferServiceTest {
     Criteria criteria = criteriaQuery.getCriteria();
     List<Criteria> criteriaChain = criteria.getCriteriaChain();
     assertNotNull(criteriaChain);
-    assertEquals(1, criteriaChain.size());
+    assertEquals(2, criteriaChain.size());
     Criteria nftIdCriteria = criteriaChain.get(0);
     assertNotNull(nftIdCriteria);
     assertEquals(filedName, nftIdCriteria.getField().getName());

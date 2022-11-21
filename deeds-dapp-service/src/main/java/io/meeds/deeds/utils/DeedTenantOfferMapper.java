@@ -16,6 +16,11 @@
 package io.meeds.deeds.utils;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.constant.NoticePeriod;
@@ -26,6 +31,8 @@ import io.meeds.deeds.model.DeedTenantOfferDTO;
 public class DeedTenantOfferMapper {
 
   public static final Instant MAX_DATE_VALUE = Instant.ofEpochSecond(165241780471l);
+
+  public static final String  EVERYONE       = "ALL";
 
   private DeedTenantOfferMapper() {
     // Class with Static methods
@@ -38,10 +45,12 @@ public class DeedTenantOfferMapper {
     ExpirationDuration expirationDuration = deedTenantOffer.getExpirationDuration();
     Instant expirationDate = expirationDuration == null ? null : deedTenantOffer.getExpirationDate();
     return new DeedTenantOfferDTO(deedTenantOffer.getId(),
+                                  deedTenantOffer.getOfferId(),
                                   deedTenantOffer.getNftId(),
                                   deedTenantOffer.getCity(),
                                   deedTenantOffer.getCardType(),
                                   deedTenantOffer.getOwner(),
+                                  deedTenantOffer.getHostAddress(),
                                   deedTenantOffer.getDescription(),
                                   deedTenantOffer.getAmount(),
                                   deedTenantOffer.getOfferType(),
@@ -52,6 +61,8 @@ public class DeedTenantOfferMapper {
                                   deedTenantOffer.getNoticePeriod(),
                                   deedTenantOffer.getOwnerMintingPercentage(),
                                   deedTenantOffer.getMintingPower(),
+                                  deedTenantOffer.getOfferTransactionHash(),
+                                  deedTenantOffer.getOfferTransactionStatus(),
                                   expirationDate,
                                   deedTenantOffer.getCreatedDate(),
                                   deedTenantOffer.getModifiedDate(),
@@ -66,11 +77,17 @@ public class DeedTenantOfferMapper {
     Instant expirationDate = expirationDuration == null ? MAX_DATE_VALUE : deedTenantOfferDTO.getExpirationDate();
     SecurityDepositPeriod securityDepositPeriod = deedTenantOfferDTO.getSecurityDepositPeriod();
     NoticePeriod noticePeriod = deedTenantOfferDTO.getNoticePeriod();
+    List<String> viewAddresses = StringUtils.isBlank(deedTenantOfferDTO.getHostAddress()) ? Collections.singletonList(EVERYONE)
+                                                                                          : Arrays.asList(StringUtils.lowerCase(deedTenantOfferDTO.getOwner()),
+                                                                                                          StringUtils.lowerCase(deedTenantOfferDTO.getHostAddress()));
     return new DeedTenantOffer(deedTenantOfferDTO.getId(),
+                               deedTenantOfferDTO.getOfferId(),
                                deedTenantOfferDTO.getNftId(),
                                deedTenantOfferDTO.getCity(),
                                deedTenantOfferDTO.getCardType(),
-                               deedTenantOfferDTO.getOwner(),
+                               StringUtils.lowerCase(deedTenantOfferDTO.getOwner()),
+                               StringUtils.lowerCase(deedTenantOfferDTO.getHostAddress()),
+                               viewAddresses,
                                null,
                                deedTenantOfferDTO.getDescription(),
                                deedTenantOfferDTO.getAmount(),
@@ -82,6 +99,8 @@ public class DeedTenantOfferMapper {
                                noticePeriod == null ? NoticePeriod.NO_PERIOD : noticePeriod,
                                deedTenantOfferDTO.getOwnerMintingPercentage(),
                                deedTenantOfferDTO.getMintingPower(),
+                               StringUtils.lowerCase(deedTenantOfferDTO.getOfferTransactionHash()),
+                               deedTenantOfferDTO.getOfferTransactionStatus(),
                                expirationDate,
                                deedTenantOfferDTO.getCreatedDate(),
                                deedTenantOfferDTO.getModifiedDate(),

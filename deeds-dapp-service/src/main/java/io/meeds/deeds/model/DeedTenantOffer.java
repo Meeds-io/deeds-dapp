@@ -16,6 +16,7 @@
 package io.meeds.deeds.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -31,6 +32,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
+import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,6 +48,9 @@ public class DeedTenantOffer {
   private String                           id;
 
   @Field(type = FieldType.Long)
+  private long                             offerId;
+
+  @Field(type = FieldType.Long)
   private long                             nftId;
 
   @Field(type = FieldType.Auto)
@@ -56,6 +61,12 @@ public class DeedTenantOffer {
 
   @Field(type = FieldType.Keyword)
   private String                           owner;
+
+  @Field(type = FieldType.Keyword, storeNullValue = true)
+  private String                           hostAddress;
+
+  @Field(type = FieldType.Keyword)
+  private List<String>                     viewAddresses;
 
   @Field(type = FieldType.Keyword)
   private String                           ownerEmail;
@@ -89,6 +100,12 @@ public class DeedTenantOffer {
 
   @Field(type = FieldType.Double)
   private double                           mintingPower;
+
+  @Field(type = FieldType.Keyword)
+  private String                           offerTransactionHash;
+
+  @Field(type = FieldType.Keyword)
+  private TransactionStatus                offerTransactionStatus;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant                          expirationDate;

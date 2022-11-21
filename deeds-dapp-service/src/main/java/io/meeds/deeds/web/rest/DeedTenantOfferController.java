@@ -104,6 +104,7 @@ public class DeedTenantOfferController {
       offerFilter.setCardTypes(cardTypes);
       offerFilter.setOfferTypes(offerTypes);
       offerFilter.setNetworkId(networkId);
+      offerFilter.setCurrentAddress(StringUtils.lowerCase(ownerAddress));
       Page<DeedTenantOfferDTO> offers = deedTenantOfferService.getOffersList(offerFilter, pageable);
       return assembler.toModel(offers);
     }
@@ -111,10 +112,17 @@ public class DeedTenantOfferController {
 
   @GetMapping("/{offerId}")
   public DeedTenantOfferDTO getOffer(
+                                     Principal principal,
                                      @PathVariable(name = "offerId", required = true)
                                      String offerId) {
+    String walletAddress = principal == null ? null : principal.getName();
     DeedTenantOfferDTO offer = deedTenantOfferService.getOffer(offerId);
     if (offer == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+    if (StringUtils.isNotBlank(offer.getHostAddress())
+        && !StringUtils.equalsIgnoreCase(walletAddress, offer.getHostAddress())
+        && !StringUtils.equalsIgnoreCase(walletAddress, offer.getOwner())) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
     return offer;
