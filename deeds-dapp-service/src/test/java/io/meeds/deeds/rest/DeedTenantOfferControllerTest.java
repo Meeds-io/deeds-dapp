@@ -68,6 +68,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
+import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.DeedTenantOfferUpdateDTO;
 import io.meeds.deeds.service.AuthorizationCodeService;
@@ -172,6 +173,33 @@ class DeedTenantOfferControllerTest {
     when(deedTenantOfferService.getOffer(offerId)).thenReturn(deedTenantOfferDTO);
 
     ResultActions response = mockMvc.perform(get("/api/offers/" + offerId));
+    response.andExpect(status().isOk())
+            .andExpect(jsonPath("$", notNullValue()));
+  }
+
+  @Test
+  void testGetOfferWhenMeantToTenantAnonymously() throws Exception {
+    String offerId = "offerId";
+    long nftId = 3l;
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    deedTenantOfferDTO.setHostAddress("tenant");
+    when(deedTenantOfferService.getOffer(offerId)).thenReturn(deedTenantOfferDTO);
+
+    ResultActions response = mockMvc.perform(get("/api/offers/" + offerId));
+    response.andExpect(status().isNotFound());
+  }
+
+  @Test
+  void testGetOfferWhenMeantToTenant() throws Exception {
+    long nftId = 3l;
+    String offerId = "offerId";
+    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    deedTenantOfferDTO.setHostAddress(TEST_USER);
+    when(deedTenantOfferService.getOffer(offerId)).thenReturn(deedTenantOfferDTO);
+
+    ResultActions response = mockMvc.perform(get("/api/offers/" + offerId).accept(MediaType.APPLICATION_JSON)
+                                                                          .with(testUser())
+                                                                          .with(csrf()));
     response.andExpect(status().isOk())
             .andExpect(jsonPath("$", notNullValue()));
   }
@@ -287,9 +315,11 @@ class DeedTenantOfferControllerTest {
   private DeedTenantOfferDTO getTenantOfferDTO(String offerId, long nftId) {
     return new DeedTenantOfferDTO(offerId,
                                   nftId,
+                                  nftId,
                                   DeedCity.ASHTARTE,
                                   DeedCard.UNCOMMON,
                                   "owner",
+                                  null,
                                   "description",
                                   5d,
                                   OfferType.RENTING,
@@ -300,6 +330,8 @@ class DeedTenantOfferControllerTest {
                                   NoticePeriod.ONE_MONTH,
                                   1,
                                   1.1d,
+                                  "0xTransaction",
+                                  TransactionStatus.IN_PROGRESS,
                                   Instant.now(),
                                   Instant.now(),
                                   Instant.now(),
@@ -309,9 +341,11 @@ class DeedTenantOfferControllerTest {
   private DeedTenantOfferUpdateDTO getTenantOfferUpdateDTO(String offerId, long nftId) {
     return new DeedTenantOfferUpdateDTO(offerId,
                                         nftId,
+                                        nftId,
                                         DeedCity.ASHTARTE,
                                         DeedCard.UNCOMMON,
                                         "owner",
+                                        "tenant",
                                         "description",
                                         5d,
                                         OfferType.RENTING,
@@ -322,6 +356,8 @@ class DeedTenantOfferControllerTest {
                                         NoticePeriod.ONE_MONTH,
                                         1,
                                         1.1d,
+                                        "0xTransaction",
+                                        TransactionStatus.IN_PROGRESS,
                                         Instant.now(),
                                         Instant.now(),
                                         Instant.now(),

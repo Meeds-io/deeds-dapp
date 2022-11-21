@@ -51,7 +51,7 @@
           dense
           @click="step = 1">
           <v-chip :color="step === 1 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
-          <span class="subtitle-1 ms-4">{{ $t('deedRentingStep1Title') }}</span>
+          <span class="subtitle-1 ms-4">{{ $t('deedOfferVisibilityStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
           <v-card
@@ -60,7 +60,65 @@
             class="flex-grow-1"
             flat>
             <div class="px-0 pt-4">
-              {{ $t('deedRentingStep1Description') }}
+              {{ $t('deedOfferVisibilityStepDescription') }}
+              <v-radio-group
+                v-model="visibility"
+                hide-details>
+                <v-radio
+                  :label="$t('deedOfferPublicVisibility')"
+                  class="align-start"
+                  value="ALL">
+                  <template #label>
+                    <div class="d-flex flex-column">
+                      <div class="text--color">{{ $t('deedOfferPublicVisibility') }}</div>
+                      <div class="caption">{{ $t('deedOfferPublicVisibilityDescription') }}</div>
+                    </div>
+                  </template>
+                </v-radio>
+                <v-radio
+                  :label="$t('deedOfferAddressVisibility')"
+                  class="align-start"
+                  value="ADDRESS">
+                  <template #label>
+                    <div class="d-flex flex-column">
+                      <div class="text--color">{{ $t('deedOfferAddressVisibility') }}</div>
+                      <div class="caption">{{ $t('deedOfferAddressVisibilityDescription') }}</div>
+                    </div>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+              <div v-if="visibility === 'ADDRESS'" class="mb-8 mt-4">
+                <span>{{ $t('deedOfferAddressVisibilityAssignedTo') }}</span>
+                <v-text-field
+                  v-model="offer.hostAddress"
+                  :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
+                  name="hostAddress"
+                  class="mt-0 pt-0 me-2"
+                  hide-details
+                  outlined
+                  dense />
+                <span class="caption text--disabled">
+                  {{ $t('deedOfferAddressVisibilityAssignedToSubtitle') }}
+                </span>
+              </div>
+            </div>
+          </v-card>
+        </v-expand-transition>
+        <v-list-item
+          class="d-flex align-center flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="step = 1">
+          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedOfferDescriptionStepTitle') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-show="step === 2"
+            color="transparent"
+            class="flex-grow-1"
+            flat>
+            <div class="px-0 pt-4">
+              {{ $t('deedOfferDescriptionStepDescription') }}
               <deeds-extended-textarea
                 v-model="offer.description"
                 :placeholder="$t('deedRentingDescriptionPlaceholder')"
@@ -73,12 +131,12 @@
           class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
           dense
           @click="goToStep2">
-          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
-          <span class="subtitle-1 ms-4">{{ $t('deedRentingStep2Title') }}</span>
+          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedRentingConditionsStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
           <v-card
-            v-show="step === 2"
+            v-show="step === 3"
             color="transparent"
             class="flex-grow-1 mb-8"
             flat>
@@ -158,14 +216,14 @@
           class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
           dense
           @click="goToStep3">
-          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
+          <v-chip :color="step === 4 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
           <span class="subtitle-1 ms-4">
-            {{ isNew && $t('deedRentingStep3TitleCreation') || $t('deedRentingStep3TitleUpdate') }}
+            {{ isNew && $t('deedRentingStepTitleCreation') || $t('deedRentingStepTitleUpdate') }}
           </span>
         </v-list-item>
         <v-expand-transition>
           <v-card
-            v-show="step === 3"
+            v-show="step === 4"
             color="transparent"
             class="flex-grow-1 mb-8"
             flat>
@@ -334,6 +392,7 @@ export default {
     emailCodeError: false,
     validEmail: false,
     forceUpdateExpiration: false,
+    visibility: 'ALL',
     DEFAULT_OFFER: {
       description: null,
       duration: null,
@@ -378,16 +437,19 @@ export default {
         || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
     },
     step1ButtonDisabled() {
-      return this.offer?.description?.length > this.DESCRIPTION_MAX_LENGTH;
+      return this.visibility !== 'ALL' && (!this.offer?.hostAddress?.length || !ethers.utils.isAddress(this.offer.hostAddress));
     },
     step2ButtonDisabled() {
+      return this.offer?.description?.length > this.DESCRIPTION_MAX_LENGTH;
+    },
+    step3ButtonDisabled() {
       return this.step1ButtonDisabled
         || !this.offer?.duration
         || !this.offer?.amount
         || !this.offer?.noticePeriod
         || !this.offer?.securityDepositPeriod;
     },
-    step3ButtonDisabled() {
+    step4ButtonDisabled() {
       return this.step1ButtonDisabled
         || this.step2ButtonDisabled
         || (!this.isNew && !this.offerChanged)
@@ -399,7 +461,8 @@ export default {
     buttonDisabled() {
       return (this.step === 1 && this.step1ButtonDisabled)
         || (this.step === 2 && this.step2ButtonDisabled)
-        || (this.step === 3 && this.step3ButtonDisabled);
+        || (this.step === 3 && this.step3ButtonDisabled)
+        || (this.step === 4 && this.step4ButtonDisabled);
     },
     paymentPeriodicityLabel() {
       if (!this.offer?.paymentPeriodicity) {
@@ -509,6 +572,11 @@ export default {
         this.$refs.drawer?.endLoading();
       }
     },
+    visibility() {
+      if (this.visibility === 'ALL') {
+        this.offer.hostAddress = null;
+      }
+    },
     offer: {
       handler() {
         this.offerChanged = true;
@@ -538,10 +606,12 @@ export default {
           this.forceUpdateExpiration = true;
           this.offer.updateExpirationDate = true;
         }
+        this.visibility = this.offer.hostAddress ? 'ADDRESS' : 'ALL';
       } else {
         this.offer = Object.assign({
           nftId,
         }, this.DEFAULT_OFFER);
+        this.visibility = 'ALL';
       }
       this.isNew = !offer;
       this.emailCode = null;
@@ -590,6 +660,15 @@ export default {
         this.scrollDrawerContent();
       }
     },
+    goToStep4() {
+      if (this.step !== 4
+          && (this.step !== 1 || !this.step1ButtonDisabled)
+          && (this.step !== 2 || !this.step2ButtonDisabled)
+          && (this.step !== 3 || !this.step3ButtonDisabled)) {
+        this.step = 4;
+        this.scrollDrawerContent();
+      }
+    },
     scrollDrawerContent() {
       window.setTimeout(() => {
         this.$refs.drawer?.$el.querySelector('.rental-steps').scrollIntoView({
@@ -607,6 +686,8 @@ export default {
         this.goToStep2();
       } else if (this.step === 2) {
         this.goToStep3();
+      } else if (this.step === 3) {
+        this.goToStep4();
       } else if (this.confirmEmailStep) {
         this.sendEmailConfirmation();
       } else {

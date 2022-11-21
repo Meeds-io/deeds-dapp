@@ -39,6 +39,7 @@ import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
+import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenant;
 import io.meeds.deeds.model.DeedTenantOffer;
@@ -95,13 +96,17 @@ public class DeedTenantOfferService {
       Criteria offerCriteria = new Criteria("offerType").in(offerFilter.getOfferTypes());
       criteria = addAndCriteria(criteria, offerCriteria);
     }
-
     if (offerFilter.isExcludeExpired()) {
       Criteria expirationDateCriteria = new Criteria("expirationDate").greaterThan(Instant.now());
       criteria = addAndCriteria(criteria, expirationDateCriteria);
     }
-    if (criteria == null) {
-      criteria = new Criteria("nftId").exists();
+    if (StringUtils.isNotBlank(offerFilter.getCurrentAddress())) {
+      Criteria visibilityCriteria = new Criteria("viewAddresses").in(StringUtils.lowerCase(offerFilter.getCurrentAddress()),
+                                                                     DeedTenantOfferMapper.EVERYONE);
+      criteria = addAndCriteria(criteria, visibilityCriteria);
+    } else {
+      Criteria visibilityCriteria = new Criteria("viewAddresses").in(DeedTenantOfferMapper.EVERYONE);
+      criteria = addAndCriteria(criteria, visibilityCriteria);
     }
     CriteriaQuery query = new CriteriaQuery(criteria, pageable);
     SearchHits<DeedTenantOffer> result = elasticsearchOperations.search(query, DeedTenantOffer.class);
@@ -154,6 +159,12 @@ public class DeedTenantOfferService {
     deedTenantOffer.setCreatedDate(now);
     deedTenantOffer.setModifiedDate(now);
     deedTenantOffer.setOfferType(OfferType.RENTING);
+    deedTenantOffer.setOfferId(0);
+    if (StringUtils.isBlank(deedTenantOffer.getOfferTransactionHash())) {
+      deedTenantOffer.setOfferTransactionStatus(TransactionStatus.NONE);
+    } else {
+      deedTenantOffer.setOfferTransactionStatus(TransactionStatus.IN_PROGRESS);
+    }
     if (deedTenantOffer.getExpirationDuration() != null) {
       Instant expirationDate = now.atZone(ZoneOffset.UTC).plus(deedTenantOffer.getExpirationDuration().getPeriod()).toInstant();
       deedTenantOffer.setExpirationDate(expirationDate);
@@ -189,6 +200,7 @@ public class DeedTenantOfferService {
     boolean hasExpirationDate = existingDeedTenantOffer.getExpirationDuration() != null;
     boolean expirationDurationChanged = existingDeedTenantOffer.getExpirationDuration() != deedTenantOfferDTO.getExpirationDuration();
     existingDeedTenantOffer.setOwner(walletAddress.toLowerCase());
+    existingDeedTenantOffer.setHostAddress(deedTenantOfferDTO.getHostAddress());
     existingDeedTenantOffer.setDescription(deedTenantOfferDTO.getDescription());
     existingDeedTenantOffer.setAmount(deedTenantOfferDTO.getAmount());
     existingDeedTenantOffer.setDuration(deedTenantOfferDTO.getDuration());
@@ -197,7 +209,14 @@ public class DeedTenantOfferService {
     existingDeedTenantOffer.setSecurityDepositPeriod(deedTenantOfferDTO.getSecurityDepositPeriod());
     existingDeedTenantOffer.setNoticePeriod(deedTenantOfferDTO.getNoticePeriod());
     existingDeedTenantOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
-
+    if (StringUtils.isBlank(existingDeedTenantOffer.getOfferTransactionHash())) {
+      existingDeedTenantOffer.setOfferTransactionHash(deedTenantOfferDTO.getOfferTransactionHash());
+      if (StringUtils.isBlank(existingDeedTenantOffer.getOfferTransactionHash())) {
+        existingDeedTenantOffer.setOfferTransactionStatus(TransactionStatus.NONE);
+      } else {
+        existingDeedTenantOffer.setOfferTransactionStatus(TransactionStatus.IN_PROGRESS);
+      }
+    }
     if (deedTenantOfferDTO.getExpirationDuration() != null && expirationDurationChanged) {
       Instant expirationStartInstant = (deedTenantOfferDTO.isUpdateExpirationDate()
           || !hasExpirationDate) ? Instant.now() : existingDeedTenantOffer.getCreatedDate();

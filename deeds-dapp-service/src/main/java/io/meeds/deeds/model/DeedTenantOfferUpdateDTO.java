@@ -28,6 +28,7 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.SecurityDepositPeriod;
+import io.meeds.deeds.constant.TransactionStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -39,10 +40,12 @@ import lombok.NoArgsConstructor;
 public class DeedTenantOfferUpdateDTO extends DeedTenantOfferDTO {
 
   public DeedTenantOfferUpdateDTO(String id, // NOSONAR
+                                  long offerId,
                                   long nftId,
                                   DeedCity city,
                                   DeedCard cardType,
                                   String owner,
+                                  String hostAddress,
                                   String description,
                                   double amount,
                                   OfferType offerType,
@@ -53,16 +56,20 @@ public class DeedTenantOfferUpdateDTO extends DeedTenantOfferDTO {
                                   NoticePeriod noticePeriod,
                                   int ownerMintingPercentage,
                                   double mintingPower,
+                                  String transactionHash,
+                                  TransactionStatus transactionStatus,
                                   Instant expirationDate,
                                   Instant createdDate,
                                   Instant modifiedDate,
                                   boolean enabled,
                                   boolean updateExpirationDate) {
     super(id,
+          offerId,
           nftId,
           city,
           cardType,
           owner,
+          hostAddress,
           description,
           amount,
           offerType,
@@ -73,6 +80,8 @@ public class DeedTenantOfferUpdateDTO extends DeedTenantOfferDTO {
           noticePeriod,
           ownerMintingPercentage,
           mintingPower,
+          transactionHash,
+          transactionStatus,
           expirationDate,
           createdDate,
           modifiedDate,
