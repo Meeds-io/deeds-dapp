@@ -19,9 +19,10 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
+    v-click-outside="onClickOutside"
     :width="width"
     :hide-overlay="firstLevel || isMobile"
-    :permanent="permanent || firstLevel && drawer"
+    :permanent="permanentDrawer"
     :color="whiteThemeColor"
     :overlay-opacity="overlayOpacity"
     temporary
@@ -33,7 +34,7 @@
     class="d-sm-flex drawerParent">
     <v-container
       fill-height
-      class="pa-0">
+      class="pa-0 full-width">
       <v-layout column>
         <template v-if="$slots.title">
           <v-flex class="mx-0 drawerHeader flex-grow-0">
@@ -56,7 +57,7 @@
               <v-list-item-action class="drawerIcons align-end d-flex flex-row">
                 <slot name="titleIcons"></slot>
                 <v-btn
-                  v-if="allowExpand && !isMobile"
+                  v-if="!isMobile"
                   name="expandDrawer"
                   icon
                   @click="toogleExpand">
@@ -115,14 +116,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    secondLevel: {
-      type: Boolean,
-      default: false,
-    },
-    firstLevel: {
-      type: Boolean,
-      default: false,
-    },
     permanent: {
       type: Boolean,
       default: false,
@@ -132,12 +125,15 @@ export default {
     drawer: false,
     loading: false,
     expand: true,
+    level: 1,
+    permanentBehavior: false,
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     scrollbarWidth: state => state.scrollbarWidth,
     whiteThemeColor: state => state.whiteThemeColor,
     dark: state => state.dark,
+    openedDrawersCount: state => state.openedDrawersCount,
     width() {
       return this.expand && '100%' || this.drawerWidth;
     },
@@ -146,6 +142,18 @@ export default {
     },
     overlayOpacity() {
       return this.dark && '0.8' || '0.46';
+    },
+    firstLevel() {
+      return this.level === 1 && this.openedDrawersCount > this.level;
+    },
+    secondLevel() {
+      return this.level > 1;
+    },
+    permanentDrawer() {
+      return this.permanentBehavior || this.permanent || (this.firstLevel && this.drawer);
+    },
+    hideOverlay() {
+      return this.firstLevel || this.isMobile;
     },
   }),
   watch: {
@@ -158,17 +166,24 @@ export default {
     },
     drawer() {
       if (this.drawer) {
+        this.permanentBehavior = true;
         this.$emit('opened');
+        this.$store.commit('incrementOpenedDrawer');
+        this.level = this.openedDrawersCount;
         this.$root.$emit('drawer-opened', this);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = 'contain';
           }
-          Object.assign(window.document.querySelector('html').style, {overflowY: 'hidden', marginRight: `${this.scrollbarWidth}px`});
-          Object.assign(window.document.querySelector('#banner').style, {overflowY: 'hidden', paddingRight: `${this.scrollbarWidth}px`});
+          if (window.innerHeight < window.document.body.offsetHeight) {
+            Object.assign(window.document.querySelector('html').style, {overflowY: 'hidden', marginRight: `${this.scrollbarWidth}px`});
+            Object.assign(window.document.querySelector('#banner').style, {overflowY: 'hidden', paddingRight: `${this.scrollbarWidth}px`});
+          }
         }
       } else {
+        this.permanentBehavior = false;
         this.$emit('closed');
+        this.$store.commit('decrementOpenedDrawer');
         this.$root.$emit('drawer-closed', this);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
@@ -193,6 +208,16 @@ export default {
     open() {
       this.drawer = true;
       this.$nextTick().then(() => this.$root.$emit('close-alert-message'));
+    },
+    onClickOutside(event) {
+      if (this.permanentBehavior && event?.target?.closest('.v-overlay')) {
+        this.permanentBehavior = false;
+        this.$nextTick().then(() => {
+          if (!this.permanentDrawer) {
+            this.drawer = false;
+          }
+        });
+      }
     },
     closeByEscape(event) {
       if (event?.key === 'Escape') {

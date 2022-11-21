@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.meeds.deeds.model.UserProfile;
+import io.meeds.deeds.elasticsearch.model.UserProfile;
 import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.storage.UserProfileRepository;
 

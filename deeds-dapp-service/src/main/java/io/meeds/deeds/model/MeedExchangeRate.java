@@ -28,12 +28,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "meed_exchange_rate", createIndex = true)
-@Setting(
-    sortFields = "date",
-    sortOrders = SortOrder.desc,
-    replicas = 0,
-    shards = 1
-)
+@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
 public class MeedExchangeRate {
 
   public MeedExchangeRate(LocalDate date) {

@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.model.EmailSendingCommand;
+import io.meeds.deeds.listerner.model.EmailSendingCommand;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

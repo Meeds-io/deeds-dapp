@@ -163,6 +163,7 @@ export default {
     meedContract: state => state.meedContract,
     xMeedContract: state => state.xMeedContract,
     xMeedAddress: state => state.xMeedAddress,
+    address: state => state.address,
     transactionGas: state => state.transactionGas,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     approvalGasLimit: state => state.approvalGasLimit,
@@ -288,6 +289,7 @@ export default {
       this.sendingApproval = true;
       const amount = this.$ethUtils.toDecimals(this.allowance, 18);
       const options = {
+        from: this.address,
         gasLimit: this.approvalGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -295,16 +297,16 @@ export default {
         this.meedContract,
         'approve',
         options,
-        [this.xMeedAddress, amount]
+        [this.xMeedAddress, amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.approvalInProgress = true;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.approvalInProgress = true;
+          this.allowance = 0;
+        }
         this.sendingApproval = false;
-        this.allowance = 0;
-      }).catch(() => {
-        this.sendingApproval = false;
-      });
+      }).catch(() => this.sendingApproval = false);
     },
     setMaxAllowance() {
       this.allowance = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
@@ -316,6 +318,7 @@ export default {
       this.sendingStake = true;
       const amount = this.$ethUtils.toDecimals(this.stakeAmount, 18);
       const options = {
+        from: this.address,
         gasLimit: this.stakeGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -323,14 +326,16 @@ export default {
         this.xMeedContract,
         'stake',
         options,
-        [amount]
+        [amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.stakeAmount = 0;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.stakeAmount = 0;
+          this.$root.$emit('close-drawer');
+          this.step = 1;
+        }
         this.sendingStake = false;
-        this.$root.$emit('close-drawer');
-        this.step = 1;
       }).catch(() => {
         this.sendingStake = false;
       });

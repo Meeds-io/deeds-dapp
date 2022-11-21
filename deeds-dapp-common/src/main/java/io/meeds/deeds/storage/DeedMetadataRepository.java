@@ -17,7 +17,7 @@ package io.meeds.deeds.storage;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.DeedMetadata;
+import io.meeds.deeds.elasticsearch.model.DeedMetadata;
 
 public interface DeedMetadataRepository extends ElasticsearchRepository<DeedMetadata, Long> {
 

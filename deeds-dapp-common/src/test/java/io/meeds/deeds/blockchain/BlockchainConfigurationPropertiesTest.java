@@ -30,6 +30,7 @@ import org.springframework.test.context.TestPropertySource;
     "meeds.blockchain.networkUrl=" + BlockchainConfigurationPropertiesTest.NETWORK_URL_VALUE,
     "meeds.blockchain.polygonNetworkUrl=" + BlockchainConfigurationPropertiesTest.POLYGON_NETWORK_URL_VALUE,
     "meeds.blockchain.tenantProvisioningAddress=" + BlockchainConfigurationPropertiesTest.TENANT_PROVISIONING_ADDRESS_VALUE,
+    "meeds.blockchain.tenantRentingAddress=" + BlockchainConfigurationPropertiesTest.TENANT_RENTING_ADDRESS_VALUE,
     "meeds.blockchain.deedAddress=" + BlockchainConfigurationPropertiesTest.DEED_ADDRESS_VALUE,
     "meeds.blockchain.meedAddress=" + BlockchainConfigurationPropertiesTest.MAINNET_MEED_ADDRESS_VALUE,
     "meeds.blockchain.polygonMeedAddress=" + BlockchainConfigurationPropertiesTest.POLYGON_MEED_ADDRESS_VALUE,
@@ -44,6 +45,8 @@ class BlockchainConfigurationPropertiesTest {
   public static final String                POLYGON_NETWORK_URL_VALUE         = "POLYGON_NETWORK_URL";
 
   public static final String                TENANT_PROVISIONING_ADDRESS_VALUE = "TENANT_PROVISIONING_ADDRESS";
+
+  public static final String                TENANT_RENTING_ADDRESS_VALUE      = "TENANT_RENTING_ADDRESS_VALUE";
 
   public static final String                DEED_ADDRESS_VALUE                = "DEED_ADDRESS";
 
@@ -73,6 +76,7 @@ class BlockchainConfigurationPropertiesTest {
     BlockchainConfigurationProperties properties = new BlockchainConfigurationProperties(NETWORK_URL_VALUE,
                                                                                          POLYGON_NETWORK_URL_VALUE,
                                                                                          TENANT_PROVISIONING_ADDRESS_VALUE,
+                                                                                         TENANT_RENTING_ADDRESS_VALUE,
                                                                                          DEED_ADDRESS_VALUE,
                                                                                          MAINNET_MEED_ADDRESS_VALUE,
                                                                                          POLYGON_MEED_ADDRESS_VALUE,

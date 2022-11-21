@@ -26,7 +26,7 @@ import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 
 public interface DeedTenantManagerRepository extends ElasticsearchRepository<DeedTenant, Long> {
 

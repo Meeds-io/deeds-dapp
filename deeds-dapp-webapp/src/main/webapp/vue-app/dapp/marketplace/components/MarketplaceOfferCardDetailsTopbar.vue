@@ -38,7 +38,7 @@
       </v-list-item-title>
     </v-list-item-content>
     <template v-if="!invalidOffer">
-      <v-list-item-action v-if="isOwner" class="me-2 ms-0">
+      <v-list-item-action v-if="isEditable" class="me-2 ms-0">
         <v-btn
           :title="$t('deedRentEditButton')"
           icon
@@ -82,6 +82,9 @@ export default {
     address: state => state.address,
     isOwner() {
       return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+    },
+    isEditable() {
+      return this.isOwner && this.offer?.offerId && !this.offer?.deleteId && !this.offer?.updateId && !this.offer?.parentId;
     },
   }),
   methods: {

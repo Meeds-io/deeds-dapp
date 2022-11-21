@@ -21,9 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.service.ExchangeService;
 
+@Component
 public class MeedsExchangeTask {
 
   private static final Logger LOG = LoggerFactory.getLogger(MeedsExchangeTask.class);
@@ -32,7 +34,7 @@ public class MeedsExchangeTask {
   private ExchangeService     exchangeService;
 
   @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS, initialDelay = 1)
-  public synchronized void computeExchangeRate() {
+  public void computeExchangeRate() {
     LOG.info("Start Computing MEED exchange rates");
     long start = System.currentTimeMillis();
     try {

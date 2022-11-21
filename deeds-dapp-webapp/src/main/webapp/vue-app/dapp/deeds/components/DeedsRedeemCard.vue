@@ -148,6 +148,7 @@ export default {
     redeem() {
       this.sendingRedeem = true;
       const options = {
+        from: this.address,
         gasLimit: this.redeemGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -156,10 +157,10 @@ export default {
         'redeem',
         options,
         [this.cardType]
-      ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-      }).finally(() => this.sendingRedeem = false);
+      )
+      // can't use finally() with Metamask Promise
+        .then(() => this.sendingRedeem = false) 
+        .catch(() => this.sendingRedeem = false);
     },
   },
 };

@@ -21,14 +21,13 @@
     ref="drawer"
     v-model="drawer"
     :permanent="sending"
-    second-level
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
       <h4 class="text-capitalize">{{ $t('deedMoveInDrawerTitle', {0: cardName, 1: nftId}) }}</h4>
     </template>
     <template v-if="drawer" #content>
-      <v-card flat>
+      <v-card color="transparent" flat>
         <v-card-text>
           {{ $t('deedMoveInParagraph1') }}
         </v-card-text>
@@ -198,6 +197,7 @@ export default {
       if (this.nftId && this.$refs.email?.isValid()) {
         this.sending = true;
         const options = {
+          from: this.address,
           gasLimit: this.startTenantGasLimit,
         };
         return this.$ethUtils.sendTransaction(
@@ -207,13 +207,13 @@ export default {
           options,
           [this.nftId]
         ).then(receipt => {
-          if (receipt) {
-            this.transactionHash = receipt.hash;
+          this.transactionHash = receipt?.hash;
+          if (this.transactionHash) {
             this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash, 'start');
-            this.$root.$emit('transaction-sent', this.transactionHash);
             this.saveStartTenantRequest();
           }
-        }).finally(() => this.sending = false);
+          this.sending = false;
+        }).catch(() => this.sending = false);
       }
     },
     saveStartTenantRequest() {

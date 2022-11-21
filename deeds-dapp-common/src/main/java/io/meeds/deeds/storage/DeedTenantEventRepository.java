@@ -16,20 +16,20 @@
 package io.meeds.deeds.storage;
 
 import java.time.Instant;
-import java.util.stream.Stream;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.DeedTenantEvent;
+import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
 
 public interface DeedTenantEventRepository extends ElasticsearchRepository<DeedTenantEvent, String> {
 
-  Stream<DeedTenantEvent> findByDateGreaterThanEqualAndConsumersNotOrderByDateAsc(Instant lastEventScanDate, String clientName);
+  List<DeedTenantEvent> findByDateGreaterThanEqualAndConsumersNotOrderByDateAsc(Instant lastEventScanDate, String clientName);
 
   Page<DeedTenantEvent> findByConsumersNotOrderByDateDesc(String clientName, Pageable ofSize);
 
-  Stream<DeedTenantEvent> findByDateLessThan(Instant minus);
+  void deleteByDateLessThan(Instant minus);
 
 }

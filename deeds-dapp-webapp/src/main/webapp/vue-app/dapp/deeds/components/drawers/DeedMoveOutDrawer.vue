@@ -21,14 +21,13 @@
     ref="drawer"
     v-model="drawer"
     :permanent="sending"
-    second-level
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
       <h4>{{ $t('removeTenantTitle') }}</h4>
     </template>
     <template #content>
-      <v-card flat>
+      <v-card color="transparent" flat>
         <v-card-text v-if="transactionHash">
           <v-list-item class="px-0">
             <v-list-item-avatar size="72">
@@ -95,6 +94,7 @@ export default {
     provider: state => state.provider,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     stopTenantGasLimit: state => state.stopTenantGasLimit,
+    address: state => state.address,
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;
     },
@@ -149,6 +149,7 @@ export default {
       if (this.nftId) {
         this.sending = true;
         const options = {
+          from: this.address,
           gasLimit: this.stopTenantGasLimit,
         };
         return this.$ethUtils.sendTransaction(
@@ -158,11 +159,13 @@ export default {
           options,
           [this.nftId]
         ).then(receipt => {
-          this.transactionHash = receipt.hash;
-          this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash, 'stop');
-          this.$root.$emit('transaction-sent', this.transactionHash);
-          this.saveStopTenantRequest();
-        }).finally(() => this.sending = false);
+          this.transactionHash = receipt?.hash;
+          if (this.transactionHash) {
+            this.$root.$emit('nft-status-changed', this.nftId, 'loading', this.transactionHash, 'stop');
+            this.saveStopTenantRequest();
+          }
+          this.sending = false;
+        }).catch(() => this.sending = false);
       }
     },
     saveStopTenantRequest() {

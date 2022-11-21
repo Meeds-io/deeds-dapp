@@ -176,6 +176,7 @@ export default {
   data: () => ({
     selectedTab: null,
     avoidAddToHistory: false,
+    avoidResetTab: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -201,19 +202,28 @@ export default {
     initSelectedTab(event) {
       const href = window.location.pathname;
       const hrefParts = href.split('/');
-      if (event) {
-        this.avoidAddToHistory = true;
-        this.switchPage(hrefParts[hrefParts.length - 1] || 'marketplace');
+      const newTab = hrefParts[hrefParts.length - 1] || 'marketplace';
+      let tabToSelect;
+      if (this.isMobile) {
+        tabToSelect = newTab;
       } else {
-        if (this.isMobile) {
-          this.selectedTab = hrefParts[hrefParts.length - 1];
+        tabToSelect = `/${this.parentLocation}/${newTab}`;
+      }
+      if (this.selectedTab === tabToSelect) {
+        // Stay on the same tab, no change to apply
+        // To let Tab apply its proper state
+      } else {
+        if (event) {
+          this.avoidAddToHistory = true;
+          this.switchPage(newTab);
         } else {
-          this.selectedTab = hrefParts.length > 2 && `/${this.parentLocation}/${hrefParts[2]}` || this.defaultTab;
+          this.selectedTab = tabToSelect;
         }
       }
     },
-    switchPage(tab) {
+    switchPage(tab, avoidResetTab) {
       if (tab && this.$refs[tab]) {
+        this.avoidResetTab = avoidResetTab;
         this.$root.$emit('close-drawer');
         this.$root.$emit('close-alert-message');
         this.$nextTick().then(() => this.$refs[tab].$el.click());
@@ -229,7 +239,9 @@ export default {
             window.history.pushState({}, '', link);
           }
           this.avoidAddToHistory = false;
-          this.$root.$emit('location-change', `/${event.target.id}`);
+
+          this.$root.$emit('location-change', `/${event.target.id}`, link, this.avoidResetTab);
+          this.avoidResetTab = false;
         }
         if (this.isMobile) {
           window.scrollTo(0, 0);

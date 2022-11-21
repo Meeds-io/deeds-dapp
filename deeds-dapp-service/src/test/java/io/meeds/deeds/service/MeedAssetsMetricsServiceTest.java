@@ -18,8 +18,10 @@
 package io.meeds.deeds.service;
 
 import static org.assertj.core.api.Assertions.assertWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +34,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.model.DeedCity;
+import io.meeds.deeds.elasticsearch.model.DeedCity;
 import io.meeds.deeds.model.FundInfo;
 
-@SpringBootTest(classes = { MeedAssetsMetricsService.class })
+@SpringBootTest(classes = {
+    MeedAssetsMetricsService.class
+})
 class MeedAssetsMetricsServiceTest {
 
   @MockBean

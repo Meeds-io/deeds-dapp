@@ -51,6 +51,7 @@
             <template v-if="!loading">
               <deeds-marketplace-deeds-empty v-if="invalidOffer" offer-not-available />
               <div v-else-if="offer" class="px-2">
+                <deeds-marketplace-offer-card-details-status :offer="offer" />
                 <deeds-marketplace-offer-card-details-charcteristics
                   :offer="selectedOffer"
                   :image-size="imageSize"

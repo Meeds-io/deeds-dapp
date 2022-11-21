@@ -29,6 +29,7 @@ import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
 import * as deedTenantOfferService from './js/deedTenantOfferService.js';
+import * as deedTenantLeaseService from './js/deedTenantLeaseService.js';
 
 window.Object.defineProperty(Vue.prototype, '$utils', {
   value: utils,
@@ -68,6 +69,10 @@ window.Object.defineProperty(Vue.prototype, '$tokenMetricService', {
 
 window.Object.defineProperty(Vue.prototype, '$deedTenantOfferService', {
   value: deedTenantOfferService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
+  value: deedTenantLeaseService,
 });
 
 Vue.use(Vuex);
@@ -237,6 +242,53 @@ const store = new Vuex.Store({
       'function tenantStatus(uint256 _nftId) public view returns(bool)',
       'function isProvisioningManager(address _address, uint256 _nftId) public view returns(bool)',
     ],
+    tenantRentingABI: [
+      `function createOffer((
+          uint256 id,
+          uint256 deedId,
+          address creator,
+          uint16 months,
+          uint8 noticePeriod,
+          uint256 price,
+          uint256 allDurationPrice,
+          uint256 offerStartDate,
+          uint256 offerExpirationDate,
+          uint8 offerExpirationDays,
+          address authorizedTenant,
+          uint8 ownerMintingPercentage
+      ))`,
+      `function updateOffer((
+          uint256 id,
+          uint256 deedId,
+          address creator,
+          uint16 months,
+          uint8 noticePeriod,
+          uint256 price,
+          uint256 allDurationPrice,
+          uint256 offerStartDate,
+          uint256 offerExpirationDate,
+          uint8 offerExpirationDays,
+          address authorizedTenant,
+          uint8 ownerMintingPercentage
+      ))`,
+      'event OfferCreated(uint256 indexed id, uint256 indexed deedId, address owner)',
+      'event OfferUpdated(uint256 indexed id, uint256 indexed deedId, address owner)',
+      'event OfferDeleted(uint256 indexed id, uint256 indexed deedId, address owner)',
+      'event RentPaid(uint256 indexed id, uint256 indexed deedId, address tenant, address owner, uint16 paidMonths, bool firstRent)',
+      'event LeaseEnded(uint256 indexed id, uint256 indexed deedId, address tenant, uint16 leaseRemainingMonths)',
+      'event TenantEvicted(uint256 indexed id, uint256 indexed deedId, address tenant, address owner, uint16 paidMonths, uint16 leaseRemainingMonths)',
+      'function deleteOffer(uint256 _id)',
+      'function acquireRent(uint256 _id, uint8 _monthsToPay)',
+      'function payRent(uint256 _id, address _deedOwner, uint8 _monthsToPay)',
+      'function endLease(uint256 _id)',
+      'function evictTenant(uint256 _id)',
+      'function MONTH_IN_SECONDS() public view returns(uint256)',
+      'function DAY_IN_SECONDS() public view returns(uint256)'
+    ],
+    ZERO_X_ADDRESS: '0x0000000000000000000000000000000000000000',
+    ZERO_BN: ethers.BigNumber.from('0'),
+    MONTH_IN_SECONDS: 2629800,
+    DAY_IN_SECONDS: 86400,
     // Contracts objects
     sushiswapRouterContract: null,
     wethContract: null,
@@ -246,6 +298,7 @@ const store = new Vuex.Store({
     tokenFactoryContract: null,
     tenantProvisioningContract: null,
     tenantRentingContract: null,
+    tenantRentingContractListenersInstalled: false,
     polygonMeedContract: null,
     // User preferred language
     language,
@@ -313,12 +366,24 @@ const store = new Vuex.Store({
     authenticated: false,
     dark,
     blackThemeColor: dark && 'white' || 'black',
-    whiteThemeColor: dark && 'black' || 'white',
+    whiteThemeColor: dark && 'dark-color' || 'white',
+    openedDrawersCount: 0,
+    defaultDateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
   },
   mutations: {
     setOfferId(state, value) {
       state.selectedStandaloneOfferId = null;
       state.selectedOfferId = value;
+    },
+    incrementOpenedDrawer(state) {
+      state.openedDrawersCount++;
+    },
+    decrementOpenedDrawer(state) {
+      state.openedDrawersCount--;
     },
     setStandaloneOfferId(state, value) {
       state.selectedOfferId = null;
@@ -341,7 +406,7 @@ const store = new Vuex.Store({
       state.dark = value;
       vuetify.framework.theme.dark = value;
       state.blackThemeColor = value && 'white' || 'black';
-      state.whiteThemeColor = value && '#303030' || 'white';
+      state.whiteThemeColor = value && 'dark-color' || 'white';
     },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();
@@ -375,7 +440,14 @@ const store = new Vuex.Store({
             state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
             state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
             state.tenantProvisioningAddress = '0x238758516d1521a4aE108966104Aa1C5cC088220';
-            state.tenantRentingAddress = null;
+            state.tenantRentingAddress = '0x79cce6e1A1909B97A2dAde12F0C8C23Bb68bF4c6';
+            state.defaultDateFormat = {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+            };
 
             // Opensea links
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
@@ -821,10 +893,27 @@ const store = new Vuex.Store({
           );
         }
 
+        if (state.tenantRentingAddress) {
+          state.tenantRentingContract = new ethers.Contract(
+            state.tenantRentingAddress,
+            state.tenantRentingABI,
+            state.provider
+          );
+          if (state.networkId === 5) {
+            // eslint-disable-next-line new-cap
+            state.tenantRentingContract.MONTH_IN_SECONDS()
+              .then(data => state.MONTH_IN_SECONDS = data && data.toNumber());
+            // eslint-disable-next-line new-cap
+            state.tenantRentingContract.DAY_IN_SECONDS()
+              .then(data => state.DAY_IN_SECONDS = data && data.toNumber());
+          }
+          this.commit('installRentingListeners');
+        }
+
         // eslint-disable-next-line new-cap
         const transferFilter = state.meedContract.filters.Transfer();
         state.meedContract.on(transferFilter, (from, to) => {
-          const address = state.address.toUpperCase();
+          const address = state.address?.toUpperCase();
           if (from.toUpperCase() === address || to.toUpperCase() === address) {
             this.commit('loadBalances');
           }
@@ -832,10 +921,15 @@ const store = new Vuex.Store({
 
         // eslint-disable-next-line new-cap
         const approveFilter = state.meedContract.filters.Approval();
-        state.meedContract.on(approveFilter, (from, to) => {
-          const address = state.address.toUpperCase();
+        state.meedContract.on(approveFilter, (from, to, amount) => {
+          const address = state.address?.toUpperCase();
           if (from.toUpperCase() === address || to.toUpperCase() === address) {
             this.commit('loadBalances');
+            document.dispatchEvent(new CustomEvent('dapp-meeds-approved', {detail: {
+              from,
+              to,
+              amount,
+            }}));
           }
         });
 
@@ -843,7 +937,7 @@ const store = new Vuex.Store({
           // eslint-disable-next-line new-cap
           const redeemFilter = state.xMeedContract.filters.Redeemed();
           state.xMeedContract.on(redeemFilter, (address) => {
-            if (address.toUpperCase() === state.address.toUpperCase()) {
+            if (address.toUpperCase() === state.address?.toUpperCase()) {
               this.commit('loadOwnedNfts');
               this.commit('loadPointsBalance');
             }
@@ -861,6 +955,100 @@ const store = new Vuex.Store({
           .then(name => state.ens = name);
       } else {
         this.commit('setMetamaskOffline');
+      }
+    },
+    installRentingListeners(state) {
+      if (state.tenantRentingContract && !state.tenantRentingContractListenersInstalled) {
+        state.tenantRentingContractListenersInstalled = true;
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.OfferCreated(),
+          (id, deedId, owner) => {
+            const address = state.address?.toUpperCase();
+            if (owner.toUpperCase() === address) {
+              document.dispatchEvent(new CustomEvent('deed-offer-created', {detail: {
+                offerId: id,
+                nftId: deedId,
+                creator: owner,
+              }}));
+            }
+          }
+        );
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.OfferUpdated(),
+          (id, deedId, owner) => {
+            const address = state.address?.toUpperCase();
+            if (owner.toUpperCase() === address) {
+              document.dispatchEvent(new CustomEvent('deed-offer-updated', {detail: {
+                offerId: id,
+                nftId: deedId,
+                creator: owner,
+              }}));
+            }
+          }
+        );
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.OfferDeleted(),
+          (id, deedId, owner) => {
+            if (state.address) { // When an offer is confirmed as deleted, trigger this to all
+              document.dispatchEvent(new CustomEvent('deed-offer-deleted', {detail: {
+                offerId: id,
+                nftId: deedId,
+                creator: owner,
+              }}));
+            }
+          }
+        );
+
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.RentPaid(),
+          (id, deedId, tenant, owner, firstRent) => {
+            const address = state.address?.toUpperCase();
+            if (owner.toUpperCase() === address || tenant.toUpperCase() === address) {
+              document.dispatchEvent(new CustomEvent('deed-lease-paid', {detail: {
+                leaseId: id,
+                nftId: deedId,
+                manager: tenant,
+                owner: owner,
+                firstRent: firstRent,
+              }}));
+            }
+          }
+        );
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.LeaseEnded(),
+          (id, deedId, tenant, leaseRemainingMonths) => {
+            const address = state.address?.toUpperCase();
+            if (tenant.toUpperCase() === address) {
+              document.dispatchEvent(new CustomEvent('deed-lease-ended', {detail: {
+                leaseId: id,
+                nftId: deedId,
+                manager: tenant,
+                leaseRemainingMonths: leaseRemainingMonths,
+              }}));
+            }
+          }
+        );
+        state.tenantRentingContract.on(
+          // eslint-disable-next-line new-cap
+          state.tenantRentingContract.filters.TenantEvicted(),
+          (id, deedId, tenant, owner, leaseRemainingMonths) => {
+            const address = state.address?.toUpperCase();
+            if (owner.toUpperCase() === address || tenant.toUpperCase() === address) {
+              document.dispatchEvent(new CustomEvent('deed-lease-tenant-evicted', {detail: {
+                leaseId: id,
+                nftId: deedId,
+                manager: tenant,
+                owner: owner,
+                leaseRemainingMonths: leaseRemainingMonths,
+              }}));
+            }
+          }
+        );
       }
     },
     loadGasPrice(state) {

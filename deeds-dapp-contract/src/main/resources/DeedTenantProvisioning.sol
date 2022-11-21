@@ -6,6 +6,7 @@ import "./abstract/UUPSUpgradeable.sol";
 import "./abstract/SafeMath.sol";
 import "./abstract/ManagerRole.sol";
 import "./abstract/IERC1155.sol";
+import "./abstract/ProvisioningManager.sol";
 
 /**
  * @title Deed Tenant provisioning Contract for Deed NFT owners
@@ -29,7 +30,7 @@ contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
     mapping(uint256 => address) public delegatees;
 
     /**
-     * @dev Throws if called by any account other than the owner of the NFT.
+     * @dev Throws if called by any account other than the Provisioning Manager of the NFT.
      */
     modifier onlyProvisioningManager(uint256 _nftId) {
         require(isProvisioningManager(_msgSender(), _nftId), "DeedTenantProvisioning#onlyProvisioningOwner: Not provisioning owner of the NFT");
@@ -87,6 +88,13 @@ contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
+     * @dev Returns the delegated address for Provisioning Management of an NFT
+     */
+    function getDelegatee(uint256 _nftId) external view returns(address) {
+        return delegatees[_nftId];
+    }
+
+    /**
      * @dev The Deed Owner can delete a previously approved delegatee of his Tenant.
      * This call can be done only through another contract such as Renting contract.
      */
@@ -99,13 +107,17 @@ contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
      * @dev returns true if the address can manage NFT Tenant provisioning (Start & Stop)
      */
     function isProvisioningManager(address _address, uint256 _nftId) public view returns(bool) {
-        uint256 _balance = deed.balanceOf(_address, _nftId);
-        if (_balance == 0) {
-            // If this is not NFT owner, we will check if the _address is approved to manage provisioning
-            return _address == delegatees[_nftId];
+        if (delegatees[_nftId].isContract()) {
+            return ProvisioningManager(delegatees[_nftId]).isProvisioningManager(_address, _nftId);
         } else {
-            // If this is about owner, the provisioning shouldn't be delegated
-            return address(0) == delegatees[_nftId];
+          uint256 _balance = deed.balanceOf(_address, _nftId);
+          if (_balance == 0) {
+              // If this is not NFT owner, we will check if the _address is approved to manage provisioning
+              return _address == delegatees[_nftId];
+          } else {
+              // If this is about owner, the provisioning shouldn't be delegated
+              return address(0) == delegatees[_nftId];
+          }
         }
     }
 

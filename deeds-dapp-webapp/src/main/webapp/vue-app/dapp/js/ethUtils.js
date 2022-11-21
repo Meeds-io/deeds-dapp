@@ -40,7 +40,7 @@ export function connectToMetamask() {
   });
 }
 
-export function sendTransaction(provider, contract, method, options, params) {
+export function sendTransaction(provider, contract, method, options, params, forceWhenEstimationError) {
   const signer = provider && contract && contract.connect(provider.getSigner());
   if (signer) {
     return signer.estimateGas[method](
@@ -55,15 +55,25 @@ export function sendTransaction(provider, contract, method, options, params) {
         options
       );
     }).catch(e => {
-      if (e && e.code === 4001) { // User denied transaction signature
+      if (e?.code === 4001) { // User denied transaction signature
         return;
+      } else {
+        // eslint-disable-next-line no-console
+        console.debug('Error estimating gas, send transaction with fixed limit', e);
+        if (e?.message?.includes('-32603') && e?.message?.includes('execution reverted') && !forceWhenEstimationError) { // Estimation error
+          document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e.message}));
+          throw new Error(e.message);
+        }
+        return signer[method](
+          ...params,
+          options
+        );
       }
-      // eslint-disable-next-line no-console
-      console.debug('Error estimating gas, send transaction with fixed limit');
-      return signer[method](
-        ...params,
-        options
-      );
+    }).then((receipt) => {
+      if (receipt?.hash) {
+        document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
+      }
+      return receipt;
     });
   }
   return Promise.resolve(null);

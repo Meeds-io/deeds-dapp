@@ -35,7 +35,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 
 @SpringBootTest(classes = { TenantPlaceholderRequestDispatcherFilter.class })

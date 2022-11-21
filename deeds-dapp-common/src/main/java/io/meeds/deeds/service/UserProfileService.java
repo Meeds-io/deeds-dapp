@@ -20,7 +20,7 @@ import static io.meeds.deeds.constant.CommonConstants.DEED_USER_PROFILE_SAVED_EV
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.model.UserProfile;
+import io.meeds.deeds.elasticsearch.model.UserProfile;
 import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.storage.UserProfileRepository;
 import io.meeds.deeds.utils.UserProfileMapper;

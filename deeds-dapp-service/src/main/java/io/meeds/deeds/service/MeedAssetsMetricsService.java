@@ -40,7 +40,7 @@ public class MeedAssetsMetricsService {
     return meedAssetsMetrics;
   }
 
-  public synchronized void computeMeedAssetsMetrics() {
+  public void computeMeedAssetsMetrics() {
     MeedAssetsMetrics metrics = new MeedAssetsMetrics();
     addPools(metrics);
     metrics.setTotalAllocationPoints(blockchainService.totalAllocationPoints());

@@ -35,12 +35,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "meed_token_metrics", createIndex = true)
-@Setting(
-    sortFields = "date",
-    sortOrders = SortOrder.desc,
-    replicas = 0,
-    shards = 1
-)
+@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
 public class MeedTokenMetric {
 
   public MeedTokenMetric(LocalDate date) {

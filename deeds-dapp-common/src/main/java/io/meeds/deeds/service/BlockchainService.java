@@ -19,19 +19,27 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.web3j.abi.EventEncoder;
+import org.web3j.abi.datatypes.Address;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.request.EthFilter;
@@ -40,14 +48,26 @@ import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tuples.generated.Tuple12;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tuples.generated.Tuple8;
+import org.web3j.utils.Numeric;
 
+import io.meeds.deeds.constant.BlockchainLeaseStatus;
+import io.meeds.deeds.constant.BlockchainOfferStatus;
 import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
+import io.meeds.deeds.contract.DeedRenting;
+import io.meeds.deeds.contract.DeedRenting.LeaseEndedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.OfferCreatedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.OfferDeletedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.OfferUpdatedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.RentPaidEventResponse;
+import io.meeds.deeds.contract.DeedRenting.TenantEvictedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStartedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse;
@@ -55,12 +75,16 @@ import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
-import io.meeds.deeds.model.DeedCity;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedCity;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.model.DeedLeaseBlockchainState;
+import io.meeds.deeds.model.DeedOfferBlockchainState;
 import io.meeds.deeds.model.FundInfo;
 
 @Component
 public class BlockchainService {
+
+  private static final Logger    LOG = LoggerFactory.getLogger(BlockchainService.class);
 
   @Autowired
   @Qualifier("ethereumNetwork")
@@ -68,6 +92,9 @@ public class BlockchainService {
 
   @Autowired(required = false)
   private DeedTenantProvisioning deedTenantProvisioning;
+
+  @Autowired(required = false)
+  private DeedRenting            deedRenting;
 
   @Autowired
   private Deed                   deed;
@@ -171,6 +198,44 @@ public class BlockchainService {
   }
 
   /**
+   * Retrieves Lease and Offer Events occurred on Renting Contract
+   * 
+   * @param  fromBlock Start block
+   * @param  toBlock   End Block to filter
+   * @return           {@link List} of {@link Map} of events
+   */
+  public List<Map<?, ?>> getMinedRentingTransactions(long fromBlock, // NOSONAR
+                                                     long toBlock) {
+    EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
+                                        new DefaultBlockParameterNumber(toBlock),
+                                        deedRenting.getContractAddress());
+    try {
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      @SuppressWarnings("rawtypes")
+      List<LogResult> ethLogs = ethLog.getLogs();
+      if (CollectionUtils.isEmpty(ethLogs)) {
+        return Collections.emptyList();
+      }
+
+      return ethLogs.stream()
+                    .map(logResult -> (LogObject) logResult.get())
+                    .filter(logObject -> !logObject.isRemoved())
+                    .map(LogObject::getTransactionHash)
+                    .flatMap(transactionHash -> {
+                      Map<?, ?> offerEvents = getOfferTransactionEvents(transactionHash);
+                      Map<?, ?> leaseEvents = getLeaseTransactionEvents(transactionHash);
+                      return MapUtils.isEmpty(offerEvents) ? Stream.of(leaseEvents)
+                                                           : MapUtils.isEmpty(leaseEvents) ? Stream.of(offerEvents)// NOSONAR
+                                                                                           : Stream.of(offerEvents, leaseEvents);
+                    })
+                    .filter(MapUtils::isNotEmpty)
+                    .collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving event logs of mined transactions", e);
+    }
+  }
+
+  /**
    * Retrieves the list of mined ownership transfer of a Deed transactions
    * starting from a block to another
    * 
@@ -203,6 +268,170 @@ public class BlockchainService {
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs", e);
     }
+  }
+
+  public Map<BlockchainOfferStatus, DeedOfferBlockchainState> getOfferTransactionEvents(String transactionHash) {// NOSONAR
+    try {
+      TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
+                                                   .send()
+                                                   .getTransactionReceipt()
+                                                   .orElse(null);
+      if (transactionReceipt == null || !transactionReceipt.isStatusOK()) {
+        return Collections.emptyMap();
+      }
+
+      Map<BlockchainOfferStatus, DeedOfferBlockchainState> events = new EnumMap<>(BlockchainOfferStatus.class);
+      List<OfferCreatedEventResponse> createdEvents = DeedRenting.getOfferCreatedEvents(transactionReceipt);
+      if (createdEvents != null && !createdEvents.isEmpty()) {
+        if (createdEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one offer creation, {} events. This can't be handled, only first one will be handled",
+                   createdEvents.size());
+        }
+        OfferCreatedEventResponse response = createdEvents.get(0);
+        DeedOfferBlockchainState deedOffer = getOfferById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
+        events.put(BlockchainOfferStatus.OFFER_CREATED, deedOffer);
+      }
+      List<OfferUpdatedEventResponse> updatedEvents = DeedRenting.getOfferUpdatedEvents(transactionReceipt);
+      if (updatedEvents != null && !updatedEvents.isEmpty()) {
+        if (updatedEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one offer update, {} events. This can't be handled, only first one will be handled",
+                   updatedEvents.size());
+        }
+        OfferUpdatedEventResponse response = updatedEvents.get(0);
+        DeedOfferBlockchainState deedOffer = getOfferById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
+        events.put(BlockchainOfferStatus.OFFER_UPDATED, deedOffer);
+      }
+      List<OfferDeletedEventResponse> deletedEvents = DeedRenting.getOfferDeletedEvents(transactionReceipt);
+      if (deletedEvents != null && !deletedEvents.isEmpty()) {
+        if (deletedEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one offer delete, {} events. This can't be handled, only first one will be handled",
+                   deletedEvents.size());
+        }
+        OfferDeletedEventResponse response = deletedEvents.get(0);
+        DeedOfferBlockchainState deedOffer = new DeedOfferBlockchainState(response.id,
+                                                                          transactionReceipt.getBlockNumber(),
+                                                                          response.deedId,
+                                                                          response.owner,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          BigInteger.ZERO,
+                                                                          Address.DEFAULT.getValue(),
+                                                                          BigInteger.ZERO,
+                                                                          transactionHash);
+        events.put(BlockchainOfferStatus.OFFER_DELETED, deedOffer);
+      }
+      List<RentPaidEventResponse> rentPaidEvents = DeedRenting.getRentPaidEvents(transactionReceipt);
+      if (rentPaidEvents != null && !rentPaidEvents.isEmpty()) {
+        if (rentPaidEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one rent paid {} events. This can't be handled, only first one will be handled",
+                   rentPaidEvents.size());
+        }
+        RentPaidEventResponse response = rentPaidEvents.get(0);
+        DeedOfferBlockchainState deedOffer = getOfferById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
+        if (response.firstRent.booleanValue()) {
+          events.put(BlockchainOfferStatus.OFFER_ACQUIRED, deedOffer);
+        }
+      }
+      return events;
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving transaction receipt " + transactionHash + " logs", e);
+    }
+  }
+
+  public Map<BlockchainLeaseStatus, DeedLeaseBlockchainState> getLeaseTransactionEvents(String transactionHash) { // NOSONAR
+    try {
+      TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
+                                                   .send()
+                                                   .getTransactionReceipt()
+                                                   .orElse(null);
+      if (transactionReceipt == null || !transactionReceipt.isStatusOK()) {
+        return Collections.emptyMap();
+      }
+
+      Map<BlockchainLeaseStatus, DeedLeaseBlockchainState> events = new EnumMap<>(BlockchainLeaseStatus.class);
+      List<RentPaidEventResponse> rentPaidEvents = DeedRenting.getRentPaidEvents(transactionReceipt);
+      if (rentPaidEvents != null && !rentPaidEvents.isEmpty()) {
+        if (rentPaidEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one rent paid {} events. This can't be handled, only first one will be handled",
+                   rentPaidEvents.size());
+        }
+        RentPaidEventResponse response = rentPaidEvents.get(0);
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        if (response.firstRent.booleanValue()) {
+          events.put(BlockchainLeaseStatus.LEASE_ACQUIRED, deedLease);
+        } else {
+          events.put(BlockchainLeaseStatus.LEASE_PAYED, deedLease);
+        }
+      }
+      List<LeaseEndedEventResponse> leaseEndedEvents = DeedRenting.getLeaseEndedEvents(transactionReceipt);
+      if (leaseEndedEvents != null && !leaseEndedEvents.isEmpty()) {
+        if (leaseEndedEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one lease ended {} events. This can't be handled, only first one will be handled",
+                   leaseEndedEvents.size());
+        }
+        LeaseEndedEventResponse response = leaseEndedEvents.get(0);
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        events.put(BlockchainLeaseStatus.LEASE_ENDED, deedLease);
+      }
+      List<TenantEvictedEventResponse> tenantEvictedEvents = DeedRenting.getTenantEvictedEvents(transactionReceipt);
+      if (tenantEvictedEvents != null && !tenantEvictedEvents.isEmpty()) {
+        if (tenantEvictedEvents.size() > 1) {
+          LOG.warn("It seems that in a single transaction, we have more than one tenant evicted {} events. This can't be handled, only first one will be handled",
+                   tenantEvictedEvents.size());
+        }
+        TenantEvictedEventResponse response = tenantEvictedEvents.get(0);
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        events.put(BlockchainLeaseStatus.LEASE_MANAGER_EVICTED, deedLease);
+      }
+      return events;
+    } catch (Exception e) {
+      throw new IllegalStateException("Error retrieving transaction receipt " + transactionHash + " logs", e);
+    }
+  }
+
+  public DeedOfferBlockchainState getOfferById(BigInteger offerId,
+                                               BigInteger blockNumber,
+                                               String transactionHash) throws Exception {
+    Tuple12<BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger> offerTuple =
+                                                                                                                                                               deedRenting.deedOffers(offerId)
+                                                                                                                                                                          .send();
+
+    if (StringUtils.isBlank(transactionHash)) {
+      transactionHash = getOfferCreationTransactionHash(offerId);
+    }
+    return new DeedOfferBlockchainState(offerTuple.component1(),
+                                        blockNumber == null ? BigInteger.ZERO : blockNumber,
+                                        offerTuple.component2(),
+                                        offerTuple.component3(),
+                                        offerTuple.component4(),
+                                        offerTuple.component5(),
+                                        offerTuple.component6(),
+                                        offerTuple.component7(),
+                                        offerTuple.component8(),
+                                        offerTuple.component9(),
+                                        offerTuple.component10(),
+                                        offerTuple.component11(),
+                                        offerTuple.component12(),
+                                        transactionHash);
+  }
+
+  public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId, BigInteger blockNumber) throws Exception {
+    Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String> leaseTuple =
+                                                                                                                  deedRenting.deedLeases(leaseId)
+                                                                                                                             .send();
+    return new DeedLeaseBlockchainState(leaseTuple.component1(),
+                                        blockNumber == null ? BigInteger.ZERO : blockNumber,
+                                        leaseTuple.component2(),
+                                        leaseTuple.component3(),
+                                        leaseTuple.component4(),
+                                        leaseTuple.component5(),
+                                        leaseTuple.component6(),
+                                        leaseTuple.component7(),
+                                        leaseTuple.component8());
   }
 
   /**
@@ -247,6 +476,15 @@ public class BlockchainService {
         throw new IllegalStateException("Error retrieving information 'getDeedCardType' from Blockchain", e);
       }
     }
+  }
+
+  public boolean isOfferEnabled(long offerId) throws Exception {
+    DeedOfferBlockchainState offer = getOfferById(BigInteger.valueOf(offerId), null, "0x");
+    if (offer != null && offer.getId().longValue() == offerId) {
+      DeedLeaseBlockchainState lease = getLeaseById(BigInteger.valueOf(offerId), null);
+      return lease == null || lease.getId().longValue() == 0;
+    }
+    return false;
   }
 
   /**
@@ -433,6 +671,27 @@ public class BlockchainService {
       networkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
     }
     return networkId;
+  }
+
+  @SuppressWarnings("rawtypes")
+  public String getOfferCreationTransactionHash(BigInteger offerId) throws IOException {
+    try {
+      EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
+                                          DefaultBlockParameterName.LATEST,
+                                          deedRenting.getContractAddress()).addSingleTopic(EventEncoder.encode(DeedRenting.OFFERCREATED_EVENT))
+                                                                           .addOptionalTopics(Numeric.toHexStringWithPrefixZeroPadded(offerId,
+                                                                                                                                      64));
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      List<LogResult> logs = ethLog.getLogs();
+      if (CollectionUtils.isNotEmpty(logs)) {
+        LogResult logResult = logs.get(0);
+        LogObject logObject = (LogObject) logResult.get();
+        return logObject.getTransactionHash();
+      }
+    } catch (Exception e) {
+      LOG.warn("Error retrieving Offer Creation Hash, return null instead", e);
+    }
+    return null;
   }
 
   private Stream<DeedOwnershipTransferEvent> getTransferOwnershipEvents(TransactionReceipt transactionReceipt) {

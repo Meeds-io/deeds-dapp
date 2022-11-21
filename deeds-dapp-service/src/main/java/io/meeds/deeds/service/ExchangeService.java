@@ -102,10 +102,10 @@ public class ExchangeService {
    * Retrieves list of {@link MeedPrice} from selected date until a dedicated
    * date
    * 
-   * @param currency {@link Currency}
-   * @param fromDate {@link LocalDate}
-   * @param toDate {@link LocalDate}
-   * @return {@link List} of {@link MeedPrice} for selected dates
+   * @param  currency {@link Currency}
+   * @param  fromDate {@link LocalDate}
+   * @param  toDate   {@link LocalDate}
+   * @return          {@link List} of {@link MeedPrice} for selected dates
    */
   public List<MeedPrice> getExchangeRates(Currency currency, LocalDate fromDate, LocalDate toDate) {
     if (fromDate == null) {

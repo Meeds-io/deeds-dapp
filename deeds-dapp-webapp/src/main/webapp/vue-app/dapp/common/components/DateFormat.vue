@@ -30,19 +30,14 @@ export default {
     },
     format: {
       type: Object,
-      default: function() {
-        return {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        };
-      },
+      default: null,
     },
   },
   computed: Vuex.mapState({
     language: state => state.language,
+    defaultDateFormat: state => state.defaultDateFormat,
     displayedDate() {
-      return this.value && new window.Intl.DateTimeFormat(this.language, this.format)
+      return this.value && new window.Intl.DateTimeFormat(this.language, this.format || this.defaultDateFormat)
         .format(new Date(this.value));
     },
   }),

@@ -40,7 +40,6 @@ import MediaSelector from './components/form/MediaSelector.vue';
 import RentalExpirationDuration from './components/form/RentalExpirationDuration.vue';
 import RentalDuration from './components/form/RentalDuration.vue';
 import NoticePeriod from './components/form/NoticePeriod.vue';
-import SecurityDepositPeriod from './components/form/SecurityDepositPeriod.vue';
 import ButtonGroupItem from './components/form/ButtonGroupItem.vue';
 
 const components = {
@@ -68,7 +67,6 @@ const components = {
   'deeds-renting-expiration-duration': RentalExpirationDuration,
   'deeds-renting-duration': RentalDuration,
   'deeds-notice-period': NoticePeriod,
-  'deeds-security-deposit-period': SecurityDepositPeriod,
   'deeds-button-group-item': ButtonGroupItem,
 };
 

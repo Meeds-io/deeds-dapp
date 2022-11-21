@@ -165,16 +165,16 @@ export default {
   methods: {
     resetForm() {
       this.email = this.value;
-      this.isEditing = false;
-      this.code = null;
-      this.isEditing = false;
-      this.emailConfirmationNeeded = false;
-      this.sending = false;
-      this.sendingCode = false;
-      this.validCode = false;
-
-      this.emailLoading = true;
-      if (!this.email) {
+      if (this.email) {
+        this.isEditing = false;
+      } else {
+        this.isEditing = false;
+        this.code = null;
+        this.emailConfirmationNeeded = false;
+        this.sending = false;
+        this.sendingCode = false;
+        this.validCode = false;
+        this.emailLoading = true;
         this.$userProfileService.getEmail()
           .then(email => {
             this.email = email;

@@ -39,14 +39,25 @@ export default {
     },
   },
   mounted() {
-    window.addEventListener('popstate', (event) => this.refreshSelectedOfferId(event));
+    window.addEventListener('popstate', (event) => this.goBackLink(event));
+    this.$root.$on('location-change', this.refreshSelectedOfferId);
     this.refreshUrl();
   },
   methods: {
-    refreshSelectedOfferId() {
+    goBackLink(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.refreshSelectedOfferId();
+      }
+    },
+    refreshSelectedOfferId(_location, link, avoidResetTab) {
+      if (link && (!link.includes('marketplace') || avoidResetTab)) {
+        return;
+      }
       const offerId = this.$utils.getQueryParam('offer');
       if (offerId) {
-        this.$store.commit('setStandaloneOfferId', Number(offerId));
+        this.$store.commit('setStandaloneOfferId', offerId);
       } else {
         this.$store.commit('setStandaloneOfferId', null);
       }

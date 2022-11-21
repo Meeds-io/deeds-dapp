@@ -38,7 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import io.meeds.deeds.constant.DeedCity;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 
 @Component("tenantPlaceholderRequestDispatcherFilter")

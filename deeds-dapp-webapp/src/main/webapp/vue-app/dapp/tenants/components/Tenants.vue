@@ -22,5 +22,7 @@
     <deeds-tenants-list />
     <deeds-move-in-drawer />
     <deeds-move-out-drawer />
+    <deeds-tenants-lease-rent-pay-drawer />
+    <deeds-tenants-lease-end-renting-drawer />
   </div>
 </template>

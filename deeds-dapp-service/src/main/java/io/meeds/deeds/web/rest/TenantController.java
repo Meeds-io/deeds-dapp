@@ -40,7 +40,7 @@ import org.springframework.web.server.ResponseStatusException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;

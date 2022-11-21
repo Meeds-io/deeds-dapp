@@ -37,21 +37,15 @@ import lombok.*;
 @Component
 public class MeedTokenMetricService {
 
-  @Value(
-    "#{'${meeds.blockchain.reserveValueEthereumAddresses:0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853}'.split(',')}"
-  )
+  @Value("#{'${meeds.blockchain.reserveValueEthereumAddresses:0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853}'.split(',')}")
   @Getter
   private List<String>               reserveEthereumAddresses;
 
-  @Value(
-    "#{'${meeds.blockchain.reserveValuePolygonAddresses:}'.split(',')}"
-  )
+  @Value("#{'${meeds.blockchain.reserveValuePolygonAddresses:}'.split(',')}")
   @Getter
   private List<String>               reservePolygonAddresses;
 
-  @Value(
-    "#{'${meeds.blockchain.lockedValueEthereumAddresses:0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070}'.split(',')}"
-  )
+  @Value("#{'${meeds.blockchain.lockedValueEthereumAddresses:0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070}'.split(',')}")
   @Getter
   private List<String>               lockedEthereumAddresses;
 
@@ -73,11 +67,11 @@ public class MeedTokenMetricService {
   private ExchangeService            exchangeService;
 
   /**
-   * Retrieves total circulating Meeds supply by using this formula:
-   * - Total supply of Meeds - total Meeds reserves - total locked Meeds
+   * Retrieves total circulating Meeds supply by using this formula: - Total
+   * supply of Meeds - total Meeds reserves - total locked Meeds
    *
    * @return {@link BigDecimal} for most recent computed circulating supply
-   *           value
+   *         value
    */
   public BigDecimal getCirculatingSupply() {
     MeedTokenMetric lastMetric = getLastMetric(null);
@@ -85,10 +79,10 @@ public class MeedTokenMetricService {
   }
 
   /**
-   * Retrieves total Meeds supply, reading the value of the ERC20.totalSupply() Meeds contract
+   * Retrieves total Meeds supply, reading the value of the ERC20.totalSupply()
+   * Meeds contract
    *
-   * @return {@link BigDecimal} for most recent computed total supply
-   *           value
+   * @return {@link BigDecimal} for most recent computed total supply value
    */
   public BigDecimal getTotalSupply() {
     MeedTokenMetric lastMetric = getLastMetric(null);
@@ -96,12 +90,12 @@ public class MeedTokenMetricService {
   }
 
   /**
-   * Retrieves Market Capitalization by using this formula:
-   * - Circulating Supply of Meeds * Meed USD Token price
-   * @param currency used {@link Currency} for currency prices calculation
+   * Retrieves Market Capitalization by using this formula: - Circulating Supply
+   * of Meeds * Meed USD Token price
    * 
-   * @return {@link BigDecimal} for most recent computed market capitalization
-   *           value
+   * @param  currency used {@link Currency} for currency prices calculation
+   * @return          {@link BigDecimal} for most recent computed market
+   *                  capitalization value
    */
   public BigDecimal getMarketCapitalization(Currency currency) {
     MeedTokenMetric lastMetric = getLastMetric(currency);
@@ -109,12 +103,12 @@ public class MeedTokenMetricService {
   }
 
   /**
-   * Retrieves Total Locked Value by using this formula:
-   * - Total Locked Meed Tokens * Meed USD Token price
-   * @param currency used {@link Currency} for currency prices calculation
-   *
-   * @return {@link BigDecimal} for most recent computed Total Locked Value
-   *           value
+   * Retrieves Total Locked Value by using this formula: - Total Locked Meed
+   * Tokens * Meed USD Token price
+   * 
+   * @param  currency used {@link Currency} for currency prices calculation
+   * @return          {@link BigDecimal} for most recent computed Total Locked
+   *                  Value value
    */
   public BigDecimal getTotalValueLocked(Currency currency) {
     MeedTokenMetric lastMetric = getLastMetric(currency);
@@ -163,8 +157,8 @@ public class MeedTokenMetricService {
 
   /**
    * @return {@link Map} of {@link String} and {@link BigDecimal}. This will
-   *           retrieve from Ethereum and Polygon Blockchains a Map of Token
-   *           balances for each configured reserveBalanceAddress.
+   *         retrieve from Ethereum and Polygon Blockchains a Map of Token
+   *         balances for each configured reserveBalanceAddress.
    */
   public Map<String, BigDecimal> getReserveBalances() {
     Map<String, BigDecimal> reserveBalances = new HashMap<>();
@@ -185,8 +179,8 @@ public class MeedTokenMetricService {
 
   /**
    * @return {@link Map} of {@link String} and {@link BigDecimal}. This will
-   *           retrieve from Ethereum and Polygon Blockchains a Map of Token
-   *           balances for each configured lockedBalanceAddress.
+   *         retrieve from Ethereum and Polygon Blockchains a Map of Token
+   *         balances for each configured lockedBalanceAddress.
    */
   public Map<String, BigDecimal> getLockedBalances() {
     Map<String, BigDecimal> lockedBalances = new HashMap<>();
@@ -223,9 +217,10 @@ public class MeedTokenMetricService {
 
   /**
    * Retrieves the latest Metrics of Meed Token
-   * @param currency used {@link Currency} for currency prices calculation
    * 
-   * @return {@link MeedTokenMetric} representing the Meed Token Metrics
+   * @param  currency used {@link Currency} for currency prices calculation
+   * @return          {@link MeedTokenMetric} representing the Meed Token
+   *                  Metrics
    */
   public MeedTokenMetric getLastMetric(Currency currency) {
     if (recentMetric == null) {

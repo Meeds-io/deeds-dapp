@@ -355,6 +355,7 @@ export default {
         .mul((1 - this.slippage) * 1000)
         .div(1000);
       const options = {
+        from: this.address,
         gasLimit: this.tradeGasLimit,
       };
       return new Promise((resolve, reject) => {
@@ -380,8 +381,9 @@ export default {
       })
         .then(receipt => {
           const transactionHash = receipt.hash;
-          this.$root.$emit('transaction-sent', transactionHash);
-          this.reset();
+          if (transactionHash) {
+            this.reset();
+          }
         })
         .finally(() => {
           this.sendingTransaction--;
@@ -392,17 +394,15 @@ export default {
       this.sendingTransaction++;
       const amount = this.$ethUtils.toDecimals(this.fromValue, 18);
       const options = {
+        from: this.address,
         gasLimit: this.approvalGasLimit,
       };
       return this.approveMethod(
         this.sushiswapRouterAddress,
         amount,
         options
-      ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.swapInToSteps = true;
-      })
+      )
+        .then(() => this.swapInToSteps = true)
         .catch(() => {
           this.sendingTransaction--;
           this.step = 1;

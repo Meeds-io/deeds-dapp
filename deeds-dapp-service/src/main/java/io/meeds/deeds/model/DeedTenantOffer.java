@@ -17,6 +17,7 @@ package io.meeds.deeds.model;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -31,18 +32,18 @@ import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
-import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.With;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(indexName = "deed_tenant_offer", createIndex = true)
 @Setting(replicas = 0, shards = 1)
-public class DeedTenantOffer {
+public class DeedTenantOffer implements Cloneable {
 
   @Id
   private String                           id;
@@ -74,8 +75,11 @@ public class DeedTenantOffer {
   @Field(type = FieldType.Text)
   private String                           description;
 
-  @Field(type = FieldType.Long)
+  @Field(type = FieldType.Double)
   private double                           amount;
+
+  @Field(type = FieldType.Double)
+  private double                           allDurationAmount;
 
   @Field(type = FieldType.Keyword)
   private OfferType                        offerType;
@@ -88,9 +92,6 @@ public class DeedTenantOffer {
 
   @Field(type = FieldType.Keyword)
   private RentalPaymentPeriodicity         paymentPeriodicity;
-
-  @Field(type = FieldType.Keyword)
-  private SecurityDepositPeriod            securityDepositPeriod;
 
   @Field(type = FieldType.Keyword)
   private NoticePeriod                     noticePeriod;
@@ -108,6 +109,9 @@ public class DeedTenantOffer {
   private TransactionStatus                offerTransactionStatus;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  private Instant                          startDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant                          expirationDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time)
@@ -119,4 +123,58 @@ public class DeedTenantOffer {
   @Field(type = FieldType.Boolean)
   private boolean                          enabled;
 
+  @Field(type = FieldType.Boolean)
+  private boolean                          acquired;
+
+  @Field(type = FieldType.Keyword)
+  private String                           updateId;
+
+  @Field(type = FieldType.Keyword)
+  private String                           deleteId;
+
+  @Field(type = FieldType.Keyword, storeNullValue = true)
+  @With
+  private String                           parentId;
+
+  @Field(type = FieldType.Keyword)
+  @With
+  private Set<String>                      acquisitionIds;
+
+  @Field(type = FieldType.Long)
+  private long                             lastCheckedBlock;
+
+  public DeedTenantOffer clone() { // NOSONAR
+    return new DeedTenantOffer(id,
+                               offerId,
+                               nftId,
+                               city,
+                               cardType,
+                               owner,
+                               hostAddress,
+                               viewAddresses,
+                               ownerEmail,
+                               description,
+                               amount,
+                               allDurationAmount,
+                               offerType,
+                               expirationDuration,
+                               duration,
+                               paymentPeriodicity,
+                               noticePeriod,
+                               ownerMintingPercentage,
+                               mintingPower,
+                               offerTransactionHash,
+                               offerTransactionStatus,
+                               startDate,
+                               expirationDate,
+                               createdDate,
+                               modifiedDate,
+                               enabled,
+                               acquired,
+                               updateId,
+                               deleteId,
+                               parentId,
+                               acquisitionIds,
+                               lastCheckedBlock);
+  }
 }

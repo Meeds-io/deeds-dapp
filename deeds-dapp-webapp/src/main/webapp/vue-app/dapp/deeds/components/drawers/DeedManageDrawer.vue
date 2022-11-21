@@ -20,7 +20,6 @@
   <deeds-drawer
     ref="drawer"
     v-model="drawer"
-    :first-level="secondLevelOpened"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
@@ -227,7 +226,7 @@
       </v-list>
       <v-spacer />
     </template>
-    <template v-if="isProvisioningManager" #footer>
+    <template v-if="isProvisioningManager || isOwner" #footer>
       <deeds-login-button
         ref="loginButton"
         :login-tooltip="$t('authenticateToCommandTenantTooltip')"
@@ -238,12 +237,6 @@
 </template>
 <script>
 export default {
-  props: {
-    secondLevelOpened: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data: () => ({
     nft: null,
     drawer: false,
@@ -252,6 +245,8 @@ export default {
     loadingMoveDeed: false,
     loadingRentDrawer: false,
     loadingRentalOffers: false,
+    index: 1,
+    isProvisioningManager: false,
     rentalOffers: null,
     location: 'manage-deed-drawer',
   }),
@@ -263,6 +258,7 @@ export default {
     openSeaBaseLink: state => state.openSeaBaseLink,
     cardTypeInfos: state => state.cardTypeInfos,
     authenticated: state => state.authenticated,
+    tenantProvisioningContract: state => state.tenantProvisioningContract,
     now: state => state.now,
     cardTypeInfo() {
       return this.cardTypeInfos[this.cardType];
@@ -301,7 +297,7 @@ export default {
       return this.deedInfo?.provisioningDate;
     },
     deedTenantStatus() {
-      return this.deedInfo?.tenantStatus;
+      return this.deedInfo?.status;
     },
     provisioningStatus() {
       return this.deedInfo?.provisioningStatus;
@@ -314,17 +310,14 @@ export default {
     cityName() {
       return this.nft?.cityName;
     },
-    isProvisioningManager() {
-      return this.nft?.provisioningManager;
-    },
     isOwner() {
       return this.nft?.owner;
     },
     status() {
-      return this.nft?.status;
+      return this.index && this.nft?.status;
     },
     loading() {
-      return this.status === 'loading' || this.provisioningStatus === 'PROVISIONING_STOP_IN_PROGRESS' || this.provisioningStatus === 'PROVISIONING_START_IN_PROGRESS';
+      return  this.status === 'loading' || this.provisioningStatus === 'PROVISIONING_STOP_IN_PROGRESS' || this.provisioningStatus === 'PROVISIONING_START_IN_PROGRESS';
     },
     stopped() {
       return !this.loading && this.status === 'STOPPED';
@@ -342,25 +335,29 @@ export default {
       return this.authenticated && this.isProvisioningManager && (this.started || this.stopped);
     },
     showRentPart() {
-      return this.authenticated && this.isOwner;
+      return this.authenticated && this.isOwner && !this.rented && (!this.rentalOffer || this.rentalOffer.offerId);
     },
     showSeeRentPart() {
-      return this.authenticated && this.isOwner && this.hasAvailableRentOffers;
+      return this.authenticated && this.isOwner && !this.rented && this.hasAvailableRentOffers;
     },
     hasRentOffers() {
       return !!this.rentalOffers?.length;
     },
+    availableRentOffers() {
+      return this.rentalOffers?.filter(offer => !offer.expirationDate || new Date(offer.expirationDate).getTime() > this.now);
+    },
     hasAvailableRentOffers() {
-      return !!this.rentalOffers?.filter(offer => !offer.expirationDate || new Date(offer.expirationDate).getTime() > this.now)?.length;
+      return !!this.availableRentOffers?.length;
     },
     hasOnlyExpiredOffers() {
       return this.hasRentOffers && !this.hasAvailableRentOffers;
     },
     rentalOffer() {
-      return this.hasRentOffers && this.rentalOffers[0];
+      return this.hasAvailableRentOffers && this.availableRentOffers[0]
+        || (this.hasRentOffers && this.rentalOffers[0]);
     },
     isRentingEnabled() {
-      return this.showRentPart && !this.started && !this.loading;
+      return this.showRentPart && !this.started && !this.loading && this.isProvisioningManager;
     },
     moveInDescription() {
       return this.hasRentOffers
@@ -372,7 +369,9 @@ export default {
         && this.$t('deedRentOfferExpired')
         || (this.hasRentOffers
         && this.$t('deedRentEditDescription')
-        || (this.isRentingEnabled && this.$t('deedRentEnabledDescription') ||  this.$t('deedRentDisabledDescription')));
+        || (this.isRentingEnabled
+            && this.$t('deedRentEnabledDescription')
+            ||  this.$t('deedRentDisabledDescription')));
     },
     rentingButtonName() {
       return this.hasRentOffers
@@ -398,6 +397,12 @@ export default {
     loadingRentalOffers() {
       this.loadingRentDrawer = this.loadingRentalOffers;
     },
+    nft: {
+      handler() {
+        this.index++;
+      },
+      deep: true
+    },
   },
   created() {
     this.$root.$on('deeds-manage-drawer', this.open);
@@ -417,7 +422,7 @@ export default {
   },
   methods: {
     refreshNft(nft) {
-      if (this.drawer && this.nftId === nft.id) {
+      if (this.drawer && this.nftId === nft?.id) {
         this.nft = Object.assign({}, nft);
       }
     },
@@ -425,16 +430,20 @@ export default {
       this.loadingRentalOffers = true;
       return this.$deedTenantOfferService.getOffers({
         nftId: this.nftId,
+        address: this.address,
         onlyOwned: true,
         excludeExpired: true,
+        excludeNotStarted: false,
       }, this.networkId)
-        .then(offers => this.rentalOffers = offers?._embedded?.deedTenantOfferDTOList)
+        .then(offers => this.rentalOffers = offers?._embedded?.offers)
         .finally(() => this.loadingRentalOffers = false);
     },
     refreshDeedInfo() {
       if (this.authenticated) {
         return this.$tenantManagement.getTenantInfo(this.nftId)
-          .then(deedInfo => this.deedInfo = deedInfo)
+          .then(deedInfo => {
+            this.deedInfo = deedInfo;
+          })
           .catch(() => {
             if (this.$refs.loginButton) {
               return this.$refs.loginButton.logout(true)
@@ -442,10 +451,17 @@ export default {
                 .then(startDate => this.deedInfo = {provisioningDate: startDate});
             }
           })
-          .then(() => this.refreshOffers());
+          .then(() => this.refreshOffers())
+          .then(() => this.refreshProvisioningManager());
       } else {
         return this.$tenantManagement.getTenantStartDate(this.nftId)
           .then(startDate => this.deedInfo = {provisioningDate: startDate});
+      }
+    },
+    refreshProvisioningManager() {
+      if (this.authenticated && this.nftId && this.address) {
+        return this.tenantProvisioningContract.isProvisioningManager(this.address, this.nftId)
+          .then(isManager => this.isProvisioningManager = isManager);
       }
     },
     openMoveOutDrawer() {
@@ -500,7 +516,7 @@ export default {
     },
     openRentDetails() {
       this.$store.commit('setStandaloneOfferId', this.rentalOffers[0].id);
-      this.$root.$emit('switch-page', 'marketplace');
+      this.$root.$emit('switch-page', 'marketplace', true);
     },
   },
 };

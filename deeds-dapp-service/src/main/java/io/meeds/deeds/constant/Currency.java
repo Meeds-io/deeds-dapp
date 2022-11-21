@@ -19,7 +19,5 @@
 package io.meeds.deeds.constant;
 
 public enum Currency {
-  ETH,
-  USD,
-  EUR;
+  ETH, USD, EUR;
 }

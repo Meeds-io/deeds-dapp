@@ -16,6 +16,9 @@
 package io.meeds.deeds.model;
 
 import java.time.Instant;
+import java.util.Set;
+
+import org.springframework.hateoas.server.core.Relation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -26,7 +29,6 @@ import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
-import io.meeds.deeds.constant.SecurityDepositPeriod;
 import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +38,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
+@Relation(collectionRelation = "offers", itemRelation = "offer")
 public class DeedTenantOfferDTO {
 
   private String                           id;
@@ -56,6 +59,8 @@ public class DeedTenantOfferDTO {
 
   private double                           amount;
 
+  private double                           allDurationAmount;
+
   private OfferType                        offerType;
 
   private ExpirationDuration               expirationDuration;
@@ -63,8 +68,6 @@ public class DeedTenantOfferDTO {
   private RentalDuration                   duration;
 
   private RentalPaymentPeriodicity         paymentPeriodicity;
-
-  private SecurityDepositPeriod            securityDepositPeriod;
 
   private NoticePeriod                     noticePeriod;
 
@@ -76,6 +79,8 @@ public class DeedTenantOfferDTO {
 
   private TransactionStatus                offerTransactionStatus;
 
+  private Instant                          startDate;
+
   private Instant                          expirationDate;
 
   private Instant                          createdDate;
@@ -83,5 +88,13 @@ public class DeedTenantOfferDTO {
   private Instant                          modifiedDate;
 
   private boolean                          enabled;
+
+  private String                           parentId;
+
+  private Set<String>                      acquisitionIds;
+
+  private String                           updateId;
+
+  private String                           deleteId;
 
 }

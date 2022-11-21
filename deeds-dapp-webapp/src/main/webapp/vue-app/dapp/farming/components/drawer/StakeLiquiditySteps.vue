@@ -175,6 +175,7 @@ export default {
     transactionGas: state => state.transactionGas,
     approvalGasLimit: state => state.approvalGasLimit,
     depositGasLimit: state => state.depositGasLimit,
+    address: state => state.address,
     disabledApproveButton() {
       return !this.allowance || !Number(this.allowance) || !this.isAllowanceValueValid || this.sendingApproval || this.approvalInProgress;
     },
@@ -274,6 +275,7 @@ export default {
       this.sendingApproval = true;
       const amount = this.$ethUtils.toDecimals(this.allowance, 18);
       const options = {
+        from: this.address,
         gasLimit: this.approvalGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -281,16 +283,16 @@ export default {
         this.lpContract,
         'approve',
         options,
-        [this.tokenFactoryAddress, amount]
+        [this.tokenFactoryAddress, amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.approvalInProgress = true;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.approvalInProgress = true;
+          this.allowance = 0;
+        }
         this.sendingApproval = false;
-        this.allowance = 0;
-      }).catch(() => {
-        this.sendingApproval = false;
-      });
+      }).catch(() => this.sendingApproval = false);
     },
     setMaxAllowance() {
       this.allowance = this.$ethUtils.fromDecimals(this.lpBalance, 18);
@@ -309,17 +311,17 @@ export default {
         this.tokenFactoryContract,
         'deposit',
         options,
-        [this.lpAddress, amount]
+        [this.lpAddress, amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.stakeAmount = 0;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.stakeAmount = 0;
+          this.$root.$emit('close-drawer');
+          this.step = 1;
+        }
         this.sendingStake = false;
-        this.$root.$emit('close-drawer');
-        this.step = 1;
-      }).catch(() => {
-        this.sendingStake = false;
-      });
+      }).catch(() => this.sendingStake = false);
     },
   },
 };

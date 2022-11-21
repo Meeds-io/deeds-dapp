@@ -45,6 +45,8 @@ public class CommonConstants {
 
   public static final String CODE_VERIFICATION_HTTP_HEADER               = "X-AUTHORIZATION";
 
+  public static final String CODE_REFRESH_HTTP_HEADER                    = "X-REFRESH";
+
   @NoArgsConstructor
   @AllArgsConstructor
   @Data

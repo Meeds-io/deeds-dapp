@@ -40,7 +40,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.deeds.model.EmailSendingCommand;
+import io.meeds.deeds.listerner.model.EmailSendingCommand;
 
 @SpringBootTest(classes = {
     AuthorizationCodeService.class,

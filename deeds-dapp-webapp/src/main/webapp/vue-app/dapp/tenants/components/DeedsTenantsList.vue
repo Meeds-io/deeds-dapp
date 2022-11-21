@@ -20,10 +20,10 @@
 -->
 <template>
   <v-card
-    id="tenantsList"
+    id="leasesList"
     :loading="loading"
     flat>
-    <v-row v-if="hasTenants" class="pa-0 my-0">
+    <v-row v-if="hasLeases" class="pa-0 my-0">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
           <div class="subtitle-1 font-weight-bold ps-0 py-0">{{ $t('dapp.tenants.yourTenants') }}</div>
@@ -31,11 +31,13 @@
         </div>
       </v-col>
       <v-col
-        v-for="(tenant, index) in tenants"
-        :key="`${tenant.id}-${index}`"
+        v-for="(lease, index) in leases"
+        :key="`${lease.id}-${index}`"
         class="d-flex justify-center"
         cols="12">
-        <deeds-tenant-card :tenant="tenant" />
+        <v-slide-x-transition>
+          <deeds-tenants-lease-card :lease="lease" />
+        </v-slide-x-transition>
       </v-col>
       <v-col v-if="hasMore" cols="12">
         <v-btn
@@ -52,81 +54,8 @@
 <script>
 export default {
   data: () => ({
-    tenantsMock: [{
-      'id': '5z-So4QBvtG_sqDaIOWo',
-      'nftId': 5,
-      'city': 'TANIT',
-      'cardType': 'LEGENDARY',
-      'mintingPower': 2,
-      'ownerAddress': '0xa5ef66131fbd70a1ffa69a95aba172f0a0502e6a',
-      'managerAddress': '0xa5ef66131fbd70a1ffa69a95aba172f0a0502e6a',
-      'amount': 100,
-      'tenantStatus': 'DEPLOYED',
-      'provisioningStatus': 'START_CONFIRMED',
-      'distributedAmount': 14,
-      'paidPeriods': 2,
-      'paymentPeriodicity': 'ONE_MONTH',
-      'securityDepositPeriod': 'ONE_MONTH',
-      'ownerMintingPercentage': 50,
-      'enabled': true,
-      'nextPaymentDate': Date.now() - 20000,
-      'tenantStartDate': '2022-01-17T15:01:25.903Z',
-      'acquiredDate': '2022-11-17T15:01:25.903Z',
-      'rentingEndDate': '2023-10-19T15:01:25.903Z',
-      'noticeDate': '2023-09-18T15:01:25.903Z',
-      'createdDate': '2022-11-17T15:01:25.903Z',
-      'modifiedDate': '2022-11-17T17:52:02.522Z',
-    }, {
-      'id': '7z-So4QBvtG_sqDaIOAd',
-      'nftId': 1,
-      'city': 'TANIT',
-      'cardType': 'COMMON',
-      'mintingPower': 1,
-      'ownerAddress': '0x12eF3db2F4F2F2ace676d9EAABFaE4d98EFdA9f5',
-      'managerAddress': '0x12eF3db2F4F2F2ace676d9EAABFaE4d98EFdA9f5',
-      'amount': 178500,
-      'tenantStatus': 'UNDEPLOYED',
-      'provisioningStatus': 'STOP_CONFIRMED',
-      'distributedAmount': 0,
-      'paidPeriods': 3,
-      'paymentPeriodicity': 'ONE_YEAR',
-      'securityDepositPeriod': 'NO_PERIOD',
-      'ownerMintingPercentage': 25,
-      'enabled': true,
-      'nextPaymentDate': '2022-12-17T15:01:25.903Z',
-      'tenantStartDate': null,
-      'acquiredDate': '2022-01-17T15:01:25.903Z',
-      'rentingEndDate': '2023-01-10T15:01:25.903Z',
-      'noticeDate': null,
-      'createdDate': '2022-11-17T15:01:25.903Z',
-      'modifiedDate': '2022-11-17T17:52:02.522Z',
-    }, {
-      'id': '7z-So4QBvtG_sqDaIOe',
-      'nftId': 9,
-      'city': 'TANIT',
-      'cardType': 'RARE',
-      'mintingPower': 1.3,
-      'ownerAddress': '0x12eF3db2F4F2F2ace676d9EAABFaE4d98EFdA9f5',
-      'managerAddress': '0x12eF3db2F4F2F2ace676d9EAABFaE4d98EFdA9f5',
-      'amount': 1500,
-      'tenantStatus': 'UNDEPLOYED',
-      'provisioningStatus': 'STOP_CONFIRMED_IN_PROGRESS',
-      'distributedAmount': 0,
-      'paidPeriods': 3,
-      'paymentPeriodicity': 'ONE_YEAR',
-      'securityDepositPeriod': 'NO_PERIOD',
-      'ownerMintingPercentage': 25,
-      'enabled': true,
-      'nextPaymentDate': '2022-11-17T15:01:25.903Z',
-      'tenantStartDate': null,
-      'acquiredDate': '2022-01-17T15:01:25.903Z',
-      'rentingEndDate': '2023-01-10T15:01:25.903Z',
-      'noticeDate': null,
-      'createdDate': '2022-11-17T15:01:25.903Z',
-      'modifiedDate': '2022-11-17T17:52:02.522Z',
-    }],
-    tenants: [],
-    sortField: 'acquiredDate',
+    leases: [],
+    sortField: 'createdDate',
     sortDirection: 'desc',
     pageSize: 9,
     limit: 0,
@@ -135,14 +64,15 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
-    loadedTenantsLength() {
-      return this.tenants?.length || 0;
+    networkId: state => state.networkId,
+    loadedLeasesLength() {
+      return this.leases?.length || 0;
     },
-    hasTenants() {
-      return this.loadedTenantsLength > 0;
+    hasLeases() {
+      return this.loadedLeasesLength > 0;
     },
     hasMore() {
-      return this.totalSize > this.loadedTenantsLength;
+      return this.totalSize > this.loadedLeasesLength;
     },
   }),
   watch: {
@@ -159,6 +89,18 @@ export default {
   },
   created() {
     this.init();
+    this.$root.$on('deed-lease-ended', this.refreshLease);
+    this.$root.$on('deed-lease-payed', this.refreshLease);
+    document.addEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
+    document.addEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
+    document.addEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+  },
+  beforeDestroy() {
+    this.$root.$off('deed-lease-ended', this.refreshLease);
+    this.$root.$off('deed-lease-payed', this.refreshLease);
+    document.removeEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
+    document.removeEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
+    document.removeEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
   },
   methods: {
     init() {
@@ -170,18 +112,40 @@ export default {
     loadMore() {
       this.limit += this.pageSize;
     },
+    refreshLeaseFromblockchain(event) {
+      if (event?.detail?.leaseId?.toNumber) {
+        const leaseId = event.detail.leaseId.toNumber();
+        const selectedLease = this.leases.find(lease => lease.id === leaseId);
+        if (selectedLease) {
+          this.$deedTenantLeaseService.getLease(leaseId, true)
+            .then(lease => {
+              if (lease) {
+                this.refreshLease(lease);
+              }
+            });
+        }
+      }
+    },
+    refreshLease(lease) {
+      const index = this.leases.findIndex(displayedLease => displayedLease.id === lease.id);
+      if (index >= 0) {
+        this.leases.splice(index, 1, lease);
+      }
+    },
     refresh() {
       this.loading = true;
-      return this.$tenantManagement.getRentedTenants({
+      return this.$deedTenantLeaseService.getLeases({
         page: 0,
         size: this.limit,
         sort: `${this.sortField},${this.sortDirection}`,
         address: this.address,
-      })
-        .then(tenants => {
-          this.tenants = tenants || this.tenantsMock.filter(tenant => tenant.managerAddress.toLowerCase() === this.address.toLowerCase());
-          this.totalSize = tenants?.page?.totalElements || this.tenants.length;
-          this.$root.$emit('deed-tenants-loaded', this.tenants, this.totalSize);
+        onlyConfirmed: false,
+        owner: false,
+      }, this.networkId)
+        .then(leases => {
+          this.leases = leases?._embedded?.leases || [];
+          this.totalSize = leases?.page?.totalElements || this.leases.length;
+          this.$root.$emit('deed-leases-loaded', this.leases, this.totalSize);
         })
         .finally(() => this.loading = false);
     },

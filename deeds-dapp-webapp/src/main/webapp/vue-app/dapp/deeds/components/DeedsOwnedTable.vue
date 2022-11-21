@@ -24,20 +24,12 @@
     </v-card-title>
     <template v-if="hasDeeds">
       <deeds-manage-drawer
-        :second-level-opened="secondLevelOpened"
-        @opened="firstLevelOpened = true"
-        @closed="firstLevelOpened = false" />
-      <template v-if="firstLevelOpened">
-        <deeds-move-in-drawer
-          @opened="secondLevelOpened = true"
-          @closed="secondLevelOpened = false" />
-        <deeds-move-out-drawer
-          @opened="secondLevelOpened = true"
-          @closed="secondLevelOpened = false" />
-        <deeds-manage-rent-offer-drawer
-          :second-level="firstLevelOpened"
-          @opened="secondLevelOpened = true"
-          @closed="secondLevelOpened = false" />
+        @opened="manageDrawerOpened = true"
+        @closed="manageDrawerOpened = false" />
+      <template v-if="manageDrawerOpened">
+        <deeds-move-in-drawer />
+        <deeds-move-out-drawer />
+        <deeds-manage-rent-offer-drawer />
       </template>
     </template>
     <v-card-text v-html="$t('yourDeedsIntroduction')" />
@@ -73,8 +65,7 @@ export default {
   data: () => ({
     ownedDeeds: [],
     initialized: false,
-    firstLevelOpened: false,
-    secondLevelOpened: false,
+    manageDrawerOpened: false,
     contractListenersInstalled: false,
   }),
   computed: Vuex.mapState({
@@ -185,11 +176,13 @@ export default {
     },
     refreshTenantStatus(nftId) {
       if (this.ownedNfts) {
-        const id = nftId.toNumber();
-        const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
-        if (nft) {
-          Promise.resolve(this.loadStatus(nft))
-            .then(() => this.$root.$emit('deeds-move-drawer-close', id));
+        const id = nftId?.toNumber && nftId.toNumber() || Number(nftId);
+        if (id && Number.isFinite(id) && !Number.isNaN(id)) {
+          const nft = this.ownedNfts.find(ownedNft => ownedNft.id === id);
+          if (nft) {
+            Promise.resolve(this.loadStatus(nft))
+              .then(() => this.$root.$emit('deeds-move-drawer-close', id));
+          }
         }
       }
     },
@@ -199,17 +192,11 @@ export default {
         return;
       }
       this.setStatus(nft, 'loading');
-      return this.tenantProvisioningContract.isProvisioningManager(this.address, nft.id)
-        .then(provisioningManager => {
-          nft.provisioningManager = provisioningManager;
-          if (provisioningManager) {
-            return this.tenantProvisioningContract.tenantStatus(nft.id)
-              .then(status => {
-                this.setStatus(nft, status && 'STARTED' || 'STOPPED');
-              })
-              .finally(() => nft.loaded = true);
-          }
-        });
+      return this.tenantProvisioningContract.tenantStatus(nft.id)
+        .then(status => {
+          this.setStatus(nft, status && 'STARTED' || 'STOPPED');
+        })
+        .finally(() => nft.loaded = true);
     },
     setStatus(nft, status, transactionHash, command) {
       if (nft) {

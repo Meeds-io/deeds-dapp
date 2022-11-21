@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.service.MeedTokenMetricService;
 
+@Component
 public class MeedTokenMetricTask {
 
   private static final Logger    LOG = LoggerFactory.getLogger(MeedTokenMetricTask.class);
@@ -30,7 +32,7 @@ public class MeedTokenMetricTask {
   private MeedTokenMetricService meedTokenMetricService;
 
   @Scheduled(cron = "0 0/30 * * * *")
-  public synchronized void computeMeedTokenMetrics() {
+  public void computeMeedTokenMetrics() {
     LOG.info("Start Computing circulating supply");
     long start = System.currentTimeMillis();
     try {

@@ -25,16 +25,24 @@
     :timeout="timeout"
     color="transparent"
     elevation="0"
-    app
-    @click="cancelEvent">
+    app>
     <v-alert
       :type="alertType"
       :max-width="maxWidth"
+      :dark="dark"
+      :light="!dark"
+      :class="whiteThemeColor"
       border="left"
       elevation="2"
+      outlined
       dismissible
       colored-border>
-      <span class="text--lighten-1">
+      <span
+        v-if="useHtml"
+        class="text--lighten-1"
+        v-html="alertMessage">
+      </span>
+      <span v-else class="text--lighten-1">
         {{ alertMessage }}
       </span>
       <v-btn
@@ -52,12 +60,11 @@
       </v-btn>
       <v-btn
         slot="close"
-        slot-scope="{toggle}"
         name="closeAlertButton"
+        class="ms-4"
         icon
         small
-        light
-        @click="cancelEvent($event);toggle($event);">
+        @click="closeAlert">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </v-alert>
@@ -69,47 +76,95 @@ export default {
     snackbar: false,
     timeout: 10000,
     alertMessage: null,
+    useHtml: false,
     alertType: null,
     alertLink: null,
     alertLinkCallback: null,
     alertLinkIcon: null,
     alertLinkTooltip: null,
+    timeoutInstance: null,
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     etherscanBaseLink: state => state.etherscanBaseLink,
+    dark: state => state.dark,
+    whiteThemeColor: state => state.whiteThemeColor,
     maxWidth() {
       return this.isMobile && '100vw' || '50vw';
     },
   }),
   created() {
-    this.$root.$on('transaction-sent', transactionHash => {
-      this.snackbar = false;
-      this.$nextTick().then(() => {
-        this.alertLink = `${this.etherscanBaseLink}/tx/${transactionHash}`;
-        this.alertLinkIcon = 'mdi-open-in-new';
-        this.alertType = 'success';
-        this.alertMessage = this.$t('transactionSent');
-        this.alertLinkTooltip = this.$t('viewOnEtherscan');
-        window.setTimeout(() => this.snackbar = true, 500);
-      });
-    });
     this.$root.$on('alert-message', (message, type, linkCallback, linkIcon, linkTooltip) => {
-      this.snackbar = false;
-      this.$nextTick().then(() => {
-        this.alertType = type;
-        this.alertMessage = message;
-        this.alertLink = null;
-        this.alertLinkCallback = linkCallback;
-        this.alertLinkIcon = linkIcon;
-        this.alertLinkTooltip = linkTooltip;
-        window.setTimeout(() => this.snackbar = true, 500);
+      this.openAlert({
+        alertType: type,
+        alertMessage: message,
+        alertLinkCallback: linkCallback,
+        alertLinkIcon: linkIcon,
+        alertLinkTooltip: linkTooltip,
       });
     });
-    this.$root.$on('close-alert-message', () => this.snackbar = false);
-    window.setTimeout(() => this.snackbar = false, this.timeout);
+    this.$root.$on('alert-message-html', (message, type, linkCallback, linkIcon, linkTooltip) => {
+      this.openAlert({
+        useHtml: true,
+        alertType: type,
+        alertMessage: message,
+        alertLinkCallback: linkCallback,
+        alertLinkIcon: linkIcon,
+        alertLinkTooltip: linkTooltip,
+      });
+    });
+    document.addEventListener('transaction-sent', this.handleTransactionSent);
+    document.addEventListener('transaction-sending-error', this.handleTransactionEstimationError);
+    this.$root.$on('close-alert-message', this.closeAlert);
   },
   methods: {
+    handleTransactionSent(event) {
+      const transactionHash = event?.detail;
+      if (transactionHash) {
+        this.openAlert({
+          alertLink: `${this.etherscanBaseLink}/tx/${transactionHash}`,
+          alertLinkIcon: 'mdi-open-in-new',
+          alertType: 'success',
+          alertMessage: this.$t('transactionSent'),
+          alertLinkTooltip: this.$t('viewOnEtherscan'),
+        });
+      }
+    },
+    handleTransactionEstimationError(event) {
+      if (event?.detail?.length) {
+        const message = event?.detail;
+        try {
+          let blockchainMessage = message.substring(message.indexOf(':', message.indexOf('execution reverted')) + 2, message.indexOf('"', message.indexOf('execution reverted')));
+          if (blockchainMessage.includes('#')) {
+            const blockchainMessages = blockchainMessage.split('#');
+            blockchainMessage = this.$t(`BlockchainError.${blockchainMessages[1]}`);
+          }
+          this.$root.$emit('alert-message-html', this.$t('transactionSendingCanceledDueToError', {0: `<span class="error--text">${blockchainMessage}</span>`}), 'error');
+        } catch (e) {
+          console.debug(e);// eslint-disable-line no-console
+          this.$root.$emit('alert-message-html', this.$t('transactionSendingCanceledDueToError', {0: `<span class="error--text">${message}</span>`}), 'error');
+        }
+      }
+    },
+    openAlert(params) {
+      this.closeAlert();
+      this.$nextTick().then(() => {
+        this.useHtml = params.useHtml || false;
+        this.alertLink = params.alertLink || null;
+        this.alertMessage = params.alertMessage || null;
+        this.alertLinkIcon = params.alertLinkIcon || null;
+        this.alertType = params.alertType || 'info';
+        this.alertLinkTooltip = params.alertLinkTooltip || null;
+        this.alertLinkCallback = params.alertLinkCallback || null;
+        this.timeoutInstance = window.setTimeout(() => this.snackbar = true, 500);
+      });
+    },
+    closeAlert() {
+      if (this.timeoutInstance) {
+        window.clearTimeout(this.timeoutInstance);
+      }
+      this.snackbar = false;
+    },
     linkCallback() {
       if (this.alertLinkCallback) {
         this.alertLinkCallback();

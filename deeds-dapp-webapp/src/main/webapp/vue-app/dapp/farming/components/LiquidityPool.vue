@@ -449,6 +449,7 @@ export default {
     claimReward() {
       this.sendingClaim = true;
       const options = {
+        from: this.address,
         gasLimit: this.harvestGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -456,16 +457,18 @@ export default {
         this.tokenFactoryContract,
         'harvest',
         options,
-        [this.lpAddress]
+        [this.lpAddress],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.stakeAmount = 0;
-        this.sendingStake = false;
-        this.$root.$emit('close-drawer');
-        this.step = 1;
-      })
-        .finally(() => this.sendingClaim = false);
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.stakeAmount = 0;
+          this.sendingStake = false;
+          this.$root.$emit('close-drawer');
+          this.step = 1;
+        }
+        this.sendingClaim = false;
+      }).catch(() => this.sendingClaim = false);
     },
   },
 };

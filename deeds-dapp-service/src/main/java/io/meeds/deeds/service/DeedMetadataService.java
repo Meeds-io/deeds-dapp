@@ -33,7 +33,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.model.DeedMetadata;
+import io.meeds.deeds.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.storage.DeedMetadataRepository;
 
 @Component
@@ -91,9 +91,10 @@ public class DeedMetadataService {
   }
 
   /**
-   * @param nftId DEED NFT identifier
-   * @return DEED NFT metadatas of type {@link DeedMetadata}. If the Metadata entry doesn't exist in storage,
-   *           it will build a new one base on City and Card Type of the NFT.
+   * @param  nftId DEED NFT identifier
+   * @return       DEED NFT metadatas of type {@link DeedMetadata}. If the
+   *               Metadata entry doesn't exist in storage, it will build a new
+   *               one base on City and Card Type of the NFT.
    */
   @Cacheable(cacheNames = "deedMetadata")
   public DeedMetadata getDeedMetadata(Long nftId) {
@@ -101,9 +102,9 @@ public class DeedMetadataService {
   }
 
   /**
-   * @param cityIndex City index of selected Card
-   * @param cardTypeIndex Card Type index of selected Card
-   * @return DEED NFT metadatas from metadata pattern.
+   * @param  cityIndex     City index of selected Card
+   * @param  cardTypeIndex Card Type index of selected Card
+   * @return               DEED NFT metadatas from metadata pattern.
    */
   public DeedMetadata getDeedMetadataOfCard(int cityIndex, int cardTypeIndex) {
     if (cityIndex >= DeedCity.values().length || cardTypeIndex >= DeedCard.values().length) {
@@ -118,7 +119,7 @@ public class DeedMetadataService {
 
   /**
    * @return {@link DeedMetadata} representing the contract Metadata used by
-   *           OpenSea
+   *         OpenSea
    */
   public DeedMetadata getContractMetadata() {
     return contractMetadata.clone();

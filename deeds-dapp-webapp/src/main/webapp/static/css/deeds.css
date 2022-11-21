@@ -20,6 +20,10 @@ html {
   overflow: auto;
 }
 
+body, .theme--dark.v-application {
+  background: #1e1e1e;
+}
+
 #banner {
   border-bottom: 1px #eee solid !important;
 }
@@ -78,10 +82,6 @@ html {
 
 .v-btn {
   text-transform: capitalize;
-}
-
-.link--color {
-  color: #0000ee !important;
 }
 
 .text--color {
@@ -227,6 +227,10 @@ html {
 .position-relative {
   position: relative;
 }
+.position-relative-1 {
+  position: relative;
+  z-index: 1;
+}
 .position-absolute {
   position: absolute;
 }
@@ -279,10 +283,27 @@ html {
   text-transform: capitalize !important;
 }
 
+.v-application .dark-color {
+  background-color: #303030 !important;
+  border-color: #303030 !important;
+}
+
+.v-application .dark-color--text {
+  color: #303030 !important;
+}
+
 .v-application.theme--dark .text--color {
   color: #fff !important;
 }
 
 .v-application.theme--light .text--color {
   color: #000000de !important;
+}
+
+.v-application.theme--light .link--color {
+  color: #0000ee !important;
+}
+
+.v-application.theme--dark .link--color {
+  color: #4e9fff !important;
 }

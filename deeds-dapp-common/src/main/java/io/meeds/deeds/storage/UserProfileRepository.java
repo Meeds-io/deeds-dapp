@@ -17,7 +17,7 @@ package io.meeds.deeds.storage;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.UserProfile;
+import io.meeds.deeds.elasticsearch.model.UserProfile;
 
 public interface UserProfileRepository extends ElasticsearchRepository<UserProfile, String> {
 

@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.service.MeedAssetsMetricsService;
 
+@Component
 public class MeedAssetsMetricTask {
 
   private static final Logger      LOG = LoggerFactory.getLogger(MeedAssetsMetricTask.class);
@@ -30,7 +32,7 @@ public class MeedAssetsMetricTask {
   private MeedAssetsMetricsService meedAssetsMetricsService;
 
   @Scheduled(cron = "0 0/15 * * * *")
-  public synchronized void computeMeedAssetsMetrics() {
+  public void computeMeedAssetsMetrics() {
     LOG.info("Start Computing Meed Assets Metrics for Investors app offline access");
     long start = System.currentTimeMillis();
     try {

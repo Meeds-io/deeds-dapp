@@ -23,14 +23,13 @@
     ref="drawer"
     v-model="drawer"
     :permanent="sending"
-    :second-level="secondLevel"
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
       <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardType, 1: nftId}) }}</h4>
       <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
     </template>
-    <template v-if="offer && authenticated" #content>
+    <template v-if="authenticated" #content>
       <v-card-text v-if="isNew">
         {{ $t('deedRentingDescription1') }}
         <ul>
@@ -43,7 +42,7 @@
       <v-card-text v-else>
         {{ $t('deedRentingEditDescription1') }}
         <div class="pt-4">{{ $t('deedRentingEditDescription2') }}</div>
-        <deeds-renting-offer-card :offer="offer" />
+        <deeds-renting-offer-card v-if="drawer" :offer="offer" />
       </v-card-text>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
         <v-list-item
@@ -105,10 +104,10 @@
           </v-card>
         </v-expand-transition>
         <v-list-item
-          class="d-flex align-center flex-grow-0 max-height-40px pa-0"
+          class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="step = 1">
-          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
+          @click="goToStep2">
+          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedOfferDescriptionStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
@@ -120,6 +119,7 @@
             <div class="px-0 pt-4">
               {{ $t('deedOfferDescriptionStepDescription') }}
               <deeds-extended-textarea
+                v-if="drawer"
                 v-model="offer.description"
                 :placeholder="$t('deedRentingDescriptionPlaceholder')"
                 :max-length="DESCRIPTION_MAX_LENGTH"
@@ -128,10 +128,10 @@
           </v-card>
         </v-expand-transition>
         <v-list-item
-          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="goToStep2">
-          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
+          @click="goToStep3">
+          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedRentingConditionsStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
@@ -141,9 +141,9 @@
             class="flex-grow-1 mb-8"
             flat>
             <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}:</div>
-            <deeds-renting-duration v-model="offer.duration" />
+            <deeds-renting-duration v-if="drawer" v-model="offer.duration" />
             <div class="mb-2 mt-6">{{ $t('deedRentingExpirationDurationTitle') }}:</div>
-            <deeds-renting-expiration-duration v-model="offer.expirationDuration" />
+            <deeds-renting-expiration-duration v-if="drawer" v-model="offer.expirationDuration" />
             <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}:</div>
             <div class="d-flex">
               <v-text-field
@@ -198,25 +198,20 @@
                   dense />
               </div>
             </div>
-            <div class="mt-6">{{ $t('deedRentingSecurityDepositPeriodTitle') }}:</div>
-            <div class="mb-2 caption text--disabled">{{ $t('deedRentingSecurityDepositPeriodSubtitle') }}:</div>
-            <deeds-security-deposit-period
-              v-model="offer.securityDepositPeriod"
-              :max-value="offer.duration"
-              max-value-exclusive />
             <div class="mt-6">{{ $t('deedRentingNoticePeriodTitle') }}:</div>
             <div class="mb-2 caption text--disabled">{{ $t('deedRentingNoticePeriodSubtitle') }}:</div>
             <deeds-notice-period
+              v-if="drawer"
               v-model="offer.noticePeriod"
-              :max-value="offer.duration"
+              :max-value="maxNoticePeriod"
               max-value-exclusive />
           </v-card>
         </v-expand-transition>
         <v-list-item
-          class="d-flex align-center mt-4 flex-grow-0 max-height-40px pa-0"
+          class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="goToStep3">
-          <v-chip :color="step === 4 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
+          @click="goToStep4">
+          <v-chip :color="step === 4 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">4</span></v-chip>
           <span class="subtitle-1 ms-4">
             {{ isNew && $t('deedRentingStepTitleCreation') || $t('deedRentingStepTitleUpdate') }}
           </span>
@@ -256,15 +251,6 @@
             <div class="caption font-italic mb-4">
               {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
             </div>
-            <template v-if="hasSecurityDepositPeriod">
-              <div class="d-flex mt-2">
-                <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
-                {{ securityDepositPeriodLabel }}
-              </div>
-              <div class="caption font-italic mb-4">
-                {{ $t('deedRentingSecurityDepositPeriodSummarySubtitle') }}
-              </div>
-            </template>
             <template v-if="hasNoticePeriod">
               <div class="d-flex mt-2">
                 <div class="flex-grow-1">{{ $t('deedRentingNoticePeriodTitle') }}</div>
@@ -274,46 +260,45 @@
                 {{ $t('deedRentingNoticePeriodSummarySubtitle') }}
               </div>
             </template>
-            <template v-if="drawer">
-              <template v-if="isNew">
-                <div class="font-weight-bold d-flex mt-6">
-                  {{ $t('deedEmailConfirmTitle') }}
-                </div>
-                <div class="caption font-italic my-2">
-                  {{ $t('deedEmailConfirmSubTitle') }}
-                </div>
-                <deeds-email-field
-                  ref="email"
-                  v-model="email"
-                  :placeholder="$t('deedEmailContactPlaceholder')"
-                  :readonly="sending"
-                  :disabled="disabledEmail"
-                  @valid-email="validEmail = $event"
-                  @email-confirmation-success="emailCode = $event"
-                  @email-confirmation-error="emailCodeError = true"
-                  @loading="sending = $event"
-                  @submit="confirmOffer" />
-              </template>
-              <div v-else-if="expirationDuration" class="d-flex align-center">
-                <div class="flex-grow-1">
-                  <v-switch
-                    v-model="offer.updateExpirationDate"
-                    :disabled="forceUpdateExpiration"
-                    class="ma-0 pa-0"
-                    hide-details
-                    dense>
-                    <template #label>
-                      <span class="text--color subtitle-2 font-weight-normal">
-                        {{ expirationDateChoiceLabel }}
-                      </span>
-                    </template>
-                  </v-switch>
-                </div>
-                <div class="flex-grow-0 pt-2px">
-                  <deeds-date-format :value="expirationDate" />
-                </div>
+            <template v-if="isNew">
+              <div class="font-weight-bold d-flex mt-6">
+                {{ $t('deedEmailConfirmTitle') }}
               </div>
+              <div class="caption font-italic my-2">
+                {{ $t('deedEmailConfirmSubTitle') }}
+              </div>
+              <deeds-email-field
+                ref="email"
+                v-model="email"
+                :placeholder="$t('deedEmailContactPlaceholder')"
+                :readonly="sending"
+                :disabled="disabledEmail"
+                :code="emailCode"
+                @valid-email="validEmail = $event"
+                @email-confirmation-success="emailCode = $event"
+                @email-confirmation-error="emailCodeError = true"
+                @loading="sending = $event"
+                @submit="confirmOffer" />
             </template>
+            <div v-if="!isNew && offer.startDate && expirationDuration" class="d-flex align-center">
+              <div class="flex-grow-1">
+                <v-switch
+                  v-model="updateExpirationDate"
+                  :disabled="forceUpdateExpiration"
+                  class="ma-0 pa-0"
+                  hide-details
+                  dense>
+                  <template #label>
+                    <span class="text--color subtitle-2 font-weight-normal">
+                      {{ expirationDateChoiceLabel }}
+                    </span>
+                  </template>
+                </v-switch>
+              </div>
+              <div class="flex-grow-0 pt-2px">
+                <deeds-date-format :value="expirationDate" />
+              </div>
+            </div>
           </v-card>
         </v-expand-transition>
       </v-card-text>
@@ -334,11 +319,11 @@
         text
         class="me-2 ms-auto"
         name="cancelRent"
-        @click="cancel">
+        @click="closeAndReset">
         {{ $t('cancel') }}
       </v-btn>
       <v-btn
-        v-else
+        v-else-if="canDelete"
         :loading="deleting"
         :min-width="MIN_BUTTONS_WIDTH"
         outlined
@@ -372,19 +357,14 @@
 </template>
 <script>
 export default {
-  props: {
-    secondLevel: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data: () => ({
     drawer: false,
     sending: false,
     deleting: false,
     isNew: false,
     step: 0,
-    offer: null,
+    offer: {},
+    originalOffer: null,
     offerChanged: false,
     email: null,
     emailCode: null,
@@ -400,16 +380,31 @@ export default {
       amount: 10,
       paymentPeriodicity: 'ONE_MONTH',
       noticePeriod: 'ONE_MONTH',
-      securityDepositPeriod: 'ONE_MONTH',
       ownerMintingPercentage: 50,
-      updateExpirationDate: false,
     },
+    updateExpirationDate: false,
     DESCRIPTION_MAX_LENGTH: 200,
     MIN_BUTTONS_WIDTH: 120,
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
     whiteThemeColor: state => state.whiteThemeColor,
+    provider: state => state.provider,
+    address: state => state.address,
+    tenantRentingContract: state => state.tenantRentingContract,
+    maxGasLimit: state => state.maxGasLimit,
+    DAY_IN_SECONDS: state => state.DAY_IN_SECONDS,
+    ZERO_X_ADDRESS: state => state.ZERO_X_ADDRESS,
+    ZERO_BN: state => state.ZERO_BN,
+    offerBlockchainStateChanged() {
+      if (this.originalOffer) {
+        const originalOfferBlockchainState = this.getBlockchainOfferStructure(this.originalOffer, false);
+        const offerBlockchainState = this.getBlockchainOfferStructure(this.offer, this.updateExpirationDate);
+        return JSON.stringify(originalOfferBlockchainState) !== JSON.stringify(offerBlockchainState);
+      } else {
+        return true;
+      }
+    },
     nftId() {
       return this.offer?.nftId;
     },
@@ -429,12 +424,16 @@ export default {
       }];
     },
     intermediateStep() {
-      return this.step < 3;
+      return this.step < 4;
     },
     buttonLabel() {
       return (this.intermediateStep && this.$t('next'))
         || (this.confirmEmailStep && (this.emailCodeSent && this.$t('resend') || this.$t('send')))
-        || (this.isNew && this.$t('deedRentingCreateButton') || this.$t('deedRentingUpdateButton'));
+        || (this.isNew
+            && this.$t('deedRentingCreateButton')
+            || (this.offerBlockchainStateChanged
+                && this.$t('deedRentingUpdateButton')
+                || this.$t('deedRentingUpdateNoBlockchainButton')));
     },
     step1ButtonDisabled() {
       return this.visibility !== 'ALL' && (!this.offer?.hostAddress?.length || !ethers.utils.isAddress(this.offer.hostAddress));
@@ -446,13 +445,13 @@ export default {
       return this.step1ButtonDisabled
         || !this.offer?.duration
         || !this.offer?.amount
-        || !this.offer?.noticePeriod
-        || !this.offer?.securityDepositPeriod;
+        || !this.offer?.paymentPeriodicity
+        || !this.offer?.noticePeriod;
     },
     step4ButtonDisabled() {
       return this.step1ButtonDisabled
         || this.step2ButtonDisabled
-        || (!this.isNew && !this.offerChanged)
+        || (!this.isNew && !this.offerChanged && !this.offerBlockchainStateChanged)
         || (this.isNew && !this.validEmail);
     },
     confirmEmailStep() {
@@ -496,19 +495,8 @@ export default {
       }
       return null;
     },
-    hasSecurityDepositPeriod() {
-      return this.offer?.securityDepositPeriod && this.offer?.securityDepositPeriod !== 'NO_PERIOD';
-    },
-    securityDepositPeriodLabel() {
-      if (!this.offer?.securityDepositPeriod) {
-        return null;
-      }
-      switch (this.offer?.securityDepositPeriod) {
-      case 'ONE_MONTH': return this.$t('deedRentingDurationOneMonth');
-      case 'TWO_MONTHS': return this.$t('deedRentingDurationTwoMonths');
-      case 'THREE_MONTHS': return this.$t('deedRentingDurationThreeMonths');
-      }
-      return null;
+    canDelete() {
+      return this.offer?.offerId;
     },
     hasNoticePeriod() {
       return this.offer?.noticePeriod && this.offer?.noticePeriod !== 'NO_PERIOD';
@@ -530,31 +518,35 @@ export default {
     rewardTenantMintingPercentage() {
       return 100 - this.rentalOwnerMintingPercentage;
     },
-    isUpdateExpirationDate() {
-      return this.offer.updateExpirationDate;
-    },
     expirationDateChoiceLabel() {
-      return this.isUpdateExpirationDate
+      return this.updateExpirationDate
         && this.$t('deedUpdateExpirationDate')
         || this.$t('deedKeepExpirationDate');
     },
     expirationDuration() {
       return this.offer.expirationDuration;
     },
+    maxNoticePeriod() {
+      switch (this.offer?.paymentPeriodicity){
+      case 'ONE_MONTH': return this.offer.duration;
+      case 'ONE_YEAR': return 'NO_PERIOD';
+      }
+      return 'NO_PERIOD';
+    },
     expirationDurationInMillis() {
       if (!this.expirationDuration) {
         return 0;
       }
       switch (this.expirationDuration) {
-      case 'ONE_DAY': return 24 * 60 * 60 * 1000;
-      case 'THREE_DAYS': return 3 * 24 * 60 * 60 * 1000;
-      case 'ONE_WEEK': return 7 * 24 * 60 * 60 * 1000;
-      case 'ONE_MONTH': return 30 * 24 * 60 * 60 * 1000;
+      case 'ONE_DAY': return this.DAY_IN_SECONDS * 1000;
+      case 'THREE_DAYS': return 3 * this.DAY_IN_SECONDS * 1000;
+      case 'ONE_WEEK': return 7 * this.DAY_IN_SECONDS * 1000;
+      case 'ONE_MONTH': return 30 * this.DAY_IN_SECONDS * 1000;
       }
       return 0;
     },
     expirationDate() {
-      return this.isUpdateExpirationDate && (Date.now() + this.expirationDurationInMillis) || (new Date(this.offer.createdDate).getTime() + this.expirationDurationInMillis);
+      return this.offer?.startDate && this.updateExpirationDate && (Date.now() + this.expirationDurationInMillis) || (new Date(this.offer.startDate).getTime() + this.expirationDurationInMillis);
     },
   }),
   watch: {
@@ -594,57 +586,54 @@ export default {
   },
   methods: {
     open(nftId, offer) {
-      if (!this.offer || (offer?.id && this.offer?.id !== offer?.id)) {
-        this.step = 1;
-      }
-      if (offer) {
-        this.offer = Object.assign({}, this.DEFAULT_OFFER, offer);
-        if (this.offer.expirationDuration) {
-          this.forceUpdateExpiration = false;
-          this.offer.updateExpirationDate = false;
-        } else {
-          this.forceUpdateExpiration = true;
-          this.offer.updateExpirationDate = true;
-        }
-        this.visibility = this.offer.hostAddress ? 'ADDRESS' : 'ALL';
+      let sameOffer = nftId && offer?.id === this.offer?.id && nftId === this.offer?.nftId;
+      if (sameOffer && this.offer && offer) {
+        const previousOffer = this.getBlockchainOfferStructure(this.offer);
+        const newOffer = this.getBlockchainOfferStructure(offer);
+        sameOffer = JSON.stringify(previousOffer) !== JSON.stringify(newOffer);
       } else {
-        this.offer = Object.assign({
-          nftId,
-        }, this.DEFAULT_OFFER);
-        this.visibility = 'ALL';
+        sameOffer = false;
       }
-      this.isNew = !offer;
-      this.emailCode = null;
-      this.emailCodeSent = false;
-      this.$refs.drawer?.open();
-      this.$nextTick().then(() => this.offerChanged = false);
+
+      if (sameOffer) {
+        this.$refs.drawer?.open();
+      } else {
+        this.step = 1;
+        if (offer) {
+          this.offer = Object.assign({}, this.DEFAULT_OFFER, offer);
+          this.originalOffer = Object.assign({}, this.DEFAULT_OFFER, offer);
+          if (this.offer.expirationDuration) {
+            this.forceUpdateExpiration = false;
+            this.updateExpirationDate = false;
+          } else {
+            this.forceUpdateExpiration = true;
+            this.updateExpirationDate = true;
+          }
+          this.visibility = this.offer.hostAddress ? 'ADDRESS' : 'ALL';
+        } else {
+          this.offer = Object.assign({
+            nftId,
+          }, this.DEFAULT_OFFER);
+          this.originalOffer = null;
+          this.visibility = 'ALL';
+        }
+        this.isNew = !offer;
+        this.emailCode = null;
+        this.emailCodeSent = false;
+        this.$refs.drawer?.open();
+        this.$nextTick().then(() => {
+          this.offerChanged = false;
+        });
+      }
     },
-    cancel() {
+    closeAndReset() {
       this.close(this.nftId);
-      this.$nextTick().then(() => this.offer = null);
+      this.$nextTick().then(() => this.offer = {});
     },
     close(nftId) {
       if (nftId === this.nftId) {
         this.$refs.drawer.close();
       }
-    },
-    deleteOffer(confirmed) {
-      if (!confirmed) {
-        this.$refs.confirmDialog.open();
-        return;
-      }
-      this.deleting = true;
-      return this.$deedTenantOfferService.deleteOffer(this.offer.id)
-        .then(() => {
-          this.$root.$emit('deed-offer-renting-deleted', this.offer);
-          this.deleting = false;
-          this.$root.$emit('alert-message', this.$t('deedRentingOfferDeleted'), 'success');
-          this.$nextTick().then(() => this.cancel());
-        })
-        .catch(() => {
-          this.deleting = false;
-          this.$root.$emit('alert-message', this.$t('deedRentingOfferDeletionError'), 'error');
-        });
     },
     goToStep2() {
       if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
@@ -690,33 +679,165 @@ export default {
         this.goToStep4();
       } else if (this.confirmEmailStep) {
         this.sendEmailConfirmation();
+      } else if (this.isNew) {
+        this.createOffer();
       } else {
-        this.sending = true;
-        const savePromise = this.isNew && this.$deedTenantOfferService.createOffer(this.offer, this.emailCode)
-          || this.$deedTenantOfferService.updateOffer(this.offer.id, this.offer);
-        return savePromise
-          .then(offer => {
-            this.$root.$emit(this.isNew && 'deed-offer-renting-created' || 'deed-offer-renting-updated', offer);
-            const message = this.$t(this.isNew && 'deedRentingOfferCreated' || 'deedRentingOfferUpdated');
-            this.$root.$emit('alert-message',
-              message,
-              'success', 
-              () => this.openOfferInMarketplace(offer.id),
-              'fas fa-magnifying-glass primary--text mx-4 ps-1',
-              this.$t('deedRentingOpenOfferInMarketplace'));
-            this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
-            return this.$nextTick();
-          })
-          .then(() => this.cancel())
-          .catch(() => {
-            this.sending = false;
-            this.$root.$emit('alert-message', this.$t(this.isNew && 'deedRentingOfferCreationError' || 'deedRentingOfferUpdateError'), 'error');
-          });
+        this.updateOffer();
       }
     },
-    openOfferInMarketplace(offerId) {
-      this.$store.commit('setOfferId', offerId);
-      this.$root.$emit('switch-page', 'marketplace');
+    saveOfferTransaction(isCreate) {
+      if (!isCreate && !this.offerBlockchainStateChanged) {
+        return Promise.resolve(null);
+      }
+      const deedOfferParam = this.getBlockchainOfferStructure(this.offer, this.updateExpirationDate);
+      const options = {
+        from: this.address,
+        gasLimit: this.maxGasLimit
+      };
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.tenantRentingContract,
+        isCreate && 'createOffer' || 'updateOffer',
+        options,
+        deedOfferParam
+      ).then(receipt => receipt?.hash);
+    },
+    createOffer() {
+      this.sending = true;
+      return this.saveOfferTransaction(true)
+        .then(transactionHash => {
+          if (transactionHash) {
+            this.offer.offerTransactionHash = transactionHash;
+            return this.$deedTenantOfferService.createOffer(this.offer, this.emailCode)
+              .then(offer => {
+                this.$root.$emit('deed-offer-renting-created', offer);
+                this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
+                return this.$nextTick();
+              })
+              .then(() => this.closeAndReset())
+              .catch(e => {
+                console.debug('Error creating offer', e); // eslint-disable-line no-console
+                this.sending = false;
+                this.$root.$emit('alert-message', this.$t('deedRentingOfferCreationError'), 'error');
+              });
+          } else {
+            this.sending = false;
+          }
+        }).catch(() => this.sending = false);
+    },
+    updateOffer() {
+      this.sending = true;
+      return this.saveOfferTransaction(false)
+        .then(transactionHash => {
+          if (transactionHash || !this.offerBlockchainStateChanged) {
+            this.offer.offerTransactionHash = transactionHash;
+            return this.$deedTenantOfferService.updateOffer(this.offer.id, this.offer)
+              .then(offer => {
+                this.$root.$emit('deed-offer-renting-updated', offer);
+                this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
+                return this.$nextTick();
+              })
+              .then(() => this.closeAndReset())
+              .catch(e => {
+                console.debug('Error updating offer', e); // eslint-disable-line no-console
+                this.sending = false;
+                this.$root.$emit('alert-message', this.$t('deedRentingOfferUpdateError'), 'error');
+              });
+          } else {
+            this.sending = false;
+          }
+        }).catch(() => this.sending = false);
+    },
+    deleteOffer(confirmed) {
+      if (!confirmed) {
+        this.$refs.confirmDialog.open();
+        return;
+      }
+      this.deleting = true;
+      const options = {
+        from: this.address,
+        gasLimit: this.maxGasLimit
+      };
+      return this.$ethUtils.sendTransaction(
+        this.provider,
+        this.tenantRentingContract,
+        'deleteOffer',
+        options,
+        [this.offer.offerId]
+      )
+        .then(receipt => {
+          const transactionHash = receipt?.hash;
+          if (transactionHash) {
+            return this.$deedTenantOfferService.deleteOffer(this.offer.id, transactionHash)
+              .then(() => {
+                this.$root.$emit('deed-offer-renting-deleted', this.offer);
+                this.$nextTick().then(() => this.closeAndReset());
+              })
+              .catch(() => this.$root.$emit('alert-message', this.$t('deedRentingOfferDeletionError'), 'error'))
+              .finally(() => this.deleting = false);
+          } else {
+            this.deleting = false;
+          }
+        })
+        .catch(e => {
+          console.debug('Error deleting offer', e); // eslint-disable-line no-console
+          this.deleting = false;
+        });
+    },
+    getBlockchainOfferStructure(offer, updateExpirationDate) {
+      if (!offer) {
+        return [];
+      }
+      const offerStartDate = (updateExpirationDate || !offer.startDate || !offer.expirationDuration) ? this.ZERO_BN : ethers.BigNumber.from(parseInt(new Date(offer.startDate).getTime() / 1000));
+      return [[
+        offer.offerId || 0, // id
+        offer.nftId, // NFT id
+        this.ZERO_X_ADDRESS, // creator - AUTOMATICALLY SET
+        this.getRentalDurationMonthsCount(offer), // months
+        this.getNoticePeriodMonthsCount(offer), // noticePeriod
+        offer.amount && this.$ethUtils.toDecimals(offer.amount, 18), // price
+        0, // overAllPrice
+        offerStartDate, // offerStartDate
+        0, // offerExpirationDate - AUTOMATICALLY SET
+        this.getExpirationDurationInDays(offer), // offerExpirationDays
+        offer.hostAddress || this.ZERO_X_ADDRESS, // authorizedTenant
+        offer.ownerMintingPercentage && parseInt(offer.ownerMintingPercentage) // ownerMintingPercentage
+      ]];
+    },
+    getExpirationDurationInDays(offer) {
+      if (!offer.expirationDuration) {
+        return 0;
+      }
+      switch (offer.expirationDuration) {
+      case 'ONE_DAY': return 1;
+      case 'THREE_DAYS': return 3;
+      case 'ONE_WEEK': return 7;
+      case 'ONE_MONTH': return 30;
+      }
+      return 0;
+    },
+    getNoticePeriodMonthsCount(offer) {
+      if (!offer.noticePeriod) {
+        return 0;
+      }
+      switch (offer.noticePeriod) {
+      case 'ONE_MONTH': return 1;
+      case 'TWO_MONTHS': return 2;
+      case 'THREE_MONTHS': return 3;
+      }
+      return 0;
+    },
+    getRentalDurationMonthsCount(offer) {
+      if (!offer.duration) {
+        return 0;
+      }
+      switch (offer.duration) {
+      case 'ONE_MONTH': return 1;
+      case 'THREE_MONTHS': return 3;
+      case 'SIX_MONTHS': return 6;
+      case 'ONE_YEAR': return 12;
+      }
+      return 0;
     },
   },
 };

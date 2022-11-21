@@ -20,7 +20,9 @@
   <deeds-drawer
     ref="drawer"
     v-model="drawer"
-    :permanent="sending">
+    :permanent="sending"
+    @opened="$emit('opened')"
+    @closed="$emit('closed')">
     <template #title>
       <h4 class="text-capitalize">{{ $t('deedGetOfferRentingTitle', {0: cardType, 1: nftId}) }}</h4>
     </template>
@@ -71,13 +73,13 @@
             <div class="caption font-italic mb-4">
               {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
             </div>
-            <template v-if="hasSecurityDepositPeriod">
+            <template v-if="hasNoticePeriod">
               <div class="d-flex mt-2">
-                <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
-                {{ securityDepositPeriodLabel }}
+                <div class="flex-grow-1">{{ $t('deedRentingNoticePeriodTitle') }}</div>
+                {{ noticePeriodLabel }}
               </div>
               <div class="caption font-italic mb-4">
-                {{ $t('deedRentingSecurityDepositPeriodSummarySubtitle') }}
+                {{ $t('deedRentingNoticePeriodSummarySubtitle') }}
               </div>
             </template>
             <div class="d-flex mt-2">
@@ -143,11 +145,11 @@
               :placeholder="$t('deedEmailContactPlaceholder')"
               :readonly="sending"
               :disabled="disabledEmail"
+              :code="emailCode"
               @valid-email="validEmail = $event"
               @email-confirmation-success="emailCode = $event"
               @email-confirmation-error="emailCodeError = true"
-              @loading="sending = $event"
-              @submit="confirmOffer" />
+              @loading="sending = $event" />
           </v-card>
         </v-expand-transition>
         <v-list-item
@@ -185,15 +187,30 @@
                 </deeds-number-format>
               </div>
             </div>
-            <div v-if="hasSecurityDepositPeriod" class="d-flex mb-2">
-              <div class="flex-grow-1">{{ $t('deedRentingSecurityDepositPeriodTitle') }}</div>
+            <div v-if="hasNoticePeriod" class="d-flex mb-2">
+              <div class="flex-grow-1">{{ $t('deedRentingNoticePeriodTitle') }}</div>
               <div class="d-flex">
                 <deeds-number-format
-                  :value="securityDepositAmount"
+                  :value="noticePeriodAmount"
                   :fractions="2"
                   no-decimals>
                   <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
                 </deeds-number-format>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div>{{ $t('deedRentMonthsToPay') }}</div>
+              <div class="d-flex mb-2">
+                <div class="flex-grow-1">
+                  <v-slider
+                    v-model="monthsToPay"
+                    :max="rentalDurationMonths"
+                    min="1"
+                    hide-details />
+                </div>
+                <div class="d-flex text-ordinary-capitalize">
+                  {{ monthsToPayLabel }}
+                </div>
               </div>
             </div>
             <div class="d-flex mb-2">
@@ -250,6 +267,13 @@
           </li>
         </ul>
       </v-card-text>
+      <deeds-marketplace-offer-payment-drawer
+        v-if="!intermediateStep"
+        ref="paymentDrawer"
+        :offer-id="offerId"
+        :months-to-pay="monthsToPay"
+        :amount="totalAmountToPayWithDecimals"
+        @transaction-sent="confirmPayment" />
     </template>
     <template #footer>
       <template v-if="authenticated">
@@ -300,12 +324,19 @@ export default {
     offer: null,
     step: 1,
     MIN_BUTTONS_WIDTH: 120,
+    monthsToPay: 1,
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
     meedsBalance: state => state.meedsBalance,
+    tenantRentingAddress: state => state.tenantRentingAddress,
+    ZERO_BN: state => state.ZERO_BN,
+    MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
     nftId() {
       return this.offer?.nftId;
+    },
+    offerId() {
+      return this.offer?.offerId;
     },
     cardType() {
       return this.offer?.cardType;
@@ -364,40 +395,17 @@ export default {
       }
       return null;
     },
-    hasSecurityDepositPeriod() {
-      return this.offer?.securityDepositPeriod && this.offer?.securityDepositPeriod !== 'NO_PERIOD';
-    },
-    securityDepositPeriodLabel() {
-      if (!this.offer?.securityDepositPeriod) {
-        return null;
+    rentalDurationMonths() {
+      if (!this.offer?.duration) {
+        return 1;
       }
-      switch (this.offer?.securityDepositPeriod) {
-      case 'ONE_MONTH': return this.$t('deedRentingDurationOneMonth');
-      case 'TWO_MONTHS': return this.$t('deedRentingDurationTwoMonths');
-      case 'THREE_MONTHS': return this.$t('deedRentingDurationThreeMonths');
+      switch (this.offer?.duration) {
+      case 'ONE_MONTH': return 1;
+      case 'THREE_MONTHS': return 3;
+      case 'SIX_MONTHS': return 6;
+      case 'ONE_YEAR': return 12;
       }
-      return null;
-    },
-    securityDepositAmount() {
-      if (!this.offer?.securityDepositPeriod) {
-        return 0;
-      }
-      switch (this.offer?.securityDepositPeriod) {
-      case 'ONE_MONTH': return this.offer.amount;
-      case 'TWO_MONTHS': return this.offer.amount * 2;
-      case 'THREE_MONTHS': return this.offer.amount * 3;
-      }
-      return 0;
-    },
-    buyMeedProposalLabel() {
-      return this.$t('deedRentingPaymentMeedsBuyProposal', {
-        0: '<a id="buyMeeds" class="mx-1 primary--text font-weight-bold">',
-        1: this.$t('meeds'),
-        2: '</a>',
-      });
-    },
-    totalAmountToPay() {
-      return this.securityDepositAmount + this.offer.amount;
+      return 1;
     },
     hasNoticePeriod() {
       return this.offer?.noticePeriod && this.offer?.noticePeriod !== 'NO_PERIOD';
@@ -413,6 +421,45 @@ export default {
       }
       return null;
     },
+    monthsToPayLabel() {
+      if (this.monthsToPay === 1) {
+        return this.$t('deedRentingRemainingTimeOneMonth');
+      } else {
+        return this.$t('deedRentingRemainingTimeMonths', {0: this.monthsToPay});
+      }
+    },
+    totalMonthsToPay() {
+      return this.noticeMonths + this.monthsToPay;
+    },
+    noticeMonths() {
+      if (!this.offer?.noticePeriod) {
+        return 0;
+      }
+      switch (this.offer?.noticePeriod) {
+      case 'ONE_MONTH': return 1;
+      case 'TWO_MONTHS': return 2;
+      case 'THREE_MONTHS': return 3;
+      }
+      return 0;
+    },
+    noticePeriodAmount() {
+      return this.offer.amount * this.noticeMonths;
+    },
+    buyMeedProposalLabel() {
+      return this.$t('deedRentingPaymentMeedsBuyProposal', {
+        0: '<a id="buyMeeds" class="mx-1 primary--text font-weight-bold">',
+        1: this.$t('meeds'),
+        2: '</a>',
+      });
+    },
+    totalAmountToPay() {
+      return this.totalMonthsToPay * this.offer.amount;
+    },
+    totalAmountToPayWithDecimals() {
+      return this.totalAmountToPay
+        && ethers.BigNumber.from(this.totalAmountToPay).mul(ethers.BigNumber.from(10).pow(18))
+        || this.ZERO_BN;
+    },
     rentalOwnerMintingPercentage() {
       return this.offer?.ownerMintingPercentage || 0;
     },
@@ -427,10 +474,10 @@ export default {
         return 0;
       }
       switch (this.rentalDuration) {
-      case 'ONE_MONTH': return 30 * 24 * 60 * 60 * 1000;
-      case 'THREE_MONTHS': return 91.25 * 24 * 60 * 60 * 1000;
-      case 'SIX_MONTHS': return 182.5 * 24 * 60 * 60 * 1000;
-      case 'ONE_YEAR': return 365 * 24 * 60 * 60 * 1000;
+      case 'ONE_MONTH': return this.MONTH_IN_SECONDS * 1000;
+      case 'THREE_MONTHS': return 3 * this.MONTH_IN_SECONDS * 1000;
+      case 'SIX_MONTHS': return 6 * this.MONTH_IN_SECONDS * 1000;
+      case 'ONE_YEAR': return 12 * this.MONTH_IN_SECONDS * 1000;
       }
       return 0;
     },
@@ -487,16 +534,18 @@ export default {
       if (!offer) {
         return;
       }
+      if (!this.offer || offer.id !== this.offer.id) {
+        this.agreeCondition1 = false;
+        this.agreeCondition2 = false;
+        this.email = null;
+        this.emailCode = null;
+        this.emailCodeSent = false;
+        this.sent = false;
+        this.step = 1;
+        this.sending = false;
+        this.validEmail = false;
+      }
       this.offer = Object.assign({}, offer);
-      this.agreeCondition1 = false;
-      this.agreeCondition2 = false;
-      this.email = null;
-      this.emailCode = null;
-      this.emailCodeSent = false;
-      this.sent = false;
-      this.step = 1;
-      this.sending = false;
-      this.validEmail = false;
       this.$refs.drawer?.open();
     },
     close() {
@@ -523,30 +572,33 @@ export default {
         this.goToStep3();
       } else if (this.sent) {
         this.openTenants();
-      } else {
-        this.sending = true;
-        return this.$deedTenantOfferService.rentOffer(this.offer.id, this.offer)
-          .then(offer => {
-            this.$root.$emit('deed-offer-rented', offer);
-            this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
-            this.sent = true;
-            return this.$nextTick();
-          })
-          .then(() => {
-            window.setTimeout(() => {
-              const element = document.querySelector('#paymentTransactionConfirmation');
-              if (element) {
-                element.scrollIntoView({
-                  block: 'end',
-                });
-              }
-            }, 200);
-          })
-          .catch(() => {
-            this.sending = false;
-            this.$root.$emit('alert-message', this.$t('deedOfferRentingError'), 'error');
-          });
+      } else if (this.$refs.paymentDrawer) {
+        this.$refs.paymentDrawer.open();
       }
+    },
+    confirmPayment(transactionHash) {
+      this.sending = true;
+      return this.$deedTenantLeaseService.createLease(this.offer.id, transactionHash, this.emailCode)
+        .then(lease => {
+          this.$root.$emit('deed-offer-rented', lease, this.offer);
+          this.sending = false;// Make sending = false to delete permanent behavior of drawer before closing it
+          this.sent = true;
+          return this.$nextTick();
+        })
+        .then(() => {
+          window.setTimeout(() => {
+            const element = document.querySelector('#paymentTransactionConfirmation');
+            if (element) {
+              element.scrollIntoView({
+                block: 'end',
+              });
+            }
+          }, 200);
+        })
+        .catch(() => {
+          this.sending = false;
+          this.$root.$emit('alert-message', this.$t('deedOfferRentingError'), 'error');
+        });
     },
     openTenants(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {

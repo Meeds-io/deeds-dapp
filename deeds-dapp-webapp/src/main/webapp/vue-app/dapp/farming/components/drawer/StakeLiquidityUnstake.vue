@@ -141,16 +141,16 @@ export default {
         this.tokenFactoryContract,
         'withdraw',
         options,
-        [this.lpAddress, amount]
+        [this.lpAddress, amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.unstakeAmount = 0;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.unstakeAmount = 0;
+          this.$root.$emit('close-drawer');
+        }
         this.sendingUnstake = false;
-        this.$root.$emit('close-drawer');
-      }).catch(() => {
-        this.sendingUnstake = false;
-      });
+      }).catch(() => this.sendingUnstake = false);
     },
   },
 };

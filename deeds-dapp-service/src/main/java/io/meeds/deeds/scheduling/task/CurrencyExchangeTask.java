@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.service.ExchangeService;
 
+@Component
 public class CurrencyExchangeTask {
 
   private static final Logger LOG = LoggerFactory.getLogger(CurrencyExchangeTask.class);
@@ -30,7 +32,7 @@ public class CurrencyExchangeTask {
   private ExchangeService     exchangeService;
 
   @Scheduled(cron = "0 0 0/12 * * *")
-  public synchronized void computeExchangeRate() {
+  public void computeExchangeRate() {
     LOG.info("Start Computing EURO exchange rate");
     long start = System.currentTimeMillis();
     try {

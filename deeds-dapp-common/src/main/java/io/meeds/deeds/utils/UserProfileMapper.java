@@ -15,7 +15,7 @@
  */
 package io.meeds.deeds.utils;
 
-import io.meeds.deeds.model.UserProfile;
+import io.meeds.deeds.elasticsearch.model.UserProfile;
 import io.meeds.deeds.model.UserProfileDTO;
 
 public class UserProfileMapper {

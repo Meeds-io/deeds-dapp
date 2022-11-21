@@ -47,12 +47,16 @@ export function getOffers(paramsObj, networkId) {
   });
 }
 
-export function getOffer(offerId) {
+export function getOffer(offerId, refreshFromBlockchain) {
+  const headers = {
+    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+  };
+  if (refreshFromBlockchain) {
+    headers['X-REFRESH'] = 'true';
+  }
   return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
     method: 'GET',
-    headers: {
-      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
-    },
+    headers,
     credentials: 'include',
   }).then(resp => {
     if (!resp || !resp.ok) {
@@ -82,10 +86,6 @@ export function createOffer(offer, code) {
   });
 }
 
-export function rentOffer() {
-  return Promise.resolve();
-}
-
 export function updateOffer(offerId, offer) {
   return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
     method: 'PUT',
@@ -104,8 +104,8 @@ export function updateOffer(offerId, offer) {
   });
 }
 
-export function deleteOffer(offerId) {
-  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
+export function deleteOffer(offerId, transactionHash) {
+  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}?transactionHash=${transactionHash}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

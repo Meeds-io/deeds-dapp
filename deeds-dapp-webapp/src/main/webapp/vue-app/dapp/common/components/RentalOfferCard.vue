@@ -54,6 +54,22 @@
             </template>
             <span class="text-no-wrap">{{ $t('deedsOfferOwner') }}</span>
           </v-tooltip>
+          <v-tooltip
+            v-else-if="isRestricted"
+            :attach="`#${cardElementId}`"
+            bottom>
+            <template #activator="{on, bind}">
+              <v-btn
+                :color="isRestrictedToCurrent && 'success' || 'error'"
+                icon
+                x-small
+                v-on="on"
+                v-bind="bind">
+                <v-icon>{{ isRestrictedToCurrent && 'fas fa-unlock' || 'fas fa-lock' }}</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-no-wrap">{{ isRestrictedToCurrent && $t('deedsOfferIsRestrictedToCurrent') || $t('deedsOfferIsRestricted') }}</span>
+          </v-tooltip>
         </v-card-title>
         <v-card-text class="ps-0 pb-6">
           <v-list dense>
@@ -268,6 +284,12 @@ export default {
     },
     isOwner() {
       return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
+    },
+    isRestricted() {
+      return !!this.offer?.hostAddress;
+    },
+    isRestrictedToCurrent() {
+      return this.offer?.hostAddress.toLowerCase() === this.address?.toLowerCase();
     },
   }),
   created() {

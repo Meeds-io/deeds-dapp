@@ -75,6 +75,7 @@ export default {
     xMeedContract: state => state.xMeedContract,
     transactionGas: state => state.transactionGas,
     unstakeGasLimit: state => state.unstakeGasLimit,
+    address: state => state.address,
     meedsBalanceOfXMeeds: state => state.meedsBalanceOfXMeeds,
     xMeedsTotalSupply: state => state.xMeedsTotalSupply,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
@@ -151,6 +152,7 @@ export default {
       this.sendingUnstake = true;
       const amount = this.$ethUtils.toDecimals(this.unstakeAmount, 18);
       const options = {
+        from: this.address,
         gasLimit: this.unstakeGasLimit,
       };
       return this.$ethUtils.sendTransaction(
@@ -158,16 +160,16 @@ export default {
         this.xMeedContract,
         'withdraw',
         options,
-        [amount]
+        [amount],
+        true
       ).then(receipt => {
-        const transactionHash = receipt.hash;
-        this.$root.$emit('transaction-sent', transactionHash);
-        this.unstakeAmount = 0;
+        const transactionHash = receipt?.hash;
+        if (transactionHash) {
+          this.unstakeAmount = 0;
+          this.$root.$emit('close-drawer');
+        }
         this.sendingUnstake = false;
-        this.$root.$emit('close-drawer');
-      }).catch(() => {
-        this.sendingUnstake = false;
-      });
+      }).catch(() => this.sendingUnstake = false);
     },
   },
 };

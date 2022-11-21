@@ -104,7 +104,7 @@
                     </v-card-text>
                   </v-card>
                 </v-list-item-action-text>
-                <div class="d-flex flex-column flex-grow-1 mt-0 mt-sm-5 me-0 me-sm-4 px-4 px-sm-0">
+                <div class="d-flex flex-column flex-grow-1 mt-0 mt-sm-5 me-0 px-4 px-sm-0">
                   <div class="d-flex">
                     <div class="flex-grow-1">
                       <div class="error--text mb-n1">{{ offer.ownerMintingPercentage }}%</div>
@@ -123,7 +123,7 @@
                       </v-label>
                     </div>
                   </div>
-                  <div class="me-n4">
+                  <div>
                     <v-progress-linear
                       :value="offer.ownerMintingPercentage"
                       color="error"

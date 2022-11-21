@@ -31,10 +31,10 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
-import io.meeds.deeds.model.DeedMetadata;
-import io.meeds.deeds.model.DeedTenant;
-import io.meeds.deeds.model.DeedTenantEvent;
-import io.meeds.deeds.model.UserProfile;
+import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
+import io.meeds.deeds.elasticsearch.model.UserProfile;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = {

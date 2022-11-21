@@ -54,13 +54,13 @@ export default {
     parentLocation: state => state.parentLocation,
   }),
   created() {
-    this.$root.$on('deed-tenants-loaded', this.computeTenantsLength);
+    this.$root.$on('deed-leases-loaded', this.computeLeasesLength);
   },
   beforeDestroy() {
-    this.$root.$off('deed-tenants-loaded', this.computeTenantsLength);
+    this.$root.$off('deed-leases-loaded', this.computeLeasesLength);
   },
   methods: {
-    computeTenantsLength(_tenants, totalSize) {
+    computeLeasesLength(_leases, totalSize) {
       this.hasTenants = totalSize > 0;
       this.showIntroduction = !this.hasTenants;
     },

@@ -81,14 +81,15 @@ public class DeedAuthenticationProvider implements AuthenticationProvider {
   }
 
   /**
-   * @param walletAddress wallet Address (wallet public key)
-   * @param rawMessage raw signed message
-   * @param signedMessage encrypted message
-   * @return true if the message has been decrypted successfully, else false
+   * @param  walletAddress                wallet Address (wallet public key)
+   * @param  rawMessage                   raw signed message
+   * @param  signedMessage                encrypted message
+   * @return                              true if the message has been decrypted
+   *                                      successfully, else false
    * @throws UnsupportedEncodingException when UTF-8 isn't recognized as
-   *           Encoding Charset
-   * @throws SignatureException when an error occurs while decrypting signed
-   *           message
+   *                                        Encoding Charset
+   * @throws SignatureException           when an error occurs while decrypting
+   *                                        signed message
    */
   public boolean validateSignedMessage(String walletAddress,
                                        String rawMessage,

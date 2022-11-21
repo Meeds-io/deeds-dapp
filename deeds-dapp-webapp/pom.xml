@@ -83,6 +83,7 @@
           <includeEmptyDirectories>false</includeEmptyDirectories>
           <packagingExcludes>vue-app/**</packagingExcludes>
           <warSourceExcludes>**/vue-app/**</warSourceExcludes>
+          <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
         </configuration>
       </plugin>
     </plugins>

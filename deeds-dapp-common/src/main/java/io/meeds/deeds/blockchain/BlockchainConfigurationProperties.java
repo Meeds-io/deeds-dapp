@@ -35,6 +35,8 @@ public class BlockchainConfigurationProperties {
 
   private String tenantProvisioningAddress = "0x49C0cF46C0Eb6FdF05A4E8C1FE344d510422E1F0";
 
+  private String tenantRentingAddress      = null;
+
   private String deedAddress               = "0x0143b71443650aa8efa76bd82f35c22ebd558090";
 
   private String meedAddress               = "0x8503a7b00b4b52692cc6c14e5b96f142e30547b7";

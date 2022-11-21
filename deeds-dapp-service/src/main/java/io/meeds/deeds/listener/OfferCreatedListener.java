@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.DeedTenantOfferService;
+import io.meeds.deeds.service.OfferService;
 import io.meeds.deeds.service.UserProfileService;
 
 @Service
@@ -32,7 +32,7 @@ public class OfferCreatedListener implements EventListener<DeedTenantOffer> {
 
   public static final String        LISTENER_NAME    = "OfferCreatedListener";
 
-  private static final List<String> SUPPORTED_EVENTS = Collections.singletonList(DeedTenantOfferService.OFFER_CREATED_EVENT);
+  private static final List<String> SUPPORTED_EVENTS = Collections.singletonList(OfferService.OFFER_CREATED_EVENT);
 
   @Autowired
   private UserProfileService        userProfileService;

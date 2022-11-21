@@ -31,9 +31,9 @@ import org.springframework.http.ResponseEntity.BodyBuilder;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.model.DeedMetadata;
-import io.meeds.deeds.model.DeedMetadataAttribute;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.elasticsearch.model.DeedMetadataAttribute;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.web.rest.model.DeedMetadataPresentation;
 import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
 

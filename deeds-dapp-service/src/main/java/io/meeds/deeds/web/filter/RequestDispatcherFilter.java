@@ -28,7 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 
 public class RequestDispatcherFilter implements Filter {
 
-  private static final List<String> PATHS = Arrays.asList("/", "/marketplace", "/tenants", "/overview", "/stake", "/deeds", "/farm");
+  private static final List<String> PATHS = Arrays.asList("/",
+                                                          "/marketplace",
+                                                          "/tenants",
+                                                          "/overview",
+                                                          "/stake",
+                                                          "/deeds",
+                                                          "/farm");
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {

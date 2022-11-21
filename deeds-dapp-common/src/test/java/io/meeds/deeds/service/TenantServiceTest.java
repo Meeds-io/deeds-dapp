@@ -47,7 +47,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.storage.DeedTenantManagerRepository;
 
 @SpringBootTest(classes = {

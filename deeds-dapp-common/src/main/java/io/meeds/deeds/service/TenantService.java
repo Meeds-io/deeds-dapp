@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.model.DeedTenant;
+import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.storage.DeedTenantManagerRepository;
 
 @Component
@@ -141,6 +141,23 @@ public class TenantService {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
     return deedTenant;
+  }
+
+  /**
+   * Changes the DeedTenant Manager when an offer was acquired.
+   * 
+   * @param  nftId                          Deed NFT blockchain identifier
+   * @param  newManager                     New Manager Address
+   * @throws ObjectNotFoundException        when Deed doesn't exist
+   * @throws UnauthorizedOperationException when the address isn't the manager
+   *                                          on blockchain
+   */
+  public void markDeedAsAcquired(long nftId, String newManager) throws ObjectNotFoundException, UnauthorizedOperationException {
+    LOG.debug("Mark Tenant of {} as aqcuired by new Provisioning Manager: {}", nftId, newManager);
+    DeedTenant deedTenant = getDeedTenantOrImport(newManager, nftId);
+    if (!StringUtils.equalsIgnoreCase(deedTenant.getManagerAddress(), newManager)) {
+      throw new UnauthorizedOperationException(newManager + " address isn't the provisioning manager of Tenant in blockchain");
+    }
   }
 
   /**

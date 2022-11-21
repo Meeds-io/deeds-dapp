@@ -20,23 +20,24 @@
 -->
 <template>
   <v-list-item class="d-flex flex-column flex-sm-row justify-end px-0 mt-4 mt-sm-auto">
-    <template v-if="expirationTime">
-      <v-list-item-action-text v-if="hasExpired" class="d-flex py-0 me-0 me-sm-8 subtitle-1">
-        <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
+    <v-list-item-action-text v-if="isRestricted" class="d-flex py-0 me-0 me-sm-8 subtitle-1">
+      <span class="error--text">{{ $t('deedsOfferIsRestricted') }}</span>
+    </v-list-item-action-text>
+    <v-list-item-action-text v-else-if="hasExpired" class="d-flex py-0 me-0 me-sm-8 subtitle-1">
+      <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
+    </v-list-item-action-text>
+    <template v-else-if="hasExpirationTime">
+      <v-list-item-action-text class="d-flex py-0 subtitle-1">
+        <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
       </v-list-item-action-text>
-      <template v-else>
-        <v-list-item-action-text class="d-flex py-0 subtitle-1">
-          <span class="mx-4">{{ $t('deedsOfferRentingExpiresWithin') }}</span>
-        </v-list-item-action-text>
-        <v-list-item-action-text class="d-flex py-0 me-0 me-sm-8 subtitle-1">
-          <v-icon :color="blackThemeColor" size="16">fas fa-stopwatch</v-icon>
-          <deeds-timer
-            :end-time="expirationTime"
-            class="ms-sm-1"
-            text-color=""
-            short-format />
-        </v-list-item-action-text>
-      </template>
+      <v-list-item-action-text class="d-flex py-0 me-0 me-sm-8 subtitle-1">
+        <v-icon :color="blackThemeColor" size="16">fas fa-stopwatch</v-icon>
+        <deeds-timer
+          :end-time="expirationTime"
+          class="ms-sm-1"
+          text-color=""
+          short-format />
+      </v-list-item-action-text>
     </template>
     <v-list-item-action v-if="!hasExpired" class="mx-0 align-self-center align-self-sm-end">
       <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
@@ -44,7 +45,7 @@
       </div>
       <v-btn
         v-else
-        :disabled="isOwner"
+        :disabled="disabledRentButton"
         color="primary"
         @click="openOfferRentingDrawer">
         {{ $t('deedsOfferRentingButton') }}
@@ -65,17 +66,46 @@ export default {
     metamaskOffline: state => state.metamaskOffline,
     now: state => state.now,
     blackThemeColor: state => state.blackThemeColor,
+    hasExpirationTime() {
+      return !!this.offer?.expirationDate;
+    },
     expirationTime() {
       return this.offer?.expirationDate && new Date(this.offer.expirationDate).getTime() || 0;
     },
     hasExpired() {
-      return this.expirationTime && this.expirationTime < this.now;
+      return this.hasExpirationTime && this.expirationTime < this.now;
+    },
+    isRestricted() {
+      return this.offer?.hostAddress && this.offer?.hostAddress.toLowerCase() !== this.address?.toLowerCase();
+    },
+    isConfirmed() {
+      return this.offer?.offerId;
+    },
+    isUpdating() {
+      return this.offer?.updateId;
+    },
+    isDeleting() {
+      return this.offer?.deleteId;
     },
     isOwner() {
       return this.address && this.offer?.owner?.toLowerCase() === this.address?.toLowerCase();
     },
     displayActions() {
       return this.metamaskOffline || !this.isOwner;
+    },
+    acquisitionInProgress() {
+      return this.offer?.acquisitionIds?.length || 0;
+    },
+    isAcquisitionInProgress() {
+      return this.acquisitionInProgress > 0;
+    },
+    disabledRentButton() {
+      return this.isRestricted
+        || !this.isConfirmed
+        || this.isOwner
+        || this.hasExpired
+        || this.isAcquisitionInProgress
+        || this.isDeleting;
     },
   }),
   methods: {
