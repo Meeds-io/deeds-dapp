@@ -21,6 +21,7 @@ import static io.meeds.deeds.constant.CommonConstants.TENANT_COMMAND_STOP_EVENT;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -72,6 +73,17 @@ public class TenantService {
    */
   public DeedTenant getDeedTenant(long nftId) {
     return deedTenantManagerRepository.findById(nftId).orElse(null);
+  }
+
+  /**
+   * Retrieve list of {@link DeedTenant} of NFT owner
+   * 
+   * @param  ownerAddress Deed Owner Address
+   * @return              {@link List} of associated Deed provisioning
+   *                      information
+   */
+  public List<DeedTenant> getDeedTenants(String ownerAddress) {
+    return deedTenantManagerRepository.findByOwnerAddress(StringUtils.lowerCase(ownerAddress));
   }
 
   /**
@@ -313,8 +325,8 @@ public class TenantService {
   /**
    * Stores Tenant information
    * 
-   * @param deedTenant {@link DeedTenant}
-   * @return {@link DeedTenant}
+   * @param  deedTenant {@link DeedTenant}
+   * @return            {@link DeedTenant}
    */
   public DeedTenant saveDeedTenant(DeedTenant deedTenant) {
     return deedTenantManagerRepository.save(deedTenant);

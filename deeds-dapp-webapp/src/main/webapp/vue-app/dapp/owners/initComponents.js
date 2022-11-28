@@ -16,21 +16,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-const Marketplace = { template: '<deeds-marketplace />' };
-const Tenants = { template: '<deeds-tenants />' };
-const Owners = { template: '<deeds-owners />' };
-const Stake = { template: '<deeds-stake />' };
-const Deeds = { template: '<deeds-deeds />' };
-const Farm = { template: '<deeds-farm />' };
-const Overview = { template: '<deeds-overview />' };
+import DeedsOwners from './components/Owners.vue';
+import DeedsOwnersIntroduction from './components/DeedsOwnersIntroduction.vue';
+import DeedsOwnersList from './components/DeedsOwnersList.vue';
+import DeedsOwnersDeedCard from './components/DeedsOwnersDeedCard.vue';
 
-export default {
-  '/': Marketplace,
-  '/marketplace': Marketplace,
-  '/tenants': Tenants,
-  '/owners': Owners,
-  '/overview': Overview,
-  '/stake': Stake,
-  '/deeds': Deeds,
-  '/farm': Farm,
+const components = {
+  'deeds-owners': DeedsOwners,
+  'deeds-owners-introduction': DeedsOwnersIntroduction,
+  'deeds-owners-list': DeedsOwnersList,
+  'deeds-owners-deed-card': DeedsOwnersDeedCard,
 };
+
+for (const key in components) {
+  Vue.component(key, components[key]);
+}

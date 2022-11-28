@@ -43,4 +43,6 @@ public interface DeedTenantManagerRepository extends ElasticsearchRepository<Dee
   @Query("{\"match\": {\"properties.currentTaskId\": {\"query\": \"?0\"}}}")
   Stream<DeedTenant> findByTaskId(String taskId);
 
+  List<DeedTenant> findByOwnerAddress(String ownerAddress);
+
 }

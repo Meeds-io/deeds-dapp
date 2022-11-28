@@ -165,6 +165,7 @@ export default {
       this.sending = false;
       this.email = null;
       this.emailChanged = false;
+      this.$refs.email?.resetForm();
       this.$nextTick()
         .then(() => this.$refs.drawer?.open());
     },

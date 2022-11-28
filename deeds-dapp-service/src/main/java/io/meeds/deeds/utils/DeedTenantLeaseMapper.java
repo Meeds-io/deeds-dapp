@@ -74,7 +74,8 @@ public class DeedTenantLeaseMapper {
                                   deedTenantLease.getNoticeDate(),
                                   deedTenantLease.getPaidRentsDate(),
                                   confirmed,
-                                  deedTenantLease.isEndingLease());
+                                  deedTenantLease.isEndingLease(),
+                                  deedTenantLease.getEndingLeaseAddress());
   }
 
   public static DeedTenantLease fromOffer(DeedTenantOfferDTO deedTenantOffer,
@@ -117,6 +118,7 @@ public class DeedTenantLeaseMapper {
                                false,
                                true,
                                false,
+                               null,
                                0);
   }
 

@@ -77,7 +77,7 @@ public class EntityMapper {
                                         attributes);
   }
 
-  private static DeedTenantPresentation build(DeedTenant deedTenant) {
+  public static DeedTenantPresentation build(DeedTenant deedTenant) {
     LocalDateTime date = deedTenant.getDate();
     long epochSecond = date == null ? 0 : date.toEpochSecond(ZoneOffset.UTC);
     return new DeedTenantPresentation(deedTenant.getNftId(),

@@ -17,42 +17,20 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tooltip bottom>
-    <template #activator="{ on, attrs }">
-      <v-btn
-        :loading="loading"
-        icon
-        v-bind="attrs"
-        v-on="on"
-        @click="openManageDeedDrawer">
-        <v-icon>fas fa-cog</v-icon>
-      </v-btn>
-    </template>
-    <span>{{ $t('manageYourDeedTooltip') }}</span>
-  </v-tooltip>
+  <div class="d-flex flex-column mt-8">
+    <deeds-owners-introduction />
+    <deeds-owners-list />
+    <deeds-move-in-drawer />
+    <deeds-move-out-drawer />
+    <deeds-manage-rent-offer-drawer />
+    <deeds-evict-tenant-drawer />
+  </div>
 </template>
 <script>
 export default {
-  props: {
-    nft: {
-      type: Object,
-      default: null,
-    },
-  },
-  data: () => ({
-    loading: false,
-  }),
   created() {
-    this.$root.$on('drawer-opened', () => this.loading = false);
+    this.$store.commit('loadOwnedNfts');
+    this.$store.commit('installProvisioningListeners');
   },
-  beforeDestroy() {
-    this.$root.$off('drawer-opened', () => this.loading = false);
-  },
-  methods: {
-    openManageDeedDrawer() {
-      this.loading = true;
-      this.$root.$emit('deeds-manage-drawer', this.nft);
-    },
-  }
 };
 </script>

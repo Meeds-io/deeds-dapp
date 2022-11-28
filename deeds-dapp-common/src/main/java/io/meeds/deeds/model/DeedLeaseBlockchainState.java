@@ -42,4 +42,6 @@ public class DeedLeaseBlockchainState {
 
   private String     tenant;
 
+  private String     transactionHash;
+
 }

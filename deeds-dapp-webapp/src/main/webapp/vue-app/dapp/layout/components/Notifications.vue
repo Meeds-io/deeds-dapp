@@ -116,8 +116,12 @@ export default {
     document.addEventListener('transaction-sent', this.handleTransactionSent);
     document.addEventListener('transaction-sending-error', this.handleTransactionEstimationError);
     this.$root.$on('close-alert-message', this.closeAlert);
+    this.$root.$on('open-buy-meed-drawer', this.displayComingSoon);
   },
   methods: {
+    displayComingSoon() {
+      this.$root.$emit('alert-message', this.$t('comingSoonStayTuned'), 'info');
+    },
     handleTransactionSent(event) {
       const transactionHash = event?.detail;
       if (transactionHash) {

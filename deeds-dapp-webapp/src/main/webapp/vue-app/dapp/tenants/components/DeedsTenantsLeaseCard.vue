@@ -35,7 +35,7 @@
                         :city="city"
                         :card-type="cardType" />
                       <deeds-lease-card-minting-power
-                        :minting-power="rentalTenantMintingPower" />
+                        :card-type="cardType" />
                       <deeds-lease-card-hub-status
                         :nft="nft"
                         :confirmed="rentalConfirmed"
@@ -187,15 +187,6 @@ export default {
     paymentPeriodicity() {
       return this.lease?.paymentPeriodicity || '';
     },
-    rentalTenantMintingPower() {
-      return this.lease?.mintingPower;
-    },
-    rentalOwnerMintingPercentage() {
-      return this.lease?.ownerMintingPercentage || 0;
-    },
-    rentalTenantMintingPercentage() {
-      return 100 - this.rentalOwnerMintingPercentage;
-    },
     rentPeriodMonths() {
       return this.lease?.months || 0;
     },
@@ -213,6 +204,9 @@ export default {
     },
     hasPaymentInProgress() {
       return !this.rentalConfirmed || (this.lease?.monthPaymentInProgress && this.lease?.monthPaymentInProgress > 0);
+    },
+    paidRentsDate() {
+      return this.lease?.paidRentsDate;
     },
     rentalStartDate() {
       return this.lease?.startDate;

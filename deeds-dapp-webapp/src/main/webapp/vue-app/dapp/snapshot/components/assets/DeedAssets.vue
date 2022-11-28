@@ -73,5 +73,8 @@ export default {
       return Object.values(nftsByCardType).sort((type1, type2) => type1.id - type2.id);
     },
   }),
+  created() {
+    this.$store.commit('loadOwnedNfts');
+  },
 };
 </script>

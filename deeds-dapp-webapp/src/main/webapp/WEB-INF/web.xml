@@ -47,6 +47,7 @@
     <url-pattern>/</url-pattern>
     <url-pattern>/marketplace</url-pattern>
     <url-pattern>/tenants</url-pattern>
+    <url-pattern>/owners</url-pattern>
     <url-pattern>/overview</url-pattern>
     <url-pattern>/stake</url-pattern>
     <url-pattern>/deeds</url-pattern>

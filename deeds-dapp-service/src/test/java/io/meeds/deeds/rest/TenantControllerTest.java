@@ -73,21 +73,21 @@ class TenantControllerTest {
   @Test
   @WithAnonymousUser
   void whenAnonymousGetDeedTenant_thenNOk() throws Exception {
-    mockMvc.perform(get("/api/tenant/" + NFT_ID)).andExpect(status().isUnauthorized());
+    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isUnauthorized());
   }
 
   @Test
   @WithMockUser(username = USERNAME, roles = DeedAuthenticationProvider.USER_ROLE_NAME)
   void whenAuthenticatedGetDeedTenant_thenNOk() throws Exception {
     when(tenantService.getDeedTenantOrImport(USERNAME, NFT_ID)).thenReturn(new DeedTenant());
-    mockMvc.perform(get("/api/tenant/" + NFT_ID)).andExpect(status().isOk());
-    mockMvc.perform(get("/api/tenant/" + (NFT_ID + 1))).andExpect(status().isNotFound());
+    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isOk());
+    mockMvc.perform(get("/api/tenants/" + (NFT_ID + 1))).andExpect(status().isNotFound());
   }
 
   @Test
   @WithAnonymousUser
   void whenAnonymousGetDeedTenantStartTile_thenNOk() throws Exception {
-    mockMvc.perform(get("/api/tenant/" + NFT_ID + "/startDate"))
+    mockMvc.perform(get("/api/tenants/" + NFT_ID + "/startDate"))
            .andExpect(status().isOk())
            .andExpect(content().string(""));
 
@@ -99,18 +99,18 @@ class TenantControllerTest {
 
     when(tenantService.getDeedTenant(NFT_ID)).thenReturn(deedTenant);
 
-    mockMvc.perform(get("/api/tenant/" + NFT_ID + "/startDate"))
+    mockMvc.perform(get("/api/tenants/" + NFT_ID + "/startDate"))
            .andExpect(status().isOk())
            .andExpect(content().string(containsString(String.valueOf(date.toEpochSecond(ZoneOffset.UTC)))));
 
     deedTenant.setTenantStatus(TenantStatus.UNDEPLOYED);
-    mockMvc.perform(get("/api/tenant/" + NFT_ID + "/startDate"))
+    mockMvc.perform(get("/api/tenants/" + NFT_ID + "/startDate"))
            .andExpect(status().isOk())
            .andExpect(content().string(""));
 
     deedTenant.setTenantStatus(TenantStatus.DEPLOYED);
     deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_CONFIRMED);
-    mockMvc.perform(get("/api/tenant/" + NFT_ID + "/startDate"))
+    mockMvc.perform(get("/api/tenants/" + NFT_ID + "/startDate"))
            .andExpect(status().isOk())
            .andExpect(content().string(""));
   }

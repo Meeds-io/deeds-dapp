@@ -20,6 +20,7 @@ import './common/initComponents';
 import './layout/initComponents';
 import './marketplace/initComponents';
 import './tenants/initComponents';
+import './owners/initComponents';
 import './snapshot/initComponents';
 import './deeds/initComponents';
 import './stake/initComponents';

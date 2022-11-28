@@ -31,6 +31,7 @@ public class RequestDispatcherFilter implements Filter {
   private static final List<String> PATHS = Arrays.asList("/",
                                                           "/marketplace",
                                                           "/tenants",
+                                                          "/owners",
                                                           "/overview",
                                                           "/stake",
                                                           "/deeds",

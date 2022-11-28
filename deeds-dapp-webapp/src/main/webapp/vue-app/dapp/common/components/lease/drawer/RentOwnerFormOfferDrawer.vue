@@ -620,6 +620,7 @@ export default {
         this.isNew = !offer;
         this.emailCode = null;
         this.emailCodeSent = false;
+        this.$refs.email?.resetForm();
         this.$refs.drawer?.open();
         this.$nextTick().then(() => {
           this.offerChanged = false;

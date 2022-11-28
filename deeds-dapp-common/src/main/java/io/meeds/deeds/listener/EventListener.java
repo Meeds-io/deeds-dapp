@@ -64,7 +64,8 @@ public interface EventListener<T> {
       ListenerService.LOG.warn("Error triggering event {} with data {} on listener {}",
                                eventName,
                                data,
-                               getName());
+                               getName(),
+                               e);
     }
   }
 

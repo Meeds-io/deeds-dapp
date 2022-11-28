@@ -19,13 +19,17 @@ import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedTenantResponse;
 
 import java.security.Principal;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,16 +47,27 @@ import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
+import io.meeds.deeds.web.rest.utils.EntityMapper;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 
 @RestController
-@RequestMapping("/api/tenant")
+@RequestMapping("/api/tenants")
 public class TenantController {
 
   private static final Logger LOG = LoggerFactory.getLogger(TenantController.class);
 
   @Autowired
   private TenantService       tenantService;
+
+  @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+  public List<DeedTenantPresentation> getTenants(Principal principal) {
+    if (principal == null || StringUtils.isBlank(principal.getName())) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    }
+    String walletAddress = principal.getName();
+    List<DeedTenant> deedTenants = tenantService.getDeedTenants(walletAddress);
+    return deedTenants.stream().map(EntityMapper::build).collect(Collectors.toList());
+  }
 
   @GetMapping("/{nftId}")
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)

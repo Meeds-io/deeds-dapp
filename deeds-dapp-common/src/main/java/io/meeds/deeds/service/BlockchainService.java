@@ -321,7 +321,7 @@ public class BlockchainService {
                                                                           BigInteger.ZERO,
                                                                           Address.DEFAULT.getValue(),
                                                                           BigInteger.ZERO,
-                                                                          transactionHash);
+                                                                          StringUtils.lowerCase(transactionHash));
         events.put(BlockchainOfferStatus.OFFER_DELETED, deedOffer);
       }
       List<RentPaidEventResponse> rentPaidEvents = DeedRenting.getRentPaidEvents(transactionReceipt);
@@ -360,7 +360,7 @@ public class BlockchainService {
                    rentPaidEvents.size());
         }
         RentPaidEventResponse response = rentPaidEvents.get(0);
-        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
         if (response.firstRent.booleanValue()) {
           events.put(BlockchainLeaseStatus.LEASE_ACQUIRED, deedLease);
         } else {
@@ -374,7 +374,7 @@ public class BlockchainService {
                    leaseEndedEvents.size());
         }
         LeaseEndedEventResponse response = leaseEndedEvents.get(0);
-        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
         events.put(BlockchainLeaseStatus.LEASE_ENDED, deedLease);
       }
       List<TenantEvictedEventResponse> tenantEvictedEvents = DeedRenting.getTenantEvictedEvents(transactionReceipt);
@@ -384,7 +384,7 @@ public class BlockchainService {
                    tenantEvictedEvents.size());
         }
         TenantEvictedEventResponse response = tenantEvictedEvents.get(0);
-        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber());
+        DeedLeaseBlockchainState deedLease = getLeaseById(response.id, transactionReceipt.getBlockNumber(), transactionHash);
         events.put(BlockchainLeaseStatus.LEASE_MANAGER_EVICTED, deedLease);
       }
       return events;
@@ -416,10 +416,11 @@ public class BlockchainService {
                                         offerTuple.component10(),
                                         offerTuple.component11(),
                                         offerTuple.component12(),
-                                        transactionHash);
+                                        StringUtils.lowerCase(transactionHash));
   }
 
-  public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId, BigInteger blockNumber) throws Exception {
+  public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId, BigInteger blockNumber,
+                                               String transactionHash) throws Exception {
     Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String> leaseTuple =
                                                                                                                   deedRenting.deedLeases(leaseId)
                                                                                                                              .send();
@@ -431,7 +432,8 @@ public class BlockchainService {
                                         leaseTuple.component5(),
                                         leaseTuple.component6(),
                                         leaseTuple.component7(),
-                                        leaseTuple.component8());
+                                        leaseTuple.component8(),
+                                        StringUtils.lowerCase(transactionHash));
   }
 
   /**
@@ -481,7 +483,7 @@ public class BlockchainService {
   public boolean isOfferEnabled(long offerId) throws Exception {
     DeedOfferBlockchainState offer = getOfferById(BigInteger.valueOf(offerId), null, "0x");
     if (offer != null && offer.getId().longValue() == offerId) {
-      DeedLeaseBlockchainState lease = getLeaseById(BigInteger.valueOf(offerId), null);
+      DeedLeaseBlockchainState lease = getLeaseById(BigInteger.valueOf(offerId), null, null);
       return lease == null || lease.getId().longValue() == 0;
     }
     return false;

@@ -283,9 +283,11 @@ export default {
           const isCreator = creator?.toUpperCase() === this.address?.toUpperCase();
           if (isCreator) {
             this.$deedTenantOfferService.getOffer(selectedOffer.id, isCreator)
-              .catch(() => {
+              .catch(e => {
                 if (selectedOffer.parentId) {
                   return this.$deedTenantOfferService.getOffer(selectedOffer.parentId, isCreator);
+                } else {
+                  throw e;
                 }
               })
               .then(offer => {
@@ -297,7 +299,8 @@ export default {
                     this.offers.splice(index, 1);
                   }
                 }
-              });
+              })
+              .catch(() => this.refresh());
           } else if (event.type === 'deed-offer-deleted') { // When not creator of Deed, just delete the offer
             const index = this.offers.findIndex(displayedOffer => displayedOffer?.id === selectedOffer?.id);
             if (index >= 0) {

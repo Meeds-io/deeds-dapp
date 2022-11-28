@@ -29,7 +29,6 @@
       </div>
     </template>
     <deeds-redeem class="mb-8" />
-    <deeds-owned-table v-if="!noCityLeft && !metamaskOffline" />
     <deeds-trade />
   </div>
 </template>

@@ -156,24 +156,22 @@ public class OfferService {
   }
 
   public DeedTenantOfferDTO getOffer(String id, String walletAddress, boolean refreshFromBlockchain) throws Exception {
-    if (refreshFromBlockchain) {
+    if (refreshFromBlockchain && StringUtils.isNotBlank(walletAddress)) {
       DeedTenantOffer offer = deedTenantOfferRepository.findById(id).orElse(null);
       if (offer == null) {
         throw new ObjectNotFoundException();
       }
-      if (StringUtils.equalsIgnoreCase(offer.getOwner(), walletAddress)) {
-        LOG.debug("Refreshing Changed offer with id {} on blockchain on request of offer owner {}", id, walletAddress);
-        try {
-          refreshOffer(offer);
+      LOG.info("Refreshing Changed offer with id {} on blockchain on request of wallet {}", id, walletAddress);
+      try {
+        refreshOffer(offer);
 
-          if (isChangelog(offer)) {
-            // Get refreshed parent offer after applying changelog
-            id = offer.getParentId();
-          }
-        } catch (ObjectNotFoundException e) {
-          LOG.debug("It seems that there was a concurrent refresh with scheduled tasks, the offer was already refreshed. Original error: {}",
-                    e.getMessage());
+        if (isChangelog(offer)) {
+          // Get refreshed parent offer after applying changelog
+          id = offer.getParentId();
         }
+      } catch (ObjectNotFoundException e) {
+        LOG.debug("It seems that there was a concurrent refresh with scheduled tasks, the offer was already refreshed. Original error: {}",
+                  e.getMessage());
       }
     }
     DeedTenantOfferDTO offer = getOffer(id);
@@ -204,7 +202,7 @@ public class OfferService {
     if (!tenantService.isDeedOwner(ownerAddress, nftId)) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(ownerAddress, nftId));
     }
-    String transactionHash = deedTenantOfferDTO.getOfferTransactionHash();
+    String transactionHash = StringUtils.lowerCase(deedTenantOfferDTO.getOfferTransactionHash());
     if (StringUtils.isBlank(transactionHash)) {
       throw new IllegalStateException(TRANSACTION_HASH_IS_MANDATORY_MESSAGE);
     }
@@ -446,7 +444,7 @@ public class OfferService {
           && isOfferTransactionInProgress(changeLogOffer)
           && blockchainService.isTransactionMined(changeLogOffer.getOfferTransactionHash())) {
 
-        if (blockchainService.isTransactionConfirmed(offerChangeLogId)) {
+        if (blockchainService.isTransactionConfirmed(changeLogOffer.getOfferTransactionHash())) {
           updateRentingOfferStatusFromBlockchain(offerChangeLogId,
                                                  blockchainOffer,
                                                  blockchainStatus);
@@ -964,7 +962,9 @@ public class OfferService {
     List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId);
     if (CollectionUtils.isEmpty(offers)) {
       if (updateIfNotFound) {
-        DeedOfferBlockchainState blockchainOffer = blockchainService.getOfferById(BigInteger.valueOf(blockchainOfferId), null, null);
+        DeedOfferBlockchainState blockchainOffer = blockchainService.getOfferById(BigInteger.valueOf(blockchainOfferId),
+                                                                                  null,
+                                                                                  null);
         return updateOfferFromBlockchain(blockchainOffer);
       } else {
         return null;

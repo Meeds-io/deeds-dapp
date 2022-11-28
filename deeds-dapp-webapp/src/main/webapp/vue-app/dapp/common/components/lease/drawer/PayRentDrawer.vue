@@ -102,7 +102,7 @@
         <div class="font-weight-bold mb-3 mt-4">
           {{ $t('deedRentPaymentTitle') }}
         </div>
-        <div class="mb-2">
+        <div v-if="rentRemainingMonths > 1" class="mb-2">
           <div>{{ $t('deedRentMonthsToPay') }}</div>
           <div class="d-flex mb-2">
             <div class="flex-grow-1">
@@ -112,9 +112,23 @@
                 min="1"
                 hide-details />
             </div>
-            <div class="d-flex text-ordinary-capitalize">
+            <div class="d-flex text-ordinary-capitalize align-center">
               {{ monthsToPayLabel }}
             </div>
+          </div>
+        </div>
+        <div class="d-flex mb-2">
+          <div class="flex-grow-1 font-weight-bold">
+            {{ $t('deedRentingPaymentTotal') }}
+            <span class="caption ms-1">({{ monthsToPayLabel }})</span>
+          </div>
+          <div class="d-flex">
+            <deeds-number-format
+              :value="totalAmountToPay"
+              :fractions="2"
+              no-decimals>
+              <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
+            </deeds-number-format>
           </div>
         </div>
 
@@ -327,6 +341,7 @@ export default {
       }
       this.lease = Object.assign({}, lease);
       this.sending = false;
+      this.monthsToPay = 1;
       this.$refs.drawer?.open();
     },
     close() {

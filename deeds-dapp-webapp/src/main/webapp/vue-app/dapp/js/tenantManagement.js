@@ -26,7 +26,7 @@ export function startTenant(nftId, email, transactionHash) {
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,7 +46,7 @@ export function stopTenant(nftId, transactionHash) {
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -62,7 +62,7 @@ export function stopTenant(nftId, transactionHash) {
 }
 
 export function getTenantStartDate(nftId) {
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}/startDate`, {
+  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}/startDate`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -78,7 +78,7 @@ export function getTenantStartDate(nftId) {
 }
 
 export function getTenantInfo(nftId) {
-  return fetch(`/${window.parentAppLocation}/api/tenant/${nftId}`, {
+  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -89,6 +89,22 @@ export function getTenantInfo(nftId) {
       return resp.json();
     } else {
       throw new Error(`Error getting Deed Tenant #${nftId} information`);
+    }
+  });
+}
+
+export function getTenants() {
+  return fetch(`/${window.parentAppLocation}/api/tenants`, {
+    method: 'GET',
+    headers: {
+      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+    },
+    credentials: 'include',
+  }).then(resp => {
+    if (resp && resp.ok) {
+      return resp.json();
+    } else {
+      throw new Error('Error getting Deed Tenants Provisioning information');
     }
   });
 }

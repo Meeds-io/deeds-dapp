@@ -89,4 +89,6 @@ public class DeedTenantLeaseDTO {
 
   private boolean                          endingLease;
 
+  private String                           endingLeaseAddress;
+
 }

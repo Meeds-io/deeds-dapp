@@ -25,12 +25,21 @@
 <script>
 export default {
   props: {
-    mintingPower: {
-      type: Number,
+    cardType: {
+      type: String,
       default: null,
     },
   },
   computed: Vuex.mapState({
+    mintingPower() {
+      switch (this.cardType){
+      case 'COMMON': return 1;
+      case 'UNCOMMON': return 1.1;
+      case 'RARE': return 1.3;
+      case 'LEGENDARY': return 2;
+      default: return '';
+      }
+    },
     mintingPowerPercentage() {
       return this.mintingPower && parseInt((this.mintingPower - 1) * 100);
     },

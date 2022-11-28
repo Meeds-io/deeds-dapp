@@ -342,7 +342,7 @@ const store = new Vuex.Store({
     now: Date.now(),
     xMeedsBalance: null,
     pointsBalance: null,
-    ownedNfts: null,
+    ownedNfts: [],
     selectedFiatCurrency,
     noCityLeft: false,
     currentCity: null,
@@ -451,7 +451,7 @@ const store = new Vuex.Store({
 
             // Opensea links
             state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
-            state.openSeaCollectionLink = `https://testnets.opensea.io/collection/${state.deedAddress}`;
+            state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-dao-testnet';
           } else {
             this.commit('setMetamaskOffline');
             return;
@@ -614,9 +614,11 @@ const store = new Vuex.Store({
     async loadOwnedNfts(state) {
       try {
         if (state.deedContract && state.xMeedContract) {
+          state.ownedNftsLoaded = true;
           await tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
             .then(nfts => state.ownedNfts = nfts);
         } else {
+          state.ownedNftsToLoad = true;
           state.ownedNfts = [];
         }
       } finally {
@@ -870,6 +872,9 @@ const store = new Vuex.Store({
             state.xMeedRewardingABI,
             state.provider
           );
+          if (state.ownedNftsToLoad) {
+            this.commit('loadOwnedNfts');
+          }
         }
         if (state.deedAddress) {
           state.deedContract = new ethers.Contract(
@@ -891,6 +896,9 @@ const store = new Vuex.Store({
             state.tenantProvisioningABI,
             state.provider
           );
+          if (state.provisioningListenersToInstall) {
+            this.commit('installProvisioningListeners');
+          }
         }
 
         if (state.tenantRentingAddress) {
@@ -947,7 +955,6 @@ const store = new Vuex.Store({
 
         this.commit('loadBalances');
         this.commit('loadGasPrice');
-        this.commit('loadOwnedNfts');
         this.commit('loadCurrentCity');
         this.commit('loadPointsBalance');
         this.commit('loadPointsPeriodically');
@@ -1204,6 +1211,8 @@ const store = new Vuex.Store({
             }}));
           }
         });
+      } else {
+        state.provisioningListenersToInstall = true;
       }
     },
   }

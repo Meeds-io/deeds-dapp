@@ -16,9 +16,9 @@
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
     <link rel="preload" as="style" type="text/css" href="./static/css/materialdesignicons.min.css?_=6.5.95">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=v2.6.4">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=v2.6.12">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.4_1">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.12_1">
 
     <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmEU9fBBc4.woff2" as="font" type="font/woff2" crossorigin="">
     <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2" as="font" type="font/woff2" crossorigin="">
@@ -31,8 +31,8 @@
     <link rel="preload" href="./static/fonts/fa-solid-900.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./static/fonts/fa-solid-900.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
 
-    <link rel="preload" href="./static/js/vue.min.js?_=v2.6.14" as="script" type="text/javascript">
-    <link rel="preload" href="./static/js/vuetify.min.js?_=v2.6.4" as="script" type="text/javascript">
+    <link rel="preload" href="./static/js/vue.min.js?_=v2.7.14" as="script" type="text/javascript">
+    <link rel="preload" href="./static/js/vuetify.min.js?_=v2.6.12" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/vue-i18n.min.js?_=v8.26.7" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/vuex.min.js?_=v3.6.2" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/echarts.min.js?_=5.4.0" as="script" type="text/javascript">
@@ -51,8 +51,8 @@
     <link href="./static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
     <link href="./static/css/materialdesignicons.min.css?_=6.5.95" rel="stylesheet">
-    <link href="./static/css/vuetify.min.css?_=v2.6.4" rel="stylesheet">
-    <link href="./static/css/vuetify-theme.css?_=v2.6.4_1" rel="stylesheet">
+    <link href="./static/css/vuetify.min.css?_=v2.6.12" rel="stylesheet">
+    <link href="./static/css/vuetify-theme.css?_=v2.6.12_1" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
@@ -63,8 +63,8 @@
       <input type="hidden" name="login">
     <% } %>
     <input type="hidden" name="loginMessage" value="<%=Utils.generateLoginMessage(session)%>">
-    <script src="./static/js/vue.min.js?_=v2.6.14"></script>
-    <script src="./static/js/vuetify.min.js?_=v2.6.4"></script>
+    <script src="./static/js/vue.min.js?_=v2.7.14"></script>
+    <script src="./static/js/vuetify.min.js?_=v2.6.12"></script>
     <script src="./static/js/vue-i18n.min.js?_=v8.26.7"></script>
     <script src="./static/js/vuex.min.js?_=v3.6.2"></script>
     <script src="./static/js/echarts.min.js?_=5.4.0"></script>

@@ -165,24 +165,24 @@ export default {
   methods: {
     resetForm() {
       this.email = this.value;
-      if (this.email) {
-        this.isEditing = false;
-      } else {
-        this.isEditing = false;
-        this.code = null;
-        this.emailConfirmationNeeded = false;
-        this.sending = false;
-        this.sendingCode = false;
-        this.validCode = false;
-        this.emailLoading = true;
-        this.$userProfileService.getEmail()
-          .then(email => {
-            this.email = email;
-            this.$nextTick().then(() => this.validEmailCheckIndex++);
-          })
-          .catch(() => this.email = null)
-          .finally(() => this.emailLoading = false);
-      }
+      this.isEditing = false;
+      this.code = null;
+      this.emailConfirmationNeeded = false;
+      this.sending = false;
+      this.sendingCode = false;
+      this.validCode = false;
+
+      this.loadWalletEmail();
+    },
+    loadWalletEmail() {
+      this.emailLoading = true;
+      this.$userProfileService.getEmail()
+        .then(email => {
+          this.email = email;
+          this.$nextTick().then(() => this.validEmailCheckIndex++);
+        })
+        .catch(() => this.validEmailCheckIndex++)
+        .finally(() => this.emailLoading = false);
     },
     edit() {
       this.isEditing = true;

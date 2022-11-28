@@ -72,6 +72,8 @@ public class LeaseService {
 
   public static final String      LEASE_ENDED_CONFIRMED_EVENT           = "deed.event.leaseEndedConfirmed";
 
+  public static final String      LEASE_TENANT_EVICT_EVENT              = "deed.event.leaseTenantEvict";
+
   public static final String      LEASE_TENANT_EVICTED_CONFIRMED_EVENT  = "deed.event.leaseTenantEvictedConfirmed";
 
   private static final String     TRANSACTION_HASH_IS_MANDATORY_MESSAGE = "Transaction Hash is Mandatory";
@@ -156,7 +158,7 @@ public class LeaseService {
     if (refreshFromBlockchain) {
       LOG.debug("Refreshing Changed lease with id {} on blockchain on request of user {}", leaseId, walletAddress);
       long lastBlockNumber = blockchainService.getLastBlock();
-      DeedLeaseBlockchainState blockchainLease = blockchainService.getLeaseById(BigInteger.valueOf(leaseId), null);
+      DeedLeaseBlockchainState blockchainLease = blockchainService.getLeaseById(BigInteger.valueOf(leaseId), null, null);
       blockchainLease.setBlockNumber(BigInteger.valueOf(lastBlockNumber));
       updateLeaseStatusFromBlockchain(blockchainLease, null);
       return getLease(leaseId, walletAddress);
@@ -242,7 +244,7 @@ public class LeaseService {
     return buildLeaseDTO(deedTenantLease);
   }
 
-  public DeedTenantLeaseDTO endLease(String managerAddress,
+  public DeedTenantLeaseDTO endLease(String walletAddress,
                                      long leaseId,
                                      String transactionHash) throws ObjectNotFoundException, UnauthorizedOperationException {
     DeedTenantLease deedTenantLease = deedTenantLeaseRepository.findById(leaseId).orElse(null);
@@ -250,19 +252,28 @@ public class LeaseService {
     if (deedTenantLease == null) {
       throw new ObjectNotFoundException("Provided lease with id " + leaseId + "doesn't exists");
     }
-    if (!StringUtils.equalsIgnoreCase(managerAddress, deedTenantLease.getManager())) {
-      throw new UnauthorizedOperationException("Lease with id " + leaseId + " does't belong to " + managerAddress);
+    boolean isManager = tenantService.isDeedManager(walletAddress, deedTenantLease.getNftId());
+    boolean isOwner = tenantService.isDeedOwner(walletAddress, deedTenantLease.getNftId());
+    if (!isManager && !isOwner) {
+      throw new UnauthorizedOperationException("Lease with id " + leaseId + " does't belong to " + walletAddress);
     }
     if (StringUtils.isBlank(transactionHash)) {
       throw new IllegalStateException(TRANSACTION_HASH_IS_MANDATORY_MESSAGE);
     }
     addPendingTransactionHash(deedTenantLease, transactionHash);
     deedTenantLease.setTransactionStatus(TransactionStatus.IN_PROGRESS);
+    deedTenantLease.setEndingLeaseAddress(StringUtils.lowerCase(walletAddress));
     deedTenantLease.setEndingLease(true);
-    deedTenantLease = saveLease(deedTenantLease);
-
-    listenerService.publishEvent(LEASE_END_EVENT, deedTenantLease);
-    return buildLeaseDTO(deedTenantLease);
+    if (isOwner) {
+      deedTenantLease.setOwner(StringUtils.lowerCase(walletAddress));
+      deedTenantLease = saveLease(deedTenantLease);
+      listenerService.publishEvent(LEASE_TENANT_EVICT_EVENT, deedTenantLease);
+      return buildLeaseDTO(deedTenantLease);
+    } else {
+      deedTenantLease = saveLease(deedTenantLease);
+      listenerService.publishEvent(LEASE_END_EVENT, deedTenantLease);
+      return buildLeaseDTO(deedTenantLease);
+    }
   }
 
   public void updateLeaseStatusFromBlockchain(DeedLeaseBlockchainState blockchainLease,
@@ -369,43 +380,52 @@ public class LeaseService {
     if (leaseId == 0) {
       throw new ObjectNotFoundException("Retrieved Lease from blockchain has a 0 identifier");
     }
+    if (StringUtils.isEmpty(transactionHash)) {
+      transactionHash = StringUtils.lowerCase(blockchainLease.getTransactionHash());
+    } else {
+      transactionHash = StringUtils.lowerCase(transactionHash);
+    }
     removePendingTransactionHash(lease, transactionHash);
     long leaseEndDateInSeconds = blockchainLease.getLeaseEndDate().longValue();
     Instant leaseEndDate = Instant.ofEpochSecond(leaseEndDateInSeconds);
     if (lease.isEndingLease()
         && (lease.getEndDate() != null && leaseEndDateInSeconds > 0 && leaseEndDate.isBefore(lease.getEndDate()))) {
-      lease.setEndDate(leaseEndDate);
       lease.setEndingLease(false);
+    }
+    if (lease.getMonthPaymentInProgress() > 0) {
+      int newlyPaidMonths = blockchainLease.getPaidMonths().intValue() - lease.getPaidMonths();
+      int monthPaymentInProgress = lease.getMonthPaymentInProgress() - newlyPaidMonths;
+      lease.setMonthPaymentInProgress(monthPaymentInProgress > 0 ? monthPaymentInProgress : 0);
+    }
+    if (CollectionUtils.isEmpty(lease.getPendingTransactions())) {
+      lease.setEndingLease(false);
+      lease.setMonthPaymentInProgress(0);
+    }
+    lease.setConfirmed(true);
+    lease.setId(leaseId);
+    lease.setNftId(blockchainLease.getDeedId().longValue());
+    lease.setManager(StringUtils.lowerCase(blockchainLease.getTenant()));
+    lease.setPaidMonths(blockchainLease.getPaidMonths().intValue());
+    lease.setPaidRentsDate(Instant.ofEpochSecond(blockchainLease.getPaidRentsDate().longValue()));
+    lease.setStartDate(Instant.ofEpochSecond(blockchainLease.getLeaseStartDate().longValue()));
+    lease.setEndDate(leaseEndDate);
+    lease.setNoticeDate(Instant.ofEpochSecond(blockchainLease.getNoticePeriodDate().longValue()));
+
+    long blockNumber = blockchainLease.getBlockNumber().longValue();
+    if (lease.getId() > 0 && blockNumber > 0) {
+      DeedTenantLease freshLeaseEntity = deedTenantLeaseRepository.findById(lease.getId()).orElse(null);
+      if (freshLeaseEntity != null && freshLeaseEntity.getLastCheckedBlock() >= blockNumber) {
+        LOG.debug("Lease Status is already updated in block {} (last checked {}) with status {}. Avoid publish an Event about change made.",
+                  blockNumber,
+                  freshLeaseEntity.getLastCheckedBlock(),
+                  status);
+        saveLease(lease);
+        return;
+      }
     }
 
     try {
-      if (lease.getMonthPaymentInProgress() > 0) {
-        int newlyPaidMonths = blockchainLease.getPaidMonths().intValue() - lease.getPaidMonths();
-        int monthPaymentInProgress = lease.getMonthPaymentInProgress() - newlyPaidMonths;
-        lease.setMonthPaymentInProgress(monthPaymentInProgress > 0 ? monthPaymentInProgress : 0);
-      }
-      lease.setConfirmed(true);
-      lease.setId(leaseId);
-      lease.setNftId(blockchainLease.getDeedId().longValue());
-      lease.setManager(StringUtils.lowerCase(blockchainLease.getTenant()));
-      long blockNumber = blockchainLease.getBlockNumber().longValue();
-      if (lease.getId() > 0 && blockNumber > 0) {
-        DeedTenantLease freshLeaseEntity = deedTenantLeaseRepository.findById(lease.getId()).orElse(null);
-        if (freshLeaseEntity != null && freshLeaseEntity.getLastCheckedBlock() >= blockNumber) {
-          LOG.debug("Lease Status is already updated in block {} (last checked {}) with status {}",
-                    blockNumber,
-                    freshLeaseEntity.getLastCheckedBlock(),
-                    status);
-          saveLease(lease);
-          return;
-        }
-      }
       lease.setLastCheckedBlock(blockNumber);
-      lease.setPaidMonths(blockchainLease.getPaidMonths().intValue());
-      lease.setPaidRentsDate(Instant.ofEpochSecond(blockchainLease.getPaidRentsDate().longValue()));
-      lease.setStartDate(Instant.ofEpochSecond(blockchainLease.getLeaseStartDate().longValue()));
-      lease.setEndDate(leaseEndDate);
-      lease.setNoticeDate(Instant.ofEpochSecond(blockchainLease.getNoticePeriodDate().longValue()));
       lease = saveLease(lease);
     } finally {
       broadcastLeaseEvent(lease, status);
@@ -517,14 +537,14 @@ public class LeaseService {
     } else {
       pendingTransactions = new ArrayList<>();
     }
-    pendingTransactions.add(transactionHash.toLowerCase());
+    pendingTransactions.add(StringUtils.lowerCase(transactionHash));
     lease.setPendingTransactions(pendingTransactions);
   }
 
   private void removePendingTransactionHash(DeedTenantLease lease, String transactionHash) {
     if (StringUtils.isNotBlank(transactionHash) && !CollectionUtils.isEmpty(lease.getPendingTransactions())) {
       List<String> pendingTransactions = new ArrayList<>(lease.getPendingTransactions());
-      pendingTransactions.remove(transactionHash.toLowerCase());
+      pendingTransactions.remove(StringUtils.lowerCase(transactionHash));
       lease.setPendingTransactions(pendingTransactions);
     }
   }

@@ -188,7 +188,10 @@
               </div>
             </div>
             <div v-if="hasNoticePeriod" class="d-flex mb-2">
-              <div class="flex-grow-1">{{ $t('deedRentingNoticePeriodTitle') }}</div>
+              <div class="flex-grow-1">
+                {{ $t('deedRentingNoticePeriodTitle') }}
+                <span class="caption ms-1">({{ noticeMonthsToPayLabel }})</span>
+              </div>
               <div class="d-flex">
                 <deeds-number-format
                   :value="noticePeriodAmount"
@@ -198,23 +201,26 @@
                 </deeds-number-format>
               </div>
             </div>
-            <div class="mb-2">
+            <div v-if="maxMonthsToPay > 1" class="mb-2">
               <div>{{ $t('deedRentMonthsToPay') }}</div>
               <div class="d-flex mb-2">
                 <div class="flex-grow-1">
                   <v-slider
                     v-model="monthsToPay"
-                    :max="rentalDurationMonths"
+                    :max="maxMonthsToPay"
                     min="1"
                     hide-details />
                 </div>
-                <div class="d-flex text-ordinary-capitalize">
+                <div class="d-flex text-ordinary-capitalize align-center">
                   {{ monthsToPayLabel }}
                 </div>
               </div>
             </div>
             <div class="d-flex mb-2">
-              <div class="flex-grow-1 font-weight-bold">{{ $t('deedRentingPaymentTotal') }}</div>
+              <div class="flex-grow-1 font-weight-bold">
+                {{ $t('deedRentingPaymentTotal') }}
+                <span class="caption ms-1">({{ totalMonthsToPayLabel }})</span>
+              </div>
               <div class="d-flex">
                 <deeds-number-format
                   :value="totalAmountToPay"
@@ -261,7 +267,7 @@
             {{ $t('deedRentOfferConfirmationSuccessPart3') }}
           </li>
           <li
-            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
+            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='/${parentLocation}/tenants'>`, 1: `</a>`})"
             class="ps-0 ps-sm-4"
             @click.prevent.stop="openTenants">
           </li>
@@ -330,6 +336,7 @@ export default {
     authenticated: state => state.authenticated,
     meedsBalance: state => state.meedsBalance,
     tenantRentingAddress: state => state.tenantRentingAddress,
+    parentLocation: state => state.parentLocation,
     ZERO_BN: state => state.ZERO_BN,
     MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
     nftId() {
@@ -407,6 +414,9 @@ export default {
       }
       return 1;
     },
+    maxMonthsToPay() {
+      return this.rentalDurationMonths - this.noticeMonths;
+    },
     hasNoticePeriod() {
       return this.offer?.noticePeriod && this.offer?.noticePeriod !== 'NO_PERIOD';
     },
@@ -426,6 +436,22 @@ export default {
         return this.$t('deedRentingRemainingTimeOneMonth');
       } else {
         return this.$t('deedRentingRemainingTimeMonths', {0: this.monthsToPay});
+      }
+    },
+    totalMonthsToPayLabel() {
+      if (this.totalMonthsToPay === 1) {
+        return this.$t('deedRentingRemainingTimeOneMonth');
+      } else {
+        return this.$t('deedRentingRemainingTimeMonths', {0: this.totalMonthsToPay});
+      }
+    },
+    noticeMonthsToPayLabel() {
+      if (!this.noticeMonths || this.noticeMonths < 1) {
+        return '';
+      } else if (this.noticeMonths === 1) {
+        return this.$t('deedRentingRemainingTimeOneMonth');
+      } else {
+        return this.$t('deedRentingRemainingTimeMonths', {0: this.noticeMonths});
       }
     },
     totalMonthsToPay() {
@@ -544,6 +570,7 @@ export default {
         this.step = 1;
         this.sending = false;
         this.validEmail = false;
+        this.$refs.email?.resetForm();
       }
       this.offer = Object.assign({}, offer);
       this.$refs.drawer?.open();

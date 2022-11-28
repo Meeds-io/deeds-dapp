@@ -125,6 +125,9 @@ public class DeedTenantLease {
   @Field(type = FieldType.Boolean)
   private boolean                          endingLease;
 
+  @Field(type = FieldType.Keyword)
+  private String                           endingLeaseAddress;
+
   @Field(type = FieldType.Long)
   private long                             lastCheckedBlock;
 

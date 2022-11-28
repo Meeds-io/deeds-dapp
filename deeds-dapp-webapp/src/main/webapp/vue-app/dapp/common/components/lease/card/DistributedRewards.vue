@@ -4,7 +4,7 @@
       {{ $t('deedRentingRewardsDistibuted') }}
     </v-list-item-content>
     <v-list-item-action-text class="py-0 d-flex">
-      <template v-if="!confirmed">
+      <template v-if="!confirmed && !owner">
         {{ $t('waitingForConfirmation') }}
       </template>
       <deeds-number-format
@@ -24,6 +24,10 @@
 export default {
   props: {
     confirmed: {
+      type: Boolean,
+      default: false,
+    },
+    owner: {
       type: Boolean,
       default: false,
     },

@@ -1,7 +1,5 @@
 <template>
-  <v-tooltip
-    :disabled="isLeaseNotFullyPaid"
-    bottom>
+  <v-tooltip bottom>
     <template #activator="{ on, attrs }">
       <v-card
         class="mx-auto mt-2 mt-md-0"
@@ -14,46 +12,30 @@
         v-on="on">
         <v-btn
           :disabled="disabled"
-          :width="buttonsWidth"
           :min-width="minButtonsWidth"
+          :width="buttonsWidth"
           :max-width="maxButtonsWidth"
-          :title="$t('payTheRent')"
+          :title="$t('claimRewards')"
+          class="mx-auto mt-2 mt-md-0"
           color="primary"
           outlined
           depressed
-          dark
-          @click="$root.$emit('deeds-rent-pay-drawer', lease)">
+          dark>
           <span class="text-truncate position-absolute full-width text-capitalize">
-            {{ payRentButtonLabel }}
+            {{ $t('claimRewards') }}
           </span>
         </v-btn>
       </v-card>
     </template>
-    <span>{{ $t('deedOfferAllRentsPaid') }}</span>
+    <span>{{ $t('comingSoonStayTuned') }}</span>
   </v-tooltip>
 </template>
 <script>
 export default {
   props: {
-    lease: {
-      type: Boolean,
-      default: false,
-    },
-    confirmed: {
-      type: Boolean,
-      default: false,
-    },
-    hasPaymentInProgress: {
-      type: Boolean,
-      default: false,
-    },
-    isLeaseNotFullyPaid: {
-      type: Boolean,
-      default: false,
-    },
     disabled: {
-      type: Boolean,
-      default: false,
+      type: Object,
+      default: null,
     },
     minButtonsWidth: {
       type: String,
@@ -68,10 +50,5 @@ export default {
       default: () => '100%',
     },
   },
-  computed: Vuex.mapState({
-    payRentButtonLabel() {
-      return this.confirmed && (this.hasPaymentInProgress && this.$t('paymentInProgress') || this.$t('payTheRent')) || this.$t('acquisitionInProgress');
-    },
-  }),
 };
 </script>
