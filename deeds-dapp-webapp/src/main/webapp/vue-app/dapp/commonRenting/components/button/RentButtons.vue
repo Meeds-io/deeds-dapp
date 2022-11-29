@@ -17,10 +17,10 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tooltip disabled>
+  <v-tooltip z-index="4" disabled>
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template #activator="{ onParent, attrsParent }">
-      <v-tooltip bottom>
+      <v-tooltip z-index="4" bottom>
         <template #activator="{ on, attrs }">
           <v-card
             :width="buttonsWidth"
@@ -34,9 +34,10 @@
             v-on="on">
             <v-badge
               :value="isCreateInProgress"
-              bordered
-              color="info"
+              class="full-width"
               icon="fas fa-info mt-n2px"
+              color="info"
+              bordered
               overlap>
               <v-btn
                 :width="buttonsWidth"
@@ -55,7 +56,7 @@
         </template>
         <span>{{ rentingSeeDescription }}</span>
       </v-tooltip>
-      <v-tooltip bottom>
+      <v-tooltip z-index="4" bottom>
         <template #activator="{ on, attrs }">
           <v-card
             :width="buttonsWidth"
@@ -71,6 +72,7 @@
               :value="showEditOfferBadge"
               :icon="editOfferBadgeIcon"
               :color="editOfferBadgeIconColor"
+              class="full-width"
               bordered
               overlap>
               <v-btn

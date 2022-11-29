@@ -2,6 +2,7 @@
   <v-tooltip
     v-if="started"
     :disabled="disableButtons"
+    z-index="4"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -17,6 +18,7 @@
           :value="!!hasRentOffers"
           icon="fas fa-triangle-exclamation mt-n2px"
           color="error"
+          class="full-width"
           bordered
           overlap>
           <v-btn
@@ -25,7 +27,6 @@
             :min-width="minButtonsWidth"
             :max-width="maxButtonsWidth"
             :disabled="disableButtons"
-            class="mx-auto mt-2 mt-md-0"
             color="secondary"
             outlined
             depressed
@@ -43,6 +44,7 @@
   <v-tooltip
     v-else-if="stopped"
     :disabled="disableButtons"
+    z-index="4"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -58,6 +60,7 @@
           :value="!!hasRentOffers"
           color="info"
           icon="fas fa-info mt-n2px"
+          class="full-width"
           bordered
           overlap>
           <v-btn
@@ -67,7 +70,6 @@
             :min-width="minButtonsWidth"
             :max-width="maxButtonsWidth"
             :outlined="hasRentOffers || disableButtons"
-            class="mx-auto mt-2 mt-md-0"
             color="primary"
             depressed
             dark
@@ -83,6 +85,7 @@
   </v-tooltip>
   <v-tooltip
     v-else-if="starting"
+    z-index="4"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -98,7 +101,6 @@
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
           :max-width="maxButtonsWidth"
-          class="mx-auto mt-2 mt-md-0"
           outlined
           disabled
           color="primary"
@@ -114,6 +116,7 @@
   </v-tooltip>
   <v-tooltip
     v-else-if="stopping"
+    z-index="4"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -129,7 +132,6 @@
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
           :max-width="maxButtonsWidth"
-          class="mx-auto mt-2 mt-md-0"
           outlined
           disabled
           color="primary"

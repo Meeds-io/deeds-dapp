@@ -29,6 +29,7 @@
   </v-btn>
   <v-tooltip
     v-else
+    z-index="4"
     top
     left>
     <template #activator="{ on, attrs }">

@@ -6,7 +6,10 @@
       <div class="mt-4">
         <v-badge color="transparent" bordered>
           <template #badge>
-            <v-tooltip top left>
+            <v-tooltip
+              z-index="4"
+              top
+              left>
               <template #activator="{ on, attrs }">
                 <v-btn
                   height="16px"

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip bottom>
+  <v-tooltip z-index="4" bottom>
     <template #activator="{ on, attrs }">
       <v-card
         class="mx-auto mt-2 mt-md-0"
