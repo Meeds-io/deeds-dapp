@@ -36,7 +36,7 @@
         </v-btn>
       </v-card>
     </template>
-    <span>{{ $t('deedTenantAccessButton') }}</span>
+    <span>{{ accessButtonTooltip }}</span>
   </v-tooltip>
 </template>
 <script>
@@ -80,6 +80,11 @@ export default {
     },
   },
   computed: Vuex.mapState({
+    accessButtonTooltip() {
+      return this.accessButtonDisabled
+        && this.$t('deedTenantAccessButtonDisabledTooltip')
+        || this.$t('deedTenantAccessButtonTooltip');
+    },
     accessButtonDisabled() {
       return !this.started
         || (!this.hasPaidCurrentPeriod && !this.owner);
