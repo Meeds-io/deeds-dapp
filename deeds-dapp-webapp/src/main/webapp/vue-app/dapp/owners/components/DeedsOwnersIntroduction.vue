@@ -45,6 +45,7 @@
         </ul>
       </v-card-text>
     </v-expand-transition>
+    <v-progress-linear v-if="loading" indeterminate />
   </v-card>
 </template>
 <script>
@@ -52,6 +53,7 @@ export default {
   data: () => ({
     showIntroduction: false,
     hasTenants: false,
+    loading: true,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -73,6 +75,7 @@ export default {
     computeLeasesLength(_leases, totalSize) {
       this.hasTenants = totalSize > 0;
       this.showIntroduction = !this.hasTenants;
+      window.setTimeout(() => this.loading = false, 50);
     },
     openDeeds(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {

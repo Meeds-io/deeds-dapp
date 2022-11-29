@@ -48,6 +48,7 @@
             v-model="allowance"
             :rules="allowanceValueValidator"
             :hide-details="isAllowanceValueValid"
+            autocomplete="off"
             placeholder="0.0"
             large
             outlined
@@ -102,6 +103,7 @@
             v-model="stakeAmount"
             :rules="stakeAmountValidator"
             :hide-details="isStakeAmountValid"
+            autocomplete="off"
             placeholder="0.0"
             large
             outlined

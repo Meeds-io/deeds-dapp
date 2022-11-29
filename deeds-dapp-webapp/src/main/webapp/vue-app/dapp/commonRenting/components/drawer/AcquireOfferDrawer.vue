@@ -563,15 +563,13 @@ export default {
       if (!this.offer || offer.id !== this.offer.id) {
         this.agreeCondition1 = false;
         this.agreeCondition2 = false;
-        this.email = null;
         this.emailCode = null;
         this.emailCodeSent = false;
         this.sent = false;
         this.step = 1;
         this.sending = false;
-        this.validEmail = false;
-        this.$refs.email?.resetForm();
       }
+      this.$refs.email?.resetForm();
       this.offer = Object.assign({}, offer);
       this.$refs.drawer?.open();
     },

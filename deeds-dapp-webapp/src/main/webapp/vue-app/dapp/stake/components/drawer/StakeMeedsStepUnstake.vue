@@ -24,6 +24,7 @@
         v-model="unstakeAmount"
         :rules="unstakeAmountValidator"
         :hide-details="isUnstakeAmountValid"
+        autocomplete="off"
         placeholder="0.0"
         large
         outlined

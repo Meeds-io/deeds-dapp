@@ -52,6 +52,7 @@
             v-model="allowance"
             :rules="allowanceValueValidator"
             :hide-details="isAllowanceValueValid"
+            autocomplete="off"
             placeholder="0.0"
             large
             outlined

@@ -104,10 +104,11 @@
               md="2">
               <template v-if="authenticated">
                 <deeds-lease-card-hub-access-button
-                  v-if="!isLeased && !hasRentOffers"
+                  v-if="showAccessButton"
                   :nft-id="nftId"
                   :city="city"
                   :started="started"
+                  :outlined="hasRentOffers"
                   owner />
 
                 <deeds-lease-card-move-button
@@ -260,6 +261,9 @@ export default {
       default: return 0;
       }
     },
+    showAccessButton() {
+      return this.isProvisioningManager && (!this.isOwner || !this.isLeased);
+    },
     cumulativeRentsPaid() {
       return this.paidMonths * this.tokenAmountPerMonth;
     },
@@ -308,6 +312,16 @@ export default {
       this.animate();
     },
   },
+  created() {
+    document.addEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
+    document.addEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
+    document.addEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+  },
+  beforeDestroy() {
+    document.removeEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
+    document.removeEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
+    document.removeEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+  },
   methods: {
     animate() {
       this.show = false;
@@ -316,6 +330,16 @@ export default {
     logout(validate) {
       if (this.$refs.loginButton) {
         return this.$refs.loginButton.logout(validate);
+      }
+    },
+    refreshLeaseFromblockchain(event) {
+      if (event?.detail?.nftId?.toNumber) {
+        const nftId = event.detail.nftId.toNumber();
+        if (this.nftId === nftId) {
+          const leaseId = event.detail.leaseId.toNumber();
+          this.$deedTenantLeaseService.getLease(leaseId, true)
+            .then(lease => lease && this.$emit('refresh', lease));
+        }
       }
     },
   },

@@ -1040,6 +1040,7 @@ const store = new Vuex.Store({
             }
           }
         );
+
         state.tenantRentingContract.on(
           // eslint-disable-next-line new-cap
           state.tenantRentingContract.filters.TenantEvicted(),

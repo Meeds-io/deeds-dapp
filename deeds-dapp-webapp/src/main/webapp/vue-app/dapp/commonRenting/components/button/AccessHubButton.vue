@@ -25,6 +25,7 @@
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
           :max-width="maxButtonsWidth"
+          :outlined="outlined"
           color="primary"
           rel="nofollow noreferrer noopener"
           target="_blank"
@@ -58,6 +59,10 @@ export default {
       default: false,
     },
     owner: {
+      type: Boolean,
+      default: false,
+    },
+    outlined: {
       type: Boolean,
       default: false,
     },

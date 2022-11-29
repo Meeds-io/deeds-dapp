@@ -127,7 +127,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     /**
      * @dev Throws if called by any account other than the owner of the NFT.
      */
-    modifier isDeedOwnerByLeaseId(uint256 _offerId, address _deedOwner) {
+    modifier isReceiverDeedOwnerByLeaseId(uint256 _offerId, address _deedOwner) {
         require(deed.balanceOf(_deedOwner, deedOffers[_offerId].deedId) > 0, "DeedRenting#ReceiverNotOwnerOfDeed");
         _;
     }
@@ -141,7 +141,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     }
 
     /**
-     * @dev Throws when offer id isn't currently assigned to the deed Id
+     * @dev Throws when offer id isn't currently assigned to the NFT Id
      */
     modifier isDeedOffer(uint256 _offerId, uint256 _deedId) {
         require(_deedId == deedOffers[_offerId].deedId, "DeedRenting#NotAdequateDeedForOffer");
@@ -174,7 +174,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     }
 
     /**
-     * @dev Throws if lease offer has a start date that is less than last acquired offer end date.
+     * @dev Throws if offer has a start date that is less than last acquired offer end date.
      */
     modifier hasOfferValidStartDate(uint256 _deedId, uint256 _offerStartDate) {
         if (_offerStartDate == 0) {
@@ -187,7 +187,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     }
 
     /**
-     * @dev Throws if notice period is more than Lease months
+     * @dev Throws if Rent months is 0 or Notice months is more than Rent months
      */
     modifier isValidOfferPeiod(uint16 _months, uint8 _noticePeriod) {
         require(_months > 0, "DeedRenting#RentalDurationMustBePositive");
@@ -206,7 +206,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     }
 
     /**
-     * @dev Throws if offer has been already acquired.
+     * @dev Throws if offer had expired or has a start date that is less than last acquired offer end date
      */
     modifier isOfferNotExpired(uint256 _offerId) {
         DeedOffer storage offer = deedOffers[_offerId];
@@ -229,7 +229,16 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     }
 
     /**
-     * @dev Throws if Deed tenant isn't the current address
+     * @dev Throws if neither "price" nor "all duration price" are strictly positive number or both are set
+     */
+    modifier isValidPrice(uint256 _price, uint256 _allDurationPrice) {
+        require(_price > 0 || _allDurationPrice > 0, "DeedRenting#InvalidOfferPrice");
+        require(_price == 0 || _allDurationPrice == 0, "DeedRenting#EitherMonthlyRentOrAllDurationPrice");
+        _;
+    }
+
+    /**
+     * @dev Throws if current address isn't the current Deed Tenant/Provisioning Manager
      */
     modifier onlyDeedTenant(uint256 _leaseId) {
         DeedLease storage lease = deedLeases[_leaseId];
@@ -283,7 +292,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         onlyDeedOwner(_offer.deedId)
         hasOfferValidStartDate(_offer.deedId, _offer.offerStartDate)
         isValidOfferPeiod(_offer.months, _offer.noticePeriod)
-        isPercentageValid(_offer.ownerMintingPercentage) {
+        isPercentageValid(_offer.ownerMintingPercentage)
+        isValidPrice(_offer.price, _offer.allDurationPrice) {
 
         offersCount = offersCount.add(1);
         _offer.id = offersCount;
@@ -390,7 +400,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
      */
     function payRent(uint256 _id, address _deedOwner, uint8 _monthsToPay)
         public
-        isDeedOwnerByLeaseId(_id, _deedOwner)
+        isReceiverDeedOwnerByLeaseId(_id, _deedOwner)
         onlyDeedTenant(_id)
         isOngoingLease(_id) {
 

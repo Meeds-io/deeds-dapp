@@ -285,7 +285,8 @@ export default {
             this.$deedTenantOfferService.getOffer(selectedOffer.id, isCreator)
               .catch(e => {
                 if (selectedOffer.parentId) {
-                  return this.$deedTenantOfferService.getOffer(selectedOffer.parentId, isCreator);
+                  return this.$deedTenantOfferService.getOffer(selectedOffer.parentId, isCreator)
+                    .catch(() => console.debug('offer seems to be deleted', selectedOffer.parentId)); // eslint-disable-line no-console
                 } else {
                   throw e;
                 }
@@ -330,6 +331,7 @@ export default {
           }
           return offer;
         })
+        .catch(() => console.debug('offer seems to be deleted', id)) // eslint-disable-line no-console
         .finally(() => this.loading = false);
     },
   },

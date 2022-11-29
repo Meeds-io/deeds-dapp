@@ -13,25 +13,32 @@
         flat
         v-bind="attrs"
         v-on="on">
-        <v-btn
-          :loading="loadingMoveDeed"
-          :width="buttonsWidth"
-          :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
-          :disabled="disableButtons"
-          class="mx-auto mt-2 mt-md-0"
-          color="secondary"
-          outlined
-          depressed
-          dark
-          @click="openMoveOutDrawer">
-          <span class="text-truncate position-absolute full-width text-capitalize">
-            {{ $t('moveOut') }}
-          </span>
-        </v-btn>
+        <v-badge
+          :value="!!hasRentOffers"
+          icon="fas fa-triangle-exclamation mt-n2px"
+          color="error"
+          bordered
+          overlap>
+          <v-btn
+            :loading="loadingMoveDeed"
+            :width="buttonsWidth"
+            :min-width="minButtonsWidth"
+            :max-width="maxButtonsWidth"
+            :disabled="disableButtons"
+            class="mx-auto mt-2 mt-md-0"
+            color="secondary"
+            outlined
+            depressed
+            dark
+            @click="openMoveOutDrawer">
+            <span class="text-truncate position-absolute full-width text-capitalize">
+              {{ $t('moveOut') }}
+            </span>
+          </v-btn>
+        </v-badge>
       </v-card>
     </template>
-    <span>{{ $t('deedMoveOutDescription') }}</span>
+    <span>{{ moveOutDescription }}</span>
   </v-tooltip>
   <v-tooltip
     v-else-if="stopped"
@@ -47,25 +54,32 @@
         flat
         v-bind="attrs"
         v-on="on">
-        <v-btn
-          :disabled="disableButtons"
-          :loading="loadingMoveDeed"
-          :width="buttonsWidth"
-          :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
-          :outlined="hasRentOffers || disableButtons"
-          class="mx-auto mt-2 mt-md-0"
-          color="primary"
-          depressed
-          dark
-          @click="openMoveInDrawer">
-          <span class="text-truncate position-absolute full-width text-capitalize">
-            {{ $t('moveIn') }}
-          </span>
-        </v-btn>
+        <v-badge
+          :value="!!hasRentOffers"
+          color="info"
+          icon="fas fa-info mt-n2px"
+          bordered
+          overlap>
+          <v-btn
+            :disabled="disableButtons"
+            :loading="loadingMoveDeed"
+            :width="buttonsWidth"
+            :min-width="minButtonsWidth"
+            :max-width="maxButtonsWidth"
+            :outlined="hasRentOffers || disableButtons"
+            class="mx-auto mt-2 mt-md-0"
+            color="primary"
+            depressed
+            dark
+            @click="openMoveInDrawer">
+            <span class="text-truncate position-absolute full-width text-capitalize">
+              {{ $t('moveIn') }}
+            </span>
+          </v-btn>
+        </v-badge>
       </v-card>
     </template>
-    <span>{{ $t('deedMoveInDescription') }}</span>
+    <span>{{ moveInDescription }}</span>
   </v-tooltip>
   <v-tooltip
     v-else-if="starting"
@@ -205,6 +219,12 @@ export default {
     tenantStatus() {
       return this.deedInfo?.status || this.lease?.tenantStatus;
     },
+    moveOutDescription() {
+      return this.hasRentOffers && this.$t('deedMoveOutOfferWarningTooltip') || this.$t('deedMoveOutDescription');
+    },
+    moveInDescription() {
+      return this.hasRentOffers && this.$t('deedMoveInOfferWarningTooltip') || this.$t('deedMoveInDescription');
+    },
   }),
   watch: {
     provisioningStatus: {
@@ -224,11 +244,12 @@ export default {
     this.installListeners();
     this.$root.$on('nft-status-changed', this.handleStatusChanged);
     document.addEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
-    if (this.owner) {
+    if (this.lease?.deedInfo?.then) { // Promise loading in progress
+      this.lease?.deedInfo.then(deedInfo => this.deedInfo = deedInfo);
+    } else if (this.lease?.deedInfo) {
       this.deedInfo = this.lease?.deedInfo;
-      if (!this.deedInfo) {
-        this.refreshDeedInfo();
-      }
+    } else {
+      this.refreshDeedInfo();
     }
   },
   beforeDestroy() {

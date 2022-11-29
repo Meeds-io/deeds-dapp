@@ -103,6 +103,12 @@ body, .theme--dark.v-application {
 .mt-2px {
   margin-top: 2px !important;
 }
+.mt-n2px {
+  margin-top: -2px !important;
+}
+.mb-2px {
+  margin-bottom: 2px !important;
+}
 .mr-n2px {
   margin-right: -2px !important;
 }

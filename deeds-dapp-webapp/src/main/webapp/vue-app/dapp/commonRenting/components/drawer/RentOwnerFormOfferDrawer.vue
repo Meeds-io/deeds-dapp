@@ -92,6 +92,7 @@
                   v-model="offer.hostAddress"
                   :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
                   name="hostAddress"
+                  autocomplete="off"
                   class="mt-0 pt-0 me-2"
                   hide-details
                   outlined
@@ -135,8 +136,9 @@
           <span class="subtitle-1 ms-4">{{ $t('deedRentingConditionsStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
-          <v-card
+          <v-form
             v-show="step === 3"
+            ref="conditionsForm"
             color="transparent"
             class="flex-grow-1 mb-8"
             flat>
@@ -149,11 +151,16 @@
               <v-text-field
                 v-model="offer.amount"
                 name="rentalAmount"
+                type="number"
+                min="1"
+                step="1"
+                pattern="(?=.*\d)"
                 color="grey"
                 class="mt-0 pt-0 me-2"
                 hide-details
                 outlined
                 dense
+                required
                 style="max-width: 80px" />
               <label for="rentalAmount" class="my-auto">{{ $t('meeds') }}</label>
               <v-select
@@ -205,7 +212,7 @@
               v-model="offer.noticePeriod"
               :max-value="maxNoticePeriod"
               max-value-exclusive />
-          </v-card>
+          </v-form>
         </v-expand-transition>
         <v-list-item
           class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
@@ -377,7 +384,7 @@ export default {
       description: null,
       duration: null,
       expirationDuration: null,
-      amount: 10,
+      amount: 0,
       paymentPeriodicity: 'ONE_MONTH',
       noticePeriod: 'ONE_MONTH',
       ownerMintingPercentage: 50,
@@ -444,9 +451,11 @@ export default {
     step3ButtonDisabled() {
       return this.step1ButtonDisabled
         || !this.offer?.duration
-        || !this.offer?.amount
-        || !this.offer?.paymentPeriodicity
-        || !this.offer?.noticePeriod;
+        || !this.offer.amount
+        || Number(this.offer.amount) <= 0
+        || !Number.isInteger(Number(this.offer.amount))
+        || !this.offer.paymentPeriodicity
+        || !this.offer.noticePeriod;
     },
     step4ButtonDisabled() {
       return this.step1ButtonDisabled
@@ -647,6 +656,7 @@ export default {
           && (this.step !== 1 || !this.step1ButtonDisabled)
           && (this.step !== 2 || !this.step2ButtonDisabled)) {
         this.step = 3;
+        this.$nextTick().then(() => this.$refs?.conditionsForm?.$el?.reportValidity());
         this.scrollDrawerContent();
       }
     },
@@ -677,7 +687,9 @@ export default {
       } else if (this.step === 2) {
         this.goToStep3();
       } else if (this.step === 3) {
-        this.goToStep4();
+        if (this.$refs?.conditionsForm?.$el?.reportValidity()) {
+          this.goToStep4();
+        }
       } else if (this.confirmEmailStep) {
         this.sendEmailConfirmation();
       } else if (this.isNew) {

@@ -19,10 +19,7 @@
 
 -->
 <template>
-  <v-card
-    id="leasesList"
-    :loading="loading"
-    flat>
+  <v-card id="leasesList" flat>
     <v-row v-if="hasLeases || hasNfts" class="pa-0 my-0">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
@@ -31,22 +28,15 @@
         </div>
       </v-col>
       <v-col
-        v-for="lease in leases"
-        :key="lease.id"
+        v-for="(lease, index) in deedsToDisplay"
+        :key="`${lease.nftId}-${lease.index || index}`"
         class="d-flex justify-center"
         cols="12">
-        <v-slide-x-transition>
-          <deeds-owners-deed-card :lease="lease" />
-        </v-slide-x-transition>
-      </v-col>
-      <v-col
-        v-for="deed in ownedDeeds"
-        :key="deed.nftId"
-        class="d-flex justify-center"
-        cols="12">
-        <v-slide-x-transition>
-          <deeds-owners-deed-card :lease="deed" />
-        </v-slide-x-transition>
+        <v-fade-transition>
+          <deeds-owners-deed-card
+            :lease="lease"
+            @refresh="refreshDeedOrLease" />
+        </v-fade-transition>
       </v-col>
     </v-row>
   </v-card>
@@ -55,15 +45,19 @@
 export default {
   data: () => ({
     leases: [],
+    ownedDeeds: [],
+    deedsToDisplay: [],
     sortField: 'createdDate',
     sortDirection: 'desc',
     pageSize: 100,
     totalSize: 0,
-    loading: true,
-    rentedOffersLoaded: false,
+    rentedOffersLoaded: 0,
     rentedOffers: {},
     tenants: {},
     tenantsLoaded: false,
+    tenantsLoadingPromise: null,
+    sortResults: true,
+    refreshedLeases: {},
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -80,96 +74,46 @@ export default {
     hasNfts() {
       return this.ownedNfts.length > 0;
     },
-    ownedDeeds() {
-      if (!this.ownedNfts?.length || !this.rentedOffersLoaded || !this.tenantsLoaded) {
-        return [];
-      }
-      const ownedNftsNoLease = this.ownedNfts.filter(deed => {
-        return !this.leases.find(lease => lease.nftId === deed.id);
-      });
-      return ownedNftsNoLease.map(deed => ({
-        nftId: deed.id,
-        city: this.cities[deed.cityIndex],
-        cardType: this.cardTypes[deed.cardType],
-        ownerAddress: this.address,
-        managerAddress: this.address,
-        rentedOffers: this.rentedOffers[deed.id]?.slice() || [],
-        deedInfo: this.tenants[deed.id],
-      })).sort((deed1, deed2) => (deed2.rentedOffers?.length || 0) - (deed1.rentedOffers?.length || 0));
-    },
   }),
   watch: {
-    hasLeases() {
-      this.emitLoadedDeeds();
-    },
-    hasNfts() {
-      this.emitLoadedDeeds();
+    ownedNfts() {
+      this.computeDeedsToDisplay();
     },
   },
   created() {
     this.init();
-    this.$root.$on('deed-lease-ended', this.refreshLease);
-    this.$root.$on('deed-lease-payed', this.refreshLease);
-    this.$root.$on('deed-offer-renting-updated', this.handleOfferUpdated);
-    this.$root.$on('deed-offer-renting-deleted', this.handleOfferUpdated);
-    this.$root.$on('deed-offer-rented', this.handleOfferRented);
-    document.addEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
-    document.addEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
-    document.addEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+    this.$root.$on('deed-offers-loaded', this.refreshLoadedOffers);
   },
   beforeDestroy() {
-    this.$root.$off('deed-lease-ended', this.refreshLease);
-    this.$root.$off('deed-lease-payed', this.refreshLease);
-    this.$root.$off('deed-offer-renting-updated', this.handleOfferUpdated);
-    this.$root.$off('deed-offer-renting-deleted', this.handleOfferUpdated);
-    this.$root.$off('deed-offer-rented', this.handleOfferRented);
-    document.removeEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
-    document.removeEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
-    document.removeEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+    this.$root.$off('deed-offers-loaded', this.refreshLoadedOffers);
   },
   methods: {
     init() {
+      this.tenantsLoadingPromise = this.loadTenants();
       Promise.all([
-        this.refreshLeases(),
-        this.refreshOffers(),
-        this.refreshTenants()
-      ]).finally(() => this.emitLoadedDeeds());
+        this.tenantsLoadingPromise,
+        this.loadLeases(),
+        this.loadOffers()
+      ]).finally(() => this.computeDeedsToDisplay());
     },
-    emitLoadedDeeds() {
-      const deeds = [...this.leases, ...this.ownedDeeds];
-      this.$root.$emit('deed-leases-loaded', deeds, deeds.length);
-      this.$nextTick(() => this.loading = false);
+    loadLeases() {
+      return this.$deedTenantLeaseService.getLeases({
+        sort: `${this.sortField},${this.sortDirection}`,
+        address: this.address,
+        onlyConfirmed: false,
+        owner: true,
+      }, this.networkId)
+        .then(data => {
+          const leases = data?._embedded?.leases || [];
+          leases.forEach(lease => {
+            lease.deedInfo = this.getDeedInfo(lease, lease.nftId);
+            lease.index = 1;
+          });
+          this.leases = leases.filter(lease => lease.confirmed);
+          this.totalSize = leases?.page?.totalElements || this.leases.length;
+        });
     },
-    refreshLeaseFromblockchain(event) {
-      if (event?.detail?.leaseId?.toNumber) {
-        const leaseId = event.detail.leaseId.toNumber();
-        const selectedLease = this.leases.find(lease => lease.id === leaseId);
-        if (selectedLease) {
-          this.$deedTenantLeaseService.getLease(leaseId, true)
-            .then(lease => {
-              if (lease) {
-                this.refreshLease(lease);
-              }
-            });
-        }
-      }
-    },
-    refreshLease(lease) {
-      const index = this.leases.findIndex(displayedLease => displayedLease.id === lease.id);
-      if (index >= 0) {
-        this.leases.splice(index, 1, lease);
-      }
-    },
-    refreshTenants() {
-      return this.$tenantManagement.getTenants()
-        .then(tenants => {
-          this.tenants = {};
-          tenants.forEach(tenant => this.tenants[tenant.nftId] = tenant);
-        })
-        .catch(() => this.tenants = {})
-        .finally(() => this.tenantsLoaded = true);
-    },
-    refreshOffers() {
+    loadOffers() {
       return this.$deedTenantOfferService.getOffers({
         address: this.address,
         onlyOwned: true,
@@ -187,32 +131,75 @@ export default {
             }
           });
         })
-        .finally(() => this.rentedOffersLoaded = true);
+        .finally(() => this.rentedOffersLoaded++);
     },
-    handleOfferUpdated(offer) {
-      if (offer) {
-        this.refreshOffers();
+    loadTenants() {
+      return this.$tenantManagement.getTenants()
+        .then(tenants => {
+          this.tenants = {};
+          tenants.forEach(tenant => this.tenants[tenant.nftId] = tenant);
+          return this.tenants;
+        })
+        .catch(() => this.tenants = {})
+        .finally(() => this.tenantsLoaded = true);
+    },
+    getDeedInfo(lease, deedId) {
+      return this.tenantsLoadingPromise
+        .then(tenants => lease.deedInfo = tenants[deedId])
+        .catch(() => lease.deedInfo = null);
+    },
+    refreshLoadedOffers(deedId, rentalOffers) {
+      const deed = this.deedsToDisplay.find(displayedLease => displayedLease.nftId === deedId);
+      if (deed) {
+        deed.rentedOffers = rentalOffers;
+        deed.index = (deed.index || 0) + 1;
+        this.refreshDeedOrLease(deed);
       }
     },
-    handleOfferRented(lease, offer) {
-      if (offer) {
-        this.refreshOffers();
-      }
-      if (lease) {
-        this.refreshLeases();
+    refreshDeedOrLease(lease) {
+      const index = this.deedsToDisplay.findIndex(displayedLease => displayedLease.nftId === lease.nftId);
+      if (index >= 0) {
+        lease.index = this.deedsToDisplay[index].index + 1;
+        this.deedsToDisplay.splice(index, 1, lease);
+      } else {
+        lease.deedInfo = this.getDeedInfo(lease, lease.nftId);
+        this.refreshedLeases[lease.nftId] = lease;
+        this.deedsToDisplay = [...this.leases, this.ownedDeeds];
       }
     },
-    refreshLeases() {
-      return this.$deedTenantLeaseService.getLeases({
-        sort: `${this.sortField},${this.sortDirection}`,
-        address: this.address,
-        onlyConfirmed: false,
-        owner: true,
-      }, this.networkId)
-        .then(leases => {
-          this.leases = leases?._embedded?.leases || [];
-          this.totalSize = leases?.page?.totalElements || this.leases.length;
-        });
+    computeDeedsToDisplay() {
+      const ownedNftsNoLease = this.ownedNfts && this.ownedNfts.filter(deed => {
+        return !this.leases.find(lease => lease.nftId === deed.id);
+      }) || [];
+      const ownedDeeds = ownedNftsNoLease.map(deed => {
+        const lease = this.refreshedLeases[deed.id] || {
+          nftId: deed.id,
+          city: this.cities[deed.cityIndex],
+          cardType: this.cardTypes[deed.cardType],
+          ownerAddress: this.address,
+          managerAddress: this.address,
+          rentedOffers: this.rentedOffers[deed.id]?.slice() || [],
+          deedInfo: this.tenants[deed.id],
+          index: 1,
+        };
+        if (!lease.deedInfo) {
+          lease.deedInfo = this.getDeedInfo(lease, deed.id);
+        }
+        return lease;
+      });
+      if (this.sortResults && ownedDeeds.length > 0) {
+        if (this.ownedNfts?.length > 0 && this.rentedOffersLoaded) {
+          this.sortResults = false;
+        }
+        this.ownedDeeds = ownedDeeds
+          .sort((deed1, deed2) =>
+            (deed2.rentedOffers?.length || 0) - (deed1.rentedOffers?.length || 0)
+          );
+      } else {
+        this.ownedDeeds = ownedDeeds;
+      }
+      this.deedsToDisplay = [...this.leases, ...this.ownedDeeds];
+      this.$root.$emit('deed-leases-loaded', this.deedsToDisplay, this.deedsToDisplay.length);
     },
   },
 };

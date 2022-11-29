@@ -35,6 +35,7 @@
         :rules="fromValueValidator"
         :hide-details="isFromValueValid"
         class="align-center"
+        autocomplete="off"
         placeholder="0.0"
         large
         outlined
@@ -80,6 +81,7 @@
         v-model="toValueDisplay"
         placeholder="0.0"
         class="align-center"
+        autocomplete="off"
         hide-details
         large
         outlined

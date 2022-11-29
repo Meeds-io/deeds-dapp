@@ -22,44 +22,73 @@
     <template #activator="{ onParent, attrsParent }">
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn
+          <v-card
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
             :max-width="maxButtonsWidth"
             :class="!showSeeRentPart && 'd-none'"
             class="mx-auto mt-2 mt-md-0"
-            color="primary"
-            outlined
-            depressed
+            color="transparent"
+            flat
             v-bind="attrs"
-            v-on="on"
-            @click="openRentDetails">
-            <span class="text-truncate position-absolute full-width text-capitalize">
-              {{ $t('deedRentSeeRentButton') }}
-            </span>
-          </v-btn>
+            v-on="on">
+            <v-badge
+              :value="isCreateInProgress"
+              bordered
+              color="info"
+              icon="fas fa-info mt-n2px"
+              overlap>
+              <v-btn
+                :width="buttonsWidth"
+                :min-width="minButtonsWidth"
+                :max-width="maxButtonsWidth"
+                color="primary"
+                outlined
+                depressed
+                @click="openRentDetails">
+                <span class="text-truncate position-absolute full-width text-capitalize">
+                  {{ $t('deedRentSeeRentButton') }}
+                </span>
+              </v-btn>
+            </v-badge>
+          </v-card>
         </template>
-        <span>{{ $t('deedRentSeeRentDescription') }}</span>
+        <span>{{ rentingSeeDescription }}</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn
-            :loading="loadingRentDrawer"
+          <v-card
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
             :max-width="maxButtonsWidth"
-            :outlined="!hasRentOffers"
             :class="!showRentPart && 'd-none'"
             class="mx-auto mt-2 mt-md-0"
-            color="primary"
-            depressed
+            color="transparent"
+            flat
             v-bind="attrs"
-            v-on="on"
-            @click="openRentDrawer">
-            <span class="text-truncate position-absolute full-width text-capitalize">
-              {{ rentingButtonName }}
-            </span>
-          </v-btn>
+            v-on="on">
+            <v-badge
+              :value="showEditOfferBadge"
+              :icon="editOfferBadgeIcon"
+              :color="editOfferBadgeIconColor"
+              bordered
+              overlap>
+              <v-btn
+                :disabled="disabledEdit"
+                :loading="loadingRentDrawer"
+                :width="buttonsWidth"
+                :min-width="minButtonsWidth"
+                :max-width="maxButtonsWidth"
+                :outlined="!hasRentOffers || disabledEdit"
+                color="primary"
+                depressed
+                @click="openRentDrawer">
+                <span class="text-truncate position-absolute full-width text-capitalize">
+                  {{ rentingButtonName }}
+                </span>
+              </v-btn>
+            </v-badge>
+          </v-card>
         </template>
         <span>{{ rentingDescription }}</span>
       </v-tooltip>
@@ -101,7 +130,6 @@ export default {
   data: () => ({
     loadingRentDrawer: false,
     loadingRentalOffers: false,
-    rentalOffers: [],
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -111,17 +139,47 @@ export default {
     authenticated: state => state.authenticated,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     now: state => state.now,
+    offerId() {
+      return this.rentalOffer?.offerId;
+    },
+    isDeleteInProgress() {
+      return this.rentalOffer?.deleteId;
+    },
+    isUpdateInProgress() {
+      return this.rentalOffer?.updateId;
+    },
+    isCreateInProgress() {
+      return this.rentalOffer && !this.offerId || false;
+    },
+    acquisitionsCount() {
+      return this.rentalOffer?.acquisitionIds?.length || 0;
+    },
+    isAcquisitionInProgress() {
+      return (this.rentalOffer?.acquisitionIds?.length || 0) > 0;
+    },
+    showEditOfferBadge() {
+      return this.isAcquisitionInProgress || this.disabledEdit;
+    },
+    editOfferBadgeIcon() {
+      return this.isAcquisitionInProgress && 'fas fa-cart-shopping mt-n2px' || 'fas fa-lock mt-n2px';
+    },
+    editOfferBadgeIconColor() {
+      return this.isAcquisitionInProgress && 'warning' || 'error';
+    },
+    disabledEdit() {
+      return this.isDeleteInProgress || this.isUpdateInProgress || false;
+    },
     showRentPart() {
-      return this.authenticated && (!this.rentalOffer || !!this.rentalOffer.offerId);
+      return this.authenticated && (!this.rentalOffer || !!this.offerId) || false;
     },
     showSeeRentPart() {
-      return this.authenticated && this.hasAvailableRentOffers;
+      return this.authenticated && this.hasAvailableRentOffers || false;
     },
     hasRentOffers() {
-      return !!this.rentalOffers?.length;
+      return !!this.offers?.length;
     },
     availableRentOffers() {
-      return this.rentalOffers?.filter(offer => !offer.expirationDate || new Date(offer.expirationDate).getTime() > this.now);
+      return this.offers?.filter(offer => !offer.expirationDate || new Date(offer.expirationDate).getTime() > this.now);
     },
     hasAvailableRentOffers() {
       return this.availableRentOffers?.length > 0;
@@ -131,7 +189,7 @@ export default {
     },
     rentalOffer() {
       return (this.hasAvailableRentOffers && this.availableRentOffers[0])
-        || (this.hasRentOffers && this.rentalOffers[0]);
+        || (this.hasRentOffers && this.offers[0]);
     },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;
@@ -139,7 +197,19 @@ export default {
     rented() {
       return !this.isProvisioningManager;
     },
+    rentingSeeDescription() {
+      return this.offerId && this.$t('deedRentSeeRentDescription') || this.$t('deedRentingOfferCreationInProgress');
+    },
     rentingDescription() {
+      if (this.isAcquisitionInProgress) {
+        return this.$t('deedOfferAcquisitionInProgress', {0: this.acquisitionsCount});
+      }
+      if (this.isDeleteInProgress) {
+        return this.$t('deedRentingOfferDeletionInProgress');
+      }
+      if (this.isUpdateInProgress) {
+        return this.$t('deedRentingOfferUpdateInProgress');
+      }
       return this.hasOnlyExpiredOffers
         && this.$t('deedRentOfferExpired')
         || (this.hasRentOffers
@@ -160,12 +230,17 @@ export default {
     },
   },
   created() {
+    document.addEventListener('deed-offer-created', this.refreshOfferFromblockchain);
+    document.addEventListener('deed-offer-updated', this.refreshOfferFromblockchain);
+    document.addEventListener('deed-offer-deleted', this.refreshOfferFromblockchain);
     this.$root.$on('deed-offer-renting-created', this.handleRefreshOffers);
     this.$root.$on('deed-offer-renting-updated', this.handleRefreshOffers);
     this.$root.$on('deed-offer-renting-deleted', this.handleRefreshOffers);
-    this.rentalOffers = this.offers || [];
   },
   beforeDestroy() {
+    document.removeEventListener('deed-offer-created', this.refreshOfferFromblockchain);
+    document.removeEventListener('deed-offer-updated', this.refreshOfferFromblockchain);
+    document.removeEventListener('deed-offer-deleted', this.refreshOfferFromblockchain);
     this.$root.$off('deed-offer-renting-created', this.handleRefreshOffers);
     this.$root.$off('deed-offer-renting-updated', this.handleRefreshOffers);
     this.$root.$off('deed-offer-renting-deleted', this.handleRefreshOffers);
@@ -193,16 +268,25 @@ export default {
         excludeNotStarted: false,
       }, this.networkId)
         .then(offers => {
-          this.rentalOffers = offers?._embedded?.offers && [offers?._embedded?.offers[0]] || [];
+          const rentalOffers = offers?._embedded?.offers && [offers?._embedded?.offers[0]] || [];
           if (broadcast) {
-            this.$root.$emit('deed-offers-loaded', this.nftId, this.rentalOffers);
+            this.$root.$emit('deed-offers-loaded', this.nftId, rentalOffers);
           }
         })
         .finally(() => this.loadingRentalOffers = false);
     },
     openRentDetails() {
-      this.$store.commit('setStandaloneOfferId', this.rentalOffers[0].id);
+      this.$store.commit('setStandaloneOfferId', this.offers[0].id);
       this.$root.$emit('switch-page', 'marketplace', true);
+    },
+    refreshOfferFromblockchain(event) {
+      const offerId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
+      const deedId = event?.detail?.nftId?.toNumber();
+      if (this.rentalOffer && (offerId === this.offerId || deedId === this.nftId)) {
+        this.$deedTenantOfferService.getOffer(this.rentalOffer.id, true)
+          .catch(() => console.debug('offer seems to be deleted', this.rentalOffer.id)) // eslint-disable-line no-console
+          .finally(() => this.refreshOffers(true));
+      }
     },
   },
 };

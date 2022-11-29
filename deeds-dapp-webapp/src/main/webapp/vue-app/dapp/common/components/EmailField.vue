@@ -28,6 +28,7 @@
       name="email"
       type="email"
       pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
+      autocomplete="off"
       class="align-center"
       hide-details
       large
@@ -56,6 +57,7 @@
         name="emailCode"
         maxlength="6"
         class="align-center"
+        autocomplete="off"
         hide-details
         large
         outlined
