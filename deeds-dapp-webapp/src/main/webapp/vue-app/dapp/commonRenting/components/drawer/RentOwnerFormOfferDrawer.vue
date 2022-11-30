@@ -44,76 +44,17 @@
         <div class="pt-4">{{ $t('deedRentingEditDescription2') }}</div>
         <deeds-renting-offer-card v-if="drawer" :offer="offer" />
       </v-card-text>
-      <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
-        <v-list-item
-          class="d-flex align-center flex-grow-0 max-height-40px pa-0"
-          dense
-          @click="step = 1">
-          <v-chip :color="step === 1 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
-          <span class="subtitle-1 ms-4">{{ $t('deedOfferVisibilityStepTitle') }}</span>
-        </v-list-item>
-        <v-expand-transition>
-          <v-card
-            v-show="step === 1"
-            color="transparent"
-            class="flex-grow-1"
-            flat>
-            <div class="px-0 pt-4">
-              {{ $t('deedOfferVisibilityStepDescription') }}
-              <v-radio-group
-                v-model="visibility"
-                hide-details>
-                <v-radio
-                  :label="$t('deedOfferPublicVisibility')"
-                  class="align-start"
-                  value="ALL">
-                  <template #label>
-                    <div class="d-flex flex-column">
-                      <div class="text--color">{{ $t('deedOfferPublicVisibility') }}</div>
-                      <div class="caption">{{ $t('deedOfferPublicVisibilityDescription') }}</div>
-                    </div>
-                  </template>
-                </v-radio>
-                <v-radio
-                  :label="$t('deedOfferAddressVisibility')"
-                  class="align-start"
-                  value="ADDRESS">
-                  <template #label>
-                    <div class="d-flex flex-column">
-                      <div class="text--color">{{ $t('deedOfferAddressVisibility') }}</div>
-                      <div class="caption">{{ $t('deedOfferAddressVisibilityDescription') }}</div>
-                    </div>
-                  </template>
-                </v-radio>
-              </v-radio-group>
-              <div v-if="visibility === 'ADDRESS'" class="mb-8 mt-4">
-                <span>{{ $t('deedOfferAddressVisibilityAssignedTo') }}</span>
-                <v-text-field
-                  v-model="offer.hostAddress"
-                  :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
-                  name="hostAddress"
-                  autocomplete="off"
-                  class="mt-0 pt-0 me-2"
-                  hide-details
-                  outlined
-                  dense />
-                <span class="caption text--disabled">
-                  {{ $t('deedOfferAddressVisibilityAssignedToSubtitle') }}
-                </span>
-              </div>
-            </div>
-          </v-card>
-        </v-expand-transition>
+      <v-card-text class="d-flex flex-column flex-grow-1 rental-steps pt-0">
         <v-list-item
           class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="goToStep2">
-          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
+          @click="step = 1">
+          <v-chip :color="step === 1 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">1</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedOfferDescriptionStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
           <v-card
-            v-show="step === 2"
+            v-show="step === 1"
             color="transparent"
             class="flex-grow-1"
             flat>
@@ -131,13 +72,13 @@
         <v-list-item
           class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
           dense
-          @click="goToStep3">
-          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
+          @click="goToStep2">
+          <v-chip :color="step === 2 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">2</span></v-chip>
           <span class="subtitle-1 ms-4">{{ $t('deedRentingConditionsStepTitle') }}</span>
         </v-list-item>
         <v-expand-transition>
           <v-form
-            v-show="step === 3"
+            v-show="step === 2"
             ref="conditionsForm"
             color="transparent"
             class="flex-grow-1 mb-8"
@@ -213,6 +154,65 @@
               :max-value="maxNoticePeriod"
               max-value-exclusive />
           </v-form>
+        </v-expand-transition>
+        <v-list-item
+          class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
+          dense
+          @click="goToStep3">
+          <v-chip :color="step === 3 && 'secondary' || 'secondary lighten-2'"><span class="font-weight-bold">3</span></v-chip>
+          <span class="subtitle-1 ms-4">{{ $t('deedOfferVisibilityStepTitle') }}</span>
+        </v-list-item>
+        <v-expand-transition>
+          <v-card
+            v-show="step === 3"
+            color="transparent"
+            class="flex-grow-1"
+            flat>
+            <div class="px-0 pt-4">
+              {{ $t('deedOfferVisibilityStepDescription') }}
+              <v-radio-group
+                v-model="visibility"
+                hide-details>
+                <v-radio
+                  :label="$t('deedOfferPublicVisibility')"
+                  class="align-start"
+                  value="ALL">
+                  <template #label>
+                    <div class="d-flex flex-column">
+                      <div class="text--color">{{ $t('deedOfferPublicVisibility') }}</div>
+                      <div class="caption">{{ $t('deedOfferPublicVisibilityDescription') }}</div>
+                    </div>
+                  </template>
+                </v-radio>
+                <v-radio
+                  :label="$t('deedOfferAddressVisibility')"
+                  class="align-start"
+                  value="ADDRESS">
+                  <template #label>
+                    <div class="d-flex flex-column">
+                      <div class="text--color">{{ $t('deedOfferAddressVisibility') }}</div>
+                      <div class="caption">{{ $t('deedOfferAddressVisibilityDescription') }}</div>
+                    </div>
+                  </template>
+                </v-radio>
+              </v-radio-group>
+              <div v-if="visibility === 'ADDRESS'" class="mb-8 mt-4">
+                <span>{{ $t('deedOfferAddressVisibilityAssignedTo') }}</span>
+                <v-text-field
+                  v-model="offer.hostAddress"
+                  :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
+                  name="hostAddress"
+                  autocomplete="off"
+                  class="mt-0 pt-0 me-2"
+                  hide-details
+                  outlined
+                  dense />
+                <span class="caption text--disabled">
+                  {{ $t('deedOfferAddressVisibilityAssignedToSubtitle') }}
+                </span>
+              </div>
+            </div>
+          </v-card>
         </v-expand-transition>
         <v-list-item
           class="d-flex align-center mt-2 flex-grow-0 max-height-40px pa-0"
@@ -446,12 +446,9 @@ export default {
                 || this.$t('deedRentingUpdateNoBlockchainButton')));
     },
     step1ButtonDisabled() {
-      return this.visibility !== 'ALL' && (!this.offer?.hostAddress?.length || !ethers.utils.isAddress(this.offer.hostAddress));
-    },
-    step2ButtonDisabled() {
       return this.offer?.description?.length > this.DESCRIPTION_MAX_LENGTH;
     },
-    step3ButtonDisabled() {
+    step2ButtonDisabled() {
       return this.step1ButtonDisabled
         || !this.offer?.duration
         || !this.offer.amount
@@ -460,9 +457,15 @@ export default {
         || !this.offer.paymentPeriodicity
         || !this.offer.noticePeriod;
     },
+    step3ButtonDisabled() {
+      return this.step1ButtonDisabled
+        || this.step2ButtonDisabled
+        || (this.visibility !== 'ALL' && (!this.offer?.hostAddress?.length || !ethers.utils.isAddress(this.offer.hostAddress)));
+    },
     step4ButtonDisabled() {
       return this.step1ButtonDisabled
         || this.step2ButtonDisabled
+        || this.step3ButtonDisabled
         || (!this.isNew && !this.offerChanged && !this.offerBlockchainStateChanged)
         || (this.isNew && !this.validEmail);
     },
@@ -652,6 +655,7 @@ export default {
     goToStep2() {
       if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
         this.step = 2;
+        this.$nextTick().then(() => this.$refs?.conditionsForm?.$el?.reportValidity());
         this.scrollDrawerContent();
       }
     },
@@ -660,7 +664,6 @@ export default {
           && (this.step !== 1 || !this.step1ButtonDisabled)
           && (this.step !== 2 || !this.step2ButtonDisabled)) {
         this.step = 3;
-        this.$nextTick().then(() => this.$refs?.conditionsForm?.$el?.reportValidity());
         this.scrollDrawerContent();
       }
     },

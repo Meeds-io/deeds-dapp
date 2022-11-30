@@ -21,7 +21,8 @@
     elevation="0"
     width="100%"
     height="250"
-    class="d-flex flex-column"
+    max-width="350px"
+    class="d-flex flex-column mx-auto"
     outlined>
     <v-card-title class="d-flex flex-column justify-center pb-2">
       <template v-if="buy">
