@@ -158,7 +158,7 @@ export default {
       return this.rentalOffer?.acquisitionIds?.length || 0;
     },
     isAcquisitionInProgress() {
-      return (this.rentalOffer?.acquisitionIds?.length || 0) > 0;
+      return this.acquisitionsCount > 0;
     },
     showEditOfferBadge() {
       return this.isAcquisitionInProgress || this.disabledEdit;

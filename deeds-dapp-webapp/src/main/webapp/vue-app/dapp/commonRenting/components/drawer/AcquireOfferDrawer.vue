@@ -86,9 +86,10 @@
               <div class="flex-grow-1">{{ $t('deedRentingEndDateTitle') }}</div>
               <deeds-date-format :value="rentalEndDate" />
             </div>
-            <div v-if="hasNoticePeriod" class="caption font-italic mb-4">
-              {{ $t('deedRentingEndDateSummarySubtitle', {0: noticePeriodLabel}) }}
-            </div>
+            <div
+              v-if="hasNoticePeriod"
+              class="caption font-italic mb-4"
+              v-html="$t('deedRentingEndDateSummarySubtitle', {0: `<strong>${noticePeriodLabel}</strong>`})"></div>
           </v-card>
         </v-expand-transition>
         <v-list-item
@@ -190,7 +191,7 @@
             <div v-if="hasNoticePeriod" class="d-flex mb-2">
               <div class="flex-grow-1">
                 {{ $t('deedRentingNoticePeriodTitle') }}
-                <span class="caption ms-1">({{ noticeMonthsToPayLabel }})</span>
+                <span class="ms-1"> - {{ noticeMonthsToPayLabel }}</span>
               </div>
               <div class="d-flex">
                 <deeds-number-format
@@ -219,8 +220,12 @@
             </div>
             <div class="d-flex mb-2">
               <div class="flex-grow-1 font-weight-bold">
-                {{ $t('deedRentingPaymentTotal') }}
-                <span class="caption ms-1">({{ totalMonthsToPayLabel }})</span>
+                <div>{{ $t('deedRentingPaymentTotal') }}</div>
+                <div v-if="hasNoticePeriod" class="caption">
+                  (<span class=" text-capitalize">{{ $t('deedMonthRents') }}</span>
+                  +
+                  <span class=" text-capitalize">{{ $t('deedRentingNoticePeriodTitle') }}</span>)
+                </div>
               </div>
               <div class="d-flex">
                 <deeds-number-format
@@ -437,13 +442,6 @@ export default {
         return this.$t('deedRentingRemainingTimeOneMonth');
       } else {
         return this.$t('deedRentingRemainingTimeMonths', {0: this.monthsToPay});
-      }
-    },
-    totalMonthsToPayLabel() {
-      if (this.totalMonthsToPay === 1) {
-        return this.$t('deedRentingRemainingTimeOneMonth');
-      } else {
-        return this.$t('deedRentingRemainingTimeMonths', {0: this.totalMonthsToPay});
       }
     },
     noticeMonthsToPayLabel() {
