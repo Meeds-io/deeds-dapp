@@ -43,6 +43,16 @@
           {{ testnetName }}
         </v-chip>
       </v-toolbar-title>
+      <div v-if="isTestNetwork" class="ms-4 d-none d-md-flex">
+        <v-btn
+          :color="darkMode && 'primary' || 'amber lighten-2'"
+          height="36"
+          width="36"
+          icon
+          @click="switchMode">
+          <v-icon>{{ darkMode && 'fas fa-moon' || 'fas fa-sun' }}</v-icon>
+        </v-btn>
+      </div>
       <v-spacer />
       <template v-if="validNetwork && address">
         <div class="ms-4 d-none d-md-inline-block">
@@ -69,16 +79,6 @@
           @click="$root.$emit('open-buy-meed-drawer')">
           {{ $t('buyMeedsButton') }}
         </v-btn>
-      </div>
-      <div v-if="isTestNetwork" class="ms-4 me-n4 d-none d-md-flex">
-        <v-switch
-          v-model="darkMode"
-          :append-icon="`${darkMode && 'fas fa-moon' || 'far fa-sun'} ms-n8`"
-          class="my-auto"
-          inset
-          dense
-          hide-details
-          @click="storePreference" />
       </div>
     </div>
     <v-spacer />
@@ -128,7 +128,8 @@ export default {
     this.darkMode = this.dark;
   },
   methods: {
-    storePreference() {
+    switchMode() {
+      this.darkMode = !this.darkMode;
       window.localStorage.setItem('preferred-theme-colors', this.darkMode && 'dark' || 'light');
     },
   },
