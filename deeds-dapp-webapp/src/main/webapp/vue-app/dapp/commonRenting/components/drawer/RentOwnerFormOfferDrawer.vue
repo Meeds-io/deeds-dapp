@@ -82,9 +82,9 @@
             color="transparent"
             class="flex-grow-1 mb-8"
             flat>
-            <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}:</div>
+            <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}</div>
             <deeds-renting-duration v-if="drawer" v-model="offer.duration" />
-            <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}:</div>
+            <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}</div>
             <div class="d-flex">
               <v-text-field
                 v-model="offer.amount"
@@ -109,7 +109,7 @@
                 hide-details
                 dense />
             </div>
-            <div class="mb-2 mt-6">{{ $t('deedRentingRewardDistribution') }}:</div>
+            <div class="mb-2 mt-6">{{ $t('deedRentingRewardDistributionOfferForm') }}</div>
             <div class="d-flex flex-column">
               <div class="d-flex">
                 <div class="flex-grow-1">
@@ -143,8 +143,8 @@
                   dense />
               </div>
             </div>
-            <div class="mt-6">{{ $t('deedRentingNoticePeriodTitle') }}:</div>
-            <div class="mb-2 caption text--disabled">{{ $t('deedRentingNoticePeriodSubtitle') }}:</div>
+            <div class="mt-6">{{ $t('deedRentingNoticePeriodTitle') }}</div>
+            <div class="mb-2 caption text--disabled">{{ $t('deedRentingNoticePeriodSubtitle') }}</div>
             <deeds-notice-period
               v-if="drawer"
               v-model="offer.noticePeriod"
@@ -381,11 +381,11 @@ export default {
     visibility: 'ALL',
     DEFAULT_OFFER: {
       description: null,
-      duration: null,
+      duration: 'ONE_YEAR',
+      noticePeriod: 'ONE_MONTH',
       expirationDuration: null,
       amount: 0,
       paymentPeriodicity: 'ONE_MONTH',
-      noticePeriod: 'ONE_MONTH',
       ownerMintingPercentage: 50,
     },
     updateExpirationDate: false,
