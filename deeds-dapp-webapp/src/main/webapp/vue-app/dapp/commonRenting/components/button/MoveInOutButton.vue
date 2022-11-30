@@ -3,6 +3,7 @@
     v-if="started"
     :disabled="disableButtons"
     z-index="4"
+    max-width="300px"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -45,6 +46,7 @@
     v-else-if="stopped"
     :disabled="disableButtons"
     z-index="4"
+    max-width="300px"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -86,6 +88,7 @@
   <v-tooltip
     v-else-if="starting"
     z-index="4"
+    max-width="300px"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card
@@ -117,6 +120,7 @@
   <v-tooltip
     v-else-if="stopping"
     z-index="4"
+    max-width="300px"
     bottom>
     <template #activator="{ on, attrs }">
       <v-card

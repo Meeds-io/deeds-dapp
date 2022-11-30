@@ -30,6 +30,7 @@
   <v-tooltip
     v-else
     z-index="4"
+    max-width="300px"
     top
     left>
     <template #activator="{ on, attrs }">

@@ -42,6 +42,7 @@
             v-if="isOwner"
             :attach="`#${cardElementId}`"
             z-index="4"
+            max-width="300px"
             bottom>
             <template #activator="{on, bind}">
               <v-btn
@@ -59,6 +60,7 @@
             v-else-if="isRestricted"
             :attach="`#${cardElementId}`"
             z-index="4"
+            max-width="300px"
             bottom>
             <template #activator="{on, bind}">
               <v-btn
@@ -88,7 +90,10 @@
                 {{ $t('deedMintingPower') }}
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
-                <v-tooltip z-index="4" bottom>
+                <v-tooltip
+                  z-index="4"
+                  max-width="300px"
+                  bottom>
                   <template #activator="{ on, attrs }">
                     <v-progress-circular
                       :rotate="-90"
@@ -119,7 +124,10 @@
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
                 <v-card min-width="50" flat>
-                  <v-tooltip z-index="4" bottom>
+                  <v-tooltip
+                    z-index="4"
+                    max-width="300px"
+                    bottom>
                     <template #activator="{ on, attrs }">
                       <v-progress-linear
                         :value="rentalTenantMintingPercentage"

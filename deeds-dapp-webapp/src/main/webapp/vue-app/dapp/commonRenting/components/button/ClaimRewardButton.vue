@@ -1,5 +1,8 @@
 <template>
-  <v-tooltip z-index="4" bottom>
+  <v-tooltip
+    z-index="4"
+    max-width="300px"
+    bottom>
     <template #activator="{ on, attrs }">
       <v-card
         class="mx-auto mt-2 mt-md-0"

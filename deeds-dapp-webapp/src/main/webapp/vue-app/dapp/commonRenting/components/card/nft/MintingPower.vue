@@ -4,7 +4,10 @@
       {{ $t('deedMintingPower') }}
     </v-list-item-content>
     <v-list-item-action-text class="d-flex py-0">
-      <v-tooltip z-index="4" bottom>
+      <v-tooltip
+        z-index="4"
+        max-width="300px"
+        bottom>
         <template #activator="{ on, attrs }">
           <v-progress-circular
             :rotate="-90"

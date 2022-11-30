@@ -23,6 +23,7 @@
     <v-list-item-action class="me-2" @click="close">
       <v-tooltip
         z-index="4"
+        max-width="300px"
         bottom>
         <template #activator="{on, attrs}">
           <v-btn
@@ -41,6 +42,7 @@
       <v-list-item-title class="d-flex">
         <v-tooltip
           z-index="4"
+          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-card
@@ -61,6 +63,7 @@
       <v-list-item-action v-if="isOwner" class="me-2 ms-0 d-flex flex-row align-center">
         <v-tooltip
           z-index="4"
+          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-btn
@@ -77,6 +80,7 @@
         <v-tooltip
           v-if="!isOfferChangeLog"
           z-index="4"
+          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-card
@@ -108,6 +112,7 @@
       <v-list-item-action class="me-2 ms-0">
         <v-tooltip
           z-index="4"
+          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-btn
@@ -125,6 +130,7 @@
     <v-list-item-action class="ms-0">
       <v-tooltip
         z-index="4"
+        max-width="300px"
         bottom>
         <template #activator="{on, attrs}">
           <v-btn

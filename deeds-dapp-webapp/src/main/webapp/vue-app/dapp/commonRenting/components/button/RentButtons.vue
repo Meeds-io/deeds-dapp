@@ -17,10 +17,16 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-tooltip z-index="4" disabled>
+  <v-tooltip
+    z-index="4"
+    max-width="300px"
+    disabled>
     <!-- eslint-disable-next-line vue/no-unused-vars -->
     <template #activator="{ onParent, attrsParent }">
-      <v-tooltip z-index="4" bottom>
+      <v-tooltip
+        z-index="4"
+        max-width="300px"
+        bottom>
         <template #activator="{ on, attrs }">
           <v-card
             :width="buttonsWidth"
@@ -57,7 +63,10 @@
         </template>
         <span>{{ rentingSeeDescription }}</span>
       </v-tooltip>
-      <v-tooltip z-index="4" bottom>
+      <v-tooltip
+        z-index="4"
+        max-width="300px"
+        bottom>
         <template #activator="{ on, attrs }">
           <v-card
             :width="buttonsWidth"
