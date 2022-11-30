@@ -23,7 +23,6 @@
     <v-list-item-action class="me-2" @click="close">
       <v-tooltip
         z-index="4"
-        max-width="300px"
         bottom>
         <template #activator="{on, attrs}">
           <v-btn
@@ -42,7 +41,6 @@
       <v-list-item-title class="d-flex">
         <v-tooltip
           z-index="4"
-          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-card
@@ -63,7 +61,6 @@
       <v-list-item-action v-if="isOwner" class="me-2 ms-0 d-flex flex-row align-center">
         <v-tooltip
           z-index="4"
-          max-width="300px"
           bottom>
           <template #activator="{on, attrs}">
             <v-btn
@@ -75,7 +72,7 @@
               <v-icon class="mt-1" size="22">fa-crown</v-icon>
             </v-btn>
           </template>
-          <span class="text-no-wrap">{{ $t('deedsOfferOwner') }}</span>
+          <span>{{ $t('deedsOfferOwner') }}</span>
         </v-tooltip>
         <v-tooltip
           v-if="!isOfferChangeLog"
@@ -106,7 +103,7 @@
               </v-badge>
             </v-card>
           </template>
-          <span class="text-no-wrap">{{ rentingEditTooltip }}</span>
+          <span>{{ rentingEditTooltip }}</span>
         </v-tooltip>
       </v-list-item-action>
       <v-list-item-action class="me-2 ms-0">
@@ -123,7 +120,7 @@
               <v-icon>fas fa-clone</v-icon>
             </v-btn>
           </template>
-          <span class="text-no-wrap">{{ $t('deedsMarketPlaceCopyOfferLink') }}</span>
+          <span>{{ $t('deedsMarketPlaceCopyOfferLink') }}</span>
         </v-tooltip>
       </v-list-item-action>
     </template>
@@ -142,7 +139,7 @@
             <v-icon>fas fa-times</v-icon>
           </v-btn>
         </template>
-        <span class="text-no-wrap">{{ $t('deedsMarketPlaceBackToList') }}</span>
+        <span>{{ $t('deedsMarketPlaceBackToList') }}</span>
       </v-tooltip>
     </v-list-item-action>
   </v-list-item>

@@ -84,8 +84,6 @@
             flat>
             <div class="mb-2 mt-6">{{ $t('deedRentingDurationTitle') }}:</div>
             <deeds-renting-duration v-if="drawer" v-model="offer.duration" />
-            <div class="mb-2 mt-6">{{ $t('deedRentingExpirationDurationTitle') }}:</div>
-            <deeds-renting-expiration-duration v-if="drawer" v-model="offer.expirationDuration" />
             <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}:</div>
             <div class="d-flex">
               <v-text-field
@@ -165,7 +163,7 @@
           <v-card
             v-show="step === 3"
             color="transparent"
-            class="flex-grow-1"
+            class="flex-grow-1 mb-6"
             flat>
             <div class="px-0 pt-4">
               {{ $t('deedOfferVisibilityStepDescription') }}
@@ -211,6 +209,8 @@
                 </span>
               </div>
             </div>
+            <div class="mb-2 mt-6">{{ $t('deedRentingExpirationDurationTitle') }}</div>
+            <deeds-renting-expiration-duration v-if="drawer" v-model="offer.expirationDuration" />
           </v-card>
         </v-expand-transition>
         <v-list-item

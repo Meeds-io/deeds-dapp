@@ -54,7 +54,7 @@
                 <v-icon>fa-crown</v-icon>
               </v-btn>
             </template>
-            <span class="text-no-wrap">{{ $t('deedsOfferOwner') }}</span>
+            <span>{{ $t('deedsOfferOwner') }}</span>
           </v-tooltip>
           <v-tooltip
             v-else-if="isRestricted"
@@ -72,7 +72,7 @@
                 <v-icon>{{ isRestrictedToCurrent && 'fas fa-unlock' || 'fas fa-lock' }}</v-icon>
               </v-btn>
             </template>
-            <span class="text-no-wrap">{{ isRestrictedToCurrent && $t('deedsOfferIsRestrictedToCurrent') || $t('deedsOfferIsRestricted') }}</span>
+            <span>{{ isRestrictedToCurrent && $t('deedsOfferIsRestrictedToCurrent') || $t('deedsOfferIsRestricted') }}</span>
           </v-tooltip>
         </v-card-title>
         <v-card-text class="ps-0 pb-6">

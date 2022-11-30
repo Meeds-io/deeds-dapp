@@ -24,17 +24,10 @@ import TabLink from './components/TabLink.vue';
 import MetamaskButton from './components/MetamaskButton.vue';
 import CardCarousel from './components/CardCarousel.vue';
 import TokenAssetTemplate from './components/TokenAssetTemplate.vue';
-import RentalOfferCard from './components/RentalOfferCard.vue';
-import CardTypeChip from './components/CardTypeChip.vue';
-import OfferTypeChip from './components/OfferTypeChip.vue';
 import EmailField from './components/EmailField.vue';
 import LoginButton from './components/LoginButton.vue';
 import DateFormat from './components/DateFormat.vue';
 import ExtendedTextarea from './components/ExtendedTextarea.vue';
-import MediaSelector from './components/MediaSelector.vue';
-import RentalExpirationDuration from './components/RentalExpirationDuration.vue';
-import RentalDuration from './components/RentalDuration.vue';
-import NoticePeriod from './components/NoticePeriod.vue';
 import ButtonGroupItem from './components/ButtonGroupItem.vue';
 
 const components = {
@@ -46,17 +39,10 @@ const components = {
   'deeds-tab-link': TabLink,
   'deeds-card-caroussel': CardCarousel,
   'deeds-token-asset-template': TokenAssetTemplate,
-  'deeds-renting-offer-card': RentalOfferCard,
-  'deeds-card-type-chip': CardTypeChip,
-  'deeds-offer-type-chip': OfferTypeChip,
   'deeds-email-field': EmailField,
   'deeds-login-button': LoginButton,
   'deeds-date-format': DateFormat,
   'deeds-extended-textarea': ExtendedTextarea,
-  'deeds-media-selector': MediaSelector,
-  'deeds-renting-expiration-duration': RentalExpirationDuration,
-  'deeds-renting-duration': RentalDuration,
-  'deeds-notice-period': NoticePeriod,
   'deeds-button-group-item': ButtonGroupItem,
 };
 

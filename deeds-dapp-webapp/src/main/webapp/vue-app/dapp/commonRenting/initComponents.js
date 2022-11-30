@@ -33,6 +33,7 @@ import DeedsLeaseCardNoticePeriodPaid from './components/card/NoticePeriodPaid.v
 import DeedsLeaseCardRemainingTime from './components/card/RemainingTime.vue';
 import DeedsLeaseCardRentAmount from './components/card/RentAmount.vue';
 import DeedsLeaseCardRentStatus from './components/card/RentStatus.vue';
+import RentalOfferCard from './components/card/RentalOfferCard.vue';
 
 import DeedsLeaseCardHubAccessButton from './components/button/AccessHubButton.vue';
 import DeedsLeaseCardMoveButton from './components/button/MoveInOutButton.vue';
@@ -53,12 +54,20 @@ import DeedMoveInDrawer from './components/drawer/MoveInDrawer.vue';
 import DeedMoveOutDrawer from './components/drawer/MoveOutDrawer.vue';
 import DeedLeaseEvictTenantDrawer from './components/drawer/EvictTenantDrawer.vue';
 
+import MediaSelector from './components/form/MediaSelector.vue';
+import RentalExpirationDuration from './components/form/RentalExpirationDuration.vue';
+import RentalDuration from './components/form/RentalDuration.vue';
+import NoticePeriod from './components/form/NoticePeriod.vue';
+import CardTypeChip from './components/form/CardTypeChip.vue';
+import OfferTypeChip from './components/form/OfferTypeChip.vue';
+
 const components = {
   'deeds-marketplace-offer-rent-drawer': DeedsMarketplaceOfferRentDrawer,
   'deeds-marketplace-offer-payment-drawer': DeedsMarketplaceOfferPaymentDrawer,
   'deeds-tenants-lease-payment-drawer': DeedLeasePaymentDrawer,
   'deeds-tenants-lease-rent-pay-drawer': DeedLeaseRentPayDrawer,
   'deeds-tenants-lease-end-renting-drawer': DeedLeaseEndRentingDrawer,
+  'deeds-renting-offer-card': RentalOfferCard,
   'deeds-lease-card-title': DeedsLeaseCardTitle,
   'deeds-lease-card-image': DeedsLeaseCardImage,
   'deeds-lease-card-start-date': DeedsLeaseCardStartDate,
@@ -87,6 +96,12 @@ const components = {
   'deeds-lease-card-evict-tenant-button': DeedsLeaseCardEvictTenantButton,
   'deeds-lease-card-sell-nft-button': DeedsLeaseCardSellNftButton,
   'deeds-lease-card-rent-buttons': DeedsLeaseCardRentButtons,
+  'deeds-media-selector': MediaSelector,
+  'deeds-renting-expiration-duration': RentalExpirationDuration,
+  'deeds-renting-duration': RentalDuration,
+  'deeds-notice-period': NoticePeriod,
+  'deeds-card-type-chip': CardTypeChip,
+  'deeds-offer-type-chip': OfferTypeChip,
 };
 
 for (const key in components) {

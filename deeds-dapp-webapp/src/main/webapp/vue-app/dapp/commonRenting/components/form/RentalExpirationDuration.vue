@@ -22,31 +22,32 @@
   <v-btn-toggle
     v-model="expirationDuration"
     class="flex-grow-1 d-flex justify-space-between"
+    mandatory
     outlined
     dense
     group>
     <deeds-button-group-item
       :selected-value="expirationDuration"
-      value="ONE_DAY"
-      color="secondary">
-      {{ $t('deedRentingExpirationDurationOneDay') }}
+      value="NO_EXPIRATION"
+      color="primary">
+      {{ $t('deedRentingExpirationDurationNoExpiration') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="THREE_DAYS"
-      color="secondary">
+      color="primary">
       {{ $t('deedRentingExpirationDurationThreeDays') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_WEEK"
-      color="secondary">
+      color="primary">
       {{ $t('deedRentingExpirationDurationOneWeek') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_MONTH"
-      color="secondary">
+      color="primary">
       {{ $t('deedRentingExpirationDurationOneMonth') }}
     </deeds-button-group-item>
   </v-btn-toggle>
@@ -64,11 +65,19 @@ export default {
   }),
   watch: {
     expirationDuration() {
-      this.$emit('input', this.expirationDuration);
+      if (this.expirationDuration === 'NO_EXPIRATION') {
+        this.$emit('input', null);
+      } else {
+        this.$emit('input', this.expirationDuration);
+      }
     },
   },
   created() {
-    this.expirationDuration = this.value;
+    if (!this.value) {
+      this.expirationDuration = 'NO_EXPIRATION';
+    } else {
+      this.expirationDuration = this.value;
+    }
   },
 };
 </script>
