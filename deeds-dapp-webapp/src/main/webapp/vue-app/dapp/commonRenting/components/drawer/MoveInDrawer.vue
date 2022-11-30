@@ -49,7 +49,8 @@
             :disabled="disabledEmail"
             :reset="drawer"
             @submit="sendRequest"
-            @valid-email="validEmail = $event" />
+            @valid-email="validEmail = $event"
+            @email-found="knownEmail = $event" />
         </v-card-text>
       </v-card>
       <template v-if="transactionHash">
@@ -108,6 +109,7 @@ export default {
     email: null,
     emailChanged: false,
     validEmail: false,
+    knownEmail: false,
     sending: false,
     sendingEmail: false,
     transactionHash: null,

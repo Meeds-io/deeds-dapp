@@ -184,7 +184,10 @@ export default {
           this.$nextTick().then(() => this.validEmailCheckIndex++);
         })
         .catch(() => this.validEmailCheckIndex++)
-        .finally(() => this.emailLoading = false);
+        .finally(() => {
+          this.emailLoading = false;
+          this.$emit('email-found', !!this.email);
+        });
     },
     edit() {
       this.isEditing = true;

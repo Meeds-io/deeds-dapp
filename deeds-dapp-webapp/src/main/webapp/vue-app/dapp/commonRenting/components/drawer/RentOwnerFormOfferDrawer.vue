@@ -271,7 +271,12 @@
                 {{ $t('deedEmailConfirmTitle') }}
               </div>
               <div class="caption font-italic my-2">
-                {{ $t('deedEmailConfirmSubTitle') }}
+                <template v-if="knownEmail">
+                  {{ $t('deedKnownEmailConfirmSubTitle') }}
+                </template>
+                <template v-else>
+                  {{ $t('deedEmailConfirmSubTitle') }}
+                </template>
               </div>
               <deeds-email-field
                 ref="email"
@@ -283,6 +288,7 @@
                 @valid-email="validEmail = $event"
                 @email-confirmation-success="emailCode = $event"
                 @email-confirmation-error="emailCodeError = true"
+                @email-found="knownEmail = $event"
                 @loading="sending = $event"
                 @submit="confirmOffer" />
             </template>
@@ -380,6 +386,7 @@ export default {
     emailCode: null,
     emailCodeSent: false,
     emailCodeError: false,
+    knownEmail: false,
     validEmail: false,
     forceUpdateExpiration: false,
     visibility: 'ALL',
