@@ -362,22 +362,6 @@ public class OfferService {
     }
   }
 
-  private DeedTenantOffer getParentOfferFromChangelog(DeedTenantOffer offer) {
-    if (!isChangelog(offer)) {
-      return offer;
-    }
-    DeedTenantOffer parentOffer = deedTenantOfferRepository.findById(offer.getParentId()).orElse(null);
-    if (parentOffer == null) {
-      return offer;
-    } else {
-      // Copy fields that can't be retrieved from Contract
-      // and are stored locally only
-      parentOffer.setDescription(offer.getDescription());
-      parentOffer.setPaymentPeriodicity(offer.getPaymentPeriodicity());
-      return parentOffer;
-    }
-  }
-
   public void saveOfferTransactionAsError(String offerId) throws Exception {
     DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
     if (offer == null) {
@@ -392,6 +376,22 @@ public class OfferService {
       LOG.warn("Don't know what to do with a parent offer {} with blockchain Id {} that exists on blockchain and that is meant to have a valid transaction",
                offer.getId(),
                offer.getOfferId());
+    }
+  }
+
+  private DeedTenantOffer getParentOfferFromChangelog(DeedTenantOffer offer) {
+    if (!isChangelog(offer)) {
+      return offer;
+    }
+    DeedTenantOffer parentOffer = deedTenantOfferRepository.findById(offer.getParentId()).orElse(null);
+    if (parentOffer == null) {
+      return offer;
+    } else {
+      // Copy fields that can't be retrieved from Contract
+      // and are stored locally only
+      parentOffer.setDescription(offer.getDescription());
+      parentOffer.setPaymentPeriodicity(offer.getPaymentPeriodicity());
+      return parentOffer;
     }
   }
 
@@ -512,7 +512,7 @@ public class OfferService {
 
   private void createOfferAcquisitionChangeLog(DeedTenantOffer parentOffer, String transactionHash) {
     DeedTenantOffer offerChangeLog = DeedTenantOfferMapper.toOfferChangeLog(parentOffer, transactionHash);
-    offerChangeLog = saveOffer(offerChangeLog);
+    offerChangeLog = saveOffer(offerChangeLog, false);
 
     Set<String> acquisitionIds = CollectionUtils.isEmpty(parentOffer.getAcquisitionIds()) ? new HashSet<>()
                                                                                           : new HashSet<>(parentOffer.getAcquisitionIds());
@@ -864,6 +864,10 @@ public class OfferService {
   }
 
   private DeedTenantOffer saveOffer(DeedTenantOffer offer) {
+    return saveOffer(offer, true);
+  }
+
+  private DeedTenantOffer saveOffer(DeedTenantOffer offer, boolean checkTransactionHashDuplication) {
     if (offer.getExpirationDuration() == null) {
       offer.setExpirationDate(DeedTenantOfferMapper.MAX_DATE_VALUE);
     }
@@ -875,12 +879,20 @@ public class OfferService {
     } else {
       offer.setViewAddresses(Collections.singletonList(StringUtils.lowerCase(offer.getOwner())));
     }
+    String id = offer.getId();
     if (StringUtils.isBlank(offer.getOfferTransactionHash())) {
-      throw new IllegalStateException("Offer " + offer.getId() + "/" + offer.getOfferId() + " transaction hash is mandatory");
+      throw new IllegalStateException("Offer " + id + "/" + offer.getOfferId() + " transaction hash is mandatory");
     }
     // Can't add field unicity on ElasticSearch, thus we have to make a manual
     // check each time
-    if (offer.getId() == null
+    boolean isNewOffer = StringUtils.isBlank(id);
+    if (!isNewOffer) {
+      DeedTenantOffer existingOffer = deedTenantOfferRepository.findById(id).orElse(null);
+      if (existingOffer == null) {
+        throw new IllegalStateException("Offer to update doesn't exists");
+      }
+    }
+    if (isNewOffer
         && !isChangelog(offer)
         && offer.getOfferId() > 0
         && isBlockchainOfferIdKnown(offer.getOfferId())) {
@@ -888,9 +900,9 @@ public class OfferService {
     }
     // Can't add field unicity on ElasticSearch, thus we have to make a manual
     // check each time
-    if (offer.getId() == null
-        && StringUtils.isNotBlank(offer.getOfferTransactionHash())
-        && isOfferTransactionHashDuplicated(offer.getOfferTransactionHash(), offer.getId())) {
+    if (isNewOffer
+        && (!checkTransactionHashDuplication
+            || isOfferTransactionHashDuplicated(offer.getOfferTransactionHash(), id))) {
       throw new IllegalStateException("Offer with same transaction hash already exists");
     }
     return deedTenantOfferRepository.save(offer);

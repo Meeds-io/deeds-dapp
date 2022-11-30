@@ -61,6 +61,15 @@
       <div class="ms-4">
         <deeds-topbar-language-selector />
       </div>
+      <div class="ms-4">
+        <v-btn
+          class="hidden-xs-only"
+          elevation="0"
+          color="secondary"
+          @click="$root.$emit('open-buy-meed-drawer')">
+          {{ $t('buyMeedsButton') }}
+        </v-btn>
+      </div>
       <div v-if="isTestNetwork" class="ms-4 me-n4 d-none d-md-flex">
         <v-switch
           v-model="darkMode"

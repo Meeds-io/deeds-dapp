@@ -81,7 +81,7 @@
         </div>
         <div class="d-flex mb-2">
           <div class="flex-grow-1">{{ $t('deedsRentPayDueDate') }}</div>
-          <div class="d-flex">
+          <div class="d-flex justify-end">
             <template v-if="isDueDateNextMonth">
               {{ $t('deedsRentPayDueDateNextMonth') }}
             </template>
@@ -91,9 +91,9 @@
             <span
               v-else-if="paidRentsDate"
               :class="isDueDatePast && 'error--text'"
-              class="caption text-center">
+              class="d-flex caption text-center align-end">
               <deeds-date-format :value="dueRentStartDate" />
-              -
+              <div class="mx-1">-</div>
               <deeds-date-format :value="dueRentEndDate" />
             </span>
           </div>

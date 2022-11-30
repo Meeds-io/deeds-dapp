@@ -576,7 +576,7 @@ class OfferServiceTest {
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0, DeedTenantOffer.class));
 
     DeedTenantOffer existingDeedTenantOffer = new DeedTenantOffer();
-    existingDeedTenantOffer.setId(String.valueOf(nftId));
+    existingDeedTenantOffer.setId(offerId);
     existingDeedTenantOffer.setNftId(nftId);
     existingDeedTenantOffer.setCardType(DeedCard.UNCOMMON);
     existingDeedTenantOffer.setCity(DeedCity.MELQART);

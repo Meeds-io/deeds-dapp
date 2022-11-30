@@ -153,37 +153,25 @@ public class LeaseService {
   public DeedTenantLeaseDTO getLease(long leaseId,
                                      String walletAddress,
                                      boolean refreshFromBlockchain) throws Exception {
-    walletAddress = StringUtils.lowerCase(walletAddress);
-    DeedTenantLeaseDTO lease = getLease(leaseId, walletAddress);
+    DeedTenantLeaseDTO lease = getLease(leaseId);
     if (refreshFromBlockchain) {
       LOG.debug("Refreshing Changed lease with id {} on blockchain on request of user {}", leaseId, walletAddress);
       long lastBlockNumber = blockchainService.getLastBlock();
       DeedLeaseBlockchainState blockchainLease = blockchainService.getLeaseById(BigInteger.valueOf(leaseId), null, null);
       blockchainLease.setBlockNumber(BigInteger.valueOf(lastBlockNumber));
       updateLeaseStatusFromBlockchain(blockchainLease, null);
-      return getLease(leaseId, walletAddress);
+      return getLease(leaseId);
     } else {
       return lease;
     }
   }
 
-  public DeedTenantLeaseDTO getLease(long leaseId, String walletAddress) throws ObjectNotFoundException,
-                                                                         UnauthorizedOperationException {
+  public DeedTenantLeaseDTO getLease(long leaseId) throws ObjectNotFoundException {
     DeedTenantLease lease = deedTenantLeaseRepository.findById(leaseId).orElse(null);
     if (lease == null) {
       throw new ObjectNotFoundException();
     }
-    walletAddress = StringUtils.lowerCase(walletAddress);
-    if (StringUtils.equalsIgnoreCase(walletAddress, lease.getManager())
-        || StringUtils.equalsIgnoreCase(walletAddress, lease.getOwner())
-        || !CollectionUtils.containsAny(lease.getViewAddresses(),
-                                        Arrays.asList(DeedTenantOfferMapper.EVERYONE,
-                                                      StringUtils.lowerCase(walletAddress)))
-        || tenantService.isDeedOwner(walletAddress, lease.getNftId())) {
-      return buildLeaseDTO(lease);
-    } else {
-      throw new UnauthorizedOperationException();
-    }
+    return buildLeaseDTO(lease);
   }
 
   public DeedTenantLeaseDTO createLease(String managerAddress,

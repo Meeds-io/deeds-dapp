@@ -18,27 +18,37 @@
 -->
 <template>
   <v-card
-    width="340"
-    height="350"
+    elevation="0"
+    width="100%"
+    height="250"
     class="d-flex flex-column"
     outlined>
     <v-card-title class="d-flex flex-column justify-center pb-2">
-      <v-icon>mdi-cash-multiple</v-icon>
-      <span>{{ $t('buyOrSell') }}</span>
+      <template v-if="buy">
+        {{ $t('buyMeeds') }}
+      </template>
+      <template v-else>
+        {{ $t('sellMeeds') }}
+      </template>
     </v-card-title>
     <v-card-text class="d-flex flex-column flex-grow-1 pt-2">
       <v-text-field
         v-model="fromValue"
-        :disabled="hasInvalidAddress"
-        :filled="hasInvalidAddress"
+        :disabled="hasInvalidAddress || sending"
+        :filled="hasInvalidAddress || sending"
         :loading="loadingAmount"
         :rules="fromValueValidator"
         :hide-details="isFromValueValid"
+        :step="buy && '0.1' || '100'"
+        :min="0"
+        :max="buy && maxEther || maxMeed"
         class="align-center"
+        type="number"
         autocomplete="off"
         placeholder="0.0"
-        large
+        autofocus
         outlined
+        large
         dense>
         <template #append>
           <v-chip
@@ -86,7 +96,7 @@
         large
         outlined
         dense
-        disabled
+        readonly
         filled>
         <template #append>
           <v-img
@@ -110,44 +120,31 @@
           </div>
         </template>
       </v-text-field>
-      <v-card-actions>
-        <div class="d-flex flex-column mx-auto mt-4">
-          <deeds-metamask-button v-if="hasInvalidAddress" />
-          <template v-else>
-            <div v-if="swapInToSteps || !hasSufficientAllowedTokens" class="mx-auto">({{ $t('step') }} {{ step }} / 2)</div>
-            <v-btn
-              v-if="hasSufficientAllowedTokens"
-              :loading="!!sendingTransaction"
-              :disabled="disabledButton"
-              name="sendSwapTransactionButton"
-              class="ma-auto"
-              @click="sendSwapTransaction">
-              {{ swapButtonLabel }}
-            </v-btn>
-            <v-btn
-              v-else
-              :loading="!!sendingTransaction"
-              :disabled="disabledButton"
-              name="sendApproveTransactionButton"
-              class="ma-auto"
-              @click="sendApproveTransaction">
-              {{ approveButtonLabel }}
-            </v-btn>
-          </template>
-        </div>
-      </v-card-actions>
     </v-card-text>
   </v-card>
 </template>
 <script>
 export default {
+  props: {
+    sending: {
+      type: Boolean,
+      default: false,
+    },
+    completedSteps: {
+      type: Boolean,
+      default: false,
+    },
+    maxEther: {
+      type: Number,
+      default: null,
+    },
+    maxMeed: {
+      type: Number,
+      default: null,
+    },
+  },
   data: () => ({
-    slippage: 0.05,
-    deadlineMinutes: 30,
     computingAmount: false,
-    swapInToSteps: false,
-    sendingTransaction: 0,
-    step: 1,
     buy: true,
     fromValue: null,
     toValue: null,
@@ -161,40 +158,22 @@ export default {
     address: state => state.address,
     appLoading: state => state.appLoading,
     language: state => state.language,
-    tradeGasLimit: state => state.tradeGasLimit,
-    approvalGasLimit: state => state.approvalGasLimit,
-    sushiswapRouterAddress: state => state.sushiswapRouterAddress,
     sushiswapRouterContract: state => state.sushiswapRouterContract,
-    meedContract: state => state.meedContract,
-    wethContract: state => state.wethContract,
     meedAddress: state => state.meedAddress,
     wethAddress: state => state.wethAddress,
     etherBalance: state => state.etherBalance,
     meedsBalance: state => state.meedsBalance,
     transactionGas: state => state.transactionGas,
     meedsRouteAllowance: state => state.meedsRouteAllowance,
-    provider: state => state.provider,
     parentLocation: state => state.parentLocation,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
     },
-    fromContract() {
-      return this.buy && this.meedContract || this.wethContract;
-    },
     tokenAdresses() {
       return this.buy && [this.wethAddress, this.meedAddress] || [this.meedAddress, this.wethAddress];
     },
-    swapButtonLabel() {
-      return this.buy && this.$t('buyMeeds') || this.$t('sellMeeds');
-    },
-    approveButtonLabel() {
-      return this.sendingTransaction > 0 && this.$t('sellMeeds') || this.$t('approveMeeds');
-    },
     hasInvalidAddress() {
       return this.appLoading || !this.address;
-    },
-    disabledButton() {
-      return !this.toValue || !this.isFromValueValid || !!this.sendingTransaction;
     },
     toValueDisplay() {
       return this.toValue && this.$ethUtils.toFixed(this.toValue, 8) || null;
@@ -207,20 +186,6 @@ export default {
         () => !!this.isFromValueLessThanMax || this.$t('valueMustBeLessThan', {0: this.maxFromValueLabel}),
       ];
     },
-    maxMeed() {
-      if (this.meedsBalance) {
-        const maxMeed = this.$ethUtils.fromDecimals(this.meedsBalance, 18);
-        return Number(maxMeed);
-      }
-      return 0;
-    },
-    maxEther() {
-      if (this.etherBalance && this.transactionGas) {
-        const maxEther = this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
-        return Number(maxEther) > 0 && Number(maxEther) || 0;
-      }
-      return 0;
-    },
     maxFromValueLabel() {
       if (this.buy) {
         return this.$ethUtils.fromDecimals(this.etherBalance.sub(this.transactionGas), 18);
@@ -230,15 +195,6 @@ export default {
     },
     isFromValueValid() {
       return !this.fromValue || (this.isFromValueNumeric && this.isFromValueLessThanMax && this.hasSufficientGas);
-    },
-    hasSufficientAllowedTokens() {
-      if (this.buy || !this.isFromValueNumeric || !this.fromValue) {
-        return true;
-      } else {
-        const meedsRouteAllowance = this.meedsRouteAllowance;
-        const meedsToSend = this.$ethUtils.toDecimals(this.fromValue, 18);
-        return meedsToSend.lte(meedsRouteAllowance);
-      }
     },
     hasSufficientGas() {
       if (!this.fromValue) {
@@ -282,38 +238,36 @@ export default {
     canComputeValue() {
       return this.fromValue && this.isFromValueNumeric;
     },
-    swapMethod() {
-      if (this.provider && this.sushiswapRouterContract) {
-        const signer = this.sushiswapRouterContract.connect(this.provider.getSigner());
-        return this.buy && signer.swapExactETHForTokens || signer.swapExactTokensForETH;
-      }
-      return null;
-    },
-    approveMethod() {
-      if (this.provider && this.meedContract) {
-        const signer = this.meedContract.connect(this.provider.getSigner());
-        return signer.approve;
-      }
-      return null;
-    },
   }),
   watch: {
-    meedsRouteAllowance() {
-      if (this.swapInToSteps && this.meedsRouteAllowance && !this.meedsRouteAllowance.isZero()) {
-        this.step = 2;
-        this.sendingTransaction = 0;
+    sending() {
+      if (!this.sending && this.completedSteps) {
+        this.reset();
       }
     },
     fromValue() {
+      this.$emit('changed-amount-out', this.fromValue);
       if (!this.fromValue) {
         this.computeValue();
-        return;
+      } else {
+        this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
+        if (!this.typing) {
+          this.typing = true;
+          this.waitForEndTyping();
+        }
       }
-      this.startTypingKeywordTimeout = Date.now() + this.startSearchAfterInMilliseconds;
-      if (!this.typing) {
-        this.typing = true;
-        this.waitForEndTyping();
-      }
+    },
+    toValue() {
+      this.$emit('changed-amount-in', this.toValue);
+    },
+    buy() {
+      this.$emit('changed-buy', this.buy);
+    },
+    typing() {
+      this.$emit('computing', this.computingAmount || this.typing);
+    },
+    computingAmount() {
+      this.$emit('computing', this.computingAmount || this.typing);
     },
   },
   methods: {
@@ -345,73 +299,13 @@ export default {
         this.computingAmount = true;
         this.toValue = null;
         const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
-        return this.sushiswapRouterContract.getAmountsOut(amountIn, this.tokenAdresses)
-          .then(amounts =>  this.toValue = this.$ethUtils.fromDecimals(amounts[1], 18))
-          .finally(() => this.computingAmount = false);
+        return this.$nextTick()
+          .then(() => {
+            return this.sushiswapRouterContract.getAmountsOut(amountIn, this.tokenAdresses)
+              .then(amounts =>  this.toValue = this.$ethUtils.fromDecimals(amounts[1], 18))
+              .finally(() => this.computingAmount = false);
+          });
       }
-    },
-    sendSwapTransaction() {
-      this.sendingTransaction++;
-      const amountIn = this.$ethUtils.toDecimals(this.fromValue, 18);
-      const amountOutMin = this.$ethUtils.toDecimals(this.toValue, 18)
-        .mul((1 - this.slippage) * 1000)
-        .div(1000);
-      const options = {
-        from: this.address,
-        gasLimit: this.tradeGasLimit,
-      };
-      return new Promise((resolve, reject) => {
-        if (this.buy) {
-          options.value = amountIn.toHexString();
-          return this.swapMethod(
-            amountOutMin.toHexString(),
-            this.tokenAdresses,
-            this.address,
-            this.getTransactionDeadline(),
-            options,
-          ).then(resolve).catch(reject);
-        } else {
-          return this.swapMethod(
-            amountIn,
-            amountOutMin.toHexString(),
-            this.tokenAdresses,
-            this.address,
-            this.getTransactionDeadline(),
-            options,
-          ).then(resolve).catch(reject);
-        }
-      })
-        .then(receipt => {
-          const transactionHash = receipt.hash;
-          if (transactionHash) {
-            this.reset();
-          }
-        })
-        .finally(() => {
-          this.sendingTransaction--;
-          this.swapInToSteps = false;
-        });
-    },
-    sendApproveTransaction() {
-      this.sendingTransaction++;
-      const amount = this.$ethUtils.toDecimals(this.fromValue, 18);
-      const options = {
-        from: this.address,
-        gasLimit: this.approvalGasLimit,
-      };
-      return this.approveMethod(
-        this.sushiswapRouterAddress,
-        amount,
-        options
-      )
-        .then(() => this.swapInToSteps = true)
-        .catch(() => {
-          this.sendingTransaction--;
-          this.step = 1;
-        });
-    },
-    getTransactionDeadline() {
-      return parseInt(Date.now() / 1000 + this.deadlineMinutes * 60);
     },
     setMaxValue() {
       if (this.buy) {

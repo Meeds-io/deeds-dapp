@@ -57,7 +57,7 @@
               <v-list-item-action class="drawerIcons align-end d-flex flex-row">
                 <slot name="titleIcons"></slot>
                 <v-btn
-                  v-if="!isMobile"
+                  v-if="!isMobile && !secondLevel"
                   name="expandDrawer"
                   icon
                   @click="toogleExpand">

@@ -27,7 +27,6 @@
         <deeds-token-assets />
         <deeds-deed-assets />
       </v-card>
-      <deeds-trade-meeds class="mx-auto ms-md-32 me-md-15 my-8 my-md-0 flex-shrink-0 flex-grow-0" />
     </div>
   </div>
 </template>

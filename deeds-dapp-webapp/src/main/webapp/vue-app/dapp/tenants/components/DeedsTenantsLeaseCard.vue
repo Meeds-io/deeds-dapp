@@ -263,8 +263,7 @@ export default {
       return this.rentalConfirmed && new Date(this.rentalEndDate).getTime() > Date.now();
     },
     isLeaseNotFullyPaid() {
-      return this.rentalConfirmed && this.rentalEndDate && this.rentalPaidEndDate
-        && new Date(this.rentalEndDate).getTime() !== new Date(this.rentalPaidEndDate).getTime();
+      return this.rentalConfirmed && this.paidMonths < this.rentPeriodMonths;
     },
     stopped() {
       return this.rentalConfirmed && (!this.provisioningStatus || this.provisioningStatus === 'STOP_CONFIRMED');

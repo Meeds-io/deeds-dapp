@@ -18,10 +18,11 @@
 -->
 <template>
   <v-app>
-    <v-card flat class="overflow-hidden">
+    <v-card class="overflow-hidden" flat>
       <deeds-topbar />
       <deeds-site-content />
     </v-card>
+    <deeds-trade-meeds-drawer />
   </v-app>
 </template>
 <script>
