@@ -26,8 +26,8 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 v-if="isNew" class="text-capitalize">{{ $t('deedRentingTitle', {0: cardType, 1: nftId}) }}</h4>
-      <h4 v-else>{{ $t('deedRentingEditTitle') }}</h4>
+      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeCapitalized, 1: nftId}) }}</h4>
+      <h4 v-else>{{ $t('deedRentingEditDrawerTitle', {0: cardTypeCapitalized, 1: nftId}) }}</h4>
     </template>
     <template v-if="authenticated" #content>
       <v-card-text v-if="isNew">
@@ -418,6 +418,9 @@ export default {
     cardType() {
       return this.offer?.cardType;
     },
+    cardTypeCapitalized() {
+      return this.cardType && `${this.cardType[0].toUpperCase()}${this.cardType.substring(1).toLowerCase()}`;
+    },
     periods() {
       return this.offer.duration?.includes('YEAR') && [{
         value: 'ONE_MONTH',
@@ -594,17 +597,8 @@ export default {
     this.$root.$off('deeds-rent-close', this.close);
   },
   methods: {
-    open(nftId, offer) {
-      let sameOffer = nftId && offer?.id === this.offer?.id && nftId === this.offer?.nftId;
-      if (sameOffer && this.offer && offer) {
-        const previousOffer = this.getBlockchainOfferStructure(this.offer);
-        const newOffer = this.getBlockchainOfferStructure(offer);
-        sameOffer = JSON.stringify(previousOffer) !== JSON.stringify(newOffer);
-      } else {
-        sameOffer = false;
-      }
-
-      if (sameOffer) {
+    open(nftId, offer, cardType) {
+      if (this.isSameOffer(nftId, this.offer, offer)) {
         this.$refs.drawer?.open();
       } else {
         this.step = 1;
@@ -622,6 +616,7 @@ export default {
         } else {
           this.offer = Object.assign({
             nftId,
+            cardType,
           }, this.DEFAULT_OFFER);
           this.originalOffer = null;
           this.visibility = 'ALL';
@@ -635,6 +630,15 @@ export default {
           this.offerChanged = false;
         });
       }
+    },
+    isSameOffer(nftId, offer1, offer2) {
+      const sameIds = nftId && nftId === this.nftId && offer2?.id === offer1?.id;
+      if (sameIds && offer1 && offer2) {
+        const previousOffer = this.getBlockchainOfferStructure(offer1);
+        const newOffer = this.getBlockchainOfferStructure(offer2);
+        return JSON.stringify(previousOffer) !== JSON.stringify(newOffer);
+      }
+      return false;
     },
     closeAndReset() {
       this.close(this.nftId);

@@ -120,9 +120,11 @@
                   @provisioning-status="provisioningStatus = $event"
                   @tenant-status="tenantStatus = $event"
                   @logout="logout($event)" />
+
                 <deeds-lease-card-rent-buttons
                   v-if="!isLeased"
                   :nft-id="nftId"
+                  :card-type="cardType"
                   :offers="lease.rentedOffers"
                   :started="started"
                   :is-provisioning-manager="isProvisioningManager" />
@@ -321,11 +323,12 @@ export default {
     document.removeEventListener('deed-lease-paid', this.refreshLeaseFromblockchain);
     document.removeEventListener('deed-lease-ended', this.refreshLeaseFromblockchain);
     document.removeEventListener('deed-lease-tenant-evicted', this.refreshLeaseFromblockchain);
+    this.animate();
   },
   methods: {
     animate() {
       this.show = false;
-      window.setTimeout(() => this.show = true, 200);
+      window.setTimeout(() => this.show = true, 100);
     },
     logout(validate) {
       if (this.$refs.loginButton) {

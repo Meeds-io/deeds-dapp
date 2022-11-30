@@ -41,6 +41,7 @@
       </v-col>
       <v-col v-if="hasMore" cols="12">
         <v-btn
+          :loading="loading"
           outlined
           text
           block

@@ -279,10 +279,8 @@ export default {
       return this.rentalConfirmed && this.provisioningStatus === 'STOP_IN_PROGRESS';
     },
   }),
-  watch: {
-    lease() {
-      this.animate();
-    },
+  created() {
+    this.animate();
   },
   methods: {
     animate() {

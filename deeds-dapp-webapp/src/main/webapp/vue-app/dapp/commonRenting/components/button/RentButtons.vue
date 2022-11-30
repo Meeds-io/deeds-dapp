@@ -105,6 +105,10 @@ export default {
       type: Number,
       default: null,
     },
+    cardType: {
+      type: Number,
+      default: null,
+    },
     offers: {
       type: Array,
       default: null,
@@ -256,7 +260,7 @@ export default {
     openRentDrawer() {
       this.loadingRentDrawer = true;
       this.refreshOffers()
-        .then(() => this.$root.$emit('deeds-rent-drawer', this.nftId, this.rentalOffer))
+        .then(() => this.$root.$emit('deeds-rent-drawer', this.nftId, this.rentalOffer, this.cardType))
         .catch(() => this.$root.$emit('alert-message', this.$t('loggedOutPleaseLoginAgain'), 'warning'))
         .finally(() => this.loadingRentDrawer = false);
     },
