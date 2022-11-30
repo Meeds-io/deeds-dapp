@@ -251,8 +251,8 @@
               {{ $t('deedRentingPeriodicRentPriceSummarySubtitle', {0: paymentPeriodicityLabel}) }}
             </div>
             <div class="d-flex mt-2">
-              <div class="flex-grow-1">{{ $t('deedRentingRewardDistribution') }}</div>
-              {{ $t('deedTenantMintingPercentage', {0: rewardTenantMintingPercentage}) }}
+              <div class="flex-grow-1">{{ $t('deedRentingRewardDistributionOfferForm') }}</div>
+              {{ $t('deedLenderMintingPercentage', {0: rentalOwnerMintingPercentage}) }}
             </div>
             <div class="caption font-italic mb-4">
               {{ $t('deedRentingRewardDistributionSummarySubtitle') }}
@@ -540,9 +540,6 @@ export default {
     },
     rentalOwnerMintingPercentage() {
       return this.offer?.ownerMintingPercentage || 0;
-    },
-    rewardTenantMintingPercentage() {
-      return 100 - this.rentalOwnerMintingPercentage;
     },
     expirationDateChoiceLabel() {
       return this.updateExpirationDate
