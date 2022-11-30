@@ -59,7 +59,6 @@
             class="flex-grow-1"
             flat>
             <div class="px-0 pt-4">
-              {{ $t('deedOfferDescriptionStepDescription') }}
               <deeds-extended-textarea
                 v-if="drawer"
                 v-model="offer.description"
