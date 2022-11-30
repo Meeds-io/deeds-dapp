@@ -213,13 +213,13 @@ export default {
     },
     rentingDescription() {
       if (this.isAcquisitionInProgress) {
-        return this.$t('deedOfferAcquisitionInProgress', {0: this.acquisitionsCount});
+        return this.$t('deedOfferAcquisitionInProgressTooltip', {0: this.acquisitionsCount});
       }
       if (this.isDeleteInProgress) {
-        return this.$t('deedRentingOfferDeletionInProgress');
+        return this.$t('deedRentingOfferDeletionInProgressTooltip');
       }
       if (this.isUpdateInProgress) {
-        return this.$t('deedRentingOfferUpdateInProgress');
+        return this.$t('deedRentingOfferUpdateInProgressTooltip');
       }
       return this.hasOnlyExpiredOffers
         && this.$t('deedRentOfferExpired')
