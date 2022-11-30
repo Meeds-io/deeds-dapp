@@ -40,6 +40,7 @@
               bordered
               overlap>
               <v-btn
+                :href="rentalOfferLink"
                 :width="buttonsWidth"
                 :min-width="minButtonsWidth"
                 :max-width="maxButtonsWidth"
@@ -47,7 +48,7 @@
                 outlined
                 depressed
                 @click="openRentDetails">
-                <span class="text-truncate position-absolute full-width text-capitalize">
+                <span class="text-truncate position-absolute full-width text-capitalize text-center">
                   {{ $t('deedRentSeeRentButton') }}
                 </span>
               </v-btn>
@@ -193,6 +194,10 @@ export default {
       return (this.hasAvailableRentOffers && this.availableRentOffers[0])
         || (this.hasRentOffers && this.offers[0]);
     },
+    rentalOfferLink() {
+      return this.showSeeRentPart
+        && `/${this.parentLocation}/marketplace?offer=${this.rentalOffer.id}`;
+    },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;
     },
@@ -200,7 +205,7 @@ export default {
       return !this.isProvisioningManager;
     },
     rentingSeeDescription() {
-      return this.offerId && this.$t('deedRentSeeRentDescription') || this.$t('deedRentingOfferCreationInProgress');
+      return this.offerId && this.$t('deedRentSeeRentDescription') || this.$t('deedRentingOfferCreationInProgressTooltip');
     },
     rentingDescription() {
       if (this.isAcquisitionInProgress) {
@@ -277,9 +282,15 @@ export default {
         })
         .finally(() => this.loadingRentalOffers = false);
     },
-    openRentDetails() {
-      this.$store.commit('setStandaloneOfferId', this.offers[0].id);
-      this.$root.$emit('switch-page', 'marketplace', true);
+    openRentDetails(event) {
+      if (!event?.ctrlKey) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        this.$store.commit('setStandaloneOfferId', this.offers[0].id);
+        this.$root.$emit('switch-page', 'marketplace', true);
+      }
     },
     refreshOfferFromblockchain(event) {
       const offerId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
