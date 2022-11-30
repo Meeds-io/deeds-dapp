@@ -318,33 +318,37 @@
     </template>
     <template v-if="authenticated" #footer>
       <v-btn
-        v-if="isNew"
-        :disabled="sending"
-        :min-width="MIN_BUTTONS_WIDTH"
-        outlined
-        text
-        class="me-2 ms-auto"
-        name="cancelRent"
-        @click="closeAndReset">
-        {{ $t('cancel') }}
-      </v-btn>
-      <v-btn
-        v-else-if="canDelete"
+        v-if="canDelete"
         :loading="deleting"
         :min-width="MIN_BUTTONS_WIDTH"
+        :max-width="MAX_BUTTONS_WIDTH"
         outlined
         name="deleteConfirmButton"
         color="error"
-        class="ms-auto me-2"
+        class="me-auto"
         depressed
         dark
         @click="deleteOffer(false)">
         {{ $t('deedRentingDeleteButton') }}
       </v-btn>
+
+      <v-btn
+        v-if="step > 1"
+        :disabled="sending"
+        :min-width="MIN_BUTTONS_WIDTH"
+        :max-width="MAX_BUTTONS_WIDTH"
+        outlined
+        text
+        class="me-2 ms-auto"
+        name="prevousRentStep"
+        @click="step--">
+        {{ $t('previous') }}
+      </v-btn>
       <v-btn
         :loading="sending"
         :disabled="buttonDisabled"
         :min-width="MIN_BUTTONS_WIDTH"
+        :max-width="MAX_BUTTONS_WIDTH"
         :outlined="intermediateStep"
         :class="!intermediateStep && buttonDisabled && 'primary'"
         name="rentConfirmButton"
@@ -390,7 +394,8 @@ export default {
     },
     updateExpirationDate: false,
     DESCRIPTION_MAX_LENGTH: 200,
-    MIN_BUTTONS_WIDTH: 120,
+    MIN_BUTTONS_WIDTH: 80,
+    MAX_BUTTONS_WIDTH: '30%',
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
