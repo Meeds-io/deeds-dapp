@@ -203,6 +203,7 @@
             </div>
             <div v-if="maxMonthsToPay > 1" class="mb-2">
               <div>{{ $t('deedRentMonthsToPay') }}</div>
+              <div class="caption" v-html="$t('deedRentMonthsToPayInAdvance', {0: '<strong>', 1: maxMonthsToPay, 2: '</strong>'})"></div>
               <div class="d-flex mb-2">
                 <div class="flex-grow-1">
                   <v-slider
