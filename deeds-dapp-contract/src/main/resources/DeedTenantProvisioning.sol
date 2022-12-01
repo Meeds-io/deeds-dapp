@@ -6,12 +6,13 @@ import "./abstract/UUPSUpgradeable.sol";
 import "./abstract/SafeMath.sol";
 import "./abstract/ManagerRole.sol";
 import "./abstract/IERC1155.sol";
+import "./abstract/IProvisioningDelegation.sol";
 import "./abstract/ProvisioningManager.sol";
 
 /**
  * @title Deed Tenant provisioning Contract for Deed NFT owners
  */
-contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
+contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole, IProvisioningDelegation {
     using SafeMath for uint256;
     using Address for address;
 
@@ -79,7 +80,7 @@ contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
      * The call of this method can be done only through a contract designated as Manager of current contract
      * such as Renting Contract.
      */
-    function setDelegatee(address _address, uint256 _nftId) external onlyManager returns(bool) {
+    function setDelegatee(address _address, uint256 _nftId) external override onlyManager returns(bool) {
         if (delegatees[_nftId] != address(0)) {
           _removeDelegatee(_nftId);
         }
@@ -90,7 +91,7 @@ contract DeedTenantProvisioning is UUPSUpgradeable, Initializable, ManagerRole {
     /**
      * @dev Returns the delegated address for Provisioning Management of an NFT
      */
-    function getDelegatee(uint256 _nftId) external view returns(address) {
+    function getDelegatee(uint256 _nftId) external override view returns(address) {
         return delegatees[_nftId];
     }
 

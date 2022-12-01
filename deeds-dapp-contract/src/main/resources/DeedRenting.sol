@@ -6,15 +6,16 @@ import "./abstract/UUPSUpgradeable.sol";
 import "./abstract/SafeMath.sol";
 import "./abstract/Context.sol";
 import "./abstract/Ownable.sol";
+import "./abstract/Pausable.sol";
 import "./abstract/IERC1155.sol";
 import "./abstract/IERC20.sol";
 import "./abstract/ProvisioningManager.sol";
-import "./DeedTenantProvisioning.sol";
+import "./abstract/IProvisioningDelegation.sol";
 
 /**
  * @title Deed Renting Contract
  */
-contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Context, Ownable {
+contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Context, Ownable, Pausable {
     using SafeMath for uint256;
     using Address for address;
 
@@ -94,7 +95,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
 
     IERC1155 public deed;
 
-    DeedTenantProvisioning public tenantProvisioning;
+    IProvisioningDelegation public tenantProvisioning;
 
     uint256 public offersCount;
 
@@ -270,7 +271,7 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     function initialize(
         IERC20 _meed,
         IERC1155 _deed,
-        DeedTenantProvisioning _tenantProvisioning
+        IProvisioningDelegation _tenantProvisioning
     )
         virtual
         public
@@ -293,7 +294,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         hasOfferValidStartDate(_offer.deedId, _offer.offerStartDate)
         isValidOfferPeiod(_offer.months, _offer.noticePeriod)
         isPercentageValid(_offer.ownerMintingPercentage)
-        isValidPrice(_offer.price, _offer.allDurationPrice) {
+        isValidPrice(_offer.price, _offer.allDurationPrice)
+        whenNotPaused {
 
         offersCount = offersCount.add(1);
         _offer.id = offersCount;
@@ -319,7 +321,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         notAcquiredOffer(_offer.id)
         hasOfferValidStartDate(_offer.deedId, _offer.offerStartDate)
         isValidOfferPeiod(_offer.months, _offer.noticePeriod)
-        isPercentageValid(_offer.ownerMintingPercentage) {
+        isPercentageValid(_offer.ownerMintingPercentage)
+        whenNotPaused {
 
         _setOffer(_offer);
 
@@ -336,7 +339,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     function deleteOffer(uint256 _id)
         public
         onlyDeedOwnerByLeaseId(_id)
-        notAcquiredOffer(_id) {
+        notAcquiredOffer(_id)
+        whenNotPaused {
 
         uint256 deedId = deedOffers[_id].deedId;
         delete deedOffers[_id];
@@ -357,7 +361,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         isAuthorizedTenant(_id)
         isOfferNotExpired(_id)
         notDeedOwnerByLeaseId(_id)
-        isOfferCreatorDeedOwner(_id) {
+        isOfferCreatorDeedOwner(_id)
+        whenNotPaused {
 
         DeedOffer storage offer = deedOffers[_id];
 
@@ -402,7 +407,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         public
         isReceiverDeedOwnerByLeaseId(_id, _deedOwner)
         onlyDeedTenant(_id)
-        isOngoingLease(_id) {
+        isOngoingLease(_id)
+        whenNotPaused {
 
         DeedOffer storage offer = deedOffers[_id];
         DeedLease storage lease = deedLeases[_id];
@@ -426,7 +432,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
     function endLease(uint256 _id)
         public
         onlyDeedTenant(_id)
-        isOngoingLease(_id) {
+        isOngoingLease(_id)
+        whenNotPaused {
 
         DeedOffer storage offer = deedOffers[_id];
         DeedLease storage lease = deedLeases[_id];
@@ -448,7 +455,8 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         public
         onlyDeedOwnerByLeaseId(_id)
         isOngoingLease(_id)
-        isRentNotPaid(_id) {
+        isRentNotPaid(_id)
+        whenNotPaused {
 
         DeedOffer storage offer = deedOffers[_id];
         DeedLease storage lease = deedLeases[_id];
@@ -459,6 +467,28 @@ contract DeedRenting is UUPSUpgradeable, Initializable, ProvisioningManager, Con
         }
 
         emit TenantEvicted(_id, lease.deedId, lease.tenant, _msgSender(), (offer.months - lease.paidMonths));
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function unpause() public onlyOwner {
+        _unpause();
     }
 
     /**
