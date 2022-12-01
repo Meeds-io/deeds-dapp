@@ -65,6 +65,7 @@ export default {
     ownedNfts: state => state.ownedNfts,
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
+    selectedStandaloneDeedCardName: state => state.selectedStandaloneDeedCardName,
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },
@@ -198,7 +199,28 @@ export default {
       } else {
         this.ownedDeeds = ownedDeeds;
       }
-      this.deedsToDisplay = [...this.leases, ...this.ownedDeeds];
+      if (this.selectedStandaloneDeedCardName) {
+        this.deedsToDisplay = [...this.leases, ...this.ownedDeeds].sort((a, b) => {
+          if (a.cardType?.toUpperCase() !== b.cardType?.toUpperCase()) {
+            if (a.cardType?.toUpperCase() === this.selectedStandaloneDeedCardName.toUpperCase()) {
+              return -1;
+            } else if (b.cardType?.toUpperCase() === this.selectedStandaloneDeedCardName.toUpperCase()) {
+              return 1;
+            }
+          }
+          return 0;
+        });
+      } else {
+        this.deedsToDisplay = [...this.leases, ...this.ownedDeeds];
+      }
+      if (this.selectedStandaloneDeedId) {
+        const index = this.deedsToDisplay.findIndex(displayedLease => displayedLease.nftId === this.selectedStandaloneDeedId);
+        if (index >= 0) {
+          const lease = this.deedsToDisplay[index];
+          this.deedsToDisplay.splice(index, 1);
+          this.deedsToDisplay.unshift(lease);
+        }
+      }
       this.$root.$emit('deed-leases-loaded', this.deedsToDisplay, this.deedsToDisplay.length);
     },
   },

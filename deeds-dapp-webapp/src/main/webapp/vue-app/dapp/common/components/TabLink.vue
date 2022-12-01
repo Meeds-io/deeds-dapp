@@ -22,7 +22,7 @@
     color="primary"
     class="font-size-normal"
     text
-    @click="$root.$emit('switch-page', tabLink)">
+    @click="clickOnLink">
     <span class="text-none">
       <span v-if="noTitleTextTransform" class="font-weight-bold">{{ label }}</span>
       <span v-else class="font-weight-bold text-capitalize">{{ label }}</span>
@@ -48,6 +48,12 @@ export default {
     noTitleTextTransform: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    clickOnLink(event) {
+      this.$emit('click', event);
+      this.$root.$emit('switch-page', this.tabLink);
     },
   },
 };

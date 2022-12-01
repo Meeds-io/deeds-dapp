@@ -30,8 +30,9 @@
     <template #col1>
       <deeds-tab-link
         :label="cardName"
-        tab-link="deeds"
-        class="ms-n4" />
+        tab-link="owners"
+        class="ms-n4"
+        @click="selectDeed" />
     </template>
     <template #col2>
       <span class="text-capitalize">{{ cityName }}</span>
@@ -64,5 +65,10 @@ export default {
       return `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
     },
   }),
+  methods: {
+    selectDeed() {
+      this.$store.commit('setStandaloneDeedCardName', this.cardName);
+    },
+  },
 };
 </script>

@@ -363,6 +363,7 @@ const store = new Vuex.Store({
     poolsChanged: 2,
     selectedOfferId: null,
     selectedStandaloneOfferId: null,
+    selectedStandaloneDeedCardName: null,
     authenticated: false,
     dark,
     blackThemeColor: dark && 'white' || 'black',
@@ -388,6 +389,9 @@ const store = new Vuex.Store({
     setStandaloneOfferId(state, value) {
       state.selectedOfferId = null;
       state.selectedStandaloneOfferId = value;
+    },
+    setStandaloneDeedCardName(state, value) {
+      state.selectedStandaloneDeedCardName = value;
     },
     refreshAuthentication(state) {
       const authenticated = state.address && authentication.isAuthenticated(state.address);
