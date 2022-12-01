@@ -92,7 +92,7 @@
 export default {
   data: () => ({
     snackbar: false,
-    timeout: 1000000,
+    timeout: 10000,
     alertMessage: null,
     useHtml: false,
     alertType: null,

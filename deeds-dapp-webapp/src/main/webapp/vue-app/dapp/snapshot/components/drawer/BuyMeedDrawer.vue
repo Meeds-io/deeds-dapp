@@ -40,6 +40,9 @@
               <li class="ps-0 ps-sm-4">
                 {{ $t('buyMeedsIntroductionBulletPoint3') }}
               </li>
+              <li class="ps-0 ps-sm-4">
+                {{ $t('buyMeedsIntroductionBulletPoint4') }}
+              </li>
             </ul>
           </div>
           <deeds-trade-meeds

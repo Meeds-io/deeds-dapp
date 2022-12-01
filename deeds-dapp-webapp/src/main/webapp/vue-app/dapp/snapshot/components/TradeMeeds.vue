@@ -97,8 +97,9 @@
               absolute
               large
               icon
+              light
               @click="switchInputs">
-              <v-icon color="black" size="36">fas fa-angle-down</v-icon>
+              <v-icon size="36" light>fas fa-angle-down</v-icon>
             </v-btn>
             <v-divider />
           </v-card>
