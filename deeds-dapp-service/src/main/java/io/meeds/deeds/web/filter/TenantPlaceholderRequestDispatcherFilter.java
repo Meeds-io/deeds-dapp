@@ -45,7 +45,7 @@ import io.meeds.deeds.service.TenantService;
 public class TenantPlaceholderRequestDispatcherFilter implements Filter {
 
   private static final Pattern SERVER_HOST_PATTERN =
-                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.meeds\\.io");
+                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.wom\\.meeds\\.io");
 
   protected TenantService      tenantService;
 
