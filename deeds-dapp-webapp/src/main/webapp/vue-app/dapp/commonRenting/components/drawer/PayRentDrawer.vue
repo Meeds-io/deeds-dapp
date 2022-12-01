@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('deedsRentPayDrawerTitle', {0: cardType, 1: nftId}) }}</h4>
+      <h4>{{ $t('deedsRentPayDrawerTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="lease" #content>
       <v-card
@@ -113,7 +113,7 @@
                 min="1"
                 hide-details />
             </div>
-            <div class="d-flex text-ordinary-capitalize align-center">
+            <div class="d-flex align-center">
               {{ monthsToPayLabel }}
             </div>
           </div>
@@ -207,6 +207,9 @@ export default {
     },
     cardType() {
       return this.lease?.cardType;
+    },
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
     },
     leaseId() {
       return this.lease?.id;

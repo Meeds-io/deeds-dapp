@@ -21,7 +21,7 @@
     width="530"
     class="px-4"
     outlined>
-    <v-card-title class="ps-0 pb-0 mx-1 text-ordinary-capitalize">
+    <v-card-title class="ps-0 pb-0 mx-1">
       {{ $t('pointsSimulator') }}
     </v-card-title>
     <v-card-text class="ps-0">

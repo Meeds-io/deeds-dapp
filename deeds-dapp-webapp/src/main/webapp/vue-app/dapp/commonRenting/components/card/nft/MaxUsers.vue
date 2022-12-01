@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="pa-0 my-n2">
-    <v-list-item-content class="py-0 text-capitalize">
+    <v-list-item-content class="py-0">
       {{ $t('cityName', {0: city}) }}
     </v-list-item-content>
     <v-list-item-action-text class="d-flex py-0">

@@ -54,7 +54,7 @@
                 outlined
                 depressed
                 @click="openRentDetails">
-                <span class="text-truncate position-absolute full-width text-capitalize text-center">
+                <span class="text-truncate position-absolute full-width text-center">
                   {{ $t('deedRentSeeRentButton') }}
                 </span>
               </v-btn>
@@ -95,7 +95,7 @@
                 color="primary"
                 depressed
                 @click="openRentDrawer">
-                <span class="text-truncate position-absolute full-width text-capitalize">
+                <span class="text-truncate position-absolute full-width">
                   {{ rentingButtonName }}
                 </span>
               </v-btn>

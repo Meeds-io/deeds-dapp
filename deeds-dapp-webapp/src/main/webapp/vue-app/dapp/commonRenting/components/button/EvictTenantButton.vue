@@ -24,7 +24,7 @@
           depressed
           dark
           @click="$root.$emit('deed-evict-tenant-open', lease)">
-          <span class="text-truncate position-absolute full-width text-capitalize">
+          <span class="text-truncate position-absolute full-width">
             {{ $t('evictTenant') }}
           </span>
         </v-btn>

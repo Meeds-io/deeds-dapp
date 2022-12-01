@@ -10,15 +10,15 @@
           :href="deedTenantLink"
           target="_blank"
           rel="nofollow noreferrer noopener">
-          <span v-if="starting" class="text-capitalize text-end">{{ $t('tenantDeployTransactionInProgress') }}</span>
-          <span v-else-if="stopping" class="text-capitalize text-end">{{ $t('tenantUndeployTransactionInProgress') }}</span>
-          <span v-else-if="beingPrepared" class="text-capitalize text-end">{{ $t('tenantBeingPrepared') }}</span>
+          <span v-if="starting" class="text-end">{{ $t('tenantDeployTransactionInProgress') }}</span>
+          <span v-else-if="stopping" class="text-end">{{ $t('tenantUndeployTransactionInProgress') }}</span>
+          <span v-else-if="beingPrepared" class="text-end">{{ $t('tenantBeingPrepared') }}</span>
           <span v-else class="text-lowercase">{{ deedTenantLinkLabel }}</span>
         </a>
-        <div v-else-if="beingStopped" class="text-capitalize text-end">
+        <div v-else-if="beingStopped" class="text-end">
           {{ $t('tenantBeingStopped') }}
         </div>
-        <div v-else-if="stopped" class="text-capitalize text-end">
+        <div v-else-if="stopped" class="text-end">
           {{ isProvisioningManager && $t('deedTenantNotStartedYet') || $t('vacant') }}
         </div>
         <div v-else>-</div>
@@ -90,10 +90,10 @@ export default {
       return this.nft?.isProvisioningManager;
     },
     deedTenantLink() {
-      return `https://${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
+      return this.cityName && `https://${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
     },
     deedTenantLinkLabel() {
-      return `${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
+      return this.cityName && `${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
     },
   }),
 };

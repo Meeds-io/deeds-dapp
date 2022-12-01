@@ -23,7 +23,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('buyMeeds') }}</h4>
+      <h4>{{ $t('buyMeeds') }}</h4>
     </template>
     <template #content>
       <v-card color="transparent" flat>

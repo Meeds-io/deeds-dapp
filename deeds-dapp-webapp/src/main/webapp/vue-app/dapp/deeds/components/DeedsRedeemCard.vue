@@ -41,8 +41,8 @@
           mdi-image-size-select-actual
         </v-icon>
       </v-card-text>
-      <v-card-title class="justify-center pt-0 text-capitalize">
-        {{ cardName }}
+      <v-card-title class="justify-center pt-0">
+        {{ cardTypeI18N }}
       </v-card-title>
       <v-card-text v-if="isRealNft" class="pt-0">
         <div class="text-subtitle-1">
@@ -116,6 +116,9 @@ export default {
     },
     cardName() {
       return this.card && this.card.name;
+    },
+    cardTypeI18N() {
+      return this.cardName && this.$t(this.cardName.toLowerCase());
     },
     cardSupply() {
       return this.card && this.card.supply;

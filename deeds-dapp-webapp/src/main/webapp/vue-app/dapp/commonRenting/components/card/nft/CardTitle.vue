@@ -4,9 +4,9 @@
       :city="city"
       :card-type="cardType"
       class="mt-0 hidden-md-and-up" />
-    <span class="text-capitalize">
+    <span>
       {{ $t('deedRentalNftTypeTitle', {
-        0: cardType,
+        0: cardTypeI18N,
         1: nftId
       }) }}
     </span>
@@ -28,5 +28,10 @@ export default {
       default: null,
     },
   },
+  computed: Vuex.mapState({
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
+    },
+  }),
 };
 </script>

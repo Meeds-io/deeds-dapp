@@ -23,7 +23,7 @@
           outlined
           depressed
           dark>
-          <span class="text-truncate position-absolute full-width text-capitalize">
+          <span class="text-truncate position-absolute full-width">
             {{ $t('claimRewards') }}
           </span>
         </v-btn>

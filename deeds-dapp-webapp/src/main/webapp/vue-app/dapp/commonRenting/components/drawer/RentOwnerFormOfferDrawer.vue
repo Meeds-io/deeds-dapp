@@ -26,8 +26,8 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeCapitalized, 1: nftId}) }}</h4>
-      <h4 v-else>{{ $t('deedRentingEditDrawerTitle', {0: cardTypeCapitalized, 1: nftId}) }}</h4>
+      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
+      <h4 v-else>{{ $t('deedRentingEditDrawerTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="authenticated" #content>
       <v-card-text v-if="isNew">
@@ -429,8 +429,8 @@ export default {
     cardType() {
       return this.offer?.cardType;
     },
-    cardTypeCapitalized() {
-      return this.cardType && `${this.cardType[0].toUpperCase()}${this.cardType.substring(1).toLowerCase()}`;
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
     },
     periods() {
       return this.offer.duration?.includes('YEAR') && [{

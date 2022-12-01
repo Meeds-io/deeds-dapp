@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('confirmRenting') }}</h4>
+      <h4>{{ $t('confirmRenting') }}</h4>
     </template>
     <template #content>
       <v-stepper

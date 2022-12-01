@@ -63,7 +63,7 @@ export default {
     parentLocation: state => state.parentLocation,
     blackThemeColor: state => state.blackThemeColor,
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
+      return this.city && this.card && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
     },
   }),
 };

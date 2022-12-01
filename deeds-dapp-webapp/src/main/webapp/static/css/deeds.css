@@ -80,8 +80,8 @@ body, .theme--dark.v-application {
   background-color: #3f8487de !important;
 }
 
-.v-btn {
-  text-transform: capitalize;
+.v-tab, .v-btn {
+  text-transform: none;
 }
 
 .text--color {

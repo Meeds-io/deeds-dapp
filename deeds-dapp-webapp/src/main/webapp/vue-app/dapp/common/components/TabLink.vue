@@ -25,7 +25,7 @@
     @click="clickOnLink">
     <span class="text-none">
       <span v-if="noTitleTextTransform" class="font-weight-bold">{{ label }}</span>
-      <span v-else class="font-weight-bold text-capitalize">{{ label }}</span>
+      <span v-else class="font-weight-bold">{{ label }}</span>
       <span v-if="subLabel" class="font-weight-normal">({{ subLabel }})</span>
     </span>
   </v-btn>

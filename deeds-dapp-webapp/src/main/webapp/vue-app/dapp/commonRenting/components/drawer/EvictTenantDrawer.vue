@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('deedsRentEvictTenantTitle', {0: cardType, 1: nftId}) }}</h4>
+      <h4>{{ $t('deedsRentEvictTenantTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="lease" #content>
       <v-card color="transparent" flat>
@@ -88,6 +88,9 @@ export default {
     },
     cardType() {
       return this.lease?.cardType;
+    },
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
     },
     noticeDate() {
       return this.lease?.noticeDate;

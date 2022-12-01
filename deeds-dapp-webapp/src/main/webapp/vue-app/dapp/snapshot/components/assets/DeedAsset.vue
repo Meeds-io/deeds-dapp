@@ -29,7 +29,7 @@
     </template>
     <template #col1>
       <deeds-tab-link
-        :label="cardName"
+        :label="cardTypeI18N"
         tab-link="owners"
         class="ms-n4"
         @click="selectDeed" />
@@ -58,11 +58,14 @@ export default {
     cardName() {
       return this.deed?.cardName;
     },
+    cardTypeI18N() {
+      return this.cardName && this.$t(this.cardName.toLowerCase());
+    },
     count() {
       return this.deed?.count;
     },
     imageSrc() {
-      return `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
+      return this.cardName && this.cityName && `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
     },
   }),
   methods: {

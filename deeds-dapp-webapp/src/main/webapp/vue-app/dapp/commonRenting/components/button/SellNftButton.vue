@@ -24,7 +24,7 @@
           outlined
           depressed
           @click="openRentDetails">
-          <span class="text-truncate position-absolute full-width text-capitalize text-center">
+          <span class="text-truncate position-absolute full-width text-center">
             <v-icon class="me-2" small>fa-external-link</v-icon>
             {{ $t('deedSellButton') }}
           </span>

@@ -36,7 +36,7 @@
         class="flex-grow-1"
         flat>
         <v-card-title class="d-flex ps-0 py-2">
-          <span class="text-capitalize">{{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}</span>
+          <span>{{ $t('deedRentalNftTypeTitle', {0: cardTypeI18N, 1: nftId}) }}</span>
           <v-spacer />
           <v-tooltip
             v-if="isOwner"
@@ -78,7 +78,7 @@
         <v-card-text class="ps-0 pb-6">
           <v-list dense>
             <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0 text-capitalize">
+              <v-list-item-content class="py-0">
                 {{ $t('cityName', {0: city}) }}
               </v-list-item-content>
               <v-list-item-action-text class="d-flex py-0">
@@ -231,6 +231,9 @@ export default {
     cardType() {
       return this.offer?.cardType?.toUpperCase() || '';
     },
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
+    },
     city() {
       return this.offer?.city?.toUpperCase() || '';
     },
@@ -247,7 +250,7 @@ export default {
       }
     },
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
+      return this.city && this.cardType && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
     },
     rentalTenantMintingPower() {
       return this.originalOffer?.mintingPower;

@@ -33,13 +33,13 @@
     <div class="d-flex flex-column flex-grow-1">
       <v-list-item class="min-height-auto">
         <v-list-item-title>
-          <v-card-title class="px-0 py-2 text-capitalize">
+          <v-card-title class="px-0 py-2">
             {{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}
           </v-card-title>
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="min-height-auto" dense>
-        <v-list-item-subtitle class="text-color text-capitalize">
+        <v-list-item-subtitle class="text-color">
           {{ $t('cityName', {0: city}) }}
         </v-list-item-subtitle>
       </v-list-item>
@@ -98,7 +98,7 @@ export default {
       }
     },
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
+      return this.city && this.cardType && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
     },
     cardMaxUsers() {
       switch (this.cardType) {

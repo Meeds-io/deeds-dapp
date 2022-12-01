@@ -23,7 +23,7 @@
           depressed
           dark
           @click="$root.$emit('deeds-rent-pay-drawer', lease)">
-          <span class="text-truncate position-absolute full-width text-capitalize">
+          <span class="text-truncate position-absolute full-width">
             {{ payRentButtonLabel }}
           </span>
         </v-btn>

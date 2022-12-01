@@ -22,7 +22,7 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     cardImage() {
-      return `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
+      return this.city && this.cardType && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
     },
   }),
 };

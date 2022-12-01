@@ -33,7 +33,7 @@
             depressed
             dark
             @click="openMoveOutDrawer">
-            <span class="text-truncate position-absolute full-width text-capitalize">
+            <span class="text-truncate position-absolute full-width">
               {{ $t('moveOut') }}
             </span>
           </v-btn>
@@ -76,7 +76,7 @@
             depressed
             dark
             @click="openMoveInDrawer">
-            <span class="text-truncate position-absolute full-width text-capitalize">
+            <span class="text-truncate position-absolute full-width">
               {{ $t('moveIn') }}
             </span>
           </v-btn>
@@ -109,7 +109,7 @@
           color="primary"
           depressed
           dark>
-          <span class="text-truncate position-absolute full-width text-capitalize">
+          <span class="text-truncate position-absolute full-width">
             {{ $t('moveInProgress') }}
           </span>
         </v-btn>
@@ -141,7 +141,7 @@
           color="primary"
           depressed
           dark>
-          <span class="text-truncate position-absolute full-width text-capitalize">
+          <span class="text-truncate position-absolute full-width">
             {{ $t('moveOutInProgress') }}
           </span>
         </v-btn>

@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('deedMoveInDrawerTitle', {0: cardName, 1: nftId}) }}</h4>
+      <h4>{{ $t('deedMoveInDrawerTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="drawer" #content>
       <v-card color="transparent" flat>
@@ -127,6 +127,9 @@ export default {
     },
     cardName() {
       return this.nft?.cardName;
+    },
+    cardTypeI18N() {
+      return this.cardName && this.$t(this.cardName.toLowerCase());
     },
     transactionHashAlias() {
       return this.transactionHash && `${this.transactionHash.substring(0, 5)}...${this.transactionHash.substring(this.transactionHash.length - 3)}`;

@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="text-capitalize">{{ $t('deedGetOfferRentingTitle', {0: cardType, 1: nftId}) }}</h4>
+      <h4>{{ $t('deedGetOfferRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="offer" #content>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">
@@ -219,7 +219,7 @@
                     min="1"
                     hide-details />
                 </div>
-                <div class="d-flex text-ordinary-capitalize align-center">
+                <div class="d-flex align-center">
                   {{ monthsToPayLabel }}
                 </div>
               </div>
@@ -228,9 +228,9 @@
               <div class="flex-grow-1 font-weight-bold">
                 <div>{{ $t('deedRentingPaymentTotal') }}</div>
                 <div v-if="hasNoticePeriod" class="caption">
-                  (<span class=" text-capitalize">{{ $t('deedMonthRents') }}</span>
+                  (<span>{{ $t('deedMonthRents') }}</span>
                   +
-                  <span class=" text-capitalize">{{ $t('deedRentingNoticePeriodTitle') }}</span>)
+                  <span>{{ $t('deedRentingNoticePeriodTitle') }}</span>)
                 </div>
               </div>
               <div class="d-flex">
@@ -360,6 +360,9 @@ export default {
     },
     cardType() {
       return this.offer?.cardType;
+    },
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
     },
     periods() {
       return this.offer.duration?.includes('YEAR') && [{

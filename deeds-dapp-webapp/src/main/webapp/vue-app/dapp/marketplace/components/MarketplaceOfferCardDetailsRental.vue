@@ -157,9 +157,6 @@ export default {
     },
   },
   computed: Vuex.mapState({
-    cardType() {
-      return this.offer?.cardType?.toUpperCase() || '';
-    },
     city() {
       return this.offer?.city?.toUpperCase() || '';
     },
