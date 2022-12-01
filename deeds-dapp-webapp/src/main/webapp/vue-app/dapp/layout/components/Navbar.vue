@@ -17,114 +17,153 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-bottom-navigation
-    v-if="isMobile"
-    v-model="selectedTab"
-    active-class="selected-item"
-    class="bottom-navigation content-box-sizing overflow-x-auto justify-start"
-    fixed
-    grow>
-    <v-row class="ma-0 pa-0 flex-nowrap" no-gutters>
-      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="marketplace"
-          id="marketplace"
-          :href="`/${parentLocation}/marketplace`"
-          value="marketplace"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.marketplace') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="tenants"
-          id="tenants"
-          :href="`/${parentLocation}/tenants`"
-          value="tenants"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.tenants') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-building-user</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="owners"
-          id="owners"
-          :href="`/${parentLocation}/owners`"
-          value="owners"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.owners') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-building-user</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="3" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="overview"
-          id="overview"
-          :href="`/${parentLocation}/overview`"
-          value="overview"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.overview') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-home</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="stake"
-          id="stake"
-          :href="`/${parentLocation}/stake`"
-          value="stake"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.stake') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-piggy-bank</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="deeds"
-          id="deeds"
-          :href="`/${parentLocation}/deeds`"
-          value="deeds"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.deeds') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-building</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-      <v-col cols="2" class="me-2 ms-0 my-0 pa-0">
-        <v-btn
-          ref="farm"
-          id="farm"
-          :href="`/${parentLocation}/farm`"
-          value="farm"
-          class="box-box-sizing px-2"
-          link
-          @click="openPage">
-          <h3>{{ $t('page.farm') }}</h3>
-          <v-icon class="mb-1 mt-2">fas fa-sack-dollar</v-icon>
-          <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-bottom-navigation>
+  <div v-if="isMobile">
+    <v-bottom-navigation
+      v-model="selectedTab"
+      :class="menuColor"
+      :input-value="showBottomNavigation"
+      style="z-index: 250;"
+      active-class="selected-item"
+      class="bottom-navigation justify-start"
+      fixed
+      grow>
+      <v-row class="ma-0 pa-0 flex-nowrap d-flex" no-gutters>
+        <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
+          <v-btn
+            ref="marketplace"
+            id="marketplace"
+            :href="`/${parentLocation}/marketplace`"
+            value="marketplace"
+            class="px-0 full-height"
+            link
+            @click="openPage">
+            <h3 class="mx-2">{{ $t('page.marketplace') }}</h3>
+            <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
+            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+          </v-btn>
+        </v-col>
+        <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
+          <v-btn
+            ref="buy"
+            id="buy"
+            value="buy"
+            class="px-0 full-height"
+            link
+            @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
+            <h3 class="mx-2">{{ $t('buy') }}</h3>
+            <v-icon class="font-normal font-weight-bold mb-1 mt-2">Ɱ</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
+          <v-btn
+            ref="overview"
+            id="overview"
+            :href="`/${parentLocation}/overview`"
+            value="overview"
+            class="px-0 full-height"
+            link
+            @click="openPage">
+            <h3 class="mx-2">{{ $t('page.overview') }}</h3>
+            <v-icon class="mb-1 mt-2">fas fa-coins</v-icon>
+            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+          </v-btn>
+        </v-col>
+        <v-col cols="auto" class="my-0 pa-0">
+          <v-btn
+            ref="more"
+            id="more"
+            value="more"
+            class="px-0 full-height"
+            link
+            @click.prevent.stop="showMoreMenu = true">
+            <h3 class="mx-2">{{ $t('more') }}</h3>
+            <v-icon class="mb-1 mt-2">fas fa-ellipsis</v-icon>
+            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-bottom-navigation>
+    <v-dialog
+      v-model="showMoreMenu"
+      transition="bottom-sheet-transition"
+      content-class="ma-0 v-bottom-sheet mb-14 elevation-0"
+      width="100%"
+      bottom="50px"
+      hide-overlay>
+      <v-list
+        :class="menuColor"
+        dense>
+        <v-list-item-group
+          v-model="selectedId">
+          <v-list-item
+            ref="tenants"
+            id="tenants"
+            :href="`/${parentLocation}/tenants`"
+            key="tenants"
+            value="tenants"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-icon class="mb-1 mt-2">fas fa-building-user</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ $t('page.tenants') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            ref="owners"
+            id="owners"
+            :href="`/${parentLocation}/owners`"
+            key="owners"
+            value="owners"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-icon class="mb-1 mt-2">fas fa-city</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ $t('page.owners') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            ref="stake"
+            id="stake"
+            :href="`/${parentLocation}/stake`"
+            key="stake"
+            value="stake"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-icon class="mb-1 mt-2">fas fa-piggy-bank</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ $t('page.stake') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            ref="deeds"
+            id="deeds"
+            :href="`/${parentLocation}/deeds`"
+            key="deeds"
+            value="deeds"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-icon class="mb-1 mt-2 transform-rotate-270">fas fa-trowel</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ $t('page.deeds') }}</v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            ref="farm"
+            id="farm"
+            :href="`/${parentLocation}/farm`"
+            key="farm"
+            value="farm"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-icon class="mb-1 mt-2">fas fa-sack-dollar</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-dialog>
+  </div>
   <v-tabs
     v-else
     v-model="selectedTab"
@@ -200,23 +239,49 @@ export default {
     selectedTab: null,
     avoidAddToHistory: false,
     avoidResetTab: false,
+    showMoreMenu: false,
+    showBottomNavigation: true,
+    selectedId: null,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     isMobile: state => state.isMobile,
+    dark: state => state.dark,
     defaultTab() {
       return `/${this.parentLocation}/marketplace`;
-    }
+    },
+    menuColor() {
+      return this.dark && 'grey darken-3' || 'grey lighten-3';
+    },
   }),
   watch: {
     isMobile() {
       this.initSelectedTab();
+    },
+    selectedTab(newVal, oldVal) {
+      if (newVal === 'buy' || (newVal === 'more' && !this.selectedId)) {
+        this.$nextTick(() => {
+          this.selectedTab = oldVal;
+          this.selectedId = null;
+        });
+      } else if (this.selectedTab !== 'more') {
+        this.selectedId = null;
+      }
+    },
+    selectedId() {
+      if (this.selectedId) {
+        this.$nextTick(() => {
+          this.selectedTab = 'more';
+        });
+      }
     },
   },
   created() {
     this.initSelectedTab();
     this.$root.$on('switch-page', this.switchPage);
     window.addEventListener('popstate', (event) => this.initSelectedTab(event));
+    this.$root.$on('drawer-opened', this.closeBottomMenu);
+    this.$root.$on('drawer-closed', this.openBottomMenu);
   },
   beforeDestroy() {
     this.$root.$off('switch-page', this.switchPage);
@@ -241,6 +306,12 @@ export default {
           this.switchPage(newTab);
         } else {
           this.selectedTab = tabToSelect;
+          if (this.isMobile && this.selectedTab !=='marketplace' && this.selectedTab !=='overview') {
+            this.$nextTick().then(() => {
+              this.selectedId = newTab;
+              this.selectedTab = 'more';
+            });
+          }
         }
       }
     },
@@ -251,7 +322,21 @@ export default {
         this.$nextTick().then(() => this.$refs[tab].$el.click());
       }
     },
+    closeBottomMenu(_drawer, level) {
+      if (level === 1) {
+        this.showBottomNavigation = false;
+      }
+    },
+    openBottomMenu(_drawer, level) {
+      if (level === 1) {
+        this.showBottomNavigation = true;
+      }
+    },
+    closeMobileMenu() {
+      this.showMoreMenu = false;
+    },
     openPage(event) {
+      this.closeMobileMenu();
       if (event) {
         event.preventDefault();
         event.stopPropagation();

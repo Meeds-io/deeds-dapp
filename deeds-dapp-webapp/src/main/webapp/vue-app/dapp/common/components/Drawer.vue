@@ -170,7 +170,7 @@ export default {
         this.$emit('opened');
         this.$store.commit('incrementOpenedDrawer');
         this.level = this.openedDrawersCount;
-        this.$root.$emit('drawer-opened', this);
+        this.$root.$emit('drawer-opened', this, this.level);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = 'contain';
@@ -184,7 +184,7 @@ export default {
         this.permanentBehavior = false;
         this.$emit('closed');
         this.$store.commit('decrementOpenedDrawer');
-        this.$root.$emit('drawer-closed', this);
+        this.$root.$emit('drawer-closed', this, this.level);
         if (!this.secondLevel) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = '';

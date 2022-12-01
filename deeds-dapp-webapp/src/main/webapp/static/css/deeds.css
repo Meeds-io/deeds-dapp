@@ -42,10 +42,6 @@ body, .theme--dark.v-application {
   left: -9999px;
 }
 
-#b button.v-btn, #navbar a.v-btn {
-  min-width: auto;
-}
-
 #priceChart, .priceChartParent {
   max-width: 100%;
   width: 600px;
@@ -57,11 +53,19 @@ body, .theme--dark.v-application {
   position: relative;
 }
 
+.transform-rotate-270 {
+  transform: rotate(270deg);
+}
+
 .priceChartPeriodSelector {
   position: absolute;
   top: 0;
   z-index: 1;
   width: 100%;
+}
+
+.full-height {
+  height: 100%!important;
 }
 
 .v-alert__icon {
@@ -218,7 +222,14 @@ body, .theme--dark.v-application {
   right: -1px;
   top: -1px;
 }
-
+.v-bottom-sheet .v-list-item-group .v-list-item--active:before {
+  content: '';
+  width: 4px;
+  background: #e25d5d;
+  position: absolute;
+  left: 0;
+  opacity: 1!important;
+}
 .v-list {
   padding-top: 0;
   padding-bottom: 0;
@@ -285,6 +296,9 @@ body, .theme--dark.v-application {
   display: none;
 }
 
+.v-application .font-normal {
+  font-style: normal!important
+}
 .v-application .text-capitalize {
   text-transform: lowercase !important;
   display: inline-block;
