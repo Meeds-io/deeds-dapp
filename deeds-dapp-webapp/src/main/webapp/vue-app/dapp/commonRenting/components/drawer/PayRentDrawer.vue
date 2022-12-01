@@ -132,7 +132,6 @@
             </deeds-number-format>
           </div>
         </div>
-
         <div class="font-weight-bold mb-3 mt-4">
           {{ $t('deedRentingPaymentYourBalance') }}
         </div>
@@ -366,7 +365,7 @@ export default {
     },
     openBuyMeeds(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('open-buy-meed-drawer');
+        this.$root.$emit('open-buy-meed-drawer', true);
       }
     },
   },

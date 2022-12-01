@@ -66,6 +66,16 @@
             {{ $t('step') }} {{ step }}/2
           </div>
           <v-btn
+            v-if="displayCancel"
+            :min-width="minWidthButtons"
+            name="cancelRentButton"
+            class="ms-auto me-2"
+            outlined
+            text
+            @click="close">
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-btn
             v-if="displayApproveButton"
             :loading="sending"
             :disabled="disabled"
@@ -111,8 +121,8 @@ export default {
     completedSteps: false,
     sending: false,
     sent: false,
+    displayCancel: false,
     step: 1,
-    minWidthButtons: 150,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -148,6 +158,9 @@ export default {
     },
     computingAmountIn() {
       return this.typing || this.computingAmount;
+    },
+    minWidthButtons() {
+      return this.displayCancel && 120 || 150;
     },
     hasSufficientAllowedTokens() {
       if (this.buy) {
@@ -261,10 +274,11 @@ export default {
     setTypingAmount(typing) {
       this.typing = typing;
     },
-    open() {
+    open(displayCancel) {
       if (!this.sending && !this.displaySteps) {
         this.step = 1;
       }
+      this.displayCancel = displayCancel;
       this.$refs.drawer.open();
     },
     close() {

@@ -545,6 +545,11 @@ export default {
     },
   }),
   watch: {
+    emailCode() {
+      if (this.emailCode && this.step === 2) {
+        this.confirmRenting();
+      }
+    },
     sending() {
       if (this.sending) {
         this.$refs.drawer?.startLoading();
@@ -589,7 +594,7 @@ export default {
       }
     },
     goToStep3() {
-      if (this.step !== 3 && (this.step !== 2 || !this.step2ButtonDisabled)) {
+      if (this.step !== 3 && !this.step2ButtonDisabled && this.emailCode) {
         this.step = 3;
         this.scrollDrawerContent();
       }
@@ -638,7 +643,7 @@ export default {
     },
     openBuyMeeds(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('open-buy-meed-drawer');
+        this.$root.$emit('open-buy-meed-drawer', true);
       }
     },
     scrollDrawerContent() {

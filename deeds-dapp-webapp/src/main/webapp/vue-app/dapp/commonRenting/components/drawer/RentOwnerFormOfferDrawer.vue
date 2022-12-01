@@ -661,7 +661,7 @@ export default {
       }
     },
     goToStep2() {
-      if (this.step !== 2 && (this.step !== 1 || !this.step1ButtonDisabled)) {
+      if (this.step !== 2 && !this.step1ButtonDisabled) {
         this.step = 2;
         this.$nextTick().then(() => this.$refs?.conditionsForm?.$el?.reportValidity());
         this.scrollDrawerContent();
@@ -669,17 +669,17 @@ export default {
     },
     goToStep3() {
       if (this.step !== 3
-          && (this.step !== 1 || !this.step1ButtonDisabled)
-          && (this.step !== 2 || !this.step2ButtonDisabled)) {
+          && !this.step1ButtonDisabled
+          && !this.step2ButtonDisabled) {
         this.step = 3;
         this.scrollDrawerContent();
       }
     },
     goToStep4() {
       if (this.step !== 4
-          && (this.step !== 1 || !this.step1ButtonDisabled)
-          && (this.step !== 2 || !this.step2ButtonDisabled)
-          && (this.step !== 3 || !this.step3ButtonDisabled)) {
+          && !this.step1ButtonDisabled
+          && !this.step2ButtonDisabled
+          && !this.step3ButtonDisabled) {
         this.step = 4;
         this.scrollDrawerContent();
       }

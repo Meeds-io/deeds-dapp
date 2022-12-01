@@ -9,8 +9,8 @@
     elevation="0"
     outlined>
     <v-slide-y-reverse-transition>
-      <div v-show="show">
-        <div class="d-flex flex">
+      <div v-show="show" class="fill-height">
+        <div class="d-flex flex fill-height">
           <deeds-lease-card-image
             :city="city"
             :card-type="cardType"
