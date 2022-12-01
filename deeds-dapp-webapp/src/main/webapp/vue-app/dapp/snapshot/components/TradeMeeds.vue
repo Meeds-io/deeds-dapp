@@ -36,18 +36,18 @@
       <v-text-field
         v-model="fromValue"
         :disabled="hasInvalidAddress || sending"
-        :filled="hasInvalidAddress || sending"
+        :readonly="hasInvalidAddress || sending"
         :loading="loadingAmount"
         :rules="fromValueValidator"
         :hide-details="isFromValueValid"
         :step="buy && '0.1' || '100'"
         :min="0"
         :max="buy && maxEther || maxMeed"
-        class="align-center"
+        :autofocus="focus"
+        class="align-center no-border"
         type="number"
         autocomplete="off"
         placeholder="0.0"
-        autofocus
         outlined
         large
         dense>
@@ -80,48 +80,64 @@
           </div>
         </template>
       </v-text-field>
-      <v-btn
-        name="switchTokenTradingButton"
-        icon
-        class="mx-auto my-2"
-        @click="switchInputs"
-        x-large>
-        <v-icon size="48">mdi-autorenew</v-icon>
-      </v-btn>
-      <v-text-field
-        v-model="toValueDisplay"
-        placeholder="0.0"
-        class="align-center"
-        autocomplete="off"
-        hide-details
-        large
-        outlined
-        dense
-        readonly
-        filled>
-        <template #append>
-          <v-img
-            v-if="buy"
-            :src="`/${parentLocation}/static/images/meedsicon.png`"
-            :max-height="maxIconsSize"
-            :max-width="maxIconsSize"
-            class="me-1 mt-2px"
-            contain
-            eager />
-          <v-img
-            v-else
-            :src="`/${parentLocation}/static/images/ether.svg`"
-            :max-height="maxIconsSize"
-            :max-width="maxIconsSize"
-            class="me-1 mt-2px"
-            contain
-            eager />
-          <div class="mt-1">
-            {{ buy && 'MEED' || 'ETH' }}
-          </div>
-        </template>
-      </v-text-field>
+      <v-hover v-slot="{ hover }">
+        <v-card
+          color="transparent"
+          class="d-flex flex-column flex-grow-1"
+          flat>
+          <v-card
+            color="transparent"
+            class="d-flex justify-center align-center full-width position-relative"
+            flat>
+            <v-btn
+              :elevation="hover ? 12 : 0"
+              :disabled="typing || sending"
+              name="switchTokenTradingButton"
+              class="mx-auto z-index-2 white"
+              absolute
+              large
+              icon
+              @click="switchInputs">
+              <v-icon color="black" size="36">fas fa-angle-down</v-icon>
+            </v-btn>
+            <v-divider />
+          </v-card>
+          <v-text-field
+            v-model="toValueDisplay"
+            placeholder="0.0"
+            class="align-center no-border"
+            autocomplete="off"
+            hide-details
+            readonly
+            outlined
+            large
+            dense>
+            <template #append>
+              <v-img
+                v-if="buy"
+                :src="`/${parentLocation}/static/images/meedsicon.png`"
+                :max-height="maxIconsSize"
+                :max-width="maxIconsSize"
+                class="me-1 mt-2px"
+                contain
+                eager />
+              <v-img
+                v-else
+                :src="`/${parentLocation}/static/images/ether.svg`"
+                :max-height="maxIconsSize"
+                :max-width="maxIconsSize"
+                class="me-1 mt-2px"
+                contain
+                eager />
+              <div class="mt-1">
+                {{ buy && 'MEED' || 'ETH' }}
+              </div>
+            </template>
+          </v-text-field>
+        </v-card>
+      </v-hover>
     </v-card-text>
+    <v-card-title class="d-flex flex-column justify-center pb-2" />
   </v-card>
 </template>
 <script>
@@ -142,6 +158,10 @@ export default {
     maxMeed: {
       type: Number,
       default: null,
+    },
+    focus: {
+      type: Boolean,
+      default: false,
     },
   },
   data: () => ({
@@ -167,6 +187,8 @@ export default {
     transactionGas: state => state.transactionGas,
     meedsRouteAllowance: state => state.meedsRouteAllowance,
     parentLocation: state => state.parentLocation,
+    whiteThemeColor: state => state.whiteThemeColor,
+    blackThemeColor: state => state.blackThemeColor,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
     },
@@ -237,12 +259,12 @@ export default {
       return this.sendingTransaction + 1;
     },
     canComputeValue() {
-      return this.fromValue && this.isFromValueNumeric;
+      return this.fromValue && this.isFromValueNumeric && Number(this.fromValue) > 0;
     },
   }),
   watch: {
-    sending() {
-      if (!this.sending && this.completedSteps) {
+    completedSteps() {
+      if (this.completedSteps) {
         this.reset();
       }
     },
@@ -265,14 +287,15 @@ export default {
       this.$emit('changed-buy', this.buy);
     },
     typing() {
-      this.$emit('computing', this.computingAmount || this.typing);
+      this.$emit('typing', this.typing);
     },
     computingAmount() {
-      this.$emit('computing', this.computingAmount || this.typing);
+      this.$emit('computing-amount', this.computingAmount);
     },
   },
   methods: {
     reset() {
+      this.buy = true;
       this.fromValue = null;
       this.toValue = null;
       this.computeValue();

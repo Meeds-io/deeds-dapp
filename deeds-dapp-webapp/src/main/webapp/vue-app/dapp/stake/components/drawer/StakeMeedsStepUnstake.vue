@@ -161,8 +161,7 @@ export default {
         this.xMeedContract,
         'withdraw',
         options,
-        [amount],
-        true
+        [amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {

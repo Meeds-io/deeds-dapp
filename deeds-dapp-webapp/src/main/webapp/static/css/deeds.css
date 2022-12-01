@@ -237,6 +237,9 @@ body, .theme--dark.v-application {
   position: relative;
   z-index: 1;
 }
+.z-index-2 {
+  z-index: 2;
+}
 .position-absolute {
   position: absolute;
 }
@@ -276,6 +279,10 @@ body, .theme--dark.v-application {
   position: absolute;
   right: 17px;
   bottom: 34px;
+}
+
+.v-application .v-input.no-border fieldset {
+  display: none;
 }
 
 .v-application .text-capitalize {

@@ -299,8 +299,7 @@ export default {
         this.meedContract,
         'approve',
         options,
-        [this.xMeedAddress, amount],
-        true
+        [this.xMeedAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {
@@ -328,8 +327,7 @@ export default {
         this.xMeedContract,
         'stake',
         options,
-        [amount],
-        true
+        [amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {

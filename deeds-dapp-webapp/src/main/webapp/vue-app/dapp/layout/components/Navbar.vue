@@ -248,7 +248,6 @@ export default {
       if (tab && this.$refs[tab]) {
         this.avoidResetTab = avoidResetTab;
         this.$root.$emit('close-drawer');
-        this.$root.$emit('close-alert-message');
         this.$nextTick().then(() => this.$refs[tab].$el.click());
       }
     },

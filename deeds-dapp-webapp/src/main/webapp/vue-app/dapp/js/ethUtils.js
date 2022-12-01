@@ -40,41 +40,40 @@ export function connectToMetamask() {
   });
 }
 
-export function sendTransaction(provider, contract, method, options, params, forceWhenEstimationError) {
+export function sendTransaction(provider, contract, method, options, params) {
   const signer = provider && contract && contract.connect(provider.getSigner());
   if (signer) {
+    if (options?.to) {
+      delete options.to;
+    }
+    const estimationOptions = JSON.parse(JSON.stringify(options));
+    delete estimationOptions.gasLimit;
     return signer.estimateGas[method](
-      ...params
+      ...params,
+      estimationOptions
     ).then(estimatedGasLimit => {
       if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
         options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
       }
-    }).then(() => {
-      return signer[method](
-        ...params,
-        options
-      );
     }).catch(e => {
-      if (e?.code === 4001) { // User denied transaction signature
-        return;
-      } else {
-        // eslint-disable-next-line no-console
-        console.debug('Error estimating gas, send transaction with fixed limit', e);
-        if (e?.message?.includes('-32603') && e?.message?.includes('execution reverted') && !forceWhenEstimationError) { // Estimation error
-          document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e.message}));
-          throw new Error(e.message);
-        }
-        return signer[method](
+      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e.message}));
+      throw new Error(e.message);
+    })
+      .then(() => 
+        signer[method](
           ...params,
           options
-        );
-      }
-    }).then((receipt) => {
-      if (receipt?.hash) {
-        document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
-      }
-      return receipt;
-    });
+        )
+      ).catch(e => {
+        if (e?.code !== 4001) { // User denied transaction signature
+          throw e;
+        }
+      }).then((receipt) => {
+        if (receipt?.hash) {
+          document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
+        }
+        return receipt;
+      });
   }
   return Promise.resolve(null);
 }

@@ -457,8 +457,7 @@ export default {
         this.tokenFactoryContract,
         'harvest',
         options,
-        [this.lpAddress],
-        true
+        [this.lpAddress]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {

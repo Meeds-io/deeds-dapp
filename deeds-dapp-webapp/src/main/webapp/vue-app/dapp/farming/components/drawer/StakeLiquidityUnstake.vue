@@ -142,8 +142,7 @@ export default {
         this.tokenFactoryContract,
         'withdraw',
         options,
-        [this.lpAddress, amount],
-        true
+        [this.lpAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {

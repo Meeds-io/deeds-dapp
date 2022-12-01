@@ -35,38 +35,56 @@
       border="left"
       elevation="2"
       outlined
-      dismissible
       colored-border>
-      <span
-        v-if="useHtml"
-        class="text--lighten-1"
-        v-html="alertMessage">
-      </span>
-      <span v-else class="text--lighten-1">
-        {{ alertMessage }}
-      </span>
-      <v-btn
-        v-if="alertLink || alertLinkCallback"
-        :href="alertLink"
-        :title="alertLinkTooltip"
-        name="closeSnackbarButton"
-        target="_blank"
-        rel="nofollow noreferrer noopener"
-        class="secondary--text"
-        icon
-        link
-        @click="linkCallback">
-        <v-icon>{{ alertLinkIcon }}</v-icon>
-      </v-btn>
-      <v-btn
-        slot="close"
-        name="closeAlertButton"
-        class="ms-4"
-        icon
-        small
-        @click="closeAlert">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
+      <div class="d-flex flex-nowrap align-center full-width">
+        <template v-if="currency">
+          <v-img
+            v-if="currency === 'MEED'"
+            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-4"
+            contain
+            eager />
+          <v-img
+            v-else-if="currency === 'ETH'"
+            :src="`/${parentLocation}/static/images/ether.svg`"
+            :max-height="maxIconsSize"
+            :max-width="maxIconsSize"
+            class="me-2"
+            contain
+            eager />
+        </template>
+        <span
+          v-if="useHtml"
+          class="text--lighten-1 flex-grow-1 pe-4"
+          v-html="alertMessage"
+          @click="handleAlertClicked">
+        </span>
+        <span v-else class="text--lighten-1 flex-grow-1 pe-4">
+          {{ alertMessage }}
+        </span>
+        <v-btn
+          v-if="alertLink || alertLinkCallback"
+          :href="alertLink"
+          :title="alertLinkTooltip"
+          name="closeSnackbarButton"
+          target="_blank"
+          rel="nofollow noreferrer noopener"
+          class="secondary--text"
+          icon
+          link
+          @click="linkCallback">
+          <v-icon>{{ alertLinkIcon }}</v-icon>
+        </v-btn>
+        <v-btn
+          slot="close"
+          name="closeAlertButton"
+          icon
+          @click="closeAlert">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
     </v-alert>
   </v-snackbar>
 </template>
@@ -74,7 +92,7 @@
 export default {
   data: () => ({
     snackbar: false,
-    timeout: 10000,
+    timeout: 1000000,
     alertMessage: null,
     useHtml: false,
     alertType: null,
@@ -83,12 +101,15 @@ export default {
     alertLinkIcon: null,
     alertLinkTooltip: null,
     timeoutInstance: null,
+    currency: null,
+    maxIconsSize: '20px',
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     etherscanBaseLink: state => state.etherscanBaseLink,
     dark: state => state.dark,
     whiteThemeColor: state => state.whiteThemeColor,
+    parentLocation: state => state.parentLocation,
     maxWidth() {
       return this.isMobile && '100vw' || '50vw';
     },
@@ -101,6 +122,7 @@ export default {
         alertLinkCallback: linkCallback,
         alertLinkIcon: linkIcon,
         alertLinkTooltip: linkTooltip,
+        currency: null
       });
     });
     this.$root.$on('alert-message-html', (message, type, linkCallback, linkIcon, linkTooltip) => {
@@ -111,11 +133,24 @@ export default {
         alertLinkCallback: linkCallback,
         alertLinkIcon: linkIcon,
         alertLinkTooltip: linkTooltip,
+        currency: null
+      });
+    });
+    this.$root.$on('alert-message-currency', (message, type, linkCallback, currency) => {
+      this.openAlert({
+        useHtml: true,
+        alertType: type,
+        alertMessage: message,
+        alertLinkCallback: linkCallback,
+        currency,
       });
     });
     document.addEventListener('transaction-sent', this.handleTransactionSent);
     document.addEventListener('transaction-sending-error', this.handleTransactionEstimationError);
     this.$root.$on('close-alert-message', this.closeAlert);
+    this.$root.$on('drawer-closed', this.closeAlert);
+    this.$root.$on('drawer-opened', this.closeAlert);
+    this.$root.$on('switch-page', this.closeAlert);
   },
   methods: {
     handleTransactionSent(event) {
@@ -156,6 +191,7 @@ export default {
         this.alertType = params.alertType || 'info';
         this.alertLinkTooltip = params.alertLinkTooltip || null;
         this.alertLinkCallback = params.alertLinkCallback || null;
+        this.currency = params.currency || null;
         this.timeoutInstance = window.setTimeout(() => this.snackbar = true, 500);
       });
     },
@@ -174,6 +210,15 @@ export default {
       if (event) {
         event.stopPropagation();
         event.preventDefault();
+      }
+    },
+    handleAlertClicked(event) {
+      if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
+        this.linkCallback();
       }
     },
   },

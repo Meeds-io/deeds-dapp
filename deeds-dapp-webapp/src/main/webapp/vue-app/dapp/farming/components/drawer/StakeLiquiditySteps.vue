@@ -284,8 +284,7 @@ export default {
         this.lpContract,
         'approve',
         options,
-        [this.tokenFactoryAddress, amount],
-        true
+        [this.tokenFactoryAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {
@@ -312,8 +311,7 @@ export default {
         this.tokenFactoryContract,
         'deposit',
         options,
-        [this.lpAddress, amount],
-        true
+        [this.lpAddress, amount]
       ).then(receipt => {
         const transactionHash = receipt?.hash;
         if (transactionHash) {

@@ -207,15 +207,12 @@ export default {
   methods: {
     open() {
       this.drawer = true;
-      this.$nextTick().then(() => this.$root.$emit('close-alert-message'));
     },
     onClickOutside(event) {
       if (this.permanentBehavior && event?.target?.closest('.v-overlay')) {
         this.permanentBehavior = false;
         this.$nextTick().then(() => {
-          if (!this.permanentDrawer) {
-            this.drawer = false;
-          }
+          this.closeIfNotFirstLevel();
         });
       }
     },
@@ -225,8 +222,16 @@ export default {
       }
     },
     closeIfNotFirstLevel(event) {
-      if (!this.firstLevel) {
-        this.close(event);
+      if (this.level > 1) {
+        window.setTimeout(() => {
+          if (!this.permanentDrawer) {
+            this.close(event);
+          }
+        }, 50);
+      } else {
+        if (!this.permanentDrawer) {
+          this.close(event);
+        }
       }
     },
     close(event) {
