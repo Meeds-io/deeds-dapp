@@ -118,23 +118,8 @@ const i18n = new VueI18n({
   messages: {},
 });
 
-const store = new Vuex.Store({
-  state: {
-    parentLocation: window.parentAppLocation,
-    appLoading: true,
-    deedLoading: true,
-    tokenLoading: true,
-    lpLoading: true,
-    ens: null,
-    address: null,
-    networkId: null,
-    validNetwork: false,
-    yearInMinutes: 365 * 24 * 60,
-    scrollbarWidth: utils.getScrollbarWidth(),
-    cities: ['TANIT', 'RESHEF', 'ASHTARTE', 'MELQART', 'ESHMUN', 'KUSHOR', 'HAMMON'],
-    cardTypes: ['COMMON', 'UNCOMMON', 'RARE', 'LEGENDARY'],
-    offerTypes: ['RENTING', 'SALE'],
-    cardTypeInfos: {},
+const networkSettings = {
+  1: {
     // Contracts addresses
     sushiswapRouterAddress: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
     sushiswapPairAddress: '0x960bd61d0b960b107ff5309a2dcced4705567070',
@@ -148,7 +133,6 @@ const store = new Vuex.Store({
     comethPairAddress: '0xb82F8457fcf644803f4D74F677905F1d410Cd395',
     comethRouterAddress: '0x93bcdc45f7e62f89a8e901dc4a0e2c6c427d9f25',
     comethTokenFactoryAddress: '0x035a8a07bbae988893499e5c0d5b281b7967b107',
-    comethPool: null,
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
     tenantProvisioningAddress: '0x49C0cF46C0Eb6FdF05A4E8C1FE344d510422E1F0',
@@ -159,7 +143,116 @@ const store = new Vuex.Store({
     openSeaBaseLink: 'https://testnets.opensea.io/assets/rinkeby/0x0143b71443650aa8efa76bd82f35c22ebd558090',
     openSeaCollectionLink: 'https://opensea.io/collection/meeds-dao',
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
+    defaultDateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
+  },
+};
+
+// Goerli
+networkSettings[5] = {
+  sushiswapRouterAddress: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
+  sushiswapPairAddress: '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD',
+  wethAddress: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+  meedAddress: '0x4998a63C7494afc4Ea96E7Ea86E88c59271914c1',
+  tokenFactoryAddress: '0x13142F102152aBa8AD81281E7eC1374577D662EC',
+  xMeedAddress: '0xee5BBf589577266e5ddee2CfB4acFB945e844079',
+  deedAddress: '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
+  tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
+  tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
+  etherscanBaseLink: 'https://goerli.etherscan.io/',
+  // Opensea links
+  openSeaBaseLink: 'https://testnets.opensea.io/assets/goerli/0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
+  openSeaCollectionLink: 'https://testnets.opensea.io/collection/meeds-dao-testnet',
+  // TestNet Date Format
+  defaultDateFormat: {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  },
+};
+
+const blockchainAddressAndNetworkState = {
+  metamaskOffline: false,
+  appLoading: true,
+  deedLoading: true,
+  tokenLoading: true,
+  lpLoading: true,
+  ens: null,
+  MONTH_IN_SECONDS: 2629800,
+  DAY_IN_SECONDS: 86400,
+  // Contracts objects
+  sushiswapRouterContract: null,
+  wethContract: null,
+  meedContract: null,
+  xMeedContract: null,
+  deedContract: null,
+  tokenFactoryContract: null,
+  tenantProvisioningContract: null,
+  tenantRentingContract: null,
+  tenantRentingContractListenersInstalled: false,
+  polygonMeedContract: null,
+  // Cuurent Gas Price
+  gasPrice: 0,
+  gasPriceGwei: 0,
+  transactionGas: 0,
+  meedPrice: 0,
+  // User balances
+  etherBalance: null,
+  meedsBalance: null,
+  polygonMeedsBalance: null,
+  meedsRouteAllowance: null,
+  meedsStakeAllowance: null,
+  meedsTotalSupply: null,
+  maxMeedSupplyReached: null,
+  noMeedSupplyForLPRemaining: null,
+  remainingMeedSupply: null,
+  xMeedsTotalSupply: null,
+  meedsBalanceOfXMeeds: null,
+  meedsPendingBalanceOfXMeeds: null,
+  loadingXMeedsBalance: true,
+  loadingMeedsBalance: true,
+  xMeedsBalance: null,
+  pointsBalance: null,
+  ownedNfts: [],
+  noCityLeft: false,
+  currentCity: null,
+  currentCardTypes: null,
+  currentCityMintable: null,
+  lastCityMintingCompleteDate: null,
+  rewardedFundsLength: null,
+  rewardedFunds: null,
+  rewardedPools: null,
+  rewardedTotalFixedPercentage: null,
+  rewardedTotalAllocationPoints: null,
+  poolsChanged: 2,
+  selectedOfferId: null,
+  selectedStandaloneOfferId: null,
+  selectedStandaloneDeedCardName: null,
+};
+
+const store = new Vuex.Store({
+  state: {
+    ...networkSettings[1],
+    ...blockchainAddressAndNetworkState,
+    parentLocation: window.parentAppLocation,
+    addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
+    rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
+    address: null,
+    networkId: null,
+    validNetwork: false,
+    yearInMinutes: 365 * 24 * 60,
+    scrollbarWidth: utils.getScrollbarWidth(),
+    cities: ['TANIT', 'RESHEF', 'ASHTARTE', 'MELQART', 'ESHMUN', 'KUSHOR', 'HAMMON'],
+    cardTypes: ['COMMON', 'UNCOMMON', 'RARE', 'LEGENDARY'],
+    offerTypes: ['RENTING', 'SALE'],
+    cardTypeInfos: {},
     // Contract variables
+    comethPool: null,
     provider: null,
     polygonProvider: null,
     erc20ABI: [
@@ -287,23 +380,9 @@ const store = new Vuex.Store({
     ],
     ZERO_X_ADDRESS: '0x0000000000000000000000000000000000000000',
     ZERO_BN: ethers.BigNumber.from('0'),
-    MONTH_IN_SECONDS: 2629800,
-    DAY_IN_SECONDS: 86400,
-    // Contracts objects
-    sushiswapRouterContract: null,
-    wethContract: null,
-    meedContract: null,
-    xMeedContract: null,
-    deedContract: null,
-    tokenFactoryContract: null,
-    tenantProvisioningContract: null,
-    tenantRentingContract: null,
-    tenantRentingContractListenersInstalled: false,
-    polygonMeedContract: null,
     // User preferred language
     language,
     // Metamask status
-    metamaskOffline: false,
     isMetamaskInstalled,
     isMetamaskConnected,
     // Meed/ETH pair historical data
@@ -320,60 +399,16 @@ const store = new Vuex.Store({
     startTenantGasLimit: 150000,
     stopTenantGasLimit: 150000,
     maxGasLimit: 300000,
-    // Cuurent Gas Price 
-    gasPrice: 0,
-    gasPriceGwei: 0,
-    transactionGas: 0,
-    meedPrice: 0,
-    // User balances
-    etherBalance: null,
-    meedsBalance: null,
-    polygonMeedsBalance: null,
-    meedsRouteAllowance: null,
-    meedsStakeAllowance: null,
-    meedsTotalSupply: null,
     meedsMaxTotalSupply: new BigNumber('100000000000000000000000000'),
-    maxMeedSupplyReached: null,
-    noMeedSupplyForLPRemaining: null,
-    remainingMeedSupply: null,
-    xMeedsTotalSupply: null,
-    meedsBalanceOfXMeeds: null,
-    meedsPendingBalanceOfXMeeds: null,
     now: Date.now(),
-    xMeedsBalance: null,
-    pointsBalance: null,
-    ownedNfts: [],
     selectedFiatCurrency,
-    noCityLeft: false,
-    currentCity: null,
-    currentCardTypes: null,
-    currentCityMintable: null,
-    lastCityMintingCompleteDate: null,
     rewardedMeedPerMinute: new BigNumber('10000000000000000000'),
-    rewardedFundsLength: null,
-    rewardedFunds: null,
-    rewardedPools: null,
-    rewardedTotalFixedPercentage: null,
-    rewardedTotalAllocationPoints: null,
-    addSushiswapLiquidityLink: 'https://app.sushi.com/add/ETH/0x8503a7b00b4b52692cc6c14e5b96f142e30547b7?chainId=1',
-    addUniswapLiquidityLink: null,
-    addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
-    rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
     isMobile: false,
-    poolsChanged: 2,
-    selectedOfferId: null,
-    selectedStandaloneOfferId: null,
-    selectedStandaloneDeedCardName: null,
     authenticated: false,
     dark,
     blackThemeColor: dark && 'white' || 'black',
     whiteThemeColor: dark && 'dark-color' || 'white',
     openedDrawersCount: 0,
-    defaultDateFormat: {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    },
   },
   mutations: {
     setOfferId(state, value) {
@@ -419,51 +454,55 @@ const store = new Vuex.Store({
     setMetamaskConnected(state) {
       state.isMetamaskConnected = ethUtils.isMetamaskConnected();
     },
-    setAddress(state) {
-      ethUtils.getSelectedAddress()
-        .then(addresses => {
-          state.address = addresses && addresses.length && addresses[0] || null;
-          this.commit('refreshAuthentication');
-          this.commit('setProvider');
-        })
-        .finally(() => this.commit('loaded'));
+    setAddress(state, networkChanged) {
+      if (state.validNetwork) {
+        ethUtils.getSelectedAddress()
+          .then(addresses => {
+            const address = addresses && addresses.length && addresses[0] || null;
+            const addressChanged = address !== state.address;
+            if (addressChanged) {
+              state.address = address;
+              this.commit('refreshAuthentication');
+            }
+            if (addressChanged || networkChanged) {
+              this.commit('initBlockchainState');
+              this.commit('setProvider');
+            }
+          })
+          .finally(() => this.commit('loaded'));
+      } else {
+        this.commit('loaded');
+      }
+    },
+    initBlockchainState(state) {
+      Object.keys(blockchainAddressAndNetworkState).forEach(key => {
+        state[key] = blockchainAddressAndNetworkState[key];
+      });
     },
     setNetworkId(state) {
       ethUtils.getSelectedChainId()
         .then(networkId => {
+          const previousNetworkId = state.networkId;
           state.networkId = new BigNumber(networkId).toNumber();
-          if (state.networkId === 1) {
-            // Mainnet
-          } else if (state.networkId === 5) {
-            // Goerli
-            state.etherscanBaseLink = 'https://goerli.etherscan.io/';
-            state.sushiswapRouterAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506';
-            state.sushiswapPairAddress = '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD';
-            state.wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-            state.meedAddress = '0x4998a63C7494afc4Ea96E7Ea86E88c59271914c1';
-            state.tokenFactoryAddress = '0x13142F102152aBa8AD81281E7eC1374577D662EC';
-            state.xMeedAddress = '0xee5BBf589577266e5ddee2CfB4acFB945e844079';
-            state.deedAddress = '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346';
-            state.tenantProvisioningAddress = '0x238758516d1521a4aE108966104Aa1C5cC088220';
-            state.tenantRentingAddress = '0x79cce6e1A1909B97A2dAde12F0C8C23Bb68bF4c6';
-            state.defaultDateFormat = {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-            };
+          const settings = networkSettings[state.networkId];
+          state.validNetwork = !!settings;
+          if (state.validNetwork) {
+            Object.keys(settings).forEach(key => {
+              state[key] = settings[key];
+            });
+          } else {
+            Object.keys(networkSettings[1]).forEach(key => {
+              state[key] = networkSettings[1][key];
+            });
+          }
 
-            // Opensea links
-            state.openSeaBaseLink = `https://testnets.opensea.io/assets/goerli/${state.deedAddress}`;
-            state.openSeaCollectionLink = 'https://testnets.opensea.io/collection/meeds-dao-testnet';
+          if (state.validNetwork) {
+            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}?chainId=${state.networkId}`;
+            const networkChanged = previousNetworkId && previousNetworkId !== state.networkId;
+            this.commit('setAddress', networkChanged);
           } else {
             this.commit('setMetamaskOffline');
-            return;
           }
-          state.validNetwork = true;
-          state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}?chainId=${state.networkId}`;
-          this.commit('setAddress');
         });
     },
     selectLanguage(state, language) {
@@ -490,9 +529,6 @@ const store = new Vuex.Store({
     setXMeedsBalance(state, xMeedsBalance) {
       state.xMeedsBalance = xMeedsBalance;
       state.loadingXMeedsBalance = false;
-    },
-    loadPointsPeriodically() {
-      window.setInterval(() => this.commit('loadPointsBalance'), 20000);
     },
     loadPointsBalance(state) {
       if (state.xMeedContract) {
@@ -616,14 +652,13 @@ const store = new Vuex.Store({
         })
         .finally(() => state.comethPool = pool);
     },
-    async loadOwnedNfts(state) {
+    loadOwnedNfts(state) {
       try {
         if (state.deedContract && state.xMeedContract) {
-          state.ownedNftsLoaded = true;
-          await tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
+          state.ownedNfts = [];
+          tokenUtils.getNftsOfWallet(state.deedContract, state.xMeedContract, state.address)
             .then(nfts => state.ownedNfts = nfts);
         } else {
-          state.ownedNftsToLoad = true;
           state.ownedNfts = [];
         }
       } finally {
@@ -855,62 +890,98 @@ const store = new Vuex.Store({
     },
     setProvider(state) {
       if (state.address && state.validNetwork) {
-        state.provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        provider.lookupAddress(state.address)
+          .then(name => state.ens = name);
+
+        if (state.sushiswapRouterContract) {
+          state.sushiswapRouterContract.removeAllListeners();
+        }
         state.sushiswapRouterContract = new ethers.Contract(
           state.sushiswapRouterAddress,
           state.routerABI,
-          state.provider
+          provider
         );
+
+        if (state.meedContract) {
+          state.meedContract.removeAllListeners();
+        }
         state.meedContract = new ethers.Contract(
           state.meedAddress,
           state.erc20ABI,
-          state.provider
+          provider
         );
+
+        if (state.wethContract) {
+          state.wethContract.removeAllListeners();
+        }
         state.wethContract = new ethers.Contract(
           state.meedAddress,
           state.erc20ABI,
-          state.provider
+          provider
         );
+
+        if (state.xMeedContract) {
+          state.xMeedContract.removeAllListeners();
+        }
         if (state.xMeedAddress) {
           state.xMeedContract = new ethers.Contract(
             state.xMeedAddress,
             state.xMeedRewardingABI,
-            state.provider
+            provider
           );
-          if (state.ownedNftsToLoad) {
-            this.commit('loadOwnedNfts');
-          }
+        } else {
+          state.xMeedContract = null;
+        }
+
+        if (state.deedContract) {
+          state.deedContract.removeAllListeners();
         }
         if (state.deedAddress) {
           state.deedContract = new ethers.Contract(
             state.deedAddress,
             state.nftABI,
-            state.provider
+            provider
           );
+        } else {
+          state.deedContract = null;
+        }
+
+        if (state.tokenFactoryContract) {
+          state.tokenFactoryContract.removeAllListeners();
         }
         if (state.tokenFactoryAddress) {
           state.tokenFactoryContract = new ethers.Contract(
             state.tokenFactoryAddress,
             state.tokenFactoryABI,
-            state.provider
+            provider
           );
+        } else {
+          state.tokenFactoryContract = null;
+        }
+
+        if (state.tenantProvisioningContract) {
+          state.tenantProvisioningContract.removeAllListeners();
         }
         if (state.tenantProvisioningAddress) {
           state.tenantProvisioningContract = new ethers.Contract(
             state.tenantProvisioningAddress,
             state.tenantProvisioningABI,
-            state.provider
+            provider
           );
-          if (state.provisioningListenersToInstall) {
-            this.commit('installProvisioningListeners');
-          }
+        } else {
+          state.tenantProvisioningContract = null;
         }
 
+        if (state.tenantRentingContract) {
+          state.tenantRentingContract.removeAllListeners();
+        }
         if (state.tenantRentingAddress) {
           state.tenantRentingContract = new ethers.Contract(
             state.tenantRentingAddress,
             state.tenantRentingABI,
-            state.provider
+            provider
           );
           if (state.networkId === 5) {
             // eslint-disable-next-line new-cap
@@ -920,7 +991,8 @@ const store = new Vuex.Store({
             state.tenantRentingContract.DAY_IN_SECONDS()
               .then(data => state.DAY_IN_SECONDS = data && data.toNumber());
           }
-          this.commit('installRentingListeners');
+        } else {
+          state.tenantRentingContract = null;
         }
 
         // eslint-disable-next-line new-cap
@@ -951,20 +1023,19 @@ const store = new Vuex.Store({
           const redeemFilter = state.xMeedContract.filters.Redeemed();
           state.xMeedContract.on(redeemFilter, (address) => {
             if (address.toUpperCase() === state.address?.toUpperCase()) {
-              this.commit('loadOwnedNfts');
               this.commit('loadPointsBalance');
+              this.commit('loadOwnedNfts');
             }
-            this.commit('loadCurrentCity');
           });
         }
 
+        state.provider = provider;
+
         this.commit('loadBalances');
         this.commit('loadGasPrice');
-        this.commit('loadCurrentCity');
-        this.commit('loadPointsBalance');
-        this.commit('loadPointsPeriodically');
-        state.provider.lookupAddress(state.address)
-          .then(name => state.ens = name);
+        if (state.provisioningListenersToInstall) {
+          this.commit('installProvisioningListeners');
+        }
       } else {
         this.commit('setMetamaskOffline');
       }
@@ -1083,56 +1154,60 @@ const store = new Vuex.Store({
         });
     },
     setMetamaskOffline(state) {
+      console.warn('setMetamaskOffline', state.metamaskOffline);
       if (!state.metamaskOffline) {
         state.metamaskOffline = true;
-        assetMetricService.getMetrics()
-          .then(metrics => {
-            if (!metrics) {
-              return;
-            }
-            state.rewardedTotalAllocationPoints = ethers.BigNumber.from(metrics.totalAllocationPoints);
-            state.rewardedTotalFixedPercentage = ethers.BigNumber.from(metrics.totalFixedPercentage);
-            const xMeedFund = metrics.pools.find(pool => !pool.isLPToken);
-            if (xMeedFund) {
-              state.xMeedsTotalSupply = ethers.BigNumber.from(xMeedFund.totalSupply);
-              state.meedsPendingBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.xmeedPendingReward);
-              state.meedsBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.meedsBalance);
-              state.xMeedAddress = xMeedFund.address;
-            }
-            state.rewardedFunds = metrics.pools.map((fundInfo, i) => {
-              const fund = {};
-              Object.keys(fundInfo).forEach(key => {
-                if (Number.isNaN(Number(key))) {
-                  if (fundInfo[key] && fundInfo[key] !== true && String(fundInfo[key]).indexOf('0x') < 0 && Number.isInteger(Number(fundInfo[key]))) {
-                    fund[key] = ethers.BigNumber.from(fundInfo[key]);
-                  } else {
-                    fund[key] = fundInfo[key];
-                  }
-                }
-              });
-              fund.index = i;
-              return fund;
-            });
-            const rewardedPools = state.rewardedFunds.filter(fund => fund.isLPToken);
-            rewardedPools.forEach(pool => this.commit('computeLPApy', pool));
-            state.rewardedPools = rewardedPools;
-
-            Object.keys(metrics.currentCity).forEach(key => {
+        this.commit('lpLoaded');
+      }
+    },
+    loadMetrics(state) {
+      assetMetricService.getMetrics()
+        .then(metrics => {
+          if (!metrics) {
+            return;
+          }
+          state.rewardedTotalAllocationPoints = ethers.BigNumber.from(metrics.totalAllocationPoints);
+          state.rewardedTotalFixedPercentage = ethers.BigNumber.from(metrics.totalFixedPercentage);
+          const xMeedFund = metrics.pools.find(pool => !pool.isLPToken);
+          if (xMeedFund) {
+            state.xMeedsTotalSupply = ethers.BigNumber.from(xMeedFund.totalSupply);
+            state.meedsPendingBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.xmeedPendingReward);
+            state.meedsBalanceOfXMeeds = ethers.BigNumber.from(xMeedFund.meedsBalance);
+            state.xMeedAddress = xMeedFund.address;
+          }
+          state.rewardedFunds = metrics.pools.map((fundInfo, i) => {
+            const fund = {};
+            Object.keys(fundInfo).forEach(key => {
               if (Number.isNaN(Number(key))) {
-                if (metrics.currentCity[key] && metrics.currentCity[key] !== true && String(metrics.currentCity[key]).indexOf('0x') < 0 && Number.isInteger(Number(metrics.currentCity[key]))) {
-                  metrics.currentCity[key] = ethers.BigNumber.from(metrics.currentCity[key]);
+                if (fundInfo[key] && fundInfo[key] !== true && String(fundInfo[key]).indexOf('0x') < 0 && Number.isInteger(Number(fundInfo[key]))) {
+                  fund[key] = ethers.BigNumber.from(fundInfo[key]);
+                } else {
+                  fund[key] = fundInfo[key];
                 }
               }
             });
-            state.currentCity = metrics.currentCity;
-          })
-          .finally(() => {
-            state.appLoading = false;
-            state.deedLoading = false;
-            state.tokenLoading = false;
-            state.lpLoading = false;
+            fund.index = i;
+            return fund;
           });
-      }
+          const rewardedPools = state.rewardedFunds.filter(fund => fund.isLPToken);
+          rewardedPools.forEach(pool => this.commit('computeLPApy', pool));
+          state.rewardedPools = rewardedPools;
+
+          Object.keys(metrics.currentCity).forEach(key => {
+            if (Number.isNaN(Number(key))) {
+              if (metrics.currentCity[key] && metrics.currentCity[key] !== true && String(metrics.currentCity[key]).indexOf('0x') < 0 && Number.isInteger(Number(metrics.currentCity[key]))) {
+                metrics.currentCity[key] = ethers.BigNumber.from(metrics.currentCity[key]);
+              }
+            }
+          });
+          state.currentCity = metrics.currentCity;
+        })
+        .finally(() => {
+          state.appLoading = false;
+          state.deedLoading = false;
+          state.tokenLoading = false;
+          state.lpLoading = false;
+        });
     },
     loaded(state) {
       state.appLoading = false;
@@ -1239,22 +1314,8 @@ function initialize() {
 
     window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
     window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
-    window.ethereum.on('accountsChanged', () => {
-      if (authentication.hasAuthenticatedLogin()) {
-        authentication.logout().finally(() => window.location.reload());
-      } else {
-        window.location.reload();
-      }
-    });
-    window.ethereum.on('chainChanged', () => window.location.reload());
-  
-    window.setInterval(() => store.commit('loadGasPrice'), 12000);
   } else {
     store.commit('setMetamaskOffline');
-
-    window.addEventListener('ethereum#initialized', initialize, {
-      once: true,
-    });
 
     // If the event is not dispatched by the end of the timeout,
     // the user probably doesn't have MetaMask installed.
@@ -1263,6 +1324,19 @@ function initialize() {
 }
 
 initialize();
+
+window.ethereum?.on('accountsChanged', () => {
+  if (authentication.hasAuthenticatedLogin()) {
+    authentication.logout().finally(() => window.location.reload());
+  } else {
+    initialize();
+  }
+});
+window.ethereum?.on('chainChanged', initialize);
+
+window.addEventListener('ethereum#initialized', initialize, {
+  once: true,
+});
 
 const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
 let app = null;

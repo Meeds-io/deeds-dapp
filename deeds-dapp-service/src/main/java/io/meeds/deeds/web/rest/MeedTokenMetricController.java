@@ -48,7 +48,7 @@ public class MeedTokenMetricController {
   public ResponseEntity<BigDecimal> getCirculatingSupply() {
     BigDecimal circulatingSupply = meedTokenMetricService.getCirculatingSupply();
     return ResponseEntity.ok()
-                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .cacheControl(CacheControl.noStore())
                          .body(circulatingSupply);
   }
 
@@ -58,7 +58,7 @@ public class MeedTokenMetricController {
                                                             Currency currency) {
     BigDecimal marketCapitalization = meedTokenMetricService.getMarketCapitalization(currency);
     return ResponseEntity.ok()
-                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .cacheControl(CacheControl.noStore())
                          .body(marketCapitalization);
   }
 
@@ -68,7 +68,7 @@ public class MeedTokenMetricController {
                                                         Currency currency) {
     BigDecimal totalValueLocked = meedTokenMetricService.getTotalValueLocked(currency);
     return ResponseEntity.ok()
-                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .cacheControl(CacheControl.noStore())
                          .body(totalValueLocked);
   }
 
@@ -76,7 +76,7 @@ public class MeedTokenMetricController {
   public ResponseEntity<BigDecimal> getTotalSupply() {
     BigDecimal totalSupply = meedTokenMetricService.getTotalSupply();
     return ResponseEntity.ok()
-                         .cacheControl(CacheControl.noCache().cachePublic())
+                         .cacheControl(CacheControl.noStore())
                          .body(totalSupply);
   }
 

@@ -202,6 +202,7 @@ export default {
     this.$root.$on('close-drawer', this.closeIfNotFirstLevel);
   },
   beforeDestroy() {
+    document.removeEventListener('keydown', this.closeByEscape);
     this.$root.$off('close-drawer', this.closeIfNotFirstLevel);
   },
   methods: {

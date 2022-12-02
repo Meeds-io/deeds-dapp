@@ -26,10 +26,15 @@
 </template>
 <script>
 export default {
+  data: () => ({
+    timeout: null,
+  }),
   computed: Vuex.mapState({
     address: state => state.address,
     language: state => state.language,
     gasPriceGwei: state => state.gasPriceGwei,
+    provider: state => state.provider,
+    validNetwork: state => state.validNetwork,
     floorGasPriceGwei() {
       if (this.gasPriceGwei < 1) {
         return this.$ethUtils.toFixedDisplay(this.gasPriceGwei, 2, this.language);
@@ -38,7 +43,29 @@ export default {
       }
     },
   }),
+  watch: {
+    provider() {
+      this.init();
+    },
+  },
+  created() {
+    this.init();
+  },
+  beforeDestroy() {
+    this.reset();
+  },
   methods: {
+    init() {
+      this.reset();
+      if (this.provider && this.validNetwork) {
+        this.timeout = window.setInterval(() => this.refreshGasPrice(), 12000);
+      }
+    },
+    reset() {
+      if (this.timeout) {
+        window.clearInterval(this.timeout);
+      }
+    },
     refreshGasPrice() {
       this.$store.commit('loadGasPrice');
     },

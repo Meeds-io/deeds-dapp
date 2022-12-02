@@ -34,9 +34,36 @@
 </template>
 <script>
 export default {
+  data: () => ({
+    timeout: null,
+  }),
   computed: Vuex.mapState({
     noCityLeft: state => state.noCityLeft,
     metamaskOffline: state => state.metamaskOffline,
   }),
+  created() {
+    this.$store.commit('loadCurrentCity');
+    this.$store.commit('loadPointsBalance');
+    this.init();
+  },
+  beforeDestroy() {
+    this.reset();
+  },
+  methods: {
+    init() {
+      this.reset();
+      if (this.provider && this.validNetwork) {
+        this.timeout = window.setInterval(() => this.loadPointsPeriodically(), 12000);
+      }
+    },
+    reset() {
+      if (this.timeout) {
+        window.clearInterval(this.timeout);
+      }
+    },
+    loadPointsPeriodically() {
+      this.commit('loadPointsBalance');
+    },
+  },
 };
 </script>

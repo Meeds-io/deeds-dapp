@@ -31,6 +31,7 @@ export default {
   created() {
     this.$store.commit('loadOwnedNfts');
     this.$store.commit('installProvisioningListeners');
+    this.$store.commit('installRentingListeners');
   },
 };
 </script>

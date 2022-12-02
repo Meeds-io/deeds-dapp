@@ -71,7 +71,7 @@
       <div class="ms-4">
         <deeds-topbar-language-selector />
       </div>
-      <div v-if="isTestNetwork" class="ms-4">
+      <div class="ms-4">
         <v-btn
           class="hidden-xs-only"
           elevation="0"

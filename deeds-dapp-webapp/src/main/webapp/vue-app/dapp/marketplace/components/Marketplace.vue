@@ -38,12 +38,21 @@ export default {
       this.refreshUrl();
     },
   },
-  mounted() {
-    window.addEventListener('popstate', (event) => this.goBackLink(event));
+  created() {
+    window.addEventListener('popstate', this.goBackLink);
     this.$root.$on('location-change', this.refreshSelectedOfferId);
+  },
+  mounted() {
     this.refreshUrl();
   },
+  beforeDestroy() {
+    window.removeEventListener('popstate', this.goBackLink);
+    this.$root.$off('location-change', this.refreshSelectedOfferId);
+  },
   methods: {
+    init() {
+      this.$store.commit('installRentingListeners');
+    },
     goBackLink(event) {
       if (event) {
         event.preventDefault();

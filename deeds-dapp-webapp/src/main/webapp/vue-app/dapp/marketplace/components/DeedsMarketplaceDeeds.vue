@@ -169,6 +169,7 @@ export default {
     this.$root.$off('deeds-offers-select-offer-types', this.selectOfferTypes);
     this.$root.$off('deed-offer-renting-updated', this.handleOfferUpdated);
     this.$root.$off('deed-offer-renting-deleted', this.handleOfferDeleted);
+    this.$root.$off('deed-offer-rented', this.handleOfferRented);
     document.removeEventListener('deed-offer-created', this.refreshOfferFromblockchain);
     document.removeEventListener('deed-offer-updated', this.refreshOfferFromblockchain);
     document.removeEventListener('deed-offer-deleted', this.refreshOfferFromblockchain);

@@ -26,3 +26,11 @@
     <deeds-tenants-lease-end-renting-drawer />
   </div>
 </template>
+<script>
+export default {
+  created() {
+    this.$store.commit('installProvisioningListeners');
+    this.$store.commit('installRentingListeners');
+  },
+};
+</script>

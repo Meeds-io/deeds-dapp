@@ -49,10 +49,12 @@ export default {
     parentLocation: state => state.parentLocation,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
+    lpLoading: state => state.lpLoading,
     poolCount() {
       return this.rewardedPools && this.rewardedPools.length || 1;
     },
     loading() {
+      console.warn('this.rewardedPools', this.rewardedPools, this.rewardedFunds);
       return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
     },
   }),

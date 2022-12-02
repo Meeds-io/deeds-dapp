@@ -23,13 +23,28 @@ export default {
   data: () => ({
     regex: /(\/)([a-zA-Z]+)(\/?)([a-zA-Z]*)/,
     currentRoute: '/',
+    show: true,
   }),
-  computed: {
+  computed: Vuex.mapState({
+    address: state => state.address,
+    provider: state => state.provider,
     viewComponent() {
       if (!this.currentRoute) {
-        return {template: '<p>Not Found</p>'};
+        return {template: ''};
       } else {
-        return routes[this.currentRoute] || {template: '<p>Not Found</p>'};
+        return routes[this.currentRoute] || {template: ''};
+      }
+    },
+  }),
+  watch: {
+    address(newVal, oldVal) {
+      if (newVal?.toUpperCase() !== oldVal?.toUpperCase()) {
+        this.refreshPage();
+      }
+    },
+    provider(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        this.refreshPage();
       }
     },
   },
@@ -41,6 +56,11 @@ export default {
     return h(this.viewComponent);
   },
   methods: {
+    refreshPage() {
+      const route = this.currentRoute;
+      this.currentRoute = 'notFound';
+      this.$nextTick(() => this.currentRoute = route);
+    },
     refreshRoute(path) {
       const parts = path && window.location.pathname.split('/') || [];
       let currentRoute = '/';

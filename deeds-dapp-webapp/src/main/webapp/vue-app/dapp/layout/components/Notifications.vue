@@ -148,7 +148,11 @@ export default {
     document.addEventListener('transaction-sent', this.handleTransactionSent);
     document.addEventListener('transaction-sending-error', this.handleTransactionEstimationError);
     this.$root.$on('close-alert-message', this.closeAlert);
-    this.$root.$on('drawer-closed', this.closeAlert);
+    this.$root.$on('drawer-closed', (_drawer, level) => {
+      if (level === 1) {
+        this.closeAlert();
+      }
+    });
     this.$root.$on('drawer-opened', this.closeAlert);
     this.$root.$on('switch-page', this.closeAlert);
   },

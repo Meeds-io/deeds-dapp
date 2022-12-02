@@ -247,24 +247,24 @@ export default {
     },
   },
   created() {
-    this.installListeners();
     this.$root.$on('nft-status-changed', this.handleStatusChanged);
     document.addEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
-    if (this.lease?.deedInfo?.then) { // Promise loading in progress
-      this.lease?.deedInfo.then(deedInfo => this.deedInfo = deedInfo);
-    } else if (this.lease?.deedInfo) {
-      this.deedInfo = this.lease?.deedInfo;
-    } else {
-      this.refreshDeedInfo();
-    }
+    this.init();
   },
   beforeDestroy() {
     this.$root.$off('nft-status-changed', this.handleStatusChanged);
     document.removeEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
   },
   methods: {
-    installListeners() {
+    init() {
       this.$store.commit('installProvisioningListeners');
+      if (this.lease?.deedInfo?.then) { // Promise loading in progress
+        this.lease?.deedInfo.then(deedInfo => this.deedInfo = deedInfo);
+      } else if (this.lease?.deedInfo) {
+        this.deedInfo = this.lease?.deedInfo;
+      } else {
+        this.refreshDeedInfo();
+      }
     },
     handleBlockchainStatusChanged(event) {
       const detail = event?.detail;

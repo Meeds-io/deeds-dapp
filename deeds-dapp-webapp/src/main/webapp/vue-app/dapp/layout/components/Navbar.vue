@@ -295,12 +295,15 @@ export default {
   created() {
     this.initSelectedTab();
     this.$root.$on('switch-page', this.switchPage);
-    window.addEventListener('popstate', (event) => this.initSelectedTab(event));
     this.$root.$on('drawer-opened', this.closeBottomMenu);
     this.$root.$on('drawer-closed', this.openBottomMenu);
+    window.addEventListener('popstate', this.initSelectedTab);
   },
   beforeDestroy() {
     this.$root.$off('switch-page', this.switchPage);
+    this.$root.$off('drawer-opened', this.closeBottomMenu);
+    this.$root.$off('drawer-closed', this.openBottomMenu);
+    window.removeEventListener('popstate', this.initSelectedTab);
   },
   methods: {
     initSelectedTab(event) {

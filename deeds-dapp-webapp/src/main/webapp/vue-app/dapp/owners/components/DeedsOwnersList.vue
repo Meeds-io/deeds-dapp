@@ -66,6 +66,7 @@ export default {
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
     selectedStandaloneDeedCardName: state => state.selectedStandaloneDeedCardName,
+    authenticated: state => state.authenticated,
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },
@@ -135,14 +136,20 @@ export default {
         .finally(() => this.rentedOffersLoaded++);
     },
     loadTenants() {
-      return this.$tenantManagement.getTenants()
-        .then(tenants => {
-          this.tenants = {};
-          tenants.forEach(tenant => this.tenants[tenant.nftId] = tenant);
-          return this.tenants;
-        })
-        .catch(() => this.tenants = {})
-        .finally(() => this.tenantsLoaded = true);
+      if (this.authenticated) {
+        return this.$tenantManagement.getTenants()
+          .then(tenants => {
+            this.tenants = {};
+            tenants.forEach(tenant => this.tenants[tenant.nftId] = tenant);
+            return this.tenants;
+          })
+          .catch(() => {
+            this.tenants = {};
+          })
+          .finally(() => this.tenantsLoaded = true);
+      } else {
+        return Promise.resolve(null);
+      }
     },
     getDeedInfo(lease, deedId) {
       return this.tenantsLoadingPromise
