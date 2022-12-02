@@ -291,7 +291,7 @@ export default {
       window.setTimeout(() => this.show = true, 200);
     },
     logout(validate) {
-      if (this.$refs.loginButton) {
+      if (this.rentalConfirmed && this.$refs.loginButton) {
         return this.$refs.loginButton.logout(validate);
       }
     },

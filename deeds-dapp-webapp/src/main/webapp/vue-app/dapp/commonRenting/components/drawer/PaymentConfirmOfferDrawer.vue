@@ -205,6 +205,11 @@ export default {
         this.$refs.drawer.endLoading();
       }
     },
+    step() {
+      if (this.step > 1) {
+        this.$root.$emit('close-alert-message');
+      }
+    },
     allowance() {
       if (this.hasSufficientAllowance) {
         this.step = 2;

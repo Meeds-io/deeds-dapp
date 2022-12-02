@@ -127,6 +127,7 @@ export default {
     expand: true,
     level: 1,
     permanentBehavior: false,
+    bodyScrollHidden: false,
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
@@ -176,6 +177,7 @@ export default {
             document.body.style.overscrollBehaviorY = 'contain';
           }
           if (window.innerHeight < window.document.body.offsetHeight) {
+            this.bodyScrollHidden = true;
             Object.assign(window.document.querySelector('html').style, {overflowY: 'hidden', marginRight: `${this.scrollbarWidth}px`});
             Object.assign(window.document.querySelector('#banner').style, {overflowY: 'hidden', paddingRight: `${this.scrollbarWidth}px`});
           }
@@ -185,7 +187,7 @@ export default {
         this.$emit('closed');
         this.$store.commit('decrementOpenedDrawer');
         this.$root.$emit('drawer-closed', this, this.level);
-        if (!this.secondLevel) {
+        if (!this.secondLevel || this.bodyScrollHidden) {
           if (this.disablePullToRefresh) {
             document.body.style.overscrollBehaviorY = '';
           }
