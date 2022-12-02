@@ -411,6 +411,7 @@ const store = new Vuex.Store({
       vuetify.framework.theme.dark = value;
       state.blackThemeColor = value && 'white' || 'black';
       state.whiteThemeColor = value && 'dark-color' || 'white';
+      window.localStorage.setItem('preferred-theme-colors', state.dark && 'dark' || 'light');
     },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();

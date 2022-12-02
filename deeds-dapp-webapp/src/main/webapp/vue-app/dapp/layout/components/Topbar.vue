@@ -45,12 +45,12 @@
       </v-toolbar-title>
       <div v-if="isTestNetwork" class="ms-4 d-none d-md-flex">
         <v-btn
-          :color="darkMode && 'primary' || 'amber lighten-2'"
+          :color="dark && 'primary' || 'amber lighten-2'"
           height="36"
           width="36"
           icon
-          @click="switchMode">
-          <v-icon>{{ darkMode && 'fas fa-moon' || 'fas fa-sun' }}</v-icon>
+          @click="$store.commit('setDark', !dark)">
+          <v-icon>{{ dark && 'fas fa-moon' || 'fas fa-sun' }}</v-icon>
         </v-btn>
       </div>
       <v-spacer />
@@ -71,7 +71,7 @@
       <div class="ms-4">
         <deeds-topbar-language-selector />
       </div>
-      <div class="ms-4">
+      <div v-if="isTestNetwork" class="ms-4">
         <v-btn
           class="hidden-xs-only"
           elevation="0"
@@ -86,9 +86,6 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    darkMode: false,
-  }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     isMetamaskInstalled: state => state.isMetamaskInstalled,
@@ -116,22 +113,5 @@ export default {
       }
     },
   }),
-  watch: {
-    darkMode() {
-      this.$store.commit('setDark', this.darkMode);
-    },
-    dark() {
-      this.darkMode = this.dark;
-    },
-  },
-  created() {
-    this.darkMode = this.dark;
-  },
-  methods: {
-    switchMode() {
-      this.darkMode = !this.darkMode;
-      window.localStorage.setItem('preferred-theme-colors', this.darkMode && 'dark' || 'light');
-    },
-  },
 };
 </script>

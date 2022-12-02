@@ -83,18 +83,16 @@
         </v-col>
       </v-row>
     </v-bottom-navigation>
-    <v-dialog
+    <v-bottom-sheet
       v-model="showMoreMenu"
-      transition="bottom-sheet-transition"
-      content-class="ma-0 v-bottom-sheet mb-14 elevation-0"
-      width="100%"
-      bottom="50px"
+      content-class="mb-14"
       hide-overlay>
       <v-list
         :class="menuColor"
         dense>
         <v-list-item-group
-          v-model="selectedId">
+          v-model="selectedId"
+          :mandatory="selectedTab === 'more'">
           <v-list-item
             ref="tenants"
             id="tenants"
@@ -161,8 +159,21 @@
             <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
+        <v-list-item
+          v-if="isTestNetwork"
+          key="dayNight"
+          dense>
+          <v-switch
+            :value="dark"
+            :prepend-icon="`${dark && 'fas fa-moon' || 'far fa-sun'} me-10`"
+            class="my-auto ms-5"
+            inset
+            dense
+            hide-details
+            @click="$store.commit('setDark', !dark)" />
+        </v-list-item>
       </v-list>
-    </v-dialog>
+    </v-bottom-sheet>
   </div>
   <v-tabs
     v-else
@@ -247,11 +258,16 @@ export default {
     parentLocation: state => state.parentLocation,
     isMobile: state => state.isMobile,
     dark: state => state.dark,
+    networkId: state => state.networkId,
+    validNetwork: state => state.validNetwork,
     defaultTab() {
       return `/${this.parentLocation}/marketplace`;
     },
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
+    },
+    isTestNetwork() {
+      return this.networkId !== 1 && this.validNetwork;
     },
   }),
   watch: {
