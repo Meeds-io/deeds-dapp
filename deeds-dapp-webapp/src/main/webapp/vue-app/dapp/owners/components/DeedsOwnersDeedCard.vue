@@ -241,7 +241,7 @@ export default {
       return !this.lease?.pendingRewardsAmount;
     },
     disabledEvictTenant() {
-      return this.lastPaidDate && this.lastPaidDate.getTime() > Date.now();
+      return this.paidRentsDate && new Date(this.paidRentsDate).getTime() > Date.now();
     },
     rentalStartDate() {
       return this.lease?.startDate;
@@ -298,7 +298,7 @@ export default {
       return this.rentalConfirmed && new Date(this.rentalEndDate).getTime() > Date.now();
     },
     isLeaseNotFullyPaid() {
-      return this.rentalConfirmed && this.paidMonths < this.rentPeriodMonths;
+      return this.rentalConfirmed && this.rentalEndDate && this.lastPaidDate && new Date(this.rentalEndDate).getTime() > this.lastPaidDate.getTime();
     },
     stopped() {
       return (this.rentalConfirmed || this.isProvisioningManager) && (!this.provisioningStatus || this.provisioningStatus === 'STOP_CONFIRMED');

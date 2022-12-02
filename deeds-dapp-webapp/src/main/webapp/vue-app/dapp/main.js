@@ -136,7 +136,7 @@ const networkSettings = {
     vestingAddress: '0x440701ca5817b5847438da2ec2ca3b9fdbf37dfa',
     univ2PairAddress: null,
     tenantProvisioningAddress: '0x49C0cF46C0Eb6FdF05A4E8C1FE344d510422E1F0',
-    tenantRentingAddress: null,
+    tenantRentingAddress: '0x427aa8F31013960E0E5e73977c1918e15d693BAa',
     // External links
     etherscanBaseLink: 'https://etherscan.io/',
     polygonscanBaseLink: 'https://polygonscan.com/',
@@ -182,6 +182,9 @@ const blockchainAddressAndNetworkState = {
   deedLoading: true,
   tokenLoading: true,
   lpLoading: true,
+  loadingBalances: true,
+  loadingXMeedsBalance: true,
+  loadingMeedsBalance: true,
   ens: null,
   MONTH_IN_SECONDS: 2629800,
   DAY_IN_SECONDS: 86400,
@@ -193,6 +196,7 @@ const blockchainAddressAndNetworkState = {
   deedContract: null,
   tokenFactoryContract: null,
   tenantProvisioningContract: null,
+  provisioningListenersInstalled: false,
   tenantRentingContract: null,
   tenantRentingContractListenersInstalled: false,
   polygonMeedContract: null,
@@ -214,8 +218,6 @@ const blockchainAddressAndNetworkState = {
   xMeedsTotalSupply: null,
   meedsBalanceOfXMeeds: null,
   meedsPendingBalanceOfXMeeds: null,
-  loadingXMeedsBalance: true,
-  loadingMeedsBalance: true,
   xMeedsBalance: null,
   pointsBalance: null,
   ownedNfts: [],
@@ -501,7 +503,7 @@ const store = new Vuex.Store({
             const networkChanged = previousNetworkId && previousNetworkId !== state.networkId;
             this.commit('setAddress', networkChanged);
           } else {
-            this.commit('setMetamaskOffline');
+            this.commit('loaded');
           }
         });
     },
@@ -846,10 +848,11 @@ const store = new Vuex.Store({
       }
     },
     async loadBalances(state) {
-      if (state.address && state.provider) {
+      if (state.address && state.provider && state.validNetwork) {
         state.loadingBalances = true;
         try {
-          state.provider.getBalance(state.address).then(balance => state.etherBalance = balance);
+          state.provider.getBalance(state.address)
+            .then(balance => state.etherBalance = balance);
           this.commit('loadMeedsBalances');
           if (state.meedContract) {
             if (state.xMeedAddress) {
@@ -1037,7 +1040,7 @@ const store = new Vuex.Store({
           this.commit('installProvisioningListeners');
         }
       } else {
-        this.commit('setMetamaskOffline');
+        this.commit('loaded');
       }
     },
     installRentingListeners(state) {
@@ -1154,13 +1157,12 @@ const store = new Vuex.Store({
         });
     },
     setMetamaskOffline(state) {
-      console.warn('setMetamaskOffline', state.metamaskOffline);
       if (!state.metamaskOffline) {
         state.metamaskOffline = true;
-        this.commit('lpLoaded');
+        this.commit('loadOfflineData');
       }
     },
-    loadMetrics(state) {
+    loadOfflineData(state) {
       assetMetricService.getMetrics()
         .then(metrics => {
           if (!metrics) {
@@ -1203,14 +1205,20 @@ const store = new Vuex.Store({
           state.currentCity = metrics.currentCity;
         })
         .finally(() => {
-          state.appLoading = false;
           state.deedLoading = false;
           state.tokenLoading = false;
           state.lpLoading = false;
+          state.appLoading = false;
+          state.loadingBalances = false;
+          state.loadingXMeedsBalance = false;
+          state.loadingMeedsBalance = false;
         });
     },
     loaded(state) {
       state.appLoading = false;
+      if (!state.address || !state.validNetwork) {
+        this.commit('setMetamaskOffline');
+      }
     },
     deedLoaded(state) {
       state.deedLoading = false;
@@ -1260,12 +1268,14 @@ const store = new Vuex.Store({
         deedMetadata.getCardInfo(cityIndex, cardTypeIndex)
           .then(cardInfo => {
             Vue.set(state.cardTypeInfos, cardType, cardInfo);
-            return tokenUtils.getCityCardType(state.xMeedContract, cardType);
+            return state.xMeedContract && tokenUtils.getCityCardType(state.xMeedContract, cardType);
           })
           .then(card => {
-            const cardInfo = state.cardTypeInfos[cardType];
-            Object.assign(cardInfo, card, cardInfo);
-            Vue.set(state.cardTypeInfos, cardType, cardInfo);
+            if (card) {
+              const cardInfo = state.cardTypeInfos[cardType];
+              Object.assign(cardInfo, card, cardInfo);
+              Vue.set(state.cardTypeInfos, cardType, cardInfo);
+            }
           });
       }
     },
@@ -1302,7 +1312,6 @@ const store = new Vuex.Store({
 function initialize() {
   if (ethUtils.isMetamaskInstalled()) {
     store.commit('refreshMetamaskState');
-
     if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
       window.ethereum._metamask.isUnlocked()
         .then(unlocked => {
@@ -1312,10 +1321,12 @@ function initialize() {
         });
     }
 
-    window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
-    window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
+    if (!store.appLoading) {
+      window.ethereum.on('connect', () => store.commit('refreshMetamaskState'));
+      window.ethereum.on('disconnect', () => store.commit('refreshMetamaskState'));
+    }
   } else {
-    store.commit('setMetamaskOffline');
+    store.commit('loaded');
 
     // If the event is not dispatched by the end of the timeout,
     // the user probably doesn't have MetaMask installed.

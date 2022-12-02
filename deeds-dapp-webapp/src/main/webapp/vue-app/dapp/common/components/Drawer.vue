@@ -218,12 +218,13 @@ export default {
       }
     },
     closeByEscape(event) {
-      if (event?.key === 'Escape') {
-        this.closeIfNotFirstLevel(event);
+      if (this.drawer && event?.key === 'Escape') {
+        this.permanentBehavior = false;
+        this.closeIfNotFirstLevel();
       }
     },
     closeIfNotFirstLevel(event) {
-      if (this.level > 1) {
+      if (this.level > 1 || this.openedDrawersCount < 2) {
         window.setTimeout(() => {
           if (!this.permanentDrawer) {
             this.close(event);

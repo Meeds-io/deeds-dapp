@@ -30,7 +30,7 @@ export function getOffers(paramsObj, networkId) {
       }
     });
   }
-  formData.append('networkId', networkId);
+  formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
   return fetch(`/${window.parentAppLocation}/api/offers?${params}`, {
     method: 'GET',

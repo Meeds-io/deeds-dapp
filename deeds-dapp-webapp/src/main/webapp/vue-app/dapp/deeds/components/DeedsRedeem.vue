@@ -49,7 +49,7 @@
             @end="endCountDown" />
         </div>
       </small>
-      <v-container v-if="currentCardTypes" class="mt-2">
+      <v-container v-if="hasCardTypes" class="mt-2">
         <deeds-card-caroussel>
           <div
             v-for="card in currentCardTypes"
@@ -85,6 +85,9 @@ export default {
     currentCardTypes: state => state.currentCardTypes,
     currentCityMintable: state => state.currentCityMintable,
     lastCityMintingCompleteDate: state => state.lastCityMintingCompleteDate,
+    hasCardTypes() {
+      return !!this.currentCardTypes?.length;
+    },
     currentCityMintingStartDate() {
       if (!this.currentCityMintable && this.currentCityAvailability && this.lastCityMintingCompleteDate) {
         return (this.currentCityAvailability.toNumber() + this.lastCityMintingCompleteDate.toNumber()) * 1000;

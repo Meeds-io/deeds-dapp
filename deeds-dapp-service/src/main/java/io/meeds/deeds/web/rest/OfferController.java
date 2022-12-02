@@ -78,7 +78,7 @@ public class OfferController {
                                                                PagedResourcesAssembler<DeedTenantOfferDTO> assembler,
                                                                @RequestParam(name = "nftId", required = false)
                                                                Long nftId,
-                                                               @RequestParam(name = "address", required = true)
+                                                               @RequestParam(name = "address", required = false)
                                                                String address,
                                                                @RequestParam(name = "cardType", required = false)
                                                                List<DeedCard> cardTypes,
@@ -90,7 +90,7 @@ public class OfferController {
                                                                boolean excludeExpired,
                                                                @RequestParam(name = "excludeNotStarted", required = false)
                                                                boolean excludeNotStarted,
-                                                               @RequestParam(name = "networkId", required = true)
+                                                               @RequestParam(name = "networkId", required = false)
                                                                long networkId) {
     if (onlyOwned && StringUtils.isBlank(address)) {
       return assembler.toModel(Page.empty(pageable));

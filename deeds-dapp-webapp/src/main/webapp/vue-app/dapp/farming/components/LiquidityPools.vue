@@ -54,7 +54,6 @@ export default {
       return this.rewardedPools && this.rewardedPools.length || 1;
     },
     loading() {
-      console.warn('this.rewardedPools', this.rewardedPools, this.rewardedFunds);
       return !this.rewardedPools || this.rewardedPools.filter(pool => pool.loading).length > 0;
     },
   }),

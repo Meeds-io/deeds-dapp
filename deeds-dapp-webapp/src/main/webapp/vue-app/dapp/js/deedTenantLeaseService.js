@@ -30,7 +30,7 @@ export function getLeases(paramsObj, networkId) {
       }
     });
   }
-  formData.append('networkId', networkId);
+  formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
   return fetch(`/${window.parentAppLocation}/api/leases?${params}`, {
     method: 'GET',

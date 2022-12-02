@@ -41,6 +41,7 @@ export default {
   created() {
     window.addEventListener('popstate', this.goBackLink);
     this.$root.$on('location-change', this.refreshSelectedOfferId);
+    this.init();
   },
   mounted() {
     this.refreshUrl();

@@ -262,8 +262,12 @@ export default {
     isLeaseOngoing() {
       return this.rentalConfirmed && new Date(this.rentalEndDate).getTime() > Date.now();
     },
+    lastPaidDate() {
+      return this.noticeDate && new Date(this.noticeDate)
+        || (this.paidRentsDate && new Date(this.paidRentsDate));
+    },
     isLeaseNotFullyPaid() {
-      return this.rentalConfirmed && this.paidMonths < this.rentPeriodMonths;
+      return this.rentalConfirmed && this.rentalEndDate && this.lastPaidDate && new Date(this.rentalEndDate).getTime() > this.lastPaidDate.getTime();
     },
     stopped() {
       return this.rentalConfirmed && (!this.provisioningStatus || this.provisioningStatus === 'STOP_CONFIRMED');

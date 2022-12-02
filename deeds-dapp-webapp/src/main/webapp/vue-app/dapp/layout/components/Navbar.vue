@@ -253,6 +253,7 @@ export default {
     showMoreMenu: false,
     showBottomNavigation: true,
     selectedId: null,
+    updatingMenu: false,
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -277,17 +278,16 @@ export default {
     selectedTab(newVal, oldVal) {
       if (newVal === 'buy' || (newVal === 'more' && !this.selectedId)) {
         this.$nextTick(() => {
-          this.selectedTab = oldVal;
-          this.selectedId = null;
+          this.updateSelection(oldVal, null);
         });
-      } else if (this.selectedTab !== 'more') {
-        this.selectedId = null;
+      } else if (this.selectedTab !== 'more' && this.selectedId) {
+        this.updateSelection(newVal, null);
       }
     },
     selectedId() {
       if (this.selectedId) {
         this.$nextTick(() => {
-          this.selectedTab = 'more';
+          this.updateSelection('more', this.selectedId);
         });
       }
     },
@@ -333,6 +333,19 @@ export default {
           }
         }
       }
+    },
+    updateSelection(tab, mobileMenuId) {
+      if (this.updatingMenu) {
+        return;
+      }
+      this.updatingMenu = true;
+      if (this.selectedTab !== tab) {
+        this.selectedTab = tab;
+      }
+      if (this.selectedTab !== 'more' && this.selectedId !== mobileMenuId) {
+        this.selectedId = mobileMenuId;
+      }
+      this.$nextTick(() => this.updatingMenu = false);
     },
     switchPage(tab, avoidResetTab) {
       if (tab && this.$refs[tab]) {

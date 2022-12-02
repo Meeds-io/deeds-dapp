@@ -225,16 +225,19 @@ export default {
     },
     refresh() {
       this.loading = true;
-      return this.$deedTenantOfferService.getOffers({
+      const params = {
         page: 0,
         size: this.limit,
         sort: `${this.sortField},${this.sortDirection}`,
         excludeExpired: true,
         excludeNotStarted: true,
-        address: this.address,
         cardType: this.cardTypes,
         offerType: this.offerTypes,
-      }, this.networkId)
+      };
+      if (this.address) {
+        params.address = this.address;
+      }
+      return this.$deedTenantOfferService.getOffers(params, this.networkId || 0)
         .then(offers => {
           this.offers = offers?._embedded?.offers || [];
           this.totalSize = offers?.page?.totalElements || 0;
