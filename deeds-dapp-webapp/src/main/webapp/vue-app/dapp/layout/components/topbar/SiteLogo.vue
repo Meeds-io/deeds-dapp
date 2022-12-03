@@ -17,54 +17,48 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app>
-    <v-card class="overflow-hidden" flat>
-      <deeds-topbar />
-      <deeds-site-content />
-    </v-card>
-    <deeds-trade-meeds-drawer />
-  </v-app>
+  <v-toolbar-title class="d-flex">
+    <v-img
+      max-height="64px"
+      max-width="64px"
+      :src="`/${parentLocation}/static/images/meeds.png`"
+      contain
+      eager />
+    <div class="ps-2 pb-1">{{ $t('dao') }}</div>
+    <v-chip
+      v-if="isTestNetwork"
+      :small="!isMobile"
+      :x-small="isMobile"
+      color="orange"
+      dark
+      class="testnet-chip mt-1 ms-4">
+      {{ testnetName }}
+    </v-chip>
+  </v-toolbar-title>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
-    systemThemeDark: state => state.systemThemeDark,
-    themePreference: state => state.themePreference,
-    dark: state => state.dark,
-    isMobile() {
-      return this.$vuetify.breakpoint.xsOnly;
-    },
+    isMobile: state => state.isMobile,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },
-  }),
-  watch: {
-    isMobile() {
-      this.refreshMobileValue();
-    },
-    isTestNetwork: {
-      immediate: true,
-      handler: function() {
-        this.refreshTheme();
-      },
-    },
-  },
-  created() {
-    this.refreshMobileValue();
-  },
-  methods: {
-    refreshMobileValue() {
-      this.$store.commit('setMobile', this.isMobile);
-    },
-    refreshTheme() {
-      const isDark = this.isTestNetwork
-        && (this.systemThemeDark || this.themePreference === 'dark');
-      if (isDark !== this.dark) {
-        this.$store.commit('setDark', isDark);
+    testnetName() {
+      if (!this.networkId) {
+        return '';
+      }
+      switch (this.networkId) {
+      case 4:
+        return 'Rinkeby';
+      case 5:
+        return 'Goerli';
+      default:
+        return '';
       }
     },
-  },
+  }),
 };
 </script>

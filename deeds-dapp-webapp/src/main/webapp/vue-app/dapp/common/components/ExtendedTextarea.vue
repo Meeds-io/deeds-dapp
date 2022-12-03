@@ -25,6 +25,7 @@
     :placeholder="placeholder"
     :rows="rows"
     :row-height="rowHeight"
+    autofocus
     counter
     auto-grow
     outlined
@@ -59,6 +60,10 @@ export default {
     rowHeight: {
       type: Number,
       default: () => 24
+    },
+    autofocus: {
+      type: Boolean,
+      default: false
     },
   },
   data: () => ({

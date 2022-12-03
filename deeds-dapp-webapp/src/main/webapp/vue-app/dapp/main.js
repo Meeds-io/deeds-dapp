@@ -78,8 +78,9 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
-const themePreference = window.localStorage.getItem('preferred-theme-colors');
-const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches || themePreference !== 'light';
+const themePreference = window.localStorage.getItem('meeds-preferred-theme-colors') || 'system';
+const systemThemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
+const dark = (systemThemeDark && themePreference === 'system') || themePreference === 'dark';
 const vuetify = new Vuetify({
   iconfont: 'fa',
   theme: {
@@ -257,6 +258,7 @@ const store = new Vuex.Store({
     comethPool: null,
     provider: null,
     polygonProvider: null,
+    pollingInterval: 12000, // 12 seconds
     erc20ABI: [
       'event Transfer(address indexed from, address indexed to, uint256 value)',
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
@@ -408,6 +410,8 @@ const store = new Vuex.Store({
     isMobile: false,
     authenticated: false,
     dark,
+    systemThemeDark,
+    themePreference,
     blackThemeColor: dark && 'white' || 'black',
     whiteThemeColor: dark && 'dark-color' || 'white',
     openedDrawersCount: 0,
@@ -445,10 +449,20 @@ const store = new Vuex.Store({
     },
     setDark(state, value) {
       state.dark = value;
-      vuetify.framework.theme.dark = value;
-      state.blackThemeColor = value && 'white' || 'black';
-      state.whiteThemeColor = value && 'dark-color' || 'white';
-      window.localStorage.setItem('preferred-theme-colors', state.dark && 'dark' || 'light');
+      vuetify.framework.theme.dark = state.dark;
+      state.blackThemeColor = state.dark && 'white' || 'black';
+      state.whiteThemeColor = state.dark && 'dark-color' || 'white';
+    },
+    setThemePreference(state, value) {
+      const isSystemTheme = value === 'system';
+      const isDark = isSystemTheme ? systemThemeDark : value === 'dark';
+      this.commit('setDark', isDark);
+      state.themePreference = value;
+      if (isSystemTheme) {
+        window.localStorage.removeItem('meeds-preferred-theme-colors');
+      } else {
+        window.localStorage.setItem('meeds-preferred-theme-colors', value);
+      }
     },
     setMetamaskInstalled(state) {
       state.isMetamaskInstalled = ethUtils.isMetamaskInstalled();
@@ -894,6 +908,7 @@ const store = new Vuex.Store({
     setProvider(state) {
       if (state.address && state.validNetwork) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        provider.pollingInterval = state.pollingInterval;
 
         provider.lookupAddress(state.address)
           .then(name => state.ens = name);

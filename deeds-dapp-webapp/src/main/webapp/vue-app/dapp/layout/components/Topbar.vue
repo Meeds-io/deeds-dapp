@@ -25,34 +25,8 @@
     elevate-on-scroll>
     <v-spacer />
     <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
-      <v-toolbar-title class="d-flex">
-        <v-img
-          max-height="64px"
-          max-width="64px"
-          :src="`/${parentLocation}/static/images/meeds.png`"
-          contain
-          eager />
-        <div class="ps-2 pb-1">{{ $t('dao') }}</div>
-        <v-chip
-          v-if="isTestNetwork"
-          :small="!isMobile"
-          :x-small="isMobile"
-          color="orange"
-          dark
-          class="testnet-chip mt-1 ms-4">
-          {{ testnetName }}
-        </v-chip>
-      </v-toolbar-title>
-      <div v-if="isTestNetwork" class="ms-4 d-none d-md-flex">
-        <v-btn
-          :color="dark && 'primary' || 'amber lighten-2'"
-          height="36"
-          width="36"
-          icon
-          @click="$store.commit('setDark', !dark)">
-          <v-icon>{{ dark && 'fas fa-moon' || 'fas fa-sun' }}</v-icon>
-        </v-btn>
-      </div>
+      <deeds-topbar-logo />
+      <deeds-theme-button css-class="ms-4" />
       <v-spacer />
       <template v-if="validNetwork && address">
         <div class="ms-4 d-none d-md-inline-block">
@@ -87,31 +61,10 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-    isMetamaskInstalled: state => state.isMetamaskInstalled,
-    networkId: state => state.networkId,
+    appLoading: state => state.appLoading,
     validNetwork: state => state.validNetwork,
     address: state => state.address,
-    appLoading: state => state.appLoading,
-    isMobile: state => state.isMobile,
     whiteThemeColor: state => state.whiteThemeColor,
-    dark: state => state.dark,
-    isTestNetwork() {
-      return this.networkId !== 1 && this.validNetwork;
-    },
-    testnetName() {
-      if (!this.networkId) {
-        return '';
-      }
-      switch (this.networkId) {
-      case 4:
-        return 'Rinkeby';
-      case 5:
-        return 'Goerli';
-      default:
-        return '';
-      }
-    },
   }),
 };
 </script>

@@ -43,7 +43,7 @@
         :step="buy && '0.1' || '100'"
         :min="0"
         :max="buy && maxEther || maxMeed"
-        :autofocus="focus"
+        :autofocus="focus && !isMobile"
         class="align-center no-border"
         type="number"
         autocomplete="off"
@@ -190,6 +190,7 @@ export default {
     parentLocation: state => state.parentLocation,
     whiteThemeColor: state => state.whiteThemeColor,
     blackThemeColor: state => state.blackThemeColor,
+    isMobile: state => state.isMobile,
     loadingAmount() {
       return !!this.computingAmount || this.typing;
     },

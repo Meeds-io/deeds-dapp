@@ -25,6 +25,7 @@
       :loading="emailLoading"
       :readonly="readonly"
       :disabled="disabledField"
+      :autofocus="!isMobile"
       name="email"
       type="email"
       pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
@@ -54,6 +55,7 @@
         :disabled="validCode"
         :readonly="sendingCode"
         :loading="sendingCode"
+        :autofocus="!isMobile"
         name="emailCode"
         maxlength="6"
         class="align-center"
@@ -102,6 +104,7 @@ export default {
     validEmailCheckIndex: 1,
   }),
   computed: Vuex.mapState({
+    isMobile: state => state.isMobile,
     disabledField() {
       return this.disabled || this.sending || this.emailConfirmationNeeded;
     },

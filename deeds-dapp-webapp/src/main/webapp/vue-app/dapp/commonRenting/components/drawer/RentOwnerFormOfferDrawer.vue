@@ -60,10 +60,10 @@
             flat>
             <div class="px-0 pt-4">
               <deeds-extended-textarea
-                v-if="drawer"
                 v-model="offer.description"
                 :placeholder="$t('deedRentingDescriptionPlaceholder')"
                 :max-length="DESCRIPTION_MAX_LENGTH"
+                :autofocus="drawer && !isMobile"
                 class="mt-1" />
             </div>
           </v-card>
@@ -203,6 +203,7 @@
                   <v-text-field
                     v-model="offer.hostAddress"
                     :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
+                    :autofocus="!isMobile"
                     name="hostAddress"
                     minlength="42"
                     maxlength="42"
@@ -210,7 +211,6 @@
                     autocomplete="off"
                     class="mt-0 pt-0 me-2"
                     hide-details
-                    autofocus
                     outlined
                     required
                     dense />
@@ -425,6 +425,7 @@ export default {
     address: state => state.address,
     tenantRentingContract: state => state.tenantRentingContract,
     maxGasLimit: state => state.maxGasLimit,
+    isMobile: state => state.isMobile,
     DAY_IN_SECONDS: state => state.DAY_IN_SECONDS,
     ZERO_X_ADDRESS: state => state.ZERO_X_ADDRESS,
     ZERO_BN: state => state.ZERO_BN,

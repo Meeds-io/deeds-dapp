@@ -35,6 +35,7 @@ export default {
     gasPriceGwei: state => state.gasPriceGwei,
     provider: state => state.provider,
     validNetwork: state => state.validNetwork,
+    pollingInterval: state => state.pollingInterval,
     floorGasPriceGwei() {
       if (this.gasPriceGwei < 1) {
         return this.$ethUtils.toFixedDisplay(this.gasPriceGwei, 2, this.language);
@@ -58,7 +59,7 @@ export default {
     init() {
       this.reset();
       if (this.provider && this.validNetwork) {
-        this.timeout = window.setInterval(() => this.refreshGasPrice(), 12000);
+        this.timeout = window.setInterval(() => this.refreshGasPrice(), this.pollingInterval);
       }
     },
     reset() {
@@ -67,7 +68,9 @@ export default {
       }
     },
     refreshGasPrice() {
-      this.$store.commit('loadGasPrice');
+      if (this.validNetwork) {
+        this.$store.commit('loadGasPrice');
+      }
     },
   },
 };
