@@ -25,6 +25,9 @@
     :permanent="permanentDrawer"
     :color="whiteThemeColor"
     :overlay-opacity="overlayOpacity"
+    disable-route-watcher
+    disable-resize-watcher
+    touchless
     temporary
     right
     fixed
