@@ -34,7 +34,7 @@
       <v-list-item class="min-height-auto">
         <v-list-item-title>
           <v-card-title class="px-0 py-2">
-            {{ $t('deedRentalNftTypeTitle', {0: cardType, 1: nftId}) }}
+            {{ $t('deedRentalNftTypeTitle', {0: cardTypeI18N, 1: nftId}) }}
           </v-card-title>
         </v-list-item-title>
       </v-list-item>
@@ -84,6 +84,9 @@ export default {
     },
     cardType() {
       return this.offer?.cardType?.toUpperCase() || '';
+    },
+    cardTypeI18N() {
+      return this.cardType && this.$t(this.cardType.toLowerCase());
     },
     city() {
       return this.offer?.city?.toUpperCase() || '';
