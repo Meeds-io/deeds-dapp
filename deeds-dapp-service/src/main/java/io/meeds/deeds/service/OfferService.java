@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.StampedLock;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,42 +68,46 @@ import io.meeds.deeds.utils.DeedTenantOfferMapper;
 @Component
 public class OfferService {
 
-  private static final Logger     LOG                                   = LoggerFactory.getLogger(OfferService.class);
+  private static final Logger      LOG                                   = LoggerFactory.getLogger(OfferService.class);
 
-  public static final String      OFFER_CREATED_EVENT                   = "deed.event.offerCreated";
+  public static final String       OFFER_CREATED_EVENT                   = "deed.event.offerCreated";
 
-  public static final String      OFFER_CREATED_CONFIRMED_EVENT         = "deed.event.offerCreatedConfirmed";
+  public static final String       OFFER_CREATED_CONFIRMED_EVENT         = "deed.event.offerCreatedConfirmed";
 
-  public static final String      OFFER_UPDATED_EVENT                   = "deed.event.offerUpdated";
+  public static final String       OFFER_UPDATED_EVENT                   = "deed.event.offerUpdated";
 
-  public static final String      OFFER_UPDATED_CONFIRMED_EVENT         = "deed.event.offerUpdatedConfirmed";
+  public static final String       OFFER_UPDATED_CONFIRMED_EVENT         = "deed.event.offerUpdatedConfirmed";
 
-  public static final String      OFFER_DELETED_EVENT                   = "deed.event.offerDeleted";
+  public static final String       OFFER_DELETED_EVENT                   = "deed.event.offerDeleted";
 
-  public static final String      OFFER_DELETED_CONFIRMED_EVENT         = "deed.event.offerDeletedConfirmed";
+  public static final String       OFFER_DELETED_CONFIRMED_EVENT         = "deed.event.offerDeletedConfirmed";
 
-  public static final String      OFFER_CANCELED_EVENT                  = "deed.event.offerCanceled";
+  public static final String       OFFER_CANCELED_EVENT                  = "deed.event.offerCanceled";
 
-  public static final String      OFFER_ACQUISITION_PROGRESS_EVENT      = "deed.event.offerAcquisitionInProgress";
+  public static final String       OFFER_ACQUISITION_PROGRESS_EVENT      = "deed.event.offerAcquisitionInProgress";
 
-  public static final String      OFFER_ACQUISITION_CONFIRMED_EVENT     = "deed.event.offerAcquisitionConfirmed";
+  public static final String       OFFER_ACQUISITION_CONFIRMED_EVENT     = "deed.event.offerAcquisitionConfirmed";
 
-  private static final String     TRANSACTION_HASH_IS_MANDATORY_MESSAGE = "Transaction Hash is Mandatory";
-
-  @Autowired
-  private OfferRepository         deedTenantOfferRepository;
+  private static final String      TRANSACTION_HASH_IS_MANDATORY_MESSAGE = "Transaction Hash is Mandatory";
 
   @Autowired
-  private ElasticsearchOperations elasticsearchOperations;
+  private OfferRepository          deedTenantOfferRepository;
 
   @Autowired
-  private TenantService           tenantService;
+  private ElasticsearchOperations  elasticsearchOperations;
 
   @Autowired
-  private BlockchainService       blockchainService;
+  private TenantService            tenantService;
 
   @Autowired
-  private ListenerService         listenerService;
+  private BlockchainService        blockchainService;
+
+  @Autowired
+  private ListenerService          listenerService;
+
+  private Map<String, StampedLock> blockchainRefreshLocks                = new ConcurrentHashMap<>();
+
+  private Map<String, Long>        blockchainRefreshStamp                = new ConcurrentHashMap<>();
 
   public Page<DeedTenantOfferDTO> getOffers(OfferFilter offerFilter, Pageable pageable) {
     if (offerFilter.getNetworkId() > 0 && !tenantService.isBlockchainNetworkValid(offerFilter.getNetworkId())) {
@@ -156,23 +163,9 @@ public class OfferService {
   }
 
   public DeedTenantOfferDTO getOffer(String id, String walletAddress, boolean refreshFromBlockchain) throws Exception {
-    if (refreshFromBlockchain && StringUtils.isNotBlank(walletAddress)) {
+    if (refreshFromBlockchain) {
       DeedTenantOffer offer = deedTenantOfferRepository.findById(id).orElse(null);
-      if (offer == null) {
-        throw new ObjectNotFoundException();
-      }
-      LOG.info("Refreshing Changed offer with id {} on blockchain on request of wallet {}", id, walletAddress);
-      try {
-        refreshOffer(offer);
-
-        if (isChangelog(offer)) {
-          // Get refreshed parent offer after applying changelog
-          id = offer.getParentId();
-        }
-      } catch (ObjectNotFoundException e) {
-        LOG.debug("It seems that there was a concurrent refresh with scheduled tasks, the offer was already refreshed. Original error: {}",
-                  e.getMessage());
-      }
+      id = refreshOfferConcurrently(offer, walletAddress);
     }
     DeedTenantOfferDTO offer = getOffer(id);
     if (offer == null) {
@@ -340,9 +333,20 @@ public class OfferService {
     }
   }
 
-  public DeedTenantOffer updateOfferFromBlockchain(DeedOfferBlockchainState blockchainOffer) throws Exception {
-    DeedTenantOffer offer = getOfferByBlockchainOfferId(blockchainOffer.getId().longValue(), false);
-    return updateOfferFromBlockchain(offer, blockchainOffer);
+  public DeedTenantOffer updateOfferFromBlockchain(DeedOfferBlockchainState blockchainOffer,
+                                                   boolean blockchainScan) throws Exception {
+    DeedTenantOffer offer = getParentOfferByBlockchainId(blockchainOffer.getId().longValue());
+    try {
+      return updateOfferFromBlockchain(offer, blockchainOffer);
+    } finally {
+      if (blockchainScan && offer != null) {
+        LOG.debug("Delete acquired UI Refresh Lock on Offer after blockchain scan finished {}",
+                  offer.getParentId());
+        // Remove lock of offer refreshing by UI
+        String parentId = offer.getId();
+        releaseExplicitOfferRefreshLock(parentId);
+      }
+    }
   }
 
   public void markOfferAsAcquired(long offerId, Instant leaseEndDate) throws Exception {
@@ -393,6 +397,30 @@ public class OfferService {
       parentOffer.setPaymentPeriodicity(offer.getPaymentPeriodicity());
       return parentOffer;
     }
+  }
+
+  private String refreshOfferConcurrently(DeedTenantOffer offer, String walletAddress) throws Exception {
+    if (offer == null) {
+      throw new ObjectNotFoundException();
+    }
+    // Get refreshed parent offer after applying changelog
+    String offerId = isChangelog(offer) ? offer.getParentId() : offer.getId();
+    boolean isRefreshPermitted = acquireExplicitOfferRefreshLock(offerId);
+    if (isRefreshPermitted) {
+      try {
+        LOG.info("Refreshing Changed offer with id {} on blockchain on request of wallet {}",
+                 offerId,
+                 walletAddress);
+        refreshOffer(offer);
+      } catch (ObjectNotFoundException e) {
+        LOG.debug("It seems that there was a concurrent refresh with scheduled tasks, the offer was already refreshed. Original error: {}",
+                  e.getMessage());
+      }
+    } else {
+      LOG.debug("Refresh already made by another process of changed offer with id {}. Try just to retrieve the newer version.",
+                offerId);
+    }
+    return offerId;
   }
 
   private void refreshOffer(DeedTenantOffer offer) throws Exception { // NOSONAR
@@ -637,8 +665,12 @@ public class OfferService {
               parentOffer.getId());
     if (StringUtils.equals(parentOffer.getUpdateId(), changeLogId)) {
       parentOffer.setUpdateId(null);
+      parentOffer = saveOffer(parentOffer);
+      // Avoid deleting changelog before saving parent
+      // To make sure that parent has no "updateId" on it
+      // even if deletion fails or is interrupted
       deedTenantOfferRepository.deleteById(changeLogId);
-      return saveOffer(parentOffer);
+      return parentOffer;
     } else if (StringUtils.equals(parentOffer.getDeleteId(), changeLogId)) {
       return saveOfferAndDeleteChangeLogs(parentOffer);
     } else if (parentOffer.getAcquisitionIds() != null && parentOffer.getAcquisitionIds().contains(changeLogId)) {
@@ -652,11 +684,15 @@ public class OfferService {
     if (isChangelog(parentOffer) || parentOffer == null) {
       throw new IllegalArgumentException("Attempt to save changelog offer: " + parentOffer);
     }
-    deedTenantOfferRepository.deleteByParentId(parentOffer.getId());
     parentOffer.setUpdateId(null);
     parentOffer.setDeleteId(null);
     parentOffer.setAcquisitionIds(Collections.emptySet());
-    return saveOffer(parentOffer);
+    parentOffer = saveOffer(parentOffer);
+    // Avoid deleting changelog before saving parent
+    // To make sure that parent has no "updateId" on it
+    // even if deletion fails or is interrupted
+    deedTenantOfferRepository.deleteByParentId(parentOffer.getId());
+    return parentOffer;
   }
 
   private DeedTenantOffer updateOfferFromBlockchainStatus(DeedTenantOffer offer,
@@ -867,7 +903,7 @@ public class OfferService {
     return saveOffer(offer, true);
   }
 
-  private DeedTenantOffer saveOffer(DeedTenantOffer offer, boolean checkTransactionHashDuplication) {
+  private DeedTenantOffer saveOffer(DeedTenantOffer offer, boolean checkTransactionHashDuplication) { // NOSONAR
     if (offer.getExpirationDuration() == null) {
       offer.setExpirationDate(DeedTenantOfferMapper.MAX_DATE_VALUE);
     }
@@ -892,8 +928,9 @@ public class OfferService {
         throw new IllegalStateException("Offer to update doesn't exists");
       }
     }
+    boolean isChangelog = isChangelog(offer);
     if (isNewOffer
-        && !isChangelog(offer)
+        && !isChangelog
         && offer.getOfferId() > 0
         && isBlockchainOfferIdKnown(offer.getOfferId())) {
       throw new IllegalStateException("Offer with same identifier already exists, must not save twice the same Parent OfferId");
@@ -901,11 +938,54 @@ public class OfferService {
     // Can't add field unicity on ElasticSearch, thus we have to make a manual
     // check each time
     if (isNewOffer
-        && (!checkTransactionHashDuplication
-            || isOfferTransactionHashDuplicated(offer.getOfferTransactionHash(), id))) {
+        && checkTransactionHashDuplication
+        && isOfferTransactionHashDuplicated(offer.getOfferTransactionHash(), id)) {
       throw new IllegalStateException("Offer with same transaction hash already exists");
     }
-    return deedTenantOfferRepository.save(offer);
+    String parentId = offer.getParentId();
+    try {
+      return deedTenantOfferRepository.save(offer);
+    } finally {
+      if (isChangelog && isNewOffer) {
+        LOG.debug("Delete acquired UI Refresh Lock on Offer {} after a new changelog has been added",
+                  parentId);
+        releaseExplicitOfferRefreshLock(parentId);
+      }
+    }
+  }
+
+  private boolean acquireExplicitOfferRefreshLock(String offerId) {
+    try {
+      StampedLock lock = blockchainRefreshLocks.computeIfAbsent(offerId, key -> new StampedLock());
+      long stamp = lock.tryWriteLock();
+      if (stamp > 0) {
+        blockchainRefreshStamp.put(offerId, stamp);
+        return true;
+      } else {
+        // Wait 3 seconds until Refresh made effectively by other process
+        lock.tryWriteLock(3, TimeUnit.SECONDS);
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    } catch (Exception e) {
+      LOG.debug("Refresh Lock on Offer {} not acquired after 3 seconds, proceed to refresh offer drom DB",
+                offerId);
+    }
+    return false;
+  }
+
+  private void releaseExplicitOfferRefreshLock(String parentOfferId) {
+    StampedLock lock = blockchainRefreshLocks.remove(parentOfferId);
+    if (lock != null && blockchainRefreshStamp.containsKey(parentOfferId)) {
+      Long stamp = blockchainRefreshStamp.remove(parentOfferId);
+      try {
+        lock.unlock(stamp);
+      } catch (Exception e) {
+        LOG.debug("Wasn't able to release Blockchain Refresh lock of parent offer with id {}. Unlocked anyway and released.",
+                  parentOfferId,
+                  e);
+      }
+    }
   }
 
   private long getLastCheckedBlockNumber(DeedOfferBlockchainState blockchainOffer, DeedTenantOffer offer) {
@@ -971,16 +1051,25 @@ public class OfferService {
   }
 
   private DeedTenantOffer getOfferByBlockchainOfferId(long blockchainOfferId, boolean updateIfNotFound) throws Exception {
-    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId);
-    if (CollectionUtils.isEmpty(offers)) {
+    DeedTenantOffer offer = getParentOfferByBlockchainId(blockchainOfferId);
+    if (offer == null) {
       if (updateIfNotFound) {
         DeedOfferBlockchainState blockchainOffer = blockchainService.getOfferById(BigInteger.valueOf(blockchainOfferId),
                                                                                   null,
                                                                                   null);
-        return updateOfferFromBlockchain(blockchainOffer);
+        return updateOfferFromBlockchain(blockchainOffer, false);
       } else {
         return null;
       }
+    } else {
+      return offer;
+    }
+  }
+
+  private DeedTenantOffer getParentOfferByBlockchainId(long blockchainOfferId) {
+    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId);
+    if (CollectionUtils.isEmpty(offers)) {
+      return null;
     } else {
       if (offers.size() > 1) {
         LOG.warn("It seems that we have more than one parent offer with id {}, this is likely a bug! Retrieve first one only. List = {}",

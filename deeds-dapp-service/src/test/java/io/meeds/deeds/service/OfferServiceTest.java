@@ -662,6 +662,7 @@ class OfferServiceTest {
 
     List<DeedTenantOffer> offers = Collections.singletonList(deedTenantOffer);
     when(deedTenantOfferRepository.findByOwnerNotAndNftIdAndEnabledTrue(walletAddress, nftId)).thenReturn(offers);
+    when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
     deedTenantOfferService.cancelOffers(walletAddress, nftId);
     verify(deedTenantOfferRepository, never()).deleteById(any());

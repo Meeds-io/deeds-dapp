@@ -106,7 +106,7 @@ public class RentingBlockchainMinedEventsCheckTask {
 
   private void updateOfferFromBlockchain(DeedOfferBlockchainState blockchainOffer) {
     try {
-      offerService.updateOfferFromBlockchain(blockchainOffer);
+      offerService.updateOfferFromBlockchain(blockchainOffer, true);
     } catch (Exception e) {
       LOG.warn("Error updating blockchain information of blockchain change for an offer: {}", blockchainOffer, e);
     }

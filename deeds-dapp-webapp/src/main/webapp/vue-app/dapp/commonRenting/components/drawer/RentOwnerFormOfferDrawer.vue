@@ -340,7 +340,6 @@
         v-if="canDelete"
         :loading="deleting"
         :min-width="MIN_BUTTONS_WIDTH"
-        :max-width="MAX_BUTTONS_WIDTH"
         outlined
         name="deleteConfirmButton"
         color="error"
@@ -355,7 +354,6 @@
         v-if="step > 1"
         :disabled="sending"
         :min-width="MIN_BUTTONS_WIDTH"
-        :max-width="MAX_BUTTONS_WIDTH"
         outlined
         text
         class="me-2 ms-auto"
@@ -367,7 +365,6 @@
         :loading="sending"
         :disabled="buttonDisabled"
         :min-width="MIN_BUTTONS_WIDTH"
-        :max-width="MAX_BUTTONS_WIDTH"
         :outlined="intermediateStep"
         :class="!intermediateStep && buttonDisabled && 'primary'"
         name="rentConfirmButton"

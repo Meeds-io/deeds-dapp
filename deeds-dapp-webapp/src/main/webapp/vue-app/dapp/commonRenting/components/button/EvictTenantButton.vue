@@ -9,7 +9,6 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
@@ -17,7 +16,6 @@
           :disabled="disabled"
           :min-width="minButtonsWidth"
           :width="buttonsWidth"
-          :max-width="maxButtonsWidth"
           :title="$t('endRental')"
           color="secondary"
           outlined

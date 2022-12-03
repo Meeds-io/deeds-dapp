@@ -54,7 +54,6 @@ export default {
     rentedOffersLoaded: 0,
     rentedOffers: {},
     tenants: {},
-    tenantsLoaded: false,
     tenantsLoadingPromise: null,
     sortResults: true,
     refreshedLeases: {},
@@ -67,6 +66,7 @@ export default {
     cardTypes: state => state.cardTypes,
     selectedStandaloneDeedCardName: state => state.selectedStandaloneDeedCardName,
     authenticated: state => state.authenticated,
+    deedLoading: state => state.deedLoading,
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },
@@ -113,7 +113,8 @@ export default {
           });
           this.leases = leases.filter(lease => lease.confirmed);
           this.totalSize = leases?.page?.totalElements || this.leases.length;
-        });
+        })
+        .finally(() => this.rentedOffersLoaded++);
     },
     loadOffers() {
       return this.$deedTenantOfferService.getOffers({
@@ -146,8 +147,9 @@ export default {
           .catch(() => {
             this.tenants = {};
           })
-          .finally(() => this.tenantsLoaded = true);
+          .finally(() => this.rentedOffersLoaded++);
       } else {
+        this.rentedOffersLoaded++;
         return Promise.resolve(null);
       }
     },
@@ -228,7 +230,9 @@ export default {
           this.deedsToDisplay.unshift(lease);
         }
       }
-      this.$root.$emit('deed-leases-loaded', this.deedsToDisplay, this.deedsToDisplay.length);
+      if (!this.deedLoading && this.rentedOffersLoaded >= 3) {
+        this.$root.$emit('deed-leases-loaded', this.deedsToDisplay, this.deedsToDisplay.length);
+      }
     },
   },
 };

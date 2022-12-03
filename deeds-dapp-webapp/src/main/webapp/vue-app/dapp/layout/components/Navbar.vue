@@ -273,6 +273,9 @@ export default {
       this.initSelectedTab();
     },
     selectedTab(newVal, oldVal) {
+      if (newVal === 'buy') {
+        this.closeMobileMenuNow();
+      }
       if (newVal === 'buy' || (newVal === 'more' && !this.selectedId)) {
         this.$nextTick(() => {
           this.updateSelection(oldVal, null);
@@ -361,11 +364,7 @@ export default {
         this.showBottomNavigation = true;
       }
     },
-    closeMobileMenu() {
-      window.setTimeout(() => this.showMoreMenu = false, 300);
-    },
     openPage(event) {
-      this.closeMobileMenu();
       if (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -380,10 +379,24 @@ export default {
           this.avoidResetTab = false;
         }
         if (this.isMobile) {
-          window.scrollTo(0, 0);
+          this.handlePageOpenedMobile();
         }
       }
-    }
+    },
+    handlePageOpenedMobile() {
+      if (this.selectedTab === 'more') {
+        this.closeMobileMenuAnimate();
+      } else {
+        this.closeMobileMenuNow();
+      }
+      window.scrollTo(0, 0);
+    },
+    closeMobileMenuAnimate() {
+      window.setTimeout(() => this.showMoreMenu = false, 300);
+    },
+    closeMobileMenuNow() {
+      this.showMoreMenu = false;
+    },
   },
 };
 </script>

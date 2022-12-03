@@ -154,9 +154,9 @@ export default {
     this.$root.$on('deeds-offers-load-more', this.loadMore);
     this.$root.$on('deeds-offers-select-card-types', this.selectCardTypes);
     this.$root.$on('deeds-offers-select-offer-types', this.selectOfferTypes);
-    this.$root.$on('deed-offer-renting-updated', this.handleOfferUpdated);
-    this.$root.$on('deed-offer-renting-deleted', this.handleOfferDeleted);
-    this.$root.$on('deed-offer-rented', this.handleOfferRented);
+    this.$root.$on('deed-offer-renting-updated', this.handleOfferUpdateInProgress);
+    this.$root.$on('deed-offer-renting-deleted', this.handleOfferDeleteInProgress);
+    this.$root.$on('deed-offer-rented', this.handleOfferRentingInProgress);
     document.addEventListener('deed-offer-created', this.refreshOfferFromblockchain);
     document.addEventListener('deed-offer-updated', this.refreshOfferFromblockchain);
     document.addEventListener('deed-offer-deleted', this.refreshOfferFromblockchain);
@@ -167,9 +167,9 @@ export default {
     this.$root.$off('deeds-offers-load-more', this.loadMore);
     this.$root.$off('deeds-offers-select-card-types', this.selectCardTypes);
     this.$root.$off('deeds-offers-select-offer-types', this.selectOfferTypes);
-    this.$root.$off('deed-offer-renting-updated', this.handleOfferUpdated);
-    this.$root.$off('deed-offer-renting-deleted', this.handleOfferDeleted);
-    this.$root.$off('deed-offer-rented', this.handleOfferRented);
+    this.$root.$off('deed-offer-renting-updated', this.handleOfferUpdateInProgress);
+    this.$root.$off('deed-offer-renting-deleted', this.handleOfferDeleteInProgress);
+    this.$root.$off('deed-offer-rented', this.handleOfferRentingInProgress);
     document.removeEventListener('deed-offer-created', this.refreshOfferFromblockchain);
     document.removeEventListener('deed-offer-updated', this.refreshOfferFromblockchain);
     document.removeEventListener('deed-offer-deleted', this.refreshOfferFromblockchain);
@@ -244,90 +244,17 @@ export default {
         })
         .finally(() => this.loading = false);
     },
-    loadSelectedOffer() {
-      this.loadOnStandaloneClose = true;
-      this.loadOffer(this.selectedStandaloneOfferId);
-    },
-    handleOfferUpdated(offer) {
-      const index = this.offers.findIndex(displayedOffer => displayedOffer.offerId === offer.offerId || displayedOffer.id === offer.id);
-      if (index >= 0) {
-        this.offers.splice(index, 1, offer);
-        this.offers.sort((offer1, offer2) => new Date(offer2.modifiedDate || offer2.createdDate).getTime() - new Date(offer1.modifiedDate || offer1.createdDate).getTime());
-        if (this.selectedStandaloneOfferId && offer.id !== this.selectedStandaloneOfferId) {
-          this.$store.commit('setStandaloneOfferId', offer.id);
-        }
-      }
-    },
-    handleOfferDeleted(offer) {
-      if (offer) {
-        this.loadOffer(offer.id);
-      }
-    },
-    handleOfferRented(_lease, offer) {
-      if (offer) {
-        this.loadOffer(offer.id);
-      }
-    },
-    refreshLeaseFromblockchain(event) {
-      const leaseId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
-      const creator = event?.detail?.creator || event?.detail?.manager || event?.detail?.owner;
-      if (leaseId && creator) {
-        this.$deedTenantLeaseService.getLease(leaseId, true)
-          .finally(() => this.refreshOfferFromblockchain(event));
-      }
-    },
-    refreshOfferFromblockchain(event) {
-      const offerId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
-      const creator = event?.detail?.creator || event?.detail?.manager || event?.detail?.owner;
-      if (offerId) {
-        const selectedOffer = event.type === 'deed-offer-created' ?
-          this.offers.find(offer => !offer.offerId)
-          : this.offers.find(offer => offer.offerId === offerId);
-        if (selectedOffer?.id) {
-          const isCreator = creator?.toUpperCase() === this.address?.toUpperCase();
-          if (isCreator) {
-            this.$deedTenantOfferService.getOffer(selectedOffer.id, isCreator)
-              .catch(e => {
-                if (selectedOffer.parentId) {
-                  return this.$deedTenantOfferService.getOffer(selectedOffer.parentId, isCreator)
-                    .catch(() => console.debug('offer seems to be deleted', selectedOffer.parentId)); // eslint-disable-line no-console
-                } else {
-                  throw e;
-                }
-              })
-              .then(offer => {
-                if (offer) {
-                  this.handleOfferUpdated(offer);
-                } else if (event.type === 'deed-offer-deleted') {
-                  const index = this.offers.findIndex(displayedOffer => displayedOffer?.id === selectedOffer.id);
-                  if (index >= 0) {
-                    this.offers.splice(index, 1);
-                  }
-                }
-              })
-              .catch(() => this.refresh());
-          } else if (event.type === 'deed-offer-deleted') { // When not creator of Deed, just delete the offer
-            const index = this.offers.findIndex(displayedOffer => displayedOffer?.id === selectedOffer?.id);
-            if (index >= 0) {
-              this.offers.splice(index, 1);
-            }
-          } else if (event.type === 'deed-offer-updated' || event.type === 'deed-lease-paid') { // When not creator of Deed, just indicate thet it's updated
-            const offer = this.offers.find(displayedOffer => displayedOffer?.id === selectedOffer?.id);
-            if (offer?.id) {
-              offer.updateId = true;
-            }
-          }
-        }
-      }
-    },
     loadOffer(id) {
+      if (!id) {
+        return;
+      }
       this.loading = true;
       this.$deedTenantOfferService.getOffer(id)
         .then(offer => {
           if (offer) {
             const index = this.offers.findIndex(displayedOffer => displayedOffer.id === offer.id);
             if (index >= 0) {
-              this.handleOfferUpdated(offer);
+              this.handleOfferUpdateInProgress(offer);
             } else {
               this.offers.push(offer);
               this.totalSize += 1;
@@ -337,6 +264,69 @@ export default {
         })
         .catch(() => console.debug('offer seems to be deleted', id)) // eslint-disable-line no-console
         .finally(() => this.loading = false);
+    },
+    handleOfferUpdateInProgress(offer) {
+      if (!offer) {
+        return;
+      }
+      const index = this.offers.findIndex(displayedOffer => displayedOffer.offerId === offer.offerId || displayedOffer.id === offer.id);
+      if (index >= 0) {
+        this.offers.splice(index, 1, offer);
+        this.offers.sort((offer1, offer2) => new Date(offer2.modifiedDate || offer2.createdDate).getTime() - new Date(offer1.modifiedDate || offer1.createdDate).getTime());
+        if (this.selectedStandaloneOfferId && offer.id !== this.selectedStandaloneOfferId) {
+          this.$store.commit('setStandaloneOfferId', offer.id);
+        }
+      }
+    },
+    handleOfferDeleteInProgress(offer) {
+      this.loadOffer(offer?.id);
+    },
+    handleOfferRentingInProgress(_lease, offer) {
+      this.loadOffer(offer?.id);
+    },
+    refreshLeaseFromblockchain(event) {
+      const offerId = this.getOfferId(event);
+      if (offerId) {
+        // Force Refresh Lease From Blockchain on Server 
+        this.$deedTenantLeaseService.getLease(offerId, true)
+          // Refresh Offer From Blockchain on Client & Server
+          .finally(() => this.refreshOfferFromblockchain(event));
+      }
+    },
+    refreshOfferFromblockchain(event) {
+      const offerId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
+      if (offerId) {
+        const selectedOffers = event.type === 'deed-offer-created' ?
+          this.offers.filter(offer => !offer.offerId)
+          : this.offers.filter(offer => offer.offerId === offerId);
+        if (selectedOffers.length > 0) {
+          selectedOffers.forEach(selectedOffer => {
+            // Refresh Offer From Blockchain on Client & Server
+            this.$deedTenantOfferService.getOffer(selectedOffer.parentId || selectedOffer.id, true)
+              .then(offer => this.handleOfferUpdateInProgress(offer))
+              .catch(() => {
+                if (event.type === 'deed-offer-deleted' || event.type === 'deed-lease-paid') {
+                  this.deleteDisplayedOffer(selectedOffer);
+                }
+              });
+          });
+        }
+      }
+    },
+    loadSelectedOffer() {
+      this.loadOnStandaloneClose = true;
+      this.loadOffer(this.selectedStandaloneOfferId);
+    },
+    getOfferId(event) {
+      return event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
+    },
+    deleteDisplayedOffer(offer) {
+      const index = this.offers.findIndex(displayedOffer => displayedOffer.offerId === offer.offerId || displayedOffer.id === offer.id);
+      const found = index >= 0;
+      if (found) {
+        this.offers.splice(index, 1);
+      }
+      return found;
     },
   },
 };

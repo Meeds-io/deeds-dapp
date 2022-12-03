@@ -9,7 +9,6 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
@@ -17,7 +16,6 @@
           :href="`${openSeaBaseLink}/${nftId}/sell`"
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
           target="_blank"
           rel="nofollow noreferrer noopener"
           class="ms-auto"

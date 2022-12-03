@@ -9,7 +9,6 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
@@ -17,7 +16,6 @@
           v-if="accessButtonDisabled"
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
           outlined
           disabled>
           {{ $t('deedTenantAccessButton') }}
@@ -27,7 +25,6 @@
           :href="deedTenantLink"
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
           :outlined="outlined"
           color="primary"
           rel="nofollow noreferrer noopener"

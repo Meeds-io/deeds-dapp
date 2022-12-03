@@ -75,7 +75,7 @@ export default {
     computeLeasesLength(_leases, totalSize) {
       this.hasTenants = totalSize > 0;
       this.showIntroduction = !this.hasTenants;
-      window.setTimeout(() => this.loading = false, 50);
+      window.setTimeout(() => this.loading = false, 500);
     },
     openDeeds(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {

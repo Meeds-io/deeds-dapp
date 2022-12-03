@@ -31,7 +31,6 @@
           <v-card
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
-            :max-width="maxButtonsWidth"
             :class="!showSeeRentPart && 'd-none'"
             class="mx-auto mt-2 mt-md-0"
             color="transparent"
@@ -49,7 +48,6 @@
                 :href="rentalOfferLink"
                 :width="buttonsWidth"
                 :min-width="minButtonsWidth"
-                :max-width="maxButtonsWidth"
                 color="primary"
                 outlined
                 depressed
@@ -71,7 +69,6 @@
           <v-card
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
-            :max-width="maxButtonsWidth"
             :class="!showRentPart && 'd-none'"
             class="mx-auto mt-2 mt-md-0"
             color="transparent"
@@ -90,7 +87,6 @@
                 :loading="loadingRentDrawer"
                 :width="buttonsWidth"
                 :min-width="minButtonsWidth"
-                :max-width="maxButtonsWidth"
                 :outlined="!hasRentOffers || disabledEdit"
                 color="primary"
                 depressed

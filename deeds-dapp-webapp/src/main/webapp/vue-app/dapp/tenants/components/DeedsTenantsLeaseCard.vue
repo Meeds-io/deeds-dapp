@@ -21,7 +21,7 @@
           :nft-id="nftId"
           :city="city"
           :card-type="cardType" />
-        <v-card-text class="ps-0 pb-6">
+        <v-card-text class="ps-sm-0 pb-6">
           <v-list dense>
             <v-list-item class="pa-0">
               <v-list-item-content class="py-0">

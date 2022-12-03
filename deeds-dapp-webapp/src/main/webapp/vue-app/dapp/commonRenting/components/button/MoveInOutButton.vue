@@ -11,7 +11,6 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
@@ -26,7 +25,6 @@
             :loading="loadingMoveDeed"
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
-            :max-width="maxButtonsWidth"
             :disabled="disableButtons"
             color="secondary"
             outlined
@@ -54,7 +52,6 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
@@ -70,7 +67,6 @@
             :loading="loadingMoveDeed"
             :width="buttonsWidth"
             :min-width="minButtonsWidth"
-            :max-width="maxButtonsWidth"
             :outlined="hasRentOffers || disableButtons"
             color="primary"
             depressed
@@ -96,14 +92,12 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
         <v-btn
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
           outlined
           disabled
           color="primary"
@@ -128,14 +122,12 @@
         color="transparent"
         :width="buttonsWidth"
         :min-width="minButtonsWidth"
-        :max-width="maxButtonsWidth"
         flat
         v-bind="attrs"
         v-on="on">
         <v-btn
           :width="buttonsWidth"
           :min-width="minButtonsWidth"
-          :max-width="maxButtonsWidth"
           outlined
           disabled
           color="primary"

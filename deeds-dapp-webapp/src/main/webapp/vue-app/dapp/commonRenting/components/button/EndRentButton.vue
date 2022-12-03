@@ -3,7 +3,6 @@
     :disabled="disabled"
     :min-width="minButtonsWidth"
     :width="buttonsWidth"
-    :max-width="maxButtonsWidth"
     :title="$t('endRental')"
     class="mx-auto mt-2 mt-md-0"
     color="secondary"

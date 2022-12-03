@@ -1066,7 +1066,7 @@ const store = new Vuex.Store({
           state.tenantRentingContract.filters.OfferCreated(),
           (id, deedId, owner) => {
             const address = state.address?.toUpperCase();
-            if (owner.toUpperCase() === address) {
+            if (owner.toUpperCase() === address || state.selectedStandaloneOfferId) {
               document.dispatchEvent(new CustomEvent('deed-offer-created', {detail: {
                 offerId: id,
                 nftId: deedId,
@@ -1080,7 +1080,7 @@ const store = new Vuex.Store({
           state.tenantRentingContract.filters.OfferUpdated(),
           (id, deedId, owner) => {
             const address = state.address?.toUpperCase();
-            if (owner.toUpperCase() === address) {
+            if (owner.toUpperCase() === address || state.selectedStandaloneOfferId) {
               document.dispatchEvent(new CustomEvent('deed-offer-updated', {detail: {
                 offerId: id,
                 nftId: deedId,
