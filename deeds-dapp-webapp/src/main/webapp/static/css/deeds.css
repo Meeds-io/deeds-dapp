@@ -154,6 +154,10 @@ body, .theme--dark.v-application {
   min-height: auto !important;
 }
 
+.height-auto {
+  height: auto !important;
+}
+
 .font-weight-normal {
   font-weight: normal !important;
 }
