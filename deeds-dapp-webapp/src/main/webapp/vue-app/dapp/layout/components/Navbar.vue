@@ -85,7 +85,8 @@
     </v-bottom-navigation>
     <v-bottom-sheet
       v-model="showMoreMenu"
-      content-class="mb-14">
+      content-class="mb-14"
+      eager>
       <v-list
         :class="menuColor"
         dense>
