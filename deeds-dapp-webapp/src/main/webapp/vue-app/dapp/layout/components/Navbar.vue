@@ -75,7 +75,7 @@
             value="more"
             class="px-0 full-height"
             link
-            @click.prevent.stop="showMoreMenu = true">
+            @click.prevent.stop="showMoreMenu = !showMoreMenu">
             <h3 class="mx-2">{{ $t('more') }}</h3>
             <v-icon class="mb-1 mt-2">fas fa-ellipsis</v-icon>
             <v-tabs-slider color="secondary" class="mobile-menu-slider" />
@@ -85,24 +85,25 @@
     </v-bottom-navigation>
     <v-bottom-sheet
       v-model="showMoreMenu"
-      content-class="mb-14"
-      hide-overlay>
+      content-class="mb-14">
       <v-list
         :class="menuColor"
         dense>
         <v-list-item-group
           v-model="selectedId"
+          :active-class="activeMenuColor"
           :mandatory="selectedTab === 'more'">
           <v-list-item
             ref="tenants"
             id="tenants"
             :href="`/${parentLocation}/tenants`"
+            :active-class="activeMenuColor"
             key="tenants"
             value="tenants"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon class="mb-1 mt-2">fas fa-building-user</v-icon>
+              <v-icon>fas fa-building-user</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t('page.tenants') }}</v-list-item-title>
           </v-list-item>
@@ -110,12 +111,13 @@
             ref="owners"
             id="owners"
             :href="`/${parentLocation}/owners`"
+            :active-class="activeMenuColor"
             key="owners"
             value="owners"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon class="mb-1 mt-2">fas fa-city</v-icon>
+              <v-icon>fas fa-city</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t('page.owners') }}</v-list-item-title>
           </v-list-item>
@@ -123,12 +125,13 @@
             ref="stake"
             id="stake"
             :href="`/${parentLocation}/stake`"
+            :active-class="activeMenuColor"
             key="stake"
             value="stake"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon class="mb-1 mt-2">fas fa-piggy-bank</v-icon>
+              <v-icon>fas fa-piggy-bank</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t('page.stake') }}</v-list-item-title>
           </v-list-item>
@@ -136,12 +139,13 @@
             ref="deeds"
             id="deeds"
             :href="`/${parentLocation}/deeds`"
+            :active-class="activeMenuColor"
             key="deeds"
             value="deeds"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon class="mb-1 mt-2 transform-rotate-270">fas fa-trowel</v-icon>
+              <v-icon class="transform-rotate-270">fas fa-trowel</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t('page.deeds') }}</v-list-item-title>
           </v-list-item>
@@ -149,29 +153,18 @@
             ref="farm"
             id="farm"
             :href="`/${parentLocation}/farm`"
+            :active-class="activeMenuColor"
             key="farm"
             value="farm"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon class="mb-1 mt-2">fas fa-sack-dollar</v-icon>
+              <v-icon>fas fa-sack-dollar</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
-        <v-list-item
-          v-if="isTestNetwork"
-          key="dayNight"
-          dense>
-          <v-switch
-            :value="dark"
-            :prepend-icon="`${dark && 'fas fa-moon' || 'far fa-sun'} me-10`"
-            class="my-auto ms-5"
-            inset
-            dense
-            hide-details
-            @click="$store.commit('setDark', !dark)" />
-        </v-list-item>
+        <deeds-theme-button />
       </v-list>
     </v-bottom-sheet>
   </div>
@@ -266,6 +259,9 @@ export default {
     },
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
+    },
+    activeMenuColor() {
+      return this.dark && 'grey darken-4' || 'grey lighten-2';
     },
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
@@ -365,7 +361,7 @@ export default {
       }
     },
     closeMobileMenu() {
-      this.showMoreMenu = false;
+      window.setTimeout(() => this.showMoreMenu = false, 300);
     },
     openPage(event) {
       this.closeMobileMenu();
