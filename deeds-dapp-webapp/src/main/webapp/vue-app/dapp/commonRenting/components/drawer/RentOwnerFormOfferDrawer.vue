@@ -195,18 +195,31 @@
               </v-radio-group>
               <div v-if="visibility === 'ADDRESS'" class="mb-8 mt-4">
                 <span>{{ $t('deedOfferAddressVisibilityAssignedTo') }}</span>
-                <v-text-field
-                  v-model="offer.hostAddress"
-                  :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
-                  name="hostAddress"
-                  autocomplete="off"
-                  class="mt-0 pt-0 me-2"
-                  hide-details
-                  outlined
-                  dense />
-                <span class="caption text--disabled">
-                  {{ $t('deedOfferAddressVisibilityAssignedToSubtitle') }}
-                </span>
+                <v-form
+                  ref="hostAddressForm"
+                  color="transparent"
+                  class="flex-grow-1 mb-1"
+                  flat>
+                  <v-text-field
+                    v-model="offer.hostAddress"
+                    :placeholder="$t('deedOfferAddressVisibilityAssignedToPlaceholder')"
+                    name="hostAddress"
+                    minlength="42"
+                    maxlength="42"
+                    pattern="0x[a-fA-F0-9]*"
+                    autocomplete="off"
+                    class="mt-0 pt-0 me-2"
+                    hide-details
+                    autofocus
+                    outlined
+                    required
+                    dense />
+                </v-form>
+                <v-label>
+                  <span class="caption">
+                    {{ $t('deedOfferAddressVisibilityAssignedToSubtitle') }}
+                  </span>
+                </v-label>
               </div>
             </div>
             <div class="mb-2 mt-6">{{ $t('deedRentingExpirationDurationTitle') }}</div>
@@ -403,6 +416,7 @@ export default {
     DESCRIPTION_MAX_LENGTH: 200,
     MIN_BUTTONS_WIDTH: 80,
     MAX_BUTTONS_WIDTH: '30%',
+    rentalHostAddressTimeout: null,
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
@@ -428,6 +442,9 @@ export default {
     },
     cardType() {
       return this.offer?.cardType;
+    },
+    rentalHostAddress() {
+      return this.offer?.hostAddress;
     },
     cardTypeI18N() {
       return this.cardType && this.$t(this.cardType.toLowerCase());
@@ -573,6 +590,19 @@ export default {
     },
   }),
   watch: {
+    rentalHostAddress(newVal, oldVal) {
+      if (newVal?.length !== oldVal?.length || (oldVal?.length > 0 && newVal !== oldVal)) {
+        if (this.$refs.hostAddressForm) {
+          if (this.rentalHostAddressTimeout) {
+            window.clearTimeout(this.rentalHostAddressTimeout);
+          }
+          this.rentalHostAddressTimeout = window.setTimeout(() => {
+            this.rentalHostAddressTimeout = null;
+            this.$refs.hostAddressForm.$el.reportValidity();
+          }, 1000);
+        }
+      }
+    },
     sending() {
       if (this.sending) {
         this.$refs.drawer?.startLoading();
