@@ -25,7 +25,7 @@
     <template #title>
       <h4>{{ $t('buyMeeds') }}</h4>
     </template>
-    <template #content>
+    <template v-if="openedDrawer" #content>
       <v-card color="transparent" flat>
         <v-card-text>
           <div class="d-flex flex-column mb-8">
@@ -126,6 +126,7 @@ export default {
     sent: false,
     displayCancel: false,
     step: 1,
+    openedDrawer: false,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -278,6 +279,7 @@ export default {
       this.typing = typing;
     },
     open(displayCancel) {
+      this.openedDrawer = true;
       if (!this.sending && !this.displaySteps) {
         this.step = 1;
       }

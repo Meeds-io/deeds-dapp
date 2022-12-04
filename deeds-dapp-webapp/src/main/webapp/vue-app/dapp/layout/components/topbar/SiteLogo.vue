@@ -17,14 +17,13 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar-title class="d-flex">
-    <v-img
-      max-height="64px"
-      max-width="64px"
+  <v-toolbar-title class="d-flex align-center">
+    <img
       :src="`/${parentLocation}/static/images/meeds.png`"
-      contain
-      eager />
-    <div class="ps-2 pb-1">{{ $t('dao') }}</div>
+      height="24px"
+      width="64px"
+      alt="" />
+    <div class="ps-2 mb-2px">{{ $t('dao') }}</div>
     <v-chip
       v-if="isTestNetwork"
       :small="!isMobile"

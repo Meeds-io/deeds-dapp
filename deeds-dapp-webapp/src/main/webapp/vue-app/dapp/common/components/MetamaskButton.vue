@@ -27,6 +27,7 @@
     class="grey lighten-4 border-color-inherit"
     outlined>
     <img
+      v-if="!appLoading"
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
@@ -39,6 +40,7 @@
     outlined
     @click="switchMetamaskNetwork">
     <img
+      v-if="!appLoading"
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
@@ -51,6 +53,7 @@
     outlined
     @click="connectToMetamask">
     <img
+      v-if="!appLoading"
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
@@ -65,6 +68,7 @@ export default {
     isMetamaskInstalled: state => state.isMetamaskInstalled,
     validNetwork: state => state.validNetwork,
     address: state => state.address,
+    appLoading: state => state.appLoading,
     hasMetamaskConnectedAddress() {
       return !!this.address;
     },
