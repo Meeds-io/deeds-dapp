@@ -54,6 +54,7 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 
+import io.meeds.deeds.constant.BlockchainOfferStatus;
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ExpirationDuration;
@@ -63,8 +64,10 @@ import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.TenantProvisioningStatus;
+import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.model.DeedOfferBlockchainState;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.OfferFilter;
@@ -96,7 +99,7 @@ class OfferServiceTest {
   private ListenerService         listenerService;
 
   @Autowired
-  private OfferService            deedTenantOfferService;
+  private OfferService            offerService;
 
   @Test
   @SuppressWarnings({
@@ -119,7 +122,7 @@ class OfferServiceTest {
 
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setNftId(nftId);
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -149,12 +152,12 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setNftId(nftId);
     offerFilter.setNetworkId(5l);
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(0, result.getSize());
 
     offerFilter.setNetworkId(2l);
-    result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -184,7 +187,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setOwnerAddress(ownerAddress);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -214,7 +217,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setCardTypes(cardTypes);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -244,7 +247,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
 
     offerFilter.setCurrentAddress(currentAddress);
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -274,7 +277,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setOfferTypes(offerTypes);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -303,7 +306,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setExcludeDisabled(true);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -332,7 +335,7 @@ class OfferServiceTest {
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setExcludeExpired(true);
 
-    Page<DeedTenantOfferDTO> result = deedTenantOfferService.getOffers(offerFilter, pageable);
+    Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -348,7 +351,7 @@ class OfferServiceTest {
     deedTenantOffer.setEnabled(true);
 
     when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
-    DeedTenantOfferDTO deedTenantOfferDTO = deedTenantOfferService.getOffer(offerId, ADDRESS, false);
+    DeedTenantOfferDTO deedTenantOfferDTO = offerService.getOffer(offerId, ADDRESS, false);
     assertNotNull(deedTenantOfferDTO);
     assertEquals(offerId, deedTenantOfferDTO.getId());
   }
@@ -356,7 +359,7 @@ class OfferServiceTest {
   @Test
   void testCreateRentingOfferBySimpleUser() {
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.createRentingOffer(ADDRESS, EMAIL, new DeedTenantOfferDTO()));
+                 () -> offerService.createRentingOffer(ADDRESS, EMAIL, new DeedTenantOfferDTO()));
   }
 
   @Test
@@ -368,7 +371,7 @@ class OfferServiceTest {
 
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     assertThrows(IllegalStateException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
+                 () -> offerService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @Test
@@ -382,7 +385,7 @@ class OfferServiceTest {
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     assertThrows(ObjectNotFoundException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
+                 () -> offerService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @Test
@@ -399,7 +402,7 @@ class OfferServiceTest {
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(tenantService.getDeedTenantOrImport(walletAddress, nftId)).thenReturn(deedTenant);
     assertThrows(IllegalStateException.class,
-                 () -> deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
+                 () -> offerService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO));
   }
 
   @SuppressWarnings("unchecked")
@@ -446,7 +449,7 @@ class OfferServiceTest {
     when(searchHits.getTotalHits()).thenReturn(0l);
     when(elasticsearchOperations.search(any(Query.class), eq(DeedTenantOffer.class))).thenReturn(searchHits);
 
-    DeedTenantOfferDTO createdRentingOffer = deedTenantOfferService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO);
+    DeedTenantOfferDTO createdRentingOffer = offerService.createRentingOffer(walletAddress, EMAIL, deedTenantOfferDTO);
     assertNotNull(createdRentingOffer);
     assertEquals(offerId, createdRentingOffer.getId());
     assertEquals(OfferType.RENTING, createdRentingOffer.getOfferType());
@@ -470,7 +473,7 @@ class OfferServiceTest {
   @Test
   void testUpdateRentingOfferBySimpleUser() {
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.updateRentingOffer(ADDRESS, new DeedTenantOfferDTO()));
+                 () -> offerService.updateRentingOffer(ADDRESS, new DeedTenantOfferDTO()));
   }
 
   @Test
@@ -485,7 +488,7 @@ class OfferServiceTest {
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     assertThrows(ObjectNotFoundException.class,
-                 () -> deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO));
+                 () -> offerService.updateRentingOffer(walletAddress, deedTenantOfferDTO));
   }
 
   @Test
@@ -521,7 +524,7 @@ class OfferServiceTest {
     when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(existingDeedTenantOffer));
 
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO));
+                 () -> offerService.updateRentingOffer(walletAddress, deedTenantOfferDTO));
     deedTenantOfferDTO.setEnabled(true);
 
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> {
@@ -529,7 +532,7 @@ class OfferServiceTest {
       offer.setId(offerId);
       return offer;
     });
-    DeedTenantOfferDTO updatedRentingOffer = deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
+    DeedTenantOfferDTO updatedRentingOffer = offerService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     assertNotNull(updatedRentingOffer);
     assertNotNull(updatedRentingOffer.getUpdateId());
     assertEquals(OfferType.RENTING, updatedRentingOffer.getOfferType());
@@ -596,7 +599,7 @@ class OfferServiceTest {
     existingDeedTenantOffer.setOfferTransactionHash("TransactionHash");
     when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(existingDeedTenantOffer));
 
-    DeedTenantOfferDTO updatedRentingOffer = deedTenantOfferService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
+    DeedTenantOfferDTO updatedRentingOffer = offerService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     assertNotNull(updatedRentingOffer);
     assertEquals(OfferType.RENTING, updatedRentingOffer.getOfferType());
     assertEquals(existingDeedTenantOffer.getCity(), updatedRentingOffer.getCity());
@@ -614,7 +617,7 @@ class OfferServiceTest {
     String offerId = "offerId";
     String walletAddress = ADDRESS;
     assertThrows(ObjectNotFoundException.class,
-                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId, ""));
+                 () -> offerService.deleteRentingOffer(walletAddress, offerId, ""));
   }
 
   @Test
@@ -628,7 +631,7 @@ class OfferServiceTest {
     lenient().when(tenantService.isDeedManager(walletAddress, nftId)).thenReturn(true);
     when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
     assertThrows(UnauthorizedOperationException.class,
-                 () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId, null),
+                 () -> offerService.deleteRentingOffer(walletAddress, offerId, null),
                  "even Deed Manager shouldn't be able to delete Offer");
   }
 
@@ -645,9 +648,9 @@ class OfferServiceTest {
     when(tenantService.isDeedOwner(walletAddress, nftId)).thenReturn(true);
     when(deedTenantOfferRepository.findById(offerId)).thenReturn(Optional.of(deedTenantOffer));
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    assertThrows(IllegalStateException.class, () -> deedTenantOfferService.deleteRentingOffer(walletAddress, offerId, null));
+    assertThrows(IllegalStateException.class, () -> offerService.deleteRentingOffer(walletAddress, offerId, null));
 
-    deedTenantOfferService.deleteRentingOffer(walletAddress, offerId, "transactionHash");
+    offerService.deleteRentingOffer(walletAddress, offerId, "transactionHash");
     verify(deedTenantOfferRepository, never()).deleteById(any());
     verify(deedTenantOfferRepository, atLeast(1)).save(any());
   }
@@ -664,9 +667,45 @@ class OfferServiceTest {
     when(deedTenantOfferRepository.findByOwnerNotAndNftIdAndEnabledTrue(walletAddress, nftId)).thenReturn(offers);
     when(deedTenantOfferRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-    deedTenantOfferService.cancelOffers(walletAddress, nftId);
+    offerService.cancelOffers(walletAddress, nftId);
     verify(deedTenantOfferRepository, never()).deleteById(any());
     verify(deedTenantOfferRepository, times(1)).save(any());
+  }
+
+  @Test
+  void testGetPendingTransactions() throws Exception {
+    DeedTenantOffer deedTenantOffer = newDeedTenant("1", 5);
+    when(deedTenantOfferRepository.findByOfferTransactionStatusInOrderByCreatedDateAsc(Arrays.asList(TransactionStatus.IN_PROGRESS)))
+                                                                                                                                     .thenReturn(Collections.singletonList(deedTenantOffer));
+
+    List<DeedTenantOfferDTO> pendingTransactions = offerService.getPendingTransactions();
+    assertNotNull(pendingTransactions);
+    assertEquals(1, pendingTransactions.size());
+
+    DeedTenantOfferDTO deedTenantOfferDTO = pendingTransactions.get(0);
+    assertEquals(deedTenantOffer.getId(), deedTenantOfferDTO.getId());
+    assertEquals(deedTenantOffer.getNftId(), deedTenantOfferDTO.getNftId());
+  }
+
+  @Test
+  void testUpdateRentingOfferStatusFromBlockchain() throws Exception {
+    String id = "offerId";
+    assertThrows(IllegalArgumentException.class, // NOSONAR
+                 () -> offerService.updateRentingOfferStatusFromBlockchain(id,
+                                                                           Collections.singletonMap(BlockchainOfferStatus.OFFER_ACQUIRED,
+                                                                                                    mock(DeedOfferBlockchainState.class))));
+
+    DeedTenantOffer deedTenantOffer = newDeedTenant(id, 5);
+    when(deedTenantOfferRepository.findById(id)).thenReturn(Optional.of(deedTenantOffer));
+    deedTenantOffer.setOfferId(10);
+
+    when(blockchainService.isOfferEnabled(10)).thenReturn(true);
+    offerService.updateRentingOfferStatusFromBlockchain(id, Collections.emptyMap());
+    verify(deedTenantOfferRepository, never()).delete(any());
+
+    when(blockchainService.isOfferEnabled(10)).thenReturn(false);
+    offerService.updateRentingOfferStatusFromBlockchain(id, Collections.emptyMap());
+    verify(deedTenantOfferRepository, times(1)).delete(any());
   }
 
   private DeedTenantOffer newDeedTenant(String offerId, long nftId) {

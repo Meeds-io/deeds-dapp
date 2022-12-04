@@ -29,6 +29,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.StringUtils;
@@ -45,19 +47,26 @@ import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tuples.generated.Tuple12;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 
+import io.meeds.deeds.constant.BlockchainOfferStatus;
 import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
+import io.meeds.deeds.contract.DeedRenting;
+import io.meeds.deeds.contract.DeedRenting.OfferCreatedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.OfferDeletedEventResponse;
+import io.meeds.deeds.contract.DeedRenting.RentPaidEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.deeds.elasticsearch.model.DeedCity;
+import io.meeds.deeds.model.DeedOfferBlockchainState;
 import io.meeds.deeds.model.FundInfo;
 
 @SpringBootTest(classes = {
@@ -66,31 +75,36 @@ import io.meeds.deeds.model.FundInfo;
 class BlockchainServiceTest {
 
   @MockBean(name = "ethereumNetwork")
-  private Web3j                  web3j;
+  private Web3j                            web3j;
 
   @MockBean
-  private DeedTenantProvisioning deedTenantProvisioning;
+  private DeedTenantProvisioning           deedTenantProvisioning;
 
   @MockBean
-  private Deed                   deed;
+  private DeedRenting                      deedRenting;
+
+  @MockBean
+  private Deed                             deed;
 
   @MockBean(name = "ethereumMeedToken")
-  private MeedsToken             ethereumToken;
+  private MeedsToken                       ethereumToken;
 
   @MockBean(name = "polygonMeedToken")
-  private MeedsToken             polygonToken;
+  private MeedsToken                       polygonToken;
 
   @MockBean
-  private XMeedsNFTRewarding     xMeedsToken;
+  private XMeedsNFTRewarding               xMeedsToken;
 
   @MockBean
-  private TokenFactory           tokenFactory;
+  private TokenFactory                     tokenFactory;
 
   @MockBean(name = "sushiPairToken")
-  private ERC20                  sushiPairToken;
+  private ERC20                            sushiPairToken;
 
   @Autowired
-  private BlockchainService      blockchainService;
+  private BlockchainService                blockchainService;
+
+  private static MockedStatic<DeedRenting> mockDeedRentingContract = mockStatic(DeedRenting.class);
 
   @Test
   void testGetDeedCardType() throws Exception {
@@ -523,6 +537,135 @@ class BlockchainServiceTest {
     minedTransactions = blockchainService.getMinedTransferOwnershipDeedTransactions(fromBlock, toBlock);
     assertNotNull(minedTransactions);
     assertEquals(3, minedTransactions.size());
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked", "rawtypes"
+  })
+  void testGetCreatedOfferTransactionEvents() throws Exception {
+    String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
+    Request getTransactionReceiptRequest = mock(Request.class);
+    EthGetTransactionReceipt ethGetTransactionReceipt = mock(EthGetTransactionReceipt.class);
+
+    when(web3j.ethGetTransactionReceipt(transactionHash)).thenReturn(getTransactionReceiptRequest);
+    when(getTransactionReceiptRequest.send()).thenReturn(ethGetTransactionReceipt);
+    TransactionReceipt transactionReceipt = mock(TransactionReceipt.class);
+    when(ethGetTransactionReceipt.getTransactionReceipt()).thenReturn(Optional.of(transactionReceipt));
+    when(transactionReceipt.isStatusOK()).thenReturn(false);
+
+    Map<BlockchainOfferStatus, DeedOfferBlockchainState> offerTransactionEvents =
+                                                                                blockchainService.getOfferTransactionEvents(transactionHash);
+    assertTrue(offerTransactionEvents.isEmpty());
+
+    OfferCreatedEventResponse offerCreateResponse = new OfferCreatedEventResponse();
+    offerCreateResponse.deedId = BigInteger.ONE;
+    offerCreateResponse.id = BigInteger.TWO;
+    offerCreateResponse.owner = "owner";
+
+    mockDeedRentingContract.when(() -> DeedRenting.getOfferCreatedEvents(transactionReceipt))
+                           .thenReturn(Collections.singletonList(offerCreateResponse));
+
+    mockOffer(offerCreateResponse.id);
+
+    when(transactionReceipt.isStatusOK()).thenReturn(true);
+
+    offerTransactionEvents = blockchainService.getOfferTransactionEvents(transactionHash);
+    assertFalse(offerTransactionEvents.isEmpty());
+    assertEquals(1, offerTransactionEvents.size());
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked", "rawtypes"
+  })
+  void testGetDeletedOfferTransactionEvents() throws Exception {
+    String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
+    Request getTransactionReceiptRequest = mock(Request.class);
+    EthGetTransactionReceipt ethGetTransactionReceipt = mock(EthGetTransactionReceipt.class);
+
+    when(web3j.ethGetTransactionReceipt(transactionHash)).thenReturn(getTransactionReceiptRequest);
+    when(getTransactionReceiptRequest.send()).thenReturn(ethGetTransactionReceipt);
+    TransactionReceipt transactionReceipt = mock(TransactionReceipt.class);
+    when(ethGetTransactionReceipt.getTransactionReceipt()).thenReturn(Optional.of(transactionReceipt));
+    when(transactionReceipt.isStatusOK()).thenReturn(false);
+
+    Map<BlockchainOfferStatus, DeedOfferBlockchainState> offerTransactionEvents =
+                                                                                blockchainService.getOfferTransactionEvents(transactionHash);
+    assertTrue(offerTransactionEvents.isEmpty());
+
+    OfferDeletedEventResponse offerDeleteResponse = new OfferDeletedEventResponse();
+    offerDeleteResponse.deedId = BigInteger.ONE;
+    offerDeleteResponse.id = BigInteger.TWO;
+    offerDeleteResponse.owner = "owner";
+
+    mockDeedRentingContract.when(() -> DeedRenting.getOfferDeletedEvents(transactionReceipt))
+                           .thenReturn(Collections.singletonList(offerDeleteResponse));
+
+    when(transactionReceipt.isStatusOK()).thenReturn(true);
+
+    offerTransactionEvents = blockchainService.getOfferTransactionEvents(transactionHash);
+    assertFalse(offerTransactionEvents.isEmpty());
+    assertEquals(1, offerTransactionEvents.size());
+  }
+
+  @Test
+  @SuppressWarnings({
+      "unchecked", "rawtypes"
+  })
+  void testGetPaidOfferTransactionEvents() throws Exception {
+    String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
+    Request getTransactionReceiptRequest = mock(Request.class);
+    EthGetTransactionReceipt ethGetTransactionReceipt = mock(EthGetTransactionReceipt.class);
+
+    when(web3j.ethGetTransactionReceipt(transactionHash)).thenReturn(getTransactionReceiptRequest);
+    when(getTransactionReceiptRequest.send()).thenReturn(ethGetTransactionReceipt);
+    TransactionReceipt transactionReceipt = mock(TransactionReceipt.class);
+    when(ethGetTransactionReceipt.getTransactionReceipt()).thenReturn(Optional.of(transactionReceipt));
+    when(transactionReceipt.isStatusOK()).thenReturn(false);
+
+    Map<BlockchainOfferStatus, DeedOfferBlockchainState> offerTransactionEvents =
+                                                                                blockchainService.getOfferTransactionEvents(transactionHash);
+    assertTrue(offerTransactionEvents.isEmpty());
+
+    RentPaidEventResponse offerPaidResponse = new RentPaidEventResponse();
+    offerPaidResponse.deedId = BigInteger.ONE;
+    offerPaidResponse.id = BigInteger.TWO;
+    offerPaidResponse.owner = "owner";
+    offerPaidResponse.firstRent = true;
+
+    mockDeedRentingContract.when(() -> DeedRenting.getRentPaidEvents(transactionReceipt))
+                           .thenReturn(Collections.singletonList(offerPaidResponse));
+    mockOffer(offerPaidResponse.id);
+    when(transactionReceipt.isStatusOK()).thenReturn(true);
+
+    offerTransactionEvents = blockchainService.getOfferTransactionEvents(transactionHash);
+    assertFalse(offerTransactionEvents.isEmpty());
+    assertEquals(1, offerTransactionEvents.size());
+  }
+
+  @SuppressWarnings({
+      "unchecked"
+  })
+  private void mockOffer(BigInteger offerId) throws Exception {
+    Tuple12<BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger> tuple12;
+    tuple12 = new Tuple12<>(
+                            BigInteger.valueOf(1),
+                            BigInteger.valueOf(2),
+                            BigInteger.valueOf(3).toString(),
+                            BigInteger.valueOf(4),
+                            BigInteger.valueOf(5),
+                            BigInteger.valueOf(6),
+                            BigInteger.valueOf(7),
+                            BigInteger.valueOf(8),
+                            BigInteger.valueOf(9),
+                            BigInteger.valueOf(10),
+                            BigInteger.valueOf(11).toString(),
+                            BigInteger.valueOf(12));
+    RemoteFunctionCall<Tuple12<BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger>> remoteFunctionCall;
+    remoteFunctionCall = mock(RemoteFunctionCall.class);
+    when(remoteFunctionCall.send()).thenReturn(tuple12);
+    when(deedRenting.deedOffers(offerId)).thenReturn(remoteFunctionCall);
   }
 
   private TransferSingleEventResponse newTransferSingleEvent(long nftId, String fromAddress, String toAddress) {

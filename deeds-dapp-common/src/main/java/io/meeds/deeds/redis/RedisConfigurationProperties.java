@@ -15,11 +15,15 @@
  */
 package io.meeds.deeds.redis;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Configuration
 @ConfigurationProperties(prefix = "meeds.redis")
@@ -29,12 +33,10 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = false)
 public class RedisConfigurationProperties extends RedisProperties {
 
-  @Getter
-  @Setter
+  @Value("${meeds.redis.channelName:channel}")
   private String channelName = "channel";
 
-  @Getter
-  @Setter
+  @Value("${meeds.redis.clientName}")
   private String clientName;
 
 }

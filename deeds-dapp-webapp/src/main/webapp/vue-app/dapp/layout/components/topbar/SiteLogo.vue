@@ -22,7 +22,7 @@
       :src="`/${parentLocation}/static/images/meeds.png`"
       height="24px"
       width="64px"
-      alt="" />
+      alt="">
     <div class="ps-2 mb-2px">{{ $t('dao') }}</div>
     <v-chip
       v-if="isTestNetwork"

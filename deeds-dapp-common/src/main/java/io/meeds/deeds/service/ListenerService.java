@@ -62,7 +62,7 @@ import io.meeds.deeds.storage.DeedTenantEventRepository;
 @Component
 public class ListenerService implements ApplicationContextAware {
 
-  private static final String                             ES_LAST_SCANNED_DATE_SETTING_NAME = "ES-LAST-SCANNED-DATE";
+  public static final String                              ES_LAST_SCANNED_DATE_SETTING_NAME = "ES-LAST-SCANNED-DATE";
 
   public static final Logger                              LOG                               =
                                                               LoggerFactory.getLogger(ListenerService.class);
@@ -221,18 +221,21 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   @PostConstruct
-  private void init() {
+  protected void init() {
+    destroy();
     clientName = redisProperties.getClientName();
     initRedisSubscription();
   }
 
   @PreDestroy
-  private void destroy() {
+  protected void destroy() {
     if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
       this.subscriptionConnection.close();
+      this.subscriptionConnection = null;
     }
     if (this.publicationConnection != null && this.publicationConnection.isOpen()) {
       this.publicationConnection.close();
+      this.publicationConnection = null;
     }
   }
 
@@ -369,7 +372,12 @@ public class ListenerService implements ApplicationContextAware {
     }
     try {
       Event event = OBJECT_MAPPER.readValue(persistentEvent.getObjectJson(), Event.class);
-      triggerEventLocally(event);
+      if (event == null) {
+        LOG.debug("Can't parse Event Class of name {}. Ignore the event, it should be meant to another type of clients",
+                  persistentEvent.getEventName());
+      } else {
+        triggerEventLocally(event);
+      }
       addElasticsearchEventCurrentConsumer(persistentEvent);
     } catch (Exception e) {
       LOG.warn("{} - Error while triggering event from ES {}",
