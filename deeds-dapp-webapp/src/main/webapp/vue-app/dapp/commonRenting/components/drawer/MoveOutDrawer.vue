@@ -47,7 +47,7 @@
         <v-card-text v-else>
           <v-list-item class="px-0">
             <v-list-item-icon size="72">
-              <v-icon size="72" color="warning">mdi-alert-remove</v-icon>
+              <v-icon size="72" color="warning">fas fa-circle-radiation</v-icon>
             </v-list-item-icon>
             <v-list-item-content class="d-inline">
               {{ $t('removeTenantDescription') }}

@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,12 +42,14 @@ import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 
 @Component("tenantPlaceholderRequestDispatcherFilter")
-public class TenantPlaceholderRequestDispatcherFilter implements Filter {
+public class TenantPlaceholderRequestDispatcherFilter extends HttpFilter {
+
+  private static final long    serialVersionUID    = 8971410534107824567L;
 
   private static final Pattern SERVER_HOST_PATTERN =
                                                    Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.wom\\.meeds\\.io");
 
-  protected TenantService      tenantService;
+  protected TenantService      tenantService;                                                                                                          // NOSONAR
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {

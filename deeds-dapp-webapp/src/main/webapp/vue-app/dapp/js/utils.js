@@ -34,3 +34,14 @@ export function getQueryParam(paramName) {
   const params = new URLSearchParams(uri);
   return params.get(paramName);
 }
+
+export function copyToClipboard(text) {
+  try {
+    navigator.clipboard.writeText(text);
+    document.dispatchEvent(new CustomEvent('copy-success'));
+    return true;
+  } catch (e) {
+    document.dispatchEvent(new CustomEvent('copy-error'));
+    return false;
+  }
+}

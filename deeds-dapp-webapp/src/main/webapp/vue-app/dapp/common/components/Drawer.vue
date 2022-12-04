@@ -64,14 +64,14 @@
                   name="expandDrawer"
                   icon
                   @click="toogleExpand">
-                  <v-icon v-text="expandIcon" size="18" />
+                  <v-icon v-text="expandIcon" size="14" />
                 </v-btn>
                 <v-btn
                   :title="$t('label.close')"
                   name="closeDrawer"
                   icon
                   @click="close">
-                  <v-icon>mdi-close</v-icon>
+                  <v-icon size="20">fas fa-xmark</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item>
@@ -142,7 +142,7 @@ export default {
       return this.expand && '100%' || this.drawerWidth;
     },
     expandIcon() {
-      return this.expand && 'mdi-arrow-collapse' || 'mdi-arrow-expand';
+      return this.expand && 'fas fa-down-left-and-up-right-to-center' || 'fas fa-up-right-and-down-left-from-center';
     },
     overlayOpacity() {
       return this.dark && '0.8' || '0.46';

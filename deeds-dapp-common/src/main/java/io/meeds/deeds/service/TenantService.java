@@ -121,6 +121,48 @@ public class TenantService {
     listenerService.publishEvent(DEED_EVENT_TENANT_EMAIL_UPDATED, deedTenant);
   }
 
+  public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId, // NOSONAR
+                                          boolean refreshFromBlockchain) throws ObjectNotFoundException, // NOSONAR
+                                                                         UnauthorizedOperationException {
+    DeedTenant deedTenant = getDeedTenantOrImport(managerAddress, nftId);
+    if (refreshFromBlockchain && deedTenant != null) {
+      boolean isPending = deedTenant.getTenantProvisioningStatus() != null
+          && deedTenant.getTenantProvisioningStatus().isPending();
+      if (isPending) {
+        boolean started = blockchainService.isDeedStarted(deedTenant.getNftId());
+        if (started && deedTenant.getTenantProvisioningStatus().isStart()) {
+          deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_CONFIRMED);
+        } else if (!started && deedTenant.getTenantProvisioningStatus().isStop()) {
+          deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_CONFIRMED);
+        }
+      } else {
+        // Mark Tenant as in progress to be checked again on DB
+        if (blockchainService.isDeedStarted(deedTenant.getNftId())) {
+          if (StringUtils.isBlank(deedTenant.getStartupTransactionHash())) {
+            deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_CONFIRMED);
+          } else {
+            deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_IN_PROGRESS);
+          }
+          saveDeedTenant(deedTenant);
+
+          // Return effective status
+          deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_CONFIRMED);
+        } else {
+          if (StringUtils.isBlank(deedTenant.getShutdownTransactionHash())) {
+            deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_CONFIRMED);
+          } else {
+            deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_IN_PROGRESS);
+          }
+          saveDeedTenant(deedTenant);
+
+          // Return effective status
+          deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_CONFIRMED);
+        }
+      }
+    }
+    return deedTenant;
+  }
+
   public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId) throws ObjectNotFoundException, // NOSONAR
                                                                              UnauthorizedOperationException {
     DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
@@ -263,6 +305,11 @@ public class TenantService {
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
     setDeedNftProperties(deedTenant);
+    if (blockchainService.isDeedStarted(deedTenant.getNftId())) {
+      deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.START_CONFIRMED);
+    } else {
+      deedTenant.setTenantProvisioningStatus(TenantProvisioningStatus.STOP_CONFIRMED);
+    }
     return deedTenant;
   }
 

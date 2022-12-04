@@ -18,13 +18,6 @@
 -->
 <template>
   <div>
-    <input
-      ref="clipboardInput"
-      v-model="address"
-      id="copyToClipboardInput"
-      name="copyToClipboardInput"
-      class="copyToClipboardInput"
-      type="text">
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
         <v-btn
@@ -38,21 +31,15 @@
           <div>{{ addressPart }}</div>
         </v-btn>
       </template>
-      <span>{{ title }}</span>
+      <span>{{ address }}</span>
     </v-tooltip>
   </div>
 </template>
 <script>
 export default {
-  data: () => ({
-    copied: false,
-  }),
   computed: Vuex.mapState({
     address: state => state.address,
     ens: state => state.ens,
-    title() {
-      return this.copied && this.$t('copied') || this.address;
-    },
     addressPart() {
       if (this.ens) {
         return this.ens;
@@ -63,28 +50,8 @@ export default {
     },
   }),
   methods: {
-    copyAddress(event) {
-      this.copyToClipboard();
-      if (event && event.focus) {
-        event.blur();
-        window.setTimeout(() => event.focus(), 100);
-        window.setTimeout(() => event.blur(), 1000);
-      }
-      window.setTimeout(() => {
-        this.copied = true;
-      }, 50);
-      window.setTimeout(() => this.copied = true, 50);
-      window.setTimeout(() => this.copied = false, 1100);
-    },
-    copyToClipboard() {
-      this.$refs.clipboardInput.select();
-      if (document.execCommand) {
-        try {
-          document.execCommand('copy');
-        } catch (e) {
-          console.error('Error executing document.execCommand', e);
-        }
-      }
+    copyAddress() {
+      this.$utils.copyToClipboard(this.address);
     },
   },
 };

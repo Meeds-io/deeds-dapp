@@ -71,11 +71,13 @@ export default {
     overallStartTimetamp: 1636156800000,
     toTimetamp: Date.now(),
     chart: null,
+    htmlMounted: false,
   }),
   computed: Vuex.mapState({
     language: state => state.language,
     address: state => state.address,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
+    echartsLoaded: state => state.echartsLoaded,
     selectedFiatCurrencyLabel() {
       return this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
     },
@@ -178,23 +180,39 @@ export default {
       }
     },
     meedPriceHistory() {
-      if (this.chart && this.chartOptions && this.meedPriceHistory.length) {
-        this.chart.setOption(this.chartOptions);
-        const today = new Date().toISOString().substring(0, 10);
-        const todayItem = this.meedPriceHistory.find(item => item.date === today);
-        if (todayItem && todayItem.currencyPrice) {
-          this.$store.commit('setMeedPrice', new BigNumber(todayItem.currencyPrice));
-        }
+      if (!this.chart) {
+        this.initChart();
       }
+      if (this.chart && this.chartOptions) {
+        this.chart.setOption(this.chartOptions);
+      }
+      this.setMeedPrice();
+    },
+    htmlMounted: {
+      immediate: true,
+      handler: function() {
+        this.initChart();
+      },
+    },
+    echartsLoaded: {
+      immediate: true,
+      handler: function() {
+        this.initChart();
+      },
     },
   },
   mounted() {
-    this.initChart();
+    this.htmlMounted = true;
     this.refreshData();
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$refs.priceChart);
+      if (this.htmlMounted && this.echartsLoaded) {
+        this.chart = echarts.init(this.$refs.priceChart);
+        if (this.chartOptions) {
+          this.chart.setOption(this.chartOptions);
+        }
+      }
     },
     refreshData() {
       return this.$exchange.getMeedsExchange(this.fromDate, this.selectedFiatCurrency)
@@ -224,6 +242,15 @@ export default {
       const date = item[0].value[0];
       const price = item[0].value[1];
       return `${this.dateFormatI18N(date)}: <strong>${this.currencyFormat(price)}</strong>`;
+    },
+    setMeedPrice() {
+      if (this.meedPriceHistory?.length) {
+        const today = new Date().toISOString().substring(0, 10);
+        const todayItem = this.meedPriceHistory.find(item => item.date === today);
+        if (todayItem?.currencyPrice) {
+          this.$store.commit('setMeedPrice', new BigNumber(todayItem.currencyPrice));
+        }
+      }
     },
   },
 };

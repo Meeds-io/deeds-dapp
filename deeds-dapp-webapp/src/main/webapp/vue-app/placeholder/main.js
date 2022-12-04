@@ -72,7 +72,9 @@ getI18N(language).then(() =>{
     store,
     i18n,
     vuetify: new Vuetify({
-      iconfont: 'fa',
+      icons: {
+        iconfont: 'fa',
+      },
       theme: {
         dark: false,
         disable: true,

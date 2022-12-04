@@ -118,6 +118,7 @@
                       :lease="lease"
                       :has-rent-offers="hasRentOffers"
                       :confirmed="rentalConfirmed"
+                      :is-provisioning-manager="isProvisioningManager"
                       owner
                       @provisioning-status="provisioningStatus = $event"
                       @tenant-status="tenantStatus = $event"

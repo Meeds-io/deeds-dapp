@@ -27,7 +27,7 @@
         v-bind="attrs"
         v-on="on">
         <div>{{ selectedLanguageLabel }}</div>
-        <v-icon>mdi-menu-down</v-icon>
+        <v-icon size="12" class="mx-2 mt-n1px">fa fa-caret-down</v-icon>
       </v-btn>
     </template>
     <v-list>

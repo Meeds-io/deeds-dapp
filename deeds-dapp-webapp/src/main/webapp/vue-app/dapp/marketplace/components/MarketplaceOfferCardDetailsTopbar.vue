@@ -230,12 +230,7 @@ export default {
       this.$store.commit('setStandaloneOfferId', null);
     },
     copyLink() {
-      try {
-        navigator.clipboard.writeText(window.location.href);
-        this.$root.$emit('alert-message', this.$t('deedsOfferPermanentLinkCopied'), 'success');
-      } catch (e) {
-        this.$root.$emit('alert-message', this.$t('navigatorDoesntAllowCopy'), 'warning');
-      }
+      this.$utils.copyToClipboard(window.location.href);
     },
   },
 };

@@ -38,7 +38,7 @@
           v-else
           size="72"
           class="mx-auto">
-          mdi-image-size-select-actual
+          fas fa-image
         </v-icon>
       </v-card-text>
       <v-card-title class="justify-center pt-0">

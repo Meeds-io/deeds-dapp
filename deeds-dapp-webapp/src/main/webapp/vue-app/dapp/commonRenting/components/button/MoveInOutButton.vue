@@ -153,6 +153,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isProvisioningManager: {
+      type: Boolean,
+      default: false,
+    },
     hasRentOffers: {
       type: Boolean,
       default: false,
@@ -184,6 +188,8 @@ export default {
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
+    tenantProvisioningContract: state => state.tenantProvisioningContract,
+    address: state => state.address,
     nftId() {
       return this.lease?.nftId;
     },
@@ -241,7 +247,7 @@ export default {
   created() {
     this.$root.$on('nft-status-changed', this.handleStatusChanged);
     document.addEventListener('nft-tenant-provisioning-changed', this.handleBlockchainStatusChanged);
-    this.init();
+    this.init().finally(() => this.synchronizeBlockchainDeedInfo());
   },
   beforeDestroy() {
     this.$root.$off('nft-status-changed', this.handleStatusChanged);
@@ -251,12 +257,13 @@ export default {
     init() {
       this.$store.commit('installProvisioningListeners');
       if (this.lease?.deedInfo?.then) { // Promise loading in progress
-        this.lease?.deedInfo.then(deedInfo => this.deedInfo = deedInfo);
+        return this.lease?.deedInfo.then(deedInfo => this.deedInfo = deedInfo);
       } else if (this.lease?.deedInfo) {
         this.deedInfo = this.lease?.deedInfo;
       } else {
-        this.refreshDeedInfo();
+        return this.refreshDeedInfo();
       }
+      return Promise.resolve();
     },
     handleBlockchainStatusChanged(event) {
       const detail = event?.detail;
@@ -304,9 +311,27 @@ export default {
           })
         );
     },
-    refreshDeedInfo() {
+    synchronizeBlockchainDeedInfo() {
+      if ((this.owner || this.confirmed)
+          && this.tenantProvisioningContract) {
+        return Promise.all([
+          this.tenantProvisioningContract.isProvisioningManager(this.address, this.nftId),
+          this.tenantProvisioningContract.tenantStatus(this.nftId)
+        ]).then(([provisioningManager, started]) => {
+          if (provisioningManager !== !!this.isProvisioningManager
+              || (started && !this.started && !this.stopping)
+              || (!started && !this.stopped && !this.starting)) {
+            // Blockchain information are more up to date,
+            // force refresh information
+            return this.refreshDeedInfo(true)
+              .then(() => this.$emit('provisioning-status', started && 'START_CONFIRMED' || 'STOP_CONFIRMED'));
+          }
+        });
+      }
+    },
+    refreshDeedInfo(refresh) {
       if (this.authenticated) {
-        return this.$tenantManagement.getTenantInfo(this.nftId)
+        return this.$tenantManagement.getTenantInfo(this.nftId, !!refresh)
           .then(deedInfo => this.deedInfo = deedInfo)
           .catch(() => this.$emit('logout', true));
       }

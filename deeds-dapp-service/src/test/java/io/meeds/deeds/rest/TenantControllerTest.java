@@ -79,7 +79,7 @@ class TenantControllerTest {
   @Test
   @WithMockUser(username = USERNAME, roles = DeedAuthenticationProvider.USER_ROLE_NAME)
   void whenAuthenticatedGetDeedTenant_thenNOk() throws Exception {
-    when(tenantService.getDeedTenantOrImport(USERNAME, NFT_ID)).thenReturn(new DeedTenant());
+    when(tenantService.getDeedTenantOrImport(USERNAME, NFT_ID, false)).thenReturn(new DeedTenant());
     mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isOk());
     mockMvc.perform(get("/api/tenants/" + (NFT_ID + 1))).andExpect(status().isNotFound());
   }

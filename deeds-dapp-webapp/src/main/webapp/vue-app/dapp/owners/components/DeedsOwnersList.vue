@@ -67,8 +67,11 @@ export default {
     selectedStandaloneDeedCardName: state => state.selectedStandaloneDeedCardName,
     authenticated: state => state.authenticated,
     deedLoading: state => state.deedLoading,
+    ownedLeases() {
+      return this.leases && this.leases.filter(lease => this.ownedNfts.findIndex(nft => nft.id === lease.nftId) >= 0);
+    },
     loadedLeasesLength() {
-      return this.leases?.length || 0;
+      return this.ownedLeases?.length || 0;
     },
     hasLeases() {
       return this.loadedLeasesLength > 0;
@@ -174,7 +177,7 @@ export default {
       } else {
         lease.deedInfo = this.getDeedInfo(lease, lease.nftId);
         this.refreshedLeases[lease.nftId] = lease;
-        this.deedsToDisplay = [...this.leases, this.ownedDeeds];
+        this.deedsToDisplay = [...this.ownedLeases, this.ownedDeeds];
       }
     },
     computeDeedsToDisplay() {
@@ -209,7 +212,7 @@ export default {
         this.ownedDeeds = ownedDeeds;
       }
       if (this.selectedStandaloneDeedCardName) {
-        this.deedsToDisplay = [...this.leases, ...this.ownedDeeds].sort((a, b) => {
+        this.deedsToDisplay = [...this.ownedLeases, ...this.ownedDeeds].sort((a, b) => {
           if (a.cardType?.toUpperCase() !== b.cardType?.toUpperCase()) {
             if (a.cardType?.toUpperCase() === this.selectedStandaloneDeedCardName.toUpperCase()) {
               return -1;
@@ -220,7 +223,7 @@ export default {
           return 0;
         });
       } else {
-        this.deedsToDisplay = [...this.leases, ...this.ownedDeeds];
+        this.deedsToDisplay = [...this.ownedLeases, ...this.ownedDeeds];
       }
       if (this.selectedStandaloneDeedId) {
         const index = this.deedsToDisplay.findIndex(displayedLease => displayedLease.nftId === this.selectedStandaloneDeedId);

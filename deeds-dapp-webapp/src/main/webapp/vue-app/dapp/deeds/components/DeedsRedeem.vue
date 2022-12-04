@@ -22,7 +22,7 @@
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
         :address="deedAddress"
-        button-top="-9"
+        button-top="-6"
         token />
       <v-divider class="my-auto ms-4" />
     </v-card-title>

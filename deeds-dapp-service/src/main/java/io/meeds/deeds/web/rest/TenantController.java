@@ -15,6 +15,7 @@
  */
 package io.meeds.deeds.web.rest;
 
+import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
 import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedTenantResponse;
 
 import java.security.Principal;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +75,8 @@ public class TenantController {
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public ResponseEntity<DeedTenantPresentation> getDeedTenant(
                                                               Principal principal,
+                                                              @RequestHeader(name = CODE_REFRESH_HTTP_HEADER, required = false)
+                                                              boolean refreshFromBlockchain,
                                                               @PathVariable(name = "nftId")
                                                               Long nftId) {
     if (principal == null) {
@@ -80,7 +84,7 @@ public class TenantController {
     }
     String walletAddress = principal.getName();
     try {
-      DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId);
+      DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId, refreshFromBlockchain);
       return getDeedTenantResponse(deedTenant);
     } catch (UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);

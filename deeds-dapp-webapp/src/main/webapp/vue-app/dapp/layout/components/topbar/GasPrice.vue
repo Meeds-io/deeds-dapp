@@ -11,7 +11,12 @@
         v-bind="attrs"
         v-on="on"
         @click="refreshGasPrice">
-        <v-icon color="grey" class="me-1">mdi-gas-station</v-icon>
+        <v-icon
+          color="grey"
+          class="me-2"
+          size="18">
+          fas fa-gas-pump
+        </v-icon>
         <div v-if="gasPriceGwei">{{ floorGasPriceGwei }} GWEI</div>
         <v-skeleton-loader
           v-else

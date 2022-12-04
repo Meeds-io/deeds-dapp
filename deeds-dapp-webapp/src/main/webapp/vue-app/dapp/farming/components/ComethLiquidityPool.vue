@@ -95,7 +95,6 @@
                 <deeds-number-format :value="lpBalanceOfTokenFactory" :fractions="2">
                   <deeds-contract-address
                     :address="lpAddress"
-                    :button-top="-2"
                     label="UNI-V2"
                     token
                     polygon />
@@ -135,7 +134,6 @@
                 :fractions="2">
                 <deeds-contract-address
                   :address="lpAddress"
-                  :button-top="-2"
                   label="UNI-V2"
                   token
                   polygon />
@@ -172,7 +170,6 @@
                 :fractions="2">
                 <deeds-contract-address
                   :address="lpAddress"
-                  :button-top="-2"
                   label="UNI-V2"
                   token
                   polygon />
@@ -215,7 +212,6 @@
                   <deeds-contract-address
                     :address="polygonMeedAddress"
                     label="MEED (Polygon)"
-                    :button-top="-2"
                     token
                     polygon />
                 </deeds-number-format>

@@ -19,11 +19,8 @@
 package io.meeds.deeds.web.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,31 +28,27 @@ import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class RequestDispatcherFilter extends HttpFilter {
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-  private static final long         serialVersionUID = -4145074746513311839L;
+@EnableWebMvc
+public class StaticResourceFilter extends HttpFilter {
 
-  private static final List<String> PATHS            = Arrays.asList("/",
-                                                                     "/marketplace",
-                                                                     "/tenants",
-                                                                     "/owners",
-                                                                     "/overview",
-                                                                     "/stake",
-                                                                     "/deeds",
-                                                                     "/farm");
+  private static final long serialVersionUID = -1870848677869804113L;
+
+  private static final long LAST_MODIFIED    = System.currentTimeMillis();
+
+  private static final long MAX_AGE          = 31536000l;
+
+  private static final long EXPIRES          = LAST_MODIFIED + MAX_AGE * 1000;
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    if (PATHS.contains(request.getServletPath())) {
-      response.setContentType("text/html; charset=UTF-8");
-      response.setCharacterEncoding("UTF-8");
-      RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/view.jsp");
-      dispatcher.include(request, response);// NOSONAR
-    } else {
-      chain.doFilter(request, response);
-    }
+    response.setDateHeader("Last-Modified", LAST_MODIFIED);
+    response.setDateHeader("Expires", EXPIRES);
+    response.setHeader("Cache-Control", "public,max-age=" + MAX_AGE);
+    chain.doFilter(request, response);
   }
 
 }

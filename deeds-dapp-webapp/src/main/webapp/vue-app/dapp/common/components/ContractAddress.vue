@@ -31,12 +31,14 @@
           v-if="!metamaskOffline"
           :style="buttonTop && {top: `${buttonTop}px`}"
           absolute
+          height="12"
+          width="12"
           icon
-          x-small
+          outlined
           class="ms-1"
           v-bind="attrs"
           v-on="on">
-          <v-icon small>mdi-information-outline</v-icon>
+          <v-icon size="8" class="my-auto">fas fa-info</v-icon>
         </v-btn>
       </span>
     </template>
@@ -58,14 +60,14 @@
             rel="nofollow noreferrer noopener"
             icon
             class="me-3 rounded-lg border-color">
-            <v-icon>mdi-link</v-icon>
+            <v-icon size="16">fas fa-link</v-icon>
           </v-btn>
           <v-btn
             :title="$t('copyAddress')"
             icon
             class="me-3 rounded-lg border-color"
             @click="copyToClipboard">
-            <v-icon>mdi-content-copy</v-icon>
+            <v-icon size="16">far fa-copy</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -90,7 +92,7 @@ export default {
     },
     buttonTop: {
       type: Number,
-      default: 0,
+      default: () => 1,
     },
     polygon: {
       type: Boolean,
@@ -127,16 +129,7 @@ export default {
   },
   methods: {
     copyToClipboard() {
-      const copyToClipboardInput = document.getElementById('copyToClipboardInput');
-      copyToClipboardInput.value = this.address;
-      copyToClipboardInput.select();
-      if (document.execCommand) {
-        try {
-          document.execCommand('copy');
-        } catch (e) {
-          console.error('Error executing document.execCommand', e);
-        }
-      }
+      this.$utils.copyToClipboard(this.address);
     },
   },
 };

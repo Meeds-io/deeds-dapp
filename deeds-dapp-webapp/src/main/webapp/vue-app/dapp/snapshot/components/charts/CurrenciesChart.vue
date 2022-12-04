@@ -29,15 +29,16 @@
 </template>
 <script>
 export default {
-  data: () => ({
-    chart: null,
-  }),
   props: {
     metrics: {
       type: Object,
       default: null,
     },
   },
+  data: () => ({
+    chart: null,
+    htmlMounted: false,
+  }),
   computed: Vuex.mapState({
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     xMeedAddress: state => state.xMeedAddress,
@@ -45,6 +46,7 @@ export default {
     vestingAddress: state => state.vestingAddress,
     language: state => state.language,
     isMobile: state => state.isMobile,
+    echartsLoaded: state => state.echartsLoaded,
     chartOptions() {
       const chartData = [];
       if (this.metrics) {
@@ -116,6 +118,9 @@ export default {
   }),
   watch: {
     metrics() {
+      if (!this.chart) {
+        this.initChart();
+      }
       if (this.chart && this.chartOptions) {
         this.chart.setOption(this.chartOptions);
       }
@@ -130,13 +135,30 @@ export default {
         this.chart.setOption(this.chartOptions);
       }
     },
+    htmlMounted: {
+      immediate: true,
+      handler: function() {
+        this.initChart();
+      },
+    },
+    echartsLoaded: {
+      immediate: true,
+      handler: function() {
+        this.initChart();
+      },
+    },
   },
   mounted() {
-    this.initChart();
+    this.htmlMounted = true;
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$refs.echartCurrencies);
+      if (this.htmlMounted && this.echartsLoaded) {
+        this.chart = echarts.init(this.$refs.echartCurrencies);
+        if (this.chartOptions) {
+          this.chart.setOption(this.chartOptions);
+        }
+      }
     },
     labelFormatter(item) {
       const name = item.data.name;

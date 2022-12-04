@@ -40,7 +40,7 @@
               v-else
               size="32"
               class="mx-auto">
-              mdi-cash
+              fas fa-money-bill
             </v-icon>
           </template>
         </v-card-text>
@@ -121,7 +121,6 @@
                     <deeds-contract-address
                       :address="lpAddress"
                       :label="lpSymbol"
-                      :button-top="-2"
                       token />
                   </deeds-number-format>
                   <deeds-number-format
@@ -160,7 +159,6 @@
                   <deeds-contract-address
                     :address="lpAddress"
                     :label="lpSymbol"
-                    :button-top="-2"
                     token />
                 </deeds-number-format>
               </v-list-item-subtitle>
@@ -193,7 +191,6 @@
                   <deeds-contract-address
                     :address="lpAddress"
                     :label="lpSymbol"
-                    :button-top="-2"
                     token />
                 </deeds-number-format>
               </v-list-item-subtitle>
@@ -231,7 +228,6 @@
                     <deeds-contract-address
                       :address="meedAddress"
                       label="MEED"
-                      :button-top="-2"
                       token />
                   </deeds-number-format>
                   <deeds-number-format

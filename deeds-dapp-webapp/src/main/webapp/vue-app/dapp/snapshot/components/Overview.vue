@@ -27,6 +27,16 @@ export default {
   created() {
     this.$store.commit('loadRewardedFunds', true);
     this.$store.commit('loadPolygonBalances', true);
+    if (!document.querySelector('#echarts-script')) {
+      const script = document.createElement('script');
+      script.id = 'echarts-script';
+      script.src = './static/js/echarts.min.js?_=5.4.0';
+      script.type = 'text/javascript';
+      script.onload = () => {
+        this.$store.commit('echartsLoaded');
+      };
+      document.getElementsByTagName('head')[0].appendChild(script);
+    }
   },
 };
 </script>

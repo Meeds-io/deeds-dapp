@@ -33,13 +33,10 @@
         outlined
         text
         class="me-sm-4">
-        <v-img
+        <img
           :src="`/${parentLocation}/static/images/discord.ico`"
-          height="24"
-          max-width="24"
-          class="me-2"
-          contain
-          eager />
+          alt=""
+          class="me-2 img-24px">
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
@@ -50,13 +47,10 @@
         outlined
         text
         class="ms-0 ms-sm-4 mt-4 mt-sm-0">
-        <v-img
+        <img
           :src="`/${parentLocation}/static/images/snapshot.png`"
-          height="24"
-          max-width="24"
-          class="me-2"
-          contain
-          eager />
+          alt=""
+          class="me-2 img-24px">
         <span class="text-none">{{ $t('voteOnSnapshot') }}</span>
       </v-btn>
     </v-card-actions>

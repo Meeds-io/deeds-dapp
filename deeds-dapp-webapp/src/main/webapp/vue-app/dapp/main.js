@@ -82,7 +82,9 @@ const themePreference = window.localStorage.getItem('meeds-preferred-theme-color
 const systemThemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
 const dark = (systemThemeDark && themePreference === 'system') || themePreference === 'dark';
 const vuetify = new Vuetify({
-  iconfont: 'fa',
+  icons: {
+    iconfont: 'fa',
+  },
   theme: {
     dark,
     disable: true,
@@ -245,6 +247,7 @@ const store = new Vuex.Store({
     parentLocation: window.parentAppLocation,
     addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
     rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
+    echartsLoaded: false,
     address: null,
     networkId: null,
     validNetwork: false,
@@ -417,6 +420,9 @@ const store = new Vuex.Store({
     openedDrawersCount: 0,
   },
   mutations: {
+    echartsLoaded(state) {
+      state.echartsLoaded = true;
+    },
     setOfferId(state, value) {
       state.selectedStandaloneOfferId = null;
       state.selectedOfferId = value;

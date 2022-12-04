@@ -30,10 +30,12 @@
             </strong>
             <v-btn
               absolute
+              height="12"
+              width="12"
               icon
-              x-small
-              class="ms-1">
-              <v-icon small>mdi-information-outline</v-icon>
+              outlined
+              class="ms-2 mt-1">
+              <v-icon size="8" class="my-auto">fas fa-info</v-icon>
             </v-btn>
           </span>
         </template>

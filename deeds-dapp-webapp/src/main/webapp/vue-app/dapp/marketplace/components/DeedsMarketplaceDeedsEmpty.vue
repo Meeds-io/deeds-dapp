@@ -9,15 +9,10 @@
       max-width="100%"
       class="d-flex flex-column align-center text-center mx-12"
       flat>
-      <v-img
+      <img
         :src="`/${parentLocation}/static/images/deeds.png`"
-        max-height="200"
-        height="250"
-        width="400px"
-        max-width="100%"
-        class="mb-8"
-        contain
-        eager />
+        alt=""
+        class="mb-8 img-deeds-empty">
       <template v-if="offerNotAvailable">
         <div class="pa-0">{{ $t('dapp.marketplace.deedsOfferNotAvailableAnyMore') }}</div>
         <div class="pa-0 mt-4" v-html="notAvailableMessage"></div>

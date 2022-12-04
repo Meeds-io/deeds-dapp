@@ -31,13 +31,10 @@
         outlined
         text
         @click.prevent.stop="$root.$emit('switch-page', 'owners')">
-        <v-img
-          :src="`/${parentLocation}/static/images/deed.png`"
-          height="30"
-          max-width="24"
-          class="me-2"
-          contain
-          eager />
+        <img
+          :src="`/${parentLocation}/static/images/deed-small.png`"
+          alt=""
+          class="me-2 img-30px">
         <span class="text-none">{{ $t('myDeeds') }}</span>
       </v-btn>
     </v-card-actions>

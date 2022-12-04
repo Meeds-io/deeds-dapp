@@ -106,6 +106,7 @@
                         :lease="lease"
                         :confirmed="rentalConfirmed"
                         :has-paid-current-period="hasPaidCurrentPeriod"
+                        :is-provisioning-manager="isProvisioningManager"
                         @provisioning-status="provisioningStatus = $event"
                         @tenant-status="tenantStatus = $event"
                         @logout="logout($event)" />

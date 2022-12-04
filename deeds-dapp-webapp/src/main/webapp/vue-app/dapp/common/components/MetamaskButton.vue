@@ -26,12 +26,10 @@
     color="primary"
     class="grey lighten-4 border-color-inherit"
     outlined>
-    <v-img
+    <img
       :src="`/${parentLocation}/static/images/metamask.svg`"
-      max-height="16px"
-      max-width="16px"
-      class="me-0 me-sm-3"
-      eager />
+      alt=""
+      class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('installMetamaskButton') }}</span>
   </v-btn>
   <v-btn
@@ -40,12 +38,10 @@
     color="secondary"
     outlined
     @click="switchMetamaskNetwork">
-    <v-img
+    <img
       :src="`/${parentLocation}/static/images/metamask.svg`"
-      max-height="16px"
-      max-width="16px"
-      class="me-0 me-sm-3"
-      eager />
+      alt=""
+      class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
@@ -54,12 +50,10 @@
     color="primary"
     outlined
     @click="connectToMetamask">
-    <v-img
+    <img
       :src="`/${parentLocation}/static/images/metamask.svg`"
-      max-height="16px"
-      max-width="16px"
-      class="me-0 me-sm-3"
-      eager />
+      alt=""
+      class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('connectMetamaskButton') }}</span>
   </v-btn>
 </template>

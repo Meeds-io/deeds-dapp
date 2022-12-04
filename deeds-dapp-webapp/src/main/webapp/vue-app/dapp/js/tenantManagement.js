@@ -77,12 +77,16 @@ export function getTenantStartDate(nftId) {
   });
 }
 
-export function getTenantInfo(nftId) {
+export function getTenantInfo(nftId, refreshFromBlockchain) {
+  const headers = {
+    'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+  };
+  if (refreshFromBlockchain) {
+    headers['X-REFRESH'] = 'true';
+  }
   return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'GET',
-    headers: {
-      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
-    },
+    headers,
     credentials: 'include',
   }).then(resp => {
     if (resp && resp.ok) {

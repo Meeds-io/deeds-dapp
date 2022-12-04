@@ -38,22 +38,16 @@
       colored-border>
       <div class="d-flex flex-nowrap align-center full-width">
         <template v-if="currency">
-          <v-img
+          <img
             v-if="currency === 'MEED'"
             :src="`/${parentLocation}/static/images/meedsicon.png`"
-            :max-height="maxIconsSize"
-            :max-width="maxIconsSize"
-            class="me-4"
-            contain
-            eager />
-          <v-img
+            alt=""
+            class="me-4 img-20px">
+          <img
             v-else-if="currency === 'ETH'"
             :src="`/${parentLocation}/static/images/ether.svg`"
-            :max-height="maxIconsSize"
-            :max-width="maxIconsSize"
-            class="me-2"
-            contain
-            eager />
+            alt=""
+            class="me-2 img-20px">
         </template>
         <span
           v-if="useHtml"
@@ -82,7 +76,7 @@
           name="closeAlertButton"
           icon
           @click="closeAlert">
-          <v-icon>mdi-close</v-icon>
+          <v-icon>fas fa-xmark</v-icon>
         </v-btn>
       </div>
     </v-alert>
@@ -147,6 +141,8 @@ export default {
     });
     document.addEventListener('transaction-sent', this.handleTransactionSent);
     document.addEventListener('transaction-sending-error', this.handleTransactionEstimationError);
+    document.addEventListener('copy-success', this.handleCopySuccess);
+    document.addEventListener('copy-error', this.handleCopyError);
     this.$root.$on('close-alert-message', this.closeAlert);
     this.$root.$on('drawer-closed', (_drawer, level) => {
       if (level === 1) {
@@ -157,12 +153,24 @@ export default {
     this.$root.$on('switch-page', this.closeAlert);
   },
   methods: {
+    handleCopySuccess() {
+      this.openAlert({
+        alertType: 'success',
+        alertMessage: this.$t('deedsOfferPermanentLinkCopied'),
+      });
+    },
+    handleCopyError() {
+      this.openAlert({
+        alertType: 'warning',
+        alertMessage: this.$t('navigatorDoesntAllowCopy'),
+      });
+    },
     handleTransactionSent(event) {
       const transactionHash = event?.detail;
       if (transactionHash) {
         this.openAlert({
           alertLink: `${this.etherscanBaseLink}/tx/${transactionHash}`,
-          alertLinkIcon: 'mdi-open-in-new',
+          alertLinkIcon: 'fas fa-up-right-from-square',
           alertType: 'success',
           alertMessage: this.$t('transactionSent'),
           alertLinkTooltip: this.$t('viewOnEtherscan'),

@@ -26,7 +26,7 @@
   <artifactId>deeds-dapp-common</artifactId>
   <name>Meeds:: Deeds Dapp - Common </name>
   <properties>
-    <exo.test.coverage.ratio>0.43</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.42</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>

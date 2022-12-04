@@ -21,12 +21,12 @@
     max-width="165px"
     class="d-flex flex-column align-center text-center mx-sm-12 mx-auto"
     flat>
-    <v-img
+    <img
       :src="`/${parentLocation}/static/images/${imageSrc}`"
-      max-height="65"
-      width="65"
-      contain
-      eager />
+      alt=""
+      class="img-65px"
+      width="65px"
+      height="65px">
     <strong class="primary--text mt-2 mb-1">{{ $t(title) }}</strong>
     <v-card-subtitle class="pa-0 hidden-xs-only">{{ $t(subtitle) }}</v-card-subtitle>
   </v-card>

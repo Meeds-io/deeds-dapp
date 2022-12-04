@@ -23,7 +23,7 @@
     height="350"
     outlined>
     <v-card-title class="d-flex flex-column justify-center pb-2">
-      <v-icon>mdi-key</v-icon>
+      <v-icon>fas fa-key</v-icon>
       <span>{{ $t('meedsStakes') }}</span>
     </v-card-title>
     <v-card
@@ -100,7 +100,6 @@
                     <deeds-number-format :value="meedsTotalBalanceOfXMeeds" :fractions="2">
                       <deeds-contract-address
                         :address="meedAddress"
-                        :button-top="-2"
                         label="MEED"
                         token />
                     </deeds-number-format>
@@ -155,7 +154,6 @@
                   :fractions="2">
                   <deeds-contract-address
                     :address="meedAddress"
-                    :button-top="-2"
                     label="MEED"
                     token />
                 </deeds-number-format>
@@ -193,7 +191,6 @@
                       :fractions="2">
                       <deeds-contract-address
                         :address="xMeedAddress"
-                        :button-top="-2"
                         label="xMEED"
                         token />
                     </deeds-number-format>
@@ -210,7 +207,6 @@
                   :fractions="2">
                   <deeds-contract-address
                     :address="xMeedAddress"
-                    :button-top="-2"
                     label="xMEED"
                     token />
                 </deeds-number-format>
