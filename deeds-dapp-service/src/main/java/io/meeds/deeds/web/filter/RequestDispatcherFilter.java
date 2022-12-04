@@ -44,11 +44,28 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                      "/deeds",
                                                                      "/farm");
 
+  private static final long         LAST_MODIFIED    = System.currentTimeMillis();
+
+  private static final String       VERSION          = String.valueOf(LAST_MODIFIED);
+
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     if (PATHS.contains(request.getServletPath())) {
+      String eTagHeader = request.getHeader("If-None-Match");
+      if (VERSION.equals(eTagHeader)) {
+        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        return;
+      }
+      long ifModifiedSinceHeader = request.getDateHeader("If-Modified-Since");
+      if (ifModifiedSinceHeader > 0 && LAST_MODIFIED <= ifModifiedSinceHeader) {
+        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        return;
+      }
+      response.setHeader("Cache-Control", "public,must-revalidate");
+      response.setHeader("etag", VERSION);
+      response.setDateHeader("Last-Modified", LAST_MODIFIED);
       response.setContentType("text/html; charset=UTF-8");
       response.setCharacterEncoding("UTF-8");
       RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/view.jsp");
