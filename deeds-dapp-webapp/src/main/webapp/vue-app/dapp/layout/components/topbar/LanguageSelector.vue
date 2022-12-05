@@ -43,7 +43,7 @@
 <script>
 export default {
   data: () => ({
-    languages: ['en', 'fr'],
+    languages: ['en', 'fr', 'Magic Lang'],
   }),
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
