@@ -21,6 +21,7 @@ package io.meeds.deeds.web.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -30,6 +31,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.codec.binary.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
@@ -54,17 +58,13 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletResponse response = (HttpServletResponse) res;
     if (PATHS.contains(request.getServletPath())) {
       String eTagHeader = request.getHeader("If-None-Match");
-      if (VERSION.equals(eTagHeader)) {
-        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-        return;
-      }
-      long ifModifiedSinceHeader = request.getDateHeader("If-Modified-Since");
-      if (ifModifiedSinceHeader > 0 && LAST_MODIFIED <= ifModifiedSinceHeader) {
+      String eTagValue = getETagValue(request);
+      if (StringUtils.equals(eTagHeader, eTagValue)) {
         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         return;
       }
       response.setHeader("Cache-Control", "public,must-revalidate");
-      response.setHeader("etag", VERSION);
+      response.setHeader("etag", eTagValue);
       response.setDateHeader("Last-Modified", LAST_MODIFIED);
       response.setContentType("text/html; charset=UTF-8");
       response.setCharacterEncoding("UTF-8");
@@ -73,6 +73,11 @@ public class RequestDispatcherFilter extends HttpFilter {
     } else {
       chain.doFilter(request, response);
     }
+  }
+
+  private String getETagValue(HttpServletRequest request) {
+    HttpSession session = request.getSession();
+    return VERSION + Objects.hash(request.getRemoteUser(), session == null ? null : session.getId());
   }
 
 }
