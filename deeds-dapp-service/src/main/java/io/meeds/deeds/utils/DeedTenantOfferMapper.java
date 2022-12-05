@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
+import io.meeds.deeds.constant.RentalDuration;
+import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.model.DeedTenantOffer;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
@@ -41,9 +43,14 @@ public class DeedTenantOfferMapper {
     if (deedTenantOffer == null) {
       return null;
     }
-    ExpirationDuration expirationDuration = deedTenantOffer.getExpirationDuration();
+    ExpirationDuration expirationDuration = ExpirationDuration.fromDays(deedTenantOffer.getExpirationDays());
+    RentalDuration duration = RentalDuration.fromMonths(deedTenantOffer.getMonths());
+    NoticePeriod noticePeriod = NoticePeriod.fromMonths(deedTenantOffer.getNoticePeriod());
+    RentalPaymentPeriodicity paymentPeriodicity = deedTenantOffer.getPaymentPeriodicity();
+
     Instant expirationDate = expirationDuration == null
-        || MAX_DATE_VALUE.equals(deedTenantOffer.getExpirationDate()) ? null : deedTenantOffer.getExpirationDate();
+        || MAX_DATE_VALUE.equals(deedTenantOffer.getExpirationDate()) ? null
+                                                                      : deedTenantOffer.getExpirationDate();
     return new DeedTenantOfferDTO(deedTenantOffer.getId(),
                                   deedTenantOffer.getOfferId(),
                                   deedTenantOffer.getNftId(),
@@ -56,9 +63,12 @@ public class DeedTenantOfferMapper {
                                   deedTenantOffer.getAllDurationAmount(),
                                   deedTenantOffer.getOfferType(),
                                   expirationDuration,
-                                  deedTenantOffer.getDuration(),
-                                  deedTenantOffer.getPaymentPeriodicity(),
+                                  deedTenantOffer.getExpirationDays(),
+                                  duration,
+                                  deedTenantOffer.getMonths(),
+                                  noticePeriod,
                                   deedTenantOffer.getNoticePeriod(),
+                                  paymentPeriodicity,
                                   deedTenantOffer.getOwnerMintingPercentage(),
                                   deedTenantOffer.getMintingPower(),
                                   deedTenantOffer.getOfferTransactionHash(),
@@ -79,9 +89,9 @@ public class DeedTenantOfferMapper {
       return null;
     }
     NoticePeriod noticePeriod = deedTenantOfferDTO.getNoticePeriod();
-    if (noticePeriod == null) {
-      noticePeriod = NoticePeriod.NO_PERIOD;
-    }
+    RentalDuration rentalDuration = deedTenantOfferDTO.getDuration();
+    ExpirationDuration expirationDuration = deedTenantOfferDTO.getExpirationDuration();
+
     Instant now = Instant.now();
     DeedTenantOffer newOffer = new DeedTenantOffer();
     newOffer.setOfferId(deedTenantOfferDTO.getOfferId());
@@ -98,10 +108,10 @@ public class DeedTenantOfferMapper {
     newOffer.setDescription(deedTenantOfferDTO.getDescription());
     newOffer.setAmount(deedTenantOfferDTO.getAmount());
     newOffer.setAllDurationAmount(deedTenantOfferDTO.getAllDurationAmount());
-    newOffer.setDuration(deedTenantOfferDTO.getDuration());
-    newOffer.setExpirationDuration(deedTenantOfferDTO.getExpirationDuration());
+    newOffer.setMonths(rentalDuration == null ? 0 : rentalDuration.getMonths());
+    newOffer.setExpirationDays(expirationDuration == null ? 0 : expirationDuration.getDays());
+    newOffer.setNoticePeriod(noticePeriod == null ? 0 : noticePeriod.getMonths());
     newOffer.setPaymentPeriodicity(deedTenantOfferDTO.getPaymentPeriodicity());
-    newOffer.setNoticePeriod(noticePeriod);
     newOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
     newOffer.setExpirationDate(MAX_DATE_VALUE);
     newOffer.setCreatedDate(now);
@@ -115,15 +125,19 @@ public class DeedTenantOfferMapper {
     if (deedTenantOfferDTO == null) {
       return null;
     }
+    RentalDuration rentalDuration = deedTenantOfferDTO.getDuration();
+    ExpirationDuration expirationDuration = deedTenantOfferDTO.getExpirationDuration();
+    NoticePeriod noticePeriod = deedTenantOfferDTO.getNoticePeriod();
+
     DeedTenantOffer changeLogOffer = toOfferChangeLog(existingDeedTenantOffer, deedTenantOfferDTO.getOfferTransactionHash());
     changeLogOffer.setHostAddress(StringUtils.lowerCase(deedTenantOfferDTO.getHostAddress()));
     changeLogOffer.setDescription(deedTenantOfferDTO.getDescription());
     changeLogOffer.setAmount(deedTenantOfferDTO.getAmount());
     changeLogOffer.setAllDurationAmount(deedTenantOfferDTO.getAllDurationAmount());
-    changeLogOffer.setDuration(deedTenantOfferDTO.getDuration());
-    changeLogOffer.setExpirationDuration(deedTenantOfferDTO.getExpirationDuration());
+    changeLogOffer.setMonths(rentalDuration == null ? 0 : rentalDuration.getMonths());
+    changeLogOffer.setExpirationDays(expirationDuration == null ? 0 : expirationDuration.getDays());
+    changeLogOffer.setNoticePeriod(noticePeriod == null ? 0 : noticePeriod.getMonths());
     changeLogOffer.setPaymentPeriodicity(deedTenantOfferDTO.getPaymentPeriodicity());
-    changeLogOffer.setNoticePeriod(deedTenantOfferDTO.getNoticePeriod());
     changeLogOffer.setOwnerMintingPercentage(deedTenantOfferDTO.getOwnerMintingPercentage());
     return changeLogOffer;
   }

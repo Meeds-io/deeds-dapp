@@ -27,10 +27,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.ExpirationDuration;
-import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.OfferType;
-import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
@@ -84,17 +81,17 @@ public class DeedTenantOffer implements Cloneable {
   @Field(type = FieldType.Keyword)
   private OfferType                        offerType;
 
-  @Field(type = FieldType.Keyword)
-  private ExpirationDuration               expirationDuration;
+  @Field(type = FieldType.Integer)
+  private int                              expirationDays;
 
-  @Field(type = FieldType.Keyword)
-  private RentalDuration                   duration;
+  @Field(type = FieldType.Integer)
+  private int                              months;
 
   @Field(type = FieldType.Keyword)
   private RentalPaymentPeriodicity         paymentPeriodicity;
 
-  @Field(type = FieldType.Keyword)
-  private NoticePeriod                     noticePeriod;
+  @Field(type = FieldType.Integer)
+  private int                              noticePeriod;
 
   @Field(type = FieldType.Integer)
   private int                              ownerMintingPercentage;
@@ -157,8 +154,8 @@ public class DeedTenantOffer implements Cloneable {
                                amount,
                                allDurationAmount,
                                offerType,
-                               expirationDuration,
-                               duration,
+                               expirationDays,
+                               months,
                                paymentPeriodicity,
                                noticePeriod,
                                ownerMintingPercentage,

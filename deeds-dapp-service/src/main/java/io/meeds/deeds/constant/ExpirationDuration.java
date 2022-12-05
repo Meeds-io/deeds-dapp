@@ -23,9 +23,31 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ExpirationDuration {
 
-  ONE_DAY(Period.ofDays(1)), THREE_DAYS(Period.ofDays(3)), ONE_WEEK(Period.ofWeeks(1)), ONE_MONTH(Period.ofMonths(1));
+  ONE_DAY(Period.ofDays(1), 1),
+  THREE_DAYS(Period.ofDays(3), 3),
+  ONE_WEEK(Period.ofWeeks(1), 7),
+  ONE_MONTH(Period.ofMonths(1), 30),
+  OTHER(null, 0);
 
   @Getter
   private Period period;
+
+  @Getter
+  private int    days;
+
+  public static ExpirationDuration fromDays(int expirationDays) {
+    switch (expirationDays) {
+    case 1:
+      return ONE_DAY;
+    case 3:
+      return THREE_DAYS;
+    case 7:
+      return ONE_WEEK;
+    case 30:
+      return ONE_MONTH;
+    default:
+      return OTHER;
+    }
+  }
 
 }

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.model.DeedTenantLease;
 import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.service.OfferService;
@@ -80,7 +81,13 @@ public class OfferAcquisitionInProgressListener implements EventListener<DeedTen
     ZonedDateTime leaseEnDate = (ZonedDateTime) Period.ofMonths(lease.getMonths())
                                                       .addTo(ZonedDateTime.ofInstant(lease.getCreatedDate(),
                                                                                      ZoneId.systemDefault()));
-    offerService.markOfferAcquisitionInProgress(lease.getNftId(), lease.getPendingTransactions().get(0), leaseEnDate.toInstant());
+    String transactionHash = lease.getPendingTransactions().get(0);
+    try {
+      offerService.markOfferAcquisitionInProgress(lease.getNftId(), transactionHash, leaseEnDate.toInstant());
+    } catch (ObjectAlreadyExistsException e) {
+      LOG.warn("Seems a bug, the transaction hash {} already exists in offers as acquisition in progress! Ignore adding the transaction hash.",
+               transactionHash);
+    }
   }
 
 }

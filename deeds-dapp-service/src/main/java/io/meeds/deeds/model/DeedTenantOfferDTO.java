@@ -65,11 +65,17 @@ public class DeedTenantOfferDTO {
 
   private ExpirationDuration               expirationDuration;
 
+  private int                              expirationDays;
+
   private RentalDuration                   duration;
 
-  private RentalPaymentPeriodicity         paymentPeriodicity;
+  private int                              months;
 
   private NoticePeriod                     noticePeriod;
+
+  private int                              noticePeriodMonths;
+
+  private RentalPaymentPeriodicity         paymentPeriodicity;
 
   private int                              ownerMintingPercentage;
 

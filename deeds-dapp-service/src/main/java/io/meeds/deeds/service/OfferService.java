@@ -49,11 +49,9 @@ import org.web3j.abi.datatypes.Address;
 import io.meeds.deeds.constant.BlockchainOfferStatus;
 import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.DeedCity;
-import io.meeds.deeds.constant.ExpirationDuration;
-import io.meeds.deeds.constant.NoticePeriod;
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
-import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
@@ -91,7 +89,7 @@ public class OfferService {
   private static final String      TRANSACTION_HASH_IS_MANDATORY_MESSAGE = "Transaction Hash is Mandatory";
 
   @Autowired
-  private OfferRepository          deedTenantOfferRepository;
+  private OfferRepository          offerRepository;
 
   @Autowired
   private ElasticsearchOperations  elasticsearchOperations;
@@ -164,21 +162,21 @@ public class OfferService {
 
   public DeedTenantOfferDTO getOffer(String id, String walletAddress, boolean refreshFromBlockchain) throws Exception {
     if (refreshFromBlockchain) {
-      DeedTenantOffer offer = deedTenantOfferRepository.findById(id).orElse(null);
+      DeedTenantOffer offer = offerRepository.findById(id).orElse(null);
       id = refreshOfferConcurrently(offer, walletAddress);
     }
     DeedTenantOfferDTO offer = getOffer(id);
     if (offer == null) {
-      throw new ObjectNotFoundException();
+      throw new ObjectNotFoundException(getOfferNotExistsMessage(id));
     }
     if (!offer.isEnabled()) {
-      throw new UnauthorizedOperationException();
+      throw new UnauthorizedOperationException("Offer with id " + id + " is disabled");
     }
     return offer;
   }
 
   public DeedTenantOfferDTO getOffer(String id) {
-    DeedTenantOffer offer = deedTenantOfferRepository.findById(id).orElse(null);
+    DeedTenantOffer offer = offerRepository.findById(id).orElse(null);
     return DeedTenantOfferMapper.toDTO(offer);
   }
 
@@ -190,7 +188,8 @@ public class OfferService {
   public DeedTenantOfferDTO createRentingOffer(String ownerAddress,
                                                String ownerEmail,
                                                DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
-                                                                                      UnauthorizedOperationException {
+                                                                                      UnauthorizedOperationException,
+                                                                                      ObjectAlreadyExistsException {
     long nftId = deedTenantOfferDTO.getNftId();
     if (!tenantService.isDeedOwner(ownerAddress, nftId)) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(ownerAddress, nftId));
@@ -220,14 +219,15 @@ public class OfferService {
 
   public DeedTenantOfferDTO updateRentingOffer(String walletAddress,
                                                DeedTenantOfferDTO deedTenantOfferDTO) throws ObjectNotFoundException,
-                                                                                      UnauthorizedOperationException {
+                                                                                      UnauthorizedOperationException,
+                                                                                      ObjectAlreadyExistsException {
     if (!tenantService.isDeedOwner(walletAddress, deedTenantOfferDTO.getNftId())) {
       throw new UnauthorizedOperationException(getNotOwnerMessage(walletAddress, deedTenantOfferDTO.getNftId()));
     }
     if (!deedTenantOfferDTO.isEnabled()) {
       throw new UnauthorizedOperationException("Offer has already been canceled");
     }
-    DeedTenantOffer existingOffer = deedTenantOfferRepository.findById(deedTenantOfferDTO.getId()).orElse(null);
+    DeedTenantOffer existingOffer = offerRepository.findById(deedTenantOfferDTO.getId()).orElse(null);
     if (existingOffer == null) {
       throw new ObjectNotFoundException("Offer with id  " + deedTenantOfferDTO.getId() + " doesn't exist");
     }
@@ -252,13 +252,14 @@ public class OfferService {
     return DeedTenantOfferMapper.toDTO(existingOffer);
   }
 
-  public void markOfferAcquisitionInProgress(long nftId, String transactionHash, Instant validStartDate) {
+  public void markOfferAcquisitionInProgress(long nftId, String transactionHash,
+                                             Instant validStartDate) throws ObjectAlreadyExistsException {
     LOG.debug("Mark Offers of nft {} as acquisition in progress", nftId);
 
     if (StringUtils.isNotBlank(transactionHash)) {
       checkTransactionHashIsUnknown(transactionHash);
     }
-    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByNftId(nftId);
+    List<DeedTenantOffer> offers = offerRepository.findByNftId(nftId);
     if (!CollectionUtils.isEmpty(offers)) {
       offers.forEach(parentOffer -> {
         if (isOfferOngoing(parentOffer, null, validStartDate)) {
@@ -269,8 +270,9 @@ public class OfferService {
   }
 
   public void deleteRentingOffer(String walletAddress, String offerId, String transactionHash) throws ObjectNotFoundException,
-                                                                                               UnauthorizedOperationException {
-    DeedTenantOffer existingOffer = deedTenantOfferRepository.findById(offerId).orElse(null);
+                                                                                               UnauthorizedOperationException,
+                                                                                               ObjectAlreadyExistsException {
+    DeedTenantOffer existingOffer = offerRepository.findById(offerId).orElse(null);
     if (existingOffer == null) {
       throw new ObjectNotFoundException("Offer with id  " + offerId + " doesn't exist");
     }
@@ -298,7 +300,7 @@ public class OfferService {
     LOG.debug("Cancel offers of nftId {} due to a changed nft owner {}",
               nftId,
               newOwner);
-    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOwnerNotAndNftIdAndEnabledTrue(newOwner, nftId);
+    List<DeedTenantOffer> offers = offerRepository.findByOwnerNotAndNftIdAndEnabledTrue(newOwner, nftId);
     if (!CollectionUtils.isEmpty(offers)) {
       offers.forEach(offer -> {
         LOG.debug("Cancel offer {} due to a changed nft owner {}",
@@ -310,7 +312,7 @@ public class OfferService {
   }
 
   public List<DeedTenantOfferDTO> getPendingTransactions() {
-    return deedTenantOfferRepository.findByOfferTransactionStatusInOrderByCreatedDateAsc(Arrays.asList(TransactionStatus.IN_PROGRESS))
+    return offerRepository.findByOfferTransactionStatusInOrderByCreatedDateAsc(Arrays.asList(TransactionStatus.IN_PROGRESS))
                                     .stream()
                                     .map(DeedTenantOfferMapper::toDTO)
                                     .collect(Collectors.toList());
@@ -318,7 +320,7 @@ public class OfferService {
 
   public void updateRentingOfferStatusFromBlockchain(String offerId, // NOSONAR
                                                      Map<BlockchainOfferStatus, DeedOfferBlockchainState> minedEvents) throws Exception {
-    DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
+    DeedTenantOffer offer = offerRepository.findById(offerId).orElse(null);
     if (offer == null) {
       throw new IllegalArgumentException("Wrong Offer technical internal identifier " + offerId);
     }
@@ -334,12 +336,12 @@ public class OfferService {
   }
 
   public DeedTenantOffer updateOfferFromBlockchain(DeedOfferBlockchainState blockchainOffer,
-                                                   boolean blockchainScan) throws Exception {
+                                                   boolean isBlockchainScan) throws Exception {
     DeedTenantOffer offer = getParentOfferByBlockchainId(blockchainOffer.getId().longValue());
     try {
       return updateOfferFromBlockchain(offer, blockchainOffer);
     } finally {
-      if (blockchainScan && offer != null) {
+      if (isBlockchainScan && offer != null) {
         LOG.debug("Delete acquired UI Refresh Lock on Offer after blockchain scan finished {}",
                   offer.getParentId());
         // Remove lock of offer refreshing by UI
@@ -355,7 +357,7 @@ public class OfferService {
     if (offer != null) {
       updateRentingOfferStatusFromBlockchain(offer.getId(), null, BlockchainOfferStatus.OFFER_ACQUIRED);
 
-      List<DeedTenantOffer> offers = deedTenantOfferRepository.findByNftId(offer.getNftId());
+      List<DeedTenantOffer> offers = offerRepository.findByNftId(offer.getNftId());
       if (!CollectionUtils.isEmpty(offers)) {
         offers.forEach(parentOffer -> {
           if (isOfferOngoing(parentOffer, offer, leaseEndDate)) {
@@ -367,15 +369,15 @@ public class OfferService {
   }
 
   public void saveOfferTransactionAsError(String offerId) throws Exception {
-    DeedTenantOffer offer = deedTenantOfferRepository.findById(offerId).orElse(null);
+    DeedTenantOffer offer = offerRepository.findById(offerId).orElse(null);
     if (offer == null) {
       throw new IllegalArgumentException("Wrong Offer id");
     }
     if (isChangelog(offer)) {
-      DeedTenantOffer parentOffer = deedTenantOfferRepository.findById(offer.getParentId()).orElse(null);
+      DeedTenantOffer parentOffer = offerRepository.findById(offer.getParentId()).orElse(null);
       cancelChangeLog(parentOffer, offer);
     } else if (!blockchainService.isOfferEnabled(offer.getOfferId())) {
-      deedTenantOfferRepository.delete(offer);
+      offerRepository.delete(offer);
     } else {
       LOG.warn("Don't know what to do with a parent offer {} with blockchain Id {} that exists on blockchain and that is meant to have a valid transaction",
                offer.getId(),
@@ -383,11 +385,45 @@ public class OfferService {
     }
   }
 
+  protected void releaseExplicitOfferRefreshLock(String parentOfferId) {
+    StampedLock lock = blockchainRefreshLocks.remove(parentOfferId);
+    if (lock != null && blockchainRefreshStamp.containsKey(parentOfferId)) {
+      Long stamp = blockchainRefreshStamp.remove(parentOfferId);
+      try {
+        lock.unlock(stamp);
+      } catch (Exception e) {
+        LOG.debug("Wasn't able to release Blockchain Refresh lock of parent offer with id {}. Unlocked anyway and released.",
+                  parentOfferId,
+                  e);
+      }
+    }
+  }
+
+  private boolean acquireExplicitOfferRefreshLock(String offerId) {
+    try {
+      StampedLock lock = blockchainRefreshLocks.computeIfAbsent(offerId, key -> new StampedLock());
+      long stamp = lock.tryWriteLock();
+      if (stamp > 0) {
+        blockchainRefreshStamp.put(offerId, stamp);
+        return true;
+      } else {
+        // Wait 3 seconds until Refresh made effectively by other process
+        lock.tryWriteLock(3, TimeUnit.SECONDS);
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    } catch (Exception e) {
+      LOG.debug("Refresh Lock on Offer {} not acquired after 3 seconds, proceed to refresh offer drom DB",
+                offerId);
+    }
+    return false;
+  }
+
   private DeedTenantOffer getParentOfferFromChangelog(DeedTenantOffer offer) {
     if (!isChangelog(offer)) {
       return offer;
     }
-    DeedTenantOffer parentOffer = deedTenantOfferRepository.findById(offer.getParentId()).orElse(null);
+    DeedTenantOffer parentOffer = offerRepository.findById(offer.getParentId()).orElse(null);
     if (parentOffer == null) {
       return offer;
     } else {
@@ -467,7 +503,7 @@ public class OfferService {
                                                       String offerChangeLogId,
                                                       BlockchainOfferStatus blockchainStatus) throws Exception {
     if (StringUtils.isNotBlank(offerChangeLogId)) {
-      DeedTenantOffer changeLogOffer = deedTenantOfferRepository.findById(offerChangeLogId).orElse(null);
+      DeedTenantOffer changeLogOffer = offerRepository.findById(offerChangeLogId).orElse(null);
       if (isChangelog(changeLogOffer)
           && isOfferTransactionInProgress(changeLogOffer)
           && blockchainService.isTransactionMined(changeLogOffer.getOfferTransactionHash())) {
@@ -487,7 +523,7 @@ public class OfferService {
   private void updateRentingOfferStatusFromBlockchain(String updateOrDeleteOrParentId, // NOSONAR
                                                       DeedOfferBlockchainState blockchainOffer,
                                                       BlockchainOfferStatus status) throws Exception {
-    DeedTenantOffer offer = deedTenantOfferRepository.findById(updateOrDeleteOrParentId).orElse(null);
+    DeedTenantOffer offer = offerRepository.findById(updateOrDeleteOrParentId).orElse(null);
     if (offer == null) {
       throw new ObjectNotFoundException("Offer with id " + updateOrDeleteOrParentId + "wasn't found");
     }
@@ -602,7 +638,7 @@ public class OfferService {
 
     DeedTenantOffer parentOffer = getParentOfferFromChangelog(offer);
     parentOffer.setAcquired(true);
-    return saveOfferAndDeleteChangeLog(parentOffer, offer.getId());
+    return saveOfferAndDeleteChangeLogs(parentOffer);
   }
 
   private DeedTenantOffer updateOfferBlockchainChange(DeedOfferBlockchainState blockchainOffer,
@@ -634,7 +670,7 @@ public class OfferService {
       return;
     }
     if (isChangelog(offer)) {
-      DeedTenantOffer parentOffer = deedTenantOfferRepository.findById(offer.getParentId()).orElse(null);
+      DeedTenantOffer parentOffer = offerRepository.findById(offer.getParentId()).orElse(null);
       cancelChangeLog(parentOffer, offer);
     } else {
       offer.setEnabled(false);
@@ -646,7 +682,7 @@ public class OfferService {
   private void cancelChangeLog(DeedTenantOffer parentOffer, DeedTenantOffer offer) {
     if (parentOffer == null) {
       // Orphan changelog, delete simply delete it
-      deedTenantOfferRepository.delete(offer);
+      offerRepository.delete(offer);
     } else {
       saveOfferAndDeleteChangeLog(parentOffer, offer.getId());
     }
@@ -669,7 +705,7 @@ public class OfferService {
       // Avoid deleting changelog before saving parent
       // To make sure that parent has no "updateId" on it
       // even if deletion fails or is interrupted
-      deedTenantOfferRepository.deleteById(changeLogId);
+      offerRepository.deleteById(changeLogId);
       return parentOffer;
     } else if (StringUtils.equals(parentOffer.getDeleteId(), changeLogId)) {
       return saveOfferAndDeleteChangeLogs(parentOffer);
@@ -691,7 +727,7 @@ public class OfferService {
     // Avoid deleting changelog before saving parent
     // To make sure that parent has no "updateId" on it
     // even if deletion fails or is interrupted
-    deedTenantOfferRepository.deleteByParentId(parentOffer.getId());
+    offerRepository.deleteByParentId(parentOffer.getId());
     return parentOffer;
   }
 
@@ -771,11 +807,11 @@ public class OfferService {
       return;
     }
     if (StringUtils.isBlank(offer.getOfferTransactionHash()) && StringUtils.isNotBlank(blockchainOffer.getTransactionHash())) {
-      offer.setOfferTransactionHash(blockchainOffer.getTransactionHash());
+      offer.setOfferTransactionHash(StringUtils.lowerCase(blockchainOffer.getTransactionHash()));
     }
     offer.setOfferId(blockchainOfferId);
     offer.setNftId(nftId);
-    offer.setOwner(blockchainOffer.getCreator());
+    offer.setOwner(StringUtils.lowerCase(blockchainOffer.getCreator()));
     offer.setAmount(blockchainOffer.getPrice().divide(BigInteger.valueOf(10).pow(18)).doubleValue());
     offer.setAllDurationAmount(blockchainOffer.getAllDurationPrice().divide(BigInteger.valueOf(10).pow(18)).doubleValue());
     offer.setStartDate(Instant.ofEpochSecond(blockchainOffer.getOfferStartDate().longValue()));
@@ -812,13 +848,14 @@ public class OfferService {
 
   private boolean isOfferStartsAfter(DeedTenantOffer offer, Instant leaseEndDate) {
     return offer.getStartDate() != null
-        && offer.getStartDate().isAfter(leaseEndDate);
+        && (offer.getStartDate().isAfter(leaseEndDate)
+            || offer.getStartDate().equals(leaseEndDate));
   }
 
-  private void checkTransactionHashIsUnknown(String transactionHash) {
+  private void checkTransactionHashIsUnknown(String transactionHash) throws ObjectAlreadyExistsException {
     boolean isKnown = isOfferTransactionHashDuplicated(transactionHash, null);
     if (isKnown) {
-      throw new IllegalStateException("Offer with same Transaction Hash " + transactionHash + " already exists");
+      throw new ObjectAlreadyExistsException("Offer with same Transaction Hash " + transactionHash + " already exists");
     }
   }
 
@@ -828,75 +865,23 @@ public class OfferService {
   }
 
   private DeedTenantOffer getOfferByTransactionHash(String transactionHash) {
-    return deedTenantOfferRepository.findByOfferTransactionHash(StringUtils.lowerCase(transactionHash));
+    return offerRepository.findByOfferTransactionHash(StringUtils.lowerCase(transactionHash));
   }
 
   private boolean isBlockchainOfferIdKnown(long blockchainOfferId) {
-    return !CollectionUtils.isEmpty(deedTenantOfferRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId));
+    return !CollectionUtils.isEmpty(offerRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId));
   }
 
   private void setExpirationDuration(DeedTenantOffer offer, int expirationDurationDays) {
-    switch (expirationDurationDays) {
-    case 0:
-      offer.setExpirationDuration(null);
-      break;
-    case 1:
-      offer.setExpirationDuration(ExpirationDuration.ONE_DAY);
-      break;
-    case 3:
-      offer.setExpirationDuration(ExpirationDuration.THREE_DAYS);
-      break;
-    case 7:
-      offer.setExpirationDuration(ExpirationDuration.ONE_WEEK);
-      break;
-    case 30:
-      offer.setExpirationDuration(ExpirationDuration.ONE_MONTH);
-      break;
-    default:
-      offer.setExpirationDuration(null);
-      break;
-    }
+    offer.setExpirationDays(expirationDurationDays);
   }
 
   private void setNoticePeriod(DeedTenantOffer offer, int noticePeriodDuration) {
-    switch (noticePeriodDuration) {
-    case 0:
-      offer.setNoticePeriod(NoticePeriod.NO_PERIOD);
-      break;
-    case 1:
-      offer.setNoticePeriod(NoticePeriod.ONE_MONTH);
-      break;
-    case 2:
-      offer.setNoticePeriod(NoticePeriod.TWO_MONTHS);
-      break;
-    case 3:
-      offer.setNoticePeriod(NoticePeriod.THREE_MONTHS);
-      break;
-    default:
-      LOG.warn("Unsupported Rental Notice Period duration found in transaction : {} Months",
-               noticePeriodDuration);
-      break;
-    }
+    offer.setNoticePeriod(noticePeriodDuration);
   }
 
   private void setDuration(DeedTenantOffer offer, int rentalDurationInMonths) {
-    switch (rentalDurationInMonths) {
-    case 1:
-      offer.setDuration(RentalDuration.ONE_MONTH);
-      break;
-    case 3:
-      offer.setDuration(RentalDuration.THREE_MONTHS);
-      break;
-    case 6:
-      offer.setDuration(RentalDuration.SIX_MONTHS);
-      break;
-    case 12:
-      offer.setDuration(RentalDuration.ONE_YEAR);
-      break;
-    default:
-      LOG.warn("Unsupported Rental Months duration found in transaction : {} Months", rentalDurationInMonths);
-      break;
-    }
+    offer.setMonths(rentalDurationInMonths);
   }
 
   private DeedTenantOffer saveOffer(DeedTenantOffer offer) {
@@ -904,7 +889,7 @@ public class OfferService {
   }
 
   private DeedTenantOffer saveOffer(DeedTenantOffer offer, boolean checkTransactionHashDuplication) { // NOSONAR
-    if (offer.getExpirationDuration() == null) {
+    if (offer.getExpirationDays() == 0) {
       offer.setExpirationDate(DeedTenantOfferMapper.MAX_DATE_VALUE);
     }
     if (offer.isAcquired() || !offer.isEnabled()) {
@@ -923,7 +908,7 @@ public class OfferService {
     // check each time
     boolean isNewOffer = StringUtils.isBlank(id);
     if (!isNewOffer) {
-      DeedTenantOffer existingOffer = deedTenantOfferRepository.findById(id).orElse(null);
+      DeedTenantOffer existingOffer = offerRepository.findById(id).orElse(null);
       if (existingOffer == null) {
         throw new IllegalStateException("Offer to update doesn't exists");
       }
@@ -944,46 +929,12 @@ public class OfferService {
     }
     String parentId = offer.getParentId();
     try {
-      return deedTenantOfferRepository.save(offer);
+      return offerRepository.save(offer);
     } finally {
       if (isChangelog && isNewOffer) {
         LOG.debug("Delete acquired UI Refresh Lock on Offer {} after a new changelog has been added",
                   parentId);
         releaseExplicitOfferRefreshLock(parentId);
-      }
-    }
-  }
-
-  private boolean acquireExplicitOfferRefreshLock(String offerId) {
-    try {
-      StampedLock lock = blockchainRefreshLocks.computeIfAbsent(offerId, key -> new StampedLock());
-      long stamp = lock.tryWriteLock();
-      if (stamp > 0) {
-        blockchainRefreshStamp.put(offerId, stamp);
-        return true;
-      } else {
-        // Wait 3 seconds until Refresh made effectively by other process
-        lock.tryWriteLock(3, TimeUnit.SECONDS);
-      }
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    } catch (Exception e) {
-      LOG.debug("Refresh Lock on Offer {} not acquired after 3 seconds, proceed to refresh offer drom DB",
-                offerId);
-    }
-    return false;
-  }
-
-  private void releaseExplicitOfferRefreshLock(String parentOfferId) {
-    StampedLock lock = blockchainRefreshLocks.remove(parentOfferId);
-    if (lock != null && blockchainRefreshStamp.containsKey(parentOfferId)) {
-      Long stamp = blockchainRefreshStamp.remove(parentOfferId);
-      try {
-        lock.unlock(stamp);
-      } catch (Exception e) {
-        LOG.debug("Wasn't able to release Blockchain Refresh lock of parent offer with id {}. Unlocked anyway and released.",
-                  parentOfferId,
-                  e);
       }
     }
   }
@@ -994,6 +945,10 @@ public class OfferService {
 
   private String getNftNotExistsMessage(long nftId) {
     return "Deed Tenant with id " + nftId + " doesn't exists";
+  }
+
+  private String getOfferNotExistsMessage(String id) {
+    return "Deed Renting Offer with id " + id + " doesn't exists";
   }
 
   private String getNotOwnerMessage(String walletAddress, long nftId) {
@@ -1057,7 +1012,11 @@ public class OfferService {
         DeedOfferBlockchainState blockchainOffer = blockchainService.getOfferById(BigInteger.valueOf(blockchainOfferId),
                                                                                   null,
                                                                                   null);
-        return updateOfferFromBlockchain(blockchainOffer, false);
+        if (blockchainOffer == null) {
+          return null;
+        } else {
+          return updateOfferFromBlockchain(blockchainOffer, false);
+        }
       } else {
         return null;
       }
@@ -1067,7 +1026,7 @@ public class OfferService {
   }
 
   private DeedTenantOffer getParentOfferByBlockchainId(long blockchainOfferId) {
-    List<DeedTenantOffer> offers = deedTenantOfferRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId);
+    List<DeedTenantOffer> offers = offerRepository.findByOfferIdAndParentIdIsNull(blockchainOfferId);
     if (CollectionUtils.isEmpty(offers)) {
       return null;
     } else {

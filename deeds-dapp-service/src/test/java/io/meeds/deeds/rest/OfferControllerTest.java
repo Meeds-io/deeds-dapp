@@ -94,7 +94,7 @@ class OfferControllerTest {
   private static final String      TEST_USER     = "testUser";
 
   @MockBean
-  private OfferService   deedTenantOfferService;
+  private OfferService             deedTenantOfferService;
 
   @MockBean
   private AuthorizationCodeService authorizationCodeService;
@@ -118,7 +118,7 @@ class OfferControllerTest {
   void testGetOffersByNftId() throws Exception {
     String offerId = "offerId";
     long nftId = 2l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
 
     when(deedTenantOfferService.getOffers(any(), any(Pageable.class))).thenAnswer(invocation -> {
       Pageable pageable = invocation.getArgument(1, Pageable.class);
@@ -137,7 +137,7 @@ class OfferControllerTest {
   void testGetOffersByOfferTypesAndCardTypes() throws Exception {
     String offerId = "offerId";
     long nftId = 2l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     List<DeedCard> cardTypes = Arrays.asList(DeedCard.COMMON, DeedCard.UNCOMMON);
     List<OfferType> offerTypes = Arrays.asList(OfferType.RENTING, OfferType.SALE);
 
@@ -170,7 +170,7 @@ class OfferControllerTest {
   void testGetOffer() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     when(deedTenantOfferService.getOffer(eq(offerId), any(), eq(false))).thenReturn(deedTenantOfferDTO);
 
     ResultActions response = mockMvc.perform(get("/api/offers/" + offerId));
@@ -182,7 +182,7 @@ class OfferControllerTest {
   void testGetOfferWhenMeantToTenantAnonymously() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     deedTenantOfferDTO.setHostAddress("tenant");
     when(deedTenantOfferService.getOffer(offerId, null, false)).thenThrow(ObjectNotFoundException.class);
 
@@ -194,7 +194,7 @@ class OfferControllerTest {
   void testGetProtectedOfferAnonymously() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     deedTenantOfferDTO.setHostAddress("tenant");
     when(deedTenantOfferService.getOffer(offerId, null, false)).thenThrow(UnauthorizedOperationException.class);
 
@@ -206,7 +206,7 @@ class OfferControllerTest {
   void testGetOfferWhenMeantToTenant() throws Exception {
     long nftId = 3l;
     String offerId = "offerId";
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     deedTenantOfferDTO.setHostAddress(TEST_USER);
     when(deedTenantOfferService.getOffer(eq(offerId), any(), eq(false))).thenReturn(deedTenantOfferDTO);
 
@@ -221,7 +221,7 @@ class OfferControllerTest {
   void testCreateOfferWithAnonymousUser() throws Exception {
     long nftId = 3l;
     String offerId = "offerId";
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
                                                                  .contentType(MediaType.APPLICATION_JSON)
                                                                  .accept(MediaType.APPLICATION_JSON));
@@ -233,7 +233,7 @@ class OfferControllerTest {
   void testCreateOfferWithUserWithoutVerificationCode() throws Exception {
     long nftId = 3l;
     String offerId = "offerId";
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
                                                                  .contentType(MediaType.APPLICATION_JSON)
                                                                  .accept(MediaType.APPLICATION_JSON)
@@ -248,7 +248,7 @@ class OfferControllerTest {
     long nftId = 3l;
     int code = 588865;
     String offerId = "offerId";
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
 
     when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenThrow(IllegalAccessException.class);
     ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
@@ -268,7 +268,7 @@ class OfferControllerTest {
     String offerId = "offerId";
     String email = "email";
     int code = 588865;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenReturn(email);
     ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
                                                                  .contentType(MediaType.APPLICATION_JSON)
@@ -285,7 +285,7 @@ class OfferControllerTest {
   void testUpdateOfferWithAnonymousUser() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     ResultActions response = mockMvc.perform(put("/api/offers/" + offerId).content(asJsonString(deedTenantOfferDTO))
                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                           .accept(MediaType.APPLICATION_JSON));
@@ -297,7 +297,7 @@ class OfferControllerTest {
   void testUpdateOfferWithUser() throws Exception {
     String offerId = "offerId";
     long nftId = 3l;
-    DeedTenantOfferDTO deedTenantOfferDTO = getTenantOfferDTO(offerId, nftId);
+    DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     deedTenantOfferDTO.setId(offerId);
     ResultActions response = mockMvc.perform(put("/api/offers/" + offerId).content(asJsonString(deedTenantOfferDTO))
                                                                           .contentType(MediaType.APPLICATION_JSON)
@@ -327,7 +327,7 @@ class OfferControllerTest {
     verify(deedTenantOfferService, times(1)).deleteRentingOffer(TEST_USER, offerId, transactionHash);
   }
 
-  private DeedTenantOfferDTO getTenantOfferDTO(String offerId, long nftId) {
+  private DeedTenantOfferDTO newOffer(String offerId, long nftId) {
     return new DeedTenantOfferDTO(offerId,
                                   nftId,
                                   nftId,
@@ -340,9 +340,12 @@ class OfferControllerTest {
                                   10d,
                                   OfferType.RENTING,
                                   ExpirationDuration.ONE_DAY,
+                                  ExpirationDuration.ONE_DAY.getDays(),
                                   RentalDuration.ONE_MONTH,
-                                  RentalPaymentPeriodicity.ONE_YEAR,
+                                  RentalDuration.ONE_MONTH.getMonths(),
                                   NoticePeriod.ONE_MONTH,
+                                  NoticePeriod.ONE_MONTH.getMonths(),
+                                  RentalPaymentPeriodicity.ONE_YEAR,
                                   1,
                                   1.1d,
                                   "0xTransaction",

@@ -23,9 +23,31 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RentalDuration {
 
-  ONE_MONTH(Period.ofMonths(1)), THREE_MONTHS(Period.ofMonths(3)), SIX_MONTHS(Period.ofMonths(6)), ONE_YEAR(Period.ofYears(1));
+  ONE_MONTH(Period.ofMonths(1), 1),
+  THREE_MONTHS(Period.ofMonths(3), 3),
+  SIX_MONTHS(Period.ofMonths(6), 6),
+  ONE_YEAR(Period.ofYears(1), 12),
+  OTHER(null, 0);
 
   @Getter
   private Period period;
+
+  @Getter
+  private int    months;
+
+  public static RentalDuration fromMonths(int months) {
+    switch (months) {
+    case 1:
+      return ONE_MONTH;
+    case 3:
+      return THREE_MONTHS;
+    case 6:
+      return SIX_MONTHS;
+    case 12:
+      return ONE_YEAR;
+    default:
+      return OTHER;
+    }
+  }
 
 }

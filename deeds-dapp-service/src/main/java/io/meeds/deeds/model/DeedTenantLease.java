@@ -26,7 +26,6 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.constant.TransactionStatus;
 import lombok.AllArgsConstructor;
@@ -59,6 +58,9 @@ public class DeedTenantLease {
   @Field(type = FieldType.Long)
   private int                              paidMonths;
 
+  @Field(type = FieldType.Integer)
+  private int                              noticePeriod;
+
   @Field(type = FieldType.Long)
   private int                              monthPaymentInProgress;
 
@@ -85,9 +87,6 @@ public class DeedTenantLease {
 
   @Field(type = FieldType.Double)
   private double                           distributedAmount;
-
-  @Field(type = FieldType.Keyword)
-  private NoticePeriod                     noticePeriod;
 
   @Field(type = FieldType.Integer)
   private int                              ownerMintingPercentage;

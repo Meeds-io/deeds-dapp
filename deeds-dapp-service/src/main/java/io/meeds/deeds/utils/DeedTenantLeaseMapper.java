@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.TransactionStatus;
@@ -50,6 +51,7 @@ public class DeedTenantLeaseMapper {
     Instant endDate = confirmed ? deedTenantLease.getEndDate() : null;
     Instant startDate = confirmed ? deedTenantLease.getStartDate() : null;
 
+    int noticePeriod = deedTenantLease.getNoticePeriod();
     return new DeedTenantLeaseDTO(deedTenantLease.getId(),
                                   deedTenantLease.getNftId(),
                                   deedTenantLease.getCity(),
@@ -65,7 +67,7 @@ public class DeedTenantLeaseMapper {
                                   deedTenantLease.getAmount(),
                                   deedTenantLease.getAllDurationAmount(),
                                   deedTenantLease.getDistributedAmount(),
-                                  deedTenantLease.getNoticePeriod(),
+                                  NoticePeriod.fromMonths(noticePeriod),
                                   deedTenantLease.getOwnerMintingPercentage(),
                                   deedTenantLease.getMintingPower(),
                                   deedTenantLease.getTransactionStatus(),
@@ -90,12 +92,14 @@ public class DeedTenantLeaseMapper {
                                                                             : Collections.singletonList(transactionHash.toLowerCase());
     TransactionStatus transactionStatus = StringUtils.isEmpty(transactionHash) ? TransactionStatus.VALIDATED
                                                                                : TransactionStatus.IN_PROGRESS;
+    NoticePeriod noticePeriod = deedTenantOffer.getNoticePeriod();
     return new DeedTenantLease(deedTenantOffer.getOfferId(),
                                deedTenantOffer.getNftId(),
                                deedTenantOffer.getCity(),
                                deedTenantOffer.getCardType(),
                                (int) deedTenantOffer.getDuration().getPeriod().toTotalMonths(),
                                0,
+                               noticePeriod == null ? 0 : noticePeriod.getMonths(),
                                0,
                                deedTenantOffer.getOwner(),
                                managerAddress,
@@ -105,7 +109,6 @@ public class DeedTenantLeaseMapper {
                                deedTenantOffer.getAmount(),
                                deedTenantOffer.getAllDurationAmount(),
                                0d,
-                               deedTenantOffer.getNoticePeriod(),
                                deedTenantOffer.getOwnerMintingPercentage(),
                                deedTenantOffer.getMintingPower(),
                                pendingTransactions,

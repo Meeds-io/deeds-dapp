@@ -48,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.TransactionStatus;
@@ -163,6 +164,8 @@ public class OfferController {
       return offerService.createRentingOffer(walletAddress, email, deedTenantOfferDTO);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
+    } catch (ObjectAlreadyExistsException e) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT);
     } catch (UnauthorizedOperationException | IllegalAccessException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to create Deed tenant offer while not allowed {}",
                walletAddress,
@@ -194,6 +197,8 @@ public class OfferController {
       return offerService.updateRentingOffer(walletAddress, deedTenantOfferDTO);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
+    } catch (ObjectAlreadyExistsException e) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT);
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to update Deed tenant offer while not owner {}",
                walletAddress,
@@ -221,6 +226,8 @@ public class OfferController {
       offerService.deleteRentingOffer(walletAddress, offerId, transactionHash);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, NFT_DOESN_T_EXIST_MESSAGE);
+    } catch (ObjectAlreadyExistsException e) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT);
     } catch (UnauthorizedOperationException e) {
       LOG.warn("[SECURITY ALERT] {} attempts to delete Deed tenant offer while not owner of offer with id {}",
                walletAddress,
