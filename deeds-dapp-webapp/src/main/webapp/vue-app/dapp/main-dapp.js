@@ -1375,7 +1375,7 @@ function initializeVueApp(language) {
   fetch(`/${window.parentAppLocation}/static/i18n/messages_${language}.properties?_=${buildNumber}`)
     .then(resp => resp && resp.ok && resp.text())
     .then(i18nMessages => {
-      const data = i18nMessages
+      const data = i18nMessages && i18nMessages
         .split('\n')
         .filter(Boolean)
         .reduce((obj, line) => {
@@ -1386,7 +1386,7 @@ function initializeVueApp(language) {
               ?.replace(/\\n/g, '\n');
           }
           return obj;
-        }, {});
+        }, {}) || {};
 
       i18n.mergeLocaleMessage(language, data);
       if (!app) {
