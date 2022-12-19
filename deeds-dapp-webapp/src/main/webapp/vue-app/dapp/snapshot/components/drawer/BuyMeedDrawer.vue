@@ -62,6 +62,31 @@
     <template #footer>
       <div class="d-flex flex-row align-center">
         <deeds-metamask-button v-if="hasInvalidAddress" />
+        <template v-else-if="displayLink">
+          <v-btn
+            v-if="displayCancel"
+            :min-width="minWidthButtons"
+            name="cancelRentButton"
+            class="ms-auto me-2"
+            outlined
+            text
+            @click="close">
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-btn
+            :href="buyLink"
+            :class="disabled && 'primary'"
+            :min-width="minWidthButtons"
+            name="sendSwapTransactionButton"
+            rel="nofollow noreferrer noopener"
+            target="_blank"
+            color="primary"
+            depressed
+            dark>
+            <v-icon size="16" class="me-2">fa-external-link</v-icon>
+            {{ swapButtonLabel }}
+          </v-btn>
+        </template>
         <template v-else>
           <div
             v-if="displaySteps || !hasSufficientAllowedTokens"
@@ -127,9 +152,12 @@ export default {
     displayCancel: false,
     step: 1,
     openedDrawer: false,
+    displayLink: true,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
+    networkId: state => state.networkId,
+    validNetwork: state => state.validNetwork,
     appLoading: state => state.appLoading,
     language: state => state.language,
     tradeGasLimit: state => state.tradeGasLimit,
@@ -145,6 +173,14 @@ export default {
     transactionGas: state => state.transactionGas,
     meedsRouteAllowance: state => state.meedsRouteAllowance,
     provider: state => state.provider,
+    buyLink() {
+      const networkId = this.validNetwork && this.networkId || '1';
+      if (this.buy) {
+        return `https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=${this.meedAddress}&exactAmount=${this.amountOut || 0}&chainId=${networkId}`;
+      } else {
+        return `https://app.sushi.com/swap?outputCurrency=ETH&inputCurrency=${this.meedAddress}&exactAmount=${this.amountOut || 0}&chainId=${networkId}`;
+      }
+    },
     fromContract() {
       return this.buy && this.meedContract || this.wethContract;
     },
