@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
@@ -445,7 +446,7 @@ public class BlockchainService {
    * @return         true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
-    return blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
+    return WalletUtils.isValidAddress(address) && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
   /**
@@ -456,7 +457,7 @@ public class BlockchainService {
    * @return         true if is owner else false
    */
   public boolean isDeedOwner(String address, long nftId) {
-    return blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
+    return WalletUtils.isValidAddress(address) && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
   }
 
   /**

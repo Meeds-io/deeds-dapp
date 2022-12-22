@@ -158,7 +158,7 @@ class BlockchainServiceTest {
   void testIsDeedProvisioningManager() throws Exception {
     assertNotNull(blockchainService);
 
-    String walletAddress = "walletAddress";
+    String walletAddress = "0xa5ef66131fbd70a1ffa69a95aba172f0a0502e6a";
 
     when(deedTenantProvisioning.isProvisioningManager(any(), any())).thenAnswer(invocation -> {
       String address = invocation.getArgument(0, String.class);
