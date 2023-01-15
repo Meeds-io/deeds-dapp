@@ -143,7 +143,7 @@ const networkSettings = {
     // External links
     etherscanBaseLink: 'https://etherscan.io/',
     polygonscanBaseLink: 'https://polygonscan.com/',
-    openSeaBaseLink: 'https://testnets.opensea.io/assets/rinkeby/0x0143b71443650aa8efa76bd82f35c22ebd558090',
+    openSeaBaseLink: 'https://opensea.io/assets/ethereum/0x0143b71443650aa8efa76bd82f35c22ebd558090',
     openSeaCollectionLink: 'https://opensea.io/collection/meeds-dao',
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     defaultDateFormat: {
