@@ -78,7 +78,7 @@
             name="approveTokenButton"
             color="primary"
             @click="approve">
-            <span class="subtitle-1 font-weight-medium">{{ $t('approve') }}</span>
+            {{ $t('approve') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -127,7 +127,7 @@
             name="stakeTokenButton"
             color="primary"
             @click="stake">
-            <span class="subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
+            {{ $t('stake') }}
           </v-btn>
         </v-card-actions>
       </v-card>

@@ -53,7 +53,7 @@
         name="unstakeTokensButton"
         color="primary"
         @click="unstake">
-        <span class="subtitle-1 font-weight-medium">{{ $t('unstake') }}</span>
+        {{ $t('unstake') }}
       </v-btn>
     </v-card-actions>
   </v-card>

@@ -149,7 +149,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
+              {{ $t('stake') }}
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -185,7 +185,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="subtitle-1 font-weight-medium">{{ $t('unstake') }}</span>
+              {{ $t('unstake') }}
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -232,7 +232,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              <span class="subtitle-1 font-weight-medium">{{ $t('claim') }}</span>
+              {{ $t('claim') }}
             </v-btn>
           </v-list-item-action>
         </v-list-item>

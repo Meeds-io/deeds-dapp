@@ -84,7 +84,7 @@
             depressed
             dark>
             <v-icon size="16" class="me-2">fa-external-link</v-icon>
-            <span class="subtitle-1 font-weight-medium">{{ swapButtonLabel }}</span>
+            {{ swapButtonLabel }}
           </v-btn>
         </template>
         <template v-else>

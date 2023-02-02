@@ -169,7 +169,7 @@
                 outlined
                 text
                 @click="openStakeDrawer(true)">
-                <span class="text-none subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
+                <span class="text-none">{{ $t('stake') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -201,7 +201,7 @@
                 outlined
                 text
                 @click="openStakeDrawer(false)">
-                <span class="text-none subtitle-1 font-weight-medium">{{ $t('unstake') }}</span>
+                <span class="text-none">{{ $t('unstake') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -245,7 +245,7 @@
                 outlined
                 text
                 @click="claimReward()">
-                <span class="subtitle-1 font-weight-medium">{{ $t('claim') }}</span>
+                {{ $t('claim') }}
               </v-btn>
             </v-list-item-action>
           </v-list-item>

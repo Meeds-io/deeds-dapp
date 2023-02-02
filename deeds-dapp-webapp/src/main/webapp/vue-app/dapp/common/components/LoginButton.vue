@@ -25,7 +25,7 @@
     v-bind="attrs"
     v-on="on"
     @click="logout(false)">
-    <span class="subtitle-1 font-weight-medium">{{ $t('signOut') }}</span>
+    {{ $t('signOut') }}
   </v-btn>
   <v-tooltip
     v-else
@@ -45,7 +45,7 @@
           depressed
           dark
           @click="login()">
-          <span class="subtitle-1 font-weight-medium">{{ $t('signIn') }}</span>
+          {{ $t('signIn') }}
         </v-btn>
       </div>
     </template>

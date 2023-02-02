@@ -88,6 +88,10 @@ body, .theme--dark.v-application {
   text-transform: none;
 }
 
+.v-btn {
+  font-size: 1rem !important;
+}
+
 .text--color {
   color: #000000de !important;
 }
