@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 headline font-weight-medium">
       {{ $t('deeds') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 subtitle-1">
       {{ $t('deedsIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
@@ -35,7 +35,7 @@
           :src="`/${parentLocation}/static/images/deed-small.png`"
           alt=""
           class="me-2 img-30px">
-        <span class="text-none">{{ $t('myDeeds') }}</span>
+        <span class="text-none subtitle-1">{{ $t('myDeeds') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>

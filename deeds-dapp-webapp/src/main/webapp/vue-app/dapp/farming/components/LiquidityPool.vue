@@ -49,7 +49,7 @@
             <slot name="title"></slot>
           </template>
           <template v-else-if="poolName">
-            {{ $t('rentLiquidityOn', {0: poolName}) }}
+            <span class="headline font-weight-medium">{{ $t('rentLiquidityOn', {0: poolName}) }}</span>
           </template>
           <template v-else>
             {{ $t('rentLiquidity') }}
@@ -134,7 +134,7 @@
         </v-list>
         <strong class="d-flex flex-row">
           <v-divider class="ms-8 me-2 my-auto" />
-          <h6>{{ $t('myAssets') }}</h6>
+          <h6 class="font-weight-bold subtitle-1">{{ $t('myAssets') }}</h6>
           <v-divider class="me-8 ms-2 my-auto" />
         </strong>
         <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">
@@ -169,7 +169,7 @@
                 outlined
                 text
                 @click="openStakeDrawer(true)">
-                <span class="text-none">{{ $t('stake') }}</span>
+                <span class="text-none subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -201,7 +201,7 @@
                 outlined
                 text
                 @click="openStakeDrawer(false)">
-                <span class="text-none">{{ $t('unstake') }}</span>
+                <span class="text-none subtitle-1 font-weight-medium">{{ $t('unstake') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -245,7 +245,7 @@
                 outlined
                 text
                 @click="claimReward()">
-                {{ $t('claim') }}
+                <span class="subtitle-1 font-weight-medium">{{ $t('claim') }}</span>
               </v-btn>
             </v-list-item-action>
           </v-list-item>

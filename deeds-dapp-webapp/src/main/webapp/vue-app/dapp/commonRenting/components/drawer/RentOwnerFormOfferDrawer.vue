@@ -26,8 +26,8 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 v-if="isNew">{{ $t('deedRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
-      <h4 v-else>{{ $t('deedRentingEditDrawerTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
+      <h4 v-if="isNew" class="title font-weight-bold">{{ $t('deedRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
+      <h4 v-else class="title font-weight-bold">{{ $t('deedRentingEditDrawerTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="authenticated" #content>
       <v-card-text v-if="isNew">

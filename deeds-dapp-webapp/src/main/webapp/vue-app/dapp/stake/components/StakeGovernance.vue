@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 headline font-weight-medium">
       {{ $t('governance') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 subtitle-1">
       {{ $t('governanceIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center d-flex flex-column flex-sm-row">
@@ -37,7 +37,7 @@
           :src="`/${parentLocation}/static/images/discord.ico`"
           alt=""
           class="me-2 img-24px">
-        <span class="text-none">{{ $t('discussOnDiscord') }}</span>
+        <span class="text-none subtitle-1">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
         name="voteOnSnapshotLink"
@@ -51,7 +51,7 @@
           :src="`/${parentLocation}/static/images/snapshot.png`"
           alt=""
           class="me-2 img-24px">
-        <span class="text-none">{{ $t('voteOnSnapshot') }}</span>
+        <span class="text-none subtitle-1">{{ $t('voteOnSnapshot') }}</span>
       </v-btn>
     </v-card-actions>
   </v-card>

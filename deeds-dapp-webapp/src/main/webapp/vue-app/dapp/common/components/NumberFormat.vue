@@ -23,7 +23,7 @@
       <slot></slot>
     </template>
     <template v-else>
-      {{ formattedValue || '-' }}
+      <span :class="noExtraClass ? '' : 'subtitle-1 font-weight-bold'">{{ formattedValue || '-' }}</span>
       <slot></slot>
     </template>
   </div>
@@ -60,6 +60,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    noExtraClass: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: Vuex.mapState({
     language: state => state.language,

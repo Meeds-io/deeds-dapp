@@ -48,7 +48,7 @@
         :disabled="disabledRentButton"
         color="primary"
         @click="openOfferRentingDrawer">
-        {{ $t('deedsOfferRentingButton') }}
+        <span class="subtitle-1 font-weight-medium">{{ $t('deedsOfferRentingButton') }}</span>
       </v-btn>
     </v-list-item-action>
   </v-list-item>

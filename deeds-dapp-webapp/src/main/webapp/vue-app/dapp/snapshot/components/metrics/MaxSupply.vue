@@ -28,12 +28,14 @@
       <deeds-number-format
         :value="meedsMaxTotalSupply"
         :fractions="2"
-        currency />
+        currency
+        no-extra-class />
     </template>
     <template #col4>
       <deeds-number-format
         :value="meedsMaxTotalSupply"
-        :fractions="2">
+        :fractions="2"
+        no-extra-class>
         Ɱ
       </deeds-number-format>
     </template>

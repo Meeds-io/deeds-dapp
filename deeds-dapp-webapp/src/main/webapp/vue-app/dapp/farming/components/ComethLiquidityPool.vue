@@ -31,10 +31,10 @@
             class="mx-auto addLiquidityIcon"
             alt="Cometh Icon">
         </v-card-text>
-        <v-card-title class="justify-center pt-0 text-center text-break">
+        <v-card-title class="justify-center pt-0 text-center text-break headline font-weight-medium">
           {{ $t('rentLiquidityOnCometh') }}
         </v-card-title>
-        <v-card-subtitle class="justify-center pt-0 text-center text-break">
+        <v-card-subtitle class="justify-center pt-0 text-center text-break subtitle-1">
           (Polygon)
         </v-card-subtitle>
       </v-card>
@@ -110,7 +110,7 @@
       </v-list>
       <strong class="d-flex flex-row">
         <v-divider class="ms-8 me-2 my-auto" />
-        <h6>{{ $t('myAssets') }}</h6>
+        <h6 class="font-weight-bold subtitle-1">{{ $t('myAssets') }}</h6>
         <v-divider class="me-8 ms-2 my-auto" />
       </strong>
       <div v-if="!address" class="d-flex flex-grow-1 flex-shrink-0">
@@ -149,7 +149,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              {{ $t('stake') }}
+              <span class="subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -185,7 +185,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              {{ $t('unstake') }}
+              <span class="subtitle-1 font-weight-medium">{{ $t('unstake') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -232,7 +232,7 @@
               outlined
               text>
               <v-icon class="me-2" small>fa-external-link</v-icon>
-              {{ $t('claim') }}
+              <span class="subtitle-1 font-weight-medium">{{ $t('claim') }}</span>
             </v-btn>
           </v-list-item-action>
         </v-list-item>

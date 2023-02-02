@@ -19,7 +19,7 @@
 <template>
   <deeds-drawer ref="drawer">
     <template #title>
-      <h4>{{ title }}</h4>
+      <h4 class="title font-weight-bold">{{ title }}</h4>
     </template>
     <template #content>
       <deeds-stake-meeds-steps

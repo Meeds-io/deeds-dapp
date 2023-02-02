@@ -50,6 +50,7 @@
               <deeds-number-format
                 :value="item.value"
                 no-decimals
+                no-extra-class
                 class="d-inline">
                 Ɱ
               </deeds-number-format>
@@ -62,7 +63,8 @@
       <deeds-number-format
         v-if="metrics"
         :value="totalValueLocked"
-        :fractions="2">
+        :fractions="2"
+        no-extra-class>
         Ɱ
       </deeds-number-format>
       <v-skeleton-loader
@@ -76,7 +78,8 @@
         v-if="metrics"
         :value="totalValueLocked"
         :fractions="2"
-        currency />
+        currency
+        no-extra-class />
       <v-skeleton-loader
         v-else
         type="chip"

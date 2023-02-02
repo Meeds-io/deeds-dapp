@@ -31,7 +31,7 @@
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('installMetamaskButton') }}</span>
+    <span v-if="!isMobile" class="text-none subtitle-1 font-weight-medium">{{ $t('installMetamaskButton') }}</span>
   </v-btn>
   <v-btn
     v-else-if="!validNetwork"
@@ -44,7 +44,7 @@
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
+    <span v-if="!isMobile" class="text-none subtitle-1 font-weight-medium">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
     v-else-if="!hasMetamaskConnectedAddress"
@@ -57,7 +57,7 @@
       :src="`/${parentLocation}/static/images/metamask.svg`"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('connectMetamaskButton') }}</span>
+    <span v-if="!isMobile" class="text-none subtitle-1 font-weight-medium">{{ $t('connectMetamaskButton') }}</span>
   </v-btn>
 </template>
 <script>

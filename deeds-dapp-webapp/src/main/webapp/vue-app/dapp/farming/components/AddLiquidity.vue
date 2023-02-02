@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 pt-0">
+    <v-card-title class="ps-0 pt-0 headline font-weight-medium">
       {{ $t('addLiquidity') }}
     </v-card-title>
-    <v-card-text class="ps-0 pt-0">
+    <v-card-text class="ps-0 pt-0 subtitle-1">
       {{ $t('addLiquidityIntroduction') }}
     </v-card-text>
     <v-bottom-navigation
@@ -38,7 +38,7 @@
         width="90px"
         outlined
         text
-        class="rounded-lg me-4">
+        class="rounded-lg me-4 subtitle-1">
         <span class="text-none">Sushiswap</span>
         <img
           :src="`/${parentLocation}/static/images/sushiswap.ico`"
@@ -54,7 +54,7 @@
         width="90px"
         outlined
         text
-        class="rounded-lg me-4">
+        class="rounded-lg me-4 subtitle-1">
         <span class="text-none">Uniswap</span>
         <div class="my-3 headline">🦄</div>
       </v-btn>
@@ -68,7 +68,7 @@
         width="90px"
         outlined
         text
-        class="rounded-lg me-4">
+        class="rounded-lg me-4 subtitle-1">
         <span class="text-none">Cometh</span>
         <img
           :src="`/${parentLocation}/static/images/cometh.ico`"

@@ -19,7 +19,7 @@
 <template>
   <v-card class="d-flex flex-column" flat>
     <div class="d-flex flex-row flex-grow-1">
-      <v-card-title class="ps-0 py-0">{{ $t('dapp.tenants.tenantsListTitle') }}</v-card-title>
+      <v-card-title class="ps-0 py-0 headline font-weight-medium">{{ $t('dapp.tenants.tenantsListTitle') }}</v-card-title>
       <v-divider class="my-auto" />
       <div v-if="hasTenants">
         <v-btn
@@ -30,15 +30,15 @@
       </div>
     </div>
     <v-expand-transition>
-      <v-card-text v-show="showIntroduction" class="px-0">
+      <v-card-text v-show="showIntroduction" class="px-0 subtitle-1">
         {{ $t('deedsTenantsCommunityIntroductionPart1') }}
         <ul class="mt-4">
           <ol
             v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
-            class="ps-0 ps-sm-4"
+            class="ps-0 ps-sm-4 subtitle-1"
             @click.prevent.stop="openMarketplace">
           </ol>
-          <ol class="ps-0 ps-sm-4">{{ $t('deedsTenantsCommunityIntroductionPart3') }}</ol>
+          <ol class="ps-0 ps-sm-4 subtitle-1">{{ $t('deedsTenantsCommunityIntroductionPart3') }}</ol>
         </ul>
       </v-card-text>
     </v-expand-transition>

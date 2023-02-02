@@ -43,7 +43,7 @@
         class="mb-12"
         flat>
         <v-card-text>
-          {{ $t('approveMeedsDescription', {0: meedsBalanceToDisplay}) }}
+          <span class="subtitle-1">{{ $t('approveMeedsDescription', {0: meedsBalanceToDisplay}) }}</span>
           <v-text-field
             v-model="allowance"
             :rules="allowanceValueValidator"
@@ -81,7 +81,7 @@
             name="approveTokensButton"
             color="primary"
             @click="approve">
-            {{ $t('approve') }}
+            <span class="subtitle-1 font-weight-medium">{{ $t('approve') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -136,7 +136,7 @@
             name="stakeTokensButton"
             color="primary"
             @click="stake">
-            {{ $t('stake') }}
+            <span class="subtitle-1 font-weight-medium">{{ $t('stake') }}</span>
           </v-btn>
         </v-card-actions>
       </v-card>

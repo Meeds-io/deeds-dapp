@@ -27,7 +27,7 @@
       class="img-65px"
       width="65px"
       height="65px">
-    <strong class="primary--text mt-2 mb-1">{{ $t(title) }}</strong>
+    <strong class="primary--text mt-2 mb-1 subtitle-1 font-weight-bold">{{ $t(title) }}</strong>
     <v-card-subtitle class="pa-0 hidden-xs-only">{{ $t(subtitle) }}</v-card-subtitle>
   </v-card>
 </template>

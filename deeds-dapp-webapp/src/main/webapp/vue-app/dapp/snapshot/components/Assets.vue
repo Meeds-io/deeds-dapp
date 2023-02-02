@@ -18,7 +18,7 @@
 -->
 <template>
   <div class="mb-4 mb-md-8">
-    <v-card-title class="d-flex flex-nowrap pa-0">
+    <v-card-title class="d-flex flex-nowrap pa-0 headline font-weight-medium">
       {{ $t('assets') }}
       <v-divider class="my-auto ms-4" />
     </v-card-title>

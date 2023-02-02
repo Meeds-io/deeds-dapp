@@ -24,7 +24,7 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4>{{ $t('deedGetOfferRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
+      <h4 class="title font-weight-bold">{{ $t('deedGetOfferRentingTitle', {0: cardTypeI18N, 1: nftId}) }}</h4>
     </template>
     <template v-if="offer" #content>
       <v-card-text class="d-flex flex-column flex-grow-1 rental-steps">

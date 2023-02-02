@@ -23,7 +23,7 @@
     <v-row v-if="hasLeases || hasNfts" class="pa-0 my-0">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
-          <div class="subtitle-1 font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
+          <div class="title font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
           <v-divider class="my-auto" />
         </div>
       </v-col>
