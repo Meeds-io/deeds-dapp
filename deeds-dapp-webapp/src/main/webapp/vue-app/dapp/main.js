@@ -519,7 +519,7 @@ const store = new Vuex.Store({
           }
 
           if (state.validNetwork) {
-            state.addSushiswapLiquidityLink = `https://app.sushi.com/add/ETH/${state.meedAddress}?chainId=${state.networkId}`;
+            state.addSushiswapLiquidityLink = `https://sushi.com/earn/eth:${state.sushiswapPairAddress}/add`;
             const networkChanged = previousNetworkId && previousNetworkId !== state.networkId;
             this.commit('setAddress', networkChanged);
           } else {
