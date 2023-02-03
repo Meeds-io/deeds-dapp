@@ -88,6 +88,22 @@ body, .theme--dark.v-application {
   text-transform: none;
 }
 
+.v-btn__content, .v-card__text, .v-card__subtitle, .number-format {
+  font-size: 1rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+.number-format.small--text {
+  font-size: inherit;
+}
+
+.v-card__title {
+  font-size: 1.5rem;
+}
+
 .text--color {
   color: #000000de !important;
 }
