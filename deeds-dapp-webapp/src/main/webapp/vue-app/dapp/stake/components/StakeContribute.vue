@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 headline font-weight-medium">
+    <v-card-title class="ps-0">
       {{ $t('contribute') }}
     </v-card-title>
-    <v-card-text class="ps-0 subtitle-1">
+    <v-card-text class="ps-0">
       {{ $t('contributionIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
@@ -36,7 +36,7 @@
           :src="`/${parentLocation}/static/images/meedsicon.png`"
           alt=""
           class="img-24px">
-        <span class="subtitle-1">{{ $t('getInvolved') }}</span>
+        {{ $t('getInvolved') }}
       </v-btn>
     </v-card-actions>
   </v-card>

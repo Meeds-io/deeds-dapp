@@ -31,10 +31,10 @@
             class="mx-auto addLiquidityIcon"
             alt="Cometh Icon">
         </v-card-text>
-        <v-card-title class="justify-center pt-0 text-center text-break headline font-weight-medium">
+        <v-card-title class="justify-center pt-0 text-center text-break">
           {{ $t('rentLiquidityOnCometh') }}
         </v-card-title>
-        <v-card-subtitle class="justify-center pt-0 text-center text-break subtitle-1">
+        <v-card-subtitle class="justify-center pt-0 text-center text-break">
           (Polygon)
         </v-card-subtitle>
       </v-card>
@@ -110,7 +110,7 @@
       </v-list>
       <strong class="d-flex flex-row">
         <v-divider class="ms-8 me-2 my-auto" />
-        <h6 class="font-weight-bold subtitle-1">{{ $t('myAssets') }}</h6>
+        <h6 class="font-size-normal">{{ $t('myAssets') }}</h6>
         <v-divider class="me-8 ms-2 my-auto" />
       </strong>
       <div v-if="!address" class="d-flex flex-grow-1 flex-shrink-0">

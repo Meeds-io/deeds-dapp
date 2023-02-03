@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 headline font-weight-medium">
+    <v-card-title class="ps-0">
       {{ $t('rentLiquidity') }}
     </v-card-title>
-    <v-card-text class="ps-0 subtitle-1">
+    <v-card-text class="ps-0">
       {{ $t('rentLiquidityIntroduction') }}
     </v-card-text>
   </v-card>

@@ -49,8 +49,8 @@
     </v-col>
     <v-col align-self="end" class="pa-0 mx-4 my-auto">
       <v-card flat>
-        <v-card-text class="pa-0 subtitle-1" v-html="$t(descriptionPart1, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})" />
-        <v-card-text class="pa-0 mt-4 subtitle-1" v-html="$t(descriptionPart2, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})" />
+        <v-card-text class="pa-0" v-html="$t(descriptionPart1, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})" />
+        <v-card-text class="pa-0 mt-4" v-html="$t(descriptionPart2, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})" />
       </v-card>
     </v-col>
   </v-row>

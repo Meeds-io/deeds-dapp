@@ -32,7 +32,7 @@
       :width="`${avatarSize}px !important`">
       <v-img :src="cardImage" />
     </v-list-item-avatar>
-    <span class="text-capitalize subtitle-1 font-weight-medium">{{ card }}</span>
+    <span class="text-capitalize font-size-normal">{{ card }}</span>
   </deeds-button-group-item>
 </template>
 <script>

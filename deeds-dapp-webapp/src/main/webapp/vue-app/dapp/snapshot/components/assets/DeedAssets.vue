@@ -18,7 +18,7 @@
 -->
 <template>
   <v-list dense class="pb-4 pb-sm-0">
-    <v-card-title class="d-flex flex-nowrap pa-0 headline font-weight-medium">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('yourDeeds') }}
     </v-card-title>
     <v-skeleton-loader

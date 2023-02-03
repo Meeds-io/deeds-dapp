@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="d-flex flex-nowrap pa-0 headline font-weight-medium">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('meedToken') }}
       <v-divider class="my-auto ms-4" />
     </v-card-title>

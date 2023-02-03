@@ -23,7 +23,7 @@
       <slot></slot>
     </template>
     <template v-else>
-      <span :class="noExtraClass ? '' : 'subtitle-1 font-weight-bold'">{{ formattedValue || '-' }}</span>
+      <span :class="formattedValueClass">{{ formattedValue || '-' }}</span>
       <slot></slot>
     </template>
   </div>
@@ -96,6 +96,9 @@ export default {
           this.language);
       }
     },
+    formattedValueClass() {
+      return this.noExtraClass ? '' : 'font-size-normal';
+    }
   }),
   created() {
     if (!this.meedPrice && this.currency) {

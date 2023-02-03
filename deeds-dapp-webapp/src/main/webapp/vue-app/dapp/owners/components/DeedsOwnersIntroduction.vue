@@ -19,7 +19,7 @@
 <template>
   <v-card class="d-flex flex-column" flat>
     <div class="d-flex flex-row flex-grow-1">
-      <v-card-title class="ps-0 py-0 headline font-weight-medium">{{ $t('dapp.owners.ownersListTitle') }}</v-card-title>
+      <v-card-title class="ps-0 py-0">{{ $t('dapp.owners.ownersListTitle') }}</v-card-title>
       <v-divider class="my-auto" />
       <div v-if="hasTenants">
         <v-btn
@@ -30,9 +30,9 @@
       </div>
     </div>
     <v-expand-transition>
-      <v-card-text v-show="showIntroduction" class="px-0 subtitle-1">
+      <v-card-text v-show="showIntroduction" class="px-0">
         {{ $t('deedsOwnersCommunityIntroductionPart1') }}
-        <ul class="mt-4 subtitle-1">
+        <ul class="mt-4">
           <ol
             v-html="$t('deedsOwnersCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/deeds'>`, 1: `</a>`})"
             class="ps-0 ps-sm-4"
@@ -40,7 +40,7 @@
           </ol>
           <ol
             v-html="$t('deedsOwnersCommunityIntroductionPart3', {0: `<a href='${openSeaLink}' title='${$t('sellOnOpenSea')}' target='${openSeaTarget}' rel='nofollow noreferrer noopener'>`, 1: `</a>`})"
-            class="ps-0 ps-sm-4 subtitle-1">
+            class="ps-0 ps-sm-4">
           </ol>
         </ul>
       </v-card-text>

@@ -19,11 +19,11 @@
 <template>
   <v-card flat>
     <flex class="d-flex flex-column flex-sm-row">
-      <v-card-title class="ps-0 py-0 headline font-weight-medium">
+      <v-card-title class="ps-0 py-0">
         {{ $t('deedsNfts') }}
       </v-card-title>
     </flex>
-    <v-card-text class="ps-0 subtitle-1" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <v-card-text class="ps-0" v-html="$t('noDeedsDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>

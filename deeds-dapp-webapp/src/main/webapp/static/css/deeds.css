@@ -88,8 +88,16 @@ body, .theme--dark.v-application {
   text-transform: none;
 }
 
-.v-btn {
-  font-size: 1rem !important;
+.v-btn__content, .v-card__text, .v-card__subtitle {
+  font-size: 1rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+.v-card__title {
+  font-size: 1.5rem;
 }
 
 .text--color {

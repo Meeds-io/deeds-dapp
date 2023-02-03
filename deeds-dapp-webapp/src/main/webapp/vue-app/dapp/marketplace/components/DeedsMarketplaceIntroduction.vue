@@ -18,9 +18,9 @@
 -->
 <template>
   <v-card class="d-flex flex-column justify-center align-center" flat>
-    <div class="py-0 mb-4 headline font-weight-medium">{{ $t('dapp.marketplace.introductionTitle') }}</div>
-    <v-card-subtitle class="py-0 subtitle-1">{{ $t('dapp.marketplace.introductionSummary1') }}</v-card-subtitle>
-    <v-card-subtitle class="py-0 subtitle-1">{{ $t('dapp.marketplace.introductionSummary2') }}</v-card-subtitle>
+    <div class="py-0 mb-4 headline">{{ $t('dapp.marketplace.introductionTitle') }}</div>
+    <v-card-subtitle class="py-0">{{ $t('dapp.marketplace.introductionSummary1') }}</v-card-subtitle>
+    <v-card-subtitle class="py-0">{{ $t('dapp.marketplace.introductionSummary2') }}</v-card-subtitle>
     <v-card-text class="d-flex justify-center pa-0 my-8">
       <deeds-marketplace-introduction-item
         image-src="onboard.jpg"

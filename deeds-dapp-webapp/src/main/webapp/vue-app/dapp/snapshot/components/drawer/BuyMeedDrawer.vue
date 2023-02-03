@@ -23,14 +23,14 @@
     @opened="$emit('opened')"
     @closed="$emit('closed')">
     <template #title>
-      <h4 class="title font-weight-bold">{{ $t('buyMeeds') }}</h4>
+      <h4>{{ $t('buyMeeds') }}</h4>
     </template>
     <template v-if="openedDrawer" #content>
       <v-card color="transparent" flat>
         <v-card-text>
           <div class="d-flex flex-column mb-8">
-            <span class="subtitle-1">{{ $t('buyMeedsIntroduction') }}</span>
-            <ul class="mt-4 subtitle-1">
+            {{ $t('buyMeedsIntroduction') }}
+            <ul class="mt-4">
               <li class="ps-0 ps-sm-4">
                 {{ $t('buyMeedsIntroductionBulletPoint1') }}
               </li>

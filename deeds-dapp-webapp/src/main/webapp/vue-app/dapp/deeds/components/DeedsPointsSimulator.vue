@@ -21,7 +21,7 @@
     width="530"
     class="px-4"
     outlined>
-    <v-card-title class="ps-0 pb-0 mx-1 headline font-weight-medium">
+    <v-card-title class="ps-0 pb-0 mx-1">
       {{ $t('pointsSimulator') }}
     </v-card-title>
     <v-card-text class="ps-0">
@@ -56,7 +56,7 @@
         type="chip"
         max-height="17"
         tile />
-      <div v-else class="mx-1 subtitle-1">
+      <div v-else class="mx-1">
         {{ pointsSimulationRate }}
       </div>
     </v-card-text>

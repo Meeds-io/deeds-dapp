@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card flat class="d-flex flex-column">
-    <v-card-title class="d-flex flex-nowrap pa-0 headline font-weight-medium">
+    <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
         :address="deedAddress"
@@ -26,21 +26,21 @@
         token />
       <v-divider class="my-auto ms-4" />
     </v-card-title>
-    <v-card-text class="subtitle-1" v-html="$t('deedsToRedeemIntroduction')" />
+    <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
     <template v-if="xMeedAddress">
       <v-skeleton-loader
         v-if="currentCityName === null"
         type="chip"
         max-height="17"
         tile />
-      <h4 v-else class="title">{{ currentCityName }}</h4>
+      <h4 v-else>{{ currentCityName }}</h4>
       <small class="d-flex flex-column flex-sm-row align-center">
-        <span class="subtitle-1">{{ $t('cityPopulation') }}:</span>
+        <span class="font-size-normal">{{ $t('cityPopulation') }}:</span>
         <v-skeleton-loader
           v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
           type="chip"
           class="ms-2" />
-        <v-chip v-else class="ms-2 subtitle-1">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
+        <v-chip v-else class="ms-2 font-size-normal">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
         <div v-if="!currentCityMintable && currentCityMintingStartDate">
           . {{ $t('cityMintingStartDate') }}:
           <deeds-timer

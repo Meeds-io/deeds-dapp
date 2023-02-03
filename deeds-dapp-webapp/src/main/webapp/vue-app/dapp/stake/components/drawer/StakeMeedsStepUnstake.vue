@@ -19,7 +19,7 @@
 <template>
   <v-card class="mb-12" flat>
     <v-card-text>
-      <span class="subtitle-1">{{ $t('unstakeXMeedsDescription', {0: xMeedsBalanceNoDecimals}) }}</span>
+      {{ $t('unstakeXMeedsDescription', {0: xMeedsBalanceNoDecimals}) }}
       <v-text-field
         v-model="unstakeAmount"
         :rules="unstakeAmountValidator"
