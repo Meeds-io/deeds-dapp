@@ -17,13 +17,13 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div v-if="display">
+  <div v-if="display" class="number-format">
     <template v-if="label">
       {{ $t(label, labelComputedParams) }}
       <slot></slot>
     </template>
     <template v-else>
-      <span :class="formattedValueClass">{{ formattedValue || '-' }}</span>
+      {{ formattedValue || '-' }}
       <slot></slot>
     </template>
   </div>
@@ -60,10 +60,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    noExtraClass: {
-      type: Boolean,
-      default: false,
-    }
   },
   computed: Vuex.mapState({
     language: state => state.language,
@@ -96,9 +92,6 @@ export default {
           this.language);
       }
     },
-    formattedValueClass() {
-      return this.noExtraClass ? '' : 'font-size-normal';
-    }
   }),
   created() {
     if (!this.meedPrice && this.currency) {

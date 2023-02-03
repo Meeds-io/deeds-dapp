@@ -134,7 +134,7 @@
         </v-list>
         <strong class="d-flex flex-row">
           <v-divider class="ms-8 me-2 my-auto" />
-          <h6 class="font-size-normal">{{ $t('myAssets') }}</h6>
+          <h4>{{ $t('myAssets') }}</h4>
           <v-divider class="me-8 ms-2 my-auto" />
         </strong>
         <div v-if="metamaskOffline" class="d-flex flex-grow-1 flex-shrink-0">

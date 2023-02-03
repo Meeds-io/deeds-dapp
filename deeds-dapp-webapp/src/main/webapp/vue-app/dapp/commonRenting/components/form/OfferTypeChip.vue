@@ -24,7 +24,7 @@
     :value="offerType"
     :small="small"
     :color="color">
-    <span class="text-capitalize font-size-normal">{{ label }}</span>
+    <span class="text-capitalize">{{ label }}</span>
   </deeds-button-group-item>
 </template>
 <script>

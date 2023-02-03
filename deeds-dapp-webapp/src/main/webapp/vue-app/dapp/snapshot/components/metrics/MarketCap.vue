@@ -37,8 +37,8 @@
         v-if="metrics"
         :value="circulatingSupply"
         :fractions="2"
-        no-decimals
-        no-extra-class>
+        class="small--text"
+        no-decimals>
         Ɱ
       </deeds-number-format>
       <v-skeleton-loader

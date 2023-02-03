@@ -25,8 +25,7 @@
       <deeds-number-format
         v-if="totalSupply"
         :value="totalSupply"
-        :fractions="2"
-        no-extra-class>
+        :fractions="2">
         Ɱ
       </deeds-number-format>
       <v-skeleton-loader
@@ -40,7 +39,7 @@
         v-if="totalSupply"
         :value="totalSupply"
         :fractions="2"
-        no-extra-class
+        class="small--text"
         currency />
       <v-skeleton-loader
         v-else

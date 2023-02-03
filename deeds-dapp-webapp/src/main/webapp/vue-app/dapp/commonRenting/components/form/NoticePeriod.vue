@@ -21,7 +21,7 @@
 <template>
   <v-btn-toggle
     v-model="period"
-    class="flex-grow-1 d-flex justify-space-between"
+    class="flex-grow-1 d-flex flex-wrap justify-space-between"
     mandatory
     outlined
     dense
@@ -29,28 +29,32 @@
     <deeds-button-group-item
       :selected-value="period"
       value="NO_PERIOD"
-      color="primary">
+      color="primary"
+      class="col-6 d-flex justify-center">
       {{ $t('deedRentingDurationNoNotice') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
       :disabled="maxValueIndex < 1"
       value="ONE_MONTH"
-      color="primary">
+      color="primary"
+      class="col-6  d-flex justify-center">
       {{ $t('deedRentingDurationOneMonth') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
       :disabled="maxValueIndex < 2"
       value="TWO_MONTHS"
-      color="primary">
+      color="primary"
+      class="col-6  d-flex justify-center">
       {{ $t('deedRentingDurationTwoMonths') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="period"
       :disabled="maxValueIndex < 3"
       value="THREE_MONTHS"
-      color="primary">
+      color="primary"
+      class="col-6  d-flex justify-center">
       {{ $t('deedRentingDurationThreeMonths') }}
     </deeds-button-group-item>
   </v-btn-toggle>
