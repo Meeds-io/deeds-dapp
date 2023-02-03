@@ -32,7 +32,7 @@
       :width="`${avatarSize}px !important`">
       <v-img :src="cardImage" />
     </v-list-item-avatar>
-    <span class="text-capitalize">{{ card }}</span>
+    <span class="text-capitalize">{{ cardTypeI18N }}</span>
   </deeds-button-group-item>
 </template>
 <script>
@@ -64,6 +64,9 @@ export default {
     blackThemeColor: state => state.blackThemeColor,
     cardImage() {
       return this.city && this.card && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
+    },
+    cardTypeI18N() {
+      return this.card && this.$t(this.card.toLowerCase());
     },
   }),
 };
