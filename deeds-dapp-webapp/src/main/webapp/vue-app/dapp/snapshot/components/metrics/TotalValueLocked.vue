@@ -76,6 +76,7 @@
         v-if="metrics"
         :value="totalValueLocked"
         :fractions="2"
+        class="small--text"
         currency />
       <v-skeleton-loader
         v-else

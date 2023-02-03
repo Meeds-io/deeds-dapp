@@ -35,12 +35,12 @@
         tile />
       <h4 v-else>{{ currentCityName }}</h4>
       <small class="d-flex flex-column flex-sm-row align-center">
-        {{ $t('cityPopulation') }}:
+        <span class="font-size-normal">{{ $t('cityPopulation') }}:</span>
         <v-skeleton-loader
           v-if="currentCityPopulation === null || currentCityMaxPopulation === null"
           type="chip"
           class="ms-2" />
-        <v-chip v-else class="ms-2">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
+        <v-chip v-else class="ms-2 font-size-normal">{{ currentCityPopulation }} / {{ currentCityMaxPopulation }}</v-chip>
         <div v-if="!currentCityMintable && currentCityMintingStartDate">
           . {{ $t('cityMintingStartDate') }}:
           <deeds-timer
