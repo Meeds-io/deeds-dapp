@@ -18,11 +18,8 @@
 -->
 <template>
   <v-card flat>
-    <div class="d-flex flex-row">
-      <v-card-title class="ps-0 py-0">{{ $t('becomeDeedOwner') }}</v-card-title>
-      <v-divider class="my-auto" />
-    </div>
-    <v-card-text class="ps-0" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <v-card-title class="ps-0 py-0 justify-center">{{ $t('becomeDeedOwner') }}</v-card-title>
+    <v-card-text class="ps-0 pt-4" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>

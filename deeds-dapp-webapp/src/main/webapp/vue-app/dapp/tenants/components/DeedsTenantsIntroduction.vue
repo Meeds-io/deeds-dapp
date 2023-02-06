@@ -18,30 +18,18 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <div class="d-flex flex-row flex-grow-1">
-      <v-card-title class="ps-0 py-0">{{ $t('dapp.tenants.tenantsListTitle') }}</v-card-title>
-      <v-divider class="my-auto" />
-      <div v-if="hasTenants">
-        <v-btn
-          icon
-          @click="showIntroduction = !showIntroduction">
-          <v-icon size="18">fas fa-chevron-{{ showIntroduction && 'up' || 'down' }}</v-icon>
-        </v-btn>
-      </div>
-    </div>
-    <v-expand-transition>
-      <v-card-text v-show="showIntroduction" class="px-0">
-        {{ $t('deedsTenantsCommunityIntroductionPart1') }}
-        <ul class="mt-4">
-          <ol
-            v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
-            class="ps-0 ps-sm-4"
-            @click.prevent.stop="openMarketplace">
-          </ol>
-          <ol class="ps-0 ps-sm-4">{{ $t('deedsTenantsCommunityIntroductionPart3') }}</ol>
-        </ul>
-      </v-card-text>
-    </v-expand-transition>
+    <v-card-title class="ps-0 py-0  justify-center">{{ $t('dapp.tenants.tenantsListTitle') }}</v-card-title>
+    <v-card-text v-show="showIntroduction" class="px-0 pt-4">
+      {{ $t('deedsTenantsCommunityIntroductionPart1') }}
+      <ul class="mt-4">
+        <ol
+          v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
+          class="ps-0 ps-sm-4"
+          @click.prevent.stop="openMarketplace">
+        </ol>
+        <ol class="ps-0 ps-sm-4">{{ $t('deedsTenantsCommunityIntroductionPart3') }}</ol>
+      </ul>
+    </v-card-text>
   </v-card>
 </template>
 <script>
@@ -62,7 +50,7 @@ export default {
   methods: {
     computeLeasesLength(_leases, totalSize) {
       this.hasTenants = totalSize > 0;
-      this.showIntroduction = !this.hasTenants;
+      this.showIntroduction = true;
     },
     openMarketplace(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
