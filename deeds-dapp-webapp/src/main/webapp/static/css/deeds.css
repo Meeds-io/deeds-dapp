@@ -34,6 +34,7 @@ body, .theme--dark.v-application {
 
 .mainPageLayout, .headerLayout {
   width: 100%;
+  max-width: 100%;
 }
 
 .copyToClipboardInput {
