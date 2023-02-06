@@ -77,7 +77,8 @@
             <span class="mx-1">+</span>
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
-              :fractions="2" />
+              :fractions="2"
+              class="small--text" />
             <span class="mx-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
@@ -98,6 +99,7 @@
       <deeds-number-format
         :value="userStakedEquivalentMeeds"
         :fractions="2"
+        class="small--text"
         currency />
     </template>
   </deeds-token-asset-template>
