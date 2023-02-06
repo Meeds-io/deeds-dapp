@@ -20,7 +20,7 @@
   <v-sheet
     class="overflow-y-auto">
     <div class="siteContentLayout mt-11 mt-sm-13">
-      <div class="mainPageLayout mx-auto pa-4">
+      <div class="mainPageLayout pa-5 mx-md-auto">
         <tenant-placeholder-page
           id="mainPageContent"
           role="main" />
