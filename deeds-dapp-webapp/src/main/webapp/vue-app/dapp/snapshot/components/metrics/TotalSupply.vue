@@ -39,6 +39,7 @@
         v-if="totalSupply"
         :value="totalSupply"
         :fractions="2"
+        class="small--text"
         currency />
       <v-skeleton-loader
         v-else

@@ -33,7 +33,8 @@
     <template #col4>
       <deeds-number-format
         :value="meedsMaxTotalSupply"
-        :fractions="2">
+        :fractions="2"
+        class="small--text">
         Ɱ
       </deeds-number-format>
     </template>
