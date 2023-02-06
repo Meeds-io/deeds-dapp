@@ -45,6 +45,7 @@
       <deeds-number-format
         :value="polygonMeedsBalance"
         :fractions="2"
+        class="small--text"
         currency />
     </template>
   </deeds-token-asset-template>
