@@ -20,7 +20,7 @@
   <v-sheet id="siteContent" class="overflow-y-auto">
     <div class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
-      <div v-else class="mainPageLayout mx-auto pa-4">
+      <div v-else class="mainPageLayout pa-5 mx-md-auto">
         <deeds-navbar id="navbar" role="navigation" />
         <deeds-page
           id="mainPageContent"
