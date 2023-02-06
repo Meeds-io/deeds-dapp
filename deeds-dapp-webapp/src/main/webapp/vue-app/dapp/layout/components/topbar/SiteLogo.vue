@@ -17,22 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-toolbar-title class="d-flex align-center">
-    <img
-      :src="`/${parentLocation}/static/images/meeds.png`"
-      height="24px"
-      width="64px"
-      alt="">
-    <div class="ps-2 mb-2px">{{ $t('dao') }}</div>
-    <v-chip
-      v-if="isTestNetwork"
-      :small="!isMobile"
-      :x-small="isMobile"
-      color="orange"
-      dark
-      class="testnet-chip mt-1 ms-4">
-      {{ testnetName }}
-    </v-chip>
+  <v-toolbar-title>
+    <a :href="`/${parentLocation}/marketplace`" class="d-flex align-center text--color no-decoration">
+      <img
+        :src="`/${parentLocation}/static/images/meeds.png`"
+        height="24px"
+        width="64px"
+        alt="">
+      <div class="ps-2 mb-2px">{{ $t('dao') }}</div>
+      <v-chip
+        v-if="isTestNetwork"
+        :small="!isMobile"
+        :x-small="isMobile"
+        color="orange"
+        dark
+        class="testnet-chip mt-1 ms-4">
+        {{ testnetName }}
+      </v-chip>
+    </a>
   </v-toolbar-title>
 </template>
 <script>
