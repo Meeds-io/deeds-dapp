@@ -35,10 +35,7 @@
   <v-card v-else flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
-        <div class="d-flex flex-row">
-          <v-card-title class="ps-0 py-0">{{ $t('dapp.marketplace.deedsListTitle') }}</v-card-title>
-          <v-divider class="my-auto" />
-        </div>
+        <v-card-title class="ps-0 py-0 justify-center">{{ $t('dapp.marketplace.deedsListTitle') }}</v-card-title>
       </div>
     </v-scale-transition>
     <deeds-marketplace-deeds-list
