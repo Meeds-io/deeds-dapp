@@ -21,7 +21,7 @@
 <template>
   <v-btn-toggle
     v-model="expirationDuration"
-    class="flex-grow-1 d-flex justify-space-between"
+    class="flex-grow-1 d-flex flex-wrap justify-space-between"
     mandatory
     outlined
     dense
@@ -29,25 +29,29 @@
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="NO_EXPIRATION"
-      color="primary">
+      color="primary"
+      class="col-6 d-flex justify-center">
       {{ $t('deedRentingExpirationDurationNoExpiration') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="THREE_DAYS"
-      color="primary">
+      color="primary"
+      class="col-6 d-flex justify-center">
       {{ $t('deedRentingExpirationDurationThreeDays') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_WEEK"
-      color="primary">
+      color="primary"
+      class="col-6 d-flex justify-center">
       {{ $t('deedRentingExpirationDurationOneWeek') }}
     </deeds-button-group-item>
     <deeds-button-group-item
       :selected-value="expirationDuration"
       value="ONE_MONTH"
-      color="primary">
+      color="primary"
+      class="col-6 d-flex justify-center">
       {{ $t('deedRentingExpirationDurationOneMonth') }}
     </deeds-button-group-item>
   </v-btn-toggle>
