@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat class="d-flex flex-column">
+  <v-card flat class="d-flex flex-column ms-md-2">
     <v-card-title class="d-flex flex-nowrap pa-0">
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
@@ -26,7 +26,7 @@
         token />
       <v-divider class="my-auto ms-4" />
     </v-card-title>
-    <v-card-text v-html="$t('deedsToRedeemIntroduction')" />
+    <v-card-text class="mx-0" v-html="$t('deedsToRedeemIntroduction')" />
     <template v-if="xMeedAddress">
       <v-skeleton-loader
         v-if="currentCityName === null"
