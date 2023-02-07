@@ -24,7 +24,6 @@
         :address="deedAddress"
         button-top="-6"
         token />
-      <v-divider class="my-auto ms-4" />
     </v-card-title>
     <v-card-text class="mx-0" v-html="$t('deedsToRedeemIntroduction')" />
     <template v-if="xMeedAddress">

@@ -18,9 +18,8 @@
 -->
 <template>
   <v-card class="ms-md-2" flat>
-    <v-card-title class="d-flex flex-nowrap pa-0">
+    <v-card-title class="pa-0">
       {{ $t('tradeDeeds') }}
-      <v-divider class="my-auto ms-4" />
     </v-card-title>
     <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='link--color' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
     <v-card-actions class="ps-0 justify-center">
