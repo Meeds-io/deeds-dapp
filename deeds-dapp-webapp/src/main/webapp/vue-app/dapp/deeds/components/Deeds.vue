@@ -21,7 +21,7 @@
     <deeds-nft-title />
     <template v-if="!noCityLeft">
       <div class="d-flex flex-column-reverse flex flex-md-row mb-8">
-        <div class="d-flex flex-column ms-0 ms-md-8">
+        <div class="d-flex flex-column ms-0 ms-md-2">
           <deeds-nft-introduction />
           <deeds-points-simulator />
         </div>
