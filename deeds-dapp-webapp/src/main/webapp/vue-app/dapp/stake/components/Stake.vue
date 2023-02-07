@@ -20,7 +20,7 @@
   <div class="mt-8 mt-sm-10">
     <deeds-stake-introduction />
     <div class="d-flex flex-column-reverse flex-md-row">
-      <div class="d-flex flex-column ms-0 ms-md-8">
+      <div class="d-flex flex-column ms-0 ms-md-2">
         <deeds-stake-yield />
         <deeds-stake-governance />
         <deeds-stake-deeds />
