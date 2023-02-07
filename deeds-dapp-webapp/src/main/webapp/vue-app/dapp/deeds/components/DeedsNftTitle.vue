@@ -19,7 +19,7 @@
 <template>
   <v-card flat>
     <v-card-title class="ps-0 py-0 justify-center">{{ $t('becomeDeedOwner') }}</v-card-title>
-    <v-card-text class="ps-0 pt-4" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <v-card-text class="ps-0 pt-4 ms-md-2" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>
