@@ -68,7 +68,7 @@ public class RequestDispatcherFilter extends HttpFilter {
       response.setDateHeader("Last-Modified", LAST_MODIFIED);
       response.setContentType("text/html; charset=UTF-8");
       response.setCharacterEncoding("UTF-8");
-      RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/view.jsp");
+      RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
       dispatcher.include(request, response);// NOSONAR
     } else {
       chain.doFilter(request, response);
