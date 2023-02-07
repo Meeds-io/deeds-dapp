@@ -19,7 +19,7 @@
 <template>
   <v-card flat>
     <v-card-title class="ps-0 py-0 justify-center">{{ $t('becomeHolder') }}</v-card-title>
-    <v-card-text class="ps-0 pt-4">
+    <v-card-text class="ps-0 pt-4 ms-md-2">
       {{ $t('becomeHolderDescription') }}
     </v-card-text>
   </v-card>
