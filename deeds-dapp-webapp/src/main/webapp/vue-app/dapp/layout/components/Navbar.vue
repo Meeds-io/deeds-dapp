@@ -37,7 +37,7 @@
             class="px-0 full-height"
             link
             @click="openPage">
-            <h3 class="mx-2 number-format">{{ $t('page.marketplace') }}</h3>
+            <h3 class="mx-2 font-size-normal">{{ $t('page.marketplace') }}</h3>
             <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
             <v-tabs-slider color="secondary" class="mobile-menu-slider" />
           </v-btn>
@@ -50,7 +50,7 @@
             class="px-0 full-height"
             link
             @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
-            <h3 class="mx-2 number-format">{{ $t('buy') }}</h3>
+            <h3 class="mx-2 font-size-normal">{{ $t('buy') }}</h3>
             <v-icon class="font-normal font-weight-bold mb-1 mt-2">Ɱ</v-icon>
           </v-btn>
         </v-col>
@@ -63,7 +63,7 @@
             class="px-0 full-height"
             link
             @click="openPage">
-            <h3 class="mx-2 number-format">{{ $t('page.overview') }}</h3>
+            <h3 class="mx-2 font-size-normal">{{ $t('page.overview') }}</h3>
             <v-icon class="mb-1 mt-2">fas fa-coins</v-icon>
             <v-tabs-slider color="secondary" class="mobile-menu-slider" />
           </v-btn>
@@ -76,7 +76,7 @@
             class="px-0 full-height"
             link
             @click.prevent.stop="showMoreMenu = !showMoreMenu">
-            <h3 class="mx-2 number-format">{{ $t('more') }}</h3>
+            <h3 class="mx-2 font-size-normal">{{ $t('more') }}</h3>
             <v-icon class="mb-1 mt-2">fas fa-ellipsis</v-icon>
             <v-tabs-slider color="secondary" class="mobile-menu-slider" />
           </v-btn>
