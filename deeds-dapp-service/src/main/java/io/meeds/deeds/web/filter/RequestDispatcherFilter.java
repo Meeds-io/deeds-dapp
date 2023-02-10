@@ -20,7 +20,6 @@ package io.meeds.deeds.web.filter;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
@@ -80,18 +78,13 @@ public class RequestDispatcherFilter extends HttpFilter {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
+        // Check if HTML file exists to display dApp UI, else send HTTP 404
+        // response code
         String[] pathParts = StringUtils.split(servletPath, "/");
         String fileName = pathParts.length > 0 ? pathParts[pathParts.length - 1] : DEFAULT_PAGE_FILE_NAME;
         String filePath = "/static/html/" + fileName + ".html";
         String fileAbsolutePath = request.getServletContext().getRealPath(filePath);
-        File file = new File(fileAbsolutePath);
-        if (file.exists()) {
-          request.setAttribute("fileContent", IOUtils.toString(file.toURI(), StandardCharsets.UTF_8));
-          response.setHeader("Cache-Control", "public,must-revalidate");
-          response.setHeader("etag", eTagValue);
-          response.setDateHeader("Last-Modified", LAST_MODIFIED);
-          response.setContentType("text/html; charset=UTF-8");
-          response.setCharacterEncoding("UTF-8");
+        if (new File(fileAbsolutePath).exists()) {
           RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
           dispatcher.include(request, response);// NOSONAR
         } else {
