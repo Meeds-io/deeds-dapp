@@ -78,6 +78,8 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
+
+const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
 const themePreference = window.localStorage.getItem('meeds-preferred-theme-colors') || 'system';
 const systemThemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
 const dark = (systemThemeDark && themePreference === 'system') || themePreference === 'dark';
@@ -244,6 +246,7 @@ const store = new Vuex.Store({
   state: {
     ...networkSettings[1],
     ...blockchainAddressAndNetworkState,
+    buildNumber,
     parentLocation: window.parentAppLocation,
     addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
     rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
@@ -1370,7 +1373,6 @@ window.addEventListener('ethereum#initialized', initialize, {
   once: true,
 });
 
-const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
 let app = null;
 
 function initializeVueApp(language) {
