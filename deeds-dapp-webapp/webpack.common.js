@@ -9,7 +9,6 @@ let config = {
   entry: {
     deeds: './src/main/webapp/vue-app/dapp/main.js',
     tenantPlaceholder: './src/main/webapp/vue-app/placeholder/main.js',
-    staticPage: './src/main/webapp/vue-app/staticPage/main.js',
   },
   plugins: [
     new ESLintPlugin({

@@ -18,6 +18,9 @@
 -->
 <script>
 export default {
-  template: document.getElementById('staticContent').innerHTML.replace(/images\//g, `/${window.location.pathname.split('/')[1]}/static/images/`),
+  template: document.getElementById('staticContent')?.innerHTML?.replace(/images\//g, `/${window.location.pathname.split('/')[1]}/static/images/`) || '',
+  mounted() {
+    document.getElementById('staticContent').innerHTML = '';
+  },
 };
 </script>
