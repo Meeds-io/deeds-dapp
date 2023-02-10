@@ -2,7 +2,6 @@
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
-  String fileContent = (String) request.getAttribute("fileContent");
   String extendedHtmlContent = Utils.getExtendedHtmlContent();
 %>
 <!DOCTYPE html>
@@ -72,12 +71,6 @@
   </head>
   <body>
     <div id="deedsApp"></div>
-
-    <% if (StringUtils.isNotBlank(fileContent)) { %>
-    <div id="staticContent" style="display: none;">
-      <%= fileContent %>
-    </div>
-    <% } %>
 
     <% if (StringUtils.isNotBlank(request.getRemoteUser())) { %>
       <input type="hidden" name="login" value="<%=request.getRemoteUser()%>">
