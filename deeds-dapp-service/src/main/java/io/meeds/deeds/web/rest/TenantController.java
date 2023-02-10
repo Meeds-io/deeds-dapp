@@ -21,7 +21,6 @@ import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedTenantResponse;
 import java.security.Principal;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -68,7 +67,7 @@ public class TenantController {
     }
     String walletAddress = principal.getName();
     List<DeedTenant> deedTenants = tenantService.getDeedTenants(walletAddress);
-    return deedTenants.stream().map(EntityMapper::build).collect(Collectors.toList());
+    return deedTenants.stream().map(EntityMapper::build).toList();
   }
 
   @GetMapping("/{nftId}")
