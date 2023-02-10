@@ -23,9 +23,11 @@ const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 const Overview = { template: '<deeds-overview />' };
+const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 export default {
-  '/': Marketplace,
+  '/': StaticPageContent,
+  '/default': StaticPageContent,
   '/marketplace': Marketplace,
   '/tenants': Tenants,
   '/owners': Owners,
