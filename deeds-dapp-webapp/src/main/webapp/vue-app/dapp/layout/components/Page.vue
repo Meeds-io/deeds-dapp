@@ -32,7 +32,7 @@ export default {
       if (!this.currentRoute) {
         return {template: ''};
       } else {
-        return routes[this.currentRoute] || {template: ''};
+        return routes[this.currentRoute] || routes['/'];
       }
     },
   }),
@@ -72,7 +72,7 @@ export default {
           currentRoute = `/${currentRoute}`;
         }
       }
-      this.currentRoute = currentRoute;
+      this.currentRoute = currentRoute || '/';
     },
   },
 };
