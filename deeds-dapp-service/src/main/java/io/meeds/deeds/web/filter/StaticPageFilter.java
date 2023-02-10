@@ -50,20 +50,26 @@ public class StaticPageFilter extends HttpFilter {
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    response.setDateHeader("Last-Modified", LAST_MODIFIED);
-    response.setDateHeader("Expires", EXPIRES);
-    response.setHeader("Cache-Control", "public,max-age=" + MAX_AGE);
-    String[] pathParts = StringUtils.split(request.getServletPath(), "/");
-    String fileName = pathParts[pathParts.length - 1];
-    String filePath = "/static/html/" + fileName;
-    String fileAbsolutePath = request.getServletContext().getRealPath(filePath);
-    File file = new File(fileAbsolutePath);
-    if (file.exists()) {
-      request.setAttribute("fileContent", IOUtils.toString(file.toURI(), StandardCharsets.UTF_8));
-      RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/htmlcontent.jsp");
-      dispatcher.include(request, response);// NOSONAR
+    String servletPath = request.getServletPath();
+    if (StringUtils.contains(servletPath, ".") // Static files
+        || StringUtils.contains(servletPath, "api")) { // REST API
+      chain.doFilter(request, response);
     } else {
-      response.setStatus(404);
+      response.setDateHeader("Last-Modified", LAST_MODIFIED);
+      response.setDateHeader("Expires", EXPIRES);
+      response.setHeader("Cache-Control", "public,max-age=" + MAX_AGE);
+      String[] pathParts = StringUtils.split(servletPath, "/");
+      String fileName = pathParts[pathParts.length - 1];
+      String filePath = "/static/html/" + fileName + ".html";
+      String fileAbsolutePath = request.getServletContext().getRealPath(filePath);
+      File file = new File(fileAbsolutePath);
+      if (file.exists()) {
+        request.setAttribute("fileContent", IOUtils.toString(file.toURI(), StandardCharsets.UTF_8));
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/htmlcontent.jsp");
+        dispatcher.include(request, response);// NOSONAR
+      } else {
+        chain.doFilter(request, response);
+      }
     }
   }
 
