@@ -270,9 +270,6 @@ export default {
     dark: state => state.dark,
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
-    defaultTab() {
-      return '';
-    },
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },
