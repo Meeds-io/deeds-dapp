@@ -26,3 +26,4 @@ import './snapshot/initComponents';
 import './deeds/initComponents';
 import './stake/initComponents';
 import './farming/initComponents';
+import './staticPage/initComponents';

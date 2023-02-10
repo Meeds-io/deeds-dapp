@@ -174,6 +174,12 @@
     v-model="selectedTab"
     color="secondary">
     <v-tab
+      ref="default"
+      id="default"
+      :href="`/${parentLocation}/static`"
+      link 
+      class="d-none" />
+    <v-tab
       ref="marketplace"
       id="marketplace"
       :href="`/${parentLocation}/marketplace`"
@@ -248,6 +254,15 @@ export default {
     showBottomNavigation: true,
     selectedId: null,
     updatingMenu: false,
+    dappPages: [
+      'marketplace',
+      'tenants',
+      'owners',
+      'stake',
+      'deeds',
+      'farm',
+      'overview',
+    ],
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
@@ -255,9 +270,6 @@ export default {
     dark: state => state.dark,
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
-    defaultTab() {
-      return `/${this.parentLocation}/marketplace`;
-    },
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },
@@ -324,8 +336,8 @@ export default {
           this.avoidAddToHistory = true;
           this.switchPage(newTab);
         } else {
-          this.selectedTab = tabToSelect;
-          if (this.isMobile && this.selectedTab !=='marketplace' && this.selectedTab !=='overview') {
+          this.selectedTab = (this.dappPages.indexOf(newTab) >= 0) && tabToSelect || `/${this.parentLocation}/static`;
+          if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'overview') {
             this.$nextTick().then(() => {
               this.selectedId = newTab;
               this.selectedTab = 'more';
