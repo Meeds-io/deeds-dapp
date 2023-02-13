@@ -18,7 +18,7 @@
     <link rel="preload" href="./static/fonts/fa-solid-900.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./static/fonts/fa-solid-900.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
 
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=v2.6.4">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-all.css?_=v2.6.4">
     <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.4_0">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
@@ -36,12 +36,12 @@
     <link rel="icon" href="./static/images/meedsicon.png" sizes="32x32">
     <link rel="icon" href="./static/images/meedsicon.png" sizes="192x192">
     <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
-    <link href="./static/css/vuetify.min.css?_=v2.6.4" rel="stylesheet">
+    <link href="./static/css/vuetify-all.css?_=v2.6.4" rel="stylesheet">
     <link href="./static/css/vuetify-theme.css?_=v2.6.4_0" rel="stylesheet">
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
-  <body>
+  <body class="VuetifyApp">
     <div id="tenantPlaceholder"></div>
     <script src="./static/js/vue.min.js?_=v2.6.14"></script>
     <script src="./static/js/vuetify.min.js?_=v2.6.4"></script>
