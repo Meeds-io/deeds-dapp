@@ -33,7 +33,7 @@
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.min.css?_=v2.6.12">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-all.css?_=v2.6.12">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
     <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.12_1">
 
@@ -65,11 +65,11 @@
     <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
     <link href="./static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
-    <link href="./static/css/vuetify.min.css?_=v2.6.12" rel="stylesheet">
+    <link href="./static/css/vuetify-all.css?_=v2.6.12" rel="stylesheet">
     <link href="./static/css/vuetify-theme.css?_=v2.6.12_1" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
-  <body>
+  <body class="VuetifyApp">
     <div id="deedsApp"></div>
 
     <% if (StringUtils.isNotBlank(request.getRemoteUser())) { %>

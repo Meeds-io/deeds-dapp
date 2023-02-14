@@ -23,7 +23,7 @@
       {{ $t('deedsTenantsCommunityIntroductionPart1') }}
       <ul class="mt-4">
         <ol
-          v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace'>`, 1: `</a>`})"
+          v-html="$t('deedsTenantsCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/marketplace' class='secondary--text'>`, 1: `</a>`})"
           class="ps-0 ps-sm-4"
           @click.prevent.stop="openMarketplace">
         </ol>
