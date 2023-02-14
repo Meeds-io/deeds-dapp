@@ -11,22 +11,23 @@
       <v-btn
         href="mailto:contact@meeds.io" 
         max-width="156px"
-        class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+        class="dark-grey-border-color rounded-pill dark-grey-color" 
         outlined>
-        {{ $t('governance.button') }}
+        <span class="subtitle-2 font-weight-normal">{{ $t('governance.button') }}</span>
       </v-btn>
     </div>
     <img 
       src="images/meeds-about-us-banner.svg"
       width="486px"
+      class="hidden-md-and-down"
       alt="" />
   </div>
   <div class="d-flex flex-column">
     <div class="pa-4 v-card__title font-weight-bold dark-grey-color">
       {{ $t('whatWeDo.title') }}
     </div> 
-    <v-list class="d-flex">
-      <v-list-item class="col-4">
+    <v-list class="d-block d-md-flex">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -37,8 +38,8 @@
                 <span class="pb-4 dark-grey-color">{{ $t('whatWeDo.meedToken') }}</span>
                 <v-btn
                   href="./overview" 
-                  max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  max-width="94px"
+                  class="dark-grey-border-color rounded-pill dark-grey-color" 
                   small
                   outlined>
                   <span class="caption">{{ $t('tokenomics') }}</span>
@@ -55,7 +56,7 @@
           </v-list-item>
         </v-list>
       </v-list-item>
-      <v-list-item class="col-4">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -68,7 +69,7 @@
                   href="https://builders.meeds.io" 
                   target="_blank"
                   max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  class="dark-grey-border-color rounded-pill dark-grey-color" 
                   small
                   outlined>
                   <span class="caption">{{ $t('discover') }}</span>
@@ -85,7 +86,7 @@
           </v-list-item>
         </v-list>
       </v-list-item>
-      <v-list-item class="col-4">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -97,7 +98,7 @@
                 <v-btn
                   href="./owners" 
                   max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  class="dark-grey-border-color rounded-pill dark-grey-color" 
                   small
                   outlined>
                   <span class="caption">{{ $t('learnMore') }}</span>
@@ -151,8 +152,8 @@
     <div class="pa-4 v-card__title font-weight-bold dark-grey-color">
       {{ $t('foundingMembers') }}
     </div> 
-    <v-list class="d-flex">
-      <v-list-item class="col-4">
+    <v-list class="d-block d-md-flex">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -165,7 +166,7 @@
                   href="https://exoplatform.com" 
                   target="_blank" 
                   max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  class="dark-grey-border-color rounded-pill dark-grey-color"  
                   small
                   outlined>
                   <span class="caption">{{ $t('visit') }}</span>
@@ -182,7 +183,7 @@
           </v-list-item>
         </v-list>
       </v-list-item>
-      <v-list-item class="col-4">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -195,7 +196,7 @@
                   href="https://bonitasoft.com" 
                   target="_blank" 
                   max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  class="dark-grey-border-color rounded-pill dark-grey-color" 
                   small
                   outlined>
                   <span class="caption">{{ $t('visit') }}</span>
@@ -212,7 +213,7 @@
           </v-list-item>
         </v-list>
       </v-list-item>
-      <v-list-item class="col-4">
+      <v-list-item class="col-12 col-md-4">
         <v-list class="full-width">
           <v-list-item class="ps-0">
             <v-list-item-icon>
@@ -225,7 +226,7 @@
                   href="https://newlogic.com" 
                   target="_blank" 
                   max-width="94px" 
-                  class="dark-grey-border-color rounded-pill dark-grey-color primary-btn" 
+                  class="dark-grey-border-color rounded-pill dark-grey-color" 
                   small
                   outlined>
                   <span class="caption">{{ $t('visit') }}</span>

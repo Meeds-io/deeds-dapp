@@ -30,6 +30,12 @@ body.VuetifyApp .v-application {
     background: #1e1e1e;
   }
 
+  font-family: @fontFamily;
+
+  .v-btn--outlined {
+    border: thin solid;
+  }
+
   .siteContentLayout {
     height: auto;
   }
@@ -247,6 +253,7 @@ body.VuetifyApp .v-application {
     opacity: 0.5;
     position: absolute;
     right: -80px;
+    clip-path: inset(0px 80px 0px 0px);
   }
 
   .mt-3px {

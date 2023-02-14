@@ -23,12 +23,12 @@
       {{ $t('deedsOwnersCommunityIntroductionPart1') }}
       <ul class="mt-4">
         <ol
-          v-html="$t('deedsOwnersCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/deeds'>`, 1: `</a>`})"
+          v-html="$t('deedsOwnersCommunityIntroductionPart2', {0: `<a href='/${parentLocation}/deeds' class='secondary--text'>`, 1: `</a>`})"
           class="ps-0 ps-sm-4"
           @click.prevent.stop="openDeeds">
         </ol>
         <ol
-          v-html="$t('deedsOwnersCommunityIntroductionPart3', {0: `<a href='${openSeaLink}' title='${$t('sellOnOpenSea')}' target='${openSeaTarget}' rel='nofollow noreferrer noopener'>`, 1: `</a>`})"
+          v-html="$t('deedsOwnersCommunityIntroductionPart3', {0: `<a href='${openSeaLink}' class='secondary--text' title='${$t('sellOnOpenSea')}' target='${openSeaTarget}' rel='nofollow noreferrer noopener'>`, 1: `</a>`})"
           class="ps-0 ps-sm-4">
         </ol>
       </ul>
