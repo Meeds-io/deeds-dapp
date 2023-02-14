@@ -95,7 +95,7 @@
                   <directory>src/main/webapp/skin/less</directory>
                 </resource>
               </resources>
-              <overwrite>true</overwrite>
+              <overwrite>false</overwrite>
             </configuration>
           </execution>
         </executions>
@@ -125,9 +125,23 @@
             <configuration>
               <sourceDirectory>${project.build.directory}/src/main/webapp/skin/less</sourceDirectory>
               <outputDirectory>${project.build.directory}/${project.build.finalName}/static/css/</outputDirectory>
-              <compress>false</compress>
+              <compress>true</compress>
               <includes>
                 <include>deeds.less</include>
+              </includes>
+            </configuration>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>vuetify</id>
+            <configuration>
+              <sourceDirectory>${project.build.directory}/src/main/webapp/skin/less/vuetify</sourceDirectory>
+              <outputDirectory>${project.build.directory}/${project.build.finalName}/static/css/</outputDirectory>
+              <compress>true</compress>
+              <includes>
+                <include>vuetify-all.less</include>
               </includes>
             </configuration>
             <goals>
