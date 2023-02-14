@@ -33,9 +33,9 @@
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-all.css?_=v2.6.12">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.css?_=v2.6.14">
     <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.12_1">
+    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify-theme.css?_=v2.6.14_0">
 
     <link rel="preload" href="./static/fonts/fa-brands-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="./static/fonts/fa-brands-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
@@ -50,7 +50,7 @@
     <link rel="preload" href="./static/js/vue.min.js?_=v2.7.14" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/vue-i18n.min.js?_=v8.26.7" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/vuex.min.js?_=v3.6.2" as="script" type="text/javascript">
-    <link rel="preload" href="./static/js/vuetify.min.js?_=v2.6.12" as="script" type="text/javascript">
+    <link rel="preload" href="./static/js/vuetify.min.js?_=v2.6.14" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/bignumber.min.js?_=v9.0.1" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/ethers.umd.min.js?_=5.5.1" as="script" type="text/javascript">
     <link rel="preload" href="./static/js/deeds.js?_=<%=buildnumber%>" as="script" type="text/javascript">
@@ -65,11 +65,11 @@
     <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
     <link href="./static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
     <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
-    <link href="./static/css/vuetify-all.css?_=v2.6.12" rel="stylesheet">
-    <link href="./static/css/vuetify-theme.css?_=v2.6.12_1" rel="stylesheet">
+    <link href="./static/css/vuetify.css?_=v2.6.14" rel="stylesheet">
+    <link href="./static/css/vuetify-theme.css?_=v2.6.14" rel="stylesheet">
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
-  <body class="VuetifyApp">
+  <body>
     <div id="deedsApp"></div>
 
     <% if (StringUtils.isNotBlank(request.getRemoteUser())) { %>
@@ -82,7 +82,7 @@
     <script src="./static/js/vue.min.js?_=v2.7.14"></script>
     <script src="./static/js/vue-i18n.min.js?_=v8.26.7"></script>
     <script src="./static/js/vuex.min.js?_=v3.6.2"></script>
-    <script src="./static/js/vuetify.min.js?_=v2.6.12"></script>
+    <script src="./static/js/vuetify.min.js?_=v2.6.14"></script>
     <script src="./static/js/bignumber.min.js?_=v9.0.1"></script>
     <script src="./static/js/ethers.umd.min.js?_=5.5.1"></script>
     <script src="./static/js/deeds.js?_=<%=buildnumber%>"></script>
