@@ -1,0 +1,160 @@
+<div class="d-flex flex-column mt-8 mt-sm-10">
+  <v-card flat>
+    <v-card-title class="py-0 justify-center font-weight-bold dark-grey-color">{{ $t('whitepaper.title') }}</v-card-title>
+  </v-card>
+  <div class="d-flex flex-column my-6">
+    <v-card class="light-grey-background py-5" flat>
+      <div class="d-flex">
+        <div>
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart1', {0:'<strong>', 1: '</strong>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart2', {0:'<strong>', 1: '</strong>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart3', {0:'<strong>', 1: '</strong>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart4', {0:'<strong>', 1: '</strong>', 2: '<br><br>'})" />
+        </div>
+        <v-img src="images/logo-m-grand.svg" alt="" width="470px" class="logo-m" />
+      </div>
+      <div class=" d-flex justify-center pt-3 pb-md-7">
+        <v-btn
+          :href="whitepaperLink" 
+          target="_blank"
+          class="primary"
+          depressed
+          dark
+          x-large
+          outlined>
+          <h4>{{ $t('readWhitepaper') }}</h4>
+        </v-btn>
+      </div>   
+    </v-card>
+  </div>
+  <div class="d-flex flex-column">
+    <div class="px-0 pt-0 v-card__title font-weight-bold dark-grey-color">
+      {{ $t('enterTheWorkMetaverse.title') }}
+    </div> 
+    <v-card class="d-block d-md-flex" flat>
+      <v-list class="ps-0 col-12 col-md-4">
+        <v-list-item class="ps-0">
+          <v-list-item-icon>
+            <img src="images/meedsToken.png" alt="" width="47px"></img>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <h4 class="pb-4 font-weight-normal dark-grey-color">{{ $t('meed') }}</h4>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item class="ps-0">
+          <v-list-item-content>
+            <span class="pb-14 dark-grey-color" v-html="$t('meed.description', {0:'<br><br>'})"></span>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-list class="ps-0 col-12 col-md-4">
+        <v-list-item class="ps-0">
+          <v-list-item-icon>
+            <img src="images/deed.png" alt="" width="47px"></img>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <h4 class="pb-4 font-weight-normal dark-grey-color">{{ $t('deed') }}</h4>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="pb-4 dark-grey-color" v-html="$t('deed.description', {0:`<br><br>`, 1:`<a class='primary--text no-decoration font-weight-bold' href='./deeds'>`, 2: `</a>`, 3:`<a class='primary--text no-decoration font-weight-bold' href='./tenants'>`, 4:`<a class='primary--text no-decoration font-weight-bold' href='./marketplace'>`})">
+                    </span>
+                  </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-list class="ps-0 col-12 col-md-4">
+        <v-list-item class="ps-0">
+          <v-list-item-icon>
+            <img src="images/meedsToken.png" alt="" width="47px"></img>
+              </v-list-item-icon>
+            <v-list-item-content>
+            <v-list-item-title>
+              <h4 class="pb-4 font-weight-normal dark-grey-color">{{ $t('xeed') }}</h4>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item class="ps-0">
+          <v-list-item-content>
+            <span class="pb-14 dark-grey-color" v-html="$t('xeed.description', {0:'<br><br>'})"></span>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-card>
+  </div>
+  <div class="d-block d-md-flex py-4">
+    <img 
+      v-if="!pageState || pageState === 'work'"
+      src="images/work-investment.svg"
+      width="564px"
+      alt="" />
+    <img 
+      v-else
+      src="images/Capital-Investement.svg"
+      width="564px"
+      alt="" />
+    <div class="d-flex flex-column ps-5"> 
+      <div class="ps-0 py-4 dark-grey-color v-card__text" v-html="$t('invest.description', {0:'<strong>', 1: '</strong>', 2: '<br><br>'})"></div>
+      <div class="d-flex space-between">
+        <v-btn
+          :dark="!pageState || pageState === 'work'"
+          :text="pageState === 'capital'"
+          :class="(!pageState || pageState === 'work') && 'primary'"
+          :color="pageState === 'capital' && 'primary'"
+          width="156px"
+          class="me-4"
+          outlined
+          @click="$store.commit('setPageState','work')">
+          <span class="subtitle-2 font-weight-normal">{{ $t('investWork') }}</span>
+        </v-btn>
+        <v-btn
+          :dark="pageState === 'capital'"
+          :text="!pageState || pageState === 'work'"
+          :class="pageState === 'capital' && 'primary'"
+          :color="(!pageState || pageState === 'work') && 'primary'"
+          width="156px"
+          class="ms-4"
+          outlined
+          @click="$store.commit('setPageState','capital')">
+          <span class="subtitle-2 font-weight-normal">{{ $t('investCapital') }}</span>
+        </v-btn>
+      </div>
+      <div v-if="!pageState || pageState === 'work'">
+        <div class="ps-0 pt-4 pb-2 dark-grey-color v-card__text" v-html="$t('investWork.descriptionPart1', {0:`<a class='primary--text no-decoration font-weight-bold' href='./overview'>`, 1: `</a>`})"></div>
+        <div class="ps-0 py-2 dark-grey-color v-card__text" v-html="$t('investWork.descriptionPart2', {0:`<a class='primary--text no-decoration font-weight-bold' href='./stake'>`, 1: `</a>`})"></div>
+        <div class="ps-0 py-2 dark-grey-color v-card__text" v-html="$t('investWork.descriptionPart3', {0:`<a class='primary--text no-decoration font-weight-bold' href='./deeds'>`, 1: `</a>`})"></div>
+        <div class="ps-0 pt-2 pb-7 dark-grey-color v-card__text" v-html="$t('investWork.descriptionPart4', {0:`<a class='primary--text no-decoration font-weight-bold' href='./owners'>`, 1: `</a>`, 3:`<a class='primary--text no-decoration font-weight-bold' target='_blank' href='https://opensea.io'>`})"></div>
+      </div>
+      <div v-else>
+        <div class="ps-0 pt-4 pb-2 dark-grey-color v-card__text" v-html="$t('investCapital.descriptionPart1', {0:`<a class='primary--text no-decoration font-weight-bold' href='./overview'>`, 1: `</a>`})"></div>
+        <div class="ps-0 py-2 dark-grey-color v-card__text" v-html="$t('investCapital.descriptionPart2', {0:`<a class='primary--text no-decoration font-weight-bold' href='./farm'>`, 1: `</a>`})"></div>
+        <div class="ps-0 py-2 dark-grey-color v-card__text" v-html="$t('investCapital.descriptionPart3', {0:`<a class='primary--text no-decoration font-weight-bold' href='./stake'>`, 1: `</a>`})"></div>
+        <div class="ps-0 py-2 dark-grey-color v-card__text" v-html="$t('investCapital.descriptionPart4', {0:`<a class='primary--text no-decoration font-weight-bold' href='./deeds'>`, 1: `</a>`})"></div>
+        <div class="ps-0 pt-2 pb-7 dark-grey-color v-card__text" v-html="$t('investCapital.descriptionPart5', {0:`<a class='primary--text no-decoration font-weight-bold' href='./owners'>`, 1: `</a>`, 2:`<a class='primary--text no-decoration font-weight-bold' target='_blank' href='https://opensea.io'>`})"></div>
+      </div>
+      <v-btn
+        v-if="!pageState || pageState === 'work'"
+        href="https://builders.meeds.io"
+        target="_blank"
+        max-width="156px"
+        class="dark-grey-border-color rounded-pill dark-grey-color d-flex justify-center" 
+        outlined>
+        <span class="subtitle-2 font-weight-normal">{{ $t('startEarning') }}</span>
+      </v-btn>
+      <v-btn
+        v-else
+        href="./overview"
+        max-width="156px"
+        class="dark-grey-border-color rounded-pill dark-grey-color d-flex justify-center" 
+        outlined>
+        <span class="subtitle-2 font-weight-normal">{{ $t('investInMeeds') }}</span>
+      </v-btn>
+    </div>
+  </div>
+</div>
+
+
