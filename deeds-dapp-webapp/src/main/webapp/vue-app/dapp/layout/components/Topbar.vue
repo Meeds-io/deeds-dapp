@@ -26,8 +26,7 @@
     <v-spacer />
     <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
       <deeds-topbar-logo />
-      <deeds-theme-button 
-        class="d-none" 
+      <deeds-theme-button
         css-class="ms-4" 
         topbar />
       <v-spacer />

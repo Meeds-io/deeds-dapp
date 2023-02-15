@@ -20,7 +20,7 @@
   <v-card
     class="d-flex flex-column"
     width="340"
-    height="350"
+    height="370"
     outlined>
     <v-card-title class="d-flex flex-column justify-center pb-2">
       <v-icon>fas fa-key</v-icon>
