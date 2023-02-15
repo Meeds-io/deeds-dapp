@@ -18,7 +18,7 @@
 -->
 <template>
   <v-toolbar-title>
-    <a :href="`/${parentLocation}/marketplace`" class="d-flex align-center text--color no-decoration">
+    <a :href="`/${parentLocation}/marketplace`" class="d-flex align-center black--text text--color no-decoration">
       <img
         :src="`/${parentLocation}/static/images/meeds.png`"
         height="24px"
