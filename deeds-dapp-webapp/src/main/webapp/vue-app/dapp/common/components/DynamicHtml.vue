@@ -25,6 +25,10 @@ export default {
       default: null,
     }
   },
+  computed: Vuex.mapState({
+    pageState: state => state.pageState,
+    whitepaperLink: state => state.whitepaperLink,
+  }),
   created () {
     this.$options.template = this.content;
   }
