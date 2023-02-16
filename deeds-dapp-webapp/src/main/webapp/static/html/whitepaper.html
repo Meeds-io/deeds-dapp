@@ -9,7 +9,9 @@
           <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart1', {0:'<strong>', 1: '</strong>'})" />
           <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart2', {0:'<strong>', 1: '</strong>'})" />
           <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart3', {0:'<strong>', 1: '</strong>'})" />
-          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart4', {0:'<strong>', 1: '</strong>', 2: '<br><br>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart4', {0:'<strong>', 1: '</strong>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart5', {0:'<strong>', 1: '</strong>'})" />
+          <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart6', {0:'<strong>', 1: '</strong>'})" />
         </div>
         <v-img src="images/logo-m-grand.svg" alt="" width="470px" class="logo-m" />
       </div>
@@ -45,7 +47,8 @@
         </v-list-item>
         <v-list-item class="ps-0">
           <v-list-item-content>
-            <span class="pb-14 dark-grey-color" v-html="$t('meed.description', {0:'<br><br>'})"></span>
+            <span class="pb-4 dark-grey-color">{{ $t('meed.descriptionPart1') }}</span>
+            <span class="pb-4 dark-grey-color">{{ $t('meed.descriptionPart2') }}</span>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -61,10 +64,10 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item class="ps-0">
-                  <v-list-item-content>
-                    <span class="pb-4 dark-grey-color" v-html="$t('deed.description', {0:`<br><br>`, 1:`<a class='primary--text no-decoration font-weight-bold' href='./deeds'>`, 2: `</a>`, 3:`<a class='primary--text no-decoration font-weight-bold' href='./tenants'>`, 4:`<a class='primary--text no-decoration font-weight-bold' href='./marketplace'>`})">
-                    </span>
-                  </v-list-item-content>
+          <v-list-item-content>
+            <span class="pb-4 dark-grey-color">{{ $t('deed.descriptionPart1') }}</span>
+            <span class="pb-4 dark-grey-color" v-html="$t('deed.descriptionPart2', {0:`<a class='primary--text no-decoration font-weight-bold' href='./deeds'>`, 1: `</a>`, 2:`<a class='primary--text no-decoration font-weight-bold' href='./tenants'>`, 3:`<a class='primary--text no-decoration font-weight-bold' href='./marketplace'>`})"></span>
+          </v-list-item-content>
         </v-list-item>
       </v-list>
       <v-list class="ps-0 col-12 col-md-4">
@@ -80,7 +83,8 @@
         </v-list-item>
         <v-list-item class="ps-0">
           <v-list-item-content>
-            <span class="pb-14 dark-grey-color" v-html="$t('xeed.description', {0:'<br><br>'})"></span>
+            <span class="pb-4 dark-grey-color">{{ $t('xeed.descriptionPart1') }}</span>
+            <span class="pb-4 dark-grey-color">{{ $t('xeed.descriptionPart2') }}</span>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -98,7 +102,8 @@
       width="564px"
       alt="" />
     <div class="d-flex flex-column ps-5"> 
-      <div class="ps-0 py-4 dark-grey-color v-card__text" v-html="$t('invest.description', {0:'<strong>', 1: '</strong>', 2: '<br><br>'})"></div>
+      <div class="ps-0 py-3 dark-grey-color v-card__text" v-html="$t('invest.descriptionPart1', {0:'<strong>', 1: '</strong>'})"></div>
+      <div class="ps-0 py-3 dark-grey-color v-card__text" >{{ $t('invest.descriptionPart2') }}</div>
       <div class="d-flex space-between">
         <v-btn
           :dark="!pageState || pageState === 'work'"
