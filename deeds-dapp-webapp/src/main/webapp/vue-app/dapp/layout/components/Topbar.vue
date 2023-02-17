@@ -24,7 +24,29 @@
     fixed
     elevate-on-scroll>
     <v-spacer />
-    <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
+    <div v-if="homeDisplay" class="d-flex headerLayout px-0 px-sm-4 mx-1">
+      <img
+        :src="`/${parentLocation}/static/images/meeds.png`"
+        height="37px"
+        width="101px"
+        alt="">
+      <v-spacer />
+      <div class="ms-4">
+        <v-btn
+          :href="`/${parentLocation}/overview`"
+          class="dark-grey-color font-weight-black"
+          outlined
+          text>
+          <img
+            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            alt=""
+            class="img-24px">
+          <h4 class="hidden-md-and-down mx-1">{{ $t('open') }}</h4>
+          <h4>{{ $t('app') }}</h4>
+        </v-btn>
+      </div>
+    </div>
+    <div v-else class="d-flex headerLayout px-0 px-sm-4 mx-1">
       <deeds-topbar-logo />
       <deeds-theme-button
         css-class="ms-4" 
@@ -67,6 +89,13 @@ export default {
     validNetwork: state => state.validNetwork,
     address: state => state.address,
     whiteThemeColor: state => state.whiteThemeColor,
+    parentLocation: state => state.parentLocation,
+    currentSiteLink() {
+      return window.location.pathname;
+    },
+    homeDisplay() {
+      return this.currentSiteLink.replace(`/${this.parentLocation}`,'') === '/';
+    },
   }),
 };
 </script>
