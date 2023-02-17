@@ -38,11 +38,12 @@
 export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
+    parentLocation: state => state.parentLocation,
     currentSiteLink() {
       return window.location.pathname;
     },
     homeDisplay() {
-      return this.currentSiteLink.replace('/deeds-dapp','') === '/';
+      return this.currentSiteLink.replace(`/${this.parentLocation}`,'') === '/';
     },
   }),
 };

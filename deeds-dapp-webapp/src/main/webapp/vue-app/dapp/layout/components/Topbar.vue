@@ -94,7 +94,7 @@ export default {
       return window.location.pathname;
     },
     homeDisplay() {
-      return this.currentSiteLink.replace('/deeds-dapp','') === '/';
+      return this.currentSiteLink.replace(`/${this.parentLocation}`,'') === '/';
     },
   }),
 };
