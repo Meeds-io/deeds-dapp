@@ -21,7 +21,10 @@
     <div class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout pa-5 mx-md-auto">
-        <deeds-navbar id="navbar" role="navigation" />
+        <deeds-navbar
+          v-if="!homeDisplay"
+          id="navbar"
+          role="navigation" />
         <deeds-page
           id="mainPageContent"
           class="mb-12 mb-sm-0"
@@ -35,6 +38,12 @@
 export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
+    currentSiteLink() {
+      return window.location.pathname;
+    },
+    homeDisplay() {
+      return this.currentSiteLink.replace('/deeds-dapp','') === '/';
+    },
   }),
 };
 </script>
