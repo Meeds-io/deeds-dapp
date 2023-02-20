@@ -42,8 +42,11 @@ export default {
     currentSiteLink() {
       return window.location.pathname;
     },
+    replacedParentLocation() {
+      return this.currentSiteLink.replace(`/${this.parentLocation}`,'');
+    },
     homeDisplay() {
-      return this.currentSiteLink.replace(`/${this.parentLocation}`,'') === '/';
+      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/index';
     },
   }),
 };

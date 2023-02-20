@@ -31,10 +31,10 @@
         width="101px"
         alt="">
       <v-spacer />
-      <div class="ms-4">
+      <div>
         <v-btn
           :href="`/${parentLocation}/overview`"
-          class="dark-grey-color font-weight-black"
+          class="dark-grey-color font-weight-black dark-grey-border-color"
           outlined
           text>
           <img
@@ -93,8 +93,11 @@ export default {
     currentSiteLink() {
       return window.location.pathname;
     },
+    replacedParentLocation() {
+      return this.currentSiteLink.replace(`/${this.parentLocation}`,'');
+    },
     homeDisplay() {
-      return this.currentSiteLink.replace(`/${this.parentLocation}`,'') === '/';
+      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/index';
     },
   }),
 };
