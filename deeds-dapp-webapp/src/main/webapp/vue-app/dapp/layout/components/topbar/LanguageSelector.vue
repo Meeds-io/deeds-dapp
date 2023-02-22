@@ -23,10 +23,11 @@
         name="languageSelectorButton"
         outlined
         text
-        class="ps-2 pe-0"
+        class="ps-2 pe-0 mx-auto"
+        width="98px"
         v-bind="attrs"
         v-on="on">
-        <div>{{ selectedLanguageLabel }}</div>
+        <div class="text-sub-title">{{ selectedLanguageLabel }}</div>
         <v-icon size="12" class="mx-2 mt-n1px">fa fa-caret-down</v-icon>
       </v-btn>
     </template>

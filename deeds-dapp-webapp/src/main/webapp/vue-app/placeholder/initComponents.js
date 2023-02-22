@@ -19,14 +19,12 @@
 import Site from './components/Site.vue';
 import SiteContent from './components/SiteContent.vue';
 import Topbar from './components/Topbar.vue';
-import TopbarLanguageSelector from './components/LanguageSelector.vue';
 import Page from './components/Page.vue';
 
 const components = {
   'tenant-placeholder-site': Site,
   'tenant-placeholder-site-content': SiteContent,
   'tenant-placeholder-topbar': Topbar,
-  'tenant-placeholder-topbar-language-selector': TopbarLanguageSelector,
   'tenant-placeholder-page': Page,
 };
 
