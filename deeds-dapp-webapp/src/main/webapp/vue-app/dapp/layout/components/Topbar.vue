@@ -67,9 +67,6 @@
         <deeds-topbar-fiat-currency-selector />
       </div>
       <div class="ms-4">
-        <deeds-topbar-language-selector />
-      </div>
-      <div class="ms-4">
         <v-btn
           class="hidden-xs-only"
           elevation="0"
