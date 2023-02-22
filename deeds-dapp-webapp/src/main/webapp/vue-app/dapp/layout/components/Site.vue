@@ -21,6 +21,7 @@
     <v-card class="overflow-hidden" flat>
       <deeds-topbar />
       <deeds-site-content />
+      <deeds-site-footer />
     </v-card>
     <deeds-trade-meeds-drawer />
   </v-app>
