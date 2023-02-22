@@ -18,6 +18,7 @@
  */
 import Site from './components/Site.vue';
 import SiteContent from './components/SiteContent.vue';
+import SiteFooter from './components/Footer.vue';
 // Topbar components
 import SiteLogo from './components/topbar/SiteLogo.vue';
 import Topbar from './components/Topbar.vue';
@@ -37,6 +38,7 @@ import Notifications from './components/Notifications.vue';
 const components = {
   'deeds-site': Site,
   'deeds-site-content': SiteContent,
+  'deeds-site-footer': SiteFooter,
   'deeds-topbar': Topbar,
   'deeds-topbar-logo': SiteLogo,
   'deeds-topbar-address-selector': TopbarAddressSelector,

@@ -34,9 +34,6 @@
         <div class="ps-2 pb-1">DAO</div>
       </v-toolbar-title>
       <v-spacer />
-      <div class="ms-4">
-        <tenant-placeholder-topbar-language-selector />
-      </div>
     </div>
     <v-spacer />
   </v-app-bar>
