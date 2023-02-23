@@ -28,6 +28,9 @@
           :selected-offer-types="selectedOfferTypes" />
       </div>
     </v-scale-transition>
+    <div v-show="noFilter">
+      <v-card-title class="ps-0 dark-grey-color">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
+    </div>
     <v-progress-linear
       v-if="loading"
       color="primary"
@@ -92,6 +95,9 @@ export default {
     selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
     hasMore() {
       return this.totalSize > this.offers?.length;
+    },
+    noFilter() {
+      return this.selectedOfferTypes?.length === 0 && this.selectedCardTypes?.length === 0;
     },
   }),
 };

@@ -18,11 +18,6 @@
 -->
 <template>
   <div class="d-flex flex-column mt-8">
-    <v-scale-transition>
-      <div v-show="!selectedStandaloneOfferId">
-        <deeds-marketplace-introduction />
-      </div>
-    </v-scale-transition>
     <deeds-marketplace-deeds />
     <deeds-manage-rent-offer-drawer />
     <deeds-marketplace-offer-rent-drawer />
