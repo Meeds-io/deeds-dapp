@@ -23,7 +23,7 @@
         name="languageSelectorButton"
         outlined
         text
-        class="ps-2 pe-0 mx-auto"
+        class="ps-2 pe-0 mb-4 mb-sm-0 mx-auto"
         width="98px"
         v-bind="attrs"
         v-on="on">
