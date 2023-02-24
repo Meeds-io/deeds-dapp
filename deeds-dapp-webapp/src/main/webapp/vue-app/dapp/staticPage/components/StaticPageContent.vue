@@ -31,7 +31,7 @@ export default {
   }),
   created() {
     const pathParts = window.location.pathname.split('/');
-    const fileName = pathParts.length > 2 && pathParts[2]?.length && pathParts[2] || 'index';
+    const fileName = pathParts.length > 2 && pathParts[2]?.length && pathParts[2] || 'home';
     fetch(`/${window.parentAppLocation}/static/html/${fileName}.html?version=${this.buildNumber}`)
       .then(resp => resp && resp.ok && resp.text())
       .then(content => this.content = content?.replace(/images\//g, `/${window.location.pathname.split('/')[1]}/static/images/`) || '');

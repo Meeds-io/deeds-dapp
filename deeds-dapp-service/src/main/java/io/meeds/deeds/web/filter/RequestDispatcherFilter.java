@@ -38,7 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
-  private static final String DEFAULT_PAGE_FILE_NAME = "index";
+  private static final String DEFAULT_PAGE_FILE_NAME = "home";
 
   private static final long         serialVersionUID = -4145074746513311839L;
 
