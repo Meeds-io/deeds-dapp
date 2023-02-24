@@ -94,7 +94,7 @@ export default {
       return this.currentSiteLink.replace(`/${this.parentLocation}`,'');
     },
     homeDisplay() {
-      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/index';
+      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/home';
     },
   }),
 };
