@@ -18,6 +18,7 @@
  */
 package io.meeds.deeds.web.filter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -33,14 +34,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
+  private static final String DEFAULT_PAGE_FILE_NAME = "home";
+
   private static final long         serialVersionUID = -4145074746513311839L;
 
-  private static final List<String> PATHS            = Arrays.asList("/",
-                                                                     "/marketplace",
+  private static final List<String> PATHS            = Arrays.asList("/marketplace",
                                                                      "/tenants",
                                                                      "/owners",
                                                                      "/overview",
@@ -56,7 +58,11 @@ public class RequestDispatcherFilter extends HttpFilter {
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    if (PATHS.contains(request.getServletPath())) {
+    String servletPath = request.getServletPath();
+    if (StringUtils.contains(servletPath, ".") // Static files
+        || StringUtils.contains(servletPath, "api")) { // REST API
+      chain.doFilter(request, response);
+    } else {
       String eTagHeader = request.getHeader("If-None-Match");
       String eTagValue = getETagValue(request);
       if (StringUtils.equals(eTagHeader, eTagValue)) {
@@ -68,10 +74,23 @@ public class RequestDispatcherFilter extends HttpFilter {
       response.setDateHeader("Last-Modified", LAST_MODIFIED);
       response.setContentType("text/html; charset=UTF-8");
       response.setCharacterEncoding("UTF-8");
-      RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/view.jsp");
-      dispatcher.include(request, response);// NOSONAR
-    } else {
-      chain.doFilter(request, response);
+      if (PATHS.contains(servletPath)) {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
+        dispatcher.include(request, response);// NOSONAR
+      } else {
+        // Check if HTML file exists to display dApp UI, else send HTTP 404
+        // response code
+        String[] pathParts = StringUtils.split(servletPath, "/");
+        String fileName = pathParts.length > 0 ? pathParts[pathParts.length - 1] : DEFAULT_PAGE_FILE_NAME;
+        String filePath = "/static/html/" + fileName + ".html";
+        String fileAbsolutePath = request.getServletContext().getRealPath(filePath);
+        if (new File(fileAbsolutePath).exists()) {
+          RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
+          dispatcher.include(request, response);// NOSONAR
+        } else {
+          chain.doFilter(request, response);
+        }
+      }
     }
   }
 

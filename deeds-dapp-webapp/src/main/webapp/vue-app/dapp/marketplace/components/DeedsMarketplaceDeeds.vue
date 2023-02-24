@@ -35,7 +35,7 @@
   <v-card v-else flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
-        <v-card-title class="ps-0 py-0 justify-center">{{ $t('dapp.marketplace.deedsListTitle') }}</v-card-title>
+        <v-card-title class="justify-center dark-grey-color">{{ $t('dapp.marketplace.deedsListTitle') }}</v-card-title>
       </div>
     </v-scale-transition>
     <deeds-marketplace-deeds-list

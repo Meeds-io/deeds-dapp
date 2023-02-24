@@ -50,6 +50,14 @@
       </exclusions>
     </dependency>
 
+    <!-- Used to retrieve common less variables -->
+    <dependency>
+      <groupId>org.exoplatform.platform-ui</groupId>
+      <artifactId>platform-ui-skin</artifactId>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+
     <!--
       Include log4j-api (without log4j-core which is NOT USED, to prevent https://www.slf4j.org/log4shell.html)
       in order to route LOGGING calls to LOGBACK.
@@ -72,6 +80,65 @@
     <finalName>deeds-dapp</finalName>
     <plugins>
       <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>less-copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/src/main/webapp/skin/less</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/webapp/skin/less</directory>
+                </resource>
+              </resources>
+              <overwrite>false</overwrite>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>platform-ui-src</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeArtifactIds>platform-ui-skin</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/src/main/webapp</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.lesscss</groupId>
+        <artifactId>lesscss-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>deeds</id>
+            <configuration>
+              <sourceDirectory>${project.build.directory}/src/main/webapp/skin/less</sourceDirectory>
+              <outputDirectory>${project.build.directory}/${project.build.finalName}/static/css/</outputDirectory>
+              <compress>true</compress>
+              <includes>
+                <include>deeds.less</include>
+                <include>vuetify.less</include>
+                <include>vuetify-theme.less</include>
+              </includes>
+            </configuration>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
       </plugin>
@@ -82,7 +149,7 @@
         <configuration>
           <includeEmptyDirectories>false</includeEmptyDirectories>
           <packagingExcludes>vue-app/**</packagingExcludes>
-          <warSourceExcludes>**/vue-app/**</warSourceExcludes>
+          <warSourceExcludes>**/*.less,**/less/**,**/vue-app/**</warSourceExcludes>
           <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
         </configuration>
       </plugin>

@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,31 +17,24 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-app-bar
-    id="dappTopbar"
-    fixed
-    color="white"
-    elevate-on-scroll>
-    <v-spacer />
-    <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
-      <v-toolbar-title class="d-flex">
-        <v-img
-          max-height="64px"
-          max-width="64px"
-          :src="`${parentLocation}/static/images/meeds.png`"
-          contain
-          eager />
-        <div class="ps-2 pb-1">DAO</div>
-      </v-toolbar-title>
-      <v-spacer />
-    </div>
-    <v-spacer />
-  </v-app-bar>
+  <div>
+    <deeds-dynamic-html v-if="content" :content="content" />
+  </div>
 </template>
 <script>
 export default {
-  computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
+  data: () => ({
+    content: null,
   }),
+  computed: Vuex.mapState({
+    buildNumber: state => state.buildNumber,
+  }),
+  created() {
+    const pathParts = window.location.pathname.split('/');
+    const fileName = pathParts.length > 2 && pathParts[2]?.length && pathParts[2] || 'home';
+    fetch(`/${window.parentAppLocation}/static/html/${fileName}.html?version=${this.buildNumber}`)
+      .then(resp => resp && resp.ok && resp.text())
+      .then(content => this.content = content?.replace(/images\//g, `/${window.location.pathname.split('/')[1]}/static/images/`) || '');
+  },
 };
 </script>

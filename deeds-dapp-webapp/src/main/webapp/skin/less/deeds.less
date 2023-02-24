@@ -16,16 +16,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
+@import "./variables.less";
+@import "./helpers.less";
+
 html {
   overflow: auto;
 }
 
 body, .theme--dark.v-application {
   background: #1e1e1e;
-}
-
-#banner {
-  border-bottom: 1px #eee solid !important;
 }
 
 .siteContentLayout {
@@ -235,13 +235,26 @@ h4 {
 .primary-border-color {
   border: 1px solid #3f8487 !important;
 }
+
+.dark-grey-border-color {
+  border: 1px solid @darkGrey !important;
+}
+
+.logo-m {
+  filter: invert(47%) sepia(46%) saturate(419%) hue-rotate(134deg) brightness(89%) contrast(90%);
+  opacity: 0.5;
+  position: absolute;
+  right: -80px;
+  clip-path: inset(0px 80px 0px 0px);
+}
+
 .mt-3px {
   margin-top: 3px !important;
 }
 
 .v-application .border-color {
   border: 1px solid #e1e8ee !important;
-  box-shadow: 0 0 0 0 rgb(0 0 0 / 20%), 0px 0 0 0 rgb(0 0 0 / 14%), 0px 0 0 0 rgb(0 0 0 / 12%) !important;
+  box-shadow: ~"0 0 0 0 rgb(0 0 0 / 20%), 0px 0 0 0 rgb(0 0 0 / 14%), 0px 0 0 0 rgb(0 0 0 / 12%) !important";
 }
 
 .v-btn--outlined.v-btn:before {

@@ -16,32 +16,21 @@
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-<template>
-  <v-app-bar
-    id="dappTopbar"
-    fixed
-    color="white"
-    elevate-on-scroll>
-    <v-spacer />
-    <div class="d-flex headerLayout px-0 px-sm-4 mx-1">
-      <v-toolbar-title class="d-flex">
-        <v-img
-          max-height="64px"
-          max-width="64px"
-          :src="`${parentLocation}/static/images/meeds.png`"
-          contain
-          eager />
-        <div class="ps-2 pb-1">DAO</div>
-      </v-toolbar-title>
-      <v-spacer />
-    </div>
-    <v-spacer />
-  </v-app-bar>
-</template>
 <script>
 export default {
+  props: {
+    content: {
+      templateHtml: true,
+      type: String,
+      default: null,
+    }
+  },
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
+    pageState: state => state.pageState,
+    whitepaperLink: state => state.whitepaperLink,
   }),
+  created () {
+    this.$options.template = this.content;
+  }
 };
 </script>
