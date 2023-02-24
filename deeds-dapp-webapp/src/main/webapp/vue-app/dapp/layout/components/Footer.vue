@@ -93,8 +93,6 @@
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('meedDAO') }}</span>
             <a
               :href="`${whitepaperLink}`"
-              target="_blank"
-              rel="nofollow noreferrer noopener"
               class="text-sub-title no-decoration my-2">
               {{ $t('whitePaper') }}
             </a>
