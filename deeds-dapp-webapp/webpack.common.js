@@ -7,7 +7,8 @@ let config = {
   // set the entry point of the application
   // can use multiple entry
   entry: {
-    deeds: './src/main/webapp/vue-app/dapp/main.js',
+    dapp: './src/main/webapp/vue-app/dapp/main-dapp.js',
+    static: './src/main/webapp/vue-app/dapp/main-static.js',
     tenantPlaceholder: './src/main/webapp/vue-app/placeholder/main.js',
   },
   plugins: [

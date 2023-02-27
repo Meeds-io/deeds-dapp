@@ -18,7 +18,6 @@
  */
 package io.meeds.deeds.web.filter;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -38,29 +37,32 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
-  private static final String DEFAULT_PAGE_FILE_NAME = "home";
+  private static final String       DEFAULT_PAGE_FILE_NAME = "/home";
 
-  private static final long         serialVersionUID = -4145074746513311839L;
+  private static final long         serialVersionUID       = -4145074746513311839L;
 
-  private static final List<String> PATHS            = Arrays.asList("/marketplace",
-                                                                     "/tenants",
-                                                                     "/owners",
-                                                                     "/overview",
-                                                                     "/stake",
-                                                                     "/deeds",
-                                                                     "/farm");
+  private static final List<String> STATIC_PATHS           = Arrays.asList("/home",
+                                                                           "/whitepaper",
+                                                                           "/about-us");
 
-  private static final long         LAST_MODIFIED    = System.currentTimeMillis();
+  private static final List<String> DAPP_PATHS             = Arrays.asList("/marketplace",
+                                                                           "/tenants",
+                                                                           "/owners",
+                                                                           "/overview",
+                                                                           "/stake",
+                                                                           "/deeds",
+                                                                           "/farm");
 
-  private static final String       VERSION          = String.valueOf(LAST_MODIFIED);
+  private static final long         LAST_MODIFIED          = System.currentTimeMillis();
+
+  private static final String       VERSION                = String.valueOf(LAST_MODIFIED);
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
-    if (StringUtils.contains(servletPath, ".") // Static files
-        || StringUtils.contains(servletPath, "api")) { // REST API
+    if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
     } else {
       String eTagHeader = request.getHeader("If-None-Match");
@@ -73,23 +75,16 @@ public class RequestDispatcherFilter extends HttpFilter {
       response.setHeader("etag", eTagValue);
       response.setDateHeader("Last-Modified", LAST_MODIFIED);
       response.setContentType("text/html; charset=UTF-8");
-      response.setCharacterEncoding("UTF-8");
-      if (PATHS.contains(servletPath)) {
+      if (StringUtils.isBlank(servletPath) || StringUtils.equals(servletPath, "/")) {
+        servletPath = DEFAULT_PAGE_FILE_NAME;
+      }
+      boolean isStaticPath = STATIC_PATHS.contains(servletPath);
+      if (isStaticPath || DAPP_PATHS.contains(servletPath)) {
+        request.setAttribute("isStaticPath", isStaticPath);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
-        // Check if HTML file exists to display dApp UI, else send HTTP 404
-        // response code
-        String[] pathParts = StringUtils.split(servletPath, "/");
-        String fileName = pathParts.length > 0 ? pathParts[pathParts.length - 1] : DEFAULT_PAGE_FILE_NAME;
-        String filePath = "/static/html/" + fileName + ".html";
-        String fileAbsolutePath = request.getServletContext().getRealPath(filePath);
-        if (new File(fileAbsolutePath).exists()) {
-          RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
-          dispatcher.include(request, response);// NOSONAR
-        } else {
-          chain.doFilter(request, response);
-        }
+        chain.doFilter(request, response);
       }
     }
   }

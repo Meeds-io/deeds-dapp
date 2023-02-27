@@ -17,24 +17,14 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <deeds-dynamic-html v-if="content" :content="content" />
-  </div>
+  <deeds-home v-if="page === 'home'" />
+  <deeds-about-us v-else-if="page === 'about-us'" />
+  <deeds-whitepaper v-else-if="page === 'whitepaper'" />
 </template>
 <script>
 export default {
-  data: () => ({
-    content: null,
-  }),
   computed: Vuex.mapState({
-    buildNumber: state => state.buildNumber,
+    page: state => state.page,
   }),
-  created() {
-    const pathParts = window.location.pathname.split('/');
-    const fileName = pathParts.length > 2 && pathParts[2]?.length && pathParts[2] || 'home';
-    fetch(`/${window.parentAppLocation}/static/html/${fileName}.html?version=${this.buildNumber}`)
-      .then(resp => resp && resp.ok && resp.text())
-      .then(content => this.content = content?.replace(/images\//g, `/${window.location.pathname.split('/')[1]}/static/images/`) || '');
-  },
 };
 </script>

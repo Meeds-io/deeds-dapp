@@ -32,10 +32,13 @@
         rel="nofollow noreferrer noopener"
         outlined
         text>
-        <img
+        <v-img
           :src="`/${parentLocation}/static/images/meedsicon.png`"
           alt=""
-          class="img-24px">
+          heigh="24"
+          max-width="24"
+          eager
+          contain />
         {{ $t('getInvolved') }}
       </v-btn>
     </v-card-actions>
