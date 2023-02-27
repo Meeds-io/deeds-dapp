@@ -22,7 +22,7 @@
       <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout pa-5 mx-md-auto">
         <deeds-navbar
-          v-if="!homeDisplay"
+          v-if="!staticPage"
           id="navbar"
           role="navigation" />
         <deeds-page
@@ -39,14 +39,9 @@ export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
     parentLocation: state => state.parentLocation,
+    staticPage: state => state.staticPage,
     currentSiteLink() {
       return window.location.pathname;
-    },
-    replacedParentLocation() {
-      return this.currentSiteLink.replace(`/${this.parentLocation}`,'');
-    },
-    homeDisplay() {
-      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/home';
     },
   }),
 };

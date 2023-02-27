@@ -24,12 +24,14 @@
     fixed
     elevate-on-scroll>
     <v-spacer />
-    <div v-if="homeDisplay" class="d-flex headerLayout px-0 px-sm-4 mx-1">
-      <img
-        :src="`/${parentLocation}/static/images/meeds.png`"
-        height="37px"
-        width="101px"
-        alt="">
+    <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-4 mx-1">
+      <a :href="`/${parentLocation}/`" class="no-decoration">
+        <img
+          :src="`/${parentLocation}/static/images/meeds.png`"
+          height="37px"
+          width="101px"
+          alt="">
+      </a>
       <v-spacer />
       <div>
         <v-btn
@@ -37,10 +39,13 @@
           class="dark-grey-color font-weight-black dark-grey-border-color"
           outlined
           text>
-          <img
+          <v-img
             :src="`/${parentLocation}/static/images/meedsicon.png`"
             alt=""
-            class="img-24px">
+            width="24"
+            max-height="24"
+            contain
+            eager />
           <h4 class="hidden-md-and-down mx-1">{{ $t('open') }}</h4>
           <h4>{{ $t('app') }}</h4>
         </v-btn>
@@ -87,14 +92,9 @@ export default {
     address: state => state.address,
     whiteThemeColor: state => state.whiteThemeColor,
     parentLocation: state => state.parentLocation,
+    staticPage: state => state.staticPage,
     currentSiteLink() {
       return window.location.pathname;
-    },
-    replacedParentLocation() {
-      return this.currentSiteLink.replace(`/${this.parentLocation}`,'');
-    },
-    homeDisplay() {
-      return this.replacedParentLocation === '/' || this.replacedParentLocation === '/home';
     },
   }),
 };

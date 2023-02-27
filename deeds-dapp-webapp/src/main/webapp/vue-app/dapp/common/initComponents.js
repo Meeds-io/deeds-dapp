@@ -29,7 +29,6 @@ import LoginButton from './components/LoginButton.vue';
 import DateFormat from './components/DateFormat.vue';
 import ExtendedTextarea from './components/ExtendedTextarea.vue';
 import ButtonGroupItem from './components/ButtonGroupItem.vue';
-import DynamicHtml from './components/DynamicHtml.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -45,7 +44,6 @@ const components = {
   'deeds-date-format': DateFormat,
   'deeds-extended-textarea': ExtendedTextarea,
   'deeds-button-group-item': ButtonGroupItem,
-  'deeds-dynamic-html': DynamicHtml,
 };
 
 for (const key in components) {

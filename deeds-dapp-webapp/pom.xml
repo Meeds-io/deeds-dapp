@@ -129,7 +129,6 @@
               <includes>
                 <include>deeds.less</include>
                 <include>vuetify.less</include>
-                <include>vuetify-theme.less</include>
               </includes>
             </configuration>
             <goals>
