@@ -21,10 +21,13 @@
     <div class="d-flex flex-column flex-sm-row">
       <div class=" py-0 d-flex flex-grow-0 flex-column px-0 mb-6 me-0 me-sm-6">
         <div class="d-flex justify-center justify-sm-start">
-          <img
+          <v-img
             :src="`/${parentLocation}/static/images/meeds.png`"
             width="77px"
-            alt="">
+            max-width="77px"
+            alt=""
+            contain
+            eager />
         </div>
         <span class="font-size-normal text-center text-sm-start text-sub-title my-4">{{ $t('footer.subtitle') }}</span>
         <div class="d-flex justify-center justify-sm-start">

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import './initComponents';
+import './initComponents-dapp';
 import * as utils from './js/utils.js';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
@@ -247,7 +247,6 @@ const store = new Vuex.Store({
     ...networkSettings[1],
     ...blockchainAddressAndNetworkState,
     buildNumber,
-    pageState: null,
     parentLocation: window.parentAppLocation,
     addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
     rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
@@ -426,13 +425,6 @@ const store = new Vuex.Store({
   mutations: {
     echartsLoaded(state) {
       state.echartsLoaded = true;
-    },
-    setPageState(state, value) {
-      state.pageState = value;
-    },
-    setOfferId(state, value) {
-      state.selectedStandaloneOfferId = null;
-      state.selectedOfferId = value;
     },
     incrementOpenedDrawer(state) {
       state.openedDrawersCount++;

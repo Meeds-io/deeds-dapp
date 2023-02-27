@@ -17,13 +17,5 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './common/initComponents';
-import './commonRenting/initComponents';
 import './layout/initComponents';
-import './marketplace/initComponents';
-import './tenants/initComponents';
-import './owners/initComponents';
-import './snapshot/initComponents';
-import './deeds/initComponents';
-import './stake/initComponents';
-import './farming/initComponents';
 import './staticPage/initComponents';

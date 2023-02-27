@@ -47,7 +47,7 @@ public class StaticResourceFilter extends HttpFilter {
     HttpServletResponse response = (HttpServletResponse) res;
     response.setDateHeader("Last-Modified", LAST_MODIFIED);
     response.setDateHeader("Expires", EXPIRES);
-    response.setHeader("Cache-Control", "public,max-age=" + MAX_AGE);
+    response.setHeader("Cache-Control", "public," + MAX_AGE);
     chain.doFilter(request, response);
   }
 
