@@ -78,12 +78,12 @@
             </a>
             <a
               :href="`/${parentLocation}/deeds`"
-              class="text-sub-title no-decoration">
+              class="text-sub-title text-capitalize no-decoration">
               {{ $t('becomingADeedOwner') }}
             </a>
             <a
               :href="`/${parentLocation}/marketplace`"
-              class="text-sub-title no-decoration my-2">
+              class="text-sub-title no-decoration text-capitalize my-2">
               {{ $t('marketplace') }}
             </a>
           </div>
