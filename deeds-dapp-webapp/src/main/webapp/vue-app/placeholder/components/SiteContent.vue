@@ -18,7 +18,7 @@
 -->
 <template>
   <v-sheet
-    class="overflow-y-auto">
+    class="overflow-y-auto overflow-x-hidden">
     <div class="siteContentLayout mt-11 mt-sm-13">
       <div class="mainPageLayout pa-5 mx-md-auto">
         <tenant-placeholder-page
