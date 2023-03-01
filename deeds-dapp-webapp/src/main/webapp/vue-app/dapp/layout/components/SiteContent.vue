@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-sheet id="siteContent" class="overflow-y-auto">
+  <v-sheet id="siteContent" class="overflow-y-auto overflow-x-hidden">
     <div class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout pa-5 mx-md-auto">
