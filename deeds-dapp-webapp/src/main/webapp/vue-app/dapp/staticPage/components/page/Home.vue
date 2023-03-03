@@ -273,6 +273,67 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
+                :src="`/${parentLocation}/static/images/leader.png`"
+                height="60px"
+                max-height="60px"
+                max-width="100px"
+                alt=""
+                contain
+                eager />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="d-flex flex-column">
+                <span class="headline font-weight-black dark-grey-color">{{ $t('leader.title') }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-list>
+                <v-list-item class="ps-0">
+                  <v-list-item-icon class="my-3 me-4">
+                    <v-icon>fas fa-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart1') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-icon class="my-3 me-4">
+                    <v-icon>fas fa-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart2') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-icon class="my-3 me-4">
+                    <v-icon>fas fa-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart3') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="my-6">
+            <v-btn
+              href="./tenants"
+              class="primary mx-auto"
+              width="240px"
+              depressed
+              dark
+              x-large
+              outlined>
+              <h4>{{ $t('getAHub') }}</h4>
+            </v-btn>
+          </v-list-item>
+        </v-list>
+        <v-list class="ps-0 col-12 col-md-6">
+          <v-list-item class="ps-0">
+            <v-list-item-icon>
+              <v-img
                 :src="`/${parentLocation}/static/images/contributor.png`"
                 alt=""
                 height="60px"
@@ -328,67 +389,6 @@
               x-large
               outlined>
               <h4>{{ $t('trynow') }}</h4>
-            </v-btn>
-          </v-list-item>
-        </v-list>
-        <v-list class="ps-0 col-12 col-md-6">
-          <v-list-item class="ps-0">
-            <v-list-item-icon>
-              <v-img
-                :src="`/${parentLocation}/static/images/leader.png`"
-                height="60px"
-                max-height="60px"
-                max-width="100px"
-                alt=""
-                contain
-                eager />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="headline font-weight-black dark-grey-color">{{ $t('leader.title') }}</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item class="ps-0">
-            <v-list-item-content>
-              <v-list>
-                <v-list-item class="ps-0">
-                  <v-list-item-icon class="my-3 me-4">
-                    <v-icon>fas fa-check</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart1') }}</span>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item class="ps-0">
-                  <v-list-item-icon class="my-3 me-4">
-                    <v-icon>fas fa-check</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart2') }}</span>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item class="ps-0">
-                  <v-list-item-icon class="my-3 me-4">
-                    <v-icon>fas fa-check</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <span class="dark-grey-color font-size-normal">{{ $t('leader.descriptionPart3') }}</span>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item class="my-6">
-            <v-btn
-              href="./tenants"
-              class="primary mx-auto"
-              width="240px"
-              depressed
-              dark
-              x-large
-              outlined>
-              <h4>{{ $t('getAHub') }}</h4>
             </v-btn>
           </v-list-item>
         </v-list>
