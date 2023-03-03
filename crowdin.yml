@@ -9,7 +9,7 @@
     "dest": "/dapp/messages.properties", 
     "type": "properties", 
     "translation_replace": {
-      "_en": "%two_letters_code%"
+      "_en": ""
     }    
   }
 ]
