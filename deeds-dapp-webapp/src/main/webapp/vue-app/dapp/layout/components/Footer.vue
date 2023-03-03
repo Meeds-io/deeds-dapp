@@ -106,7 +106,7 @@
             </a>
             <a
               :href="`/${parentLocation}/legals`"
-              class="text-sub-title no-decoration">
+              class="text-sub-title no-decoration my-2">
               {{ $t('legal') }}
             </a>
           </div>
