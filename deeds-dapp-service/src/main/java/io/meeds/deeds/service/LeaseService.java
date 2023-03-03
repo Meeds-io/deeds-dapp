@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -307,7 +306,7 @@ public class LeaseService {
     return leaseRepository.findByTransactionStatusInOrderByCreatedDateAsc(Arrays.asList(TransactionStatus.IN_PROGRESS))
                           .stream()
                           .filter(lease -> !CollectionUtils.isEmpty(lease.getPendingTransactions()))
-                          .collect(Collectors.toList());
+                          .toList();
   }
 
   public void transferDeedOwnership(String newOnwer, long nftId) throws UnauthorizedOperationException {

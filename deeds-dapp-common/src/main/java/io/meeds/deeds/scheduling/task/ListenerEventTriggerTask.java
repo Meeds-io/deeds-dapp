@@ -33,7 +33,7 @@ public class ListenerEventTriggerTask {
   @Autowired
   private ListenerService     listenerService;
 
-  @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS, initialDelay = 30)
+  @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS, initialDelay = 60)
   public synchronized void triggerEvents() {
     try {
       listenerService.triggerElasticSearchEvents();

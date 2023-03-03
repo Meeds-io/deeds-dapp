@@ -58,6 +58,8 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   @BeforeEach
   void before() throws ServletException {
     dispatcherFilter = new TenantPlaceholderRequestDispatcherFilter() {
+      private static final long serialVersionUID = 4367082767921658504L;
+
       @Override
       public void init(FilterConfig filterConfig) throws ServletException {
         this.tenantService = tenantServiceMock;
