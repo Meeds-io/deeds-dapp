@@ -22,14 +22,13 @@
       <v-tooltip :disabled="!hasTotalValueLocked" bottom>
         <template #activator="{ on, attrs }">
           <span
-            class="d-flex-inline position-relative pe-8"
+            class="d-inline-flex position-relative pe-8"
             v-bind="attrs"
             v-on="on">
             <strong>
               {{ $t('totalValueLocked') }}
             </strong>
             <v-btn
-              absolute
               height="12"
               width="12"
               icon
