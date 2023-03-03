@@ -5,8 +5,11 @@
 "files": [
   {
     "source": "/deeds-dapp-webapp/src/main/webapp/static/i18n/messages_en.properties",   
-    "translation": "/deeds-dapp-webapp/src/main/webapp/static/i18n//%file_name%_%two_letters_code%.properties",
+    "translation": "/deeds-dapp-webapp/src/main/webapp/static/i18n/%file_name%_%two_letters_code%.properties",
     "dest": "/dapp/messages.properties", 
     "type": "properties" 
+    "translation_replace": {
+      "_en": "_%two_letters_code%"
+    }    
   }
 ]
