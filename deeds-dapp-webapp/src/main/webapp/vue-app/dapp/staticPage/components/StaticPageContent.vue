@@ -20,6 +20,7 @@
   <deeds-home v-if="page === 'home'" />
   <deeds-about-us v-else-if="page === 'about-us'" />
   <deeds-whitepaper v-else-if="page === 'whitepaper'" />
+  <deeds-legals v-else-if="page === 'legals'" />
 </template>
 <script>
 export default {
