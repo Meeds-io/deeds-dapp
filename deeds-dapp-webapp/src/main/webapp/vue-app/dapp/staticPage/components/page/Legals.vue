@@ -22,48 +22,48 @@
       <v-card-title class="py-0 justify-center font-weight-bold dark-grey-color">{{ $t('legals.title') }}</v-card-title>
       <v-card-text class="py-0 d-flex justify-center subtitle-2 dark-grey-color">{{ $t('legals.description') }}</v-card-text>
     </v-card>
-    <div class="d-flex justify-center my-7">
+    <div class="d-flex justify-center flex-wrap my-7">
       <v-btn
         href="#termsOfUse"
-        class="mx-5 dark-grey-color dark-grey-border-color rounded-xl"
+        class="mx-5 mt-5 dark-grey-color dark-grey-border-color rounded-xl"
         outlined
         x-large>
-        <span class="headline">{{ $t('termsOfUse.title') }}</span>
+        <h4 class="font-weight-normal">{{ $t('termsOfUse.title') }}</h4>
       </v-btn>
       <v-btn
         href="#privacyPolicy"
-        class="mx-5 dark-grey-color dark-grey-border-color rounded-xl"
+        class="mx-5 mt-5 dark-grey-color dark-grey-border-color rounded-xl"
         outlined
         x-large>
-        <span class="headline">{{ $t('privacyPolicy.title') }}</span>
+        <h4 class="font-weight-normal">{{ $t('privacyPolicy.title') }}</h4>
       </v-btn>
       <v-btn
         href="#cookiePolicy"
-        class="mx-5 dark-grey-color dark-grey-border-color rounded-xl"
+        class="mx-5 mt-5 dark-grey-color dark-grey-border-color rounded-xl"
         outlined
         x-large>
-        <span class="headline">{{ $t('cookiePolicy.title') }}</span>
+        <h4 class="font-weight-normal">{{ $t('cookiePolicy.title') }}</h4>
       </v-btn>
       <v-btn
         href="#risks"
-        class="mx-5 dark-grey-color dark-grey-border-color rounded-xl"
+        class="mx-5 mt-5 dark-grey-color dark-grey-border-color rounded-xl"
         outlined
         x-large>
-        <span class="headline">{{ $t('risks.title') }}</span>
+        <h4 class="font-weight-normal">{{ $t('risks.title') }}</h4>
       </v-btn>
       <v-btn
         href="#legalNotice"
-        class="mx-5 dark-grey-color dark-grey-border-color rounded-xl"
+        class="mx-5 mt-5 dark-grey-color dark-grey-border-color rounded-xl"
         outlined
         x-large>
-        <span class="headline">{{ $t('legalNotice.title') }}</span>
+        <h4 class="font-weight-normal">{{ $t('legalNotice.title') }}</h4>
       </v-btn>
     </div>
     <v-divider class="mt-8" />
     <v-card id="termsOfUse" flat>
       <v-card-title class="px-0 pt-8 font-weight-black dark-grey-color">{{ $t('termsOfUse.title') }}</v-card-title>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.introduction.title') }}</h4>
-      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart1') }}</v-card-text>
+      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.introduction.descriptionPart1', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`, 2:`<a class='no-decoration dark-grey-color' href='https://holders.meeds.io'>`, 3:`<a class='no-decoration dark-grey-color' href='https://investors.meeds.io'>`})" />
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart2') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart3') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart4') }}</v-card-text>
@@ -80,8 +80,8 @@
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart5') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart6') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart7') }}</v-card-text>
-      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart8') }}</v-card-text>
-      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.access.descriptionPart9', {0: '<br>'})" />
+      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.access.descriptionPart8', {0: '<br>'})" />
+      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart9') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.access.descriptionPart10', {0: '<br>'})" />
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.access.descriptionPart11') }}</v-card-text>
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.access.descriptionPart12', {0: '<br>'})" />
@@ -92,7 +92,7 @@
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.privacy.descriptionPart2') }}</v-card-text>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.propertyRights.title') }}</h4>
       <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart1') }}</v-card-text>
-      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart2') }}</v-card-text>
+      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.propertyRights.descriptionPart2', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`})" />
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart3') }}</v-card-text>
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart4') }}</v-card-text>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.disclaimers.title') }}</h4>
@@ -205,7 +205,7 @@
     <v-divider class="mt-8" />
     <v-card id="legalNotice" flat>
       <v-card-title class="px-0 pt-8 font-weight-black dark-grey-color">{{ $t('legalNotice.title') }}</v-card-title>
-      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('legalNotice.descriptionPart1') }}</v-card-text>
+      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart1', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`})" />
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart2', {0: '<br>'})" />
     </v-card>
   </div>
