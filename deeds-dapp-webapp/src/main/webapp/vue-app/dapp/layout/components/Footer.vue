@@ -104,7 +104,11 @@
               class="text-sub-title no-decoration">
               {{ $t('aboutUs') }}
             </a>
-            <span class="font-size-normal text-sub-title my-2">{{ $t('legal') }}</span>
+            <a
+              :href="`/${parentLocation}/legals`"
+              class="text-sub-title no-decoration">
+              {{ $t('legal') }}
+            </a>
           </div>
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('community') }}</span>
