@@ -43,7 +43,7 @@ public class LeaseBlockchainTransactionCheckTask {
   @Autowired
   private BlockchainService   blockchainService;
 
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES, initialDelay = 1)
   public void checkPendingLeases() {
     List<DeedTenantLease> pendingLeases = leaseService.getPendingTransactions();
     int pendingLeasesSize = pendingLeases.size();

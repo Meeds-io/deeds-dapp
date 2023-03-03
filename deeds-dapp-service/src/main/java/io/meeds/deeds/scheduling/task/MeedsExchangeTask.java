@@ -33,7 +33,7 @@ public class MeedsExchangeTask {
   @Autowired
   private ExchangeService     exchangeService;
 
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS, initialDelay = 1)
+  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS, initialDelay = 2)
   public void computeExchangeRate() {
     LOG.info("Start Computing MEED exchange rates");
     long start = System.currentTimeMillis();

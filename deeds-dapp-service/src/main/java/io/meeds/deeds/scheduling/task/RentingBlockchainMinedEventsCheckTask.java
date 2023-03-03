@@ -79,15 +79,13 @@ public class RentingBlockchainMinedEventsCheckTask {
     minedEvents.forEach(event -> {
       if (!event.isEmpty() && event instanceof EnumMap) {
         Object keyType = event.keySet().iterator().next();
-        if (keyType instanceof BlockchainLeaseStatus) {
-          BlockchainLeaseStatus status = (BlockchainLeaseStatus) keyType;
+        if (keyType instanceof BlockchainLeaseStatus status) {
           Map<BlockchainLeaseStatus, DeedLeaseBlockchainState> events =
                                                                       (Map<BlockchainLeaseStatus, DeedLeaseBlockchainState>) event;
           DeedLeaseBlockchainState deedLease = events.get(status);
           LOG.debug("Check Lease event {} happened on Blockchain contract {} .", status, deedLease);
           updateLeaseStatusFromBlockchain(status, deedLease);
-        } else if (keyType instanceof BlockchainOfferStatus) {
-          BlockchainOfferStatus status = (BlockchainOfferStatus) keyType;
+        } else if (keyType instanceof BlockchainOfferStatus status) {
           Map<BlockchainOfferStatus, DeedOfferBlockchainState> events =
                                                                       (Map<BlockchainOfferStatus, DeedOfferBlockchainState>) event;
           DeedOfferBlockchainState blockchainOffer = events.get(status);
