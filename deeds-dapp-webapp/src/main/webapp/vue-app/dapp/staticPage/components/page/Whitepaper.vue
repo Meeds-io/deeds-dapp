@@ -30,7 +30,6 @@
             <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart3', {0:'<strong>', 1: '</strong>'})" />
             <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart4', {0:'<strong>', 1: '</strong>'})" />
             <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart5', {0:'<strong>', 1: '</strong>'})" />
-            <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart6', {0:'<strong>', 1: '</strong>'})" />
           </div>
           <v-img
             :src="`/${parentLocation}/static/images/logo-m-grand.svg`"
