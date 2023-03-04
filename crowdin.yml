@@ -10,6 +10,8 @@
     "type": "properties", 
     "translation_replace": {
       "_en": ""
-    }    
+    },
+    "escape_quotes": 0,
+    "escape_special_characters": 0
   }
 ]
