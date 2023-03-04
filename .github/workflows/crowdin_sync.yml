@@ -5,7 +5,7 @@ on:
     inputs:
       locales:
         # Target languages https://developer.crowdin.com/language-codes/
-        default: '["ar", "cs", "de", "el", "es-ES", "et", "fa", "fil", "fr", "he", "hi", "hr", "id", "it", "ja", "ko", "lt", "nl", "no", "pl", "pt-BR", "ro", "ru", "sk", "sl", "sv-SE", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]'
+        default: '["en", "fr"]'
         description: "Languages"
         required: true
   schedule: 
@@ -30,7 +30,7 @@ jobs:
           if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
             LOCALES='${{ inputs.locales }}'
           else
-            LOCALES='["ar", "cs", "de", "el", "es-ES", "et", "fa", "fil", "fr", "he", "hi", "hr", "id", "it", "ja", "ko", "lt", "nl", "no", "pl", "pt-BR", "ro", "ru", "sk", "sl", "sv-SE", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]'
+            LOCALES='["en", "fr"]'
           fi
           echo "locales=${LOCALES}" >> $GITHUB_OUTPUT
 
