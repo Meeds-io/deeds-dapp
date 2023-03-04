@@ -33,7 +33,6 @@ jobs:
           else
             LOCALES='["en", "fr"]'
           fi
-
           echo "locales=${LOCALES}" >> $GITHUB_OUTPUT       
           echo "branch=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
@@ -58,10 +57,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Echo
-        run: |
-          echo "locales: $LOCALES branch: ${{ env.BRANCH }} - ${{ needs.setup.outputs.branch }}"
 
       - name: Matrix
         uses: crowdin/github-action@v1
