@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       locales: ${{ steps.generate-matrix.outputs.locales }}
+      branch: ${{ steps.generate-matrix.outputs.branch }}
     steps:
       - name: Generate Matrix
         id: generate-matrix
@@ -35,6 +36,7 @@ jobs:
 
           echo "locales=${LOCALES}" >> $GITHUB_OUTPUT       
           echo "branch=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
 
   crowdin:
     name: Synchronize with Crowdin
@@ -59,7 +61,7 @@ jobs:
 
       - name: Echo
         run: |
-          echo "locales: $LOCALES branch: $BRANCH - ${{ needs.setup.outputs.branch }}"
+          echo "locales: $LOCALES branch: ${{ env.BRANCH }} - ${{ needs.setup.outputs.branch }}"
 
       - name: Matrix
         uses: crowdin/github-action@v1
@@ -68,8 +70,8 @@ jobs:
           upload_translations: false
           download_translations: true
           commit_message: Sync Crowdin translations - ${{ matrix.lc }}
-          localization_branch_name: l10n_${{ env.BRANCH }}_${{ matrix.lc }}
-          pull_request_base_branch_name: ${{ env.BRANCH }}
+          localization_branch_name: l10n_${{ needs.setup.outputs.branch }}_${{ matrix.lc }}
+          pull_request_base_branch_name: ${{ needs.setup.outputs.branch }}
           pull_request_title: New translations - ${{ matrix.lc }} - ${{ env.BRANCH }}
           download_language: ${{ matrix.lc }}
 
