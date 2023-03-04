@@ -32,7 +32,8 @@ jobs:
           else
             LOCALES='["en", "fr"]'
           fi
-          echo "locales=${LOCALES}" >> $GITHUB_OUTPUT
+          echo "locales=${LOCALES}" >> $GITHUB_OUTPUT       
+          echo "branch=${GITHUB_REF##*/}" $GITHUB_OUTPUT
 
   crowdin:
     name: Synchronize with Crowdin
@@ -42,7 +43,6 @@ jobs:
     permissions: write-all
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      #GITHUB_TOKEN: ${{ secrets.GH_TOKEN_CROWDIN }}
       CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
       CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_MEEDS_APIKEY }}
     strategy:
@@ -61,12 +61,8 @@ jobs:
           upload_translations: false
           download_translations: true
           commit_message: New Crowdin translations - ${{ matrix.lc }}
-          localization_branch_name: l10n_develop_${{ matrix.lc }}
-          pull_request_base_branch_name: 'develop'
+          localization_branch_name: l10n_${{needs.set_locales.outputs.branch}}_${{ matrix.lc }}
+          pull_request_base_branch_name: ${{needs.set_locales.outputs.branch}}
           pull_request_title: New translations - ${{ matrix.lc }}
           download_language: ${{ matrix.lc }}
-        #env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
-          #CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_MEEDS_APIKEY }}
 
