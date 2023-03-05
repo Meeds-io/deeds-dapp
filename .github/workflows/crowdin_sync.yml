@@ -8,8 +8,8 @@ on:
         default: '["en", "fr"]'
         description: "Languages"
         required: true
-  schedule: 
-    - cron: '30 5,12,17 * * *'
+  #schedule: 
+  #  - cron: '30 5,12,17 * * *'
   push:
     branches: [ main ]
     paths:
