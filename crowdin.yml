@@ -4,24 +4,19 @@
 
 "files": [
   {
-    "source": "/deeds-dapp-webapp/src/main/webapp/static/i18n/messages_en.properties",   
+    "source": "/deeds-dapp-webapp/src/main/webapp/static/i18n/messages.properties",   
     "translation": "/deeds-dapp-webapp/src/main/webapp/static/i18n/%file_name%_%two_letters_code%.properties",
     "dest": "/dapp/messages.properties", 
     "type": "properties", 
-    "translation_replace": {
-      "_en": ""
-    },
     "escape_quotes": 0,
     "escape_special_characters": 0
-  },
+  }
+  ,
   {
-    "source": "deeds-dapp-webapp/src/main/webapp/static/i18n/tenantPlaceholder_en.properties",   
+    "source": "deeds-dapp-webapp/src/main/webapp/static/i18n/tenantPlaceholder.properties",   
     "translation": "/deeds-dapp-webapp/src/main/webapp/static/i18n/%file_name%_%two_letters_code%.properties",
-    "dest": "/dapp/messages.properties", 
+    "dest": "/dapp/tenant.properties", 
     "type": "properties", 
-    "translation_replace": {
-      "_en": ""
-    },
     "escape_quotes": 0,
     "escape_special_characters": 0
   }
