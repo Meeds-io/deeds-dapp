@@ -56,7 +56,10 @@ function getI18N(language) {
         .filter(Boolean)
         .reduce((obj, line) => {
           const pair = line.split(/=(.*)/s);
-          obj[pair[0]] = pair[1].replace( /\\u([a-fA-F0-9]{4})/g, (g, m1) => String.fromCharCode(parseInt(m1, 16)));
+            obj[pair[0]] = decodeURIComponent(pair[1]
+              ?.replace( /\\u00([a-fA-F0-9]{2})/g, '%$1')
+              ?.replace( /\\[uU]([a-fA-F0-9]{4})/g, (g, m1) => String.fromCharCode(parseInt(m1, 16)))
+              ?.replace(/\\n/g, '\n'));
           return obj;
         }, {});
   
