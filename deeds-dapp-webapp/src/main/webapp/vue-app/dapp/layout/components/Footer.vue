@@ -120,7 +120,8 @@
             <a
               href="https://builders.meeds.io/"
               target="_blank"
-              class="text-sub-title no-decoration">
+              class="text-sub-title no-decoration d-flex">
+              <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
               {{ $t('buildWithUs') }}
             </a>
           </div>
