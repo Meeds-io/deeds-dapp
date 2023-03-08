@@ -63,13 +63,13 @@
     <v-card id="termsOfUse" flat>
       <v-card-title class="px-0 pt-8 font-weight-black dark-grey-color">{{ $t('termsOfUse.title') }}</v-card-title>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.introduction.title') }}</h4>
-      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.introduction.descriptionPart1', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`, 2:`<a class='no-decoration dark-grey-color' href='https://holders.meeds.io'>`, 3:`<a class='no-decoration dark-grey-color' href='https://investors.meeds.io'>`})" />
+      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.introduction.descriptionPart1', {0:`<a class='no-decoration primary--text font-weight-bold' href='https://www.meeds.io'>`, 1: `</a>`, 2:`<a class='no-decoration primary--text font-weight-bold' href='https://holders.meeds.io'>`, 3:`<a class='no-decoration primary--text font-weight-bold' href='https://investors.meeds.io'>`})" />
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart2') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart3') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart4') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart5') }}</v-card-text>
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart6') }}</v-card-text>
-      <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.introduction.descriptionPart7') }}</v-card-text>
+      <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.introduction.descriptionPart7', {0: `<a class='no-decoration primary--text font-weight-bold' href='mailto:contact@meeds.io'>`, 1:`</a>`})" />  
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.website.title') }}</h4>
       <v-card-text class="px-0 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.website.description') }}</v-card-text>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.access.title') }}</h4>
@@ -92,7 +92,7 @@
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.privacy.descriptionPart2') }}</v-card-text>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.propertyRights.title') }}</h4>
       <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart1') }}</v-card-text>
-      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.propertyRights.descriptionPart2', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`})" />
+      <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('termsOfUse.propertyRights.descriptionPart2', {0:`<a class='no-decoration primary--text font-weight-bold' href='https://www.meeds.io'>`, 1: `</a>`})" />
       <v-card-text class="px-0 py-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart3') }}</v-card-text>
       <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color">{{ $t('termsOfUse.propertyRights.descriptionPart4') }}</v-card-text>
       <h4 class="dark-grey-color font-weight-black">{{ $t('termsOfUse.disclaimers.title') }}</h4>
@@ -205,8 +205,8 @@
     <v-divider class="mt-8" />
     <v-card id="legalNotice" flat>
       <v-card-title class="px-0 pt-8 font-weight-black dark-grey-color">{{ $t('legalNotice.title') }}</v-card-title>
-      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart1', {0:`<a class='no-decoration dark-grey-color' href='https://www.meeds.io'>`, 1: `</a>`})" />
-      <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart2', {0: '<br>'})" />
+      <v-card-text class="px-0 pb-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart1', {0:`<a class='no-decoration primary--text font-weight-bold' href='https://www.meeds.io'>`, 1: `</a>`})" />
+      <v-card-text class="px-0 pt-2 subtitle-2 font-weight-normal dark-grey-color" v-html="$t('legalNotice.descriptionPart2', {0: '<br>', 1: `<a class='no-decoration primary--text font-weight-bold' href='mailto:info@meeds.io'>`, 2:`</a>`})" />
     </v-card>
   </div>
 </template>
