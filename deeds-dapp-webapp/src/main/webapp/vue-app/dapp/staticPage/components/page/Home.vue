@@ -178,14 +178,14 @@
       </div>
       <div class="d-flex">
         <v-btn
-          href="./whitepaper" 
-          class="primary mx-auto"
-          width="240px"
-          depressed
-          dark
+          href="https://builders.meeds.io"
+          target="_blank"
+          class="mx-auto d-flex"
+          width="280px"
           x-large
           outlined>
-          <h4>{{ $t('discover') }}</h4>
+          <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
+          <h4>{{ $t('try') }}</h4>
         </v-btn>
       </div>
     </v-card>
