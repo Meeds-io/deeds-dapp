@@ -32,7 +32,7 @@
         class="mt-5 mt-md-0"
         width="611px"
         controls>
-        <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+        <source :src="`${videoBuildersLink}`" type="video/mp4">
       </video>
     </div>
     <div>
@@ -45,7 +45,7 @@
           class="mx-14"
           width="487px"
           controls>
-          <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+          <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16">
@@ -53,7 +53,7 @@
           class="mx-14"
           width="487px"
           controls>
-          <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+          <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="headline font-weight-black dark-grey-color">{{ $t('rewards.title') }}</span>
@@ -69,7 +69,7 @@
           class="mx-14"
           width="487px"
           controls>
-          <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+          <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16">
@@ -77,7 +77,7 @@
           class="mx-14"
           width="487px"
           controls>
-          <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+          <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="headline font-weight-black dark-grey-color">{{ $t('perks.title') }}</span>
@@ -93,7 +93,7 @@
           class="mx-14"
           width="487px"
           controls>
-          <source :src="`/${parentLocation}/static/videos/Video_test.mp4`" type="video/mp4">
+          <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
     </div>
@@ -169,6 +169,7 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    videoBuildersLink: state => state.videoBuildersLink,
   })
 };
 </script>
