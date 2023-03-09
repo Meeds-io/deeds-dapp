@@ -87,10 +87,10 @@
             <div class="mb-2 mt-6">{{ $t('deedRentingRentalOffer') }}</div>
             <div class="d-flex">
               <v-text-field
+                :rules="rules"
                 v-model="offer.amount"
                 name="rentalAmount"
                 type="number"
-                min="1"
                 step="1"
                 pattern="(?=.*\d)"
                 color="grey"
@@ -414,6 +414,8 @@ export default {
     MIN_BUTTONS_WIDTH: 80,
     MAX_BUTTONS_WIDTH: '30%',
     rentalHostAddressTimeout: null,
+    rules: [v => v && v >= 1 ],
+    
   }),
   computed: Vuex.mapState({
     authenticated: state => state.authenticated,
