@@ -19,7 +19,7 @@
 <template>
   <v-card class="light-grey-background mainPageLayout pa-5 mx-md-auto" flat>
     <div class="d-flex flex-column flex-sm-row">
-      <div class=" py-0 d-flex flex-grow-0 flex-column px-0 mb-6 me-0 me-sm-6">
+      <div class=" py-0 d-flex flex-grow-0 flex-column px-0 mb-6 me-0 me-sm-6 col-12 col-sm-4">
         <div class="d-flex justify-center justify-sm-start">
           <v-img
             :src="`/${parentLocation}/static/images/meeds.png`"
