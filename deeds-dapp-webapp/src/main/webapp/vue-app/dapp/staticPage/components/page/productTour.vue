@@ -35,7 +35,7 @@
         loop="true"
         autoplay
         muted>
-        <source :src="`${videoBuildersLink}`" type="video/mp4">
+        <source :src="`${introductiveVideoLink}`" type="video/mp4">
       </video>
       <div class="d-flex d-md-none justify-center hidden-sm-and-up mt-7">
         <v-btn
@@ -71,7 +71,7 @@
           loop="true"
           autoplay
           muted>
-          <source :src="`${videoBuildersLink}`" type="video/mp4">
+          <source :src="`${contributionProgramsVideoLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
@@ -80,7 +80,7 @@
           loop="true"
           autoplay
           muted>
-          <source :src="`${videoBuildersLink}`" type="video/mp4">
+          <source :src="`${rewardsVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="headline font-weight-black dark-grey-color">{{ $t('rewards.title') }}</span>
@@ -97,7 +97,7 @@
           loop="true"
           autoplay
           muted>
-          <source :src="`${videoBuildersLink}`" type="video/mp4">
+          <source :src="`${overviewVideoLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
@@ -106,7 +106,7 @@
           loop="true"
           autoplay
           muted>
-          <source :src="`${videoBuildersLink}`" type="video/mp4">
+          <source :src="`${perksVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="headline font-weight-black dark-grey-color">{{ $t('perks.title') }}</span>
@@ -123,7 +123,7 @@
           loop="true"
           autoplay
           muted>
-          <source :src="`${videoBuildersLink}`" type="video/mp4">
+          <source :src="`${teamworkVideoLink}`" type="video/mp4">
         </video>
       </div>
     </div>
@@ -232,10 +232,15 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    videoBuildersLink: state => state.videoBuildersLink,
     isSmallScreen() {
       return this.$vuetify.breakpoint.mdAndDown;
     },
+    introductiveVideoLink: state => state.introductiveVideoLink,
+    contributionProgramsVideoLink: state => state.contributionProgramsVideoLink,
+    rewardsVideoLink: state => state.rewardsVideoLink,
+    overviewVideoLink: state => state.overviewVideoLink,
+    perksVideoLink: state => state.perksVideoLink,
+    teamworkVideoLink: state => state.teamworkVideoLink,
   })
 };
 </script>
