@@ -126,65 +126,88 @@
         </video>
       </div>
     </div>
-    <div class="light-grey-background ">
+    <div class="light-grey-background">
       <span class="headline d-flex justify-center font-weight-black dark-grey-color mt-4 mb-7">{{ $t('andMore') }}</span>
-      <div class="d-flex flex-column flex-md-row mb-10">
-        <div class="dark-grey-border-color dark-grey-color mx-5 my-4 my-md-0 rounded-lg">
-          <div class="d-flex my-8 mx-5">
-            <div>
-              <v-icon 
-                size="75" 
-                color="primary" 
-                class="me-md-0 me-9">
-                fas fa-award
-              </v-icon>
-            </div>
-            <div class="d-flex flex-column ms-5">
-              <div class="headline font-weight-black">
-                {{ $t('kudos') }}
-              </div>
-              <div class="font-size-normal">
-                {{ $t('kudos.description') }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="dark-grey-border-color dark-grey-color mx-5 my-4 my-md-0 rounded-lg">
-          <div class="d-flex my-8 mx-5">
-            <div>
-              <v-icon size="75" color="primary">fas fa-graduation-cap</v-icon>
-            </div>
-            <div class="d-flex flex-column ms-5">
-              <div class="headline font-weight-black">
-                {{ $t('badges') }}
-              </div>
-              <div class="font-size-normal">
-                {{ $t('badges.description') }}
+      <v-container class="mb-10">
+        <v-row no-gutters>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div 
+              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              :class="!isSmallScreen && 'fill-height'">
+              <div class="d-flex my-8 mx-5">
+                <div>
+                  <v-icon 
+                    size="75" 
+                    color="primary" 
+                    class="me-md-0 me-9">
+                    fas fa-award
+                  </v-icon>
+                </div>
+                <div class="d-flex flex-column ms-5">
+                  <span class="headline font-weight-black">
+                    {{ $t('kudos') }}
+                  </span>
+                  <span class="font-size-normal">
+                    {{ $t('kudos.description') }}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="dark-grey-border-color dark-grey-color mx-5 my-4 my-md-0 rounded-lg">
-          <div class="d-flex my-8 mx-5">
-            <div>
-              <v-icon 
-                size="75" 
-                color="primary" 
-                class="me-md-0 me-5">
-                fas fa-wallet
-              </v-icon>
-            </div>
-            <div class="d-flex flex-column ms-5">
-              <div class="headline font-weight-black">
-                {{ $t('wallet') }}
+          </v-col>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div 
+              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              :class="!isSmallScreen && 'fill-height'">
+              <div class="d-flex my-8 mx-5">
+                <div>
+                  <v-icon size="75" color="primary">fas fa-graduation-cap</v-icon>
+                </div>
+                <div class="d-flex flex-column ms-5">
+                  <span class="headline font-weight-black">
+                    {{ $t('badges') }}
+                  </span>
+                  <span class="font-size-normal">
+                    {{ $t('badges.description') }}
+                  </span>
+                </div>
               </div>
-              <div class="font-size-normal">
-                {{ $t('wallet.description') }}
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div 
+              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              :class="!isSmallScreen && 'fill-height'">
+              <div class="d-flex my-8 mx-5">
+                <div>
+                  <v-icon 
+                    size="75" 
+                    color="primary" 
+                    class="me-md-0 me-5">
+                    fas fa-wallet
+                  </v-icon>
+                </div>
+                <div class="d-flex flex-column ms-5">
+                  <span class="headline font-weight-black">
+                    {{ $t('wallet') }}
+                  </span>
+                  <span class="font-size-normal">
+                    {{ $t('wallet.description') }}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
     <div class="d-flex flex-column">
       <span class="headline text-center font-weight-black dark-grey-color mt-8 mb-5">{{ $t('startNow') }}</span>
@@ -209,6 +232,9 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     videoBuildersLink: state => state.videoBuildersLink,
+    isSmallScreen() {
+      return this.$vuetify.breakpoint.mdAndDown;
+    },
   })
 };
 </script>
