@@ -30,10 +30,8 @@
         </div>
       </div>
       <video
-        class="mt-5 mt-md-0 mx-auto"
-        width="611px"
-        height="285px"
-        controls>
+        class="mt-5 mt-md-0"
+        height="360px">
         <source :src="`${videoBuildersLink}`" type="video/mp4">
       </video>
       <div class="d-flex d-md-none justify-center hidden-sm-and-up mt-7">
@@ -66,8 +64,6 @@
           <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('contributionPrograms.description') }}</span>
         </div>
         <video
-          class="mx-auto"
-          width="600px"
           height="350px"
           controls>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
@@ -75,8 +71,6 @@
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
         <video
-          class="mx-auto"
-          width="600px"
           height="350px"
           controls>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
@@ -92,8 +86,6 @@
           <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
         </div>
         <video
-          class="mx-auto"
-          width="600px"
           height="350px"
           controls>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
@@ -101,8 +93,6 @@
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
         <video
-          class="mx-auto"
-          width="600px"
           height="350px"
           controls>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
@@ -118,8 +108,6 @@
           <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
         </div>
         <video
-          class="mx-auto"
-          width="600px"
           height="350px"
           controls>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
