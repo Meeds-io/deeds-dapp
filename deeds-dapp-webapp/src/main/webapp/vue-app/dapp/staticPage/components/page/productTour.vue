@@ -31,7 +31,10 @@
       </div>
       <video
         class="mt-5 mt-md-0"
-        height="360px">
+        height="360px"
+        loop="true"
+        autoplay
+        muted>
         <source :src="`${videoBuildersLink}`" type="video/mp4">
       </video>
       <div class="d-flex d-md-none justify-center hidden-sm-and-up mt-7">
@@ -65,14 +68,18 @@
         </div>
         <video
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
         <video
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -87,14 +94,18 @@
         </div>
         <video
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
       <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
         <video
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -109,7 +120,9 @@
         </div>
         <video
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
