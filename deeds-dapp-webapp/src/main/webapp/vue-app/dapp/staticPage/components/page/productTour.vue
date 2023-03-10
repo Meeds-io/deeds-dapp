@@ -33,7 +33,9 @@
         class="mt-5 mt-md-0 mx-auto"
         width="611px"
         height="285px"
-        controls>
+        loop="true"
+        autoplay
+        muted>
         <source :src="`${videoBuildersLink}`" type="video/mp4">
       </video>
       <div class="d-flex d-md-none justify-center hidden-sm-and-up mt-7">
@@ -69,7 +71,9 @@
           class="mx-auto"
           width="600px"
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
@@ -78,7 +82,9 @@
           class="mx-auto"
           width="600px"
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -95,7 +101,9 @@
           class="mx-auto"
           width="600px"
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
@@ -104,7 +112,9 @@
           class="mx-auto"
           width="600px"
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -121,7 +131,9 @@
           class="mx-auto"
           width="600px"
           height="350px"
-          controls>
+          loop="true"
+          autoplay
+          muted>
           <source :src="`${videoBuildersLink}`" type="video/mp4">
         </video>
       </div>
