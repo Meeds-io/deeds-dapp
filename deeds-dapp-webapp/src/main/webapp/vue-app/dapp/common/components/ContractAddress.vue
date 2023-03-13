@@ -30,7 +30,6 @@
         <v-btn
           v-if="!metamaskOffline"
           :style="buttonTop && {top: `${buttonTop}px`}"
-          absolute
           height="12"
           width="12"
           icon
