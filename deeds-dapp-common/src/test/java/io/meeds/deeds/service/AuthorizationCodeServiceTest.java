@@ -56,6 +56,20 @@ class AuthorizationCodeServiceTest {
 
   private static final String      DATA  = "data";
 
+  private static SecureRandom secureRandomCodeGenerator;
+
+  static {
+    try {
+      secureRandomCodeGenerator = SecureRandom.getInstance("SHA1PRNG");
+    } catch (NoSuchAlgorithmException e) {
+      try {
+        secureRandomCodeGenerator = SecureRandom.getInstanceStrong();
+      } catch (NoSuchAlgorithmException e1) {
+        throw new IllegalStateException("Error retrieving a SecureRandom Strong Instance", e1);
+      }
+    }
+  }
+
   private String                   key;
 
   @MockBean
@@ -66,7 +80,7 @@ class AuthorizationCodeServiceTest {
 
   @BeforeEach
   void setup() throws NoSuchAlgorithmException {
-    this.key = String.valueOf(SecureRandom.getInstanceStrong().nextInt(1000000));
+    this.key = String.valueOf(secureRandomCodeGenerator.nextInt(1000000));
   }
 
   @Test
