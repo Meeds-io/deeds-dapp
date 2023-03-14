@@ -21,7 +21,6 @@
   <deeds-about-us v-else-if="page === 'about-us'" />
   <deeds-whitepaper v-else-if="page === 'whitepaper'" />
   <deeds-legals v-else-if="page === 'legals'" />
-  <deeds-product-tour v-else-if="page === 'tour'" />
 </template>
 <script>
 export default {

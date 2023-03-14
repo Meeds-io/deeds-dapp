@@ -21,7 +21,6 @@ import Home from './components/page/Home.vue';
 import Whitepaper from './components/page/Whitepaper.vue';
 import AboutUs from './components/page/AboutUs.vue';
 import Legals from './components/page/Legals.vue';
-import ProductTour from './components/page/productTour.vue';
 
 const components = {
   'deeds-static-page-content': StaticPageContent,
@@ -29,7 +28,6 @@ const components = {
   'deeds-whitepaper': Whitepaper,
   'deeds-about-us': AboutUs,
   'deeds-legals': Legals,
-  'deeds-product-tour': ProductTour,
 };
 
 for (const key in components) {
