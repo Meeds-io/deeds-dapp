@@ -68,7 +68,6 @@ const store = new Vuex.Store({
     pageState: null,
     parentLocation: window.parentAppLocation,
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
-    videoBuildersLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/v1678356211/meedsdao-site/assets/video/Video_test_uic8tk.mp4',
     language,
     isMobile: false,
     staticPage: true,

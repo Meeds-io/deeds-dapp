@@ -65,11 +65,7 @@
         <div class="col-md-6 col-12 pt-0 d-flex text-center text-md-start">
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('product') }}</span>
-            <a
-              :href="`/${parentLocation}/tour`"
-              class="text-sub-title no-decoration my-2">
-              {{ $t('productTour') }}
-            </a>
+            <span class="font-size-normal text-sub-title my-2">{{ $t('productTour') }}</span>
             <a
               :href="`/${parentLocation}/tenants`"
               class="text-sub-title no-decoration">

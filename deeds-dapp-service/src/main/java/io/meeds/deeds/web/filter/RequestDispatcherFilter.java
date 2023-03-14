@@ -44,8 +44,7 @@ public class RequestDispatcherFilter extends HttpFilter {
   private static final List<String> STATIC_PATHS           = Arrays.asList("/home",
                                                                            "/whitepaper",
                                                                            "/about-us",
-                                                                           "/legals",
-                                                                           "/tour");
+                                                                           "/legals");
 
   private static final List<String> DAPP_PATHS             = Arrays.asList("/marketplace",
                                                                            "/tenants",
