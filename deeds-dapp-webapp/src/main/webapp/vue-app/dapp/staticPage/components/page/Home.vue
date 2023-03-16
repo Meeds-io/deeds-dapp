@@ -19,10 +19,7 @@
 <template>
   <div class="d-flex flex-column mt-0 mt-sm-4">
     <v-card flat>
-      <v-card-title
-        class="justify-center text-center font-weight-black text-sm-h2 display-2">
-        {{ $t('homePage.title') }}
-      </v-card-title>
+      <v-card-title class="justify-center text-center display-3 font-weight-black">{{ $t('homePage.title') }}</v-card-title>
     </v-card>
     <span class="display-1 font-weight-light text-center mb-10 mt-11 mt-sm-9 grey--text">{{ $t('homePage.description') }}</span>
     <div class="mx-auto mb-15">
@@ -154,10 +151,7 @@
       </div>
     </v-card>
     <div class="pt-16 mt-6">
-      <span
-        class="d-flex justify-center text-center font-weight-bold text-sm-h2 display-2">
-        {{ $t('poweredByWeb3.title') }}
-      </span>
+      <div class="v-card__title full-height justify-center display-3 font-weight-bold">{{ $t('poweredByWeb3.title') }}</div>
       <v-card class="my-8 mx-4 d-block d-md-flex" flat>
         <div class="ps-3 ps-md-0 my-2 col-12 col-md-4">
           <div class="ps-0 d-flex justify-md-center justify-start my-6">
@@ -170,9 +164,12 @@
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
+            <div class="d-flex flex-column flex-md-row  align-md-center align-start">
+              <span class="display-1 font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
+              <span class="text-h5 grey--text hidden-md-and-up">{{ $t('tokens.description') }}</span>
+            </div>
           </div>
-          <span class="mt-3 text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="mt-3 text-h5 grey--text d-none d-md-flex text-center hidden-md-and-down">
             {{ $t('tokens.description') }}
           </span>
         </div>
@@ -187,9 +184,12 @@
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
+            <div class="d-flex flex-column flex-md-row  align-md-center align-start">
+              <span class="display-1 font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
+              <span class="text-h5 grey--text hidden-md-and-up">{{ $t('store.description') }}</span>
+            </div>
           </div>
-          <span class="text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="text-h5 grey--text d-none d-md-flex text-center hidden-md-and-down">
             {{ $t('store.description') }}
           </span>
         </div>
@@ -200,13 +200,16 @@
               height="100px"
               max-height="100px"
               max-width="100px"
-              class="me-9"
+              class="me-7"
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
+            <div class="d-flex flex-column flex-md-row  align-md-center align-start">
+              <span class="display-1 font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
+              <span class="text-h5 grey--text hidden-md-and-up">{{ $t('workMetaverse.description') }}</span>
+            </div>
           </div>
-          <span class="text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="text-h5 grey--text d-none d-md-flex text-center hidden-md-and-down">
             {{ $t('workMetaverse.description') }}
           </span>
         </div>
@@ -225,85 +228,113 @@
       </div>
     </div>
     <div class="pt-16 mt-16">
-      <span
-        class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h2 display-2">
-        {{ $t('whatInMeedForYou.title') }}
-      </span>
-      <v-container>
-        <v-row no-gutters>
-          <v-col
-            cols="12"
-            lg="6"
-            md="12">
-            <div class="my-4 my-md-0 d-flex flex-column fill-height">
-              <div class="d-flex my-8">
-                <v-img
-                  :src="`/${parentLocation}/static/images/leader.png`"
-                  height="81px"
-                  max-height="81px"
-                  max-width="135px"
-                  alt=""
-                  contain
-                  eager />
-                <span class="display-1 d-flex align-center font-weight-bold ms-7">
-                  {{ $t('leader.title') }}
-                </span>
-              </div>
-              <div class="d-flex flex-column">
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart1') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart2') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart3') }}</span>
-              </div>
-              <v-spacer />
-              <v-btn
-                href="./tenants"
-                class="primary mx-auto mt-6 mb-15 mb-md-6 "
-                width="319px"
-                height="75px"
-                depressed
-                dark
-                outlined>
-                <span class="display-1 font-weight-bold">{{ $t('getAHub') }}</span>
-              </v-btn>
-            </div>
-          </v-col>
-          <v-col
-            cols="12"
-            lg="6"
-            md="12">
-            <div class="my-4 my-md-0 fill-height">
-              <div class="d-flex my-8">
-                <v-img
-                  :src="`/${parentLocation}/static/images/contributor.png`"
-                  height="81px"
-                  max-height="81px"
-                  max-width="135px"
-                  alt=""
-                  contain
-                  eager />
-                <span class="display-1 d-flex align-center font-weight-bold ms-7">
-                  {{ $t('contributor.title') }}
-                </span>
-              </div>
-              <div class="d-flex flex-column">
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart1') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
-              </div>
-              <v-btn
-                href="https://builders.meeds.io"
-                target="_blank"
-                class="mx-auto d-flex my-6"
-                width="319px"
-                height="75px"
-                outlined>
-                <v-icon size="34" class="me-2 dark-grey-color">fas fa-external-link-alt</v-icon>
-                <span class="display-1 dark-grey-color font-weight-bold">{{ $t('trynow') }}</span>
-              </v-btn>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
+      <div class="v-card__title full-height justify-center display-3 font-weight-bold">{{ $t('whatInMeedForYou.title') }}</div>
+      <v-card class="mb-8 mt-16 mx-4 d-block d-md-flex" flat>
+        <v-list class="ps-0 col-12 col-md-6">
+          <v-list-item class="ps-0 pb-0 pb-md-7">
+            <v-list-item-icon>
+              <v-img
+                :src="`/${parentLocation}/static/images/leader.png`"
+                height="81px"
+                max-height="81px"
+                max-width="135px"
+                alt=""
+                contain
+                eager />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="d-flex flex-column">
+                <span class="display-1 font-weight-bold">{{ $t('leader.title') }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-list>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('leader.descriptionPart1') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('leader.descriptionPart2') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('leader.descriptionPart3') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="my-6">
+            <v-btn
+              href="./tenants"
+              class="primary mx-auto"
+              width="319px"
+              height="75px"
+              depressed
+              dark
+              outlined>
+              <span class="display-1 font-weight-bold">{{ $t('getAHub') }}</span>
+            </v-btn>
+          </v-list-item>
+        </v-list>
+        <v-list class="ps-0 col-12 col-md-6">
+          <v-list-item class="ps-0">
+            <v-list-item-icon>
+              <v-img
+                :src="`/${parentLocation}/static/images/contributor.png`"
+                alt=""
+                height="110px"
+                max-height="110px"
+                max-width="136px"
+                contain
+                eager />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="d-flex flex-column">
+                <span class="display-1 font-weight-bold">{{ $t('contributor.title') }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-list>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('contributor.descriptionPart1') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('contributor.descriptionPart2') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item class="ps-0">
+                  <v-list-item-content>
+                    <span class="text-h5 grey--text">{{ $t('contributor.descriptionPart3') }}</span>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="my-6">
+            <v-btn
+              href="https://builders.meeds.io"
+              target="_blank"
+              class="mx-auto d-flex"
+              width="319px"
+              height="75px"
+              outlined>
+              <v-icon size="34" class="me-2 dark-grey-color">fas fa-external-link-alt</v-icon>
+              <span class="display-1 dark-grey-color font-weight-bold">{{ $t('trynow') }}</span>
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-card>
     </div>
   </div>
 </template>
