@@ -52,7 +52,8 @@
         height="360px"
         loop="true"
         autoplay
-        muted>
+        muted
+        controls>
         <source :src="`${introductiveVideoLink}`" type="video/mp4">
       </video>
       <div class="d-flex flex-wrap d-md-none justify-center hidden-sm-and-up">
@@ -88,7 +89,8 @@
           height="350px"
           loop="true"
           autoplay
-          muted>
+          muted
+          controls>
           <source :src="`${contributionProgramsVideoLink}`" type="video/mp4">
         </video>
       </div>
@@ -97,7 +99,8 @@
           height="350px"
           loop="true"
           autoplay
-          muted>
+          muted
+          controls>
           <source :src="`${rewardsVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -114,7 +117,8 @@
           height="350px"
           loop="true"
           autoplay
-          muted>
+          muted
+          controls>
           <source :src="`${overviewVideoLink}`" type="video/mp4">
         </video>
       </div>
@@ -123,7 +127,8 @@
           height="350px"
           loop="true"
           autoplay
-          muted>
+          muted
+          controls>
           <source :src="`${perksVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
@@ -140,7 +145,8 @@
           height="350px"
           loop="true"
           autoplay
-          muted>
+          muted
+          controls>
           <source :src="`${teamworkVideoLink}`" type="video/mp4">
         </video>
       </div>
