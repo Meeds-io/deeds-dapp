@@ -96,6 +96,41 @@ public class ListenerService implements ApplicationContextAware {
 
   private String                                          clientName;
 
+  @Value("${meeds.listenerService.enabled:true}")
+  private boolean                                         enabled;
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
+
+  @PostConstruct
+  protected void init() {
+    destroy();
+    clientName = redisProperties.getClientName();
+    initRedisSubscription();
+  }
+
+  @PreDestroy
+  protected void destroy() {
+    if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
+      this.subscriptionConnection.close();
+      this.subscriptionConnection = null;
+    }
+    if (this.publicationConnection != null && this.publicationConnection.isOpen()) {
+      this.publicationConnection.close();
+      this.publicationConnection = null;
+    }
+  }
+
+  public void enable() {
+    this.enabled = true;
+  }
+
+  public void disable() {
+    this.enabled = false;
+  }
+
   /**
    * Triggers an event locally and remotely using persistent event listening
    * based on a dedicated Elasticsearch index to persist the event and generates
@@ -111,6 +146,9 @@ public class ListenerService implements ApplicationContextAware {
    *                    {@link EventListener#onEvent(String, Object)}
    */
   public void publishEvent(String eventName, Object data) {
+    if (!this.enabled) {
+      return;
+    }
     LOG.debug("{} - Publish event {} locally with data {}",
               getClientName(),
               eventName,
@@ -182,6 +220,9 @@ public class ListenerService implements ApplicationContextAware {
    * not be used outside this provided Task.
    */
   public void triggerElasticSearchEvents() {
+    if (!this.enabled) {
+      return;
+    }
     executeElasticSearchScanning(() -> {
       Instant lastEventScanDate = getLastELasticsearchScanDate();
       List<DeedTenantEvent> events;
@@ -208,34 +249,13 @@ public class ListenerService implements ApplicationContextAware {
    * periodicity, which is by default, the dApp only.
    */
   public void cleanupElasticsearchEvents() {
+    if (!this.enabled) {
+      return;
+    }
     if (StringUtils.isNotBlank(cleanupHoursPeriodicity)) {
       Instant lastEventScanDate = getLastELasticsearchScanDate();
       deedTenantEventRepository.deleteByDateLessThan(lastEventScanDate.minus(Long.parseLong(cleanupHoursPeriodicity.trim()),
                                                                              ChronoUnit.HOURS));
-    }
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
-  }
-
-  @PostConstruct
-  protected void init() {
-    destroy();
-    clientName = redisProperties.getClientName();
-    initRedisSubscription();
-  }
-
-  @PreDestroy
-  protected void destroy() {
-    if (this.subscriptionConnection != null && this.subscriptionConnection.isOpen()) {
-      this.subscriptionConnection.close();
-      this.subscriptionConnection = null;
-    }
-    if (this.publicationConnection != null && this.publicationConnection.isOpen()) {
-      this.publicationConnection.close();
-      this.publicationConnection = null;
     }
   }
 
