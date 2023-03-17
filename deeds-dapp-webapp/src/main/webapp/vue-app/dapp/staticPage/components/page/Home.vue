@@ -24,7 +24,7 @@
     <span class="display-1 font-weight-light text-center mb-10 mt-11 mt-sm-9 grey--text">{{ $t('homePage.description') }}</span>
     <div class="mx-auto mb-15">
       <v-btn
-        href="./whitepaper" 
+        href="./tour" 
         class="primary"
         width="319px"
         height="75px"
