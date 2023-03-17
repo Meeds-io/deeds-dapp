@@ -20,8 +20,7 @@
   <div class="d-flex flex-column mt-0 mt-sm-4">
     <v-card flat>
       <v-card-title
-        :class="isMobile && 'display-2' || 'display-3'"
-        class="justify-center text-center font-weight-black">
+        class="justify-center text-center font-weight-black text-sm-h2 display-2">
         {{ $t('homePage.title') }}
       </v-card-title>
     </v-card>
@@ -156,8 +155,7 @@
     </v-card>
     <div class="pt-16 mt-6">
       <span
-        :class="isMobile && 'display-2' || 'display-3'"
-        class="d-flex justify-center text-center font-weight-bold">
+        class="d-flex justify-center text-center font-weight-bold text-sm-h2 display-2">
         {{ $t('poweredByWeb3.title') }}
       </span>
       <v-card class="my-8 mx-4 d-block d-md-flex" flat>
@@ -228,8 +226,7 @@
     </div>
     <div class="pt-16 mt-16">
       <span
-        :class="isMobile && 'display-2' || 'display-3'"
-        class="d-flex justify-center text-center font-weight-bold mb-11">
+        class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h2 display-2">
         {{ $t('whatInMeedForYou.title') }}
       </span>
       <v-container>
@@ -260,7 +257,7 @@
               <v-spacer />
               <v-btn
                 href="./tenants"
-                class="primary mx-auto my-t mb-15"
+                class="primary mx-auto mt-6 mb-15 mb-md-6 "
                 width="319px"
                 height="75px"
                 depressed
@@ -314,9 +311,6 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
-    },
   }),
 };
 </script>
