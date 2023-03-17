@@ -31,6 +31,7 @@ import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
+import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 import io.meeds.deeds.elasticsearch.model.DeedMetadata;
@@ -102,8 +103,9 @@ public class ElasticSearchConfig {
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
-        if (elasticsearchTemplate.cluster().health().isTimedOut()) {
-          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut");
+        ClusterHealth elasticHealth = elasticsearchTemplate.cluster().health();
+        if (elasticHealth.isTimedOut() || elasticHealth.getActiveShardsPercent() < 1 || elasticHealth.getActiveShards() == 0) {
+          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = " + elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
         } else {
           LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
           i = 0;
