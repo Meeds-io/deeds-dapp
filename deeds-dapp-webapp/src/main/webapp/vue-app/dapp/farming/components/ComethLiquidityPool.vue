@@ -27,7 +27,7 @@
       <v-card flat tile>
         <v-card-text class="d-flex flex-column">
           <img
-            :src="`/${parentLocation}/static/images/cometh.ico`"
+            :src="`${parentLocation}/static/images/cometh.ico`"
             class="mx-auto addLiquidityIcon"
             alt="Cometh Icon">
         </v-card-text>

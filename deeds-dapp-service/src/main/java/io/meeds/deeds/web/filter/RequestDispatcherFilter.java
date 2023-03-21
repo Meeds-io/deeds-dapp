@@ -50,7 +50,7 @@ public class RequestDispatcherFilter extends HttpFilter {
   private static final List<String> DAPP_PATHS             = Arrays.asList("/marketplace",
                                                                            "/tenants",
                                                                            "/owners",
-                                                                           "/overview",
+                                                                           "/portfolio",
                                                                            "/stake",
                                                                            "/deeds",
                                                                            "/farm");

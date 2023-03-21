@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export function getMeedsExchange(from, currency) {
-  return fetch(`/${window.parentAppLocation}/api/exchange/${(currency || 'USD').toUpperCase()}?from=${from}`, {
+  return fetch(`${window.parentAppLocation}/api/exchange/${(currency || 'USD').toUpperCase()}?from=${from}`, {
     method: 'GET',
   }).then(resp => resp && resp.ok && resp.json());
 }

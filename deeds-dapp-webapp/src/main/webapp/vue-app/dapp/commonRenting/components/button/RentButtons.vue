@@ -205,7 +205,7 @@ export default {
     },
     rentalOfferLink() {
       return this.showSeeRentPart
-        && `/${this.parentLocation}/marketplace?offer=${this.rentalOffer.id}`;
+        && `${this.parentLocation}/marketplace?offer=${this.rentalOffer.id}`;
     },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;

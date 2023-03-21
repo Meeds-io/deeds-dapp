@@ -26,7 +26,7 @@ export function startTenant(nftId, email, transactionHash) {
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
+  return fetch(`${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,7 +46,7 @@ export function stopTenant(nftId, transactionHash) {
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
+  return fetch(`${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -62,7 +62,7 @@ export function stopTenant(nftId, transactionHash) {
 }
 
 export function getTenantStartDate(nftId) {
-  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}/startDate`, {
+  return fetch(`${window.parentAppLocation}/api/tenants/${nftId}/startDate`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -84,7 +84,7 @@ export function getTenantInfo(nftId, refreshFromBlockchain) {
   if (refreshFromBlockchain) {
     headers['X-REFRESH'] = 'true';
   }
-  return fetch(`/${window.parentAppLocation}/api/tenants/${nftId}`, {
+  return fetch(`${window.parentAppLocation}/api/tenants/${nftId}`, {
     method: 'GET',
     headers,
     credentials: 'include',
@@ -98,7 +98,7 @@ export function getTenantInfo(nftId, refreshFromBlockchain) {
 }
 
 export function getTenants() {
-  return fetch(`/${window.parentAppLocation}/api/tenants`, {
+  return fetch(`${window.parentAppLocation}/api/tenants`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),

@@ -18,7 +18,7 @@
  */
 
 export function getMetrics() {
-  return fetch(`/${window.parentAppLocation}/api/token/assets`, {
+  return fetch(`${window.parentAppLocation}/api/token/assets`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {
