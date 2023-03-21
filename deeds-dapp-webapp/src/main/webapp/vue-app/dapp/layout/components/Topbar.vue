@@ -25,9 +25,9 @@
     elevate-on-scroll>
     <v-spacer />
     <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-4 mx-1">
-      <a :href="`/${parentLocation}/`" class="no-decoration">
+      <a :href="`${parentLocation}/`" class="no-decoration">
         <img
-          :src="`/${parentLocation}/static/images/meeds.png`"
+          :src="`${parentLocation}/static/images/meeds.png`"
           height="37px"
           width="101px"
           alt="">
@@ -35,12 +35,12 @@
       <v-spacer />
       <div>
         <v-btn
-          :href="`/${parentLocation}/overview`"
+          :href="`${parentLocation}/portfolio`"
           class="dark-grey-color font-weight-black dark-grey-border-color"
           outlined
           text>
           <v-img
-            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :src="`${parentLocation}/static/images/meedsicon.png`"
             alt=""
             width="24"
             max-height="24"
@@ -93,9 +93,6 @@ export default {
     whiteThemeColor: state => state.whiteThemeColor,
     parentLocation: state => state.parentLocation,
     staticPage: state => state.staticPage,
-    currentSiteLink() {
-      return window.location.pathname;
-    },
   }),
 };
 </script>

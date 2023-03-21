@@ -116,7 +116,6 @@ export default {
     minButtonsWidth: 120,
   }),
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
     address: state => state.address,
     provider: state => state.provider,
     etherscanBaseLink: state => state.etherscanBaseLink,

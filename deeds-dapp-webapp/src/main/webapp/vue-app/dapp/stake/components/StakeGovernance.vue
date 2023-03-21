@@ -34,7 +34,7 @@
         text
         class="me-sm-4">
         <img
-          :src="`/${parentLocation}/static/images/discord.ico`"
+          :src="`${parentLocation}/static/images/discord.ico`"
           alt=""
           class="me-2 img-24px">
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
@@ -48,7 +48,7 @@
         text
         class="ms-0 ms-sm-4 mt-4 mt-sm-0">
         <img
-          :src="`/${parentLocation}/static/images/snapshot.png`"
+          :src="`${parentLocation}/static/images/snapshot.png`"
           alt=""
           class="me-2 img-24px">
         <span class="text-none">{{ $t('voteOnSnapshot') }}</span>

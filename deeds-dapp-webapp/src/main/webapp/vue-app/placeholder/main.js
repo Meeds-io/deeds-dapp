@@ -21,8 +21,10 @@ import './initComponents';
 const language = localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
 
 window.parentAppLocation = window.location.pathname.split('/')[1];
-if (window.parentAppLocation.length) {
+if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
   window.parentAppLocation = `/${window.parentAppLocation}`;
+} else {
+  window.parentAppLocation = '';
 }
 
 const i18n = new VueI18n({

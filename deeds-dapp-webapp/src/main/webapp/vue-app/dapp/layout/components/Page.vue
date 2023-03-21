@@ -62,9 +62,9 @@ export default {
       this.$nextTick(() => this.currentRoute = route);
     },
     refreshRoute(path) {
-      const parts = path && window.location.pathname.split('/') || [];
+      const parts = path && window.location.pathname.split('/').filter(pathPart => pathPart?.length) || [];
       let currentRoute = '/';
-      if (parts.length > 1) {
+      if (parts.length > 0) {
         currentRoute = parts[parts.length - 1];
         if (!currentRoute || !currentRoute.length) {
           currentRoute = '/';

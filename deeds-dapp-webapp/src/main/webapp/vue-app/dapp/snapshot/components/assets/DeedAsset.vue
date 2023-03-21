@@ -65,7 +65,7 @@ export default {
       return this.deed?.count;
     },
     imageSrc() {
-      return this.cardName && this.cityName && `/${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
+      return this.cardName && this.cityName && `${this.parentLocation}/static/images/nft/${this.cityName.toLowerCase()}-${this.cardName.toLowerCase()}.png`;
     },
   }),
   methods: {

@@ -41,7 +41,7 @@
         class="rounded-lg me-4">
         <span class="text-none">Sushiswap</span>
         <img
-          :src="`/${parentLocation}/static/images/sushiswap.ico`"
+          :src="`${parentLocation}/static/images/sushiswap.ico`"
           class="my-3 addLiquidityIcon">
       </v-btn>
       <v-btn
@@ -71,7 +71,7 @@
         class="rounded-lg me-4">
         <span class="text-none">Cometh</span>
         <img
-          :src="`/${parentLocation}/static/images/cometh.ico`"
+          :src="`${parentLocation}/static/images/cometh.ico`"
           class="my-3 addLiquidityIcon"
           alt="Cometh Icon">
       </v-btn>
