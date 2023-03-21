@@ -32,7 +32,7 @@
             <v-card-subtitle class="dark-grey-color title font-weight-normal py-2" v-html="$t('whitepaper.descriptionPart5', {0:'<strong>', 1: '</strong>'})" />
           </div>
           <v-img
-            :src="`/${parentLocation}/static/images/logo-m-grand.svg`"
+            :src="`${parentLocation}/static/images/logo-m-grand.svg`"
             alt=""
             width="350px"
             class="logo-m hidden-md-and-down mt-7" />
@@ -60,7 +60,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="47px"
                 contain
@@ -83,7 +83,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/deed.png`"
+                :src="`${parentLocation}/static/images/deed.png`"
                 alt=""
                 width="47px"
                 contain
@@ -106,7 +106,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="47px"
                 contain
@@ -131,14 +131,14 @@
       <div class="d-flex justify-center justify-md-start">
         <v-img 
           v-if="!pageState || pageState === 'work'"
-          :src="`/${parentLocation}/static/images/work-investment.svg`"
+          :src="`${parentLocation}/static/images/work-investment.svg`"
           width="564px"
           alt=""
           contain
           eager />
         <v-img 
           v-else
-          :src="`/${parentLocation}/static/images/Capital-Investement.svg`"
+          :src="`${parentLocation}/static/images/Capital-Investement.svg`"
           width="564px"
           alt=""
           contain
@@ -196,7 +196,7 @@
           </v-btn>
           <v-btn
             v-else
-            href="./overview"
+            href="./portfolio"
             max-width="156px"
             class="dark-grey-border-color rounded-pill dark-grey-color d-flex justify-center" 
             outlined>

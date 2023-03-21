@@ -117,6 +117,11 @@ const isMetamaskInstalled = ethUtils.isMetamaskInstalled();
 const isMetamaskConnected = ethUtils.isMetamaskConnected();
 
 window.parentAppLocation = window.location.pathname.split('/')[1];
+if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
+  window.parentAppLocation = `/${window.parentAppLocation}`;
+} else {
+  window.parentAppLocation = '';
+}
 
 const i18n = new VueI18n({
   locale: language,
@@ -1372,7 +1377,7 @@ window.addEventListener('ethereum#initialized', initialize, {
 let app = null;
 
 function initializeVueApp(language) {
-  fetch(`/${window.parentAppLocation}/static/i18n/messages_${language}.properties?_=${buildNumber}`)
+  fetch(`${window.parentAppLocation}/static/i18n/messages_${language}.properties?_=${buildNumber}`)
     .then(resp => resp && resp.ok && resp.text())
     .then(i18nMessages => {
       const data = i18nMessages

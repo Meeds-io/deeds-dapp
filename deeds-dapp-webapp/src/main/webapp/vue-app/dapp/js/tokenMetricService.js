@@ -18,7 +18,7 @@
  */
 
 export function getMetrics(currency) {
-  return fetch(`/${window.parentAppLocation}/api/token/meed/?currency=${currency?.toUpperCase() || 'USD'}`, {
+  return fetch(`${window.parentAppLocation}/api/token/meed/?currency=${currency?.toUpperCase() || 'USD'}`, {
     method: 'GET',
     credentials: 'include',
   }).then((resp) => {

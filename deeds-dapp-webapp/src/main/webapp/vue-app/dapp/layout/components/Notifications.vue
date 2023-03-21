@@ -40,12 +40,12 @@
         <template v-if="currency">
           <img
             v-if="currency === 'MEED'"
-            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :src="`${parentLocation}/static/images/meedsicon.png`"
             alt=""
             class="me-4 img-20px">
           <img
             v-else-if="currency === 'ETH'"
-            :src="`/${parentLocation}/static/images/ether.svg`"
+            :src="`${parentLocation}/static/images/ether.svg`"
             alt=""
             class="me-2 img-20px">
         </template>

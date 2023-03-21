@@ -101,7 +101,7 @@ export default {
       }
     },
     cardImage() {
-      return this.city && this.cardType && `/${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
+      return this.city && this.cardType && `${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
     },
     cardMaxUsers() {
       switch (this.cardType) {

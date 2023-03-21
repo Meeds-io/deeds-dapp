@@ -10,7 +10,7 @@
       class="d-flex flex-column align-center text-center mx-12"
       flat>
       <img
-        :src="`/${parentLocation}/static/images/deeds.png`"
+        :src="`${parentLocation}/static/images/deeds.png`"
         alt=""
         class="mb-8 img-deeds-empty">
       <template v-if="offerNotAvailable">

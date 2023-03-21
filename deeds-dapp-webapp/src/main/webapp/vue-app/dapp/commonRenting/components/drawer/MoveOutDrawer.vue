@@ -31,7 +31,7 @@
         <v-card-text v-if="transactionHash">
           <v-list-item class="px-0">
             <v-list-item-avatar size="72">
-              <v-img :src="`/${parentLocation}/static/images/transactionInProgress.png`" eager />
+              <v-img :src="`${parentLocation}/static/images/transactionInProgress.png`" eager />
             </v-list-item-avatar>
             <v-list-item-content class="d-inline">
               {{ $t('removeTenantSentDescription') }}

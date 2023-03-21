@@ -22,7 +22,7 @@
       <div class=" py-0 d-flex flex-grow-0 flex-column px-0 mb-6 me-0 me-sm-6 col-12 col-sm-4">
         <div class="d-flex justify-center justify-sm-start">
           <v-img
-            :src="`/${parentLocation}/static/images/meeds.png`"
+            :src="`${parentLocation}/static/images/meeds.png`"
             width="77px"
             max-width="77px"
             alt=""
@@ -66,12 +66,12 @@
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('product') }}</span>
             <a
-              :href="`/${parentLocation}/tour`"
+              :href="`${parentLocation}/tour`"
               class="text-sub-title no-decoration my-2">
               {{ $t('productTour') }}
             </a>
             <a
-              :href="`/${parentLocation}/tenants`"
+              :href="`${parentLocation}/tenants`"
               class="text-sub-title no-decoration">
               {{ $t('yourHub') }}
             </a>
@@ -79,17 +79,17 @@
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('workMetaverse.title') }}</span>
             <a
-              :href="`/${parentLocation}/overview`"
+              :href="`${parentLocation}/portfolio`"
               class="text-sub-title no-decoration my-2">
               {{ $t('meedsToken') }}
             </a>
             <a
-              :href="`/${parentLocation}/deeds`"
+              :href="`${parentLocation}/deeds`"
               class="text-sub-title text-capitalize no-decoration">
               {{ $t('becomingADeedOwner') }}
             </a>
             <a
-              :href="`/${parentLocation}/marketplace`"
+              :href="`${parentLocation}/marketplace`"
               class="text-sub-title no-decoration text-capitalize my-2">
               {{ $t('marketplace') }}
             </a>
@@ -99,17 +99,17 @@
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('meedDAO') }}</span>
             <a
-              :href="`/${parentLocation}/whitepaper`"
+              :href="`${parentLocation}/whitepaper`"
               class="text-sub-title no-decoration my-2">
               {{ $t('whitePaper') }}
             </a>
             <a
-              :href="`/${parentLocation}/about-us`"
+              :href="`${parentLocation}/about-us`"
               class="text-sub-title no-decoration">
               {{ $t('aboutUs') }}
             </a>
             <a
-              :href="`/${parentLocation}/legals`"
+              :href="`${parentLocation}/legals`"
               class="text-sub-title no-decoration my-2">
               {{ $t('legal') }}
             </a>
@@ -117,7 +117,7 @@
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('community') }}</span>
             <a
-              :href="`/${parentLocation}/stake`"
+              :href="`${parentLocation}/stake`"
               class="text-sub-title no-decoration my-2">
               {{ $t('joinMeedsDAO') }}
             </a>

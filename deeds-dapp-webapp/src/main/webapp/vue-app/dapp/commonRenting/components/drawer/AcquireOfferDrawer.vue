@@ -279,7 +279,7 @@
             {{ $t('deedRentOfferConfirmationSuccessPart3') }}
           </li>
           <li
-            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='/${parentLocation}/tenants'>`, 1: `</a>`})"
+            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='${parentLocation}/tenants'>`, 1: `</a>`})"
             class="ps-0 ps-sm-4"
             @click.prevent.stop="openTenants">
           </li>
