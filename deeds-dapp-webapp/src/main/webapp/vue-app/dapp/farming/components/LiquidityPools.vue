@@ -46,7 +46,6 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
     rewardedFunds: state => state.rewardedFunds,
     rewardedPools: state => state.rewardedPools,
     lpLoading: state => state.lpLoading,

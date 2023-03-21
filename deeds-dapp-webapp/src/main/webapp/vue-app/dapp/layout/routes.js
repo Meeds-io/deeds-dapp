@@ -31,7 +31,7 @@ export default {
   '/marketplace': Marketplace,
   '/tenants': Tenants,
   '/owners': Owners,
-  '/overview': Overview,
+  '/portfolio': Overview,
   '/stake': Stake,
   '/deeds': Deeds,
   '/farm': Farm,

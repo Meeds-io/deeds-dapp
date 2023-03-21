@@ -61,7 +61,7 @@
           </v-chip>
           <v-img
             v-if="buy"
-            :src="`/${parentLocation}/static/images/ether.svg`"
+            :src="`${parentLocation}/static/images/ether.svg`"
             :max-height="maxIconsSize"
             :max-width="maxIconsSize"
             class="me-1 mt-2px"
@@ -69,7 +69,7 @@
             eager />
           <v-img
             v-else
-            :src="`/${parentLocation}/static/images/meedsicon.png`"
+            :src="`${parentLocation}/static/images/meedsicon.png`"
             :max-height="maxIconsSize"
             :max-width="maxIconsSize"
             class="me-1 mt-2px"
@@ -116,7 +116,7 @@
             <template #append>
               <v-img
                 v-if="buy"
-                :src="`/${parentLocation}/static/images/meedsicon.png`"
+                :src="`${parentLocation}/static/images/meedsicon.png`"
                 :max-height="maxIconsSize"
                 :max-width="maxIconsSize"
                 class="me-1 mt-2px"
@@ -124,7 +124,7 @@
                 eager />
               <v-img
                 v-else
-                :src="`/${parentLocation}/static/images/ether.svg`"
+                :src="`${parentLocation}/static/images/ether.svg`"
                 :max-height="maxIconsSize"
                 :max-width="maxIconsSize"
                 class="me-1 mt-2px"

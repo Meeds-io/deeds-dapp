@@ -38,11 +38,7 @@
 export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
-    parentLocation: state => state.parentLocation,
     staticPage: state => state.staticPage,
-    currentSiteLink() {
-      return window.location.pathname;
-    },
   }),
 };
 </script>

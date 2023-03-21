@@ -33,7 +33,7 @@
         outlined
         text>
         <v-img
-          :src="`/${parentLocation}/static/images/meedsicon.png`"
+          :src="`${parentLocation}/static/images/meedsicon.png`"
           alt=""
           heigh="24"
           max-width="24"

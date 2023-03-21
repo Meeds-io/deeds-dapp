@@ -27,7 +27,7 @@
         class="d-block d-md-none"
         flat>
         <v-img
-          :src="`/${parentLocation}/static/images/${imageMobile}`"
+          :src="`${parentLocation}/static/images/${imageMobile}`"
           height="100px"
           width="70px"
           max-width="100%"
@@ -39,7 +39,7 @@
         class="d-none d-md-block"
         flat>
         <v-img
-          :src="`/${parentLocation}/static/images/${imageDesktop}`"
+          :src="`${parentLocation}/static/images/${imageDesktop}`"
           height="100px"
           width="140px"
           max-width="100%"

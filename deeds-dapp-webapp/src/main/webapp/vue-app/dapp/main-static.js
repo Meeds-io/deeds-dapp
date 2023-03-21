@@ -58,8 +58,15 @@ const i18n = new VueI18n({
 });
 
 const pathParts = window.location.pathname.split('/');
-window.parentAppLocation = pathParts[1];
-const page = pathParts.length > 2 && pathParts[2] || 'home';
+window.parentAppLocation = pathParts[1] || '';
+let page;
+if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
+  window.parentAppLocation = `/${window.parentAppLocation}`;
+  page = pathParts.length > 2 && pathParts[2] || 'home';
+} else {
+  window.parentAppLocation = '';
+  page = pathParts.length > 1 && pathParts[1] || 'home';
+}
 
 const store = new Vuex.Store({
   state: {
@@ -99,7 +106,7 @@ const store = new Vuex.Store({
 
 let app = null;
 function initializeVueApp(lang) {
-  fetch(`/${window.parentAppLocation}/static/i18n/messages_${lang}.properties?_=${buildNumber}`)
+  fetch(`${window.parentAppLocation}/static/i18n/messages_${lang}.properties?_=${buildNumber}`)
     .then(resp => resp && resp.ok && resp.text())
     .then(i18nMessages => {
       const data = i18nMessages && i18nMessages

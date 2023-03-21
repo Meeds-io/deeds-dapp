@@ -26,7 +26,7 @@ export function login(address, message, signedMessage) {
   formData.append('message', message);
   const params = new URLSearchParams(formData).toString();
 
-  return fetch(`/${window.parentAppLocation}/login`, {
+  return fetch(`${window.parentAppLocation}/login`, {
     method: 'POST',
     redirect: 'manual',
     headers: {
@@ -45,7 +45,7 @@ export function login(address, message, signedMessage) {
 }
 
 export function logout() {
-  return fetch(`/${window.parentAppLocation}/logout`, {
+  return fetch(`${window.parentAppLocation}/logout`, {
     method: 'POST',
     redirect: 'manual',
     credentials: 'include',

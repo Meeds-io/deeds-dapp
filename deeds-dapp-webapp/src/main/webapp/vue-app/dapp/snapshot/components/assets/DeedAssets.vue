@@ -51,7 +51,6 @@ export default {
     deedLoading: state => state.deedLoading,
     ownedNfts: state => state.ownedNfts,
     whitepaperLink: state => state.whitepaperLink,
-    parentLocation: state => state.parentLocation,
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
     nftsByCardType() {

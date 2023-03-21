@@ -29,7 +29,7 @@
         :target="openSeaTarget"
         rel="nofollow noreferrer noopener">
         <img
-          :src="`/${parentLocation}/static/images/OpenSea-Badge.png`"
+          :src="`${parentLocation}/static/images/OpenSea-Badge.png`"
           class="openSea-badge"
           alt="Available on OpenSea">
       </a>

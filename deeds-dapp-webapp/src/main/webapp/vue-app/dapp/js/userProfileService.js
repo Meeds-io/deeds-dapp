@@ -19,7 +19,7 @@
 import {getCookie} from './authentication';
 
 export function getEmail() {
-  return fetch(`/${window.parentAppLocation}/api/profile/email`, {
+  return fetch(`${window.parentAppLocation}/api/profile/email`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),

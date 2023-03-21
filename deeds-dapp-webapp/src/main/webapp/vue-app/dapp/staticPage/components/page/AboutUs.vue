@@ -38,7 +38,7 @@
         </div>
       </div>
       <v-img 
-        :src="`/${parentLocation}/static/images/meeds-about-us-banner.svg`"
+        :src="`${parentLocation}/static/images/meeds-about-us-banner.svg`"
         width="486px"
         class="hidden-md-and-down"
         alt=""
@@ -54,7 +54,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="47px"
                 contain
@@ -64,7 +64,7 @@
               <v-list-item-title class="d-flex flex-column">
                 <span class="pb-4 dark-grey-color">{{ $t('whatWeDo.meedToken') }}</span>
                 <v-btn
-                  href="./overview"
+                  href="./portfolio"
                   max-width="94px"
                   class="dark-grey-border-color rounded-pill dark-grey-color"
                   small
@@ -86,7 +86,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="47px"
                 contain
@@ -119,7 +119,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/deed.png`"
+                :src="`${parentLocation}/static/images/deed.png`"
                 alt=""
                 width="47px"
                 contain
@@ -176,7 +176,7 @@
             </v-card-subtitle>
           </div>
           <v-img
-            :src="`/${parentLocation}/static/images/logo-m-grand.svg`"
+            :src="`${parentLocation}/static/images/logo-m-grand.svg`"
             alt=""
             width="350px"
             class="logo-m hidden-md-and-down mt-n3" />
@@ -192,7 +192,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/logo-exo.png`"
+                :src="`${parentLocation}/static/images/logo-exo.png`"
                 alt=""
                 width="80px"
                 contain
@@ -225,7 +225,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/logo-Bonitasoft.png`"
+                :src="`${parentLocation}/static/images/logo-Bonitasoft.png`"
                 alt=""
                 width="80px"
                 contain
@@ -258,7 +258,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
+                :src="`${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
                 alt=""
                 width="80px"
                 contain
