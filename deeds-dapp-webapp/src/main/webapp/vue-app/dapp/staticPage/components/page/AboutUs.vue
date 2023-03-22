@@ -17,25 +17,31 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column mt-8 mt-sm-10">
+  <div class="d-flex flex-column mt-8 mt-sm-2">
     <v-card flat>
-      <v-card-title class="py-0 justify-center font-weight-bold dark-grey-color">{{ $t('aboutUs.title') }}</v-card-title>
+      <v-card-title class="py-0 px-0 px-sm-4 justify-center">
+        <span class="text-sm-h2 display-2 font-weight-bold ms-0 ms-sm-16">{{ $t('aboutUs.title') }}</span>
+        <v-spacer />
+        <v-img 
+          :src="`/${parentLocation}/static/images/about_us.png`"
+          :max-width="isMobile && '97px' || '211px'"
+          class="me-0 me-sm-16"
+          alt=""
+          contain
+          eager />
+      </v-card-title>
     </v-card>
-    <div class="d-flex py-4">
+    <div class="d-flex pt-15">
       <div class="d-flex flex-column">
-        <div class="ps-0 py-0 v-card__title font-weight-bold dark-grey-color">
+        <span class="mb-5 display-1 font-weight-bold">
           {{ $t('governance.title') }}
-        </div> 
-        <div class="ps-0 py-4 dark-grey-color v-card__text" v-html="$t('governance.descriptionPart1', {0:'<strong>', 1: '</strong>', 2: '<br><br>'})"></div>
-        <div class="d-flex justify-center justify-md-start">
-          <v-btn
-            href="mailto:contact@meeds.io" 
-            max-width="156px"
-            class="dark-grey-border-color rounded-pill dark-grey-color d-flex justify-center" 
-            outlined>
-            <span class="subtitle-2 font-weight-normal">{{ $t('governance.button') }}</span>
-          </v-btn>
-        </div>
+        </span>
+        <v-card
+          height="8px"
+          width="140px"
+          color="primary no-border-radius"
+          flat />
+        <div class="ps-0 py-8 text-h5 grey--text font-weight-light" v-html="$t('governance.descriptionPart1', {0: '<br><br>'})"></div>
       </div>
       <v-img 
         :src="`/${parentLocation}/static/images/meeds-about-us-banner.svg`"
@@ -45,8 +51,27 @@
         contain
         eager />
     </div>
-    <div class="d-flex flex-column">
-      <div class="px-0 v-card__title font-weight-bold dark-grey-color">
+    <div class="d-flex justify-end">
+      <v-card
+        height="8px"
+        width="140px"
+        color="secondary no-border-radius"
+        flat />
+    </div>
+    <div class="d-flex justify-center my-15">
+      <v-btn
+        href="mailto:contact@meeds.io" 
+        width="319px"
+        height="75px"
+        class="primary"
+        depressed
+        dark
+        outlined>
+        <span class="display-1 font-weight-bold">{{ $t('governance.button') }}</span>
+      </v-btn>
+    </div>
+    <div class="d-flex flex-column mb-16">
+      <div class="px-0 display-1 font-weight-bold mb-12 mt-16">
         {{ $t('whatWeDo.title') }}
       </div> 
       <v-card class="d-block d-md-flex" flat>
@@ -56,29 +81,33 @@
               <v-img
                 :src="`/${parentLocation}/static/images/meedsToken.png`"
                 alt=""
-                width="47px"
+                width="75px"
                 contain
                 eager />
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('whatWeDo.meedToken') }}</span>
-                <v-btn
-                  href="./overview"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('tokenomics') }}</span>
-                </v-btn>
+              <v-list-item-title>
+                <span class="pb-4 display-1 font-weight-bold">{{ $t('whatWeDo.meedToken') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
+              <span class="pb-4 text-h5 grey--text font-weight-light">
                 {{ $t('meedToken.description') }}
               </span>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-btn
+                href="./overview"
+                max-width="200px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('tokenomics') }}</span>
+              </v-btn>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -88,30 +117,34 @@
               <v-img
                 :src="`/${parentLocation}/static/images/meedsToken.png`"
                 alt=""
-                width="47px"
+                width="75px"
                 contain
                 eager />
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('meedSoftware') }}</span>
-                <v-btn
-                  href="https://builders.meeds.io"
-                  target="_blank"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('discover') }}</span>
-                </v-btn>
+              <v-list-item-title>
+                <span class="pb-4 display-1 font-weight-bold">{{ $t('meedSoftware') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
+              <span class="pb-4 text-h5 grey--text font-weight-light">
                 {{ $t('meedSoftware.description') }}
               </span>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-btn
+                href="https://builders.meeds.io"
+                target="_blank"
+                max-width="200px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('discover') }}</span>
+              </v-btn>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -121,59 +154,63 @@
               <v-img
                 :src="`/${parentLocation}/static/images/deed.png`"
                 alt=""
-                width="47px"
+                width="75px"
                 contain
                 eager />
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('deedsServices') }}</span>
-                <v-btn
-                  href="./owners"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('learnMore') }}</span>
-                </v-btn>
+              <v-list-item-title>
+                <span class="pb-4 display-1 font-weight-bold">{{ $t('deedsServices') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
+              <span class="pb-4 text-h5 grey--text font-weight-light">
                 {{ $t('deedsServices.description') }}
               </span>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item class="ps-0">
+            <v-list-item-content>
+              <v-btn
+                href="./owners"
+                max-width="200px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('learnMore') }}</span>
+              </v-btn>
             </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card>
     </div>
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column my-16">
       <v-card class="light-grey-background py-5" flat>
         <div class="d-flex">
           <div>
-            <v-card-title class="pb-0 font-weight-bold dark-grey-color">
+            <div class="pt-4 px-4 display-1 font-weight-bold">
               {{ $t('sustainability') }}
-            </v-card-title>
-            <h4 class="px-4 pb-2 pt-3 font-weight-normal dark-grey-color">
+            </div>
+            <div class="px-4 pb-2 pt-3 display-1 font-weight-bold grey--text">
               {{ $t('duringTheMintingPeriod') }}
-            </h4>
-            <v-card-subtitle class="dark-grey-color py-2">
+            </div>
+            <div class="grey--text text-h6 font-weight-light pa-4">
               {{ $t('duringTheMintingPeriod.descriptionPart1') }}
-            </v-card-subtitle>
-            <v-card-subtitle class="dark-grey-color py-2">
+            </div>
+            <div class="grey--text text-h6 font-weight-light pa-4">
               {{ $t('duringTheMintingPeriod.descriptionPart2') }}
-            </v-card-subtitle>
-            <h4 class="px-4 pb-2 pt-3 font-weight-normal dark-grey-color">
+            </div>
+            <div class="px-4 pb-2 pt-3 display-1 font-weight-bold grey--text">
               {{ $t('afterTheMintingPeriod') }}
-            </h4>
-            <v-card-subtitle class="dark-grey-color py-2">
+            </div>
+            <div class="grey--text text-h6 font-weight-light pa-4">
               {{ $t('afterTheMintingPeriod.descriptionPart1') }}
-            </v-card-subtitle>
-            <v-card-subtitle class="dark-grey-color pt-2 pb-4">
+            </div>
+            <div class="grey--text text-h6 font-weight-light pa-4">
               {{ $t('afterTheMintingPeriod.descriptionPart2') }}
-            </v-card-subtitle>
+            </div>
           </div>
           <v-img
             :src="`/${parentLocation}/static/images/logo-m-grand.svg`"
@@ -183,111 +220,104 @@
         </div>
       </v-card>
     </div>
-    <div class="d-flex flex-column">
-      <div class="px-0 v-card__title font-weight-bold dark-grey-color">
+    <div class="d-flex flex-column mt-16">
+      <div class="px-0 display-1 font-weight-bold">
         {{ $t('foundingMembers') }}
       </div> 
-      <v-card class="d-block d-md-flex" flat>
-        <v-list class="col-12 col-md-4 ps-0">
-          <v-list-item class="ps-0">
-            <v-list-item-icon>
-              <v-img
-                :src="`/${parentLocation}/static/images/logo-exo.png`"
-                alt=""
-                width="80px"
-                contain
-                eager />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('exoPlatform') }}</span>
-                <v-btn
-                  href="https://exoplatform.com"
-                  target="_blank"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('visit') }}</span>
-                </v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item class="ps-0">
-            <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
-                {{ $t('exoPlatform.description') }}
-              </span>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <v-list class="col-12 col-md-4 ps-0">
-          <v-list-item class="ps-0">
-            <v-list-item-icon>
-              <v-img
-                :src="`/${parentLocation}/static/images/logo-Bonitasoft.png`"
-                alt=""
-                width="80px"
-                contain
-                eager />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('bonitaSoft') }}</span>
-                <v-btn
-                  href="https://bonitasoft.com"
-                  target="_blank"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('visit') }}</span>
-                </v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item class="ps-0">
-            <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
-                {{ $t('bonitaSoft.description') }}
-              </span>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <v-list class="col-12 col-md-4 ps-0">
-          <v-list-item class="ps-0">
-            <v-list-item-icon>
-              <v-img
-                :src="`/${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
-                alt=""
-                width="80px"
-                contain
-                eager />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="d-flex flex-column">
-                <span class="pb-4 dark-grey-color">{{ $t('newlogic') }}</span>
-                <v-btn
-                  href="https://newlogic.com"
-                  target="_blank"
-                  max-width="94px"
-                  class="dark-grey-border-color rounded-pill dark-grey-color"
-                  small
-                  outlined>
-                  <span class="caption">{{ $t('visit') }}</span>
-                </v-btn>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item class="ps-0">
-            <v-list-item-content>
-              <span class="pb-4 dark-grey-color">
-                {{ $t('newlogic.description') }}
-              </span>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-card>
+      <v-container>
+        <v-row no-gutters>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height">
+              <div class="my-8">
+                <v-img
+                  :src="`/${parentLocation}/static/images/logo-exo.png`"
+                  alt=""
+                  width="112px"
+                  contain
+                  eager />
+              </div>
+              <div class="py-4">
+                <span class="pb-4 grey--text text-h6 font-weight-light">
+                  {{ $t('exoPlatform.description') }}
+                </span>
+              </div>
+              <v-spacer />
+              <v-btn
+                href="https://exoplatform.com"
+                target="_blank"
+                width="125px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height">
+              <div class="my-8">
+                <v-img
+                  :src="`/${parentLocation}/static/images/logo-Bonitasoft.png`"
+                  alt=""
+                  width="225px"
+                  contain
+                  eager />
+              </div>
+              <div class="py-4">
+                <span class="pb-4 grey--text text-h6 font-weight-light">
+                  {{ $t('bonitaSoft.description') }}
+                </span>
+              </div>
+              <v-spacer />
+              <v-btn
+                href="https://bonitasoft.com"
+                target="_blank"
+                width="125px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+              </v-btn>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="4"
+            md="12">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height">
+              <div class="my-5">
+                <v-img
+                  :src="`/${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
+                  alt=""
+                  width="156px"
+                  contain
+                  eager />
+              </div>
+              <div class="py-4">
+                <span class="pb-4 grey--text text-h6 font-weight-light">
+                  {{ $t('newlogic.description') }}
+                </span>
+              </div>
+              <v-spacer />
+              <v-btn
+                href="https://newlogic.com"
+                target="_blank"
+                width="125px"
+                height="50px"
+                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                outlined>
+                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+              </v-btn>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </div>
 </template>
@@ -295,6 +325,9 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   }),
 };
 </script>
