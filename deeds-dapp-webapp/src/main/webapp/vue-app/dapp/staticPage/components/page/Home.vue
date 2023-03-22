@@ -256,7 +256,7 @@
               </div>
               <v-spacer />
               <v-btn
-                href="./tenants"
+                href="./marketplace"
                 class="primary mx-auto mt-6 mb-15 mb-md-6 "
                 width="319px"
                 height="75px"

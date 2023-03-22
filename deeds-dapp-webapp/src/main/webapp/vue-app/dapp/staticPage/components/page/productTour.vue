@@ -26,7 +26,7 @@
         <div class="ps-0 dark-grey-color font-weight-normal v-card__title">{{ $t('productTour.description') }}</div>
         <div class="d-none d-md-flex justify-center hidden-sm-and-down">
           <v-btn
-            href="./tenants"
+            href="./marketplace"
             class="primary mx-5"
             min-width="250px"
             depressed
@@ -58,7 +58,7 @@
       </video>
       <div class="d-flex flex-wrap d-md-none justify-center hidden-sm-and-up">
         <v-btn
-          href="./tenants"
+          href="./marketplace"
           class="primary mx-5 mt-7"
           min-width="250px"
           depressed
