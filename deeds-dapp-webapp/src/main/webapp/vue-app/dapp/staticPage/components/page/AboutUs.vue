@@ -250,7 +250,7 @@
                 target="_blank"
                 width="125px"
                 height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
               </v-btn>
@@ -280,7 +280,7 @@
                 target="_blank"
                 width="125px"
                 height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
               </v-btn>
@@ -310,7 +310,7 @@
                 target="_blank"
                 width="125px"
                 height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color my-10 my-sm-0"
+                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
               </v-btn>
