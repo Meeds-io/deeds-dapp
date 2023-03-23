@@ -17,73 +17,70 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column mt-8 mt-sm-10">
+  <div class="d-flex flex-column mt-2 mt-sm-6">
     <v-card flat>
-      <v-card-title class="py-0 mb-md-10 mb-0 justify-center font-weight-bold dark-grey-color">{{ $t('productTour.title') }}</v-card-title>
+      <v-card-title class="py-0 justify-center">
+        <span class="col-7 ps-0 text-sm-h2 display-2 font-weight-bold">{{ $t('productTour.title') }}</span>
+        <v-spacer />
+        <v-img 
+          :src="`${parentLocation}/static/images/tour_banner.png`"
+          :width="isMobile && '131px' || '360px'"
+          height="183px"
+          class="me-0 me-sm-16"
+          alt=""
+          contain
+          eager />
+      </v-card-title>
     </v-card>
-    <div class="d-flex flex-column flex-md-row py-4 mt-10">
-      <div class="d-flex flex-column my-auto col-12 col-md-6">
-        <div class="ps-0 dark-grey-color font-weight-normal v-card__title">{{ $t('productTour.description') }}</div>
-        <div class="d-none d-md-flex justify-center hidden-sm-and-down">
-          <v-btn
-            href="./marketplace"
-            class="primary mx-5"
-            min-width="250px"
-            depressed
-            dark
-            x-large
-            outlined>
-            <span class="headline font-weight-black">{{ $t('startYourHub') }}</span>
-          </v-btn>
-          <v-btn
-            href="https://builders.meeds.io"
-            target="_blank"
-            min-width="250px"
-            class="dark-grey-border-color dark-grey-color d-flex justify-center mx-5" 
-            x-large
-            outlined>
-            <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
-            <span class="headline font-weight-black">{{ $t('exploreAHub') }}</span>
-          </v-btn>
-        </div>
-      </div>
+    <div class="d-flex flex-column pt-4 pb-16 my-16">
+      <div class="ps-0 display-1 grey--text align-center font-weight-light">{{ $t('productTour.description') }}</div>
       <video
-        class="mt-5 mt-md-0"
+        class="mt-11 mt-md-13"
         height="360px"
+        max-width="750px"
         loop="true"
         autoplay
         muted
         controls>
         <source :src="`${introductiveVideoLink}`" type="video/mp4">
       </video>
-      <div class="d-flex flex-wrap d-md-none justify-center hidden-sm-and-up">
+      <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
           href="./marketplace"
           class="primary mx-5 mt-7"
-          min-width="250px"
+          width="300px"
+          height="75px"
           depressed
           dark
-          x-large
           outlined>
-          <span class="headline font-weight-black">{{ $t('startYourHub') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('startYourHub') }}</span>
         </v-btn>
         <v-btn
           href="https://builders.meeds.io"
           target="_blank"
-          min-width="250px"
+          width="300px"
+          height="75px"
           class="dark-grey-border-color dark-grey-color d-flex justify-center mx-5 mt-7" 
-          x-large
           outlined>
-          <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
-          <span class="headline font-weight-black">{{ $t('exploreAHub') }}</span>
+          <v-icon size="40" class="me-2">fas fa-external-link-alt</v-icon>
+          <span class="display-1 font-weight-bold">{{ $t('exploreAHub') }}</span>
         </v-btn>
       </div>
     </div>
-    <div>
-      <div class="d-flex flex-column flex-md-row my-16">
+    <div class="mt-16">
+      <div class="d-flex flex-column flex-md-row pb-16 my-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline font-weight-black dark-grey-color">{{ $t('contributionPrograms.title') }}</span>
-          <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('contributionPrograms.description') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
+          <span class="mt-10 mb-5 mb-md-0 text-h5 grey--text font-weight-light">{{ $t('contributionPrograms.description') }}</span>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/contribution_icon.png`"
+              max-width="275px"
+              class="contribution-icon"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
         <video
           height="350px"
@@ -94,7 +91,7 @@
           <source :src="`${contributionProgramsVideoLink}`" type="video/mp4">
         </video>
       </div>
-      <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
+      <div class="d-flex flex-column-reverse flex-md-row py-16 mb-16 ms-0 ms-md-14">
         <video
           height="350px"
           loop="true"
@@ -104,14 +101,32 @@
           <source :src="`${rewardsVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline font-weight-black dark-grey-color">{{ $t('rewards.title') }}</span>
-          <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('rewards.title') }}</span>
+          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/reward_icon.png`"
+              max-width="236px"
+              class="reward-icon"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
       </div>
-      <div class="d-flex flex-column flex-md-row my-16">
+      <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline font-weight-black dark-grey-color">{{ $t('overview.title') }}</span>
-          <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('overview.title') }}</span>
+          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/overview_icon.png`"
+              max-width="330px"
+              class="overview-icon"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
         <video
           height="350px"
@@ -122,7 +137,7 @@
           <source :src="`${overviewVideoLink}`" type="video/mp4">
         </video>
       </div>
-      <div class="d-flex flex-column-reverse flex-md-row my-16 mx-0 mx-md-14">
+      <div class="d-flex flex-column-reverse flex-md-row py-16 mb-16 ms-0 ms-md-14">
         <video
           height="350px"
           loop="true"
@@ -132,14 +147,32 @@
           <source :src="`${perksVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline font-weight-black dark-grey-color">{{ $t('perks.title') }}</span>
-          <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('perks.title') }}</span>
+          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/perks_icon.png`"
+              max-width="400px"
+              class="perks-icon"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
       </div>
-      <div class="d-flex flex-column flex-md-row my-16">
+      <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline font-weight-black dark-grey-color">{{ $t('teamwork.title') }}</span>
-          <span class="dark-grey-color mt-5 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
+          <span class="display-1 font-weight-bold">{{ $t('teamwork.title') }}</span>
+          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/teamwork_icon.png`"
+              max-width="298px"
+              class="teamwork-icon"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
         <video
           height="350px"
@@ -151,8 +184,13 @@
         </video>
       </div>
     </div>
-    <div class="light-grey-background">
-      <span class="headline d-flex justify-center font-weight-black dark-grey-color mt-4 mb-7">{{ $t('andMore') }}</span>
+    <div class="mt-16">
+      <v-card
+        height="8px"
+        width="140px"
+        color="primary no-border-radius"
+        flat />
+      <span class="display-3 d-flex justify-center font-weight-bold mt-4 mb-7">{{ $t('andMore') }}</span>
       <v-container class="mb-10">
         <v-row no-gutters>
           <v-col
@@ -160,7 +198,7 @@
             lg="4"
             md="12">
             <div 
-              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              class="mx-3 my-4 my-md-0 d-flex flex-column"
               :class="!isSmallScreen && 'fill-height'">
               <div class="d-flex my-8 mx-5">
                 <div>
@@ -171,15 +209,13 @@
                     fas fa-award
                   </v-icon>
                 </div>
-                <div class="d-flex flex-column ms-5">
-                  <span class="headline font-weight-black">
-                    {{ $t('kudos') }}
-                  </span>
-                  <span class="font-size-normal">
-                    {{ $t('kudos.description') }}
-                  </span>
-                </div>
+                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                  {{ $t('kudos') }}
+                </span>
               </div>
+              <span class="text-h5 grey--text font-weight-light">
+                {{ $t('kudos.description') }}
+              </span>
             </div>
           </v-col>
           <v-col
@@ -187,21 +223,19 @@
             lg="4"
             md="12">
             <div 
-              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              class="mx-3 my-4 my-md-0 d-flex flex-column"
               :class="!isSmallScreen && 'fill-height'">
               <div class="d-flex my-8 mx-5">
                 <div>
                   <v-icon size="75" color="primary">fas fa-graduation-cap</v-icon>
                 </div>
-                <div class="d-flex flex-column ms-5">
-                  <span class="headline font-weight-black">
-                    {{ $t('badges') }}
-                  </span>
-                  <span class="font-size-normal">
-                    {{ $t('badges.description') }}
-                  </span>
-                </div>
+                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                  {{ $t('badges') }}
+                </span>
               </div>
+              <span class="text-h5 grey--text font-weight-light">
+                {{ $t('badges.description') }}
+              </span>
             </div>
           </v-col>
           <v-col
@@ -209,7 +243,7 @@
             lg="4"
             md="12">
             <div 
-              class="dark-grey-border-color dark-grey-color mx-3 my-4 my-md-0 rounded-lg"
+              class="mx-3 my-4 my-md-0 d-flex flex-column"
               :class="!isSmallScreen && 'fill-height'">
               <div class="d-flex my-8 mx-5">
                 <div>
@@ -220,33 +254,38 @@
                     fas fa-wallet
                   </v-icon>
                 </div>
-                <div class="d-flex flex-column ms-5">
-                  <span class="headline font-weight-black">
-                    {{ $t('wallet') }}
-                  </span>
-                  <span class="font-size-normal">
-                    {{ $t('wallet.description') }}
-                  </span>
-                </div>
+                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                  {{ $t('wallet') }}
+                </span>
               </div>
+              <span class="text-h5 grey--text font-weight-light">
+                {{ $t('wallet.description') }}
+              </span>
             </div>
           </v-col>
         </v-row>
       </v-container>
+      <div class="d-flex justify-end">
+        <v-card
+          height="8px"
+          width="140px"
+          color="secondary no-border-radius"
+          flat />
+      </div>
     </div>
-    <div class="d-flex flex-column">
-      <span class="headline text-center font-weight-black dark-grey-color mt-8 mb-5">{{ $t('startNow') }}</span>
-      <span class="headline text-center font-weight-normal dark-grey-color mt-3 mb-10">{{ $t('startNow.description') }}</span>
+    <div class="d-flex flex-column mt-16">
+      <span class="display-3 text-center font-weight-bold mt-8 mb-5">{{ $t('startNow') }}</span>
+      <span class="display-1 text-center font-weight-light grey--text mt-3 mb-10">{{ $t('startNow.description') }}</span>
       <div class="d-flex justify-center mb-16">
         <v-btn
           href="./tenants"
           class="primary mt-3"
-          min-width="250px"
+          width="300px"
+          height="75px"
           depressed
           dark
-          x-large
           outlined>
-          <h4 class="font-weight-black">{{ $t('startAHub') }}</h4>
+          <h4 class="display-1 font-weight-bold">{{ $t('startAHub') }}</h4>
         </v-btn>
       </div>
     </div>
@@ -265,6 +304,9 @@ export default {
     overviewVideoLink: state => state.overviewVideoLink,
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
+    isMobile() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   })
 };
 </script>
