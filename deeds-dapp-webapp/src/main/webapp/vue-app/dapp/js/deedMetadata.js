@@ -19,7 +19,7 @@
 import {getCookie} from './authentication';
 
 export function getCardInfo(cityIndex, cardTypeIndex) {
-  return fetch(`/${window.parentAppLocation}/api/deeds/type/${cityIndex}/${cardTypeIndex}`, {
+  return fetch(`${window.parentAppLocation}/api/deeds/type/${cityIndex}/${cardTypeIndex}`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),

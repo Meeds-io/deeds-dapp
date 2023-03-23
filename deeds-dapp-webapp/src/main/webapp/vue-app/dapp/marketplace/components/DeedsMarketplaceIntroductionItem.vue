@@ -22,7 +22,7 @@
     class="d-flex flex-column align-center text-center mx-sm-12 mx-auto"
     flat>
     <img
-      :src="`/${parentLocation}/static/images/${imageSrc}`"
+      :src="`${parentLocation}/static/images/${imageSrc}`"
       alt=""
       class="img-65px"
       width="65px"

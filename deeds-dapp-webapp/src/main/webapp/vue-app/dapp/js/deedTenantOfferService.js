@@ -32,7 +32,7 @@ export function getOffers(paramsObj, networkId) {
   }
   formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`/${window.parentAppLocation}/api/offers?${params}`, {
+  return fetch(`${window.parentAppLocation}/api/offers?${params}`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -54,7 +54,7 @@ export function getOffer(offerId, refreshFromBlockchain) {
   if (refreshFromBlockchain) {
     headers['X-REFRESH'] = 'true';
   }
-  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
+  return fetch(`${window.parentAppLocation}/api/offers/${offerId}`, {
     method: 'GET',
     headers,
     credentials: 'include',
@@ -68,7 +68,7 @@ export function getOffer(offerId, refreshFromBlockchain) {
 }
 
 export function createOffer(offer, code) {
-  return fetch(`/${window.parentAppLocation}/api/offers/`, {
+  return fetch(`${window.parentAppLocation}/api/offers/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export function createOffer(offer, code) {
 }
 
 export function updateOffer(offerId, offer) {
-  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}`, {
+  return fetch(`${window.parentAppLocation}/api/offers/${offerId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export function updateOffer(offerId, offer) {
 }
 
 export function deleteOffer(offerId, transactionHash) {
-  return fetch(`/${window.parentAppLocation}/api/offers/${offerId}?transactionHash=${transactionHash}`, {
+  return fetch(`${window.parentAppLocation}/api/offers/${offerId}?transactionHash=${transactionHash}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

@@ -23,7 +23,7 @@
         <span class="text-sm-h2 display-2 font-weight-bold ms-0 ms-sm-16">{{ $t('aboutUs.title') }}</span>
         <v-spacer />
         <v-img 
-          :src="`/${parentLocation}/static/images/about_us.png`"
+          :src="`${parentLocation}/static/images/about_us.png`"
           :max-width="isMobile && '97px' || '211px'"
           class="me-0 me-sm-16"
           alt=""
@@ -44,7 +44,7 @@
         <div class="ps-0 py-8 text-h5 grey--text font-weight-light" v-html="$t('governance.descriptionPart1', {0: '<br><br>'})"></div>
       </div>
       <v-img 
-        :src="`/${parentLocation}/static/images/meeds-about-us-banner.svg`"
+        :src="`${parentLocation}/static/images/meeds-about-us-banner.svg`"
         width="486px"
         class="hidden-md-and-down"
         alt=""
@@ -79,7 +79,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="75px"
                 contain
@@ -115,7 +115,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/meedsToken.png`"
                 alt=""
                 width="75px"
                 contain
@@ -152,7 +152,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`/${parentLocation}/static/images/deed.png`"
+                :src="`${parentLocation}/static/images/deed.png`"
                 alt=""
                 width="75px"
                 contain
@@ -213,7 +213,7 @@
             </div>
           </div>
           <v-img
-            :src="`/${parentLocation}/static/images/logo-m-grand.svg`"
+            :src="`${parentLocation}/static/images/logo-m-grand.svg`"
             alt=""
             width="350px"
             class="logo-m hidden-md-and-down mt-n3" />
@@ -233,7 +233,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-8">
                 <v-img
-                  :src="`/${parentLocation}/static/images/logo-exo.png`"
+                  :src="`${parentLocation}/static/images/logo-exo.png`"
                   alt=""
                   width="112px"
                   contain
@@ -263,7 +263,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-8">
                 <v-img
-                  :src="`/${parentLocation}/static/images/logo-Bonitasoft.png`"
+                  :src="`${parentLocation}/static/images/logo-Bonitasoft.png`"
                   alt=""
                   width="225px"
                   contain
@@ -293,7 +293,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-5">
                 <v-img
-                  :src="`/${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
+                  :src="`${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
                   alt=""
                   width="156px"
                   contain

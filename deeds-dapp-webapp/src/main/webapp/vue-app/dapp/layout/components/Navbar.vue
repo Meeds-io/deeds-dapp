@@ -32,7 +32,7 @@
           <v-btn
             ref="marketplace"
             id="marketplace"
-            :href="`/${parentLocation}/marketplace`"
+            :href="`${parentLocation}/marketplace`"
             value="marketplace"
             class="px-0 full-height"
             link
@@ -56,10 +56,10 @@
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
           <v-btn
-            ref="overview"
-            id="overview"
-            :href="`/${parentLocation}/overview`"
-            value="overview"
+            ref="portfolio"
+            id="portfolio"
+            :href="`${parentLocation}/portfolio`"
+            value="portfolio"
             class="px-0 full-height"
             link
             @click="openPage">
@@ -97,7 +97,7 @@
           <v-list-item
             ref="tenants"
             id="tenants"
-            :href="`/${parentLocation}/tenants`"
+            :href="`${parentLocation}/tenants`"
             :active-class="activeMenuColor"
             key="tenants"
             value="tenants"
@@ -111,7 +111,7 @@
           <v-list-item
             ref="owners"
             id="owners"
-            :href="`/${parentLocation}/owners`"
+            :href="`${parentLocation}/owners`"
             :active-class="activeMenuColor"
             key="owners"
             value="owners"
@@ -125,7 +125,7 @@
           <v-list-item
             ref="stake"
             id="stake"
-            :href="`/${parentLocation}/stake`"
+            :href="`${parentLocation}/stake`"
             :active-class="activeMenuColor"
             key="stake"
             value="stake"
@@ -139,7 +139,7 @@
           <v-list-item
             ref="deeds"
             id="deeds"
-            :href="`/${parentLocation}/deeds`"
+            :href="`${parentLocation}/deeds`"
             :active-class="activeMenuColor"
             key="deeds"
             value="deeds"
@@ -153,7 +153,7 @@
           <v-list-item
             ref="farm"
             id="farm"
-            :href="`/${parentLocation}/farm`"
+            :href="`${parentLocation}/farm`"
             :active-class="activeMenuColor"
             key="farm"
             value="farm"
@@ -176,13 +176,13 @@
     <v-tab
       ref="default"
       id="default"
-      :href="`/${parentLocation}/static`"
+      :href="`${parentLocation}/static`"
       link 
       class="d-none" />
     <v-tab
       ref="marketplace"
       id="marketplace"
-      :href="`/${parentLocation}/marketplace`"
+      :href="`${parentLocation}/marketplace`"
       link 
       class="px-2 me-2"
       @click="openPage">
@@ -191,7 +191,7 @@
     <v-tab
       ref="tenants"
       id="tenants"
-      :href="`/${parentLocation}/tenants`"
+      :href="`${parentLocation}/tenants`"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -200,7 +200,7 @@
     <v-tab
       ref="owners"
       id="owners"
-      :href="`/${parentLocation}/owners`"
+      :href="`${parentLocation}/owners`"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -209,7 +209,7 @@
     <v-tab
       ref="stake"
       id="stake"
-      :href="`/${parentLocation}/stake`"
+      :href="`${parentLocation}/stake`"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -218,7 +218,7 @@
     <v-tab
       ref="deeds"
       id="deeds"
-      :href="`/${parentLocation}/deeds`"
+      :href="`${parentLocation}/deeds`"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -227,16 +227,16 @@
     <v-tab
       ref="farm"
       id="farm"
-      :href="`/${parentLocation}/farm`"
+      :href="`${parentLocation}/farm`"
       link
       class="px-0 me-2"
       @click="openPage">
       <h3>{{ $t('page.farm') }}</h3>
     </v-tab>
     <v-tab
-      ref="overview"
-      id="overview"
-      :href="`/${parentLocation}/overview`"
+      ref="portfolio"
+      id="portfolio"
+      :href="`${parentLocation}/portfolio`"
       link 
       class="px-0 ms-auto"
       @click="openPage">
@@ -261,7 +261,7 @@ export default {
       'stake',
       'deeds',
       'farm',
-      'overview',
+      'portfolio',
     ],
   }),
   computed: Vuex.mapState({
@@ -326,7 +326,7 @@ export default {
       if (this.isMobile) {
         tabToSelect = newTab;
       } else {
-        tabToSelect = `/${this.parentLocation}/${newTab}`;
+        tabToSelect = `${this.parentLocation}/${newTab}`;
       }
       if (this.selectedTab === tabToSelect) {
         // Stay on the same tab, no change to apply
@@ -336,8 +336,8 @@ export default {
           this.avoidAddToHistory = true;
           this.switchPage(newTab);
         } else {
-          this.selectedTab = (this.dappPages.indexOf(newTab) >= 0) && tabToSelect || `/${this.parentLocation}/static`;
-          if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'overview') {
+          this.selectedTab = (this.dappPages.indexOf(newTab) >= 0) && tabToSelect || `${this.parentLocation}/static`;
+          if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'portfolio') {
             this.$nextTick().then(() => {
               this.selectedId = newTab;
               this.selectedTab = 'more';

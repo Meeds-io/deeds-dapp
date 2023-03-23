@@ -32,7 +32,7 @@ export function getLeases(paramsObj, networkId) {
   }
   formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`/${window.parentAppLocation}/api/leases?${params}`, {
+  return fetch(`${window.parentAppLocation}/api/leases?${params}`, {
     method: 'GET',
     headers: {
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
@@ -54,7 +54,7 @@ export function getLease(leaseId, refreshFromBlockchain) {
   if (refreshFromBlockchain) {
     headers['X-REFRESH'] = 'true';
   }
-  return fetch(`/${window.parentAppLocation}/api/leases/${leaseId}`, {
+  return fetch(`${window.parentAppLocation}/api/leases/${leaseId}`, {
     method: 'GET',
     headers,
     credentials: 'include',
@@ -72,7 +72,7 @@ export function createLease(offerId, transactionHash, code) {
   formData.append('offerId', offerId);
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`/${window.parentAppLocation}/api/leases/`, {
+  return fetch(`${window.parentAppLocation}/api/leases/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -96,7 +96,7 @@ export function payRent(leaseId, ownerAddress, paidMonths, transactionHash) {
   formData.append('paidMonths', paidMonths);
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`/${window.parentAppLocation}/api/leases/${leaseId}`, {
+  return fetch(`${window.parentAppLocation}/api/leases/${leaseId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -117,7 +117,7 @@ export function endLease(leaseId, transactionHash) {
   const formData = new FormData();
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`/${window.parentAppLocation}/api/leases/${leaseId}`, {
+  return fetch(`${window.parentAppLocation}/api/leases/${leaseId}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

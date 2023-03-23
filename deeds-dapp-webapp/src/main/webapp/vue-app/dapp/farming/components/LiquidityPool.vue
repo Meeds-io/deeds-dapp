@@ -32,7 +32,7 @@
           <template v-else>
             <img
               v-if="isSushiswapPool"
-              :src="`/${parentLocation}/static/images/sushiswap.ico`"
+              :src="`${parentLocation}/static/images/sushiswap.ico`"
               alt="sushiswap"
               class="mx-auto addLiquidityIcon">
             <div v-else-if="isUniswapPool" class="mx-auto headline">🦄</div>

@@ -197,8 +197,8 @@ export default {
       return 0;
     },
     imageSrc() {
-      return this.isSushiswapPool && `/${this.parentLocation}/static/images/sushiswap.ico`
-        || this.isComethPool && `/${this.parentLocation}/static/images/cometh.ico`
+      return this.isSushiswapPool && `${this.parentLocation}/static/images/sushiswap.ico`
+        || this.isComethPool && `${this.parentLocation}/static/images/cometh.ico`
         || '';
     },
   }),
