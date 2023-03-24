@@ -155,14 +155,14 @@
     <div class="ps-0 py-3 font-weight-light display-1">{{ $t('invest.descriptionPart2') }}</div>
     <div class="d-flex flex-column flex-md-row py-16">
       <div class="d-flex flex-column ps-5"> 
-        <div class="d-flex justify-center justify-md-start mb-16">
+        <div class="d-flex justify-center flex-wrap justify-md-start mb-16">
           <v-btn
             :dark="!pageState || pageState === 'work'"
             :text="pageState === 'capital'"
             :class="(!pageState || pageState === 'work') && 'primary' || (pageState === 'capital' && 'dark-grey-color dark-grey-border-color')"
             width="200px"
             height="50px"
-            class="me-4"
+            class="ma-4"
             outlined
             @click="$store.commit('setPageState','work')">
             <span class="text-h5 font-weight-bold">{{ $t('investWork') }}</span>
@@ -173,7 +173,7 @@
             :class="pageState === 'capital' && 'primary' || ((!pageState || pageState === 'work') && 'dark-grey-color dark-grey-border-color')"
             width="200px"
             height="50px"
-            class="ms-4"
+            class="ma-4"
             outlined
             @click="$store.commit('setPageState','capital')">
             <span class="text-h5 font-weight-bold">{{ $t('investCapital') }}</span>
