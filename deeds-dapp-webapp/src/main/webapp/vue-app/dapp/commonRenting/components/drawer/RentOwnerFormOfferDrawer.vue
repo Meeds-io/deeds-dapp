@@ -414,7 +414,7 @@ export default {
     MIN_BUTTONS_WIDTH: 80,
     MAX_BUTTONS_WIDTH: '30%',
     rentalHostAddressTimeout: null,
-    rules: [v => v && v >= 1 ],
+    rules: [v => !v && v >= 1 ],
     
   }),
   computed: Vuex.mapState({
