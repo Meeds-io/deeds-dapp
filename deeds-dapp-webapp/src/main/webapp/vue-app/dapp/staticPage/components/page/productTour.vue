@@ -265,28 +265,12 @@
           </v-col>
         </v-row>
       </v-container>
-      <div class="d-flex justify-end">
+      <div class="d-flex justify-end mb-16 pb-16">
         <v-card
           height="8px"
           width="140px"
           color="secondary no-border-radius"
           flat />
-      </div>
-    </div>
-    <div class="d-flex flex-column mt-16">
-      <span class="display-3 text-center font-weight-bold mt-8 mb-5">{{ $t('startNow') }}</span>
-      <span class="display-1 text-center font-weight-light grey--text mt-3 mb-10">{{ $t('startNow.description') }}</span>
-      <div class="d-flex justify-center mb-16">
-        <v-btn
-          href="./tenants"
-          class="primary mt-3"
-          width="300px"
-          height="75px"
-          depressed
-          dark
-          outlined>
-          <h4 class="display-1 font-weight-bold">{{ $t('startAHub') }}</h4>
-        </v-btn>
       </div>
     </div>
   </div>
