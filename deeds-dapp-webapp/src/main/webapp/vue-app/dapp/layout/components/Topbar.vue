@@ -46,8 +46,7 @@
             max-height="24"
             contain
             eager />
-          <h4 class="hidden-md-and-down mx-1">{{ $t('open') }}</h4>
-          <h4>{{ $t('app') }}</h4>
+          <h4 class="mx-1">{{ $t('app') }}</h4>
         </v-btn>
       </div>
     </div>
