@@ -20,12 +20,12 @@
   <div class="d-flex flex-column mt-8 mt-sm-2">
     <v-card flat>
       <v-card-title class="py-0 px-0 px-sm-4 justify-center">
-        <span class="text-sm-h2 display-2 font-weight-bold ms-0 ms-sm-16">{{ $t('aboutUs.title') }}</span>
+        <span class="col-12 col-md-7 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('aboutUs.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/about_us.png`"
-          :max-width="isMobile && '97px' || '211px'"
-          class="me-0 me-sm-16"
+          max-width="211px"
+          class="me-0 me-sm-16 hidden-sm-and-down"
           alt=""
           contain
           eager />
@@ -324,9 +324,6 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
-    },
   }),
 };
 </script>
