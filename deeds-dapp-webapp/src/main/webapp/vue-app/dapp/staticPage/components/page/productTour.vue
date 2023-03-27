@@ -20,13 +20,12 @@
   <div class="d-flex flex-column mt-2 mt-sm-6">
     <v-card flat>
       <v-card-title class="py-0 justify-center">
-        <span class="col-7 ps-0 text-sm-h2 display-2 font-weight-bold">{{ $t('productTour.title') }}</span>
+        <span class="col-12 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/tour_banner.png`"
-          :width="isMobile && '131px' || '360px'"
-          height="183px"
-          class="me-0 me-sm-16"
+          max-width="360px"
+          class="me-0 hidden-sm-and-down"
           alt=""
           contain
           eager />
@@ -288,9 +287,6 @@ export default {
     overviewVideoLink: state => state.overviewVideoLink,
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
-    isMobile() {
-      return this.$vuetify.breakpoint.smAndDown;
-    },
   })
 };
 </script>
