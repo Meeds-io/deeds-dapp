@@ -52,7 +52,7 @@
             :href="whitepaperLink" 
             target="_blank"
             class="primary"
-            width="300px"
+            min-width="300px"
             height="75px"
             depressed
             dark
@@ -160,7 +160,7 @@
             :dark="!pageState || pageState === 'work'"
             :text="pageState === 'capital'"
             :class="(!pageState || pageState === 'work') && 'primary' || (pageState === 'capital' && 'dark-grey-color dark-grey-border-color')"
-            width="200px"
+            min-width="200px"
             height="50px"
             class="ma-4"
             outlined
@@ -171,7 +171,7 @@
             :dark="pageState === 'capital'"
             :text="!pageState || pageState === 'work'"
             :class="pageState === 'capital' && 'primary' || ((!pageState || pageState === 'work') && 'dark-grey-color dark-grey-border-color')"
-            width="200px"
+            min-width="200px"
             height="50px"
             class="ma-4"
             outlined
@@ -179,18 +179,29 @@
             <span class="text-h5 font-weight-bold">{{ $t('investCapital') }}</span>
           </v-btn>
         </div>
-        <div v-if="!pageState || pageState === 'work'" class="d-flex flex-column">
-          <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart1') }}</span>
-          <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart2') }}</span>
-          <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart3') }}</span>
-          <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart4') }}</span>
-        </div>
-        <div v-else class="d-flex flex-column">
-          <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart1') }}</span>
-          <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart2') }}</span>
-          <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart3') }}</span>
-          <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
-          <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
+        <div>
+          <div v-if="!pageState || pageState === 'work'" class="d-flex flex-column">
+            <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart1') }}</span>
+            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart2') }}</span>
+            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart3') }}</span>
+            <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart4') }}</span>
+          </div>
+          <div v-else class="d-flex flex-column">
+            <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart1') }}</span>
+            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart2') }}</span>
+            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart3') }}</span>
+            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
+            <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
+          </div>
+          <div class="position-absolute">
+            <v-img
+              :src="`${parentLocation}/static/images/invest_image.png`"
+              max-width="288px"
+              class="invest-image"
+              alt=""
+              contain
+              eager />    
+          </div>
         </div>
       </div>
       <div class="d-flex justify-center justify-md-start">
@@ -215,7 +226,7 @@
         v-if="!pageState || pageState === 'work'"
         href="https://builders.meeds.io"
         target="_blank"
-        width="319px"
+        min-width="319px"
         height="75px"
         class="primary" 
         dark
@@ -225,7 +236,7 @@
       <v-btn
         v-else
         href="./portfolio"
-        width="319px"
+        min-width="319px"
         height="75px"
         class="primary"
         dark
