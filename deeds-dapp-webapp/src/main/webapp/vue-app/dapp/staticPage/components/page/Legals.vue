@@ -17,10 +17,22 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column mt-8 mt-sm-10">
-    <v-card class="mb-7" flat>
-      <v-card-title class="py-0 justify-center font-weight-bold dark-grey-color">{{ $t('legals.title') }}</v-card-title>
-      <v-card-text class="py-0 d-flex justify-center subtitle-2 dark-grey-color">{{ $t('legals.description') }}</v-card-text>
+  <div class="d-flex flex-column mt-4 mt-sm-10">
+    <v-card class="mb-9" flat>
+      <v-card-title class="py-0 justify-center">
+        <div class="d-flex flex-column col-12 col-md-7 text-center text-md-start">
+          <span class="text-sm-h2 display-2 font-weight-bold">{{ $t('legals.title') }}</span>
+          <span class="text-h5 font-weight-bold">{{ $t('legals.description') }}</span>
+        </div>
+        <v-spacer />
+        <v-img 
+          :src="`${parentLocation}/static/images/legals_banner.png`"
+          max-width="211px"
+          class="hidden-sm-and-down"
+          alt=""
+          contain
+          eager />
+      </v-card-title>
     </v-card>
     <div class="d-flex justify-center flex-wrap my-7">
       <v-btn
@@ -210,3 +222,10 @@
     </v-card>
   </div>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
