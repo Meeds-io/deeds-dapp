@@ -19,13 +19,13 @@
 <template>
   <div class="d-flex flex-column mt-8">
     <v-card class="mb-3" flat>
-      <v-card-title class="py-0 justify-center">
-        <span class="col-12 col-md-6 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('whitepaper.title') }}</span>
+      <v-card-title class="py-0 justify-center flex-nowrap">
+        <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('whitepaper.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/whitepaper_banner.png`"
           max-width="350px"
-          class="me-0 me-sm-16 hidden-sm-and-down"
+          class="hidden-sm-and-down"
           alt=""
           contain
           eager />
