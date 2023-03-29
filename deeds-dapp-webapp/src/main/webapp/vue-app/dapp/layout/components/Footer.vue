@@ -128,6 +128,13 @@
               <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
               {{ $t('buildWithUs') }}
             </a>
+            <a
+              href="https://medium.com/meeds-dao"
+              target="_blank"
+              class="text-sub-title no-decoration d-flex my-2">
+              <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
+              {{ $t('blog') }}
+            </a>
           </div>
         </div>
       </div>
