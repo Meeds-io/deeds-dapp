@@ -19,13 +19,13 @@
 <template>
   <div class="d-flex flex-column mt-2 mt-sm-6">
     <v-card flat>
-      <v-card-title class="py-0 justify-center">
-        <span class="col-12 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
+      <v-card-title class="py-0 justify-center flex-nowrap">
+        <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/tour_banner.png`"
           max-width="360px"
-          class="me-0 hidden-sm-and-down"
+          class="hidden-sm-and-down"
           alt=""
           contain
           eager />
