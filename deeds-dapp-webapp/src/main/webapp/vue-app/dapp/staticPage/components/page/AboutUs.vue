@@ -19,8 +19,8 @@
 <template>
   <div class="d-flex flex-column mt-8 mt-sm-2">
     <v-card flat>
-      <v-card-title class="py-0 px-0 px-sm-4 justify-center">
-        <span class="col-12 col-md-7 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('aboutUs.title') }}</span>
+      <v-card-title class="py-0 px-0 px-sm-4 justify-center flew-nowrap">
+        <span class="col-12 col-lg-8 col-md-7 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('aboutUs.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/about_us.png`"
