@@ -34,9 +34,8 @@
     <div class="d-flex flex-column pt-4 pb-16 my-16">
       <div class="ps-0 display-1 grey--text align-center font-weight-light">{{ $t('productTour.description') }}</div>
       <video
-        class="mt-11 mt-md-13"
+        class="mt-11 mt-md-13 ms-0 ms-sm-auto me-0 me-sm-auto"
         height="360px"
-        max-width="750px"
         loop="true"
         autoplay
         muted
@@ -82,6 +81,7 @@
           </div>
         </div>
         <video
+          class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
           loop="true"
           autoplay
@@ -92,6 +92,7 @@
       </div>
       <div class="d-flex flex-column-reverse flex-md-row py-16 mb-16 ms-0 ms-md-14">
         <video
+          class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
           loop="true"
           autoplay
@@ -128,6 +129,7 @@
           </div>
         </div>
         <video
+          class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
           loop="true"
           autoplay
@@ -138,6 +140,7 @@
       </div>
       <div class="d-flex flex-column-reverse flex-md-row py-16 mb-16 ms-0 ms-md-14">
         <video
+          class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
           loop="true"
           autoplay
@@ -174,6 +177,7 @@
           </div>
         </div>
         <video
+          class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
           loop="true"
           autoplay
