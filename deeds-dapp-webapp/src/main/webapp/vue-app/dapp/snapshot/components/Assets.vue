@@ -18,7 +18,18 @@
 -->
 <template>
   <div class="mb-4 mb-md-8">
-    <v-card-title class="d-flex flex-nowrap pa-0">
+    <v-card-title class="justify-center flex-nowrap mb-10">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('startManagingAssets') }}</span>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/portfolio_banner.png`"
+        max-width="360px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
+    </v-card-title>
+    <v-card-title class="d-flex flex-nowrap px-0 pb-0 pt-0 pt-md-12">
       {{ $t('assets') }}
       <v-divider class="my-auto ms-4" />
     </v-card-title>
@@ -30,3 +41,10 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
