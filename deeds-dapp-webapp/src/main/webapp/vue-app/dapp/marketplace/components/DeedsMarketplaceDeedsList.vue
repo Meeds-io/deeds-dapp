@@ -19,7 +19,10 @@
 
 -->
 <template>
-  <v-card id="marketplaceOffersList" flat>
+  <v-card 
+    id="marketplaceOffersList"
+    class="pt-2 pt-md-12"
+    flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
         <deeds-marketplace-deeds-selector

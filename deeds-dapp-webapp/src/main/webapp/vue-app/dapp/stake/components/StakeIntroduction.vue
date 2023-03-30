@@ -18,9 +18,26 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 py-0 justify-center">{{ $t('becomeHolder') }}</v-card-title>
-    <v-card-text class="ps-0 pt-4 ms-md-2">
+    <v-card-title class="justify-center flex-nowrap mb-10">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('becomeHolder') }}</span>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/stake_banner.png`"
+        max-width="355px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
+    </v-card-title>
+    <v-card-text class="ps-0 pt-4 pt-md-11 ms-md-2">
       {{ $t('becomeHolderDescription') }}
     </v-card-text>
   </v-card>
 </template>
+<script>
+export default {
+  computed: Vuex.mapState({
+    parentLocation: state => state.parentLocation,
+  }),
+};
+</script>
