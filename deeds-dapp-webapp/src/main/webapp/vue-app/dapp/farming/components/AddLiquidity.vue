@@ -18,10 +18,18 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 pt-0 justify-center">
-      {{ $t('addLiquidity') }}
+    <v-card-title class="justify-center flex-nowrap mb-10">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('addLiquidity') }}</span>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/farm_banner.png`"
+        max-width="330px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
     </v-card-title>
-    <v-card-text class="ps-0 pt-0">
+    <v-card-text class="ps-0 pt-0 pt-md-13">
       {{ $t('addLiquidityIntroduction') }}
     </v-card-text>
     <v-bottom-navigation

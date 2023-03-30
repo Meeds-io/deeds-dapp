@@ -35,7 +35,17 @@
   <v-card v-else flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
-        <v-card-title class="justify-center dark-grey-color">{{ $t('dapp.marketplace.deedsListTitle') }}</v-card-title>
+        <v-card-title class="justify-center flex-nowrap mb-10">
+          <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.marketplace.deedsListTitle') }}</span>
+          <v-spacer />
+          <v-img 
+            :src="`${parentLocation}/static/images/marketplace_banner.png`"
+            max-width="300px"
+            class="hidden-sm-and-down"
+            alt=""
+            contain
+            eager />
+        </v-card-title>
       </div>
     </v-scale-transition>
     <deeds-marketplace-deeds-list
@@ -74,6 +84,7 @@ export default {
     availableOfferTypes: state => state.offerTypes,
     networkId: state => state.networkId,
     address: state => state.address,
+    parentLocation: state => state.parentLocation,
     loadedOffersLength() {
       return this.offers?.length || 0;
     },

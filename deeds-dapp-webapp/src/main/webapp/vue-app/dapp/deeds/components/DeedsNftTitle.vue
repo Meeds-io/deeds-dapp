@@ -18,14 +18,25 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0 py-0 justify-center">{{ $t('becomeDeedOwner') }}</v-card-title>
-    <v-card-text class="ps-0 pt-4 ms-md-2" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <v-card-title class="justify-center flex-nowrap mb-10">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('becomeDeedOwner') }}</span>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/mint_banner.png`"
+        max-width="340px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
+    </v-card-title>
+    <v-card-text class="ps-0 pt-0 pt-md-12 ms-md-2" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
     whitepaperLink: state => state.whitepaperLink,
+    parentLocation: state => state.parentLocation,
   }),
 };
 </script>
