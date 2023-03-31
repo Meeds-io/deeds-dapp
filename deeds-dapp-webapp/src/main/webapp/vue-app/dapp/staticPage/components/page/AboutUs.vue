@@ -61,9 +61,8 @@
     <div class="d-flex justify-center my-15">
       <v-btn
         href="mailto:contact@meeds.io" 
-        width="319px"
-        height="75px"
-        class="primary"
+        height="70px"
+        class="primary px-8"
         depressed
         dark
         outlined>
@@ -99,16 +98,16 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
-            <v-list-item-content>
+            <v-list-item-action>
               <v-btn
-                href="./portfolio"
-                max-width="200px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color"
+                href="./overview"
+                height="54px"
+                class="rounded-pill primary--text px-7 primary-border-color"
+                text
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('tokenomics') }}</span>
               </v-btn>
-            </v-list-item-content>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
@@ -135,16 +134,16 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
-            <v-list-item-content>
+            <v-list-item-action>
               <v-btn
                 :href="`${parentLocation}/tour`"
-                max-width="200px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color"
+                height="54px"
+                class="rounded-pill primary--text px-7 primary-border-color"
+                text
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('discover') }}</span>
               </v-btn>
-            </v-list-item-content>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
@@ -171,16 +170,16 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item class="ps-0">
-            <v-list-item-content>
+            <v-list-item-action>
               <v-btn
                 :href="`${parentLocation}/whitepaper`"
-                max-width="200px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color"
+                height="54px"
+                class="rounded-pill primary--text px-7 primary-border-color"
+                text
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('learnMore') }}</span>
               </v-btn>
-            </v-list-item-content>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-card>
@@ -244,15 +243,17 @@
                 </span>
               </div>
               <v-spacer />
-              <v-btn
-                href="https://exoplatform.com"
-                target="_blank"
-                width="125px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
-                outlined>
-                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
-              </v-btn>
+              <div class="mb-10 mb-sm-0">
+                <v-btn
+                  href="https://exoplatform.com"
+                  target="_blank"
+                  height="54px"
+                  class="rounded-pill primary--text px-7 primary-border-color"
+                  text
+                  outlined>
+                  <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+                </v-btn>
+              </div>
             </div>
           </v-col>
           <v-col
@@ -274,15 +275,17 @@
                 </span>
               </div>
               <v-spacer />
-              <v-btn
-                href="https://bonitasoft.com"
-                target="_blank"
-                width="125px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
-                outlined>
-                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
-              </v-btn>
+              <div class="mb-10 mb-sm-0">
+                <v-btn
+                  href="https://bonitasoft.com"
+                  target="_blank"
+                  height="54px"
+                  class="rounded-pill primary--text px-7 primary-border-color"
+                  text
+                  outlined>
+                  <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+                </v-btn>
+              </div>
             </div>
           </v-col>
           <v-col
@@ -304,15 +307,17 @@
                 </span>
               </div>
               <v-spacer />
-              <v-btn
-                href="https://newlogic.com"
-                target="_blank"
-                width="125px"
-                height="50px"
-                class="dark-grey-border-color rounded-pill dark-grey-color mb-10 mb-sm-0"
-                outlined>
-                <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
-              </v-btn>
+              <div class="mb-10 mb-sm-0">
+                <v-btn
+                  href="https://newlogic.com"
+                  target="_blank"
+                  height="54px"
+                  class="rounded-pill primary--text px-7 primary-border-color"
+                  text
+                  outlined>
+                  <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+                </v-btn>
+              </div>
             </div>
           </v-col>
         </v-row>

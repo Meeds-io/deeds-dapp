@@ -45,9 +45,8 @@
       <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
           href="./marketplace"
-          class="primary mx-5 mt-7"
-          width="300px"
-          height="75px"
+          class="primary px-8 mx-5 mt-7"
+          height="70px"
           depressed
           dark
           outlined>
@@ -56,9 +55,8 @@
         <v-btn
           href="https://builders.meeds.io"
           target="_blank"
-          width="300px"
-          height="75px"
-          class="dark-grey-border-color dark-grey-color d-flex justify-center mx-5 mt-7" 
+          height="70px"
+          class="primary--text primary-border-color d-flex justify-center px-8 mx-5 mt-7" 
           outlined>
           <v-icon size="40" class="me-2">fas fa-external-link-alt</v-icon>
           <span class="display-1 font-weight-bold">{{ $t('exploreAHub') }}</span>

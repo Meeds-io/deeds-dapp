@@ -36,7 +36,8 @@
       <div>
         <v-btn
           :href="`${parentLocation}/portfolio`"
-          class="dark-grey-color font-weight-black dark-grey-border-color"
+          class="primary--text px-5 primary-border-color font-weight-black"
+          height="44px"
           outlined
           text>
           <v-img
@@ -46,7 +47,7 @@
             max-height="24"
             contain
             eager />
-          <h4 class="mx-1">{{ $t('app') }}</h4>
+          <h4 class="ms-3">{{ $t('app') }}</h4>
         </v-btn>
       </div>
     </div>
