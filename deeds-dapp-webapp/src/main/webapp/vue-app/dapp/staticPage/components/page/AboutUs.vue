@@ -100,10 +100,10 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                href="./overview"
+                href="./portfolio"
                 height="54px"
-                class="rounded-pill primary--text px-7 primary-border-color"
-                text
+                class="rounded-pill px-7"
+                color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('tokenomics') }}</span>
               </v-btn>
@@ -138,8 +138,8 @@
               <v-btn
                 :href="`${parentLocation}/tour`"
                 height="54px"
-                class="rounded-pill primary--text px-7 primary-border-color"
-                text
+                class="rounded-pill px-7"
+                color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('discover') }}</span>
               </v-btn>
@@ -174,8 +174,8 @@
               <v-btn
                 :href="`${parentLocation}/whitepaper`"
                 height="54px"
-                class="rounded-pill primary--text px-7 primary-border-color"
-                text
+                class="rounded-pill px-7"
+                color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('learnMore') }}</span>
               </v-btn>
@@ -248,8 +248,8 @@
                   href="https://exoplatform.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill primary--text px-7 primary-border-color"
-                  text
+                  class="rounded-pill px-7"
+                  color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
                 </v-btn>
@@ -280,8 +280,8 @@
                   href="https://bonitasoft.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill primary--text px-7 primary-border-color"
-                  text
+                  class="rounded-pill px-7"
+                  color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
                 </v-btn>
@@ -312,8 +312,8 @@
                   href="https://newlogic.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill primary--text px-7 primary-border-color"
-                  text
+                  class="rounded-pill px-7"
+                  color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
                 </v-btn>

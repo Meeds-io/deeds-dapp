@@ -36,10 +36,10 @@
       <div>
         <v-btn
           :href="`${parentLocation}/portfolio`"
-          class="primary--text px-5 primary-border-color font-weight-black"
+          class="px-5 font-weight-black"
           height="44px"
-          outlined
-          text>
+          color="primary"
+          outlined>
           <v-img
             :src="`${parentLocation}/static/images/meedsicon.png`"
             alt=""

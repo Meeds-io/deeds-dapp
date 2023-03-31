@@ -56,7 +56,8 @@
           href="https://builders.meeds.io"
           target="_blank"
           height="70px"
-          class="primary--text primary-border-color d-flex justify-center px-8 mx-5 mt-7" 
+          class="d-flex justify-center px-8 mx-5 mt-7"
+          color="primary"
           outlined>
           <v-icon size="40" class="me-2">fas fa-external-link-alt</v-icon>
           <span class="display-1 font-weight-bold">{{ $t('exploreAHub') }}</span>

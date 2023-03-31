@@ -150,7 +150,8 @@
           href="https://builders.meeds.io"
           target="_blank"
           height="70px"
-          class="primary--text primary-border-color px-8 d-flex"
+          class="px-8 d-flex"
+          color="primary"
           outlined>
           <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
           <span class="display-1 font-weight-bold">{{ $t('try') }}</span>
@@ -299,8 +300,8 @@
                   href="https://builders.meeds.io"
                   target="_blank"
                   height="70px"
-                  class="primary--text primary-border-color px-8 my-6 d-flex"
-                  text
+                  class="px-8 my-6 d-flex"
+                  color="primary"
                   outlined>
                   <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
                   <span class="display-1 font-weight-bold">{{ $t('trynow') }}</span>
