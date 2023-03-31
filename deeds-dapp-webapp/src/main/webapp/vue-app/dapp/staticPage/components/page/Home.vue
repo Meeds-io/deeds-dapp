@@ -25,7 +25,7 @@
       </v-card-title>
     </v-card>
     <span class="display-1 font-weight-light text-center mb-10 mt-11 mt-sm-9 grey--text">{{ $t('homePage.description') }}</span>
-    <div class="mx-auto mb-15">
+    <div class="mx-auto mb-10 mb-sm-8">
       <v-btn
         href="./tour" 
         class="primary"
@@ -38,7 +38,13 @@
         <v-icon class="ms-4" size="34px">fas fa-arrow-right</v-icon>
       </v-btn>
     </div>
-    <v-card class="pa-5 mb-6 mt-15" flat>
+    <v-img
+      :src="`${parentLocation}/static/images/hero_image.png`"
+      class="mb-16 mb-md-0"
+      alt=""
+      contain
+      eager />
+    <v-card class="pa-5 mb-6 mt-16 mt-md-11" flat>
       <div class="d-block d-md-flex pb-15">
         <div class="col-12 col-md-6 my-auto">
           <div class="position-absolute">
