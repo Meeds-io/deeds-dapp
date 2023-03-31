@@ -28,9 +28,8 @@
     <div class="mx-auto mb-15">
       <v-btn
         href="./tour" 
-        class="primary"
-        width="319px"
-        height="75px"
+        height="70px"
+        class="primary px-8"
         depressed
         dark
         outlined>
@@ -140,16 +139,16 @@
           contain
           eager />
       </div>
-      <div class="d-flex">
+      <div class="d-flex justify-center mb-16">
         <v-btn
           href="https://builders.meeds.io"
           target="_blank"
-          class="mx-auto d-flex mb-16"
-          width="300px"
-          height="75px"
+          height="70px"
+          class="px-8 d-flex"
+          color="primary"
           outlined>
-          <v-icon size="34" class="me-2 dark-grey-color">fas fa-external-link-alt</v-icon>
-          <span class="display-1 font-weight-bold dark-grey-color">{{ $t('try') }}</span>
+          <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
+          <span class="display-1 font-weight-bold">{{ $t('try') }}</span>
         </v-btn>
       </div>
     </v-card>
@@ -211,12 +210,11 @@
           </span>
         </div>
       </v-card>
-      <div class="d-flex">
+      <div class="d-flex justify-center">
         <v-btn
-          href="./whitepaper" 
-          class="primary mx-auto my-14"
-          width="319px"
-          height="75px"
+          href="./whitepaper"
+          height="70px"
+          class="primary px-8 my-14"
           depressed
           dark
           outlined>
@@ -255,16 +253,17 @@
                 <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart3') }}</span>
               </div>
               <v-spacer />
-              <v-btn
-                href="./marketplace"
-                class="primary mx-auto mt-6 mb-15 mb-md-6 "
-                width="319px"
-                height="75px"
-                depressed
-                dark
-                outlined>
-                <span class="display-1 font-weight-bold">{{ $t('getAHub') }}</span>
-              </v-btn>
+              <div class="d-flex justify-center">
+                <v-btn
+                  href="./marketplace"
+                  height="70px"
+                  class="primary px-8 mt-6 mb-15 mb-md-6"
+                  depressed
+                  dark
+                  outlined>
+                  <span class="display-1 font-weight-bold">{{ $t('getAHub') }}</span>
+                </v-btn>
+              </div>
             </div>
           </v-col>
           <v-col
@@ -290,16 +289,18 @@
                 <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
                 <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
               </div>
-              <v-btn
-                href="https://builders.meeds.io"
-                target="_blank"
-                class="mx-auto d-flex my-6"
-                width="319px"
-                height="75px"
-                outlined>
-                <v-icon size="34" class="me-2 dark-grey-color">fas fa-external-link-alt</v-icon>
-                <span class="display-1 dark-grey-color font-weight-bold">{{ $t('trynow') }}</span>
-              </v-btn>
+              <div class="d-flex justify-center">
+                <v-btn
+                  href="https://builders.meeds.io"
+                  target="_blank"
+                  height="70px"
+                  class="px-8 my-6 d-flex"
+                  color="primary"
+                  outlined>
+                  <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
+                  <span class="display-1 font-weight-bold">{{ $t('trynow') }}</span>
+                </v-btn>
+              </div>
             </div>
           </v-col>
         </v-row>
