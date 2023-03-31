@@ -101,7 +101,7 @@
           <v-list-item class="ps-0">
             <v-list-item-content>
               <v-btn
-                href="./overview"
+                href="./portfolio"
                 max-width="200px"
                 height="50px"
                 class="dark-grey-border-color rounded-pill dark-grey-color"
