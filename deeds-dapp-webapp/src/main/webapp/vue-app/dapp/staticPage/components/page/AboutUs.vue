@@ -100,7 +100,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                href="./overview"
+                href="./portfolio"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
