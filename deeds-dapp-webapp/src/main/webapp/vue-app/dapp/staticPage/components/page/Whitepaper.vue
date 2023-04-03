@@ -51,9 +51,8 @@
           <v-btn
             :href="whitepaperLink" 
             target="_blank"
-            class="primary"
-            min-width="300px"
-            height="75px"
+            height="70px"
+            class="primary px-8"
             depressed
             dark
             outlined>
@@ -159,10 +158,9 @@
           <v-btn
             :dark="!pageState || pageState === 'work'"
             :text="pageState === 'capital'"
-            :class="(!pageState || pageState === 'work') && 'primary' || (pageState === 'capital' && 'dark-grey-color dark-grey-border-color')"
-            min-width="200px"
-            height="50px"
-            class="ma-4"
+            :class="(!pageState || pageState === 'work') && 'primary' || (pageState === 'capital' && 'primary--text primary-border-color')"
+            height="52px"
+            class="ma-4 px-5"
             outlined
             @click="$store.commit('setPageState','work')">
             <span class="text-h5 font-weight-bold">{{ $t('investWork') }}</span>
@@ -170,10 +168,9 @@
           <v-btn
             :dark="pageState === 'capital'"
             :text="!pageState || pageState === 'work'"
-            :class="pageState === 'capital' && 'primary' || ((!pageState || pageState === 'work') && 'dark-grey-color dark-grey-border-color')"
-            min-width="200px"
-            height="50px"
-            class="ma-4"
+            :class="pageState === 'capital' && 'primary' || ((!pageState || pageState === 'work') && 'primary--text primary-border-color')"
+            height="52px"
+            class="ma-4 px-5"
             outlined
             @click="$store.commit('setPageState','capital')">
             <span class="text-h5 font-weight-bold">{{ $t('investCapital') }}</span>
@@ -226,9 +223,8 @@
         v-if="!pageState || pageState === 'work'"
         href="https://builders.meeds.io"
         target="_blank"
-        min-width="319px"
-        height="75px"
-        class="primary" 
+        height="70px"
+        class="primary px-8"
         dark
         outlined>
         <span class="display-1 font-weight-bold">{{ $t('startEarning') }}</span>
@@ -236,9 +232,8 @@
       <v-btn
         v-else
         href="./portfolio"
-        min-width="319px"
-        height="75px"
-        class="primary"
+        height="70px"
+        class="primary px-8"
         dark
         outlined>
         <span class="display-1 font-weight-bold">{{ $t('investInMeeds') }}</span>
