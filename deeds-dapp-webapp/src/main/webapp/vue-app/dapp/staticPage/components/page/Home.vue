@@ -24,8 +24,8 @@
         {{ $t('homePage.title') }}
       </v-card-title>
     </v-card>
-    <span class="display-1 font-weight-light text-center mb-10 mt-11 mt-sm-9 grey--text">{{ $t('homePage.description') }}</span>
-    <div class="mx-auto mb-10 mb-sm-8">
+    <span class="display-1 font-weight-light text-center mb-10 mt-4 mt-sm-2 grey--text">{{ $t('homePage.description') }}</span>
+    <div class="mx-auto mb-9 mb-sm-11">
       <v-btn
         href="./tour" 
         height="70px"
@@ -39,7 +39,8 @@
     </div>
     <v-img
       :src="`${parentLocation}/static/images/hero_image.png`"
-      class="mb-16 mb-md-0"
+      class="mb-16 mb-md-0 mx-auto"
+      width="875px"
       alt=""
       contain
       eager />
