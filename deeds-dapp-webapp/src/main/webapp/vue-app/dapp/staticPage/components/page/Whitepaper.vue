@@ -76,7 +76,8 @@
           <v-list-item class="ps-0 pb-7">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/MEED-circle.png`"
+                class="mt-3 mb-4"
                 alt=""
                 width="75px"
                 contain
@@ -122,7 +123,7 @@
           <v-list-item class="ps-0 pb-7">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/meedsToken.png`"
+                :src="`${parentLocation}/static/images/xeed_icon.png`"
                 alt=""
                 width="75px"
                 contain
