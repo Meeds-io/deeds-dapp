@@ -32,7 +32,7 @@
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column my-16 pb-16">
-      <v-card class="pb-5 pt-8 pt-md-10 px-md-16 px-6" flat>
+      <v-card class="pb-5 pt-8 pt-md-10" flat>
         <div class="d-flex position-absolute mt-n16">
           <v-img
             :src="`${parentLocation}/static/images/bulle_grey_background.png`"
