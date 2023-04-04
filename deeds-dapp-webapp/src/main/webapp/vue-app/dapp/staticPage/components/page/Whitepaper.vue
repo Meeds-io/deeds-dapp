@@ -32,33 +32,38 @@
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column my-16 pb-16">
-      <v-card class="light-grey-background pb-5 pt-8 pt-md-10 px-md-16 px-6" flat>
-        <div class="d-flex">
-          <div>
-            <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart1') }}</v-card-subtitle>
-            <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart2') }}</v-card-subtitle>
-            <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart3') }}</v-card-subtitle>
-            <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart4') }}</v-card-subtitle>
-            <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart5') }}</v-card-subtitle>
-          </div>
+      <v-card class="pb-5 pt-8 pt-md-10 px-md-16 px-6" flat>
+        <div class="d-flex position-absolute mt-n16">
+          <v-img
+            :src="`${parentLocation}/static/images/bulle_grey_background.png`"
+            :height="isMobile && '100%' || 'auto'"
+            class="half-opacity"
+            alt="" /> 
           <v-img
             :src="`${parentLocation}/static/images/logo-m-grand.svg`"
             alt=""
-            width="350px"
+            width="450px"
             class="logo-m hidden-md-and-down mt-7" />
         </div>
-        <div class=" d-flex justify-center pt-3 pb-md-7">
-          <v-btn
-            :href="whitepaperLink" 
-            target="_blank"
-            height="70px"
-            class="primary px-8"
-            depressed
-            dark
-            outlined>
-            <span class="display-1 font-weight-bold">{{ $t('readWhitepaper') }}</span>
-          </v-btn>
-        </div>   
+        <div class="position-relative">
+          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart1') }}</v-card-subtitle>
+          <v-card-subtitle class="text-h5 grey--text font-weight-light py-7">{{ $t('whitepaper.descriptionPart2') }}</v-card-subtitle>
+          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart3') }}</v-card-subtitle>
+          <v-card-subtitle class="text-h5 grey--text font-weight-light py-7">{{ $t('whitepaper.descriptionPart4') }}</v-card-subtitle>
+          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart5') }}</v-card-subtitle>
+          <div class="d-flex justify-center pt-3 pb-md-7">
+            <v-btn
+              :href="whitepaperLink" 
+              target="_blank"
+              height="70px"
+              class="primary px-8"
+              depressed
+              dark
+              outlined>
+              <span class="display-1 font-weight-bold">{{ $t('readWhitepaper') }}</span>
+            </v-btn>
+          </div> 
+        </div>  
       </v-card>
     </div>
     <div class="d-flex flex-column mt-5">
@@ -247,6 +252,9 @@ export default {
     pageState: state => state.pageState,
     parentLocation: state => state.parentLocation,
     whitepaperLink: state => state.whitepaperLink,
+    isMobile() {
+      return this.$vuetify.breakpoint.xsOnly;
+    },
   }),
 };
 </script>
