@@ -28,11 +28,14 @@ public class ListenerEventCleanupTask {
 
   private static final Logger    LOG = LoggerFactory.getLogger(ListenerEventCleanupTask.class);
 
-  @Autowired
+  @Autowired(required = false)
   private ListenerService listenerService;
 
   @Scheduled(cron = "0 0 0/12 * * *")
   public synchronized void triggerCleanupEvents() {
+    if (listenerService == null) {
+      return;
+    }
     try {
       listenerService.cleanupElasticsearchEvents();
     } catch (Exception e) {

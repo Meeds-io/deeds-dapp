@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Document(indexName = "deed_setting", createIndex = true)
+@Document(indexName = "deed_setting", createIndex = false)
 @Setting(replicas = 0, shards = 1)
 public class DeedSetting {
 

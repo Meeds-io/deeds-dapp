@@ -56,8 +56,6 @@
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M7</version.surefire.plugin>
-    <!-- Avoid exceptions when packaging -->
-    <version.war.plugin>3.3.2</version.war.plugin>
 
     <!--
       FIXME: Workaround for https://github.com/Meeds-io/meeds/issues/346

@@ -35,6 +35,7 @@ import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.elasticsearch.model.DeedSetting;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.elasticsearch.model.UserProfile;
@@ -90,6 +91,7 @@ public class ElasticSearchConfig {
     ElasticsearchRestTemplate elasticsearchTemplate = new ElasticsearchRestTemplate(client);
     tryConnection(elasticsearchTemplate);
     if (createDeedIndexes) {
+      createIndex(elasticsearchTemplate, DeedSetting.class);
       createIndex(elasticsearchTemplate, DeedTenant.class);
       createIndex(elasticsearchTemplate, DeedMetadata.class);
       createIndex(elasticsearchTemplate, DeedTenantEvent.class);
