@@ -18,9 +18,26 @@
 -->
 <template>
   <v-list dense class="pb-4">
-    <v-card-title class="d-flex flex-nowrap pa-0">
-      {{ $t('yourTokens') }}
-    </v-card-title>
+    <div class="d-flex flex-nowrap align-center">
+      <v-img
+        :src="`${parentLocation}/static/images/meeds.png`"
+        height="30px"
+        max-width="81px"
+        contain
+        eager />
+      <span class="headline font-weight-bold align-center ms-5 mb-1">
+        {{ $t('tokens.title') }}
+      </span>
+      <v-spacer />
+      <v-btn
+        :href="`${parentLocation}/stake`"
+        class="rounded-pill px-8"
+        color="primary"
+        height="52px"
+        outlined>
+        <span class="font-weight-bold headline">{{ $t('stake') }}</span>
+      </v-btn>
+    </div>
     <v-skeleton-loader
       v-if="loading"
       type="image"
@@ -40,8 +57,6 @@
     <deeds-empty-assets
       v-else
       id="emptyTokenAssets"
-      image-desktop="meeds.png"
-      image-mobile="meedsToken.png"
       description-part1="noTokensDescriptionPart1"
       description-part2="noTokensDescriptionPart2"
       link-part1="becomingAHolderLink"
@@ -59,6 +74,7 @@ export default {
     lpLoading: state => state.lpLoading,
     rewardedPools: state => state.rewardedPools,
     comethPool: state => state.comethPool,
+    parentLocation: state => state.parentLocation,
     loading() {
       return this.poolsLoading || this.tokenLoading;
     },
