@@ -77,10 +77,10 @@ public class ListenerService implements ApplicationContextAware {
   @Autowired(required = false)
   private RedisClient                                     redisClient;
 
-  @Autowired
+  @Autowired(required = false)
   private SettingService                                  settingService;
 
-  @Autowired
+  @Autowired(required = false)
   private DeedTenantEventRepository                       deedTenantEventRepository;
 
   @Value("${meeds.elasticsearch.listener.events.cleanupHoursPeriodicity:}")

@@ -30,11 +30,14 @@ public class ListenerEventTriggerTask {
 
   private static final Logger LOG = LoggerFactory.getLogger(ListenerEventTriggerTask.class);
 
-  @Autowired
+  @Autowired(required = false)
   private ListenerService     listenerService;
 
   @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS, initialDelay = 60)
   public synchronized void triggerEvents() {
+    if (listenerService == null) {
+      return;
+    }
     try {
       listenerService.triggerElasticSearchEvents();
     } catch (Exception e) {
