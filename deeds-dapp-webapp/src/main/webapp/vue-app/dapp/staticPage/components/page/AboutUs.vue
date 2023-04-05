@@ -186,36 +186,41 @@
       </v-card>
     </div>
     <div class="d-flex flex-column my-16">
-      <v-card class="light-grey-background py-5" flat>
-        <div class="d-flex">
-          <div>
-            <div class="pt-4 px-4 display-1 font-weight-bold">
-              {{ $t('sustainability') }}
-            </div>
-            <div class="px-4 pb-2 pt-3 display-1 font-weight-bold grey--text">
-              {{ $t('duringTheMintingPeriod') }}
-            </div>
-            <div class="grey--text text-h6 font-weight-light pa-4">
-              {{ $t('duringTheMintingPeriod.descriptionPart1') }}
-            </div>
-            <div class="grey--text text-h6 font-weight-light pa-4">
-              {{ $t('duringTheMintingPeriod.descriptionPart2') }}
-            </div>
-            <div class="px-4 pb-2 pt-3 display-1 font-weight-bold grey--text">
-              {{ $t('afterTheMintingPeriod') }}
-            </div>
-            <div class="grey--text text-h6 font-weight-light pa-4">
-              {{ $t('afterTheMintingPeriod.descriptionPart1') }}
-            </div>
-            <div class="grey--text text-h6 font-weight-light pa-4">
-              {{ $t('afterTheMintingPeriod.descriptionPart2') }}
-            </div>
-          </div>
+      <v-card class="py-5" flat>
+        <div class="d-flex position-absolute">
+          <v-img
+            :src="`${parentLocation}/static/images/bulle_grey_background.png`"
+            class="half-opacity"
+            alt="" /> 
+          
           <v-img
             :src="`${parentLocation}/static/images/logo-m-grand.svg`"
             alt=""
-            width="350px"
+            width="470px"
             class="logo-m hidden-md-and-down mt-n3" />
+        </div>
+        <div class="position-relative">
+          <div class="pt-4 px-4 display-1 font-weight-bold">
+            {{ $t('sustainability') }}
+          </div>
+          <div class="px-4 pb-2 pt-7 display-1 font-weight-light">
+            {{ $t('duringTheMintingPeriod') }}
+          </div>
+          <div class="grey--text text-h6 font-weight-light pa-4">
+            {{ $t('duringTheMintingPeriod.descriptionPart1') }}
+          </div>
+          <div class="grey--text text-h6 font-weight-light pa-4">
+            {{ $t('duringTheMintingPeriod.descriptionPart2') }}
+          </div>
+          <div class="px-4 pb-2 pt-3 display-1 font-weight-light">
+            {{ $t('afterTheMintingPeriod') }}
+          </div>
+          <div class="grey--text text-h6 font-weight-light pa-4">
+            {{ $t('afterTheMintingPeriod.descriptionPart1') }}
+          </div>
+          <div class="grey--text text-h6 font-weight-light pa-4">
+            {{ $t('afterTheMintingPeriod.descriptionPart2') }}
+          </div>
         </div>
       </v-card>
     </div>
