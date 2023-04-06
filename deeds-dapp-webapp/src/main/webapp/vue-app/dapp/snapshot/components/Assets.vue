@@ -36,12 +36,12 @@
       <v-spacer />
       <v-btn
         href=""
-        class="rounded-pill px-10"
+        class="rounded-pill px-8"
         color="secondary"
-        height="52px"
+        height="45px"
         outlined
         @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
-        <span class="ms-1 font-weight-bold headline">{{ $t('buy') }}</span>
+        <h4 class="ms-1">{{ $t('buy') }}</h4>
       </v-btn>
     </div>
     <div class="d-flex flex-column flex-md-row mt-4">

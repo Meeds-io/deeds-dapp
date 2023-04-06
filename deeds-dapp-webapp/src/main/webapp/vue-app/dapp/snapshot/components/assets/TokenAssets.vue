@@ -31,11 +31,11 @@
       <v-spacer />
       <v-btn
         :href="`${parentLocation}/stake`"
-        class="rounded-pill px-8"
+        class="rounded-pill px-6"
         color="primary"
-        height="52px"
+        height="45px"
         outlined>
-        <span class="font-weight-bold headline">{{ $t('stake') }}</span>
+        <h4>{{ $t('stake') }}</h4>
       </v-btn>
     </div>
     <v-skeleton-loader
