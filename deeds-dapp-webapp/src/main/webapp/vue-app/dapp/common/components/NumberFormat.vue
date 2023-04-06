@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div v-if="display" class="number-format">
+  <div v-if="display">
     <template v-if="label">
       {{ $t(label, labelComputedParams) }}
       <slot></slot>

@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-list dense class="pb-4">
+  <v-list dense class="pb-16">
     <div class="d-flex flex-nowrap align-center">
       <v-img
         :src="`${parentLocation}/static/images/meeds.png`"
