@@ -31,11 +31,11 @@
       <v-spacer />
       <v-btn
         :href="`${parentLocation}/deeds`"
-        class="rounded-pill px-9"
+        class="rounded-pill px-7"
         color="primary"
-        height="52px"
+        height="45px"
         outlined>
-        <span class="ms-1 font-weight-bold headline">{{ $t('page.deeds') }}</span>
+        <h4 class="ms-1">{{ $t('page.deeds') }}</h4>
       </v-btn>
     </div>
     <v-skeleton-loader
