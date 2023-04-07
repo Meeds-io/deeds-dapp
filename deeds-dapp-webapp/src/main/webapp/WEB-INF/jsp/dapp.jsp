@@ -23,14 +23,14 @@
     <meta property="og:description" content="Meeds is an employee recognition software to engage and reward employees. Increase employee engagement and retention through a recognition and rewards program.">
     <meta property="og:url" content="https://www.meeds.io/">
     <meta property="og:site_name" content="Meeds">
-    <meta property="og:image" content="https://www.meeds.io/wp-content/uploads/2020/05/meeds-association-employee-recognition-software-facebook-preview.png">
-    <meta property="og:image:secure_url" content="https://www.meeds.io/wp-content/uploads/2020/05/meeds-association-employee-recognition-software-facebook-preview.png">
+    <meta property="og:image" content="./static/images/white_thumbnail.png">
+    <meta property="og:image:secure_url" content="./static/images/white_thumbnail.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:description" content="Meeds is an employee recognition software to engage and reward employees. Increase employee engagement and retention through a recognition and rewards program.">
     <meta name="twitter:title" content="Employee Recognition Software &amp; Employee Rewards Program | Meeds">
-    <meta name="twitter:image" content="https://www.meeds.io/wp-content/uploads/2020/05/meeds-association-employee-recognition-software-twitter-preview.png">
+    <meta name="twitter:image" content="./static/images/white_thumbnail.png">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
