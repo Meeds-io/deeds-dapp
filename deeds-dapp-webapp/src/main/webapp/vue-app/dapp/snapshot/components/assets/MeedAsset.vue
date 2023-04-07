@@ -21,8 +21,8 @@
     <template #image>
       <v-img
         :src="`${parentLocation}/static/images/meedsToken.png`"
-        max-height="40px"
-        max-width="40px"
+        max-height="50px"
+        max-width="50px"
         class="ps-1"
         contain
         eager />
@@ -30,12 +30,23 @@
     <template #col1>
       <deeds-tab-link
         label="Meeds"
-        sub-label="Mainnet"
         tab-link="stake"
         class="ms-n4" />
     </template>
+    <template #col2>
+      <v-img
+        :src="`${parentLocation}/static/images/ethereum.png`"
+        width="15px"
+        height="21px" />
+    </template>
     <template #col3>
       <deeds-number-format
+        v-if="!smallScreen"
+        :value="meedsBalance"
+        :fractions="2"
+        currency />
+      <deeds-number-format
+        v-else
         :value="meedsBalance"
         :fractions="2">
         Ɱ
@@ -43,10 +54,18 @@
     </template>
     <template #col4>
       <deeds-number-format
+        v-if="smallScreen"
         :value="meedsBalance"
         :fractions="2"
-        class="small--text"
         currency />
+    </template>
+    <template #col5>
+      <deeds-number-format
+        v-if="!smallScreen"
+        :value="meedsBalance"
+        :fractions="2">
+        Ɱ
+      </deeds-number-format>
     </template>
   </deeds-token-asset-template>
 </template>
@@ -55,7 +74,9 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     meedsBalance: state => state.meedsBalance,
-    isMobile: state => state.isMobile,
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   }),
 };
 </script>

@@ -20,14 +20,9 @@
   <v-btn
     height="auto"
     color="primary"
-    class="font-size-normal"
     text
     @click="clickOnLink">
-    <span class="text-none">
-      <span v-if="noTitleTextTransform" class="font-weight-bold">{{ label }}</span>
-      <span v-else class="font-weight-bold">{{ label }}</span>
-      <span v-if="subLabel" class="font-weight-normal">({{ subLabel }})</span>
-    </span>
+    <span class="font-weight-bold headline">{{ label }}</span>
   </v-btn>
 </template>
 <script>
@@ -37,17 +32,9 @@ export default {
       type: String,
       default: null,
     },
-    subLabel: {
-      type: String,
-      default: null,
-    },
     tabLink: {
       type: String,
       default: null,
-    },
-    noTitleTextTransform: {
-      type: Boolean,
-      default: false,
     },
   },
   methods: {
