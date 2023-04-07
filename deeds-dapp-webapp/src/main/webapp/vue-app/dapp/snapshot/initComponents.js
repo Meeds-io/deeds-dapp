@@ -36,6 +36,7 @@ import TotalSupply from './components/metrics/TotalSupply.vue';
 import TotalValueLocked from './components/metrics/TotalValueLocked.vue';
 import MeedPrice from './components/metrics/MeedPrice.vue';
 import BuyMeedDrawer from './components/drawer/BuyMeedDrawer.vue';
+import Tokenomics from './components/Tokenomics.vue';
 
 const components = {
   'deeds-overview': Overview,
@@ -58,6 +59,7 @@ const components = {
   'deeds-total-supply': TotalSupply,
   'deeds-total-value-locked': TotalValueLocked,
   'deeds-meed-price': MeedPrice,
+  'deeds-tokenomics': Tokenomics,
 };
 
 for (const key in components) {

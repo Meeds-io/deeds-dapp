@@ -23,6 +23,7 @@ const Stake = { template: '<deeds-stake />' };
 const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 const Overview = { template: '<deeds-overview />' };
+const Tokenomics = { template: '<deeds-tokenomics />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 export default {
@@ -32,6 +33,7 @@ export default {
   '/tenants': Tenants,
   '/owners': Owners,
   '/portfolio': Overview,
+  '/tokenomics': Tokenomics,
   '/stake': Stake,
   '/deeds': Deeds,
   '/farm': Farm,
