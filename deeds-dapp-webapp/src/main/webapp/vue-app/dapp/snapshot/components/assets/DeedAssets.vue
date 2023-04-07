@@ -18,9 +18,26 @@
 -->
 <template>
   <v-list dense class="pb-4 pb-sm-0">
-    <v-card-title class="d-flex flex-nowrap pa-0">
-      {{ $t('yourDeeds') }}
-    </v-card-title>
+    <div class="d-flex flex-nowrap align-center mb-4">
+      <v-img
+        :src="`${parentLocation}/static/images/deeds.png`"
+        height="52px"
+        max-width="81px"
+        contain
+        eager />
+      <span class="headline font-weight-bold align-center ms-5 mb-1">
+        {{ $t('deed') }}
+      </span>
+      <v-spacer />
+      <v-btn
+        :href="`${parentLocation}/deeds`"
+        class="rounded-pill px-7"
+        color="primary"
+        height="45px"
+        outlined>
+        <h4 class="ms-1">{{ $t('page.deeds') }}</h4>
+      </v-btn>
+    </div>
     <v-skeleton-loader
       v-if="deedLoading"
       type="image"
@@ -36,8 +53,6 @@
     <deeds-empty-assets
       v-else
       id="emptyDeedAssets"
-      image-desktop="deeds.png"
-      image-mobile="deed.png"
       description-part1="noDeedsDescriptionPart1"
       description-part2="noDeedsDescriptionPart2"
       link-part1="becomingADeedOwner"
@@ -53,6 +68,7 @@ export default {
     whitepaperLink: state => state.whitepaperLink,
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
+    parentLocation: state => state.parentLocation,
     nftsByCardType() {
       const nftsByCardType = {};
       if (this.ownedNfts) {

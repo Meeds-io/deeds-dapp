@@ -18,40 +18,11 @@
 -->
 <template>
   <v-row class="ma-0">
-    <v-col
-      cols="auto"
-      class="pa-0"
-      align-self="start">
-      <v-card
-        min-width="70px"
-        class="d-block d-md-none"
-        flat>
-        <v-img
-          :src="`${parentLocation}/static/images/${imageMobile}`"
-          height="100px"
-          width="70px"
-          max-width="100%"
-          contain
-          eager />
-      </v-card>
-      <v-card
-        min-width="140px"
-        class="d-none d-md-block"
-        flat>
-        <v-img
-          :src="`${parentLocation}/static/images/${imageDesktop}`"
-          height="100px"
-          width="140px"
-          max-width="100%"
-          contain
-          eager />
-      </v-card>
-    </v-col>
-    <v-col align-self="end" class="pa-0 mx-4 my-auto">
-      <v-card flat>
-        <v-card-text class="pa-0" v-html="$t(descriptionPart1, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})" />
-        <v-card-text class="pa-0 mt-4" v-html="$t(descriptionPart2, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})" />
-      </v-card>
+    <v-col class="pa-0 mt-6 mb-12">
+      <div class="d-flex flex-column">
+        <span class="headline dark-grey-color" v-html="$t(descriptionPart1, {0: `<a class='${id} dark-grey-color embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})"></span>
+        <span class="headline dark-grey-color mt-4" v-html="$t(descriptionPart2, {0: `<a class='${id} dark-grey-color embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})"></span>
+      </div>
     </v-col>
   </v-row>
 </template>
@@ -59,14 +30,6 @@
 export default {
   props: {
     id: {
-      type: String,
-      default: null,
-    },
-    imageDesktop: {
-      type: String,
-      default: null,
-    },
-    imageMobile: {
       type: String,
       default: null,
     },
@@ -91,9 +54,6 @@ export default {
       default: null,
     },
   },
-  computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-  }),
   mounted() {
     const links = document.querySelectorAll(`.${this.id}`);
     if (links.length) {

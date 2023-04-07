@@ -29,12 +29,23 @@
         contain
         eager />
     </v-card-title>
-    <v-card-title class="d-flex flex-nowrap px-0 pb-0 pt-0 pt-md-12">
-      {{ $t('assets') }}
-      <v-divider class="my-auto ms-4" />
-    </v-card-title>
+    <div class="d-flex pt-0 pt-md-12 ms-0 ms-md-4">
+      <span class="display-1 font-weight-bold">
+        {{ $t('assets') }}
+      </span>
+      <v-spacer />
+      <v-btn
+        href=""
+        class="rounded-pill px-8"
+        color="secondary"
+        height="45px"
+        outlined
+        @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
+        <h4 class="ms-1">{{ $t('buy') }}</h4>
+      </v-btn>
+    </div>
     <div class="d-flex flex-column flex-md-row mt-4">
-      <v-card flat class="assets ms-0 ms-md-8">
+      <v-card flat class="ms-0 ms-md-4">
         <deeds-token-assets />
         <deeds-deed-assets />
       </v-card>
