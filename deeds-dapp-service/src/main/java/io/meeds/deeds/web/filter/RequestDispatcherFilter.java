@@ -53,7 +53,8 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                            "/portfolio",
                                                                            "/stake",
                                                                            "/deeds",
-                                                                           "/farm");
+                                                                           "/farm",
+                                                                           "/tokenomics");
 
   private static final long         LAST_MODIFIED          = System.currentTimeMillis();
 
