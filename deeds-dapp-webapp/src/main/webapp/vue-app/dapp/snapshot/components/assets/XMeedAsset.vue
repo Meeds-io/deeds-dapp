@@ -21,8 +21,8 @@
     <template #image>
       <v-img
         :src="`${parentLocation}/static/images/xMeedsToken.png`"
-        max-height="40px"
-        max-width="40px"
+        max-height="50px"
+        max-width="50px"
         contain
         eager />
     </template>
@@ -30,14 +30,19 @@
       <deeds-tab-link
         label="xMeeds"
         tab-link="stake"
-        class="ms-n4"
-        no-title-text-transform />
+        class="ms-n4" />
     </template>
     <template #col3>
       <deeds-number-format
+        v-if="!smallScreen"
+        :value="xMeedsBalanceInMeeds"
+        :fractions="2"
+        currency />
+      <deeds-number-format
+        v-else
         :value="xMeedsBalance"
         :fractions="2">
-        xⱮ
+        Ɱ
       </deeds-number-format>
     </template>
     <template #col2>
@@ -50,8 +55,7 @@
             <span class="mx-1">+</span>
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
-              :fractions="2"
-              class="small--text" />
+              :fractions="2" />
             <span class="mx-1">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
@@ -70,10 +74,18 @@
     </template>
     <template #col4>
       <deeds-number-format
+        v-if="smallScreen"
         :value="xMeedsBalanceInMeeds"
         :fractions="2"
-        class="small--text"
         currency />
+    </template>
+    <template #col5>
+      <deeds-number-format
+        v-if="!smallScreen"
+        :value="xMeedsBalance"
+        :fractions="2">
+        Ɱ
+      </deeds-number-format>
     </template>
   </deeds-token-asset-template>
 </template>
@@ -92,6 +104,9 @@ export default {
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     xMeedRewardInfo() {
       return this.rewardedFunds && this.xMeedAddress && this.rewardedFunds.find(fund => fund.address.toUpperCase() === this.xMeedAddress.toUpperCase());
     },

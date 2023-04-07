@@ -21,8 +21,8 @@
     <template #image>
       <v-img
         :src="imageSrc"
-        max-height="40px"
-        max-width="40px"
+        max-height="50px"
+        max-width="50px"
         class="ps-1"
         contain
         eager />
@@ -34,7 +34,14 @@
         class="ms-n4" />
     </template>
     <template #col3>
-      <div class="d-flex">
+      <deeds-number-format
+        v-if="!smallScreen"
+        :value="userStakedEquivalentMeeds"
+        :fractions="2"
+        currency />
+      <div 
+        v-else
+        class="d-flex">
         <v-badge
           overlap
           color="transparent"
@@ -77,8 +84,7 @@
             <span class="mx-1">+</span>
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
-              :fractions="2"
-              class="small--text" />
+              :fractions="2" />
             <span class="mx-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
@@ -97,10 +103,46 @@
     </template>
     <template #col4>
       <deeds-number-format
+        v-if="smallScreen"
         :value="userStakedEquivalentMeeds"
         :fractions="2"
-        class="small--text"
         currency />
+    </template>
+    <template #col5>
+      <div 
+        v-if="!smallScreen"
+        class="d-flex">
+        <v-badge
+          overlap
+          color="transparent"
+          :value="hasUnstakedLp">
+          <template #badge>
+            <v-tooltip bottom>
+              <template #activator="{ on, attrs }">
+                <div
+                  class="red rounded-circle ms-1 lp-badge"
+                  v-bind="attrs"
+                  v-on="on">
+                </div>
+              </template>
+              <div class="d-flex flex-nowrap">
+                <deeds-number-format
+                  :value="lpBalance"
+                  :fractions="2"
+                  class="me-1">
+                  {{ lpSymbol }}
+                </deeds-number-format>
+                {{ $t('availableToStake') }}
+              </div>
+            </v-tooltip>
+          </template>
+          <deeds-number-format
+            :value="lpStaked"
+            :fractions="2">
+            {{ lpSymbol }}
+          </deeds-number-format>
+        </v-badge>
+      </div>
     </template>
   </deeds-token-asset-template>
 </template>
@@ -117,6 +159,9 @@ export default {
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
     comethPairAddress: state => state.comethPairAddress,
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     isSushiswapPool() {
       return this.sushiswapPairAddress && this.pool && this.pool.address && this.pool.address.toUpperCase() === this.sushiswapPairAddress.toUpperCase();
     },

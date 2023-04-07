@@ -21,8 +21,8 @@
     <template #image>
       <v-img
         :src="imageSrc"
-        max-height="40px"
-        max-width="40px"
+        max-height="50px"
+        max-width="50px"
         class="ps-1"
         contain
         eager />
@@ -38,7 +38,24 @@
       <span class="text-capitalize">{{ cityName }}</span>
     </template>
     <template #col3>
-      {{ count }}
+      <div v-if="smallScreen">
+        {{ count }}
+      </div>
+      <div v-else>
+        <v-btn
+          :href="`${parentLocation}/owners`"
+          class="rounded-pill px-5"
+          color="primary"
+          height="40px"
+          outlined>
+          <span class="font-weight-bold subtitle-1">{{ $t('view') }}</span>
+        </v-btn>
+      </div>
+    </template>
+    <template #col5>
+      <div v-if="!smallScreen">
+        {{ count }}
+      </div>
     </template>
   </deeds-token-asset-template>
 </template>
@@ -52,6 +69,9 @@ export default {
   },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    smallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
     cityName() {
       return this.deed?.cityName;
     },
