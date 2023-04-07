@@ -44,7 +44,7 @@
         <h4 class="ms-1">{{ $t('buy') }}</h4>
       </v-btn>
     </div>
-    <div class="d-flex flex-column flex-md-row mt-4">
+    <div class="mt-4">
       <v-card flat class="ms-0 ms-md-4">
         <deeds-token-assets />
         <deeds-deed-assets />
