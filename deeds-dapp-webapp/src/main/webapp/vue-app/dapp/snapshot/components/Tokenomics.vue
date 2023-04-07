@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,24 +17,23 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column mt-8 mt-sm-10">
-    <deeds-assets />
-    <v-btn
-      :href="`${parentLocation}/tokenomics`"
-      class="px-8 mx-auto mb-16"
-      color="primary"
-      width="250px"
-      height="75px"
-      dark
-      depressed>
-      <span class="headline font-weight-bold">{{ $t('viewTokenomics') }}</span>
-    </v-btn>
-  </div>
+  <deeds-meeds-info />
 </template>
 <script>
 export default {
-  computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-  }),
+  created() {
+    this.$store.commit('loadRewardedFunds', true);
+    this.$store.commit('loadPolygonBalances', true);
+    if (!document.querySelector('#echarts-script')) {
+      const script = document.createElement('script');
+      script.id = 'echarts-script';
+      script.src = './static/js/echarts.min.js?_=5.4.0';
+      script.type = 'text/javascript';
+      script.onload = () => {
+        this.$store.commit('echartsLoaded');
+      };
+      document.getElementsByTagName('head')[0].appendChild(script);
+    }
+  },
 };
 </script>

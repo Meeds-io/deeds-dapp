@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-token-asset-template>
+  <deeds-token-asset-template :extra-cols="false">
     <template #col1>
       <v-tooltip :disabled="!hasTotalValueLocked" bottom>
         <template #activator="{ on, attrs }">
