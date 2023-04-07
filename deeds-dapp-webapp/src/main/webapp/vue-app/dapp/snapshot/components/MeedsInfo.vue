@@ -17,12 +17,19 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat>
-    <v-card-title class="d-flex flex-nowrap pa-0">
-      {{ $t('meedToken') }}
-      <v-divider class="my-auto ms-4" />
+  <v-card class="mt-8" flat>
+    <v-card-title class="py-0 justify-center flex-nowrap">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('meedToken') }}</span>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/token_banner.png`"
+        max-width="206px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
     </v-card-title>
-    <v-row class="mt-4">
+    <v-row class="mt-14">
       <v-col
         cols="12"
         md="5"
@@ -31,9 +38,9 @@
       </v-col>
       <v-col
         cols="12"
-        md="5"
+        md="6"
         offset="0"
-        offset-md="2"
+        offset-md="1"
         class="py-0">
         <deeds-market-cap :metrics="metrics" />
       </v-col>
@@ -45,9 +52,9 @@
       </v-col>
       <v-col
         cols="12"
-        md="5"
+        md="6"
         offset="0"
-        offset-md="2"
+        offset-md="1"
         class="py-0">
         <deeds-total-value-locked :metrics="metrics" />
       </v-col>
@@ -73,6 +80,18 @@
           :metrics="metrics" />
       </v-col>
     </v-row>
+    <v-row class="pb-16 pt-6 justify-center">
+      <v-btn
+        :href="`${parentLocation}/portfolio`"
+        class="px-8"
+        color="primary"
+        width="250px"
+        height="75px"
+        dark
+        depressed>
+        <span class="headline font-weight-bold">{{ $t('manageAssets') }}</span>
+      </v-btn>
+    </v-row>
   </v-card>
 </template>
 <script>
@@ -82,6 +101,7 @@ export default {
   }),
   computed: Vuex.mapState({
     selectedFiatCurrency: state => state.selectedFiatCurrency,
+    parentLocation: state => state.parentLocation,
   }),
   watch: {
     selectedFiatCurrency() {

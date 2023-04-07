@@ -29,7 +29,7 @@
           <slot name="image"></slot>
         </v-list-item-avatar>
         <v-list-item-content class="py-0">
-          <v-list-item-title class="token-asset-title height-auto text-wrap d-flex mb-0 font-size-normal pe-2">
+          <v-list-item-title class="token-asset-title height-auto text-wrap d-flex mb-0 headline pe-2">
             <div class="my-auto me-auto">
               <slot name="col1"></slot>
             </div>
@@ -40,7 +40,7 @@
             </div>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-content class="py-0 overflow-visible mb-auto">
+        <v-list-item-content v-if="extraCols" class="py-0 overflow-visible mb-auto">
           <v-list-item-title class="token-asset-title d-flex justify-center mb-0 headline dark-grey-color font-weight-normal overflow-visible">
             <div class="my-auto pt-2px">
               <slot name="col5"></slot>
@@ -53,7 +53,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content class="py-0 overflow-visible mb-auto">
-          <v-list-item-title class="token-asset-title d-flex mb-0 headline dark-grey-color font-weight-normal overflow-visible">
+          <v-list-item-title class="token-asset-title d-flex mb-0 height-auto headline dark-grey-color font-weight-normal overflow-visible">
             <div class="my-auto ms-auto pt-2px">
               <slot name="col3"></slot>
             </div>
@@ -68,3 +68,13 @@
     </v-col>
   </v-row>
 </template>
+<script>
+export default {
+  props: {
+    extraCols: {
+      type: Boolean,
+      default: true,
+    },
+  },
+};
+</script>
