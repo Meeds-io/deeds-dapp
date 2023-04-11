@@ -79,7 +79,7 @@
           <div class="py-0 d-flex flex-column mx-auto">
             <span class="font-size-normal font-weight-black text-sub-title text-uppercase mb-3">{{ $t('workMetaverse.title') }}</span>
             <a
-              :href="`${parentLocation}/portfolio`"
+              :href="`${parentLocation}/tokenomics`"
               class="text-sub-title no-decoration my-2">
               {{ $t('meedsToken') }}
             </a>
