@@ -36,5 +36,9 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
   }),
+  created() {
+    this.$store.commit('loadRewardedFunds', true);
+    this.$store.commit('loadPolygonBalances', true);
+  }
 };
 </script>

@@ -22,8 +22,6 @@
 <script>
 export default {
   created() {
-    this.$store.commit('loadRewardedFunds', true);
-    this.$store.commit('loadPolygonBalances', true);
     if (!document.querySelector('#echarts-script')) {
       const script = document.createElement('script');
       script.id = 'echarts-script';
