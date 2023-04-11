@@ -41,8 +41,8 @@
         :dark="!collapsed"
         outlined
         @click="changeCollapsedTextVisibility">
-        <span v-if="collapsed">{{ $t('dapp.tenants.seeMore') }}</span>
-        <span v-else>{{ $t('dapp.tenants.seeLess') }}</span>
+        <span v-if="collapsed">{{ $t('dapp.seeMore') }}</span>
+        <span v-else>{{ $t('dapp.seeLess') }}</span>
       </v-btn>
     </div>
     <div v-show="!collapsed || !hasTenants">
