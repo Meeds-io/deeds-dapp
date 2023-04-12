@@ -18,12 +18,12 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <v-card-title class="py-0 justify-center flex-nowrap">
+    <v-card-title class="py-0 px-0 justify-center flex-nowrap">
       <div>
-        <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitle') }}</span>
-        <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
+        <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('dapp.tenants.tenantsListTitle') }}</span>
+        <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
       </div>
-      <v-spacer />
+      <v-spacer class="hidden-sm-and-down" />
       <v-img 
         :src="`${parentLocation}/static/images/tenants_banner.png`"
         max-width="326px"
