@@ -257,6 +257,8 @@ const store = new Vuex.Store({
     rentComethLiquidityLink: 'https://swap.cometh.io/#/stake/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a/ETH/0x035A8a07Bbae988893499e5c0D5b281b7967b107',
     browseOffersVideoLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/v1680768881/meedsdao-site/assets/video/browse_offers_jbiy1l.mp4',
     beTenantVideoLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/v1680768873/meedsdao-site/assets/video/be_a_tenant_irdzkk.mp4',
+    mintDeedVideoLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/f_auto,q_auto/v1680767385/meedsdao-site/assets/video/mint_a_deed_vonupd.mp4',
+    rentDeedVideoLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/f_auto,q_auto/v1680767387/meedsdao-site/assets/video/use_or_rent_a_deed_jcc4ml.mp4',
     echartsLoaded: false,
     address: null,
     networkId: null,
