@@ -146,7 +146,7 @@ public class ListenerService implements ApplicationContextAware {
    *                    {@link EventListener#onEvent(String, Object)}
    */
   public void publishEvent(String eventName, Object data) {
-    if (!this.enabled) {
+    if (!this.isTenantRelatedToWom()) {
       return;
     }
     LOG.debug("{} - Publish event {} locally with data {}",
@@ -220,7 +220,7 @@ public class ListenerService implements ApplicationContextAware {
    * not be used outside this provided Task.
    */
   public void triggerElasticSearchEvents() {
-    if (!this.enabled) {
+    if (!this.isTenantRelatedToWom()) {
       return;
     }
     executeElasticSearchScanning(() -> {
@@ -249,7 +249,7 @@ public class ListenerService implements ApplicationContextAware {
    * periodicity, which is by default, the dApp only.
    */
   public void cleanupElasticsearchEvents() {
-    if (!this.enabled) {
+    if (!this.isTenantRelatedToWom()) {
       return;
     }
     if (StringUtils.isNotBlank(cleanupHoursPeriodicity)) {
@@ -257,6 +257,11 @@ public class ListenerService implements ApplicationContextAware {
       deedTenantEventRepository.deleteByDateLessThan(lastEventScanDate.minus(Long.parseLong(cleanupHoursPeriodicity.trim()),
                                                                              ChronoUnit.HOURS));
     }
+  }
+
+  private boolean isTenantRelatedToWom() {
+    boolean isTenantProvisioningOrDapp = StringUtils.contains(this.getClientName(), "dApp") || StringUtils.contains(this.getClientName(), "tenant-provisioning");
+    return isTenantProvisioningOrDapp || this.enabled;
   }
 
   /**
