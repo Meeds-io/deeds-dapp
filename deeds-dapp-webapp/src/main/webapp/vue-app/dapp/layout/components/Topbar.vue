@@ -24,7 +24,7 @@
     fixed
     elevate-on-scroll>
     <v-spacer />
-    <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-4 mx-1">
+    <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <a :href="`${parentLocation}/`" class="no-decoration">
         <img
           :src="`${parentLocation}/static/images/meeds.png`"
@@ -44,7 +44,7 @@
         </v-btn>
       </div>
     </div>
-    <div v-else class="d-flex headerLayout px-0 px-sm-4 mx-1">
+    <div v-else class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <deeds-topbar-logo />
       <deeds-theme-button
         css-class="ms-4" 
