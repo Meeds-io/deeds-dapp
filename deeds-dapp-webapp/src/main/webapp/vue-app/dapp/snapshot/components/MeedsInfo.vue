@@ -18,8 +18,8 @@
 -->
 <template>
   <v-card class="mt-8" flat>
-    <v-card-title class="py-0 justify-center flex-nowrap">
-      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('meedToken') }}</span>
+    <v-card-title class="py-0 px-0 justify-center flex-nowrap">
+      <span class="col-12 col-lg-8 col-md-7 ps-0 ms-1 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('meedToken') }}</span>
       <v-spacer />
       <v-img 
         :src="`${parentLocation}/static/images/token_banner.png`"
@@ -29,7 +29,7 @@
         contain
         eager />
     </v-card-title>
-    <v-row class="mt-14">
+    <v-row class="px-5 mt-14">
       <v-col
         cols="12"
         md="5"
@@ -59,7 +59,7 @@
         <deeds-total-value-locked :metrics="metrics" />
       </v-col>
     </v-row>
-    <v-row class="pb-0 pt-6">
+    <v-row class="px-5 pb-0 pt-6">
       <v-col
         cols="12"
         md="5"
