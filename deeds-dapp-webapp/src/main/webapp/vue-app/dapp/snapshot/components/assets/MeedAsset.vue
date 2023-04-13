@@ -35,7 +35,7 @@
     </template>
     <template #col2>
       <v-img
-        :src="`${parentLocation}/static/images/ethereum.png`"
+        :src="`${parentLocation}/static/images/ethereum.webp`"
         width="15px"
         height="21px" />
     </template>

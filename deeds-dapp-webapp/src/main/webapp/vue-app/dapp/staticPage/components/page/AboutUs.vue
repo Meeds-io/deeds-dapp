@@ -23,7 +23,7 @@
         <span class="col-12 col-lg-8 col-md-7 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('aboutUs.title') }}</span>
         <v-spacer />
         <v-img 
-          :src="`${parentLocation}/static/images/about_us.png`"
+          :src="`${parentLocation}/static/images/about_us_banner.webp`"
           max-width="211px"
           class="me-0 me-sm-16 hidden-sm-and-down"
           alt=""
@@ -44,7 +44,7 @@
         <div class="ps-0 py-8 text-h5 grey--text font-weight-light" v-html="$t('governance.descriptionPart1', {0: '<br><br>'})"></div>
       </div>
       <v-img 
-        :src="`${parentLocation}/static/images/meeds-about-us-banner.svg`"
+        :src="`${parentLocation}/static/images/governance_image.svg`"
         width="486px"
         class="hidden-md-and-down"
         alt=""
@@ -78,7 +78,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/MEED-circle.png`"
+                :src="`${parentLocation}/static/images/meed_circle.webp`"
                 class="mt-3 mb-4"
                 alt=""
                 width="75px"
@@ -115,7 +115,7 @@
           <v-list-item class="ps-0">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/meeds_software.png`"
+                :src="`${parentLocation}/static/images/meeds_software.webp`"
                 alt=""
                 width="75px"
                 contain
@@ -148,10 +148,10 @@
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0">
+          <v-list-item class="ps-0 my-5">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/deed.png`"
+                :src="`${parentLocation}/static/images/deed_icon.webp`"
                 alt=""
                 width="75px"
                 contain
@@ -194,7 +194,7 @@
             alt="" /> 
           
           <v-img
-            :src="`${parentLocation}/static/images/logo-m-grand.svg`"
+            :src="`${parentLocation}/static/images/logo_m.webp`"
             alt=""
             width="470px"
             class="logo-m hidden-md-and-down mt-n3" />
@@ -237,7 +237,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-8">
                 <v-img
-                  :src="`${parentLocation}/static/images/logo-exo.png`"
+                  :src="`${parentLocation}/static/images/logo_exo.webp`"
                   alt=""
                   width="112px"
                   contain
@@ -269,7 +269,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-8">
                 <v-img
-                  :src="`${parentLocation}/static/images/logo-Bonitasoft.png`"
+                  :src="`${parentLocation}/static/images/logo_bonitasoft.webp`"
                   alt=""
                   width="225px"
                   contain
@@ -301,7 +301,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-5">
                 <v-img
-                  :src="`${parentLocation}/static/images/Newlogic-Impact-Lab-logo.png`"
+                  :src="`${parentLocation}/static/images/logo_newlogic.webp`"
                   alt=""
                   width="156px"
                   contain

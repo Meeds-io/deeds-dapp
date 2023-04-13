@@ -23,7 +23,7 @@
         <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
         <v-spacer />
         <v-img 
-          :src="`${parentLocation}/static/images/tour_banner.png`"
+          :src="`${parentLocation}/static/images/tour_banner.webp`"
           max-width="360px"
           class="hidden-sm-and-down"
           alt=""
