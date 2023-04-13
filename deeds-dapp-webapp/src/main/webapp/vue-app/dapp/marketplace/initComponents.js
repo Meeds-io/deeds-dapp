@@ -17,8 +17,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import DeedsMarketplace from './components/Marketplace.vue';
-import DeedsMarketplaceIntroduction from './components/DeedsMarketplaceIntroduction.vue';
-import DeedsMarketplaceIntroductionItem from './components/DeedsMarketplaceIntroductionItem.vue';
 import DeedsMarketplaceDeeds from './components/DeedsMarketplaceDeeds.vue';
 import DeedsMarketplaceDeedsEmpty from './components/DeedsMarketplaceDeedsEmpty.vue';
 import DeedsMarketplaceDeedsList from './components/DeedsMarketplaceDeedsList.vue';
@@ -34,8 +32,6 @@ import DeedsMarketplaceOfferCardDetailsFooter from './components/MarketplaceOffe
 
 const components = {
   'deeds-marketplace': DeedsMarketplace,
-  'deeds-marketplace-introduction': DeedsMarketplaceIntroduction,
-  'deeds-marketplace-introduction-item': DeedsMarketplaceIntroductionItem,
   'deeds-marketplace-deeds': DeedsMarketplaceDeeds,
   'deeds-marketplace-deeds-empty': DeedsMarketplaceDeedsEmpty,
   'deeds-marketplace-deeds-list': DeedsMarketplaceDeedsList,
