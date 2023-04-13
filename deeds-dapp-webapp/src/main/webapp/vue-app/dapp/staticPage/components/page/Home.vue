@@ -38,8 +38,8 @@
       </v-btn>
     </div>
     <v-img
-      :src="`${parentLocation}/static/images/hero_image.png`"
-      class="mb-16 mb-md-0 mx-auto"
+      :src="`${parentLocation}/static/images/hero_image.webp`"
+      class="mb-16 py-5 mb-md-0 mx-auto"
       width="875px"
       alt=""
       contain
@@ -49,7 +49,7 @@
         <div class="col-12 col-md-6 my-auto">
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/onboard.jpg`"
+              :src="`${parentLocation}/static/images/onboard.webp`"
               max-width="200px"
               alt=""
               class="onboard-image"
@@ -72,7 +72,7 @@
           </div>
         </div>
         <v-img
-          :src="`${parentLocation}/static/images/onboard_image.png`"
+          :src="`${parentLocation}/static/images/onboard_image.webp`"
           class="col-12 col-md-6 my-10"
           alt=""
           contain
@@ -80,7 +80,7 @@
       </div>
       <div class="d-flex flex-column-reverse flex-md-row py-15">
         <v-img
-          :src="`${parentLocation}/static/images/organize_image.png`"
+          :src="`${parentLocation}/static/images/organize_image.webp`"
           class="col-12 col-md-6 my-10"
           alt=""
           contain
@@ -88,7 +88,7 @@
         <div class="col-12 col-md-6 ps-md-14 my-auto">
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/organize.png`"
+              :src="`${parentLocation}/static/images/organize.webp`"
               max-width="200px"
               class="organize-image"
               alt=""
@@ -116,7 +116,7 @@
           <div class="d-flex">
             <div class="position-absolute">
               <v-img
-                :src="`${parentLocation}/static/images/reward.png`"
+                :src="`${parentLocation}/static/images/reward.webp`"
                 max-width="200px"
                 class="reward-image"
                 alt=""
@@ -140,7 +140,7 @@
           </div>
         </div>
         <v-img 
-          :src="`${parentLocation}/static/images/reward_image.png`"
+          :src="`${parentLocation}/static/images/reward_image.webp`"
           class="col-12 col-md-6 py-10"
           alt=""
           contain
@@ -168,7 +168,7 @@
         <div class="ps-3 ps-md-0 my-2 col-12 col-md-4">
           <div class="ps-0 d-flex justify-md-center justify-start my-6">
             <v-img 
-              :src="`${parentLocation}/static/images/MEED-circle.png`" 
+              :src="`${parentLocation}/static/images/meed_circle.webp`" 
               width="100px"
               max-width="100px"
               max-height="100px"
@@ -185,7 +185,7 @@
         <div class="my-2 col-12 col-md-4">
           <div class="ps-0 d-flex justify-md-center justify-start my-6">
             <v-img
-              :src="`${parentLocation}/static/images/hand-holding-heart.png`" 
+              :src="`${parentLocation}/static/images/hand_holding_heart.webp`" 
               height="100px"
               max-height="100px"
               max-width="100px"
@@ -202,7 +202,7 @@
         <div class="my-2 col-12 col-md-4">
           <div class="ps-0 d-flex justify-md-center justify-start my-6">
             <v-img
-              :src="`${parentLocation}/static/images/city.png`" 
+              :src="`${parentLocation}/static/images/city.webp`" 
               height="100px"
               max-height="100px"
               max-width="100px"
@@ -243,7 +243,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="d-flex my-8">
                 <v-img
-                  :src="`${parentLocation}/static/images/leader.png`"
+                  :src="`${parentLocation}/static/images/leader.webp`"
                   height="81px"
                   max-height="81px"
                   max-width="135px"
@@ -280,7 +280,7 @@
             <div class="my-4 my-md-0 fill-height">
               <div class="d-flex my-8">
                 <v-img
-                  :src="`${parentLocation}/static/images/contributor.png`"
+                  :src="`${parentLocation}/static/images/contributor.webp`"
                   height="81px"
                   max-height="81px"
                   max-width="135px"

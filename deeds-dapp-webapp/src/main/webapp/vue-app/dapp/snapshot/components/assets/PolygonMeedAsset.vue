@@ -35,7 +35,7 @@
     </template>
     <template #col2>
       <v-img
-        :src="`${parentLocation}/static/images/polygon-network.png`"
+        :src="`${parentLocation}/static/images/polygon_network.webp`"
         width="23px"
         height="21px" />
     </template>

@@ -25,7 +25,7 @@
       </div>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
-        :src="`${parentLocation}/static/images/tenants_banner.png`"
+        :src="`${parentLocation}/static/images/tenants_banner.webp`"
         max-width="326px"
         class="hidden-sm-and-down"
         alt=""
