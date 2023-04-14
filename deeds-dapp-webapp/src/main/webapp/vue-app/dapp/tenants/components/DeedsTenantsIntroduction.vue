@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <v-card-title class="py-0 justify-center flex-nowrap">
+    <v-card-title class="pa-0 justify-center flex-nowrap">
       <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitle') }}</span>
       <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
-      <v-spacer />
+      <v-spacer class="hidden-sm-and-down" />
       <v-img 
         :src="`${parentLocation}/static/images/tenants_banner.png`"
         max-width="326px"
@@ -39,8 +39,8 @@
         :dark="!collapsed"
         outlined
         @click="changeCollapsedTextVisibility">
-        <span v-if="collapsed">{{ $t('dapp.tenants.seeMore') }}</span>
-        <span v-else>{{ $t('dapp.tenants.seeLess') }}</span>
+        <span v-if="collapsed">{{ $t('dapp.seeMore') }}</span>
+        <span v-else>{{ $t('dapp.seeLess') }}</span>
       </v-btn>
     </div>
     <div v-show="!collapsed || !hasTenants">
