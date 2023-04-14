@@ -23,7 +23,7 @@
         <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('whitepaper.title') }}</span>
         <v-spacer />
         <v-img 
-          :src="`${parentLocation}/static/images/whitepaper_banner.png`"
+          :src="`${parentLocation}/static/images/whitepaper_banner.webp`"
           max-width="350px"
           class="hidden-sm-and-down"
           alt=""
@@ -40,7 +40,7 @@
             class="half-opacity"
             alt="" /> 
           <v-img
-            :src="`${parentLocation}/static/images/logo-m-grand.svg`"
+            :src="`${parentLocation}/static/images/logo_m.webp`"
             alt=""
             width="450px"
             class="logo-m hidden-md-and-down mt-7" />
@@ -78,11 +78,11 @@
         flat />
       <v-card class="d-block d-md-flex" flat>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/MEED-circle.png`"
-                class="mt-3 mb-4"
+                :src="`${parentLocation}/static/images/meed_circle.webp`"
+                class="mt-3 mb-4 pt-2px"
                 alt=""
                 width="75px"
                 contain
@@ -102,10 +102,11 @@
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/deed.png`"
+                :src="`${parentLocation}/static/images/deed_icon.webp`"
+                class="my-5"
                 alt=""
                 width="75px"
                 contain
@@ -125,10 +126,10 @@
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
-                :src="`${parentLocation}/static/images/xeed_icon.png`"
+                :src="`${parentLocation}/static/images/xeed_icon.webp`"
                 alt=""
                 width="75px"
                 contain
@@ -196,9 +197,9 @@
             <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
             <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
           </div>
-          <div class="position-absolute">
+          <div class="position-absolute d-none">
             <v-img
-              :src="`${parentLocation}/static/images/invest_image.png`"
+              :src="`${parentLocation}/static/images/invest_image.webp`"
               max-width="288px"
               class="invest-image"
               alt=""
@@ -210,14 +211,14 @@
       <div class="d-flex justify-center justify-md-start">
         <v-img 
           v-if="!pageState || pageState === 'work'"
-          :src="`${parentLocation}/static/images/work-investment.svg`"
+          :src="`${parentLocation}/static/images/work_investment.webp`"
           width="564px"
           alt=""
           contain
           eager />
         <v-img 
           v-else
-          :src="`${parentLocation}/static/images/Capital-Investement.svg`"
+          :src="`${parentLocation}/static/images/capital_investment.webp`"
           width="564px"
           alt=""
           contain

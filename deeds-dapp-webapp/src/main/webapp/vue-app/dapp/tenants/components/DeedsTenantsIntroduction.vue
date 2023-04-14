@@ -23,7 +23,7 @@
       <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
-        :src="`${parentLocation}/static/images/tenants_banner.png`"
+        :src="`${parentLocation}/static/images/tenants_banner.webp`"
         max-width="326px"
         class="hidden-sm-and-down"
         alt=""
