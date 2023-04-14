@@ -78,11 +78,11 @@
         flat />
       <v-card class="d-block d-md-flex" flat>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
                 :src="`${parentLocation}/static/images/meed_circle.webp`"
-                class="mt-3 mb-4"
+                class="mt-3 mb-4 pt-2px"
                 alt=""
                 width="75px"
                 contain
@@ -102,10 +102,11 @@
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
                 :src="`${parentLocation}/static/images/deed_icon.webp`"
+                class="my-5"
                 alt=""
                 width="75px"
                 contain
@@ -125,7 +126,7 @@
           </v-list-item>
         </v-list>
         <v-list class="ps-0 col-12 col-md-4">
-          <v-list-item class="ps-0 pb-7">
+          <v-list-item class="ps-0 pb-2">
             <v-list-item-icon>
               <v-img
                 :src="`${parentLocation}/static/images/xeed_icon.webp`"
