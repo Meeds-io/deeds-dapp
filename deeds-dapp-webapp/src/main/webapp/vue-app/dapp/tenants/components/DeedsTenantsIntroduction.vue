@@ -46,8 +46,12 @@
     <div v-show="!collapsed || !hasTenants">
       <div class="d-flex flex-column flex-md-row pb-6 my-16">
         <div class="d-flex flex-column my-auto me-7">
-          <span class="display-1 dark-grey-color font-weight-bold">{{ $t('dapp.tenants.rentFromMarketplace.title') }}</span>
-          <span class="mt-10 mb-5 mb-md-0 text-h5 dark-grey-color font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
+          <span
+            :class="textColor"
+            class="display-1 font-weight-bold">{{ $t('dapp.tenants.rentFromMarketplace.title') }}</span>
+          <span 
+            :class="textColor"
+            class="mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
           <div v-if="!hasTenants" class="mb-7">
             <v-btn
               :href="`${parentLocation}/marketplace`"
@@ -80,8 +84,12 @@
           <source :src="`${beTenantVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 dark-grey-color font-weight-bold">{{ $t('dapp.tenants.manageYourHub.title') }}</span>
-          <span class="text-h5 dark-grey-color font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
+          <span
+            :class="textColor"
+            class="display-1 font-weight-bold">{{ $t('dapp.tenants.manageYourHub.title') }}</span>
+          <span 
+            :class="textColor"
+            class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
           <div class="mb-7">
             <v-btn
               :href="`${parentLocation}/tour`"
@@ -107,6 +115,10 @@ export default {
     parentLocation: state => state.parentLocation,
     browseOffersVideoLink: state => state.browseOffersVideoLink,
     beTenantVideoLink: state => state.beTenantVideoLink,
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'dark-grey-color';
+    },
   }),
   created() {
     this.$root.$on('deed-leases-loaded', this.computeLeasesLength);

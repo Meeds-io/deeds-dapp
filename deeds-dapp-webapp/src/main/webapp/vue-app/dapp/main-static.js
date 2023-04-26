@@ -22,7 +22,9 @@ Vue.use(Vuex);
 Vue.use(Vuetify);
 
 const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
-const dark = false;
+const themePreference = window.localStorage.getItem('meeds-preferred-theme-colors') || 'system';
+const systemThemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)')?.matches || false;
+const dark = (systemThemeDark && themePreference === 'system') || themePreference === 'dark';
 const vuetify = new Vuetify({
   icons: {
     iconfont: 'fa',
@@ -84,9 +86,11 @@ const store = new Vuex.Store({
     language,
     isMobile: false,
     staticPage: true,
-    whiteThemeColor: 'white',
-    blackThemeColor: 'black',
+    systemThemeDark,
+    themePreference,
     dark,
+    blackThemeColor: dark && 'white' || 'black',
+    whiteThemeColor: dark && 'dark-color' || 'white',
   },
   mutations: {
     setPageState(state, value) {
@@ -100,6 +104,23 @@ const store = new Vuex.Store({
       i18n.locale = lang.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
       initializeVueApp(lang);
+    },
+    setDark(state, value) {
+      state.dark = value;
+      vuetify.framework.theme.dark = state.dark;
+      state.blackThemeColor = state.dark && 'white' || 'black';
+      state.whiteThemeColor = state.dark && 'dark-color' || 'white';
+    },
+    setThemePreference(state, value) {
+      const isSystemTheme = value === 'system';
+      const isDark = isSystemTheme ? systemThemeDark : value === 'dark';
+      this.commit('setDark', isDark);
+      state.themePreference = value;
+      if (isSystemTheme) {
+        window.localStorage.removeItem('meeds-preferred-theme-colors');
+      } else {
+        window.localStorage.setItem('meeds-preferred-theme-colors', value);
+      }
     },
   }
 });
