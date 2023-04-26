@@ -165,7 +165,6 @@
             <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
-        <deeds-theme-button />
       </v-list>
     </v-bottom-sheet>
   </div>
