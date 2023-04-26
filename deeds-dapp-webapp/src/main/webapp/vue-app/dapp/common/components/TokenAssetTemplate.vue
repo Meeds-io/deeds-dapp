@@ -41,7 +41,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content v-if="extraCols" class="py-0 overflow-visible mb-auto">
-          <v-list-item-title class="token-asset-title d-flex justify-center mb-0 headline dark-grey-color font-weight-normal overflow-visible">
+          <v-list-item-title :class="textColor" class="token-asset-title d-flex justify-center mb-0 headline font-weight-normal overflow-visible">
             <div class="my-auto pt-2px">
               <slot name="col5"></slot>
             </div>
@@ -53,7 +53,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content class="py-0 overflow-visible mb-auto">
-          <v-list-item-title class="token-asset-title d-flex mb-0 height-auto headline dark-grey-color font-weight-normal overflow-visible">
+          <v-list-item-title :class="textColor" class="token-asset-title d-flex mb-0 height-auto headline font-weight-normal overflow-visible">
             <div class="my-auto ms-auto pt-2px">
               <slot name="col3"></slot>
             </div>
@@ -76,5 +76,11 @@ export default {
       default: true,
     },
   },
+  computed: Vuex.mapState({
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'dark-grey-color';
+    },
+  }),
 };
 </script>
