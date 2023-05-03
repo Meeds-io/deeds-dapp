@@ -33,7 +33,7 @@
         </v-card>
       </v-list-item-action-text>
       <v-list-item-content class="py-4 pe-0 ps-4">
-        <v-card-text class="text-color pa-0">
+        <v-card-text :class="textColor" class="pa-0">
           {{ offer.description }}
         </v-card-text>
       </v-list-item-content>
@@ -62,10 +62,10 @@
           </div>
           <v-row class="mx-0 mb-0 mt-0 mt-sm-4">
             <v-col cols="auto" class="ps-0 hidden-xs-only">
-              <v-card-text class="text-color pa-0 d-block">
+              <v-card-text :class="textColor" class="pa-0 d-block">
                 {{ $t('deedRentingPeriodicRentPrice') }}
               </v-card-text>
-              <v-card-text class="text-color pa-0 d-block mt-4">
+              <v-card-text :class="textColor" class="pa-0 d-block mt-4">
                 {{ $t('deedRentingRewardDistribution') }}
               </v-card-text>
             </v-col>
@@ -157,6 +157,10 @@ export default {
     },
   },
   computed: Vuex.mapState({
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'text-color';
+    },
     city() {
       return this.offer?.city?.toUpperCase() || '';
     },

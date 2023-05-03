@@ -26,7 +26,7 @@
     <v-row v-if="hasLeases" class="pa-0 my-0">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
-          <div class="display-1 dark-grey-color font-weight-bold ps-0 py-0">{{ $t('dapp.tenants.yourTenants') }}</div>
+          <div :class="textColor" class="display-1 font-weight-bold ps-0 py-0">{{ $t('dapp.tenants.yourTenants') }}</div>
         </div>
       </v-col>
       <v-col
@@ -65,6 +65,10 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     networkId: state => state.networkId,
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'dark-grey-color';
+    },
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },

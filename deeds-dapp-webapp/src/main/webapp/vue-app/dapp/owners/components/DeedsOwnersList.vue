@@ -23,7 +23,7 @@
     <v-row v-if="hasLeases || hasNfts" class="pa-0 my-0">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
-          <div class="display-1 dark-grey-color font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
+          <div :class="textColor" class="display-1 font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
         </div>
       </v-col>
       <v-col
@@ -66,6 +66,10 @@ export default {
     selectedStandaloneDeedCardName: state => state.selectedStandaloneDeedCardName,
     authenticated: state => state.authenticated,
     deedLoading: state => state.deedLoading,
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'dark-grey-color';
+    },
     ownedLeases() {
       return this.leases && this.leases.filter(lease => this.ownedNfts.findIndex(nft => nft.id === lease.nftId) >= 0);
     },
