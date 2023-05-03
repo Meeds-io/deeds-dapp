@@ -79,6 +79,9 @@ export default {
         },
         legend: {
           orient: 'vertical',
+          textStyle: {
+            color: 'gray',
+          },
         },
         series: [{
           type: 'pie',
@@ -106,7 +109,7 @@ export default {
           textAlign: 'center',
           textStyle: {
             fontStyle: 'normal',
-            color: '#4d5466',
+            color: 'gray',
             fontWeight: 'normal',
             fontSize: '16',
             textTransform: 'capitalize',
