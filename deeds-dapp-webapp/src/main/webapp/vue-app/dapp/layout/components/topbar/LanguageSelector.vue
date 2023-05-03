@@ -27,7 +27,7 @@
         width="98px"
         v-bind="attrs"
         v-on="on">
-        <div class="text-sub-title">{{ selectedLanguageLabel }}</div>
+        <div :class="textColor">{{ selectedLanguageLabel }}</div>
         <v-icon size="12" class="mx-2 mt-n1px">fa fa-caret-down</v-icon>
       </v-btn>
     </template>
@@ -49,6 +49,10 @@ export default {
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     selectedLanguage: state => state.language,
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'text-sub-title';
+    },
     selectedLanguageLabel() {
       return this.isMobile ? this.selectedLanguage : this.$t(`language.${this.selectedLanguage}`);
     },

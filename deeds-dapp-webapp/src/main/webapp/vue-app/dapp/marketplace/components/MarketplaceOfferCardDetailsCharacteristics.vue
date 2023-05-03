@@ -39,22 +39,22 @@
         </v-list-item-title>
       </v-list-item>
       <v-list-item class="min-height-auto" dense>
-        <v-list-item-subtitle class="text-color">
+        <v-list-item-subtitle :class="textColor">
           {{ $t('cityName', {0: city}) }}
         </v-list-item-subtitle>
       </v-list-item>
       <v-list-item class="min-height-auto" dense>
-        <v-list-item-subtitle class="text-color">
+        <v-list-item-subtitle :class="textColor">
           {{ $t('deedCharacteristicsMaxUsers') }}: {{ cardMaxUsers }}
         </v-list-item-subtitle>
       </v-list-item>
       <v-list-item class="min-height-auto" dense>
-        <v-list-item-subtitle class="text-color">
+        <v-list-item-subtitle :class="textColor">
           {{ $t('deedCharacteristicsPowerMinting') }}: {{ cardMintingPower }}
         </v-list-item-subtitle>
       </v-list-item>
       <v-list-item class="min-height-auto" dense>
-        <v-list-item-subtitle class="text-color">
+        <v-list-item-subtitle :class="textColor">
           {{ $t('deedCharacteristicsCityVotingRights') }}: {{ cityVotingRights }}
         </v-list-item-subtitle>
       </v-list-item>
@@ -79,6 +79,10 @@ export default {
   },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    dark: state => state.dark,
+    textColor() {
+      return this.dark && 'white--text' || 'text-color';
+    },
     nftId() {
       return this.offer?.nftId;
     },

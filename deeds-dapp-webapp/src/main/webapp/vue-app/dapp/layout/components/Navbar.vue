@@ -275,9 +275,6 @@ export default {
     activeMenuColor() {
       return this.dark && 'grey darken-4' || 'grey lighten-2';
     },
-    isTestNetwork() {
-      return this.networkId !== 1 && this.validNetwork;
-    },
   }),
   watch: {
     isMobile() {

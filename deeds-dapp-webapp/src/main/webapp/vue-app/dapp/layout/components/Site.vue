@@ -37,31 +37,22 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
-    isTestNetwork() {
-      return this.networkId !== 1 && this.validNetwork;
-    },
   }),
   watch: {
     isMobile() {
       this.refreshMobileValue();
     },
-    isTestNetwork: {
-      immediate: true,
-      handler: function() {
-        this.refreshTheme();
-      },
-    },
   },
   created() {
     this.refreshMobileValue();
+    this.refreshTheme();
   },
   methods: {
     refreshMobileValue() {
       this.$store.commit('setMobile', this.isMobile);
     },
     refreshTheme() {
-      const isDark = this.isTestNetwork
-        && (this.systemThemeDark || this.themePreference === 'dark');
+      const isDark =  ((this.systemThemeDark && this.themePreference === 'system') || this.themePreference === 'dark');
       if (isDark !== this.dark) {
         this.$store.commit('setDark', isDark);
       }
