@@ -65,6 +65,12 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
+    if (servletPath.endsWith("/")) {
+      servletPath = servletPath.substring(0, servletPath.length() - 1);
+      response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+      response.sendRedirect("/deeds-dapp"+ servletPath);
+      return;
+    }
     if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
     } else {
