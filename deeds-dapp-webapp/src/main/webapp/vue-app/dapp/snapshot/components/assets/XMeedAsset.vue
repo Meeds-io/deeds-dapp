@@ -20,7 +20,7 @@
   <deeds-token-asset-template>
     <template #image>
       <v-img
-        :src="`${parentLocation}/static/images/xMeedsToken.png`"
+        :src="`${parentLocation}/static/images/xMeedsToken.webp`"
         max-height="50px"
         max-width="50px"
         contain
