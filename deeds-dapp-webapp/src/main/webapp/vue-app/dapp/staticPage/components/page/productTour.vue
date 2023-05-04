@@ -32,7 +32,7 @@
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column pt-4 pb-16 my-16">
-      <div class="ps-0 display-1 grey--text align-center font-weight-light">{{ $t('productTour.description') }}</div>
+      <div :class="textColor" class="ps-0 display-1 align-center font-weight-light">{{ $t('productTour.description') }}</div>
       <video
         class="mt-11 mt-md-13 ms-0 ms-sm-auto me-0 me-sm-auto"
         height="360px"
@@ -68,7 +68,7 @@
       <div class="d-flex flex-column flex-md-row pb-16 my-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="display-1 font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
-          <span class="mt-10 mb-5 mb-md-0 text-h5 grey--text font-weight-light">{{ $t('contributionPrograms.description') }}</span>
+          <span :class="textColor" class="mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('contributionPrograms.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/contribution_icon.png`"
@@ -101,7 +101,7 @@
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="display-1 font-weight-bold">{{ $t('rewards.title') }}</span>
-          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
+          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/reward_icon.png`"
@@ -116,7 +116,7 @@
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="display-1 font-weight-bold">{{ $t('overview.title') }}</span>
-          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
+          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/overview_icon.png`"
@@ -149,7 +149,7 @@
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="display-1 font-weight-bold">{{ $t('perks.title') }}</span>
-          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
+          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/perks_icon.png`"
@@ -164,7 +164,7 @@
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
           <span class="display-1 font-weight-bold">{{ $t('teamwork.title') }}</span>
-          <span class="text-h5 grey--text font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
+          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/teamwork_icon.png`"
@@ -215,7 +215,7 @@
                   {{ $t('kudos') }}
                 </span>
               </div>
-              <span class="text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="text-h5 font-weight-light">
                 {{ $t('kudos.description') }}
               </span>
             </div>
@@ -235,7 +235,7 @@
                   {{ $t('badges') }}
                 </span>
               </div>
-              <span class="text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="text-h5 font-weight-light">
                 {{ $t('badges.description') }}
               </span>
             </div>
@@ -260,7 +260,7 @@
                   {{ $t('wallet') }}
                 </span>
               </div>
-              <span class="text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="text-h5 font-weight-light">
                 {{ $t('wallet.description') }}
               </span>
             </div>
@@ -281,15 +281,19 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    isSmallScreen() {
-      return this.$vuetify.breakpoint.mdAndDown;
-    },
     introductiveVideoLink: state => state.introductiveVideoLink,
     contributionProgramsVideoLink: state => state.contributionProgramsVideoLink,
     rewardsVideoLink: state => state.rewardsVideoLink,
     overviewVideoLink: state => state.overviewVideoLink,
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
+    dark: state => state.dark,
+    isSmallScreen() {
+      return this.$vuetify.breakpoint.mdAndDown;
+    },
+    textColor() {
+      return this.dark && 'white--text' || 'grey--text';
+    },
   })
 };
 </script>

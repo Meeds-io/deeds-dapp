@@ -41,7 +41,10 @@
           width="140px"
           color="primary no-border-radius"
           flat />
-        <div class="ps-0 py-8 text-h5 grey--text font-weight-light" v-html="$t('governance.descriptionPart1', {0: '<br><br>'})"></div>
+        <div 
+          :class="textColor" 
+          class="ps-0 py-8 text-h5 font-weight-light" 
+          v-html="$t('governance.descriptionPart1', {0: '<br><br>'})"></div>
       </div>
       <v-img 
         :src="`${parentLocation}/static/images/governance_image.svg`"
@@ -93,7 +96,7 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="pb-4 text-h5 font-weight-light">
                 {{ $t('meedToken.description') }}
               </span>
             </v-list-item-content>
@@ -129,7 +132,7 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="pb-4 text-h5 font-weight-light">
                 {{ $t('meedSoftware.description') }}
               </span>
             </v-list-item-content>
@@ -165,7 +168,7 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">
+              <span :class="textColor" class="pb-4 text-h5 font-weight-light">
                 {{ $t('deedsServices.description') }}
               </span>
             </v-list-item-content>
@@ -190,7 +193,7 @@
         <div class="d-flex position-absolute">
           <v-img
             :src="`${parentLocation}/static/images/bulle_grey_background.png`"
-            class="half-opacity"
+            :class="opacityClass"
             alt="" /> 
           
           <v-img
@@ -206,19 +209,19 @@
           <div class="px-4 pb-2 pt-7 display-1 font-weight-light">
             {{ $t('duringTheMintingPeriod') }}
           </div>
-          <div class="grey--text text-h6 font-weight-light pa-4">
+          <div :class="textColor" class="text-h6 font-weight-light pa-4">
             {{ $t('duringTheMintingPeriod.descriptionPart1') }}
           </div>
-          <div class="grey--text text-h6 font-weight-light pa-4">
+          <div :class="textColor" class="text-h6 font-weight-light pa-4">
             {{ $t('duringTheMintingPeriod.descriptionPart2') }}
           </div>
           <div class="px-4 pb-2 pt-3 display-1 font-weight-light">
             {{ $t('afterTheMintingPeriod') }}
           </div>
-          <div class="grey--text text-h6 font-weight-light pa-4">
+          <div :class="textColor" class="text-h6 font-weight-light pa-4">
             {{ $t('afterTheMintingPeriod.descriptionPart1') }}
           </div>
-          <div class="grey--text text-h6 font-weight-light pa-4">
+          <div :class="textColor" class="ext text-h6 font-weight-light pa-4">
             {{ $t('afterTheMintingPeriod.descriptionPart2') }}
           </div>
         </div>
@@ -244,7 +247,7 @@
                   eager />
               </div>
               <div class="py-4">
-                <span class="pb-4 grey--text text-h6 font-weight-light">
+                <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('exoPlatform.description') }}
                 </span>
               </div>
@@ -276,7 +279,7 @@
                   eager />
               </div>
               <div class="py-4">
-                <span class="pb-4 grey--text text-h6 font-weight-light">
+                <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('bonitaSoft.description') }}
                 </span>
               </div>
@@ -308,7 +311,7 @@
                   eager />
               </div>
               <div class="py-4">
-                <span class="pb-4 grey--text text-h6 font-weight-light">
+                <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('newlogic.description') }}
                 </span>
               </div>
@@ -335,6 +338,13 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    dark: state => state.dark,
+    opacityClass() {
+      return this.dark && 'low-opacity' || 'half-opacity';
+    },
+    textColor() {
+      return this.dark && 'white--text' || 'grey--text';
+    },
   }),
 };
 </script>

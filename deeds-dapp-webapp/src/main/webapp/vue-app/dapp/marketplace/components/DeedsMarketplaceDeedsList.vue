@@ -32,7 +32,7 @@
       </div>
     </v-scale-transition>
     <div v-show="noFilter">
-      <v-card-title :class="textColor" class="ps-0">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
+      <v-card-title class="dark-grey--text ps-0">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
     </div>
     <v-progress-linear
       v-if="loading"
@@ -96,15 +96,11 @@ export default {
   },
   computed: Vuex.mapState({
     selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
-    dark: state => state.dark,
     hasMore() {
       return this.totalSize > this.offers?.length;
     },
     noFilter() {
       return this.selectedOfferTypes?.length === 0 && this.selectedCardTypes?.length === 0;
-    },
-    textColor() {
-      return this.dark && 'white--text' || 'dark-grey-color';
     },
   }),
 };
