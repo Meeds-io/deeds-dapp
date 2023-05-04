@@ -21,13 +21,11 @@
     <v-col class="pa-0 mt-6 mb-12">
       <div class="d-flex flex-column">
         <span 
-          :class="textColor"
-          class="headline dark-grey-color" 
+          class="headline dark-grey--text" 
           v-html="$t(descriptionPart1, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})">
         </span>
         <span 
-          :class="textColor"
-          class="headline dark-grey-color mt-4" 
+          class="headline dark-grey--text mt-4" 
           v-html="$t(descriptionPart2, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})">
         </span>
       </div>
@@ -62,12 +60,6 @@ export default {
       default: null,
     },
   },
-  computed: Vuex.mapState({
-    dark: state => state.dark,
-    textColor() {
-      return this.dark && 'white--text' || 'dark-grey-color';
-    },
-  }),
   mounted() {
     const links = document.querySelectorAll(`.${this.id}`);
     if (links.length) {
