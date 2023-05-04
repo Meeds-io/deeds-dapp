@@ -65,15 +65,21 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
-    if (servletPath.endsWith("/")) {
-      servletPath = servletPath.substring(0, servletPath.length() - 1);
-      response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-      response.sendRedirect("/deeds-dapp"+ servletPath);
-      return;
-    }
     if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
     } else {
+      if (servletPath.endsWith("/")) {
+        String servletPathCanonical = servletPath.substring(0, servletPath.length() - 1);
+        if (DAPP_PATHS.contains(servletPathCanonical) || STATIC_PATHS.contains(servletPathCanonical)) {
+          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+          String requestURL = request.getRequestURL().toString();
+          if (StringUtils.isNotBlank(request.getHeader("x-forwarded-host"))) {
+            requestURL = requestURL.substring(0, requestURL.length() - 1).replace(request.getContextPath(), "");
+          }
+          response.setHeader("Location", requestURL);
+          return;
+        }
+      }
       String eTagHeader = request.getHeader("If-None-Match");
       String eTagValue = getETagValue(request);
       if (StringUtils.equals(eTagHeader, eTagValue)) {
