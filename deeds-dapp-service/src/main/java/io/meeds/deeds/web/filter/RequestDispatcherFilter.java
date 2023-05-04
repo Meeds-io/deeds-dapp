@@ -71,12 +71,12 @@ public class RequestDispatcherFilter extends HttpFilter {
       if (servletPath.endsWith("/")) {
         String servletPathCanonical = servletPath.substring(0, servletPath.length() - 1);
         if (DAPP_PATHS.contains(servletPathCanonical) || STATIC_PATHS.contains(servletPathCanonical)) {
-          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           String requestURL = request.getRequestURL().toString();
           if (StringUtils.isNotBlank(request.getHeader("x-forwarded-host"))) {
             requestURL = requestURL.substring(0, requestURL.length() - 1).replace(request.getContextPath(), "");
           }
           response.setHeader("Location", requestURL);
+          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           return;
         }
       }
