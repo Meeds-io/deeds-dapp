@@ -74,6 +74,8 @@ public class RequestDispatcherFilter extends HttpFilter {
           String requestURL = request.getRequestURL().toString();
           if (StringUtils.isNotBlank(request.getHeader("x-forwarded-host"))) {
             requestURL = requestURL.substring(0, requestURL.length() - 1).replace(request.getContextPath(), "");
+          } else {
+            requestURL = requestURL.substring(0, requestURL.length() - 1);
           }
           response.setHeader("Location", requestURL);
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
