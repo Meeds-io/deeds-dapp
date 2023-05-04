@@ -165,7 +165,6 @@
             <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
-        <deeds-theme-button />
       </v-list>
     </v-bottom-sheet>
   </div>
@@ -275,9 +274,6 @@ export default {
     },
     activeMenuColor() {
       return this.dark && 'grey darken-4' || 'grey lighten-2';
-    },
-    isTestNetwork() {
-      return this.networkId !== 1 && this.validNetwork;
     },
   }),
   watch: {
