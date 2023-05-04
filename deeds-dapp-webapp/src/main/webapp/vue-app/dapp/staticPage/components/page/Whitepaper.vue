@@ -37,7 +37,7 @@
           <v-img
             :src="`${parentLocation}/static/images/bulle_grey_background.png`"
             :height="isMobile && '100%' || 'auto'"
-            class="half-opacity"
+            :class="opacityClass"
             alt="" /> 
           <v-img
             :src="`${parentLocation}/static/images/logo_m.webp`"
@@ -46,11 +46,31 @@
             class="logo-m hidden-md-and-down mt-7" />
         </div>
         <div class="position-relative">
-          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart1') }}</v-card-subtitle>
-          <v-card-subtitle class="text-h5 grey--text font-weight-light py-7">{{ $t('whitepaper.descriptionPart2') }}</v-card-subtitle>
-          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart3') }}</v-card-subtitle>
-          <v-card-subtitle class="text-h5 grey--text font-weight-light py-7">{{ $t('whitepaper.descriptionPart4') }}</v-card-subtitle>
-          <v-card-subtitle class="text-h5 grey--text font-weight-light py-2">{{ $t('whitepaper.descriptionPart5') }}</v-card-subtitle>
+          <v-card-subtitle 
+            :class="textColor"
+            class="text-h5 font-weight-light py-2">
+            {{ $t('whitepaper.descriptionPart1') }}
+          </v-card-subtitle>
+          <v-card-subtitle 
+            :class="textColor"
+            class="text-h5 font-weight-light py-7">
+            {{ $t('whitepaper.descriptionPart2') }}
+          </v-card-subtitle>
+          <v-card-subtitle 
+            :class="textColor"
+            class="text-h5 font-weight-light py-2">
+            {{ $t('whitepaper.descriptionPart3') }}
+          </v-card-subtitle>
+          <v-card-subtitle 
+            :class="textColor"
+            class="text-h5 font-weight-light py-7">
+            {{ $t('whitepaper.descriptionPart4') }}
+          </v-card-subtitle>
+          <v-card-subtitle 
+            :class="textColor"
+            class="text-h5 font-weight-light py-2">
+            {{ $t('whitepaper.descriptionPart5') }}
+          </v-card-subtitle>
           <div class="d-flex justify-center pt-3 pb-md-7">
             <v-btn
               :href="whitepaperLink" 
@@ -96,8 +116,14 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('meed.descriptionPart1') }}</span>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('meed.descriptionPart2') }}</span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">
+                {{ $t('meed.descriptionPart1') }}
+              </span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">{{ $t('meed.descriptionPart2') }}</span>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -120,8 +146,12 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('deed.descriptionPart1') }}</span>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('deed.descriptionPart2') }}</span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">{{ $t('deed.descriptionPart1') }}</span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">{{ $t('deed.descriptionPart2') }}</span>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -143,8 +173,12 @@
           </v-list-item>
           <v-list-item class="ps-0">
             <v-list-item-content>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('xeed.descriptionPart1') }}</span>
-              <span class="pb-4 text-h5 grey--text font-weight-light">{{ $t('xeed.descriptionPart2') }}</span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">{{ $t('xeed.descriptionPart1') }}</span>
+              <span 
+                :class="textColor"
+                class="pb-4 text-h5 font-weight-light">{{ $t('xeed.descriptionPart2') }}</span>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -185,17 +219,17 @@
         </div>
         <div>
           <div v-if="!pageState || pageState === 'work'" class="d-flex flex-column">
-            <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart1') }}</span>
-            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart2') }}</span>
-            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart3') }}</span>
-            <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investWork.descriptionPart4') }}</span>
+            <span :class="textColor" class="ps-0 pt-4 pb-2 text-h5 font-weight-light">{{ $t('investWork.descriptionPart1') }}</span>
+            <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investWork.descriptionPart2') }}</span>
+            <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investWork.descriptionPart3') }}</span>
+            <span :class="textColor" class="ps-0 pt-2 pb-7 text-h5 font-weight-light">{{ $t('investWork.descriptionPart4') }}</span>
           </div>
           <div v-else class="d-flex flex-column">
-            <span class="ps-0 pt-4 pb-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart1') }}</span>
-            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart2') }}</span>
-            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart3') }}</span>
-            <span class="ps-0 py-2 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
-            <span class="ps-0 pt-2 pb-7 text-h5 grey--text font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
+            <span :class="textColor" class="ps-0 pt-4 pb-2 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart1') }}</span>
+            <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart2') }}</span>
+            <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart3') }}</span>
+            <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
+            <span :class="textColor" class="ps-0 pt-2 pb-7 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
           </div>
           <div class="position-absolute d-none">
             <v-img
@@ -254,8 +288,15 @@ export default {
     pageState: state => state.pageState,
     parentLocation: state => state.parentLocation,
     whitepaperLink: state => state.whitepaperLink,
+    dark: state => state.dark,
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
+    },
+    opacityClass() {
+      return this.dark && 'low-opacity' || 'half-opacity';
+    },
+    textColor() {
+      return this.dark && 'white--text' || 'grey--text';
     },
   }),
 };
