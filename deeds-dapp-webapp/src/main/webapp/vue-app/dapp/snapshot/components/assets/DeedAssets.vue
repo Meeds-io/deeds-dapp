@@ -20,7 +20,7 @@
   <v-list dense class="pb-4 pb-sm-0">
     <div class="d-flex flex-nowrap align-center mb-4">
       <v-img
-        :src="`${parentLocation}/static/images/deeds.png`"
+        :src="`${parentLocation}/static/images/deeds.webp`"
         height="52px"
         max-width="81px"
         contain
