@@ -19,9 +19,15 @@
 package io.meeds.deeds.web.filter;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -33,32 +39,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
-  private static final String       DEFAULT_PAGE_FILE_NAME = "/home";
+  private static final String              DEFAULT_PAGE_FILE_NAME = "/home";
 
-  private static final long         serialVersionUID       = -4145074746513311839L;
+  private static final long                serialVersionUID       = -4145074746513311839L;
 
-  private static final List<String> STATIC_PATHS           = Arrays.asList("/home",
-                                                                           "/whitepaper",
-                                                                           "/about-us",
-                                                                           "/legals",
-                                                                           "/tour");
+  private static final List<String>        STATIC_PATHS           = Arrays.asList("/home",
+                                                                                  "/whitepaper",
+                                                                                  "/about-us",
+                                                                                  "/legals",
+                                                                                  "/tour");
 
-  private static final List<String> DAPP_PATHS             = Arrays.asList("/marketplace",
-                                                                           "/tenants",
-                                                                           "/owners",
-                                                                           "/portfolio",
-                                                                           "/stake",
-                                                                           "/deeds",
-                                                                           "/farm",
-                                                                           "/tokenomics");
+  private static final List<String>        DAPP_PATHS             = Arrays.asList("/marketplace",
+                                                                                  "/tenants",
+                                                                                  "/owners",
+                                                                                  "/portfolio",
+                                                                                  "/stake",
+                                                                                  "/deeds",
+                                                                                  "/farm",
+                                                                                  "/tokenomics");
 
-  private static final long         LAST_MODIFIED          = System.currentTimeMillis();
+  private static final List<String>        METADATA_LABELS        = Arrays.asList("pageDescription",
+                                                                                  "imageAlt",
+                                                                                  "twitterTitle",
+                                                                                  "pageTitle");
 
-  private static final String       VERSION                = String.valueOf(LAST_MODIFIED);
+  private static final long                LAST_MODIFIED          = System.currentTimeMillis();
+
+  private static final String              VERSION                = String.valueOf(LAST_MODIFIED);
+
+  private static final Map<String, String> PAGE_METADATAS         = new HashMap<>();
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -92,12 +106,44 @@ public class RequestDispatcherFilter extends HttpFilter {
       boolean isStaticPath = STATIC_PATHS.contains(servletPath);
       if (isStaticPath || DAPP_PATHS.contains(servletPath)) {
         request.setAttribute("isStaticPath", isStaticPath);
+
+        String pageContent = getPageHeaderMetadataContent(request, servletPath);
+
+        request.setAttribute("pageHeaderMetadatas", pageContent);
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
         chain.doFilter(request, response);
       }
     }
+  }
+
+  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath) throws IOException {
+    String lang = request.getLocale().getLanguage();
+    String pageName = servletPath.substring(1);
+
+    String key = pageName + "_" + lang;
+    String pageContent = PAGE_METADATAS.get(key);
+
+    if (StringUtils.isNotBlank(pageContent)) {
+      ResourceBundle resourceBundle = null;
+      try (InputStream is = request.getServletContext().getResourceAsStream("/static/i18n/messages_" + lang + ".properties")) {
+        resourceBundle = new PropertyResourceBundle(is);
+      }
+
+      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + servletPath + ".html")) {
+        pageContent = IOUtils.toString(is, StandardCharsets.UTF_8);
+        for (String label : METADATA_LABELS) {
+          String i18nKey = "metadata." + pageName + "." + label;
+          pageContent = pageContent.replace("#{" + i18nKey + "}", resourceBundle.getString(i18nKey));
+        }
+        pageContent = pageContent.replace("${lang}", lang);
+      }
+
+      PAGE_METADATAS.put(key, pageContent);
+    }
+    return pageContent;
   }
 
   private String getETagValue(HttpServletRequest request) {

@@ -17,33 +17,14 @@
     })(window,document,'script','dataLayer','GTM-WZ644S7');</script>
     <!-- End Google Tag Manager -->
     <% } %>
-    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-    <title>Work Metaverse | Meeds DAO</title>
-    <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="version" content="<%=buildnumber%>">
-    <meta name="description" content="Meeds is an employee recognition open source software to engage and reward DAO members. Learn more about our recognition and rewards program.">
-    <meta name="description" content="Promote employee recognition &amp; hapiness at work">
+
+    <%= request.getAttribute("pageHeaderMetadatas") %>
+
     <% if (isProduction) { %>
     <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <% } else {%>
     <meta name="robots" content="noindex">
     <% } %>
-    <link rel="canonical" href="https://www.meeds.io/">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Employee Recognition Software &amp; Employee Rewards Program | Meeds">
-    <meta property="og:description" content="Meeds is an employee recognition software to engage and reward employees. Increase employee engagement and retention through a recognition and rewards program.">
-    <meta property="og:url" content="https://www.meeds.io/">
-    <meta property="og:site_name" content="Meeds">
-    <meta property="og:image" content="./static/images/white_thumbnail.png">
-    <meta property="og:image:secure_url" content="./static/images/white_thumbnail.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:description" content="Meeds is an employee recognition software to engage and reward employees. Increase employee engagement and retention through a recognition and rewards program.">
-    <meta name="twitter:title" content="Employee Recognition Software &amp; Employee Rewards Program | Meeds">
-    <meta name="twitter:image" content="./static/images/white_thumbnail.png">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
