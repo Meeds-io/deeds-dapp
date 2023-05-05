@@ -5,14 +5,13 @@
     flat>
     <v-card
       v-if="!loading"
-      width="400px"
-      max-width="100%"
-      class="d-flex flex-column align-center text-center mx-12"
+      max-width="400px"
+      class="d-flex flex-column align-center text-center mx-0 mx-md-12"
       flat>
       <img
-        :src="`${parentLocation}/static/images/deeds.png`"
+        :src="`${parentLocation}/static/images/deeds.webp`"
         alt=""
-        class="mb-8 img-deeds-empty">
+        class="mb-8 full-width">
       <template v-if="offerNotAvailable">
         <div class="pa-0">{{ $t('dapp.marketplace.deedsOfferNotAvailableAnyMore') }}</div>
         <div class="pa-0 mt-4" v-html="notAvailableMessage"></div>
