@@ -126,7 +126,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     String key = pageName + "_" + lang;
     String pageContent = PAGE_METADATAS.get(key);
 
-    if (StringUtils.isNotBlank(pageContent)) {
+    if (StringUtils.isBlank(pageContent)) {
       ResourceBundle resourceBundle = null;
       try (InputStream is = request.getServletContext().getResourceAsStream("/static/i18n/messages_" + lang + ".properties")) {
         resourceBundle = new PropertyResourceBundle(is);
