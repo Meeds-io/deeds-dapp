@@ -120,7 +120,10 @@ public class RequestDispatcherFilter extends HttpFilter {
   }
 
   private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath) throws IOException {
-    String lang = request.getLocale().getLanguage();
+    String lang =  request.getLocale().getLanguage();
+    if(request.getParameter("lang") != null) {
+      lang = request.getParameter("lang");
+    }
     String pageName = servletPath.substring(1);
 
     String key = pageName + "_" + lang;
