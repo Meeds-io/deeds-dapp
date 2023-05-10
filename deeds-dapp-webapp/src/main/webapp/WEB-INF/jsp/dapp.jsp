@@ -2,12 +2,13 @@
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
-  String extendedHtmlContent = Utils.getExtendedHtmlContent();
+  boolean extendHtmlContent = Utils.isInstallExtendedHtmlContent();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
 %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <% if (extendHtmlContent) { %>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -15,6 +16,7 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-WZ644S7');</script>
     <!-- End Google Tag Manager -->
+    <% } %>
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
     <title>Work Metaverse | Meeds DAO</title>
     <meta name="msapplication-TileImage" content="./static/images/meedsicon.png">
@@ -80,6 +82,7 @@
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
+    <% if (extendHtmlContent) { %>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ644S7"
@@ -87,6 +90,7 @@
       </iframe>
     </noscript>
     <!-- End Google Tag Manager (noscript) -->
+    <% } %>
     <div id="deedsApp" class="<%= staticPage != null && !staticPage ? "dapp-page" : "" %>"></div>
 
     <% if (StringUtils.isNotBlank(request.getRemoteUser())) { %>
@@ -109,6 +113,5 @@
       <script id="static" src="./static/js/static.js?_=<%=buildnumber%>"></script>
     <% } %>
 
-    <%=extendedHtmlContent == null ? "" : extendedHtmlContent%>
   </body>
 </html>
