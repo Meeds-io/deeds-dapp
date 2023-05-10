@@ -2,13 +2,13 @@
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
-  boolean extendHtmlContent = Utils.isProductionEnvironment();
+  boolean isProduction = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
 %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <% if (extendHtmlContent) { %>
+    <% if (isProduction) { %>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -24,7 +24,11 @@
     <meta name="version" content="<%=buildnumber%>">
     <meta name="description" content="Meeds is an employee recognition open source software to engage and reward DAO members. Learn more about our recognition and rewards program.">
     <meta name="description" content="Promote employee recognition &amp; hapiness at work">
+    <% if (isProduction) { %>
     <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <% } else {%>
+    <meta name="robots" content="noindex">
+    <% } %>
     <link rel="canonical" href="https://www.meeds.io/">
     <meta property="og:locale" content="en_US">
     <meta property="og:type" content="website">
@@ -82,7 +86,7 @@
     <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
-    <% if (extendHtmlContent) { %>
+    <% if (isProduction) { %>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WZ644S7"
