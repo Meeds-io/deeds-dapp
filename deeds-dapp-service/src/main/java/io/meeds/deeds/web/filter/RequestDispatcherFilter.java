@@ -34,6 +34,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,38 +47,43 @@ import io.meeds.deeds.web.utils.Utils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
-  private static final String              DEFAULT_PAGE_FILE_NAME = "/home";
+  private static final String              PREFERRED_LANGUAGE_COOKIE_NAME = "preferred-language";
 
-  private static final long                serialVersionUID       = -4145074746513311839L;
+  private static final String              DEFAULT_PAGE_FILE_NAME         = "/home";
 
-  private static final List<String>        STATIC_PATHS           = Arrays.asList("/home",
-                                                                                  "/whitepaper",
-                                                                                  "/about-us",
-                                                                                  "/legals",
-                                                                                  "/tour");
+  private static final long                serialVersionUID               = -4145074746513311839L;
 
-  private static final List<String>        DAPP_PATHS             = Arrays.asList("/marketplace",
-                                                                                  "/tenants",
-                                                                                  "/owners",
-                                                                                  "/portfolio",
-                                                                                  "/stake",
-                                                                                  "/deeds",
-                                                                                  "/farm",
-                                                                                  "/tokenomics");
+  private static final List<String>        SUPPORTED_LANGUAGES            = Arrays.asList("en",
+                                                                                          "fr");
 
-  private static final List<String>        METADATA_LABELS        = Arrays.asList("pageDescription",
-                                                                                  "imageAlt",
-                                                                                  "twitterTitle",
-                                                                                  "pageTitle");
+  private static final List<String>        STATIC_PATHS                   = Arrays.asList("/home",
+                                                                                          "/whitepaper",
+                                                                                          "/about-us",
+                                                                                          "/legals",
+                                                                                          "/tour");
 
-  private static final long                LAST_MODIFIED          = System.currentTimeMillis();
+  private static final List<String>        DAPP_PATHS                     = Arrays.asList("/marketplace",
+                                                                                          "/tenants",
+                                                                                          "/owners",
+                                                                                          "/portfolio",
+                                                                                          "/stake",
+                                                                                          "/deeds",
+                                                                                          "/farm",
+                                                                                          "/tokenomics");
 
-  private static final String              VERSION                = String.valueOf(LAST_MODIFIED);
+  private static final List<String>        METADATA_LABELS                = Arrays.asList("pageDescription",
+                                                                                          "imageAlt",
+                                                                                          "twitterTitle",
+                                                                                          "pageTitle");
 
-  private static final Map<String, String> PAGE_METADATAS         = new HashMap<>();
+  private static final long                LAST_MODIFIED                  = System.currentTimeMillis();
+
+  private static final String              VERSION                        = String.valueOf(LAST_MODIFIED);
+
+  private static final Map<String, String> PAGE_METADATAS                 = new HashMap<>();
 
   @Override
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException { // NOSONAR
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
@@ -127,10 +133,7 @@ public class RequestDispatcherFilter extends HttpFilter {
   }
 
   private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath) throws IOException {
-    String lang =  request.getLocale().getLanguage();
-    if(request.getParameter("lang") != null) {
-      lang = request.getParameter("lang");
-    }
+    String lang = getLanguage(request);
     String pageName = servletPath.substring(1);
 
     String key = pageName + "_" + lang;
@@ -154,6 +157,25 @@ public class RequestDispatcherFilter extends HttpFilter {
       PAGE_METADATAS.put(key, pageContent);
     }
     return pageContent;
+  }
+
+  private String getLanguage(HttpServletRequest request) {
+    Cookie[] cookies = request.getCookies();
+    String lang = null;
+    if (cookies != null) {
+      lang = Arrays.stream(cookies)
+                   .filter(cookie -> StringUtils.equals(PREFERRED_LANGUAGE_COOKIE_NAME, cookie.getName()))
+                   .map(Cookie::getValue)
+                   .findFirst()
+                   .orElse(null);
+    }
+    if (request.getParameter("lang") != null) {
+      lang = request.getParameter("lang");
+    }
+    if (StringUtils.isBlank(lang) || !SUPPORTED_LANGUAGES.contains(lang)) {
+      lang = "en";
+    }
+    return lang;
   }
 
   private String getETagValue(HttpServletRequest request) {

@@ -52,7 +52,22 @@ const vuetify = new Vuetify({
     },
   },
 });
-const language = localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+
+function getQueryParam(paramName) {
+  if (!window.location.search?.length) {
+    return;
+  }
+  const uri = window.location.search.substring(1);
+  const params = new URLSearchParams(uri);
+  return params.get(paramName);
+}
+
+function getLanguage() {
+  const lang = getQueryParam('lang');
+  return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+}
+
+const language = getLanguage();
 
 const i18n = new VueI18n({
   locale: language,
@@ -162,6 +177,7 @@ function initializeVueApp(lang) {
           vuetify,
         });
       }
+      document.cookie = `preferred-language=${language}; path= /`;
     });
 }
 
