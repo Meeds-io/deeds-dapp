@@ -42,6 +42,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import io.meeds.deeds.web.utils.Utils;
+
 public class RequestDispatcherFilter extends HttpFilter {
 
   private static final String              DEFAULT_PAGE_FILE_NAME = "/home";
@@ -106,16 +108,21 @@ public class RequestDispatcherFilter extends HttpFilter {
       boolean isStaticPath = STATIC_PATHS.contains(servletPath);
       if (isStaticPath || DAPP_PATHS.contains(servletPath)) {
         request.setAttribute("isStaticPath", isStaticPath);
-
-        String pageContent = getPageHeaderMetadataContent(request, servletPath);
-
-        request.setAttribute("pageHeaderMetadatas", pageContent);
-
+        buildPageMetadata(request, servletPath);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
         chain.doFilter(request, response);
       }
+    }
+  }
+
+  private void buildPageMetadata(HttpServletRequest request, String servletPath) throws IOException {
+    if (Utils.isProductionEnvironment()) {
+      String pageContent = getPageHeaderMetadataContent(request, servletPath);
+      request.setAttribute("pageHeaderMetadatas", pageContent);
+    } else {
+      request.setAttribute("pageHeaderMetadatas", "");
     }
   }
 
