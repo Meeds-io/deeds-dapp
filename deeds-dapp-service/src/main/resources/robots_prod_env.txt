@@ -1,0 +1,7 @@
+# robots.txt
+User-agent: *
+Allow:  /*
+
+# Sitemaps
+
+Sitemap: https://www.meeds.io/sitemap.xml
