@@ -66,7 +66,7 @@ public class Utils {
     return buildNumber;
   }
 
-  public static boolean isInstallExtendedHtmlContent() {
+  public static boolean isProductionEnvironment() {
     if (extendedHtmlContent == null) {
       String extFilePath = EnvironmentService.getEnvironment().getProperty(EXTENDED_HTML_CONTENT_PATH_PARAM, "");
       if (StringUtils.isNotBlank(extFilePath) && Files.exists(Paths.get(extFilePath))) {

@@ -2,7 +2,7 @@
 <%@page import="org.apache.commons.lang3.StringUtils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
-  boolean extendHtmlContent = Utils.isInstallExtendedHtmlContent();
+  boolean extendHtmlContent = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
 %>
 <!DOCTYPE html>
