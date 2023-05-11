@@ -15,7 +15,6 @@
  */
 package io.meeds.deeds.web.utils;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -23,12 +22,14 @@ import java.util.Random;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Utils {
 
-  private static final Logger LOG                              = LoggerFactory.getLogger(Utils.class);
+  private static final String HOST_ENVIRONMENT_PARAM           = "meeds.deed.hostEnvironment";
+
+  private static final String HOST_ENVIRONMENT_PRODUCTION      = "production";
+
+  private static final String HOST_ENVIRONMENT_TEST            = "test";
 
   private static final String EXTENDED_HTML_CONTENT_PATH_PARAM = "meeds.deed.extendedHtmlContent.path";
 
@@ -40,7 +41,7 @@ public class Utils {
 
   private static String       buildNumber;
 
-  private static String       extendedHtmlContent;
+  private static String       hostEnvironment;
 
   private Utils() {
     // Utility class
@@ -67,18 +68,18 @@ public class Utils {
   }
 
   public static boolean isProductionEnvironment() {
-    if (extendedHtmlContent == null) {
-      String extFilePath = EnvironmentService.getEnvironment().getProperty(EXTENDED_HTML_CONTENT_PATH_PARAM, "");
-      if (StringUtils.isNotBlank(extFilePath) && Files.exists(Paths.get(extFilePath))) {
-        try {
-          extendedHtmlContent = Files.readString(Paths.get(extFilePath));
-        } catch (IOException e) {
-          extendedHtmlContent = "";
-          LOG.warn("Can't read extended content to include in static HTML page from file {}", extFilePath, e);
+    if (hostEnvironment == null) {
+      hostEnvironment = EnvironmentService.getEnvironment().getProperty(HOST_ENVIRONMENT_PARAM, "");
+      if (StringUtils.isBlank(hostEnvironment)) {
+        String extFilePath = EnvironmentService.getEnvironment().getProperty(EXTENDED_HTML_CONTENT_PATH_PARAM, "");
+        if (StringUtils.isNotBlank(extFilePath) && Files.exists(Paths.get(extFilePath))) {
+          hostEnvironment = HOST_ENVIRONMENT_PRODUCTION;
+        } else {
+          hostEnvironment = HOST_ENVIRONMENT_TEST;
         }
       }
     }
-    return StringUtils.isNotBlank(extendedHtmlContent);
+    return StringUtils.equals(hostEnvironment, HOST_ENVIRONMENT_PRODUCTION);
   }
 
 }
