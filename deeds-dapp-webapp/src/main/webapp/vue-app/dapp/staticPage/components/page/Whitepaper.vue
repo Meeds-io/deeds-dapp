@@ -235,11 +235,11 @@
             <span :class="textColor" class="ps-0 py-2 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart4') }}</span>
             <span :class="textColor" class="ps-0 pt-2 pb-7 text-h5 font-weight-light">{{ $t('investCapital.descriptionPart5') }}</span>
           </div>
-          <div class="position-absolute d-none">
+          <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/invest_image.webp`"
               max-width="288px"
-              class="invest-image"
+              class="invest-image low-opacity"
               alt=""
               contain
               eager />    

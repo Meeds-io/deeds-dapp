@@ -71,9 +71,9 @@
           <span :class="textColor" class="mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('contributionPrograms.description') }}</span>
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/contribution_icon.png`"
+              :src="`${parentLocation}/static/images/contribution_icon.webp`"
               max-width="275px"
-              class="contribution-icon"
+              class="contribution-icon low-opacity"
               alt=""
               contain
               eager />    
@@ -104,9 +104,9 @@
           <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/reward_icon.png`"
+              :src="`${parentLocation}/static/images/reward_icon.webp`"
               max-width="236px"
-              class="reward-icon"
+              class="reward-icon low-opacity"
               alt=""
               contain
               eager />    
@@ -119,9 +119,9 @@
           <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/overview_icon.png`"
+              :src="`${parentLocation}/static/images/overview_icon.webp`"
               max-width="330px"
-              class="overview-icon"
+              class="overview-icon low-opacity"
               alt=""
               contain
               eager />    
@@ -152,9 +152,9 @@
           <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/perks_icon.png`"
+              :src="`${parentLocation}/static/images/perks_icon.webp`"
               max-width="400px"
-              class="perks-icon"
+              class="perks-icon low-opacity"
               alt=""
               contain
               eager />    
@@ -167,9 +167,9 @@
           <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
           <div class="position-absolute">
             <v-img
-              :src="`${parentLocation}/static/images/teamwork_icon.png`"
+              :src="`${parentLocation}/static/images/teamwork_icon.webp`"
               max-width="298px"
-              class="teamwork-icon"
+              class="teamwork-icon low-opacity"
               alt=""
               contain
               eager />    
