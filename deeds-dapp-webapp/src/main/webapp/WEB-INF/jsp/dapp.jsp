@@ -26,6 +26,7 @@
     <meta name="robots" content="noindex">
     <% } %>
     <meta name="version" content="<%=buildnumber%>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
     <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
