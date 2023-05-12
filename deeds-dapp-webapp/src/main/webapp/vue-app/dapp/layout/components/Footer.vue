@@ -19,9 +19,9 @@
 <template>
   <v-card
     :class="backgroundColorClass"
-    class="mainPageLayout pa-5 mx-md-auto"
+    class="pa-5 mx-md-auto"
     flat>
-    <div class="d-flex flex-column flex-sm-row">
+    <div class="d-flex flex-column flex-sm-row footerLayout mx-auto">
       <div class=" py-0 d-flex flex-grow-0 flex-column px-0 mb-6 me-0 me-sm-6 col-12 col-sm-4">
         <div class="d-flex justify-center justify-sm-start mb-4">
           <v-img
@@ -168,7 +168,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex flex-column-reverse flex-sm-row align-center my-2">
+    <div class="d-flex flex-column-reverse flex-sm-row align-center my-2 footerLayout mx-auto">
       <span :class="textColor" class="caption text-center text-sm-start">{{ $t('copyright') }}</span>
       <v-spacer />
       <div class="d-flex">
