@@ -24,7 +24,7 @@
     elevate-on-scroll>
     <v-spacer />
     <div class="d-flex headerLayout px-0 px-sm-7 mx-1">
-      <v-toolbar-title class="d-flex">
+      <v-toolbar-title class="d-flex align-center">
         <v-img
           max-height="64px"
           max-width="64px"
