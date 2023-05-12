@@ -102,9 +102,10 @@
             <v-list-item-icon>
               <v-img
                 :src="`${parentLocation}/static/images/meed_circle.webp`"
-                class="mt-3 mb-4 pt-2px"
+                class="my-5"
                 alt=""
                 width="75px"
+                height="75px"
                 contain
                 eager />
             </v-list-item-icon>
@@ -135,6 +136,7 @@
                 class="my-5"
                 alt=""
                 width="75px"
+                height="75px"
                 contain
                 eager />
             </v-list-item-icon>
@@ -160,8 +162,10 @@
             <v-list-item-icon>
               <v-img
                 :src="`${parentLocation}/static/images/xeed_icon.webp`"
+                class="my-5"
                 alt=""
                 width="75px"
+                height="75px"
                 contain
                 eager />
             </v-list-item-icon>
