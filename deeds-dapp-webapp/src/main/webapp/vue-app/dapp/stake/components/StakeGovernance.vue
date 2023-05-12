@@ -33,10 +33,12 @@
         outlined
         text
         class="me-sm-4">
-        <img
-          :src="`${parentLocation}/static/images/discord.ico`"
-          alt=""
-          class="me-2 img-24px">
+        <v-icon 
+          size="24" 
+          color="indigo accent-2" 
+          class="me-2">
+          fab fa-discord
+        </v-icon>
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
