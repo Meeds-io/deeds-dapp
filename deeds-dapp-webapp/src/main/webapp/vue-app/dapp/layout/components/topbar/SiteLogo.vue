@@ -23,8 +23,9 @@
         :src="`${parentLocation}/static/images/meeds.png`"
         height="24px"
         width="64px"
+        class="mt-1"
         alt="">
-      <div class="ps-2 mb-2px">{{ $t('dao') }}</div>
+      <div class="ps-2 my-1">{{ $t('dao') }}</div>
       <v-chip
         v-if="isTestNetwork"
         :small="!isMobile"
