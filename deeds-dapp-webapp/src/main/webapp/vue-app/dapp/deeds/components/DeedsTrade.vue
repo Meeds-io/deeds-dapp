@@ -27,13 +27,12 @@
         :href="openSeaLink"
         :target="openSeaTarget"
         rel="nofollow noreferrer noopener"
-        height="73px"
         outlined
         text
         class="px-3">
         <img
           :src="`${parentLocation}/static/images/opensea.webp`"
-          width="44px"
+          width="24px"
           class="me-2"
           alt="Available on OpenSea">
         <span class="text-none">{{ $t('availableOnOpenSea') }}</span>
