@@ -23,16 +23,20 @@
     </v-card-title>
     <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='link--color' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
     <v-card-actions class="ps-0 justify-center">
-      <a
+      <v-btn
         :href="openSeaLink"
-        :title="$t('sellOnOpenSea')"
         :target="openSeaTarget"
-        rel="nofollow noreferrer noopener">
+        rel="nofollow noreferrer noopener"
+        outlined
+        text
+        class="px-3">
         <img
-          :src="`${parentLocation}/static/images/OpenSea-Badge.png`"
-          class="openSea-badge"
+          :src="`${parentLocation}/static/images/opensea.webp`"
+          width="24px"
+          class="me-2"
           alt="Available on OpenSea">
-      </a>
+        <span class="text-none">{{ $t('availableOnOpenSea') }}</span>
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
