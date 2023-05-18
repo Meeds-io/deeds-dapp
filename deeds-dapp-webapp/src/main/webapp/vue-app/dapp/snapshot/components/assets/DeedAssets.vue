@@ -30,7 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
-        :href="`${parentLocation}/deeds`"
+        :href="`${parentLocation}/${$t('deeds')}`"
         class="rounded-pill px-7"
         color="primary"
         height="45px"

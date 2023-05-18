@@ -35,7 +35,7 @@
       <v-spacer />
       <div>
         <v-btn
-          :href="`${parentLocation}/portfolio`"
+          :href="`${parentLocation}/${$t('portfolio')}`"
           class="px-5 font-weight-black"
           height="44px"
           color="primary"

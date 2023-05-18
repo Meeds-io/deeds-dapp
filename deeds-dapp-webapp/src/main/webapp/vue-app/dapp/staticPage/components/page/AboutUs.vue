@@ -104,7 +104,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                href="./portfolio"
+                :href="`${parentLocation}/${$t('portfolio')}`"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
@@ -140,7 +140,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                :href="`${parentLocation}/tour`"
+                :href="`${parentLocation}/${$t('tour')}`"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
@@ -176,7 +176,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                :href="`${parentLocation}/whitepaper`"
+                :href="`${parentLocation}/${$t('whitepaper')}`"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"

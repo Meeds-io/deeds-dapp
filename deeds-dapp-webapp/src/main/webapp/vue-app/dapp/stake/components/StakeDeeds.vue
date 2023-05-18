@@ -26,11 +26,11 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
-        :href="`${parentLocation}/owners`"
+        :href="`${parentLocation}/${$t('owners')}`"
         name="displayOwnedDeedsButton"
         outlined
         text
-        @click.prevent.stop="$root.$emit('switch-page', 'owners')">
+        @click.prevent.stop="$root.$emit('switch-page', this.$t('owners'))">
         <img
           :src="`${parentLocation}/static/images/deed-small.png`"
           alt=""

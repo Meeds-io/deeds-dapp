@@ -57,7 +57,7 @@
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
-                :href="`${parentLocation}/deeds`"
+                :href="`${parentLocation}/${$t('deeds')}`"
                 height="36px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
@@ -104,7 +104,7 @@
             <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
-                :href="`${parentLocation}/marketplace`"
+                :href="`${parentLocation}/${$t('market')}`"
                 height="36px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
@@ -153,7 +153,7 @@ export default {
     },
     openDeeds(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', 'deeds');
+        this.$root.$emit('switch-page', this.$t('deeds'));
       }
     },
     changeCollapsedTextVisibility() {

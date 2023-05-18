@@ -32,7 +32,7 @@
           <v-btn
             ref="marketplace"
             id="marketplace"
-            :href="`${parentLocation}/marketplace`"
+            :href="`${parentLocation}/${$t('market')}`"
             value="marketplace"
             class="px-0 full-height"
             link
@@ -58,7 +58,7 @@
           <v-btn
             ref="portfolio"
             id="portfolio"
-            :href="`${parentLocation}/portfolio`"
+            :href="`${parentLocation}/${$t('portfolio')}`"
             value="portfolio"
             class="px-0 full-height"
             link
@@ -97,7 +97,7 @@
           <v-list-item
             ref="tenants"
             id="tenants"
-            :href="`${parentLocation}/tenants`"
+            :href="`${parentLocation}/${$t('tenants')}`"
             :active-class="activeMenuColor"
             key="tenants"
             value="tenants"
@@ -111,7 +111,7 @@
           <v-list-item
             ref="owners"
             id="owners"
-            :href="`${parentLocation}/owners`"
+            :href="`${parentLocation}/${$t('owners')}`"
             :active-class="activeMenuColor"
             key="owners"
             value="owners"
@@ -125,7 +125,7 @@
           <v-list-item
             ref="stake"
             id="stake"
-            :href="`${parentLocation}/stake`"
+            :href="`${parentLocation}/${$t('stake')}`"
             :active-class="activeMenuColor"
             key="stake"
             value="stake"
@@ -139,7 +139,7 @@
           <v-list-item
             ref="deeds"
             id="deeds"
-            :href="`${parentLocation}/deeds`"
+            :href="`${parentLocation}/${$t('deeds')}`"
             :active-class="activeMenuColor"
             key="deeds"
             value="deeds"
@@ -153,7 +153,7 @@
           <v-list-item
             ref="farm"
             id="farm"
-            :href="`${parentLocation}/farm`"
+            :href="`${parentLocation}/${$t('farm')}`"
             :active-class="activeMenuColor"
             key="farm"
             value="farm"
@@ -181,7 +181,7 @@
     <v-tab
       ref="marketplace"
       id="marketplace"
-      :href="`${parentLocation}/marketplace`"
+      :href="`${parentLocation}/${$t('market')}`"
       link 
       class="px-2 me-2"
       @click="openPage">
@@ -190,7 +190,7 @@
     <v-tab
       ref="tenants"
       id="tenants"
-      :href="`${parentLocation}/tenants`"
+      :href="`${parentLocation}/${$t('tenants')}`"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -199,7 +199,7 @@
     <v-tab
       ref="owners"
       id="owners"
-      :href="`${parentLocation}/owners`"
+      :href="`${parentLocation}/${$t('owners')}`"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -208,7 +208,7 @@
     <v-tab
       ref="stake"
       id="stake"
-      :href="`${parentLocation}/stake`"
+      :href="`${parentLocation}/${$t('stake')}`"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -217,7 +217,7 @@
     <v-tab
       ref="deeds"
       id="deeds"
-      :href="`${parentLocation}/deeds`"
+      :href="`${parentLocation}/${$t('deeds')}`"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -226,7 +226,7 @@
     <v-tab
       ref="farm"
       id="farm"
-      :href="`${parentLocation}/farm`"
+      :href="`${parentLocation}/${$t('farm')}`"
       link
       class="px-0 me-2"
       @click="openPage">
@@ -235,7 +235,7 @@
     <v-tab
       ref="portfolio"
       id="portfolio"
-      :href="`${parentLocation}/portfolio`"
+      :href="`${parentLocation}/${$t('portfolio')}`"
       link 
       class="px-0 ms-auto"
       @click="openPage">
@@ -317,7 +317,7 @@ export default {
     initSelectedTab(event) {
       const href = window.location.pathname;
       const hrefParts = href.split('/');
-      const newTab = hrefParts[hrefParts.length - 1] || 'marketplace';
+      const newTab = hrefParts[hrefParts.length - 1] || this.$t('market');
       let tabToSelect;
       if (this.isMobile) {
         tabToSelect = newTab;
@@ -333,7 +333,7 @@ export default {
           this.switchPage(newTab);
         } else {
           this.selectedTab = (this.dappPages.indexOf(newTab) >= 0) && tabToSelect || `${this.parentLocation}/static`;
-          if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'portfolio') {
+          if (this.isMobile && this.selectedTab !== this.$t('market') && this.selectedTab !== this.$t('portfolio')) {
             this.$nextTick().then(() => {
               this.selectedId = newTab;
               this.selectedTab = 'more';
@@ -389,6 +389,12 @@ export default {
         if (this.isMobile) {
           this.handlePageOpenedMobile();
         }
+        fetch(link, {
+          method: 'GET',
+          credentials: 'include',
+        })
+          .then(resp => resp?.ok && resp.text())
+          .then(text => window.document.head.innerHTML = text);
       }
     },
     handlePageOpenedMobile() {

@@ -20,7 +20,7 @@
   <div class="d-flex flex-column mt-8 mt-sm-10">
     <deeds-assets />
     <v-btn
-      :href="`${parentLocation}/tokenomics`"
+      :href="`${parentLocation}/${$t('tokenomics')}`"
       class="px-8 mx-auto mb-16"
       color="primary"
       width="250px"

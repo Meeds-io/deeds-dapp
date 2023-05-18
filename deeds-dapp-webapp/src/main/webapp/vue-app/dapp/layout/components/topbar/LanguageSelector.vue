@@ -49,6 +49,7 @@ export default {
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     selectedLanguage: state => state.language,
+    parentLocation: state => state.parentLocation,
     dark: state => state.dark,
     textColor() {
       return this.dark && 'white--text' || 'text-sub-title';

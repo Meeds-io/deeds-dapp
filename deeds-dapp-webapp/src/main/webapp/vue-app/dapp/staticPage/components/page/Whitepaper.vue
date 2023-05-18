@@ -276,7 +276,7 @@
       </v-btn>
       <v-btn
         v-else
-        href="./portfolio"
+        :href="`${parentLocation}/${$t('portfolio')}`"
         height="70px"
         class="primary px-8"
         dark

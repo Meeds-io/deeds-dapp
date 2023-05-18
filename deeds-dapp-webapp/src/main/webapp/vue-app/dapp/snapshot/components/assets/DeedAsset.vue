@@ -43,7 +43,7 @@
       </div>
       <div v-else>
         <v-btn
-          :href="`${parentLocation}/owners`"
+          :href="`${parentLocation}/${$t('owners')}`"
           class="rounded-pill px-5"
           color="primary"
           height="40px"

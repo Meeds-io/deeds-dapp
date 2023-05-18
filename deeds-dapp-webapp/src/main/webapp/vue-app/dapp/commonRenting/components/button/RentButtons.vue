@@ -205,7 +205,7 @@ export default {
     },
     rentalOfferLink() {
       return this.showSeeRentPart
-        && `${this.parentLocation}/marketplace?offer=${this.rentalOffer.id}`;
+        && `${this.parentLocation}/${this.$t('market')}?offer=${this.rentalOffer.id}`;
     },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;
@@ -298,7 +298,7 @@ export default {
           event.stopPropagation();
         }
         this.$store.commit('setStandaloneOfferId', this.offers[0].id);
-        this.$root.$emit('switch-page', 'marketplace', true);
+        this.$root.$emit('switch-page', this.$t('market'), true);
       }
     },
     refreshOfferFromblockchain(event) {

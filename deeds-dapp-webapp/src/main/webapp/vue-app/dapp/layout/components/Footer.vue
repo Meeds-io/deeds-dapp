@@ -75,13 +75,13 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('product') }}</span>
             <a
-              :href="`${parentLocation}/tour`"
+              :href="`${parentLocation}/${$t('tour')}`"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('productTour') }}
             </a>
             <a
-              :href="`${parentLocation}/tenants`"
+              :href="`${parentLocation}/${$t('tenants')}`"
               :class="textColor"
               class="no-decoration">
               {{ $t('yourHub') }}
@@ -93,19 +93,19 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('workMetaverse.title') }}</span>
             <a
-              :href="`${parentLocation}/tokenomics`"
+              :href="`${parentLocation}/${$t('tokenomics')}`"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('meedsToken') }}
             </a>
             <a
-              :href="`${parentLocation}/deeds`"
+              :href="`${parentLocation}/${$t('deeds')}`"
               :class="textColor"
               class="text-capitalize no-decoration">
               {{ $t('becomingADeedOwner') }}
             </a>
             <a
-              :href="`${parentLocation}/marketplace`"
+              :href="`${parentLocation}/${$t('market')}`"
               :class="textColor"
               class="no-decoration text-capitalize my-2">
               {{ $t('marketplace') }}
@@ -119,19 +119,19 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('meedDAO') }}</span>
             <a
-              :href="`${parentLocation}/whitepaper`"
+              :href="`${parentLocation}/${$t('whitepaper')}`"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('whitePaper') }}
             </a>
             <a
-              :href="`${parentLocation}/about-us`"
+              :href="`${parentLocation}/${$t('about-us')}`"
               :class="textColor"
               class="no-decoration">
               {{ $t('aboutUs') }}
             </a>
             <a
-              :href="`${parentLocation}/legals`"
+              :href="`${parentLocation}/${$t('legals')}`"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('legal') }}
@@ -143,7 +143,7 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('community') }}</span>
             <a
-              :href="`${parentLocation}/stake`"
+              :href="`${parentLocation}/${$t('stake')}`"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('joinMeedsDAO') }}

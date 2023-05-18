@@ -4,9 +4,10 @@
   String buildnumber = Utils.getApplicationBuildNumber();
   boolean isProduction = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
+  String lang = (String) request.getAttribute("lang");
 %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%=lang%>" > 
   <head>
     <% if (isProduction) { %>
     <!-- Google Tag Manager -->

@@ -30,7 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
-        :href="`${parentLocation}/stake`"
+        :href="`${parentLocation}/${$t('stake')}`"
         class="rounded-pill px-6"
         color="primary"
         height="45px"

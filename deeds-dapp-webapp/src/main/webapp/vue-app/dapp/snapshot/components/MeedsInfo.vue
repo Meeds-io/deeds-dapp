@@ -82,7 +82,7 @@
     </v-row>
     <v-row class="pb-16 pt-6 justify-center">
       <v-btn
-        :href="`${parentLocation}/portfolio`"
+        :href="`${parentLocation}/${$t('portfolio')}`"
         class="px-8"
         color="primary"
         width="250px"

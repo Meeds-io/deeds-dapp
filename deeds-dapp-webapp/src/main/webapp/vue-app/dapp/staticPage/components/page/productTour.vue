@@ -44,7 +44,7 @@
       </video>
       <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
-          href="./marketplace"
+          :href="`${parentLocation}/${$t('market')}`"
           class="primary px-8 mx-5 mt-7"
           height="70px"
           depressed
