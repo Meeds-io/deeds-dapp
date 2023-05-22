@@ -26,17 +26,8 @@ const Overview = { template: '<deeds-overview />' };
 const Tokenomics = { template: '<deeds-tokenomics />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
-function getQueryParam(paramName) {
-  if (!window.location.search?.length) {
-    return;
-  }
-  const uri = window.location.search.substring(1);
-  const params = new URLSearchParams(uri);
-  return params.get(paramName);
-}
-
 function getLanguage() {
-  const lang = getQueryParam('lang');
+  const lang = document.documentElement.lang;
   return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
 }
 

@@ -53,17 +53,8 @@ const vuetify = new Vuetify({
   },
 });
 
-function getQueryParam(paramName) {
-  if (!window.location.search?.length) {
-    return;
-  }
-  const uri = window.location.search.substring(1);
-  const params = new URLSearchParams(uri);
-  return params.get(paramName);
-}
-
 function getLanguage() {
-  const lang = getQueryParam('lang');
+  const lang = document.documentElement.lang;
   return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
 }
 
@@ -117,10 +108,8 @@ const store = new Vuex.Store({
     legalsURL: `${window.parentAppLocation}/${language === 'fr' ? 'mentions-legales' : 'legals'}`,
     stakeURL: `${window.parentAppLocation}/${language === 'fr' ? 'rejoindre-dao' : 'stake'}`,
     ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'proprietaires' : 'owners'}`,
-    ownersLabel: `${language === 'fr' ? 'proprietaires' : 'owners'}`,
     farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'farm-fr' : 'farm'}`,
     tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'locataires' : 'tenants'}`,
-    tenantsLabel: `${language === 'fr' ? 'locataires' : 'tenants'}`,
   },
   mutations: {
     setPageState(state, value) {

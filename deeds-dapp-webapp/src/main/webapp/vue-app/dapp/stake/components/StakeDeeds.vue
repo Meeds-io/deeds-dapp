@@ -30,7 +30,7 @@
         name="displayOwnedDeedsButton"
         outlined
         text
-        @click.prevent.stop="$root.$emit('switch-page', this.ownersLabel)">
+        @click.prevent.stop="$root.$emit('switch-page', 'owners')">
         <img
           :src="`${parentLocation}/static/images/deed-small.png`"
           alt=""
@@ -45,8 +45,6 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     ownersURL: state => state.ownersURL,
-    language: state => state.language,
-    ownersLabel: state => state.ownersLabel,
   }),
 };
 </script>

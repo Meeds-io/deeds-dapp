@@ -109,7 +109,6 @@ export default {
     beTenantVideoLink: state => state.beTenantVideoLink,
     dark: state => state.dark,
     marketplaceURL: state => state.marketplaceURL,
-    marketplaceLabel: state => state.marketplaceLabel,
     tourURL: state => state.tourURL,
   }),
   created() {
@@ -126,7 +125,7 @@ export default {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
         this.$store.commit('setStandaloneOfferId', null);
         this.$store.commit('setOfferId', null);
-        this.$root.$emit('switch-page', this.marketplaceLabel);
+        this.$root.$emit('switch-page', 'marketplace');
       }
     },
     changeCollapsedTextVisibility() {

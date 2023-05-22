@@ -353,7 +353,6 @@ export default {
     ZERO_BN: state => state.ZERO_BN,
     MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
     tenantsURL: state => state.tenantsURL,
-    tenantsLabel: state => state.tenantsLabel,
     nftId() {
       return this.offer?.nftId;
     },
@@ -643,7 +642,7 @@ export default {
     },
     openTenants(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', this.tenantsLabel);
+        this.$root.$emit('switch-page', 'tenants');
       }
     },
     openBuyMeeds(event) {

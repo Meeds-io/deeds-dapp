@@ -68,90 +68,90 @@ export default {
   methods: {
     changeLanguage(lang) {
       const pageName = window.location.pathname.split('/')[2];
-      let label ='';
+      let uri = '';
       if (this.language === 'fr') {
         switch (pageName) {
         case 'place-de-marche': 
-          label = 'marketplace';
+          uri = 'marketplace';
           break;
         case 'portefeuille': 
-          label = 'portfolio';
+          uri = 'portfolio';
           break;
         case 'visite-guidee': 
-          label = 'tour';
+          uri = 'tour';
           break;
         case 'livre-blanc': 
-          label = 'whitepaper';
+          uri = 'whitepaper';
           break;
         case 'tokenomics-fr': 
-          label = 'tokenomics';
+          uri = 'tokenomics';
           break;
         case 'qui-sommes-nous': 
-          label = 'about-us';
+          uri = 'about-us';
           break;
         case 'deeds-fr': 
-          label = 'deeds';
+          uri = 'deeds';
           break;
         case 'mentions-legales': 
-          label = 'legals';
+          uri = 'legals';
           break;
         case 'rejoindre-dao': 
-          label = 'stake';
+          uri = 'stake';
           break;
         case 'proprietaires': 
-          label = 'owners';
+          uri = 'owners';
           break;
         case 'farm-fr': 
-          label = 'farm';
+          uri = 'farm';
           break;
         case 'locataires': 
-          label = 'tenants';
+          uri = 'tenants';
           break;
-        default: label = '';
+        default: uri = '';
         }
       } else {
         switch (pageName) {
         case 'marketplace': 
-          label = 'place-de-marche';
+          uri = 'place-de-marche';
           break;
         case 'portfolio': 
-          label = 'portefeuille';
+          uri = 'portefeuille';
           break;
         case 'tour': 
-          label = 'visite-guidee';
+          uri = 'visite-guidee';
           break;
         case 'whitepaper': 
-          label = 'livre-blanc';
+          uri = 'livre-blanc';
           break;
         case 'tokenomics': 
-          label = 'tokenomics-fr';
+          uri = 'tokenomics-fr';
           break;
         case 'about-us': 
-          label = 'qui-sommes-nous';
+          uri = 'qui-sommes-nous';
           break;
         case 'deeds': 
-          label = 'deeds-fr';
+          uri = 'deeds-fr';
           break;
         case 'legals': 
-          label = 'mentions-legales';
+          uri = 'mentions-legales';
           break;
         case 'stake': 
-          label = 'rejoindre-dao';
+          uri = 'rejoindre-dao';
           break;
         case 'owners': 
-          label = 'proprietaires';
+          uri = 'proprietaires';
           break;
         case 'farm': 
-          label = 'farm-fr';
+          uri = 'farm-fr';
           break;
         case 'tenants': 
-          label = 'locataires';
+          uri = 'locataires';
           break;
-        default: label = '';
+        default: uri = '';
         }
       }
       this.$store.commit('selectLanguage', lang);
-      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(label)}`); 
+      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(uri)}`); 
       window.location.reload();     
     },
   },
