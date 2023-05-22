@@ -7,7 +7,7 @@
   String lang = (String) request.getAttribute("lang");
 %>
 <!DOCTYPE html>
-<html lang="<%=lang%>" > 
+<html lang="<%=lang%>"> 
   <head>
     <% if (isProduction) { %>
     <!-- Google Tag Manager -->

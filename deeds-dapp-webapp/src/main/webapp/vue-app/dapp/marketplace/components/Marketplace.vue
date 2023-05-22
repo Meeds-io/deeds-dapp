@@ -27,6 +27,7 @@
 export default {
   computed: Vuex.mapState({
     selectedStandaloneOfferId: state => state.selectedStandaloneOfferId,
+    marketplaceLabel: state => state.marketplaceLabel,
   }),
   watch: {
     selectedStandaloneOfferId() {
@@ -57,7 +58,7 @@ export default {
       }
     },
     refreshSelectedOfferId(_location, link, avoidResetTab) {
-      if (link && (!link.includes(this.$t('market')) || avoidResetTab)) {
+      if (link && (!link.includes(this.marketplaceLabel) || avoidResetTab)) {
         return;
       }
       const offerId = this.$utils.getQueryParam('offer');

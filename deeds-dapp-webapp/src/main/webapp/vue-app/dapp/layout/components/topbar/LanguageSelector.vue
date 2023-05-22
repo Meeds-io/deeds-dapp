@@ -50,6 +50,7 @@ export default {
     isMobile: state => state.isMobile,
     selectedLanguage: state => state.language,
     parentLocation: state => state.parentLocation,
+    language: state => state.language,
     dark: state => state.dark,
     textColor() {
       return this.dark && 'white--text' || 'text-sub-title';
@@ -66,7 +67,92 @@ export default {
   }),
   methods: {
     changeLanguage(lang) {
+      const pageName = window.location.pathname.split('/')[2];
+      let label ='';
+      if (this.language === 'fr') {
+        switch (pageName) {
+        case 'place-de-marche': 
+          label = 'marketplace';
+          break;
+        case 'portefeuille': 
+          label = 'portfolio';
+          break;
+        case 'visite-guidee': 
+          label = 'tour';
+          break;
+        case 'livre-blanc': 
+          label = 'whitepaper';
+          break;
+        case 'tokenomics-fr': 
+          label = 'tokenomics';
+          break;
+        case 'qui-sommes-nous': 
+          label = 'about-us';
+          break;
+        case 'deeds-fr': 
+          label = 'deeds';
+          break;
+        case 'mentions-legales': 
+          label = 'legals';
+          break;
+        case 'rejoindre-dao': 
+          label = 'stake';
+          break;
+        case 'proprietaires': 
+          label = 'owners';
+          break;
+        case 'farm-fr': 
+          label = 'farm';
+          break;
+        case 'locataires': 
+          label = 'tenants';
+          break;
+        default: label = '';
+        }
+      } else {
+        switch (pageName) {
+        case 'marketplace': 
+          label = 'place-de-marche';
+          break;
+        case 'portfolio': 
+          label = 'portefeuille';
+          break;
+        case 'tour': 
+          label = 'visite-guidee';
+          break;
+        case 'whitepaper': 
+          label = 'livre-blanc';
+          break;
+        case 'tokenomics': 
+          label = 'tokenomics-fr';
+          break;
+        case 'about-us': 
+          label = 'qui-sommes-nous';
+          break;
+        case 'deeds': 
+          label = 'deeds-fr';
+          break;
+        case 'legals': 
+          label = 'mentions-legales';
+          break;
+        case 'stake': 
+          label = 'rejoindre-dao';
+          break;
+        case 'owners': 
+          label = 'proprietaires';
+          break;
+        case 'farm': 
+          label = 'farm-fr';
+          break;
+        case 'tenants': 
+          label = 'locataires';
+          break;
+        default: label = '';
+        }
+      }
       this.$store.commit('selectLanguage', lang);
+      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(label)}`); 
+      window.location.reload();     
     },
   },
 };

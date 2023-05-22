@@ -26,11 +26,11 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
-        :href="`${parentLocation}/${$t('owners')}`"
+        :href="ownersURL"
         name="displayOwnedDeedsButton"
         outlined
         text
-        @click.prevent.stop="$root.$emit('switch-page', this.$t('owners'))">
+        @click.prevent.stop="$root.$emit('switch-page', this.ownersLabel)">
         <img
           :src="`${parentLocation}/static/images/deed-small.png`"
           alt=""
@@ -44,6 +44,9 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    ownersURL: state => state.ownersURL,
+    language: state => state.language,
+    ownersLabel: state => state.ownersLabel,
   }),
 };
 </script>

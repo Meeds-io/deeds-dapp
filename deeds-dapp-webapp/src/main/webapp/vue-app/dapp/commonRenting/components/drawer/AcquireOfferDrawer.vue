@@ -279,7 +279,7 @@
             {{ $t('deedRentOfferConfirmationSuccessPart3') }}
           </li>
           <li
-            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='${parentLocation}/${$t('tenants')}'>`, 1: `</a>`})"
+            v-html="$t('deedRentOfferConfirmationSuccessPart4', {0: `<a href='${tenantsURL}'>`, 1: `</a>`})"
             class="ps-0 ps-sm-4"
             @click.prevent.stop="openTenants">
           </li>
@@ -352,6 +352,8 @@ export default {
     parentLocation: state => state.parentLocation,
     ZERO_BN: state => state.ZERO_BN,
     MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
+    tenantsURL: state => state.tenantsURL,
+    tenantsLabel: state => state.tenantsLabel,
     nftId() {
       return this.offer?.nftId;
     },
@@ -641,7 +643,7 @@ export default {
     },
     openTenants(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', this.$t('tenants'));
+        this.$root.$emit('switch-page', this.tenantsLabel);
       }
     },
     openBuyMeeds(event) {

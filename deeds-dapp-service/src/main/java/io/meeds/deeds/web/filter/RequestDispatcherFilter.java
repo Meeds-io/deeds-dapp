@@ -66,7 +66,7 @@ public class RequestDispatcherFilter extends HttpFilter {
   protected static final List<String>        STATIC_PATHS_FR                = Arrays.asList("/accueil",
                                                                                             "/livre-blanc",
                                                                                             "/qui-sommes-nous",
-                                                                                            "/legales",
+                                                                                            "/mentions-legales",
                                                                                             "/visite-guidee");
 
   protected static final List<String>        STATIC_PATHS                   = CollectionUtils.concatLists(STATIC_PATHS_EN, STATIC_PATHS_FR);
@@ -81,13 +81,13 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/tokenomics");
 
   protected static final List<String>        DAPP_PATHS_FR                  = Arrays.asList("/place-de-marche",
-                                                                                            "/tenants",
+                                                                                            "/locataires",
                                                                                             "/proprietaires",
                                                                                             "/portefeuille",
                                                                                             "/rejoindre-dao",
-                                                                                            "/deeds",
-                                                                                            "/farm",
-                                                                                            "/tokenomics");
+                                                                                            "/deeds-fr",
+                                                                                            "/farm-fr",
+                                                                                            "/tokenomics-fr");
 
   protected static final List<String>        DAPP_PATHS                   = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
 

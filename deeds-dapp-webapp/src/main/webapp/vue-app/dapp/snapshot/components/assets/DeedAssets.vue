@@ -30,7 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
-        :href="`${parentLocation}/${$t('deeds')}`"
+        :href="deedsURL"
         class="rounded-pill px-7"
         color="primary"
         height="45px"
@@ -69,6 +69,7 @@ export default {
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
     parentLocation: state => state.parentLocation,
+    deedsURL: state => state.deedsURL,
     nftsByCardType() {
       const nftsByCardType = {};
       if (this.ownedNfts) {

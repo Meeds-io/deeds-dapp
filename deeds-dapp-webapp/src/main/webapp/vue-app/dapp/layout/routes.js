@@ -45,13 +45,13 @@ const language = getLanguage();
 const routes = language === 'fr' ? {'/': StaticPageContent,
   '/default': StaticPageContent,
   '/place-de-marche': Marketplace,
-  '/tenants': Tenants,
+  '/locataires': Tenants,
   '/proprietaires': Owners,
   '/portefeuille': Overview,
-  '/tokenomics': Tokenomics,
+  '/tokenomics-fr': Tokenomics,
   '/rejoindre-dao': Stake,
-  '/deeds': Deeds,
-  '/farm': Farm} 
+  '/deeds-fr': Deeds,
+  '/farm-fr': Farm} 
   : {'/': StaticPageContent,
     '/default': StaticPageContent,
     '/marketplace': Marketplace,

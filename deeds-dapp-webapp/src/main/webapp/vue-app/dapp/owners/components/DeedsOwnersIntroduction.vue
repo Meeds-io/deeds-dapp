@@ -57,7 +57,7 @@
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
-                :href="`${parentLocation}/${$t('deeds')}`"
+                :href="deedsURL"
                 height="36px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
@@ -104,7 +104,7 @@
             <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
-                :href="`${parentLocation}/${$t('market')}`"
+                :href="marketplaceURL"
                 height="36px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
@@ -131,6 +131,9 @@ export default {
     openSeaCollectionLink: state => state.openSeaCollectionLink,
     mintDeedVideoLink: state => state.mintDeedVideoLink,
     rentDeedVideoLink: state => state.rentDeedVideoLink,
+    marketplaceURL: state => state.marketplaceURL,
+    deedsURL: state => state.deedsURL,
+    language: state => state.language,
     dark: state => state.dark,
     openSeaLink() {
       return this.openSeaCollectionLink || 'javascript:void(0)';
@@ -153,7 +156,7 @@ export default {
     },
     openDeeds(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', this.$t('deeds'));
+        this.$root.$emit('switch-page', 'deeds');
       }
     },
     changeCollapsedTextVisibility() {

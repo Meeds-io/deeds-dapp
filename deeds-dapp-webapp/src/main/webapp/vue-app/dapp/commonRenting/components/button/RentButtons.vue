@@ -151,6 +151,7 @@ export default {
     authenticated: state => state.authenticated,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     now: state => state.now,
+    marketplaceLabel: state => state.marketplaceLabel,
     offerId() {
       return this.rentalOffer?.offerId;
     },
@@ -205,7 +206,7 @@ export default {
     },
     rentalOfferLink() {
       return this.showSeeRentPart
-        && `${this.parentLocation}/${this.$t('market')}?offer=${this.rentalOffer.id}`;
+        && `${this.parentLocation}/${this.marketplaceLabel}?offer=${this.rentalOffer.id}`;
     },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;
@@ -298,7 +299,7 @@ export default {
           event.stopPropagation();
         }
         this.$store.commit('setStandaloneOfferId', this.offers[0].id);
-        this.$root.$emit('switch-page', this.$t('market'), true);
+        this.$root.$emit('switch-page', this.marketplaceLabel, true);
       }
     },
     refreshOfferFromblockchain(event) {

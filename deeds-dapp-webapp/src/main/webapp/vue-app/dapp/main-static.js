@@ -106,6 +106,21 @@ const store = new Vuex.Store({
     dark,
     blackThemeColor: dark && 'white' || 'black',
     whiteThemeColor: dark && 'dark-color' || 'white',
+    marketplaceLabel: `${language === 'fr' ? 'place-de-marche' : 'marketplace'}`,
+    marketplaceURL: `${window.parentAppLocation}/${language === 'fr' ? 'place-de-marche' : 'marketplace'}`,
+    portfolioURL: `${window.parentAppLocation}/${language === 'fr' ? 'portefeuille' : 'portfolio'}`,
+    tourURL: `${window.parentAppLocation}/${language === 'fr' ? 'visite-guidee' : 'tour'}`,
+    whitepaperURL: `${window.parentAppLocation}/${language === 'fr' ? 'livre-blanc' : 'whitepaper'}`,
+    tokenomicsURL: `${window.parentAppLocation}/${language === 'fr' ? 'tokenomics-fr' : 'tokenomics'}`,
+    deedsURL: `${window.parentAppLocation}/${language === 'fr' ? 'deeds-fr' : 'deeds'}`,
+    aboutUsURL: `${window.parentAppLocation}/${language === 'fr' ? 'qui-sommes-nous' : 'about-us'}`,
+    legalsURL: `${window.parentAppLocation}/${language === 'fr' ? 'mentions-legales' : 'legals'}`,
+    stakeURL: `${window.parentAppLocation}/${language === 'fr' ? 'rejoindre-dao' : 'stake'}`,
+    ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'proprietaires' : 'owners'}`,
+    ownersLabel: `${language === 'fr' ? 'proprietaires' : 'owners'}`,
+    farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'farm-fr' : 'farm'}`,
+    tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'locataires' : 'tenants'}`,
+    tenantsLabel: `${language === 'fr' ? 'locataires' : 'tenants'}`,
   },
   mutations: {
     setPageState(state, value) {
@@ -114,10 +129,34 @@ const store = new Vuex.Store({
     setMobile(state, value) {
       state.isMobile = value;
     },
+    refreshURLs(state, language) {
+      state.marketplaceURL = `${window.parentAppLocation}/${language === 'fr' ? 'place-de-marche' : 'marketplace'}`;
+      state.portfolioURL = `${window.parentAppLocation}/${language === 'fr' ? 'portefeuille' : 'portfolio'}`;
+      state.tourURL = `${window.parentAppLocation}/${language === 'fr' ? 'visite-guidee' : 'tour'}`;
+      state.whitepaperURL = `${window.parentAppLocation}/${language === 'fr' ? 'livre-blanc' : 'whitepaper'}`;
+      state.tokenomicsURL = `${window.parentAppLocation}/${language === 'fr' ? 'tokenomics-fr' : 'tokenomics'}`;
+      state.deedsURL = `${window.parentAppLocation}/${language === 'fr' ? 'deeds-fr' : 'deeds'}`;
+      state.aboutUsURL = `${window.parentAppLocation}/${language === 'fr' ? 'qui-sommes-nous' : 'about-us'}`;
+      state.legalsURL = `${window.parentAppLocation}/${language === 'fr' ? 'mentions-legales' : 'legals'}`;
+      state.stakeURL = `${window.parentAppLocation}/${language === 'fr' ? 'rejoindre-dao' : 'stake'}`;
+      state.ownersURL = `${window.parentAppLocation}/${language === 'fr' ? 'proprietaires' : 'owners'}`;
+      state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'farm-fr' : 'farm'}`;
+      state.tenantsURL = `${window.parentAppLocation}/${language === 'fr' ? 'locataires' : 'tenants'}`;
+    },
+    refreshDocumentHead() {
+      fetch(window.location.href, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(resp => resp?.ok && resp.text())
+        .then(text => window.document.head.innerHTML = text);
+    },
     selectLanguage(state, lang) {
       state.language = lang;
       i18n.locale = lang.indexOf('fr') === 0 ? 'fr' : 'en';
       localStorage.setItem('deeds-selectedLanguage', state.language);
+      this.commit('refreshURLs', lang);
+      this.commit('refreshDocumentHead');
       initializeVueApp(lang);
     },
     setDark(state, value) {

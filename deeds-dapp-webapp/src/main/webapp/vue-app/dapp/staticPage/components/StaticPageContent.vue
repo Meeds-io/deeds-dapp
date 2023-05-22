@@ -27,20 +27,21 @@
 export default {
   computed: Vuex.mapState({
     page: state => state.page,
+    language: state => state.language,
     homePage() {
-      return this.page === this.$t('home');
+      return this.page === (this.language === 'fr' ? 'accueil' : 'home');
     },
     aboutUsPage() {
-      return this.page === this.$t('about-us');
+      return this.page === (this.language === 'fr' ? 'qui-sommes-nous' : 'about-us');
     },
     whitepaperPage() {
-      return this.page === this.$t('whitepaper');
+      return this.page === (this.language === 'fr' ? 'livre-blanc' : 'whitepaper');
     },
     legalsPage() {
-      return this.page === this.$t('legals');
+      return this.page === (this.language === 'fr' ? 'mentions-legales' : 'legals');
     },
     tourPage() {
-      return this.page === this.$t('tour');
+      return this.page === (this.language === 'fr' ? 'visite-guidee' : 'tour');
     },
   }),
 };

@@ -104,7 +104,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                :href="`${parentLocation}/${$t('portfolio')}`"
+                :href="portfolioURL"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
@@ -140,7 +140,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                :href="`${parentLocation}/${$t('tour')}`"
+                :href="tourURL"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
@@ -176,7 +176,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
-                :href="`${parentLocation}/${$t('whitepaper')}`"
+                :href="whitepaperURL"
                 height="54px"
                 class="rounded-pill px-7"
                 color="primary"
@@ -338,6 +338,9 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    portfolioURL: state => state.portfolioURL,
+    whitepaperURL: state => state.whitepaperURL,
+    tourURL: state => state.tourURL,
     dark: state => state.dark,
     opacityClass() {
       return this.dark && 'low-opacity' || 'half-opacity';

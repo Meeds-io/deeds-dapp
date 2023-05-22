@@ -20,7 +20,7 @@
   <div class="d-flex flex-column mt-8 mt-sm-10">
     <deeds-assets />
     <v-btn
-      :href="`${parentLocation}/${$t('tokenomics')}`"
+      :href="tokenomicsURL"
       class="px-8 mx-auto mb-16"
       color="primary"
       width="250px"
@@ -34,7 +34,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
+    tokenomicsURL: state => state.tokenomicsURL,
   }),
   created() {
     this.$store.commit('loadRewardedFunds', true);
