@@ -133,6 +133,7 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Cache-Control", "public,must-revalidate");
         response.setHeader("etag", eTagValue);
         request.setAttribute("isStaticPath", isStaticPath);
+        request.setAttribute("servletPath", servletPath);
         buildPageMetadata(request, servletPath);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
@@ -144,21 +145,22 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   private void buildPageMetadata(HttpServletRequest request, String servletPath) throws IOException {
     if (Utils.isProductionEnvironment()) {
+      String pageName_EN = servletPath;
       if (DAPP_PATHS_FR.contains(servletPath)) {
-        servletPath = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(servletPath));
+        pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(servletPath));
       } else if (STATIC_PATHS_FR.contains(servletPath)) {
-        servletPath = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(servletPath));
+        pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(servletPath));
       }
-      String pageContent = getPageHeaderMetadataContent(request, servletPath);
+      String pageContent = getPageHeaderMetadataContent(request, servletPath, pageName_EN);
       request.setAttribute("pageHeaderMetadatas", pageContent);
     } else {
       request.setAttribute("pageHeaderMetadatas", "");
     }
   }
 
-  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath) throws IOException {
+  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath, String pageName_EN) throws IOException {
     String lang = getLanguage(request);
-    String pageName = servletPath.substring(1);
+    String pageName = pageName_EN.substring(1);
 
     String key = pageName + "_" + lang;
     String pageContent = PAGE_METADATAS.get(key);
@@ -170,13 +172,14 @@ public class RequestDispatcherFilter extends HttpFilter {
         resourceBundle = new PropertyResourceBundle(is);
       }
 
-      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + servletPath + ".html")) {
+      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + pageName_EN + ".html")) {
         pageContent = IOUtils.toString(is, StandardCharsets.UTF_8);
         for (String label : METADATA_LABELS) {
           String i18nKey = "metadata." + pageName + "." + label;
           pageContent = pageContent.replace("#{" + i18nKey + "}", resourceBundle.getString(i18nKey));
         }
         pageContent = pageContent.replace("${lang}", lang);
+        pageContent = pageContent.replace("${servletPath}", servletPath);
       }
 
       PAGE_METADATAS.put(key, pageContent);
