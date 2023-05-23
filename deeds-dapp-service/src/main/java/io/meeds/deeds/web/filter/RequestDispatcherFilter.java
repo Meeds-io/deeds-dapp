@@ -42,6 +42,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.util.CollectionUtils;
 
 import io.meeds.deeds.web.utils.Utils;
 
@@ -56,13 +57,21 @@ public class RequestDispatcherFilter extends HttpFilter {
   protected static final List<String>        SUPPORTED_LANGUAGES            = Arrays.asList("en",
                                                                                             "fr");
 
-  protected static final List<String>        STATIC_PATHS                   = Arrays.asList("/home",
+  protected static final List<String>        STATIC_PATHS_EN                = Arrays.asList("/home",
                                                                                             "/whitepaper",
                                                                                             "/about-us",
                                                                                             "/legals",
                                                                                             "/tour");
 
-  protected static final List<String>        DAPP_PATHS                     = Arrays.asList("/marketplace",
+  protected static final List<String>        STATIC_PATHS_FR                = Arrays.asList("/accueil",
+                                                                                            "/livre-blanc",
+                                                                                            "/qui-sommes-nous",
+                                                                                            "/mentions-legales",
+                                                                                            "/visite-guidee");
+
+  protected static final List<String>        STATIC_PATHS                   = CollectionUtils.concatLists(STATIC_PATHS_EN, STATIC_PATHS_FR);
+
+  protected static final List<String>        DAPP_PATHS_EN                  = Arrays.asList("/marketplace",
                                                                                             "/tenants",
                                                                                             "/owners",
                                                                                             "/portfolio",
@@ -70,6 +79,17 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/deeds",
                                                                                             "/farm",
                                                                                             "/tokenomics");
+
+  protected static final List<String>        DAPP_PATHS_FR                  = Arrays.asList("/place-de-marche",
+                                                                                            "/locataires",
+                                                                                            "/proprietaires",
+                                                                                            "/portefeuille",
+                                                                                            "/rejoindre-dao",
+                                                                                            "/deeds-fr",
+                                                                                            "/farm-fr",
+                                                                                            "/tokenomics-fr");
+
+  protected static final List<String>        DAPP_PATHS                   = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
 
   protected static final List<String>        METADATA_LABELS                = Arrays.asList("pageDescription",
                                                                                             "imageAlt",
@@ -113,6 +133,7 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Cache-Control", "public,must-revalidate");
         response.setHeader("etag", eTagValue);
         request.setAttribute("isStaticPath", isStaticPath);
+        request.setAttribute("servletPath", servletPath);
         buildPageMetadata(request, servletPath);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
@@ -124,33 +145,41 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   private void buildPageMetadata(HttpServletRequest request, String servletPath) throws IOException {
     if (Utils.isProductionEnvironment()) {
-      String pageContent = getPageHeaderMetadataContent(request, servletPath);
+      String pageName_EN = servletPath;
+      if (DAPP_PATHS_FR.contains(servletPath)) {
+        pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(servletPath));
+      } else if (STATIC_PATHS_FR.contains(servletPath)) {
+        pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(servletPath));
+      }
+      String pageContent = getPageHeaderMetadataContent(request, servletPath, pageName_EN);
       request.setAttribute("pageHeaderMetadatas", pageContent);
     } else {
       request.setAttribute("pageHeaderMetadatas", "");
     }
   }
 
-  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath) throws IOException {
+  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath, String pageName_EN) throws IOException {
     String lang = getLanguage(request);
-    String pageName = servletPath.substring(1);
+    String pageName = pageName_EN.substring(1);
 
     String key = pageName + "_" + lang;
     String pageContent = PAGE_METADATAS.get(key);
 
+    request.setAttribute("lang", lang);
     if (StringUtils.isBlank(pageContent)) {
       ResourceBundle resourceBundle = null;
       try (InputStream is = request.getServletContext().getResourceAsStream("/static/i18n/messages_" + lang + ".properties")) {
         resourceBundle = new PropertyResourceBundle(is);
       }
 
-      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + servletPath + ".html")) {
+      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + pageName_EN + ".html")) {
         pageContent = IOUtils.toString(is, StandardCharsets.UTF_8);
         for (String label : METADATA_LABELS) {
           String i18nKey = "metadata." + pageName + "." + label;
           pageContent = pageContent.replace("#{" + i18nKey + "}", resourceBundle.getString(i18nKey));
         }
         pageContent = pageContent.replace("${lang}", lang);
+        pageContent = pageContent.replace("${servletPath}", servletPath);
       }
 
       PAGE_METADATAS.put(key, pageContent);
@@ -159,22 +188,8 @@ public class RequestDispatcherFilter extends HttpFilter {
   }
 
   private String getLanguage(HttpServletRequest request) {
-    Cookie[] cookies = request.getCookies();
-    String lang = null;
-    if (cookies != null) {
-      lang = Arrays.stream(cookies)
-                   .filter(cookie -> StringUtils.equals(PREFERRED_LANGUAGE_COOKIE_NAME, cookie.getName()))
-                   .map(Cookie::getValue)
-                   .findFirst()
-                   .orElse(null);
-    }
-    if (request.getParameter("lang") != null) {
-      lang = request.getParameter("lang");
-    }
-    if (StringUtils.isBlank(lang) || !SUPPORTED_LANGUAGES.contains(lang)) {
-      lang = "en";
-    }
-    return lang;
+    String path = request.getServletPath();
+    return DAPP_PATHS_FR.contains(path) || STATIC_PATHS_FR.contains(path) ? "fr" : "en";
   }
 
   private String getETagValue(HttpServletRequest request) {

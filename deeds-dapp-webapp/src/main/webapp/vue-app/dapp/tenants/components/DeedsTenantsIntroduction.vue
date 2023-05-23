@@ -50,7 +50,7 @@
           <span class="dark-grey--text mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
           <div v-if="!hasTenants" class="mb-7">
             <v-btn
-              :href="`${parentLocation}/marketplace`"
+              :href="marketplaceURL"
               height="36px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
@@ -84,7 +84,7 @@
           <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
           <div class="mb-7">
             <v-btn
-              :href="`${parentLocation}/tour`"
+              :href="tourURL"
               height="36px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
@@ -108,6 +108,8 @@ export default {
     browseOffersVideoLink: state => state.browseOffersVideoLink,
     beTenantVideoLink: state => state.beTenantVideoLink,
     dark: state => state.dark,
+    marketplaceURL: state => state.marketplaceURL,
+    tourURL: state => state.tourURL,
   }),
   created() {
     this.$root.$on('deed-leases-loaded', this.computeLeasesLength);

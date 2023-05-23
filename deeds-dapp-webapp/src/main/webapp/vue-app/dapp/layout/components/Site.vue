@@ -46,6 +46,10 @@ export default {
   created() {
     this.refreshMobileValue();
     this.refreshTheme();
+    window.addEventListener('popstate', this.$store.commit('refreshDocumentHead'));
+  },
+  beforeDestroy() {
+    window.addEventListener('popstate', this.$store.commit('refreshDocumentHead'));
   },
   methods: {
     refreshMobileValue() {

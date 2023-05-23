@@ -27,7 +27,7 @@
     <span class="display-1 font-weight-light text-center mb-10 mt-4 mt-sm-2 grey--text">{{ $t('homePage.description') }}</span>
     <div class="mx-auto mb-9 mb-sm-11">
       <v-btn
-        href="./tour" 
+        :href="tourURL"
         height="70px"
         class="primary px-8"
         depressed
@@ -219,7 +219,7 @@
       </v-card>
       <div class="d-flex justify-center">
         <v-btn
-          href="./whitepaper"
+          :href="whitepaperURL"
           height="70px"
           class="primary px-8 my-14"
           depressed
@@ -262,7 +262,7 @@
               <v-spacer />
               <div class="d-flex justify-center">
                 <v-btn
-                  href="./marketplace"
+                  :href="marketplaceURL"
                   height="70px"
                   class="primary px-8 mt-6 mb-15 mb-md-6"
                   depressed
@@ -319,6 +319,9 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    marketplaceURL: state => state.marketplaceURL,
+    tourURL: state => state.tourURL,
+    whitepaperURL: state => state.whitepaperURL,
   }),
 };
 </script>

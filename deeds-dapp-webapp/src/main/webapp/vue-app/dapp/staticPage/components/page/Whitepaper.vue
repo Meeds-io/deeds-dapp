@@ -276,7 +276,7 @@
       </v-btn>
       <v-btn
         v-else
-        href="./portfolio"
+        :href="portfolioURL"
         height="70px"
         class="primary px-8"
         dark
@@ -292,6 +292,7 @@ export default {
     pageState: state => state.pageState,
     parentLocation: state => state.parentLocation,
     whitepaperLink: state => state.whitepaperLink,
+    portfolioURL: state => state.portfolioURL,
     dark: state => state.dark,
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;

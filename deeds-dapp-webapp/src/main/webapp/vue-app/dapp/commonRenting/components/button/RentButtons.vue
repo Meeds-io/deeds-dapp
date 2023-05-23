@@ -151,6 +151,7 @@ export default {
     authenticated: state => state.authenticated,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     now: state => state.now,
+    marketplaceURL: state => state.marketplaceURL,
     offerId() {
       return this.rentalOffer?.offerId;
     },
@@ -205,7 +206,7 @@ export default {
     },
     rentalOfferLink() {
       return this.showSeeRentPart
-        && `${this.parentLocation}/marketplace?offer=${this.rentalOffer.id}`;
+        && `${this.marketplaceURL}?offer=${this.rentalOffer.id}`;
     },
     isRentingEnabled() {
       return this.showRentPart && this.isProvisioningManager;

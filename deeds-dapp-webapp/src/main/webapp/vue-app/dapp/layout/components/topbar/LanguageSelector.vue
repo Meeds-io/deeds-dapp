@@ -49,6 +49,8 @@ export default {
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     selectedLanguage: state => state.language,
+    parentLocation: state => state.parentLocation,
+    language: state => state.language,
     dark: state => state.dark,
     textColor() {
       return this.dark && 'white--text' || 'text-sub-title';
@@ -65,7 +67,92 @@ export default {
   }),
   methods: {
     changeLanguage(lang) {
+      const pageName = window.location.pathname.split('/')[2];
+      let uri = '';
+      if (this.language === 'fr') {
+        switch (pageName) {
+        case 'place-de-marche': 
+          uri = 'marketplace';
+          break;
+        case 'portefeuille': 
+          uri = 'portfolio';
+          break;
+        case 'visite-guidee': 
+          uri = 'tour';
+          break;
+        case 'livre-blanc': 
+          uri = 'whitepaper';
+          break;
+        case 'tokenomics-fr': 
+          uri = 'tokenomics';
+          break;
+        case 'qui-sommes-nous': 
+          uri = 'about-us';
+          break;
+        case 'deeds-fr': 
+          uri = 'deeds';
+          break;
+        case 'mentions-legales': 
+          uri = 'legals';
+          break;
+        case 'rejoindre-dao': 
+          uri = 'stake';
+          break;
+        case 'proprietaires': 
+          uri = 'owners';
+          break;
+        case 'farm-fr': 
+          uri = 'farm';
+          break;
+        case 'locataires': 
+          uri = 'tenants';
+          break;
+        default: uri = '';
+        }
+      } else {
+        switch (pageName) {
+        case 'marketplace': 
+          uri = 'place-de-marche';
+          break;
+        case 'portfolio': 
+          uri = 'portefeuille';
+          break;
+        case 'tour': 
+          uri = 'visite-guidee';
+          break;
+        case 'whitepaper': 
+          uri = 'livre-blanc';
+          break;
+        case 'tokenomics': 
+          uri = 'tokenomics-fr';
+          break;
+        case 'about-us': 
+          uri = 'qui-sommes-nous';
+          break;
+        case 'deeds': 
+          uri = 'deeds-fr';
+          break;
+        case 'legals': 
+          uri = 'mentions-legales';
+          break;
+        case 'stake': 
+          uri = 'rejoindre-dao';
+          break;
+        case 'owners': 
+          uri = 'proprietaires';
+          break;
+        case 'farm': 
+          uri = 'farm-fr';
+          break;
+        case 'tenants': 
+          uri = 'locataires';
+          break;
+        default: uri = '';
+        }
+      }
       this.$store.commit('selectLanguage', lang);
+      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(uri)}`); 
+      window.location.reload();     
     },
   },
 };

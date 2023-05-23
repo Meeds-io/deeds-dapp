@@ -26,7 +26,7 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
-        :href="`${parentLocation}/owners`"
+        :href="ownersURL"
         name="displayOwnedDeedsButton"
         outlined
         text
@@ -44,6 +44,7 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    ownersURL: state => state.ownersURL,
   }),
 };
 </script>
