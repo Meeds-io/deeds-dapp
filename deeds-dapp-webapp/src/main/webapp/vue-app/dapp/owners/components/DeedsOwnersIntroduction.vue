@@ -133,7 +133,6 @@ export default {
     rentDeedVideoLink: state => state.rentDeedVideoLink,
     marketplaceURL: state => state.marketplaceURL,
     deedsURL: state => state.deedsURL,
-    language: state => state.language,
     dark: state => state.dark,
     openSeaLink() {
       return this.openSeaCollectionLink || 'javascript:void(0)';

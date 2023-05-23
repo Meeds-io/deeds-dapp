@@ -112,8 +112,7 @@ const vuetify = new Vuetify({
 });
 
 function getLanguage() {
-  const lang = document.documentElement.lang;
-  return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+  return document.documentElement.lang || 'en';
 }
 
 const language = getLanguage();
@@ -436,7 +435,6 @@ const store = new Vuex.Store({
     blackThemeColor: dark && 'white' || 'black',
     whiteThemeColor: dark && 'dark-color' || 'white',
     openedDrawersCount: 0,
-    marketplaceLabel: `${language === 'fr' ? 'place-de-marche' : 'marketplace'}`,
     marketplaceURL: `${window.parentAppLocation}/${language === 'fr' ? 'place-de-marche' : 'marketplace'}`,
     portfolioURL: `${window.parentAppLocation}/${language === 'fr' ? 'portefeuille' : 'portfolio'}`,
     tourURL: `${window.parentAppLocation}/${language === 'fr' ? 'visite-guidee' : 'tour'}`,
@@ -579,7 +577,6 @@ const store = new Vuex.Store({
     selectLanguage(state, language) {
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
-      localStorage.setItem('deeds-selectedLanguage', state.language);
       this.commit('refreshURLs', language);
       this.commit('refreshDocumentHead');
       initializeVueApp(language);

@@ -27,8 +27,7 @@ const Tokenomics = { template: '<deeds-tokenomics />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 function getLanguage() {
-  const lang = document.documentElement.lang;
-  return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+  return document.documentElement.lang || 'en';
 }
 
 const language = getLanguage();
