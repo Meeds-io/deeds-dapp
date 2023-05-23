@@ -43,7 +43,7 @@
       </div>
       <div v-else>
         <v-btn
-          :href="`${parentLocation}/owners`"
+          :href="ownersURL"
           class="rounded-pill px-5"
           color="primary"
           height="40px"
@@ -69,6 +69,7 @@ export default {
   },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    ownersURL: state => state.ownersURL,
     smallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
     },

@@ -32,7 +32,7 @@
           <v-btn
             ref="marketplace"
             id="marketplace"
-            :href="`${parentLocation}/marketplace`"
+            :href="marketplaceURL"
             value="marketplace"
             class="px-0 full-height"
             link
@@ -58,7 +58,7 @@
           <v-btn
             ref="portfolio"
             id="portfolio"
-            :href="`${parentLocation}/portfolio`"
+            :href="portfolioURL"
             value="portfolio"
             class="px-0 full-height"
             link
@@ -97,7 +97,7 @@
           <v-list-item
             ref="tenants"
             id="tenants"
-            :href="`${parentLocation}/tenants`"
+            :href="tenantsURL"
             :active-class="activeMenuColor"
             key="tenants"
             value="tenants"
@@ -111,7 +111,7 @@
           <v-list-item
             ref="owners"
             id="owners"
-            :href="`${parentLocation}/owners`"
+            :href="ownersURL"
             :active-class="activeMenuColor"
             key="owners"
             value="owners"
@@ -125,7 +125,7 @@
           <v-list-item
             ref="stake"
             id="stake"
-            :href="`${parentLocation}/stake`"
+            :href="stakeURL"
             :active-class="activeMenuColor"
             key="stake"
             value="stake"
@@ -139,7 +139,7 @@
           <v-list-item
             ref="deeds"
             id="deeds"
-            :href="`${parentLocation}/deeds`"
+            :href="deedsURL"
             :active-class="activeMenuColor"
             key="deeds"
             value="deeds"
@@ -153,7 +153,7 @@
           <v-list-item
             ref="farm"
             id="farm"
-            :href="`${parentLocation}/farm`"
+            :href="farmURL"
             :active-class="activeMenuColor"
             key="farm"
             value="farm"
@@ -181,7 +181,7 @@
     <v-tab
       ref="marketplace"
       id="marketplace"
-      :href="`${parentLocation}/marketplace`"
+      :href="marketplaceURL"
       link 
       class="px-2 me-2"
       @click="openPage">
@@ -190,7 +190,7 @@
     <v-tab
       ref="tenants"
       id="tenants"
-      :href="`${parentLocation}/tenants`"
+      :href="tenantsURL"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -199,7 +199,7 @@
     <v-tab
       ref="owners"
       id="owners"
-      :href="`${parentLocation}/owners`"
+      :href="ownersURL"
       link
       class="px-2 me-2"
       @click="openPage">
@@ -208,7 +208,7 @@
     <v-tab
       ref="stake"
       id="stake"
-      :href="`${parentLocation}/stake`"
+      :href="stakeURL"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -217,7 +217,7 @@
     <v-tab
       ref="deeds"
       id="deeds"
-      :href="`${parentLocation}/deeds`"
+      :href="deedsURL"
       link 
       class="px-0 me-2"
       @click="openPage">
@@ -226,7 +226,7 @@
     <v-tab
       ref="farm"
       id="farm"
-      :href="`${parentLocation}/farm`"
+      :href="farmURL"
       link
       class="px-0 me-2"
       @click="openPage">
@@ -235,7 +235,7 @@
     <v-tab
       ref="portfolio"
       id="portfolio"
-      :href="`${parentLocation}/portfolio`"
+      :href="portfolioURL"
       link 
       class="px-0 ms-auto"
       @click="openPage">
@@ -265,6 +265,14 @@ export default {
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    portfolioURL: state => state.portfolioURL,
+    marketplaceURL: state => state.marketplaceURL,
+    deedsURL: state => state.deedsURL,
+    stakeURL: state => state.stakeURL,
+    ownersURL: state => state.ownersURL,
+    farmURL: state => state.farmURL,
+    tenantsURL: state => state.tenantsURL,
+    language: state => state.language,
     isMobile: state => state.isMobile,
     dark: state => state.dark,
     networkId: state => state.networkId,
@@ -317,6 +325,47 @@ export default {
     initSelectedTab(event) {
       const href = window.location.pathname;
       const hrefParts = href.split('/');
+      if (this.language === 'fr') {
+        switch (hrefParts[hrefParts.length - 1]) {
+        case 'place-de-marche': 
+          hrefParts[hrefParts.length - 1] = 'marketplace';
+          break;
+        case 'portefeuille': 
+          hrefParts[hrefParts.length - 1] = 'portfolio';
+          break;
+        case 'visite-guidee': 
+          hrefParts[hrefParts.length - 1] = 'tour';
+          break;
+        case 'livre-blanc': 
+          hrefParts[hrefParts.length - 1] = 'whitepaper';
+          break;
+        case 'tokenomics-fr': 
+          hrefParts[hrefParts.length - 1] = 'tokenomics';
+          break;
+        case 'qui-sommes-nous': 
+          hrefParts[hrefParts.length - 1] = 'about-us';
+          break;
+        case 'deeds-fr': 
+          hrefParts[hrefParts.length - 1] = 'deeds';
+          break;
+        case 'mentions-legales': 
+          hrefParts[hrefParts.length - 1] = 'legals';
+          break;
+        case 'rejoindre-dao': 
+          hrefParts[hrefParts.length - 1] = 'stake';
+          break;
+        case 'proprietaires': 
+          hrefParts[hrefParts.length - 1] = 'owners';
+          break;
+        case 'farm-fr': 
+          hrefParts[hrefParts.length - 1] = 'farm';
+          break;
+        case 'locataires': 
+          hrefParts[hrefParts.length - 1] = 'tenants';
+          break;
+        default: hrefParts[hrefParts.length - 1] = '';
+        }
+      }
       const newTab = hrefParts[hrefParts.length - 1] || 'marketplace';
       let tabToSelect;
       if (this.isMobile) {
