@@ -572,7 +572,7 @@ const store = new Vuex.Store({
         credentials: 'include',
       })
         .then(resp => resp?.ok && resp.text())
-        .then(text => window.document.head.innerHTML = text);
+        .then(text => window.document.head.innerHTML = text.substring(text.indexOf('<head>')+6, text.indexOf('</head>')));
     },
     selectLanguage(state, language) {
       state.language = language;
