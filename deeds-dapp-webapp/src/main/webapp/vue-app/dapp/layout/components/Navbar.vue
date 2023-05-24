@@ -438,6 +438,7 @@ export default {
         if (this.isMobile) {
           this.handlePageOpenedMobile();
         }
+        this.$store.commit('refreshDocumentHead');
       }
     },
     handlePageOpenedMobile() {
