@@ -57,7 +57,7 @@ export default {
       }
     },
     refreshSelectedOfferId(_location, link, avoidResetTab) {
-      if (link && (!link.includes('marketplace') || avoidResetTab)) {
+      if (link && (!link.includes('marketplace') || !link.includes('place-de-marche') || avoidResetTab)) {
         return;
       }
       const offerId = this.$utils.getQueryParam('offer');

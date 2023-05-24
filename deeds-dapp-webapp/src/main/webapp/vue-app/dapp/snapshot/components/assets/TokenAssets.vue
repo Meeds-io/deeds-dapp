@@ -30,7 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
-        :href="`${parentLocation}/stake`"
+        :href="stakeURL"
         class="rounded-pill px-6"
         color="primary"
         height="45px"
@@ -75,6 +75,7 @@ export default {
     rewardedPools: state => state.rewardedPools,
     comethPool: state => state.comethPool,
     parentLocation: state => state.parentLocation,
+    stakeURL: state => state.stakeURL,
     loading() {
       return this.poolsLoading || this.tokenLoading;
     },

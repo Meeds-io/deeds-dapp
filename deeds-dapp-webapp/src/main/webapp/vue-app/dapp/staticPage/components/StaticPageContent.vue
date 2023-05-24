@@ -17,16 +17,32 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-home v-if="page === 'home'" />
-  <deeds-about-us v-else-if="page === 'about-us'" />
-  <deeds-whitepaper v-else-if="page === 'whitepaper'" />
-  <deeds-legals v-else-if="page === 'legals'" />
-  <deeds-product-tour v-else-if="page === 'tour'" />
+  <deeds-home v-if="homePage" />
+  <deeds-about-us v-else-if="aboutUsPage" />
+  <deeds-whitepaper v-else-if="whitepaperPage" />
+  <deeds-legals v-else-if="legalsPage" />
+  <deeds-product-tour v-else-if="tourPage" />
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
     page: state => state.page,
+    language: state => state.language,
+    homePage() {
+      return this.page === (this.language === 'fr' ? 'accueil' : 'home');
+    },
+    aboutUsPage() {
+      return this.page === (this.language === 'fr' ? 'qui-sommes-nous' : 'about-us');
+    },
+    whitepaperPage() {
+      return this.page === (this.language === 'fr' ? 'livre-blanc' : 'whitepaper');
+    },
+    legalsPage() {
+      return this.page === (this.language === 'fr' ? 'mentions-legales' : 'legals');
+    },
+    tourPage() {
+      return this.page === (this.language === 'fr' ? 'visite-guidee' : 'tour');
+    },
   }),
 };
 </script>

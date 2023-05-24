@@ -44,7 +44,7 @@
       </video>
       <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
-          href="./marketplace"
+          :href="marketplaceURL"
           class="primary px-8 mx-5 mt-7"
           height="70px"
           depressed
@@ -287,6 +287,7 @@ export default {
     overviewVideoLink: state => state.overviewVideoLink,
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
+    marketplaceURL: state => state.marketplaceURL,
     dark: state => state.dark,
     isSmallScreen() {
       return this.$vuetify.breakpoint.mdAndDown;

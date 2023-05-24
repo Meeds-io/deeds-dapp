@@ -111,18 +111,8 @@ const vuetify = new Vuetify({
   },
 });
 
-function getQueryParam(paramName) {
-  if (!window.location.search?.length) {
-    return;
-  }
-  const uri = window.location.search.substring(1);
-  const params = new URLSearchParams(uri);
-  return params.get(paramName);
-}
-
 function getLanguage() {
-  const lang = getQueryParam('lang');
-  return lang || localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+  return document.documentElement.lang || 'en';
 }
 
 const language = getLanguage();
@@ -445,6 +435,18 @@ const store = new Vuex.Store({
     blackThemeColor: dark && 'white' || 'black',
     whiteThemeColor: dark && 'dark-color' || 'white',
     openedDrawersCount: 0,
+    marketplaceURL: `${window.parentAppLocation}/${language === 'fr' ? 'place-de-marche' : 'marketplace'}`,
+    portfolioURL: `${window.parentAppLocation}/${language === 'fr' ? 'portefeuille' : 'portfolio'}`,
+    tourURL: `${window.parentAppLocation}/${language === 'fr' ? 'visite-guidee' : 'tour'}`,
+    whitepaperURL: `${window.parentAppLocation}/${language === 'fr' ? 'livre-blanc' : 'whitepaper'}`,
+    tokenomicsURL: `${window.parentAppLocation}/${language === 'fr' ? 'tokenomics-fr' : 'tokenomics'}`,
+    deedsURL: `${window.parentAppLocation}/${language === 'fr' ? 'deeds-fr' : 'deeds'}`,
+    aboutUsURL: `${window.parentAppLocation}/${language === 'fr' ? 'qui-sommes-nous' : 'about-us'}`,
+    legalsURL: `${window.parentAppLocation}/${language === 'fr' ? 'mentions-legales' : 'legals'}`,
+    stakeURL: `${window.parentAppLocation}/${language === 'fr' ? 'rejoindre-dao' : 'stake'}`,
+    ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'proprietaires' : 'owners'}`,
+    farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'farm-fr' : 'farm'}`,
+    tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'locataires' : 'tenants'}`,
   },
   mutations: {
     echartsLoaded(state) {
@@ -550,10 +552,33 @@ const store = new Vuex.Store({
           }
         });
     },
+    refreshURLs(state, language) {
+      state.marketplaceURL = `${window.parentAppLocation}/${language === 'fr' ? 'place-de-marche' : 'marketplace'}`;
+      state.portfolioURL = `${window.parentAppLocation}/${language === 'fr' ? 'portefeuille' : 'portfolio'}`;
+      state.tourURL = `${window.parentAppLocation}/${language === 'fr' ? 'visite-guidee' : 'tour'}`;
+      state.whitepaperURL = `${window.parentAppLocation}/${language === 'fr' ? 'livre-blanc' : 'whitepaper'}`;
+      state.tokenomicsURL = `${window.parentAppLocation}/${language === 'fr' ? 'tokenomics-fr' : 'tokenomics'}`;
+      state.deedsURL = `${window.parentAppLocation}/${language === 'fr' ? 'deeds-fr' : 'deeds'}`;
+      state.aboutUsURL = `${window.parentAppLocation}/${language === 'fr' ? 'qui-sommes-nous' : 'about-us'}`;
+      state.legalsURL = `${window.parentAppLocation}/${language === 'fr' ? 'mentions-legales' : 'legals'}`;
+      state.stakeURL = `${window.parentAppLocation}/${language === 'fr' ? 'rejoindre-dao' : 'stake'}`;
+      state.ownersURL = `${window.parentAppLocation}/${language === 'fr' ? 'proprietaires' : 'owners'}`;
+      state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'farm-fr' : 'farm'}`;
+      state.tenantsURL = `${window.parentAppLocation}/${language === 'fr' ? 'locataires' : 'tenants'}`;
+    },
+    refreshDocumentHead() {
+      fetch(window.location.href, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then(resp => resp?.ok && resp.text())
+        .then(text => window.document.head.innerHTML = text);
+    },
     selectLanguage(state, language) {
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
-      localStorage.setItem('deeds-selectedLanguage', state.language);
+      this.commit('refreshURLs', language);
+      this.commit('refreshDocumentHead');
       initializeVueApp(language);
     },
     setEtherBalance(state, etherBalance) {

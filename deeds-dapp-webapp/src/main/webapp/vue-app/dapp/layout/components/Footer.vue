@@ -75,13 +75,13 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('product') }}</span>
             <a
-              :href="`${parentLocation}/tour`"
+              :href="tourURL"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('productTour') }}
             </a>
             <a
-              :href="`${parentLocation}/tenants`"
+              :href="tenantsURL"
               :class="textColor"
               class="no-decoration">
               {{ $t('yourHub') }}
@@ -93,19 +93,19 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('workMetaverse.title') }}</span>
             <a
-              :href="`${parentLocation}/tokenomics`"
+              :href="tokenomicsURL"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('meedsToken') }}
             </a>
             <a
-              :href="`${parentLocation}/deeds`"
+              :href="deedsURL"
               :class="textColor"
               class="text-capitalize no-decoration">
               {{ $t('becomingADeedOwner') }}
             </a>
             <a
-              :href="`${parentLocation}/marketplace`"
+              :href="marketplaceURL"
               :class="textColor"
               class="no-decoration text-capitalize my-2">
               {{ $t('marketplace') }}
@@ -119,19 +119,19 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('meedDAO') }}</span>
             <a
-              :href="`${parentLocation}/whitepaper`"
+              :href="whitepaperURL"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('whitePaper') }}
             </a>
             <a
-              :href="`${parentLocation}/about-us`"
+              :href="aboutUsURL"
               :class="textColor"
               class="no-decoration">
               {{ $t('aboutUs') }}
             </a>
             <a
-              :href="`${parentLocation}/legals`"
+              :href="legalsURL"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('legal') }}
@@ -143,7 +143,7 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('community') }}</span>
             <a
-              :href="`${parentLocation}/stake`"
+              :href="stakeURL"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('joinMeedsDAO') }}
@@ -185,6 +185,15 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     whitepaperLink: state => state.whitepaperLink,
+    marketplaceURL: state => state.marketplaceURL,
+    tourURL: state => state.tourURL,
+    legalsURL: state => state.legalsURL,
+    stakeURL: state => state.stakeURL,
+    aboutUsURL: state => state.aboutUsURL,
+    tokenomicsURL: state => state.tokenomicsURL,
+    tenantsURL: state => state.tenantsURL,
+    deedsURL: state => state.deedsURL,
+    whitepaperURL: state => state.whitepaperURL,
     dark: state => state.dark,
     githubColor() {
       return this.dark && 'white' || 'black';

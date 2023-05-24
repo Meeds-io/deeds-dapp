@@ -18,7 +18,7 @@
  */
 import './initComponents';
 
-const language = localStorage.getItem('deeds-selectedLanguage') || (navigator.language.indexOf('fr') === 0 ? 'fr' : 'en');
+const language = document.documentElement.lang || 'en';
 
 window.parentAppLocation = window.location.pathname.split('/')[1];
 if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
@@ -41,7 +41,6 @@ const store = new Vuex.Store({
     selectLanguage(state, language) {
       state.language = language;
       i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
-      localStorage.setItem('deeds-selectedLanguage', state.language);
       getI18N(language);
     },
   }
