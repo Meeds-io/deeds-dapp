@@ -1,7 +1,7 @@
 <%@page import="io.meeds.deeds.web.utils.Utils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
-  String basePath = request.getServletPath().startsWith("/fr/") || request.getServletPath().startsWith("/en/") ? "../" : "./";
+  String basePath = request.getServletPath().startsWith("/fr/") ? "../" : "./";
 %>
 <!DOCTYPE html>
 <html lang="en">

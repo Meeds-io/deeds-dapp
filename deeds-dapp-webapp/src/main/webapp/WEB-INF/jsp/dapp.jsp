@@ -5,7 +5,7 @@
   boolean isProduction = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
   String lang = (String) request.getAttribute("lang");
-  String basePath = request.getServletPath().startsWith("/fr/") || request.getServletPath().startsWith("/en/") ? "../" : "./";
+  String basePath = request.getServletPath().startsWith("/fr/") ? "../" : "./";
 %>
 <!DOCTYPE html>
 <html lang="<%=lang%>"> 

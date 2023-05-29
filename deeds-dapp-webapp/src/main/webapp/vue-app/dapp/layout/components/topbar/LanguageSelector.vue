@@ -84,13 +84,13 @@ export default {
         case 'livre-blanc': 
           uri = 'whitepaper';
           break;
-        case 'tokenomics-fr': 
+        case 'tokenomics': 
           uri = 'tokenomics';
           break;
         case 'qui-sommes-nous': 
           uri = 'about-us';
           break;
-        case 'deeds-fr': 
+        case 'deeds': 
           uri = 'deeds';
           break;
         case 'mentions-legales': 
@@ -102,7 +102,7 @@ export default {
         case 'proprietaires': 
           uri = 'owners';
           break;
-        case 'farm-fr': 
+        case 'farm': 
           uri = 'farm';
           break;
         case 'locataires': 
@@ -125,13 +125,13 @@ export default {
           uri = 'fr/livre-blanc';
           break;
         case 'tokenomics': 
-          uri = 'fr/tokenomics-fr';
+          uri = 'fr/tokenomics';
           break;
         case 'about-us': 
           uri = 'fr/qui-sommes-nous';
           break;
         case 'deeds': 
-          uri = 'fr/deeds-fr';
+          uri = 'fr/deeds';
           break;
         case 'legals': 
           uri = 'fr/mentions-legales';
@@ -143,7 +143,7 @@ export default {
           uri = 'fr/proprietaires';
           break;
         case 'farm': 
-          uri = 'fr/farm-fr';
+          uri = 'fr/farm';
           break;
         case 'tenants': 
           uri = 'fr/locataires';

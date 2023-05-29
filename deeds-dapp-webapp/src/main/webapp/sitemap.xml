@@ -5,6 +5,11 @@
     <priority>1.00</priority>
   </url>
   <url>
+    <loc>https://www.meeds.io/home</loc>
+    <lastmod>2023-04-17</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
     <loc>https://www.meeds.io/tour</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
@@ -65,67 +70,67 @@
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/accueil</loc>
+    <loc>https://www.meeds.io/fr/accueil</loc>
+    <lastmod>2023-04-17</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/fr/portefeuille</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/portefeuille</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/visite-guidee</loc>
+    <loc>https://www.meeds.io/fr/visite-guidee</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/livre-blanc</loc>
+    <loc>https://www.meeds.io/fr/livre-blanc</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/place-de-marche</loc>
+    <loc>https://www.meeds.io/fr/place-de-marche</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/tokenomics-fr</loc>
+    <loc>https://www.meeds.io/fr/tokenomics</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/deeds-fr</loc>
+    <loc>https://www.meeds.io/fr/deeds</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/qui-somme-nous</loc>
+    <loc>https://www.meeds.io/fr/qui-somme-nous</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/mentions-legales</loc>
+    <loc>https://www.meeds.io/fr/mentions-legales</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/rejoindre-dao</loc>
+    <loc>https://www.meeds.io/fr/rejoindre-dao</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/proprietaires</loc>
+    <loc>https://www.meeds.io/fr/proprietaires</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/farm-fr</loc>
+    <loc>https://www.meeds.io/fr/farm</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/locataires</loc>
+    <loc>https://www.meeds.io/fr/locataires</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.80</priority>
   </url>

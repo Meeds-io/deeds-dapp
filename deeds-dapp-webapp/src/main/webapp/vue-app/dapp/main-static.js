@@ -68,11 +68,11 @@ const pathParts = window.location.pathname.split('/');
 window.parentAppLocation = pathParts[1] || '';
 let page;
 if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
-  page = pathParts.length > 3 && pathParts[pathParts.length-1] || 'home';
+  page = pathParts.length > 3 && pathParts[pathParts.length-1] || (language === 'fr' ? 'accueil' : 'home');
   window.parentAppLocation = `/${window.parentAppLocation}`;
 } else {
   window.parentAppLocation = '';
-  page = (pathParts.length > 1 && pathParts[1] !== language) && pathParts[pathParts.length-1] || 'home';
+  page = (pathParts.length > 1 && pathParts[1] !== language) && pathParts[pathParts.length-1] || (language === 'fr' ? 'accueil' : 'home');
 }
 
 const store = new Vuex.Store({
@@ -100,13 +100,13 @@ const store = new Vuex.Store({
     portfolioURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/portefeuille' : 'portfolio'}`,
     tourURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/visite-guidee' : 'tour'}`,
     whitepaperURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/livre-blanc' : 'whitepaper'}`,
-    tokenomicsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/tokenomics-fr' : 'tokenomics'}`,
-    deedsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/deeds-fr' : 'deeds'}`,
+    tokenomicsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/tokenomics' : 'tokenomics'}`,
+    deedsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/deeds' : 'deeds'}`,
     aboutUsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/qui-sommes-nous' : 'about-us'}`,
     legalsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/mentions-legales' : 'legals'}`,
     stakeURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-dao' : 'stake'}`,
     ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`,
-    farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm-fr' : 'farm'}`,
+    farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`,
     tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`,
   },
   mutations: {
@@ -121,13 +121,13 @@ const store = new Vuex.Store({
       state.portfolioURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/portefeuille' : 'portfolio'}`;
       state.tourURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/visite-guidee' : 'tour'}`;
       state.whitepaperURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/livre-blanc' : 'whitepaper'}`;
-      state.tokenomicsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/tokenomics-fr' : 'tokenomics'}`;
-      state.deedsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/deeds-fr' : 'deeds'}`;
+      state.tokenomicsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/tokenomics' : 'tokenomics'}`;
+      state.deedsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/deeds' : 'deeds'}`;
       state.aboutUsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/qui-sommes-nous' : 'about-us'}`;
       state.legalsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/mentions-legales' : 'legals'}`;
       state.stakeURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-dao' : 'stake'}`;
       state.ownersURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`;
-      state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm-fr' : 'farm'}`;
+      state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`;
       state.tenantsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`;
     },
     refreshDocumentHead() {

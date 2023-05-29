@@ -87,9 +87,9 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/proprietaires",
                                                                                             "/portefeuille",
                                                                                             "/rejoindre-dao",
-                                                                                            "/deeds-fr",
-                                                                                            "/farm-fr",
-                                                                                            "/tokenomics-fr");
+                                                                                            "/deeds",
+                                                                                            "/farm",
+                                                                                            "/tokenomics");
 
   protected static final List<String>        DAPP_PATHS                   = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
 
@@ -109,7 +109,6 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
-    String uri = servletPath;
     if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
     } else {
@@ -129,8 +128,9 @@ public class RequestDispatcherFilter extends HttpFilter {
       } else if (StringUtils.isBlank(servletPath) || StringUtils.equals(servletPath, "/")) {
         servletPath = DEFAULT_PAGE_FILE_NAME_EN;
       } else  if(StringUtils.equals(servletPath, "/fr")) {
-        servletPath = DEFAULT_PAGE_FILE_NAME_FR;
+        servletPath = servletPath + DEFAULT_PAGE_FILE_NAME_FR;
       }
+      String uri = servletPath;
       if(uri.startsWith("/fr/")) {
         uri = uri.substring(3, uri.length());
       }
@@ -145,9 +145,6 @@ public class RequestDispatcherFilter extends HttpFilter {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
-        if(servletPath.startsWith("/fr/")) {
-          response.setHeader("Location", uri);
-        }
         chain.doFilter(request, response);
       }
     }
@@ -156,9 +153,9 @@ public class RequestDispatcherFilter extends HttpFilter {
   private void buildPageMetadata(HttpServletRequest request, String servletPath, String uri) throws IOException {
     if (Utils.isProductionEnvironment()) {
       String pageName_EN = uri;
-      if (DAPP_PATHS_FR.contains(uri)) {
+      if (DAPP_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
         pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(uri));
-      } else if (STATIC_PATHS_FR.contains(uri)) {
+      } else if (STATIC_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
         pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(uri));
       }
       String pageContent = getPageHeaderMetadataContent(request, servletPath, pageName_EN);

@@ -38,10 +38,10 @@ const routes = language === 'fr' ? {'/': StaticPageContent,
   '/locataires': Tenants,
   '/proprietaires': Owners,
   '/portefeuille': Overview,
-  '/tokenomics-fr': Tokenomics,
+  '/tokenomics': Tokenomics,
   '/rejoindre-dao': Stake,
-  '/deeds-fr': Deeds,
-  '/farm-fr': Farm} 
+  '/deeds': Deeds,
+  '/farm': Farm} 
   : {'/': StaticPageContent,
     '/default': StaticPageContent,
     '/marketplace': Marketplace,
