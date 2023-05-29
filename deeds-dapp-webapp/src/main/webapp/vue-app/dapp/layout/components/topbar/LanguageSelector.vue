@@ -67,7 +67,8 @@ export default {
   }),
   methods: {
     changeLanguage(lang) {
-      const pageName = window.location.pathname.split('/')[2];
+      const pathParts = window.location.pathname.split('/');
+      const pageName = pathParts[pathParts.length-1];
       let uri = '';
       if (this.language === 'fr') {
         switch (pageName) {
@@ -112,46 +113,46 @@ export default {
       } else {
         switch (pageName) {
         case 'marketplace': 
-          uri = 'place-de-marche';
+          uri = 'fr/place-de-marche';
           break;
         case 'portfolio': 
-          uri = 'portefeuille';
+          uri = 'fr/portefeuille';
           break;
         case 'tour': 
-          uri = 'visite-guidee';
+          uri = 'fr/visite-guidee';
           break;
         case 'whitepaper': 
-          uri = 'livre-blanc';
+          uri = 'fr/livre-blanc';
           break;
         case 'tokenomics': 
-          uri = 'tokenomics-fr';
+          uri = 'fr/tokenomics-fr';
           break;
         case 'about-us': 
-          uri = 'qui-sommes-nous';
+          uri = 'fr/qui-sommes-nous';
           break;
         case 'deeds': 
-          uri = 'deeds-fr';
+          uri = 'fr/deeds-fr';
           break;
         case 'legals': 
-          uri = 'mentions-legales';
+          uri = 'fr/mentions-legales';
           break;
         case 'stake': 
-          uri = 'rejoindre-dao';
+          uri = 'fr/rejoindre-dao';
           break;
         case 'owners': 
-          uri = 'proprietaires';
+          uri = 'fr/proprietaires';
           break;
         case 'farm': 
-          uri = 'farm-fr';
+          uri = 'fr/farm-fr';
           break;
         case 'tenants': 
-          uri = 'locataires';
+          uri = 'fr/locataires';
           break;
         default: uri = '';
         }
       }
       this.$store.commit('selectLanguage', lang);
-      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(uri)}`); 
+      window.history.replaceState('', '', `${this.parentLocation}/${uri}`); 
       window.location.reload();     
     },
   },

@@ -1,6 +1,6 @@
 package io.meeds.deeds.web.filter;
 
-import static io.meeds.deeds.web.filter.RequestDispatcherFilter.DEFAULT_PAGE_FILE_NAME;
+import static io.meeds.deeds.web.filter.RequestDispatcherFilter.DEFAULT_PAGE_FILE_NAME_EN;
 import static io.meeds.deeds.web.filter.RequestDispatcherFilter.LAST_MODIFIED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +75,7 @@ class RequestDispatcherFilterTest {
 
   @Test
   void testGetStaticPage() throws Exception {
-    String servletPath = DEFAULT_PAGE_FILE_NAME;
+    String servletPath = DEFAULT_PAGE_FILE_NAME_EN;
     String lang = "en";
     String i18NContent = """
         metadata.home.pageDescription=Test Label

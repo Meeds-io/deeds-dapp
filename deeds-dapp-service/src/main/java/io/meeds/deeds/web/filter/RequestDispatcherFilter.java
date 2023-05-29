@@ -50,7 +50,9 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   protected static final String              PREFERRED_LANGUAGE_COOKIE_NAME = "preferred-language";
 
-  protected static final String              DEFAULT_PAGE_FILE_NAME         = "/home";
+  protected static final String              DEFAULT_PAGE_FILE_NAME_EN         = "/home";
+
+  protected static final String              DEFAULT_PAGE_FILE_NAME_FR         = "/accueil";
 
   protected static final long                serialVersionUID               = -4145074746513311839L;
 
@@ -107,6 +109,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
+    String uri = servletPath;
     if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
     } else {
@@ -124,32 +127,39 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         return;
       } else if (StringUtils.isBlank(servletPath) || StringUtils.equals(servletPath, "/")) {
-        servletPath = DEFAULT_PAGE_FILE_NAME;
+        servletPath = DEFAULT_PAGE_FILE_NAME_EN;
+      } else  if(StringUtils.equals(servletPath, "/fr")) {
+        servletPath = DEFAULT_PAGE_FILE_NAME_FR;
       }
-      boolean isStaticPath = STATIC_PATHS.contains(servletPath);
-      if (isStaticPath || DAPP_PATHS.contains(servletPath)) {
+      if(uri.startsWith("/fr/")) {
+        uri = uri.substring(3, uri.length());
+      }
+      boolean isStaticPath = STATIC_PATHS.contains(uri);
+      if (isStaticPath || DAPP_PATHS.contains(uri)) {
         response.setContentType("text/html; charset=UTF-8");
         response.setDateHeader("Last-Modified", LAST_MODIFIED);
         response.setHeader("Cache-Control", "public,must-revalidate");
         response.setHeader("etag", eTagValue);
         request.setAttribute("isStaticPath", isStaticPath);
-        request.setAttribute("servletPath", servletPath);
-        buildPageMetadata(request, servletPath);
+        buildPageMetadata(request, servletPath, uri);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
+        if(servletPath.startsWith("/fr/")) {
+          response.setHeader("Location", uri);
+        }
         chain.doFilter(request, response);
       }
     }
   }
 
-  private void buildPageMetadata(HttpServletRequest request, String servletPath) throws IOException {
+  private void buildPageMetadata(HttpServletRequest request, String servletPath, String uri) throws IOException {
     if (Utils.isProductionEnvironment()) {
-      String pageName_EN = servletPath;
-      if (DAPP_PATHS_FR.contains(servletPath)) {
-        pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(servletPath));
-      } else if (STATIC_PATHS_FR.contains(servletPath)) {
-        pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(servletPath));
+      String pageName_EN = uri;
+      if (DAPP_PATHS_FR.contains(uri)) {
+        pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(uri));
+      } else if (STATIC_PATHS_FR.contains(uri)) {
+        pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(uri));
       }
       String pageContent = getPageHeaderMetadataContent(request, servletPath, pageName_EN);
       request.setAttribute("pageHeaderMetadatas", pageContent);
@@ -189,7 +199,7 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   private String getLanguage(HttpServletRequest request) {
     String path = request.getServletPath();
-    return DAPP_PATHS_FR.contains(path) || STATIC_PATHS_FR.contains(path) ? "fr" : "en";
+    return path.contains("/fr") ? "fr" : "en";
   }
 
   private String getETagValue(HttpServletRequest request) {
