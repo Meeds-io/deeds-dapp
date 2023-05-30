@@ -122,6 +122,14 @@ public class RequestDispatcherFilter extends HttpFilter {
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           return;
         }
+      } else if(servletPath.equals("/home")) {
+        response.setHeader("Location", "/");
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        return;
+      } else if(servletPath.equals("/fr/accueil")) {
+        response.setHeader("Location", "/fr");
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        return;
       }
       String eTagHeader = request.getHeader("If-None-Match");
       String eTagValue = getETagValue(request);
@@ -134,14 +142,13 @@ public class RequestDispatcherFilter extends HttpFilter {
         servletPath = servletPath + DEFAULT_PAGE_FILE_NAME_FR;
       }
       String uri = servletPath;
-      if(!uri.startsWith("/fr/") && (DAPP_PATHS_FR_UNCOM.contains(uri) || STATIC_PATHS_FR.contains(uri))) {
+      if(uri.startsWith("/fr/")) {
+        uri = uri.substring(3, uri.length());
+      } else if (DAPP_PATHS_FR_UNCOM.contains(uri) || STATIC_PATHS_FR.contains(uri)) {
         uri = "/fr" + uri;
         response.setHeader("Location", uri);
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      }
-      if(uri.startsWith("/fr/")) {
-        uri = uri.substring(3, uri.length());
       }
       boolean isStaticPath = STATIC_PATHS.contains(uri);
       if (isStaticPath || DAPP_PATHS.contains(uri)) {
@@ -205,7 +212,7 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   private String getLanguage(HttpServletRequest request) {
     String path = request.getServletPath();
-    return path.contains("/fr") ? "fr" : "en";
+    return path.startsWith("/fr") ? "fr" : "en";
   }
 
   private String getETagValue(HttpServletRequest request) {

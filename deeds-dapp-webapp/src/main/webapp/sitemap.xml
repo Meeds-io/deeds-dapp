@@ -5,11 +5,6 @@
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/home</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>1.00</priority>
-  </url>
-  <url>
     <loc>https://www.meeds.io/tour</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
@@ -70,7 +65,7 @@
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/fr/accueil</loc>
+    <loc>https://www.meeds.io/fr</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>1.00</priority>
   </url>
