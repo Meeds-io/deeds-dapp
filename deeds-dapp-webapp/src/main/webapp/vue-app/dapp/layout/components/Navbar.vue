@@ -339,13 +339,13 @@ export default {
         case 'livre-blanc': 
           hrefParts[hrefParts.length - 1] = 'whitepaper';
           break;
-        case 'tokenomics-fr': 
+        case 'tokenomics': 
           hrefParts[hrefParts.length - 1] = 'tokenomics';
           break;
         case 'qui-sommes-nous': 
           hrefParts[hrefParts.length - 1] = 'about-us';
           break;
-        case 'deeds-fr': 
+        case 'deeds': 
           hrefParts[hrefParts.length - 1] = 'deeds';
           break;
         case 'mentions-legales': 
@@ -357,7 +357,7 @@ export default {
         case 'proprietaires': 
           hrefParts[hrefParts.length - 1] = 'owners';
           break;
-        case 'farm-fr': 
+        case 'farm': 
           hrefParts[hrefParts.length - 1] = 'farm';
           break;
         case 'locataires': 
