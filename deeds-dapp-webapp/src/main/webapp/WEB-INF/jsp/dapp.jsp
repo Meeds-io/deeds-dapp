@@ -5,6 +5,7 @@
   boolean isProduction = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
   String lang = (String) request.getAttribute("lang");
+  String basePath = request.getServletPath().startsWith("/fr/") ? "../" : "./";
 %>
 <!DOCTYPE html>
 <html lang="<%=lang%>"> 
@@ -29,45 +30,45 @@
     <meta name="version" content="<%=buildnumber%>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="preload" as="style" type="text/css" href="./static/css/fonts-roboto.css?_=6.5.95">
-    <link rel="preload" as="style" type="text/css" href="./static/css/font-awesome.min.css?_=6.2.0">
-    <link rel="preload" as="style" type="text/css" href="./static/css/vuetify.css?_=v2.6.14">
-    <link rel="preload" as="style" type="text/css" href="./static/css/deeds.css?_=<%=buildnumber%>">
+    <link rel="preload" as="style" type="text/css" href="<%=basePath%>static/css/fonts-roboto.css?_=6.5.95">
+    <link rel="preload" as="style" type="text/css" href="<%=basePath%>static/css/font-awesome.min.css?_=6.2.0">
+    <link rel="preload" as="style" type="text/css" href="<%=basePath%>static/css/vuetify.css?_=v2.6.14">
+    <link rel="preload" as="style" type="text/css" href="<%=basePath%>static/css/deeds.css?_=<%=buildnumber%>">
 
-    <link rel="preload" href="./static/fonts/fa-brands-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/fa-brands-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/fa-regular-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/fa-regular-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/fa-solid-900.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/fa-solid-900.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmEU9fBBc4.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="preload" href="./static/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2" as="font" type="font/woff2" crossorigin="">
-    <link rel="preload" href="./static/fonts/KFOmCnqEu92Fr1Mu4mxK.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-brands-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-brands-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-regular-400.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-regular-400.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-solid-900.woff2?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/fa-solid-900.ttf?v=6.2.0" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<%=basePath%>static/fonts/KFOlCnqEu92Fr1MmEU9fBBc4.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="<%=basePath%>static/fonts/KFOlCnqEu92Fr1MmWUlfBBc4.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="preload" href="<%=basePath%>static/fonts/KFOmCnqEu92Fr1Mu4mxK.woff2" as="font" type="font/woff2" crossorigin="">
 
-    <link rel="preload" href="./static/js/vue.min.js?_=v2.7.14" as="script" type="text/javascript">
-    <link rel="preload" href="./static/js/vue-i18n.min.js?_=v8.26.7" as="script" type="text/javascript">
-    <link rel="preload" href="./static/js/vuex.min.js?_=v3.6.2" as="script" type="text/javascript">
-    <link rel="preload" href="./static/js/vuetify.min.js?_=v2.6.14" as="script" type="text/javascript">
+    <link rel="preload" href="<%=basePath%>static/js/vue.min.js?_=v2.7.14" as="script" type="text/javascript">
+    <link rel="preload" href="<%=basePath%>static/js/vue-i18n.min.js?_=v8.26.7" as="script" type="text/javascript">
+    <link rel="preload" href="<%=basePath%>static/js/vuex.min.js?_=v3.6.2" as="script" type="text/javascript">
+    <link rel="preload" href="<%=basePath%>static/js/vuetify.min.js?_=v2.6.14" as="script" type="text/javascript">
     <% if (staticPage != null && !staticPage) { %>
-      <link rel="preload" href="./static/js/bignumber.min.js?_=v9.0.1" as="script" type="text/javascript">
-      <link rel="preload" href="./static/js/ethers.umd.min.js?_=5.5.1" as="script" type="text/javascript">
-      <link rel="preload" href="./static/js/dapp.js?_=<%=buildnumber%>" as="script" type="text/javascript">
-      <link rel="preload" href="./static/js/jdenticon.min.js?_=3.1.1" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/bignumber.min.js?_=v9.0.1" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/ethers.umd.min.js?_=5.5.1" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/jdenticon.min.js?_=3.1.1" as="script" type="text/javascript">
     <% } else { %>
-      <link rel="preload" href="./static/js/static.js?_=<%=buildnumber%>" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/static.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <% } %>
 
-    <link rel="preload" href="./static/images/meedsicon.png" as="image" type="image/png">
-    <link rel="preload" href="./static/images/meedsicon.png" as="image" type="image/png">
-    <link rel="preload" href="./static/images/meeds.png" as="image" type="image/png">
+    <link rel="preload" href="<%=basePath%>static/images/meedsicon.png" as="image" type="image/png">
+    <link rel="preload" href="<%=basePath%>static/images/meedsicon.png" as="image" type="image/png">
+    <link rel="preload" href="<%=basePath%>static/images/meeds.png" as="image" type="image/png">
 
-    <link rel="icon" href="./static/images/meedsicon.png" sizes="32x32">
-    <link rel="icon" href="./static/images/meedsicon.png" sizes="192x192">
-    <link rel="apple-touch-icon-precomposed" href="./static/images/meedsicon.png">
-    <link href="./static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
-    <link href="./static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
-    <link href="./static/css/vuetify.css?_=v2.6.14" rel="stylesheet">
-    <link href="./static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
+    <link rel="icon" href="<%=basePath%>static/images/meedsicon.png" sizes="32x32">
+    <link rel="icon" href="<%=basePath%>static/images/meedsicon.png" sizes="192x192">
+    <link rel="apple-touch-icon-precomposed" href="<%=basePath%>static/images/meedsicon.png">
+    <link href="<%=basePath%>static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
+    <link href="<%=basePath%>static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
+    <link href="<%=basePath%>static/css/vuetify.css?_=v2.6.14" rel="stylesheet">
+    <link href="<%=basePath%>static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
   </head>
   <body>
     <% if (isProduction) { %>
@@ -88,17 +89,17 @@
     <% } %>
     <input type="hidden" name="loginMessage" value="<%=Utils.generateLoginMessage(session)%>">
 
-    <script id="vue" src="./static/js/vue.min.js?_=v2.7.14"></script>
-    <script id="vue-i18n" src="./static/js/vue-i18n.min.js?_=v8.26.7"></script>
-    <script id="vuex" src="./static/js/vuex.min.js?_=v3.6.2"></script>
-    <script id="vuetify" src="./static/js/vuetify.min.js?_=v2.6.14"></script>
+    <script id="vue" src="<%=basePath%>static/js/vue.min.js?_=v2.7.14"></script>
+    <script id="vue-i18n" src="<%=basePath%>static/js/vue-i18n.min.js?_=v8.26.7"></script>
+    <script id="vuex" src="<%=basePath%>static/js/vuex.min.js?_=v3.6.2"></script>
+    <script id="vuetify" src="<%=basePath%>static/js/vuetify.min.js?_=v2.6.14"></script>
     <% if (staticPage != null && !staticPage) { %>
-      <script id="bignumber" src="./static/js/bignumber.min.js?_=v9.0.1"></script>
-      <script id="ethers" src="./static/js/ethers.umd.min.js?_=5.5.1"></script>
-      <script id="deeds" src="./static/js/dapp.js?_=<%=buildnumber%>"></script>
-      <script id="jdenticon" src="./static/js/jdenticon.min.js?_=3.1.1"></script>
+      <script id="bignumber" src="<%=basePath%>static/js/bignumber.min.js?_=v9.0.1"></script>
+      <script id="ethers" src="<%=basePath%>static/js/ethers.umd.min.js?_=5.5.1"></script>
+      <script id="deeds" src="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>"></script>
+      <script id="jdenticon" src="<%=basePath%>static/js/jdenticon.min.js?_=3.1.1"></script>
     <% } else { %>
-      <script id="static" src="./static/js/static.js?_=<%=buildnumber%>"></script>
+      <script id="static" src="<%=basePath%>static/js/static.js?_=<%=buildnumber%>"></script>
     <% } %>
 
   </body>
