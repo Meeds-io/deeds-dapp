@@ -82,16 +82,19 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/farm",
                                                                                             "/tokenomics");
 
-  protected static final List<String>        DAPP_PATHS_FR                  = Arrays.asList("/place-de-marche",
+  protected static final List<String>        DAPP_PATHS_FR_UNCOM            = Arrays.asList("/place-de-marche",
                                                                                             "/locataires",
                                                                                             "/proprietaires",
                                                                                             "/portefeuille",
-                                                                                            "/rejoindre-dao",
-                                                                                            "/deeds",
+                                                                                            "/rejoindre-dao");
+
+  protected static final List<String>        DAPP_PATHS_FR_COMM             = Arrays.asList("/deeds",
                                                                                             "/farm",
                                                                                             "/tokenomics");
 
-  protected static final List<String>        DAPP_PATHS                   = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
+  protected static final List<String>        DAPP_PATHS_FR                  = CollectionUtils.concatLists(DAPP_PATHS_FR_UNCOM, DAPP_PATHS_FR_COMM);
+
+  protected static final List<String>        DAPP_PATHS                     = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
 
   protected static final List<String>        METADATA_LABELS                = Arrays.asList("pageDescription",
                                                                                             "imageAlt",
@@ -131,6 +134,12 @@ public class RequestDispatcherFilter extends HttpFilter {
         servletPath = servletPath + DEFAULT_PAGE_FILE_NAME_FR;
       }
       String uri = servletPath;
+      if(!uri.startsWith("/fr/") && (DAPP_PATHS_FR_UNCOM.contains(uri) || STATIC_PATHS_FR.contains(uri))) {
+        uri = "/fr" + uri;
+        response.setHeader("Location", uri);
+        response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        return;
+      }
       if(uri.startsWith("/fr/")) {
         uri = uri.substring(3, uri.length());
       }
