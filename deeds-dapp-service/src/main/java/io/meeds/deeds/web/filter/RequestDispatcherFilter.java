@@ -212,7 +212,7 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   private String getLanguage(HttpServletRequest request) {
     String path = request.getServletPath();
-    return path.startsWith("/fr") ? "fr" : "en";
+    return (StringUtils.equals(path, "/fr") || path.startsWith("/fr/")) ? "fr" : "en";
   }
 
   private String getETagValue(HttpServletRequest request) {

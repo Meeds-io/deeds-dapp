@@ -1,6 +1,5 @@
 package io.meeds.deeds.web.filter;
 
-import static io.meeds.deeds.web.filter.RequestDispatcherFilter.DEFAULT_PAGE_FILE_NAME_EN;
 import static io.meeds.deeds.web.filter.RequestDispatcherFilter.LAST_MODIFIED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,15 +74,15 @@ class RequestDispatcherFilterTest {
 
   @Test
   void testGetStaticPage() throws Exception {
-    String servletPath = DEFAULT_PAGE_FILE_NAME_EN;
+    String servletPath = "/tour";
     String lang = "en";
     String i18NContent = """
-        metadata.home.pageDescription=Test Label
-        metadata.home.imageAlt=Image Alt
-        metadata.home.twitterTitle=Twitter Title
-        metadata.home.pageTitle=Page Title
+        metadata.tour.pageDescription=Test Label
+        metadata.tour.imageAlt=Image Alt
+        metadata.tour.twitterTitle=Twitter Title
+        metadata.tour.pageTitle=Page Title
         """;
-    String metadataContent = "#{metadata.home.pageDescription}-${lang}";
+    String metadataContent = "#{metadata.tour.pageDescription}-${lang}";
 
     when(request.getRequestURL()).thenReturn(new StringBuffer("http://test" + servletPath));
     when(request.getServletPath()).thenReturn(servletPath);
@@ -104,7 +103,7 @@ class RequestDispatcherFilterTest {
     verify(response, times(1)).setHeader(eq("etag"), any());
     verify(request, times(1)).setAttribute(eq("pageHeaderMetadatas"), argThat(contentObject -> {
       String content = (String) contentObject;
-      assertEquals(metadataContent.replace("#{metadata.home.pageDescription}", "Test Label").replace("${lang}", lang), content);
+      assertEquals(metadataContent.replace("#{metadata.tour.pageDescription}", "Test Label").replace("${lang}", lang), content);
       return true;
     }));
 
