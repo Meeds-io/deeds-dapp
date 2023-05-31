@@ -148,12 +148,11 @@ export default {
         case 'tenants': 
           uri = 'fr/locataires';
           break;
-        default: uri = '';
+        default: uri = 'fr';
         }
       }
-      this.$store.commit('selectLanguage', lang);
       window.history.replaceState('', '', `${this.parentLocation}/${uri}`); 
-      window.location.reload();     
+      this.$store.commit('selectLanguage', lang);
     },
   },
 };

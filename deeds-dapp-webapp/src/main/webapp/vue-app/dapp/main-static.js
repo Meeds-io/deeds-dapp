@@ -138,11 +138,16 @@ const store = new Vuex.Store({
         .then(resp => resp?.ok && resp.text())
         .then(text => window.document.head.innerHTML = text.substring(text.indexOf('<head>')+6, text.indexOf('</head>')));
     },
+    setPage(state, lang) {
+      const pathParts = window.location.href.split('/');
+      state.page = (pathParts[pathParts.length-1] === ('' || 'fr')) ? (lang === 'fr' ? 'accueil' : 'home') : pathParts[pathParts.length-1];
+    },
     selectLanguage(state, lang) {
       state.language = lang;
       i18n.locale = lang.indexOf('fr') === 0 ? 'fr' : 'en';
       this.commit('refreshURLs', lang);
       this.commit('refreshDocumentHead');
+      this.commit('setPage', lang);
       initializeVueApp(lang);
     },
     setDark(state, value) {
