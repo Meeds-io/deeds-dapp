@@ -64,7 +64,7 @@ export default {
     refreshRoute(path) {
       const parts = path && window.location.pathname.split('/').filter(pathPart => pathPart?.length) || [];
       let currentRoute = '/';
-      if (parts.length > 0 ) {
+      if (parts.length > 0) {
         currentRoute = parts[parts.length - 1];
         if (!currentRoute || !currentRoute.length || currentRoute === 'fr') {
           currentRoute = '/';
