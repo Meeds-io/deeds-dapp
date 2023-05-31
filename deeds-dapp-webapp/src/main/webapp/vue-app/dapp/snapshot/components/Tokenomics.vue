@@ -21,11 +21,14 @@
 </template>
 <script>
 export default {
+  computed: Vuex.mapState({
+    language: state => state.language,
+  }),
   created() {
     if (!document.querySelector('#echarts-script')) {
       const script = document.createElement('script');
       script.id = 'echarts-script';
-      script.src = './static/js/echarts.min.js?_=5.4.0';
+      script.src = `${this.language === 'fr' ? '../' : './'}static/js/echarts.min.js?_=5.4.0`;
       script.type = 'text/javascript';
       script.onload = () => {
         this.$store.commit('echartsLoaded');

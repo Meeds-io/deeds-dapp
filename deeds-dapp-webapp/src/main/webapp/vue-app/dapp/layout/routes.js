@@ -26,31 +26,20 @@ const Overview = { template: '<deeds-overview />' };
 const Tokenomics = { template: '<deeds-tokenomics />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
-function getLanguage() {
-  return document.documentElement.lang || 'en';
-}
-
-const language = getLanguage();
-
-const routes = language === 'fr' ? {'/': StaticPageContent,
+export default {
+  '/': StaticPageContent,
   '/default': StaticPageContent,
   '/place-de-marche': Marketplace,
   '/locataires': Tenants,
   '/proprietaires': Owners,
   '/portefeuille': Overview,
-  '/tokenomics-fr': Tokenomics,
+  '/tokenomics': Tokenomics,
   '/rejoindre-dao': Stake,
-  '/deeds-fr': Deeds,
-  '/farm-fr': Farm} 
-  : {'/': StaticPageContent,
-    '/default': StaticPageContent,
-    '/marketplace': Marketplace,
-    '/tenants': Tenants,
-    '/owners': Owners,
-    '/portfolio': Overview,
-    '/tokenomics': Tokenomics,
-    '/stake': Stake,
-    '/deeds': Deeds,
-    '/farm': Farm};
-export default routes;
+  '/deeds': Deeds,
+  '/farm': Farm,
+  '/marketplace': Marketplace,
+  '/tenants': Tenants,
+  '/owners': Owners,
+  '/portfolio': Overview,
+  '/stake': Stake };
 

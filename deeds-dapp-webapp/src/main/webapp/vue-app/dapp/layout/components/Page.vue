@@ -66,7 +66,7 @@ export default {
       let currentRoute = '/';
       if (parts.length > 0) {
         currentRoute = parts[parts.length - 1];
-        if (!currentRoute || !currentRoute.length) {
+        if (!currentRoute || !currentRoute.length || currentRoute === 'fr') {
           currentRoute = '/';
         } else {
           currentRoute = `/${currentRoute}`;

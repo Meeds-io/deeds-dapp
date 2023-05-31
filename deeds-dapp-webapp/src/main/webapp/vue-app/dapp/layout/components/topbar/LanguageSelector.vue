@@ -67,7 +67,8 @@ export default {
   }),
   methods: {
     changeLanguage(lang) {
-      const pageName = window.location.pathname.split('/')[2];
+      const pathParts = window.location.pathname.split('/');
+      const pageName = pathParts[pathParts.length-1];
       let uri = '';
       if (this.language === 'fr') {
         switch (pageName) {
@@ -83,13 +84,13 @@ export default {
         case 'livre-blanc': 
           uri = 'whitepaper';
           break;
-        case 'tokenomics-fr': 
+        case 'tokenomics': 
           uri = 'tokenomics';
           break;
         case 'qui-sommes-nous': 
           uri = 'about-us';
           break;
-        case 'deeds-fr': 
+        case 'deeds': 
           uri = 'deeds';
           break;
         case 'mentions-legales': 
@@ -101,7 +102,7 @@ export default {
         case 'proprietaires': 
           uri = 'owners';
           break;
-        case 'farm-fr': 
+        case 'farm': 
           uri = 'farm';
           break;
         case 'locataires': 
@@ -112,47 +113,46 @@ export default {
       } else {
         switch (pageName) {
         case 'marketplace': 
-          uri = 'place-de-marche';
+          uri = 'fr/place-de-marche';
           break;
         case 'portfolio': 
-          uri = 'portefeuille';
+          uri = 'fr/portefeuille';
           break;
         case 'tour': 
-          uri = 'visite-guidee';
+          uri = 'fr/visite-guidee';
           break;
         case 'whitepaper': 
-          uri = 'livre-blanc';
+          uri = 'fr/livre-blanc';
           break;
         case 'tokenomics': 
-          uri = 'tokenomics-fr';
+          uri = 'fr/tokenomics';
           break;
         case 'about-us': 
-          uri = 'qui-sommes-nous';
+          uri = 'fr/qui-sommes-nous';
           break;
         case 'deeds': 
-          uri = 'deeds-fr';
+          uri = 'fr/deeds';
           break;
         case 'legals': 
-          uri = 'mentions-legales';
+          uri = 'fr/mentions-legales';
           break;
         case 'stake': 
-          uri = 'rejoindre-dao';
+          uri = 'fr/rejoindre-dao';
           break;
         case 'owners': 
-          uri = 'proprietaires';
+          uri = 'fr/proprietaires';
           break;
         case 'farm': 
-          uri = 'farm-fr';
+          uri = 'fr/farm';
           break;
         case 'tenants': 
-          uri = 'locataires';
+          uri = 'fr/locataires';
           break;
-        default: uri = '';
+        default: uri = 'fr';
         }
       }
+      window.history.replaceState('', '', `${this.parentLocation}/${uri}`); 
       this.$store.commit('selectLanguage', lang);
-      window.history.replaceState('', '', `${this.parentLocation}/${this.$t(uri)}`); 
-      window.location.reload();     
     },
   },
 };
