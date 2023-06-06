@@ -24,12 +24,14 @@ const Deeds = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 const Overview = { template: '<deeds-overview />' };
 const Tokenomics = { template: '<deeds-tokenomics />' };
+const Hubs = { template: '<deeds-hubs />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 export default {
   '/': StaticPageContent,
   '/default': StaticPageContent,
   '/place-de-marche': Marketplace,
+  '/rejoindre-hubs': Hubs,
   '/locataires': Tenants,
   '/proprietaires': Owners,
   '/portefeuille': Overview,
@@ -41,5 +43,6 @@ export default {
   '/tenants': Tenants,
   '/owners': Owners,
   '/portfolio': Overview,
-  '/stake': Stake };
+  '/stake': Stake,
+  '/join-hubs': Hubs };
 
