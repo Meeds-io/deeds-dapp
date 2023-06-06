@@ -38,12 +38,9 @@
 </template>
 <script>
 export default {
-  props: {
-    keyword: {
-      type: String,
-      default: null,
-    },
-  },
+  data: () => ({
+    keyword: null
+  }),
   computed: Vuex.mapState({
     marketplaceURL: state => state.marketplaceURL,
   }),

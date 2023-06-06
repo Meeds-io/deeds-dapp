@@ -21,7 +21,7 @@
     outlined
     flat>
     <v-img 
-      :src="`${hubBackground}`"
+      :src="`${hubBackgroundUrl}`"
       max-height="120px"
       min-width="100px" />
     <v-avatar
@@ -29,9 +29,11 @@
       size="100"
       class="ms-5 mt-n12 elevation-2 rounded-lg position-absolute">
       <v-img 
-        :src="`${hubLogo}`"
+        :src="`${hubLogoUrl}`"
         class="no-border-radius"
-        height="60px" />
+        max-height="100%"
+        min-width="100%"
+        contain />
     </v-avatar>
     <div class="d-flex flex-column pa-4">
       <div class="ms-16 ps-15">
@@ -46,7 +48,7 @@
           class="mx-4"
           max-width="40px" />
         <span class="text-light-color text-h5">
-          {{ hubNbUsers }} {{ this.$t('hubs.users.title') }}
+          {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
         </span>
       </div>
     </div>
@@ -64,19 +66,19 @@ export default {
     language: state => state.language,
     parentLocation: state => state.parentLocation,
     hubName() {
-      return this.language === 'fr' ? this.hub?.fr.name : this.hub?.en.name;
+      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
     },
     hubDescription() {
-      return this.language === 'fr' ? this.hub?.fr.description : this.hub?.en.description;
+      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
-    hubBackground() {
-      return this.hub?.backgroundLink;
+    hubBackgroundUrl() {
+      return this.hub?.backgroundUrl;
     },
-    hubLogo() {
-      return this.hub?.logoLink;
+    hubLogoUrl() {
+      return this.hub?.logoUrl;
     },
-    hubNbUsers() {
-      return this.hub?.nbUsers;
+    hubUsersCount() {
+      return this.hub?.usersCount || 0;
     },
   }),
 };

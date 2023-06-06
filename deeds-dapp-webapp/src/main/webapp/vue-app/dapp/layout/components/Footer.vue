@@ -93,7 +93,7 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('workMetaverse.title') }}</span>
             <a
-              :href="hubsURL"
+              :href="hubsUrl"
               :class="textColor"
               class="no-decoration my-2">
               {{ $t('joinHubs') }}
@@ -200,7 +200,7 @@ export default {
     tenantsURL: state => state.tenantsURL,
     deedsURL: state => state.deedsURL,
     whitepaperURL: state => state.whitepaperURL,
-    hubsURL: state => state.hubsURL,
+    hubsUrl: state => state.hubsUrl,
     dark: state => state.dark,
     githubColor() {
       return this.dark && 'white' || 'black';

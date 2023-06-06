@@ -18,13 +18,13 @@
  */
 import DeedsHubs from './components/Hubs.vue';
 import HubsList from './components/HubsList.vue';
-import HubsCard from './components/HubsCard.vue';
+import HubCard from './components/HubCard.vue';
 import HubsToolbar from './components/HubsToolbar.vue';
 
 const components = {
   'deeds-hubs': DeedsHubs,
   'deeds-hubs-list': HubsList,
-  'deeds-hubs-card': HubsCard,
+  'deeds-hub-card': HubCard,
   'deeds-hubs-toolbar': HubsToolbar,
 };
 

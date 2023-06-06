@@ -108,7 +108,7 @@ const store = new Vuex.Store({
     ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`,
     farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`,
     tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`,
-    hubsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'join-hubs'}`,
+    hubsUrl: `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'join-hubs'}`,
   },
   mutations: {
     setPageState(state, value) {
@@ -130,7 +130,7 @@ const store = new Vuex.Store({
       state.ownersURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`;
       state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`;
       state.tenantsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`;
-      state.hubsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'join-hubs'}`;
+      state.hubsUrl = `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'join-hubs'}`;
     },
     refreshDocumentHead() {
       fetch(window.location.href, {

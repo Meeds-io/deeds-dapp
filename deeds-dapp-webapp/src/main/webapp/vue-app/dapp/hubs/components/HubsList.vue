@@ -23,19 +23,19 @@
     <v-row class="my-13">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
-          <div v-if="validKeyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
+          <div v-if="keyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
           <div v-else class="display-1 font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
         </div>
       </v-col>
       <v-col
-        v-for="(hub, index) in hubs"
+        v-for="(hub, index) in filteredHubs"
         :key="`${hub.id}-${index}`"
         class="d-flex justify-center"
         cols="12"
         lg="4"
         md="12">
         <v-slide-x-transition>
-          <deeds-hubs-card :hub="hub" />
+          <deeds-hub-card :hub="hub" />
         </v-slide-x-transition>
       </v-col>
     </v-row>
@@ -50,54 +50,40 @@ export default {
     },
   },
   data: () => ({
-    hubs: [],
+    hubs: [
+      {
+        id: 1,
+        name: {
+          fr: 'Builders Hub',
+          en: 'Builders Hub'
+        },
+        description: {
+          fr: 'Hub officiel de la DAO Meeds',
+          en: 'Official Hub of the Meeds DAO'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
+        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
+        usersCount: 248
+      },
+    ],
   }),
   computed: Vuex.mapState({
     language: state => state.language,
-    validKeyword() {
-      return this.keyword !== null;
-    },
     hubsCount() {
-      return this.hubs.length;
+      return this.filteredHubs.length;
+    },
+    filteredHubs() {
+      if (this.keyword) {
+        if (this.language === 'fr') {
+          return this.hubs.filter(hub => hub.name.fr.indexOf(this.keyword) >= 0 || hub.description.fr.indexOf(this.keyword) >= 0);
+        } else {
+          return this.hubs.filter(hub => hub.name.en.indexOf(this.keyword) >= 0 || hub.description.en.indexOf(this.keyword) >= 0);
+        }
+      } 
+      else {
+        return this.hubs; 
+      }
     }
   }),
-  created() {
-    this.resetSearch();
-  },
-  watch: {
-    keyword() {
-      this.resetSearch();
-      if (this.keyword) {
-        this.searchHubs();
-      }
-    },
-  },
-  methods: {
-    resetSearch() {
-      this.hubs = [
-        {
-          id: 1,
-          fr: {
-            name: 'Builders Hub',
-            description: 'Hub officiel de la DAO Meeds',
-          },
-          en: {
-            name: 'Builders Hub',
-            description: 'Official Hub of the Meeds DAO',
-          },
-          logoLink: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
-          backgroundLink: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
-          nbUsers: 248
-        },
-      ];
-    },
-    searchHubs() {
-      if (this.language === 'fr') {
-        this.hubs = this.hubs.filter(hub => hub.fr.name.indexOf(this.keyword) >= 0 || hub.fr.description.indexOf(this.keyword) >= 0);
-      } else {
-        this.hubs = this.hubs.filter(hub => hub.en.name.indexOf(this.keyword) >= 0 || hub.en.description.indexOf(this.keyword) >= 0);
-      }
-    }
-  }
 };
 </script>

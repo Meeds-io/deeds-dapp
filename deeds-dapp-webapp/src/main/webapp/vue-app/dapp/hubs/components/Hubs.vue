@@ -19,7 +19,6 @@
 <template>
   <div>
     <deeds-hubs-toolbar
-      :keyword="keyword"
       @keyword-changed="keyword = $event" />
     <deeds-hubs-list 
       :keyword="keyword" />
