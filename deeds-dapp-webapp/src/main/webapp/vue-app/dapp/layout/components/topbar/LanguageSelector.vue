@@ -108,6 +108,9 @@ export default {
         case 'locataires': 
           uri = 'tenants';
           break;
+        case 'rejoindre-hubs': 
+          uri = 'join-hubs';
+          break;
         default: uri = '';
         }
       } else {
@@ -147,6 +150,9 @@ export default {
           break;
         case 'tenants': 
           uri = 'fr/locataires';
+          break;
+        case 'join-hubs': 
+          uri = 'fr/rejoindre-hubs';
           break;
         default: uri = 'fr';
         }
