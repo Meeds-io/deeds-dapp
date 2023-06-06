@@ -35,7 +35,7 @@
       <v-spacer />
       <div>
         <v-btn
-          :href="portfolioURL"
+          :href="hubsUrl"
           class="px-5 font-weight-black"
           height="44px"
           color="primary"
@@ -83,7 +83,7 @@ export default {
     whiteThemeColor: state => state.whiteThemeColor,
     parentLocation: state => state.parentLocation,
     staticPage: state => state.staticPage,
-    portfolioURL: state => state.portfolioURL,
+    hubsUrl: state => state.hubsUrl,
   }),
 };
 </script>
