@@ -28,6 +28,7 @@ export default {
   computed: Vuex.mapState({
     address: state => state.address,
     provider: state => state.provider,
+    language: state => state.language,
     viewComponent() {
       if (!this.currentRoute) {
         return {template: ''};
@@ -51,6 +52,7 @@ export default {
   created() {
     this.$root.$on('location-change', this.refreshRoute);
     this.refreshRoute(window.location.pathname);
+    this.$store.commit('setPage', this.language);
   },
   render(h) {
     return h(this.viewComponent);
