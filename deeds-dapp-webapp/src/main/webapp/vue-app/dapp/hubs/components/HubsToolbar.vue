@@ -27,7 +27,7 @@
       outlined
       hide-details
       clearable
-      clear-icon="fa fa-times">
+      clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
       <template #prepend-inner>
         <v-icon
           v-if="!keyword"

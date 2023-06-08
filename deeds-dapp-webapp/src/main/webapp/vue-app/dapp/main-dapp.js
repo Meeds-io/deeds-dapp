@@ -268,7 +268,8 @@ const pageUriPerLanguages = {
       'stake',
       'owners',
       'farm',
-      'tenants'
+      'tenants',
+      'hubs'
     ],
     uriPrefix: '',
   },
@@ -286,7 +287,8 @@ const pageUriPerLanguages = {
       'rejoindre-dao',
       'proprietaires',
       'farm',
-      'locataires'
+      'locataires',
+      'rejoindre-hubs'
     ],
     uriPrefix: 'fr/',
   },

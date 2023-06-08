@@ -17,27 +17,25 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <v-row class="my-15">
-      <v-col cols="12">
-        <div class="d-flex flex-row flex-grow-1">
-          <div v-if="keyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
-          <div v-else class="display-1 font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
-        </div>
-      </v-col>
-      <v-col
-        v-for="(hub, index) in filteredHubs"
-        :key="`${hub.id}-${index}`"
-        class="d-flex justify-center"
-        cols="12"
-        lg="4"
-        md="12">
-        <v-slide-x-transition>
-          <deeds-hub-card :hub="hub" />
-        </v-slide-x-transition>
-      </v-col>
-    </v-row>
-  </div>
+  <v-row class="my-15">
+    <v-col cols="12">
+      <div class="d-flex flex-row flex-grow-1">
+        <div v-if="keyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
+        <div v-else class="display-1 font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
+      </div>
+    </v-col>
+    <v-col
+      v-for="(hub, index) in filteredHubs"
+      :key="`${hub.id}-${index}`"
+      class="d-flex justify-center"
+      cols="12"
+      lg="4"
+      md="12">
+      <v-slide-x-transition>
+        <deeds-hub-card :hub="hub" />
+      </v-slide-x-transition>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {

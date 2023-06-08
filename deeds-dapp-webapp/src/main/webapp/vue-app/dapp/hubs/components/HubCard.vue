@@ -17,10 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <a
+  <v-card
     :href="hubUrl"
-    class="no-decoration full-width"
-    target="_blank">
+    class="full-width"
+    target="_blank"
+    flat>
     <v-card
       class="rounded-xl"
       hover
@@ -73,12 +74,11 @@
                 :fractions="2" />
               <span class="ms-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
             </h4>
-           
           </div>
         </div>
       </div>
     </v-card>
-  </a>
+  </v-card>
 </template>
 <script>
 export default {
