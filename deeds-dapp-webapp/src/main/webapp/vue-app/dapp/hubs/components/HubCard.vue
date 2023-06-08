@@ -19,7 +19,7 @@
 <template>
   <a
     :href="hubUrl"
-    class="no-decoration"
+    class="no-decoration full-width"
     target="_blank">
     <v-card
       class="rounded-xl"
@@ -30,7 +30,7 @@
         height="120px"
         width="100%"
         flat />
-        <v-card
+      <v-card
         height="100px"
         width="100px"
         class="ms-5 mt-n12 rounded-lg position-absolute"
@@ -42,7 +42,6 @@
           width="90%"
           contain />
       </v-card>
-      
       <div class="d-flex flex-column pa-4">
         <div class="ms-16 ps-15">
           <span class="display-1 font-weight-bold">
@@ -50,14 +49,32 @@
           </span>
         </div>
         <div class="text-light-color text-h5 mt-3">{{ hubDescription }}</div>
-        <div class="d-flex justify-center mt-9">
-          <v-img 
-            :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
-            class="mx-4"
-            max-width="40px" />
-          <span class="text-light-color text-h5">
-            {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
-          </span>
+        <div class="d-flex">
+          <div class="d-flex align-center justify-center mt-9">
+            <v-img 
+              :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
+              class="me-2"
+              width="40px"
+              height="40px" />
+            <h4 class="text-light-color font-weight-normal">
+              {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
+            </h4>
+          </div>
+          <v-spacer />
+          <div class="d-flex align-center justify-center mt-9">
+            <v-img 
+              :src="`${parentLocation}/static/images/meed_circle.webp`"
+              class="me-2"
+              width="40px"
+              height="40px" />
+            <h4 class="text-light-color d-flex font-weight-normal">
+              <deeds-number-format 
+                :value="hubRewardsPerWeek" 
+                :fractions="2" />
+              <span class="ms-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
+            </h4>
+           
+          </div>
         </div>
       </div>
     </v-card>
@@ -91,6 +108,9 @@ export default {
     },
     hubUrl() {
       return this.hub?.hubUrl;
+    },
+    hubRewardsPerWeek() {
+      return this.hub?.rewardsPerWeek;
     }
   }),
 };

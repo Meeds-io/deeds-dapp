@@ -62,48 +62,8 @@ export default {
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
         backgroundColor: '#3F8487',
         usersCount: 248,
-        hubUrl: 'https://builders.meeds.io'
-      },
-      {
-        id: 1,
-        name: {
-          fr: 'Builders Hub',
-          en: 'Builders Hub'
-        },
-        description: {
-          fr: 'Hub officiel de la DAO Meeds',
-          en: 'Official Hub of the Meeds DAO'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
-        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
-        usersCount: 248
-      },{
-        id: 2,
-        name: {
-          fr: 'Builders Hub2',
-          en: 'Builders Hub2'
-        },
-        description: {
-          fr: 'Hub officiel de la DAO Meeds2',
-          en: 'Official Hub of the Meeds DAO2'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
-        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
-        usersCount: 2482
-      },
-      {
-        id: 3,
-        name: {
-          fr: 'Builders Hub3',
-          en: 'Builders Hub3'
-        },
-        description: {
-          fr: 'Hub officiel de la DAO Meeds3',
-          en: 'Official Hub of the Meeds DAO3'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
-        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
-        usersCount: 2483
+        hubUrl: 'https://builders.meeds.io',
+        rewardsPerWeek: 1000000000000000000000
       },
     ],
   }),
