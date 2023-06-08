@@ -17,42 +17,51 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    outlined
-    flat>
-    <v-img 
-      :src="`${hubBackgroundUrl}`"
-      max-height="120px"
-      min-width="100px" />
-    <v-avatar
-      color="white"
-      size="100"
-      class="ms-5 mt-n12 elevation-2 rounded-lg position-absolute">
-      <v-img 
-        :src="`${hubLogoUrl}`"
-        class="no-border-radius"
-        max-height="100%"
-        min-width="100%"
-        contain />
-    </v-avatar>
-    <div class="d-flex flex-column pa-4">
-      <div class="ms-16 ps-15">
-        <span class="display-1 font-weight-bold">
-          {{ hubName }}
-        </span>
-      </div>
-      <div class="text-light-color text-h5 mt-3">{{ hubDescription }}</div>
-      <div class="d-flex justify-center mt-9">
+  <a
+    :href="hubUrl"
+    class="no-decoration"
+    target="_blank">
+    <v-card
+      class="rounded-xl"
+      hover
+      outlined>
+      <v-card
+        :color="hubBackgroundColor" 
+        height="120px"
+        width="100%"
+        flat />
+        <v-card
+        height="100px"
+        width="100px"
+        class="ms-5 mt-n12 rounded-lg position-absolute"
+        outlined>
         <v-img 
-          :src="`${parentLocation}/static/images/teamwork_icon.webp`"
-          class="mx-4"
-          max-width="40px" />
-        <span class="text-light-color text-h5">
-          {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
-        </span>
+          :src="`${hubLogoUrl}`"
+          class="no-border-radius mx-auto"
+          height="100%"
+          width="90%"
+          contain />
+      </v-card>
+      
+      <div class="d-flex flex-column pa-4">
+        <div class="ms-16 ps-15">
+          <span class="display-1 font-weight-bold">
+            {{ hubName }}
+          </span>
+        </div>
+        <div class="text-light-color text-h5 mt-3">{{ hubDescription }}</div>
+        <div class="d-flex justify-center mt-9">
+          <v-img 
+            :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
+            class="mx-4"
+            max-width="40px" />
+          <span class="text-light-color text-h5">
+            {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
+          </span>
+        </div>
       </div>
-    </div>
-  </v-card>
+    </v-card>
+  </a>
 </template>
 <script>
 export default {
@@ -71,8 +80,8 @@ export default {
     hubDescription() {
       return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
-    hubBackgroundUrl() {
-      return this.hub?.backgroundUrl;
+    hubBackgroundColor() {
+      return this.hub?.backgroundColor;
     },
     hubLogoUrl() {
       return this.hub?.logoUrl;
@@ -80,6 +89,9 @@ export default {
     hubUsersCount() {
       return this.hub?.usersCount || 0;
     },
+    hubUrl() {
+      return this.hub?.hubUrl;
+    }
   }),
 };
 </script>

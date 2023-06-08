@@ -17,10 +17,8 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    id="hubsList"
-    flat>
-    <v-row class="my-13">
+  <div>
+    <v-row class="my-15">
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
           <div v-if="keyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
@@ -39,7 +37,7 @@
         </v-slide-x-transition>
       </v-col>
     </v-row>
-  </v-card>
+  </div>
 </template>
 <script>
 export default {
@@ -62,8 +60,50 @@ export default {
           en: 'Official Hub of the Meeds DAO'
         },
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
+        backgroundColor: '#3F8487',
+        usersCount: 248,
+        hubUrl: 'https://builders.meeds.io'
+      },
+      {
+        id: 1,
+        name: {
+          fr: 'Builders Hub',
+          en: 'Builders Hub'
+        },
+        description: {
+          fr: 'Hub officiel de la DAO Meeds',
+          en: 'Official Hub of the Meeds DAO'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
         backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
         usersCount: 248
+      },{
+        id: 2,
+        name: {
+          fr: 'Builders Hub2',
+          en: 'Builders Hub2'
+        },
+        description: {
+          fr: 'Hub officiel de la DAO Meeds2',
+          en: 'Official Hub of the Meeds DAO2'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
+        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
+        usersCount: 2482
+      },
+      {
+        id: 3,
+        name: {
+          fr: 'Builders Hub3',
+          en: 'Builders Hub3'
+        },
+        description: {
+          fr: 'Hub officiel de la DAO Meeds3',
+          en: 'Official Hub of the Meeds DAO3'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
+        backgroundUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699674/meedsdao-site/assets/images/MeedsDAO%20Background.png',
+        usersCount: 2483
       },
     ],
   }),
@@ -75,9 +115,9 @@ export default {
     filteredHubs() {
       if (this.keyword) {
         if (this.language === 'fr') {
-          return this.hubs.filter(hub => hub.name.fr.indexOf(this.keyword) >= 0 || hub.description.fr.indexOf(this.keyword) >= 0);
+          return this.hubs.filter(hub => hub.name.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         } else {
-          return this.hubs.filter(hub => hub.name.en.indexOf(this.keyword) >= 0 || hub.description.en.indexOf(this.keyword) >= 0);
+          return this.hubs.filter(hub => hub.name.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
       } 
       else {
