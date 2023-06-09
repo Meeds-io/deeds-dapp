@@ -17,22 +17,35 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column flex-md-row">
+  <div class="d-flex flex-column flex-md-row pt-0 pt-md-6 mt-16">
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      prepend-inner-icon="fa fa-search"
-      class="rounded-pill col-12 col-md-6"
-      type="text"
+      class="rounded-pill col-12 col-md-6 text-h4"
+      height="75px"
+      @keydown="enterEvent"  
       outlined
-      clearable />
+      hide-details
+      clearable
+      clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
+      <template #prepend-inner>
+        <v-icon
+          v-if="!keyword"
+          class="mx-9 my-1"
+          size="34">
+          fa fa-search
+        </v-icon>
+        <div v-else class="ms-9"></div>
+      </template>
+    </v-text-field>
+    <v-spacer />
     <v-btn
       :href="marketplaceURL"
-      height="54px"
-      class="rounded-pill px-7 elevation-0 mx-4"
+      height="75px"
+      class="rounded-pill px-7 mx-auto mt-md-0 mt-6 elevation-0"
       color="primary"
       dark>
-      <span class="text-h6 font-weight-bold">{{ $t('hubs.button.launchHub') }}</span>
+      <span class="display-1 font-weight-bold">{{ $t('hubs.button.getYourHub') }}</span>
     </v-btn>
   </div>
 </template>
@@ -48,6 +61,13 @@ export default {
     keyword() {
       this.$emit('keyword-changed', this.keyword);
     },
+  },
+  methods: {
+    enterEvent(event) {
+      if (event.key === 'Escape') {
+        this.keyword = null;
+      }
+    }
   }
 };
 </script>
