@@ -44,5 +44,5 @@ export default {
   '/owners': Owners,
   '/portfolio': Overview,
   '/stake': Stake,
-  '/join-hubs': Hubs };
+  '/hubs': Hubs };
 
