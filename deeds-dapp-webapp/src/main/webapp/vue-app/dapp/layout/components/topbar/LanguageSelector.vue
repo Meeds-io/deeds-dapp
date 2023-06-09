@@ -51,6 +51,7 @@ export default {
     selectedLanguage: state => state.language,
     parentLocation: state => state.parentLocation,
     language: state => state.language,
+    pageUriPerLanguages: state => state.pageUriPerLanguages,
     dark: state => state.dark,
     textColor() {
       return this.dark && 'white--text' || 'text-sub-title';
@@ -68,97 +69,11 @@ export default {
   methods: {
     changeLanguage(lang) {
       const pathParts = window.location.pathname.split('/');
-      const pageName = pathParts[pathParts.length-1];
-      let uri = '';
-      if (this.language === 'fr') {
-        switch (pageName) {
-        case 'place-de-marche': 
-          uri = 'marketplace';
-          break;
-        case 'portefeuille': 
-          uri = 'portfolio';
-          break;
-        case 'visite-guidee': 
-          uri = 'tour';
-          break;
-        case 'livre-blanc': 
-          uri = 'whitepaper';
-          break;
-        case 'tokenomics': 
-          uri = 'tokenomics';
-          break;
-        case 'qui-sommes-nous': 
-          uri = 'about-us';
-          break;
-        case 'deeds': 
-          uri = 'deeds';
-          break;
-        case 'mentions-legales': 
-          uri = 'legals';
-          break;
-        case 'rejoindre-dao': 
-          uri = 'stake';
-          break;
-        case 'proprietaires': 
-          uri = 'owners';
-          break;
-        case 'farm': 
-          uri = 'farm';
-          break;
-        case 'locataires': 
-          uri = 'tenants';
-          break;
-        case 'rejoindre-hubs': 
-          uri = 'join-hubs';
-          break;
-        default: uri = '';
-        }
-      } else {
-        switch (pageName) {
-        case 'marketplace': 
-          uri = 'fr/place-de-marche';
-          break;
-        case 'portfolio': 
-          uri = 'fr/portefeuille';
-          break;
-        case 'tour': 
-          uri = 'fr/visite-guidee';
-          break;
-        case 'whitepaper': 
-          uri = 'fr/livre-blanc';
-          break;
-        case 'tokenomics': 
-          uri = 'fr/tokenomics';
-          break;
-        case 'about-us': 
-          uri = 'fr/qui-sommes-nous';
-          break;
-        case 'deeds': 
-          uri = 'fr/deeds';
-          break;
-        case 'legals': 
-          uri = 'fr/mentions-legales';
-          break;
-        case 'stake': 
-          uri = 'fr/rejoindre-dao';
-          break;
-        case 'owners': 
-          uri = 'fr/proprietaires';
-          break;
-        case 'farm': 
-          uri = 'fr/farm';
-          break;
-        case 'tenants': 
-          uri = 'fr/locataires';
-          break;
-        case 'join-hubs': 
-          uri = 'fr/rejoindre-hubs';
-          break;
-        default: uri = 'fr';
-        }
-      }
-      window.history.replaceState('', '', `${this.parentLocation}/${uri}`); 
-      this.$store.commit('selectLanguage', lang);
+      const pageName = pathParts[pathParts.length - 1];
+      const pageNameIndex = this.pageUriPerLanguages[this.language]?.pages?.indexOf(pageName) || 0;
+      const uri = this.pageUriPerLanguages[lang]?.pages[pageNameIndex] || '';
+      const uriPrefix = pageNameIndex === 0 ? '' : this.pageUriPerLanguages[lang].uriPrefix;
+      window.location.href = `${this.parentLocation}/${uriPrefix}${uri}`;
     },
   },
 };

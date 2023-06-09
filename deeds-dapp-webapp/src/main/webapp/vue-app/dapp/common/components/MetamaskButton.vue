@@ -29,6 +29,8 @@
     <img
       v-if="!appLoading"
       :src="`${parentLocation}/static/images/metamask.svg`"
+      height="16px"
+      width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('installMetamaskButton') }}</span>
@@ -42,6 +44,8 @@
     <img
       v-if="!appLoading"
       :src="`${parentLocation}/static/images/metamask.svg`"
+      height="16px"
+      width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
@@ -55,6 +59,8 @@
     <img
       v-if="!appLoading"
       :src="`${parentLocation}/static/images/metamask.svg`"
+      height="16px"
+      width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
     <span v-if="!isMobile" class="text-none">{{ $t('connectMetamaskButton') }}</span>

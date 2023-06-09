@@ -5,7 +5,8 @@
   boolean isProduction = Utils.isProductionEnvironment();
   Boolean staticPage = (Boolean) request.getAttribute("isStaticPath");
   String lang = (String) request.getAttribute("lang");
-  String basePath = request.getServletPath().startsWith("/fr/") ? "../" : "./";
+  String pageName = (String) request.getAttribute("pageName");
+  String basePath = lang.equals("en") || pageName.equals("home") ? "./" : "../";
 %>
 <!DOCTYPE html>
 <html lang="<%=lang%>"> 
@@ -58,19 +59,18 @@
       <link rel="preload" href="<%=basePath%>static/js/static.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <% } %>
 
-    <link rel="preload" href="<%=basePath%>static/images/meedsicon.png" as="image" type="image/png">
-    <link rel="preload" href="<%=basePath%>static/images/meedsicon.png" as="image" type="image/png">
     <link rel="preload" href="<%=basePath%>static/images/meeds.png" as="image" type="image/png">
 
     <link rel="icon" href="<%=basePath%>static/images/meedsicon.png" sizes="32x32">
     <link rel="icon" href="<%=basePath%>static/images/meedsicon.png" sizes="192x192">
     <link rel="apple-touch-icon-precomposed" href="<%=basePath%>static/images/meedsicon.png">
+  </head>
+  <body>
     <link href="<%=basePath%>static/css/fonts-roboto.css?_=6.5.95" rel="stylesheet">
     <link href="<%=basePath%>static/css/font-awesome.min.css?_=6.2.0" rel="stylesheet">
     <link href="<%=basePath%>static/css/vuetify.css?_=v2.6.14" rel="stylesheet">
     <link href="<%=basePath%>static/css/deeds.css?_=<%=buildnumber%>" rel="stylesheet">
-  </head>
-  <body>
+
     <% if (isProduction) { %>
     <!-- Google Tag Manager (noscript) -->
     <noscript>
@@ -88,6 +88,7 @@
       <input type="hidden" name="login">
     <% } %>
     <input type="hidden" name="loginMessage" value="<%=Utils.generateLoginMessage(session)%>">
+    <input type="hidden" name="pageName" value="<%=pageName%>">
 
     <script id="vue" src="<%=basePath%>static/js/vue.min.js?_=v2.7.14"></script>
     <script id="vue-i18n" src="<%=basePath%>static/js/vue-i18n.min.js?_=v8.26.7"></script>

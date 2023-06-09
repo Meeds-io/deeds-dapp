@@ -46,12 +46,17 @@ export default {
   created() {
     this.refreshMobileValue();
     this.refreshTheme();
-    window.addEventListener('popstate', this.$store.commit('refreshDocumentHead'));
+  },
+  mounted() {
+    window.addEventListener('popstate', this.refreshDocumentHead);
   },
   beforeDestroy() {
-    window.addEventListener('popstate', this.$store.commit('refreshDocumentHead'));
+    window.removeEventListener('popstate', this.refreshDocumentHead);
   },
   methods: {
+    refreshDocumentHead() {
+      this.$store.commit('refreshDocumentHead');
+    },
     refreshMobileValue() {
       this.$store.commit('setMobile', this.isMobile);
     },
