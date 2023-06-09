@@ -54,7 +54,7 @@ const vuetify = new Vuetify({
 });
 
 function getLanguage() {
-  return document.documentElement.lang || 'en';
+  return document?.documentElement?.lang || 'en';
 }
 
 const language = getLanguage();
@@ -64,22 +64,62 @@ const i18n = new VueI18n({
   messages: {},
 });
 
+const page = document.querySelector('[name=pageName]').value;
+
 const pathParts = window.location.pathname.split('/');
 window.parentAppLocation = pathParts[1] || '';
-let page;
+
 if (window.parentAppLocation.length && (window.parentAppLocation === 'dapp' || window.parentAppLocation === 'deeds-dapp')) {
-  page = pathParts.length > 3 && pathParts[pathParts.length-1] || (language === 'fr' ? 'accueil' : 'home');
   window.parentAppLocation = `/${window.parentAppLocation}`;
 } else {
   window.parentAppLocation = '';
-  page = (pathParts.length > 1 && pathParts[1] !== language) && pathParts[pathParts.length-1] || (language === 'fr' ? 'accueil' : 'home');
 }
+
+const pageUriPerLanguages = {
+  en: {
+    pages: [
+      '',
+      'marketplace',
+      'portfolio',
+      'tour',
+      'whitepaper',
+      'tokenomics',
+      'about-us',
+      'deeds',
+      'legals',
+      'stake',
+      'owners',
+      'farm',
+      'tenants'
+    ],
+    uriPrefix: '',
+  },
+  fr: {
+    pages: [
+      'fr',
+      'place-de-marche',
+      'portefeuille',
+      'visite-guidee',
+      'livre-blanc',
+      'tokenomics',
+      'qui-sommes-nous',
+      'deeds',
+      'mentions-legales',
+      'rejoindre-dao',
+      'proprietaires',
+      'farm',
+      'locataires'
+    ],
+    uriPrefix: 'fr/',
+  },
+};
 
 const store = new Vuex.Store({
   state: {
     buildNumber,
     page,
     pageState: null,
+    pageUriPerLanguages,
     parentLocation: window.parentAppLocation,
     whitepaperLink: 'https://mirror.xyz/meedsdao.eth/EDh9QfsuuIDNS0yKcQDtGdXc25vfkpnnKpc3RYUTJgc',
     introductiveVideoLink: 'https://res.cloudinary.com/dcooc6vig/video/upload/f_auto,q_auto/v1678984879/meedsdao-site/assets/video/meeds_intro.mp4',
@@ -136,19 +176,7 @@ const store = new Vuex.Store({
         credentials: 'include',
       })
         .then(resp => resp?.ok && resp.text())
-        .then(text => window.document.head.innerHTML = text.substring(text.indexOf('<head>')+6, text.indexOf('</head>')));
-    },
-    setPage(state, lang) {
-      const pathParts = window.location.href.split('/');
-      state.page = (pathParts[pathParts.length-1] === ('' || 'fr')) ? (lang === 'fr' ? 'accueil' : 'home') : pathParts[pathParts.length-1];
-    },
-    selectLanguage(state, lang) {
-      state.language = lang;
-      i18n.locale = lang.indexOf('fr') === 0 ? 'fr' : 'en';
-      this.commit('refreshURLs', lang);
-      this.commit('refreshDocumentHead');
-      this.commit('setPage', lang);
-      initializeVueApp(lang);
+        .then(text => window.document.head.innerHTML = text.substring(text.indexOf('<head>') + '<head>'.length, text.indexOf('</head>')));
     },
     setDark(state, value) {
       state.dark = value;

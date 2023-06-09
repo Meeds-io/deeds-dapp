@@ -29,19 +29,19 @@ export default {
     page: state => state.page,
     language: state => state.language,
     homePage() {
-      return this.page === (this.language === 'fr' ? 'accueil' : 'home');
+      return this.page === 'home';
     },
     aboutUsPage() {
-      return this.page === (this.language === 'fr' ? 'qui-sommes-nous' : 'about-us');
+      return this.page === 'about-us';
     },
     whitepaperPage() {
-      return this.page === (this.language === 'fr' ? 'livre-blanc' : 'whitepaper');
+      return this.page === 'whitepaper';
     },
     legalsPage() {
-      return this.page === (this.language === 'fr' ? 'mentions-legales' : 'legals');
+      return this.page === 'legals';
     },
     tourPage() {
-      return this.page === (this.language === 'fr' ? 'visite-guidee' : 'tour');
+      return this.page === 'tour';
     },
   }),
 };

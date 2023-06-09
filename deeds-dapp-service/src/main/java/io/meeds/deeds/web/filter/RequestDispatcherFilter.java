@@ -34,7 +34,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,9 +49,9 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   protected static final String              PREFERRED_LANGUAGE_COOKIE_NAME = "preferred-language";
 
-  protected static final String              DEFAULT_PAGE_FILE_NAME_EN         = "/home";
+  protected static final String              DEFAULT_PAGE_FILE_NAME_EN      = "/home";
 
-  protected static final String              DEFAULT_PAGE_FILE_NAME_FR         = "/accueil";
+  protected static final String              DEFAULT_PAGE_FILE_NAME_FR      = "/accueil";
 
   protected static final long                serialVersionUID               = -4145074746513311839L;
 
@@ -71,7 +70,8 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/mentions-legales",
                                                                                             "/visite-guidee");
 
-  protected static final List<String>        STATIC_PATHS                   = CollectionUtils.concatLists(STATIC_PATHS_EN, STATIC_PATHS_FR);
+  protected static final List<String>        STATIC_PATHS                   =
+                                                          CollectionUtils.concatLists(STATIC_PATHS_EN, STATIC_PATHS_FR);
 
   protected static final List<String>        DAPP_PATHS_EN                  = Arrays.asList("/marketplace",
                                                                                             "/tenants",
@@ -92,9 +92,11 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/farm",
                                                                                             "/tokenomics");
 
-  protected static final List<String>        DAPP_PATHS_FR                  = CollectionUtils.concatLists(DAPP_PATHS_FR_UNCOM, DAPP_PATHS_FR_COMM);
+  protected static final List<String>        DAPP_PATHS_FR                  =
+                                                           CollectionUtils.concatLists(DAPP_PATHS_FR_UNCOM, DAPP_PATHS_FR_COMM);
 
-  protected static final List<String>        DAPP_PATHS                     = CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
+  protected static final List<String>        DAPP_PATHS                     =
+                                                        CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
 
   protected static final List<String>        METADATA_LABELS                = Arrays.asList("pageDescription",
                                                                                             "imageAlt",
@@ -114,6 +116,10 @@ public class RequestDispatcherFilter extends HttpFilter {
     String servletPath = request.getServletPath();
     if (StringUtils.contains(servletPath, "api")) { // REST API
       chain.doFilter(request, response);
+    } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
+                                                                                                                    // URI
+      response.setHeader("Location", servletPath.substring(servletPath.indexOf("/static/")));
+      response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
     } else {
       if (servletPath.endsWith("/")) {
         String servletPathCanonical = servletPath.substring(0, servletPath.length() - 1);
@@ -122,11 +128,11 @@ public class RequestDispatcherFilter extends HttpFilter {
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           return;
         }
-      } else if(servletPath.equals("/home")) {
+      } else if (servletPath.equals("/home")) {
         response.setHeader("Location", "/");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if(servletPath.equals("/fr/accueil")) {
+      } else if (servletPath.equals("/fr/accueil")) {
         response.setHeader("Location", "/fr");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
@@ -138,11 +144,11 @@ public class RequestDispatcherFilter extends HttpFilter {
         return;
       } else if (StringUtils.isBlank(servletPath) || StringUtils.equals(servletPath, "/")) {
         servletPath = DEFAULT_PAGE_FILE_NAME_EN;
-      } else  if(StringUtils.equals(servletPath, "/fr")) {
+      } else if (StringUtils.equals(servletPath, "/fr")) {
         servletPath = servletPath + DEFAULT_PAGE_FILE_NAME_FR;
       }
       String uri = servletPath;
-      if(uri.startsWith("/fr/")) {
+      if (uri.startsWith("/fr/")) {
         uri = uri.substring(3, uri.length());
       } else if (DAPP_PATHS_FR_UNCOM.contains(uri) || STATIC_PATHS_FR.contains(uri)) {
         uri = "/fr" + uri;
@@ -152,12 +158,18 @@ public class RequestDispatcherFilter extends HttpFilter {
       }
       boolean isStaticPath = STATIC_PATHS.contains(uri);
       if (isStaticPath || DAPP_PATHS.contains(uri)) {
+        String lang = getLanguage(request);
+
         response.setContentType("text/html; charset=UTF-8");
         response.setDateHeader("Last-Modified", LAST_MODIFIED);
         response.setHeader("Cache-Control", "public,must-revalidate");
         response.setHeader("etag", eTagValue);
         request.setAttribute("isStaticPath", isStaticPath);
-        buildPageMetadata(request, servletPath, uri);
+        request.setAttribute("lang", lang);
+
+        String pageName = getNormalizedPageName(servletPath, uri);
+        request.setAttribute("pageName", pageName.substring(1));
+        buildPageMetadata(request, servletPath, pageName, lang);
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
@@ -166,36 +178,31 @@ public class RequestDispatcherFilter extends HttpFilter {
     }
   }
 
-  private void buildPageMetadata(HttpServletRequest request, String servletPath, String uri) throws IOException {
+  private void buildPageMetadata(HttpServletRequest request, String servletPath, String defaultPageName, String lang) throws IOException {
     if (Utils.isProductionEnvironment()) {
-      String pageName_EN = uri;
-      if (DAPP_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
-        pageName_EN = DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(uri));
-      } else if (STATIC_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
-        pageName_EN = STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(uri));
-      }
-      String pageContent = getPageHeaderMetadataContent(request, servletPath, pageName_EN);
+      String pageContent = getPageHeaderMetadataContent(request, servletPath, defaultPageName, lang);
       request.setAttribute("pageHeaderMetadatas", pageContent);
     } else {
       request.setAttribute("pageHeaderMetadatas", "");
     }
   }
 
-  private String getPageHeaderMetadataContent(HttpServletRequest request, String servletPath, String pageName_EN) throws IOException {
-    String lang = getLanguage(request);
-    String pageName = pageName_EN.substring(1);
+  private String getPageHeaderMetadataContent(HttpServletRequest request,
+                                              String servletPath,
+                                              String defaultPageName,
+                                              String lang) throws IOException {
+    String pageName = defaultPageName.substring(1);
 
     String key = pageName + "_" + lang;
     String pageContent = PAGE_METADATAS.get(key);
 
-    request.setAttribute("lang", lang);
     if (StringUtils.isBlank(pageContent)) {
       ResourceBundle resourceBundle = null;
       try (InputStream is = request.getServletContext().getResourceAsStream("/static/i18n/messages_" + lang + ".properties")) {
         resourceBundle = new PropertyResourceBundle(is);
       }
 
-      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + pageName_EN + ".html")) {
+      try (InputStream is = request.getServletContext().getResourceAsStream("/WEB-INF/metadata" + defaultPageName + ".html")) {
         pageContent = IOUtils.toString(is, StandardCharsets.UTF_8);
         for (String label : METADATA_LABELS) {
           String i18nKey = "metadata." + pageName + "." + label;
@@ -208,6 +215,15 @@ public class RequestDispatcherFilter extends HttpFilter {
       PAGE_METADATAS.put(key, pageContent);
     }
     return pageContent;
+  }
+
+  private String getNormalizedPageName(String servletPath, String uri) {
+    if (DAPP_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
+      return DAPP_PATHS_EN.get(DAPP_PATHS_FR.indexOf(uri));
+    } else if (STATIC_PATHS_FR.contains(uri) && servletPath.startsWith("/fr/")) {
+      return STATIC_PATHS_EN.get(STATIC_PATHS_FR.indexOf(uri));
+    }
+    return STATIC_PATHS_EN.contains(uri) || DAPP_PATHS_EN.contains(uri) ? uri : "/home";
   }
 
   private String getLanguage(HttpServletRequest request) {

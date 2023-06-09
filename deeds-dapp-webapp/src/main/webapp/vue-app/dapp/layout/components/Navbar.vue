@@ -277,11 +277,17 @@ export default {
     dark: state => state.dark,
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
+    page: state => state.page,
+    pageUriPerLanguages: state => state.pageUriPerLanguages,
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },
     activeMenuColor() {
       return this.dark && 'grey darken-4' || 'grey lighten-2';
+    },
+    currentTabUri() {
+      const currentPageIndex = this.pageUriPerLanguages['en'].pages.indexOf(this.page);
+      return `${this.parentLocation}/${this.pageUriPerLanguages[this.language].uriPrefix}${this.pageUriPerLanguages[this.language].pages[currentPageIndex]}`;
     },
   }),
   watch: {
@@ -323,55 +329,11 @@ export default {
   },
   methods: {
     initSelectedTab(event) {
-      const href = window.location.pathname;
-      const hrefParts = href.split('/');
-      if (this.language === 'fr') {
-        switch (hrefParts[hrefParts.length - 1]) {
-        case 'place-de-marche': 
-          hrefParts[hrefParts.length - 1] = 'marketplace';
-          break;
-        case 'portefeuille': 
-          hrefParts[hrefParts.length - 1] = 'portfolio';
-          break;
-        case 'visite-guidee': 
-          hrefParts[hrefParts.length - 1] = 'tour';
-          break;
-        case 'livre-blanc': 
-          hrefParts[hrefParts.length - 1] = 'whitepaper';
-          break;
-        case 'tokenomics': 
-          hrefParts[hrefParts.length - 1] = 'tokenomics';
-          break;
-        case 'qui-sommes-nous': 
-          hrefParts[hrefParts.length - 1] = 'about-us';
-          break;
-        case 'deeds': 
-          hrefParts[hrefParts.length - 1] = 'deeds';
-          break;
-        case 'mentions-legales': 
-          hrefParts[hrefParts.length - 1] = 'legals';
-          break;
-        case 'rejoindre-dao': 
-          hrefParts[hrefParts.length - 1] = 'stake';
-          break;
-        case 'proprietaires': 
-          hrefParts[hrefParts.length - 1] = 'owners';
-          break;
-        case 'farm': 
-          hrefParts[hrefParts.length - 1] = 'farm';
-          break;
-        case 'locataires': 
-          hrefParts[hrefParts.length - 1] = 'tenants';
-          break;
-        default: hrefParts[hrefParts.length - 1] = '';
-        }
-      }
-      const newTab = hrefParts[hrefParts.length - 1] || 'marketplace';
       let tabToSelect;
       if (this.isMobile) {
-        tabToSelect = newTab;
+        tabToSelect = this.page;
       } else {
-        tabToSelect = `${this.parentLocation}/${newTab}`;
+        tabToSelect = this.currentTabUri;
       }
       if (this.selectedTab === tabToSelect) {
         // Stay on the same tab, no change to apply
@@ -379,12 +341,12 @@ export default {
       } else {
         if (event) {
           this.avoidAddToHistory = true;
-          this.switchPage(newTab);
+          this.switchPage(this.page);
         } else {
-          this.selectedTab = (this.dappPages.indexOf(newTab) >= 0) && tabToSelect || `${this.parentLocation}/static`;
+          this.selectedTab = (this.dappPages.indexOf(this.page) >= 0) && tabToSelect || `${this.parentLocation}/static`;
           if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'portfolio') {
             this.$nextTick().then(() => {
-              this.selectedId = newTab;
+              this.selectedId = this.page;
               this.selectedTab = 'more';
             });
           }
