@@ -78,6 +78,7 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
+const page = document.querySelector('[name=pageName]').value;
 
 const buildNumber = document.getElementsByTagName('meta').version.getAttribute('content');
 const themePreference = window.localStorage.getItem('meeds-preferred-theme-colors') || 'system';
@@ -252,10 +253,51 @@ const blockchainAddressAndNetworkState = {
   selectedStandaloneDeedCardName: null,
 };
 
+const pageUriPerLanguages = {
+  en: {
+    pages: [
+      '',
+      'marketplace',
+      'portfolio',
+      'tour',
+      'whitepaper',
+      'tokenomics',
+      'about-us',
+      'deeds',
+      'legals',
+      'stake',
+      'owners',
+      'farm',
+      'tenants'
+    ],
+    uriPrefix: '',
+  },
+  fr: {
+    pages: [
+      'fr',
+      'place-de-marche',
+      'portefeuille',
+      'visite-guidee',
+      'livre-blanc',
+      'tokenomics',
+      'qui-sommes-nous',
+      'deeds',
+      'mentions-legales',
+      'rejoindre-dao',
+      'proprietaires',
+      'farm',
+      'locataires'
+    ],
+    uriPrefix: 'fr/',
+  },
+};
+
 const store = new Vuex.Store({
   state: {
     ...networkSettings[1],
     ...blockchainAddressAndNetworkState,
+    pageUriPerLanguages,
+    page,
     buildNumber,
     parentLocation: window.parentAppLocation,
     addComethLiquidityLink: 'https://swap.cometh.io/#/add/ETH/0x6acA77CF3BaB0C4E8210A09B57B07854a995289a',
@@ -575,13 +617,6 @@ const store = new Vuex.Store({
       })
         .then(resp => resp?.ok && resp.text())
         .then(text => window.document.head.innerHTML = text.substring(text.indexOf('<head>')+6, text.indexOf('</head>')));
-    },
-    selectLanguage(state, language) {
-      state.language = language;
-      i18n.locale = language.indexOf('fr') === 0 ? 'fr' : 'en';
-      this.commit('refreshURLs', language);
-      this.commit('refreshDocumentHead');
-      initializeVueApp(language);
     },
     setEtherBalance(state, etherBalance) {
       state.etherBalance = etherBalance;

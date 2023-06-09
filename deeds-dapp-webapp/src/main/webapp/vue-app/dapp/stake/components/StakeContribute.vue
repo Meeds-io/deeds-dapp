@@ -34,9 +34,10 @@
         text>
         <v-img
           :src="`${parentLocation}/static/images/meedsicon.png`"
+          class="me-2"
           alt=""
-          heigh="24"
-          max-width="24"
+          max-height="20"
+          max-width="20"
           eager
           contain />
         {{ $t('getInvolved') }}
