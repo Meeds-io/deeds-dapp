@@ -179,6 +179,15 @@
       link 
       class="d-none" />
     <v-tab
+      ref="hubs"
+      id="hubs"
+      :href="hubsUrl"
+      link 
+      class="px-2 me-2"
+      @click="openPage">
+      <h3>{{ $t('page.hubs') }}</h3>
+    </v-tab>
+    <v-tab
       ref="marketplace"
       id="marketplace"
       :href="marketplaceURL"
@@ -254,6 +263,7 @@ export default {
     selectedId: null,
     updatingMenu: false,
     dappPages: [
+      'hubs',
       'marketplace',
       'tenants',
       'owners',
@@ -279,6 +289,7 @@ export default {
     validNetwork: state => state.validNetwork,
     page: state => state.page,
     pageUriPerLanguages: state => state.pageUriPerLanguages,
+    hubsUrl: state => state.hubsUrl,
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },
