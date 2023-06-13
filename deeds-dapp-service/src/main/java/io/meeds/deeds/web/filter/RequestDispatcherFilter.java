@@ -78,10 +78,10 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/owners",
                                                                                             "/portfolio",
                                                                                             "/stake",
+                                                                                            "/hubs",
                                                                                             "/deeds",
                                                                                             "/farm",
-                                                                                            "/tokenomics",
-                                                                                            "/hubs");
+                                                                                            "/tokenomics");
 
   protected static final List<String>        DAPP_PATHS_FR_UNCOM            = Arrays.asList("/place-de-marche",
                                                                                             "/locataires",
