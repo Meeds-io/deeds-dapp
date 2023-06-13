@@ -93,21 +93,27 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('workMetaverse.title') }}</span>
             <a
-              :href="tokenomicsURL"
+              :href="hubsUrl"
               :class="textColor"
               class="no-decoration my-2">
+              {{ $t('joinHubs') }}
+            </a>
+            <a
+              :href="tokenomicsURL"
+              :class="textColor"
+              class="no-decoration">
               {{ $t('meedsToken') }}
             </a>
             <a
               :href="deedsURL"
               :class="textColor"
-              class="text-capitalize no-decoration">
+              class="text-capitalize no-decoration my-2">
               {{ $t('becomingADeedOwner') }}
             </a>
             <a
               :href="marketplaceURL"
               :class="textColor"
-              class="no-decoration text-capitalize my-2">
+              class="no-decoration text-capitalize">
               {{ $t('marketplace') }}
             </a>
           </div>
@@ -194,6 +200,7 @@ export default {
     tenantsURL: state => state.tenantsURL,
     deedsURL: state => state.deedsURL,
     whitepaperURL: state => state.whitepaperURL,
+    hubsUrl: state => state.hubsUrl,
     dark: state => state.dark,
     githubColor() {
       return this.dark && 'white' || 'black';

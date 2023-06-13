@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import './common/initComponents';
-import './commonRenting/initComponents';
-import './layout/initComponents';
-import './marketplace/initComponents';
-import './tenants/initComponents';
-import './owners/initComponents';
-import './snapshot/initComponents';
-import './deeds/initComponents';
-import './stake/initComponents';
-import './farming/initComponents';
-import './hubs/initComponents';
+import DeedsHubs from './components/Hubs.vue';
+import HubsList from './components/HubsList.vue';
+import HubCard from './components/HubCard.vue';
+import HubsToolbar from './components/HubsToolbar.vue';
+
+const components = {
+  'deeds-hubs': DeedsHubs,
+  'deeds-hubs-list': HubsList,
+  'deeds-hub-card': HubCard,
+  'deeds-hubs-toolbar': HubsToolbar,
+};
+
+for (const key in components) {
+  Vue.component(key, components[key]);
+}

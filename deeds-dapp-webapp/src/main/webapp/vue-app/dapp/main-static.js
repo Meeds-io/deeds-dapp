@@ -90,7 +90,8 @@ const pageUriPerLanguages = {
       'stake',
       'owners',
       'farm',
-      'tenants'
+      'tenants',
+      'hubs'
     ],
     uriPrefix: '',
   },
@@ -108,7 +109,8 @@ const pageUriPerLanguages = {
       'rejoindre-dao',
       'proprietaires',
       'farm',
-      'locataires'
+      'locataires',
+      'rejoindre-hubs'
     ],
     uriPrefix: 'fr/',
   },
@@ -148,6 +150,7 @@ const store = new Vuex.Store({
     ownersURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`,
     farmURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`,
     tenantsURL: `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`,
+    hubsUrl: `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'hubs'}`,
   },
   mutations: {
     setPageState(state, value) {
@@ -169,6 +172,7 @@ const store = new Vuex.Store({
       state.ownersURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/proprietaires' : 'owners'}`;
       state.farmURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/farm' : 'farm'}`;
       state.tenantsURL = `${window.parentAppLocation}/${language === 'fr' ? 'fr/locataires' : 'tenants'}`;
+      state.hubsUrl = `${window.parentAppLocation}/${language === 'fr' ? 'fr/rejoindre-hubs' : 'hubs'}`;
     },
     refreshDocumentHead() {
       fetch(window.location.href, {
