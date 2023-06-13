@@ -178,6 +178,9 @@
       <span :class="textColor" class="caption text-center text-sm-start">{{ $t('copyright') }}</span>
       <v-spacer />
       <div class="d-flex">
+        <div class="mx-4">
+          <deeds-topbar-fiat-currency-selector />
+        </div>
         <deeds-topbar-language-selector />
         <deeds-theme-button
           css-class="ms-4" 

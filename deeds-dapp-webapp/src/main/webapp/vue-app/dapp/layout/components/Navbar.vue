@@ -168,89 +168,260 @@
       </v-list>
     </v-bottom-sheet>
   </div>
-  <v-tabs
+  <v-row
     v-else
-    v-model="selectedTab"
-    color="secondary">
-    <v-tab
-      ref="default"
-      id="default"
-      :href="`${parentLocation}/static`"
-      link 
-      class="d-none" />
-    <v-tab
-      ref="hubs"
-      id="hubs"
-      :href="hubsUrl"
-      link 
-      class="px-2 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.hubs') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="marketplace"
-      id="marketplace"
-      :href="marketplaceURL"
-      link 
-      class="px-2 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.marketplace') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="tenants"
-      id="tenants"
-      :href="tenantsURL"
-      link
-      class="px-2 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.tenants') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="owners"
-      id="owners"
-      :href="ownersURL"
-      link
-      class="px-2 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.owners') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="stake"
-      id="stake"
-      :href="stakeURL"
-      link 
-      class="px-0 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.stake') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="deeds"
-      id="deeds"
-      :href="deedsURL"
-      link 
-      class="px-0 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.deeds') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="farm"
-      id="farm"
-      :href="farmURL"
-      link
-      class="px-0 me-2"
-      @click="openPage">
-      <h3>{{ $t('page.farm') }}</h3>
-    </v-tab>
-    <v-tab
-      ref="portfolio"
-      id="portfolio"
-      :href="portfolioURL"
-      link 
-      class="px-0 ms-auto"
-      @click="openPage">
-      <h3>{{ $t('page.overview') }}</h3>
-    </v-tab>
-  </v-tabs>
+    class="flex-nowrap d-flex"
+    no-gutters>
+    <v-col class="d-flex justify-center">
+      <a
+        :href="hubsUrl"
+        class="no-decoration black--text text--color"
+        @click="openPage">
+        <span class="display-1 font-weight-black">{{ $t('page.hubs') }}</span>
+      </a>
+    </v-col>
+    <v-col class="d-flex justify-center">
+      <v-menu
+        nudge-left="120"
+        transition="slide-x-transition"
+        offset-y
+        open-on-hover>
+        <template #activator="{ on, attrs }">
+          <div 
+            v-bind="attrs"
+            v-on="on">
+            <span class="display-1 font-weight-black"> {{ $t('tokens.title') }} </span>
+          </div>
+        </template>
+        <v-list>
+          <v-list-item :href="stakeURL">
+            <v-list-item-avatar
+              height="25px"
+              width="20px"
+              min-width="20px"
+              tile>
+              <v-img :src="`${parentLocation}/static/images/stake_menu.webp`" />
+            </v-list-item-avatar>
+            <v-hover v-slot="{hover}">
+              <v-list-item-content>
+                <v-list-item-title class="d-flex">
+                  <span class="text-h5 font-weight-black"> {{ $t('page.stake') }} </span>
+                  <v-icon
+                    v-if="hover"
+                    class="ms-2 mt-1 black--text text--color"
+                    size="12">
+                    fa fa-chevron-right
+                  </v-icon>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span  
+                    :class="hover && 'black--text text--color'"
+                    class="font-size-normal"> 
+                    {{ $t('page.stake.menu.description') }} 
+                  </span>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-hover>
+          </v-list-item>
+          <v-list-item :href="farmURL">
+            <v-list-item-avatar
+              height="25px"
+              width="27px"
+              min-width="27px"
+              tile>
+              <v-img :src="`${parentLocation}/static/images/farm_menu.webp`" />
+            </v-list-item-avatar>
+            <v-hover v-slot="{hover}">
+              <v-list-item-content>
+                <v-list-item-title class="d-flex">
+                  <span class="text-h5 font-weight-black"> {{ $t('page.farm') }} </span>
+                  <v-icon
+                    v-if="hover"
+                    class="ms-2 mt-1 black--text text--color"
+                    size="12">
+                    fa fa-chevron-right
+                  </v-icon>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span  
+                    :class="hover && 'black--text text--color'"
+                    class="font-size-normal"> 
+                    {{ $t('page.farm.menu.description') }}
+                  </span>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-hover>
+          </v-list-item>
+          <v-list-item :href="tokenomicsURL">
+            <v-list-item-avatar
+              height="25px"
+              width="25px"
+              min-width="25px"
+              tile>
+              <v-img :src="`${parentLocation}/static/images/token_menu.webp`" />
+            </v-list-item-avatar>
+            <v-hover v-slot="{hover}">
+              <v-list-item-content>
+                <v-list-item-title class="d-flex">
+                  <span class="text-h5 font-weight-black"> {{ $t('page.token') }} </span>
+                  <v-icon
+                    v-if="hover"
+                    class="ms-2 mt-1 black--text text--color"
+                    size="12">
+                    fa fa-chevron-right
+                  </v-icon>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span  
+                    :class="hover && 'black--text text--color'"
+                    class="font-size-normal"> 
+                    {{ $t('page.token.menu.description') }} 
+                  </span>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-hover>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-col>
+    <v-col class="d-flex justify-center">
+      <v-menu
+        nudge-left="350"
+        transition="slide-x-transition"
+        offset-y
+        open-on-hover>
+        <template #activator="{ on, attrs }">
+          <div 
+            v-bind="attrs"
+            v-on="on">
+            <span class="display-1 font-weight-black"> {{ $t('nft.id') }} </span>
+          </div>
+        </template>
+        <div class="d-flex">
+          <v-list>
+            <v-list-item :href="marketplaceURL">
+              <v-list-item-avatar
+                height="40px"
+                width="35px"
+                min-width="35px"
+                tile>
+                <v-img :src="`${parentLocation}/static/images/marketplace_menu.webp`" />
+              </v-list-item-avatar>
+              <v-hover v-slot="{hover}">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex">
+                    <span class="text-h5 font-weight-black"> {{ $t('page.marketplace') }} </span>
+                    <v-icon
+                      v-if="hover"
+                      class="ms-2 mt-1 black--text text--color"
+                      size="12">
+                      fa fa-chevron-right
+                    </v-icon>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span  
+                      :class="hover && 'black--text text--color'"
+                      class="font-size-normal">
+                      {{ $t('page.marketplace.menu.description') }} 
+                    </span>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-hover>
+            </v-list-item>
+            <v-list-item :href="tenantsURL">
+              <v-list-item-avatar
+                height="35px"
+                width="31px"
+                min-width="31px"
+                tile>
+                <v-img :src="`${parentLocation}/static/images/tenants_menu.webp`" />
+              </v-list-item-avatar>
+              <v-hover v-slot="{hover}">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex">
+                    <span class="text-h5 font-weight-black"> {{ $t('page.tenants') }} </span>
+                    <v-icon
+                      v-if="hover"
+                      class="ms-2 mt-1 black--text text--color"
+                      size="12">
+                      fa fa-chevron-right
+                    </v-icon>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span  
+                      :class="hover && 'black--text text--color'"
+                      class="font-size-normal">
+                      {{ $t('page.tenants.menu.description') }} 
+                    </span>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-hover>
+            </v-list-item>
+          </v-list>
+          <v-list>
+            <v-list-item :href="deedsURL">
+              <v-list-item-avatar
+                height="35px"
+                width="42px"
+                min-width="42px"
+                tile>
+                <v-img :src="`${parentLocation}/static/images/mint_menu.webp`" />
+              </v-list-item-avatar>
+              <v-hover v-slot="{hover}">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex">
+                    <span class="text-h5 font-weight-black"> {{ $t('page.deeds') }} </span>
+                    <v-icon
+                      v-if="hover"
+                      class="ms-2 mt-1 black--text text--color"
+                      size="12">
+                      fa fa-chevron-right
+                    </v-icon>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span  
+                      :class="hover && 'black--text text--color'"
+                      class="font-size-normal">
+                      {{ $t('page.deeds.menu.description') }} 
+                    </span>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-hover>
+            </v-list-item>
+            <v-list-item :href="ownersURL">
+              <v-list-item-avatar
+                height="35px"
+                width="34px"
+                min-width="34px"
+                tile>
+                <v-img :src="`${parentLocation}/static/images/owners_menu.webp`" />
+              </v-list-item-avatar>
+              <v-hover v-slot="{hover}">  
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex">
+                    <span class="text-h5 font-weight-black"> {{ $t('page.owners') }} </span>
+                    <v-icon
+                      v-if="hover"
+                      class="ms-2 mt-1 black--text text--color"
+                      size="12">
+                      fa fa-chevron-right
+                    </v-icon>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span  
+                      :class="hover && 'black--text text--color'"
+                      class="font-size-normal"> 
+                      {{ $t('page.owners.menu.description') }} 
+                    </span>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-hover>
+            </v-list-item>
+          </v-list>
+        </div>
+      </v-menu>
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -282,6 +453,7 @@ export default {
     ownersURL: state => state.ownersURL,
     farmURL: state => state.farmURL,
     tenantsURL: state => state.tenantsURL,
+    tokenomicsURL: state => state.tokenomicsURL,
     language: state => state.language,
     isMobile: state => state.isMobile,
     dark: state => state.dark,

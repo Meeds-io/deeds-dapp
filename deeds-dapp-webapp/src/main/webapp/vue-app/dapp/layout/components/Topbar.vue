@@ -46,7 +46,7 @@
     </div>
     <div v-else class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <deeds-topbar-logo />
-      <v-spacer />
+      <deeds-navbar v-if="!staticPage" />
       <template v-if="validNetwork && address">
         <div class="ms-4 d-none d-md-inline-block">
           <deeds-topbar-address-selector v-if="address" />
@@ -57,9 +57,6 @@
       </template>
       <div v-else-if="!appLoading" class="ms-4 d-none d-md-block">
         <deeds-metamask-button />
-      </div>
-      <div class="ms-4">
-        <deeds-topbar-fiat-currency-selector />
       </div>
       <div class="ms-4">
         <v-btn
