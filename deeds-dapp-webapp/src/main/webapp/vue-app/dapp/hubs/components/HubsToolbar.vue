@@ -40,7 +40,7 @@
     </v-text-field>
     <v-spacer />
     <v-btn
-      :href="marketplaceURL"
+      :href="tenantsURL"
       height="75px"
       class="rounded-pill px-7 mx-auto mt-md-0 mt-6 elevation-0"
       color="primary"
@@ -55,7 +55,7 @@ export default {
     keyword: null
   }),
   computed: Vuex.mapState({
-    marketplaceURL: state => state.marketplaceURL,
+    tenantsURL: state => state.tenantsURL,
   }),
   watch: {
     keyword() {
