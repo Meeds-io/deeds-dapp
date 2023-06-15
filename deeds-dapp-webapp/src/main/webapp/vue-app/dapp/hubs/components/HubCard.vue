@@ -58,7 +58,7 @@
               width="40px"
               height="40px" />
             <h4 class="text-light-color font-weight-normal">
-              {{ hubUsersCount }} {{ this.$t('hubs.users.title') }}
+              {{ hubUsersCount }}
             </h4>
           </div>
           <v-spacer />
@@ -69,10 +69,8 @@
               width="40px"
               height="40px" />
             <h4 class="text-light-color d-flex font-weight-normal">
-              <deeds-number-format 
-                :value="hubRewardsPerWeek" 
-                :fractions="2" />
-              <span class="ms-1 text-no-wrap">Ɱ / {{ $t('week') }}</span>
+              {{ hubRewardsPerWeek }}K
+              <span class="ms-2 text-no-wrap">Ɱ / {{ $t('week') }}</span>
             </h4>
           </div>
         </div>
@@ -110,7 +108,7 @@ export default {
       return this.hub?.hubUrl;
     },
     hubRewardsPerWeek() {
-      return this.hub?.rewardsPerWeek;
+      return this.hub?.rewardsPerWeek / 1000;
     }
   }),
 };

@@ -61,7 +61,7 @@ export default {
         backgroundColor: '#3F8487',
         usersCount: 248,
         hubUrl: 'https://builders.meeds.io',
-        rewardsPerWeek: 1000000000000000000000
+        rewardsPerWeek: 1000
       },
     ],
   }),
