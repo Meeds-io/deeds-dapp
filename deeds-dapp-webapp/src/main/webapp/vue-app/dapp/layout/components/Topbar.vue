@@ -47,6 +47,7 @@
     <div v-else class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <deeds-topbar-logo />
       <deeds-navbar v-if="!staticPage" />
+      <v-spacer />
       <template v-if="validNetwork && address">
         <div class="ms-4 d-none d-md-inline-block">
           <deeds-topbar-address-selector v-if="address" />
