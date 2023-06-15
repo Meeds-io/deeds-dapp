@@ -19,7 +19,7 @@
 <template>
   <v-menu
     nudge-left="110"
-    content-class="my-menu"
+    content-class="menu-arrow"
     transition="slide-x-transition"
     offset-y
     open-on-hover>

@@ -184,7 +184,7 @@
       <v-menu
         nudge-left="160"
         transition="slide-x-transition"
-        content-class="my-menu"
+        content-class="menu-arrow"
         offset-y
         open-on-hover>
         <template #activator="{ on, attrs }">
@@ -291,7 +291,7 @@
       <v-menu
         nudge-left="300"
         transition="slide-x-transition"
-        content-class="my-menu"
+        content-class="menu-arrow"
         offset-y
         open-on-hover>
         <template #activator="{ on, attrs }">
