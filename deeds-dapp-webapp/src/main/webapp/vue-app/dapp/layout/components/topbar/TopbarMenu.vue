@@ -30,8 +30,8 @@
           :on="on"
           :attrs="attrs"></slot>
       </template>
-      <div class="d-flex justify-center mt-n1 mb-n2 elevation-4">
-        <v-icon :color="whiteThemeColor">fa fa-caret-up</v-icon>
+      <div class="d-flex justify-center mx-2 mt-n1 mb-n3">
+        <v-icon :class="dark && 'dark-black-color' || 'white--text'" class="mb-2px">fa fa-caret-up</v-icon>
       </div>
       <div class="elevation-4 mx-2 mb-2">
         <slot name="default"></slot>
@@ -42,7 +42,7 @@
 <script>
 export default {
   computed: Vuex.mapState({
-    whiteThemeColor: state => state.whiteThemeColor,
+    dark: state => state.dark,
   }),
 };
 </script>
