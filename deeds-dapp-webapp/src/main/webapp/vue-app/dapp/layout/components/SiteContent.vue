@@ -21,6 +21,10 @@
     <div class="siteContentLayout mt-11 mt-sm-13">
       <v-progress-linear v-if="appLoading" indeterminate />
       <div v-else class="mainPageLayout pa-5 mx-md-auto">
+        <deeds-navbar
+          v-if="mobileNavigationBar"
+          id="navbar"
+          role="navigation" />
         <deeds-page
           id="mainPageContent"
           class="mb-12 mb-sm-0"
@@ -35,6 +39,10 @@ export default {
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
     staticPage: state => state.staticPage,
+    isMobile: state => state.isMobile,
+    mobileNavigationBar() {
+      return !this.staticPage && this.isMobile;
+    }
   }),
 };
 </script>
