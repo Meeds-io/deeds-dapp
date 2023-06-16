@@ -181,12 +181,7 @@
       </a>
     </v-col>
     <v-col cols="auto" class="d-flex justify-center align-center mx-8">
-      <v-menu
-        nudge-left="160"
-        transition="slide-x-transition"
-        content-class="menu-arrow"
-        offset-y
-        open-on-hover>
+      <deeds-topbar-menu>
         <template #activator="{ on, attrs }">
           <div 
             v-bind="attrs"
@@ -285,15 +280,10 @@
             </v-hover>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </deeds-topbar-menu>
     </v-col>
     <v-col cols="auto" class="d-flex justify-center align-center mx-8">
-      <v-menu
-        nudge-left="300"
-        transition="slide-x-transition"
-        content-class="menu-arrow"
-        offset-y
-        open-on-hover>
+      <deeds-topbar-menu>
         <template #activator="{ on, attrs }">
           <div 
             v-bind="attrs"
@@ -427,7 +417,7 @@
             </v-list-item>
           </v-list>
         </div>
-      </v-menu>
+      </deeds-topbar-menu>
     </v-col>
   </v-row>
 </template>

@@ -17,12 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-menu
-    nudge-left="110"
-    content-class="menu-arrow"
-    transition="slide-x-transition"
-    offset-y
-    open-on-hover>
+  <deeds-topbar-menu>
     <template #activator="{ on, attrs }">
       <div 
         v-bind="attrs"
@@ -70,7 +65,7 @@
         </v-hover>  
       </v-list-item>
     </v-list>
-  </v-menu>
+  </deeds-topbar-menu>
 </template>
 <script>
 export default {
