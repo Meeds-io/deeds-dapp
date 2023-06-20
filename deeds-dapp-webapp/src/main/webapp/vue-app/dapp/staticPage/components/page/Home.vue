@@ -20,21 +20,21 @@
   <div class="d-flex flex-column mt-0 mt-sm-4">
     <v-card flat>
       <v-card-title
-        class="justify-center text-center font-weight-black text-sm-h2 display-2">
+        class="justify-center text-center font-weight-black text-sm-h3 display-1">
         {{ $t('homePage.title') }}
       </v-card-title>
     </v-card>
-    <span class="display-1 font-weight-light text-center mb-10 mt-4 mt-sm-2 grey--text">{{ $t('homePage.description') }}</span>
+    <span class="headline text-sm-h4 font-weight-light text-center mb-10 mt-4 mt-sm-2 grey--text">{{ $t('homePage.description') }}</span>
     <div class="mx-auto mb-9 mb-sm-11">
       <v-btn
         :href="tourURL"
-        height="70px"
+        height="60px"
         class="primary px-8"
         depressed
         dark
         outlined>
-        <span class="display-1 font-weight-bold">{{ $t('discover') }}</span>
-        <v-icon class="ms-4" size="34px">fas fa-arrow-right</v-icon>
+        <span class="headline font-weight-bold">{{ $t('discover') }}</span>
+        <v-icon class="ms-4" size="24px">fas fa-arrow-right</v-icon>
       </v-btn>
     </div>
     <v-img
@@ -57,16 +57,16 @@
               eager />    
           </div>        
           <div class="d-flex flex-column">
-            <span class="display-1 font-weight-bold mb-6">
+            <span class="headline text-sm-h4 font-weight-bold mb-6">
               {{ $t('homepage.onboard.title') }}
             </span>
-            <span class="text-h5 font-weight-light mt-6 grey--text">
+            <span class="text-h6 font-weight-light mt-6 grey--text">
               {{ $t('homepage.onboard.descriptionPart1') }}
             </span>
-            <span class="text-h5 font-weight-light grey--text">
+            <span class="text-h6 font-weight-light grey--text">
               {{ $t('homepage.onboard.descriptionPart2') }}
             </span>
-            <span class="text-h5 font-weight-light grey--text">
+            <span class="text-h6 font-weight-light grey--text">
               {{ $t('homepage.onboard.descriptionPart3') }}
             </span>
           </div>
@@ -96,16 +96,16 @@
               eager />
           </div>
           <div class="d-flex flex-column">
-            <span class="display-1 font-weight-bold mb-6">
+            <span class="headline text-sm-h4 font-weight-bold mb-6">
               {{ $t('homepage.organize.title') }}
             </span>
-            <span class="text-h5 font-weight-light mt-6 grey--text">
+            <span class="text-h6 font-weight-light mt-6 grey--text">
               {{ $t('homepage.organize.descriptionPart1') }}
             </span>
-            <span class="text-h5 font-weight-light grey--text">
+            <span class="text-h6 font-weight-light grey--text">
               {{ $t('homepage.organize.descriptionPart2') }}
             </span>
-            <span class="text-h5 font-weight-light grey--text">
+            <span class="text-h6 font-weight-light grey--text">
               {{ $t('homepage.organize.descriptionPart3') }}
             </span>
           </div>
@@ -124,16 +124,16 @@
                 eager />
             </div>
             <div class="d-flex flex-column">
-              <span class="display-1 font-weight-bold mb-6">
+              <span class="headline text-sm-h4 font-weight-bold mb-6">
                 {{ $t('homepage.reward.title') }}
               </span>
-              <span class="text-h5 font-weight-light mt-6 grey--text">
+              <span class="text-h6 font-weight-light mt-6 grey--text">
                 {{ $t('homepage.reward.descriptionPart1') }}
               </span>
-              <span class="text-h5 font-weight-light grey--text">
+              <span class="text-h6 font-weight-light grey--text">
                 {{ $t('homepage.reward.descriptionPart2') }}
               </span>
-              <span class="text-h5 font-weight-light grey--text">
+              <span class="text-h6 font-weight-light grey--text">
                 {{ $t('homepage.reward.descriptionPart3') }}
               </span>
             </div>
@@ -150,18 +150,18 @@
         <v-btn
           href="https://builders.meeds.io"
           target="_blank"
-          height="70px"
+          height="60px"
           class="px-8 d-flex"
           color="primary"
           outlined>
-          <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
-          <span class="display-1 font-weight-bold">{{ $t('try') }}</span>
+          <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
+          <span class="headline font-weight-bold">{{ $t('try') }}</span>
         </v-btn>
       </div>
     </v-card>
-    <div class="pt-16 mt-6">
+    <div class="pt-16 mt-0 mt-md-6">
       <span
-        class="d-flex justify-center text-center font-weight-bold text-sm-h2 display-2">
+        class="d-flex justify-center text-center font-weight-bold text-sm-h3 display-1">
         {{ $t('poweredByWeb3.title') }}
       </span>
       <v-card class="my-8 mx-4 d-block d-md-flex" flat>
@@ -176,9 +176,9 @@
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
           </div>
-          <span class="mt-3 text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="mt-3 text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('tokens.description') }}
           </span>
         </div>
@@ -193,9 +193,9 @@
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
           </div>
-          <span class="text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('store.description') }}
           </span>
         </div>
@@ -210,9 +210,9 @@
               alt=""
               contain
               eager />
-            <span class="display-1 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
           </div>
-          <span class="text-h5 grey--text d-flex text-center font-weight-light">
+          <span class="text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('workMetaverse.description') }}
           </span>
         </div>
@@ -220,18 +220,18 @@
       <div class="d-flex justify-center">
         <v-btn
           :href="whitepaperURL"
-          height="70px"
+          height="60px"
           class="primary px-8 my-14"
           depressed
           dark
           outlined>
-          <span class="display-1 font-weight-bold">{{ $t('learnMore') }}</span>
+          <span class="headline font-weight-bold">{{ $t('learnMore') }}</span>
         </v-btn>
       </div>
     </div>
     <div class="pt-16 mt-16">
       <span
-        class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h2 display-2">
+        class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h3 display-1">
         {{ $t('whatInMeedForYou.title') }}
       </span>
       <v-container>
@@ -250,25 +250,25 @@
                   alt=""
                   contain
                   eager />
-                <span class="display-1 d-flex align-center font-weight-bold ms-7">
+                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
                   {{ $t('leader.title') }}
                 </span>
               </div>
               <div class="d-flex flex-column">
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart1') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart2') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart3') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart1') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart2') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('leader.descriptionPart3') }}</span>
               </div>
               <v-spacer />
               <div class="d-flex justify-center">
                 <v-btn
                   :href="marketplaceURL"
-                  height="70px"
+                  height="60px"
                   class="primary px-8 mt-6 mb-15 mb-md-6"
                   depressed
                   dark
                   outlined>
-                  <span class="display-1 font-weight-bold">{{ $t('getAHub') }}</span>
+                  <span class="headline font-weight-bold">{{ $t('getAHub') }}</span>
                 </v-btn>
               </div>
             </div>
@@ -287,25 +287,25 @@
                   alt=""
                   contain
                   eager />
-                <span class="display-1 d-flex align-center font-weight-bold ms-7">
+                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
                   {{ $t('contributor.title') }}
                 </span>
               </div>
               <div class="d-flex flex-column">
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart1') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
-                <span class="text-h5 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart1') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
               </div>
               <div class="d-flex justify-center">
                 <v-btn
                   href="https://builders.meeds.io"
                   target="_blank"
-                  height="70px"
+                  height="60px"
                   class="px-8 my-6 d-flex"
                   color="primary"
                   outlined>
-                  <v-icon size="34" class="me-2">fas fa-external-link-alt</v-icon>
-                  <span class="display-1 font-weight-bold">{{ $t('trynow') }}</span>
+                  <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
+                  <span class="headline font-weight-bold">{{ $t('trynow') }}</span>
                 </v-btn>
               </div>
             </div>

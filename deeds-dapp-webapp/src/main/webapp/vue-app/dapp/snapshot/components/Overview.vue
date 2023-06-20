@@ -23,8 +23,7 @@
       :href="tokenomicsURL"
       class="px-8 mx-auto mb-16"
       color="primary"
-      width="250px"
-      height="75px"
+      height="60px"
       dark
       depressed>
       <span class="headline font-weight-bold">{{ $t('viewTokenomics') }}</span>

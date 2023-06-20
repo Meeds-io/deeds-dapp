@@ -18,14 +18,14 @@
 -->
 <template>
   <v-card flat class="d-flex flex-column ms-md-2">
-    <v-card-title class="d-flex flex-nowrap pa-0">
+    <v-card-title class="d-flex flex-nowrap pa-0 headline text-sm-h4 font-weight-bold">
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
         :address="deedAddress"
         button-top="-6"
         token />
     </v-card-title>
-    <v-card-text class="mx-0" v-html="$t('deedsToRedeemIntroduction')" />
+    <v-card-text class="mx-0 text-h6 font-weight-normal" v-html="$t('deedsToRedeemIntroduction')" />
     <template v-if="xMeedAddress">
       <v-skeleton-loader
         v-if="currentCityName === null"

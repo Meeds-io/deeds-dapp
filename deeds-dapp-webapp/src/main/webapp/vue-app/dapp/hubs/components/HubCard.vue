@@ -45,11 +45,11 @@
       </v-card>
       <div class="d-flex flex-column pa-4">
         <div class="ms-16 ps-15">
-          <span class="display-1 font-weight-bold">
+          <span class="headline text-sm-h4 font-weight-bold">
             {{ hubName }}
           </span>
         </div>
-        <div class="text-light-color text-h5 mt-3">{{ hubDescription }}</div>
+        <div class="text-light-color text-h6 font-weight-normal mt-3">{{ hubDescription }}</div>
         <div class="d-flex">
           <div class="d-flex align-center justify-center mt-9">
             <v-img 
