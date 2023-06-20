@@ -25,7 +25,7 @@
     elevate-on-scroll>
     <v-spacer />
     <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-7 mx-1">
-      <a :href="`${parentLocation}/`" class="d-flex align-center no-decoration">
+      <a :href="homeUrl" class="d-flex align-center no-decoration">
         <img
           :src="`${parentLocation}/static/images/meeds.png`"
           height="37px"
@@ -84,6 +84,7 @@ export default {
     parentLocation: state => state.parentLocation,
     staticPage: state => state.staticPage,
     hubsUrl: state => state.hubsUrl,
+    homeUrl: state => state.homeUrl,
   }),
 };
 </script>

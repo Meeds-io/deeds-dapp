@@ -18,7 +18,7 @@
 -->
 <template>
   <v-toolbar-title>
-    <a :href="`${parentLocation}/`" class="d-flex align-center black--text text--color no-decoration">
+    <a :href="homeUrl" class="d-flex align-center black--text text--color no-decoration">
       <img
         :src="`${parentLocation}/static/images/meeds.png`"
         height="24px"
@@ -45,6 +45,7 @@ export default {
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
     isMobile: state => state.isMobile,
+    homeUrl: state => state.homeUrl,
     isTestNetwork() {
       return this.networkId !== 1 && this.validNetwork;
     },
