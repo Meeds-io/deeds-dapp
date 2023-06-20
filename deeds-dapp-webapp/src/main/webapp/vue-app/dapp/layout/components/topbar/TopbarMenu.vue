@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,32 +17,32 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-sheet id="siteContent" class="overflow-y-auto overflow-x-hidden">
-    <div class="siteContentLayout mt-11 mt-sm-13">
-      <v-progress-linear v-if="appLoading" indeterminate />
-      <div v-else class="mainPageLayout pa-5 mx-md-auto">
-        <deeds-navbar
-          v-if="mobileNavigationBar"
-          id="navbar"
-          role="navigation" />
-        <deeds-page
-          id="mainPageContent"
-          class="mb-12 mb-sm-0"
-          role="main" />
+  <div class="position-relative align-start text-start">
+    <v-menu
+      content-class="absolute-horizontal-center transparent elevation-0"
+      transition="slide-x-transition"
+      attach
+      offset-y
+      open-on-hover>
+      <template #activator="{ on, attrs }">
+        <slot
+          name="activator"
+          :on="on"
+          :attrs="attrs"></slot>
+      </template>
+      <div class="d-flex justify-center mx-2 mt-n1 mb-n3">
+        <v-icon :class="dark && 'dark-black-color' || 'white--text'" class="mb-2px">fa fa-caret-up</v-icon>
       </div>
-      <deeds-notifications />
-    </div>
-  </v-sheet>
+      <div class="elevation-4 mx-2 mb-2">
+        <slot name="default"></slot>
+      </div>
+    </v-menu>
+  </div>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
-    appLoading: state => state.appLoading,
-    staticPage: state => state.staticPage,
-    isMobile: state => state.isMobile,
-    mobileNavigationBar() {
-      return !this.staticPage && this.isMobile;
-    }
+    dark: state => state.dark,
   }),
 };
 </script>
