@@ -21,7 +21,7 @@
     <v-card class="mb-9" flat>
       <v-card-title class="py-0 justify-center">
         <div class="d-flex flex-column col-12 col-md-7 text-center text-md-start">
-          <span class="text-sm-h2 display-2 font-weight-bold">{{ $t('legals.title') }}</span>
+          <span class="text-sm-h3 display-1 font-weight-bold">{{ $t('legals.title') }}</span>
           <span class="text-h5 font-weight-bold">{{ $t('legals.description') }}</span>
         </div>
         <v-spacer />

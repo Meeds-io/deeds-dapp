@@ -19,7 +19,7 @@
 <template>
   <div class="mb-4 mb-md-8">
     <v-card-title class="justify-center flex-nowrap mb-10">
-      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('startManagingAssets') }}</span>
+      <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('startManagingAssets') }}</span>
       <v-spacer />
       <v-img 
         :src="`${parentLocation}/static/images/portfolio_banner.webp`"
@@ -30,7 +30,7 @@
         eager />
     </v-card-title>
     <div class="d-flex pt-0 pt-md-12 ms-0 ms-md-4">
-      <span class="display-1 font-weight-bold">
+      <span class="headline text-sm-h4 font-weight-bold">
         {{ $t('assets') }}
       </span>
       <v-spacer />

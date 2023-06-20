@@ -19,11 +19,11 @@
 <template>
   <v-card flat>
     <flex class="d-flex flex-column flex-sm-row">
-      <v-card-title class="ps-0 py-0">
+      <v-card-title class="ps-0 py-0 headline text-sm-h4 font-weight-bold">
         {{ $t('yields') }}
       </v-card-title>
     </flex>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 text-h6 font-weight-normal">
       {{ $t('yieldsIntroduction1') }}
       <br>
       {{ $t('yieldsIntroduction2') }}
