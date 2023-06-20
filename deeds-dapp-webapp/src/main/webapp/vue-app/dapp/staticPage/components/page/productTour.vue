@@ -20,7 +20,7 @@
   <div class="d-flex flex-column mt-2 mt-sm-6">
     <v-card flat>
       <v-card-title class="py-0 justify-center flex-nowrap">
-        <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
+        <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('productTour.title') }}</span>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/tour_banner.webp`"
@@ -32,7 +32,7 @@
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column pt-4 pb-16 my-16">
-      <div :class="textColor" class="ps-0 display-1 align-center font-weight-light">{{ $t('productTour.description') }}</div>
+      <div :class="textColor" class="ps-0 headline text-sm-h4 align-center font-weight-light">{{ $t('productTour.description') }}</div>
       <video
         class="mt-11 mt-md-13 ms-0 ms-sm-auto me-0 me-sm-auto"
         height="360px"
@@ -46,29 +46,29 @@
         <v-btn
           :href="marketplaceURL"
           class="primary px-8 mx-5 mt-7"
-          height="70px"
+          height="60px"
           depressed
           dark
           outlined>
-          <span class="display-1 font-weight-bold">{{ $t('startYourHub') }}</span>
+          <span class="headline font-weight-bold">{{ $t('startYourHub') }}</span>
         </v-btn>
         <v-btn
           href="https://builders.meeds.io"
           target="_blank"
-          height="70px"
+          height="60px"
           class="d-flex justify-center px-8 mx-5 mt-7"
           color="primary"
           outlined>
-          <v-icon size="40" class="me-2">fas fa-external-link-alt</v-icon>
-          <span class="display-1 font-weight-bold">{{ $t('exploreAHub') }}</span>
+          <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
+          <span class="headline font-weight-bold">{{ $t('exploreAHub') }}</span>
         </v-btn>
       </div>
     </div>
     <div class="mt-16">
       <div class="d-flex flex-column flex-md-row pb-16 my-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
-          <span :class="textColor" class="mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('contributionPrograms.description') }}</span>
+          <span class="headline text-sm-h4 font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
+          <span :class="textColor" class="mt-10 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('contributionPrograms.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/contribution_icon.webp`"
@@ -100,8 +100,8 @@
           <source :src="`${rewardsVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 font-weight-bold">{{ $t('rewards.title') }}</span>
-          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
+          <span class="headline text-sm-h4 font-weight-bold">{{ $t('rewards.title') }}</span>
+          <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/reward_icon.webp`"
@@ -115,8 +115,8 @@
       </div>
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 font-weight-bold">{{ $t('overview.title') }}</span>
-          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
+          <span class="headline text-sm-h4 font-weight-bold">{{ $t('overview.title') }}</span>
+          <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/overview_icon.webp`"
@@ -148,8 +148,8 @@
           <source :src="`${perksVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 font-weight-bold">{{ $t('perks.title') }}</span>
-          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
+          <span class="headline text-sm-h4 font-weight-bold">{{ $t('perks.title') }}</span>
+          <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/perks_icon.webp`"
@@ -163,8 +163,8 @@
       </div>
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="display-1 font-weight-bold">{{ $t('teamwork.title') }}</span>
-          <span :class="textColor" class="text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
+          <span class="headline text-sm-h4 font-weight-bold">{{ $t('teamwork.title') }}</span>
+          <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
           <div class="position-absolute">
             <v-img
               :src="`${parentLocation}/static/images/teamwork_icon.webp`"
@@ -192,7 +192,7 @@
         width="140px"
         color="primary no-border-radius"
         flat />
-      <span class="display-3 d-flex justify-center font-weight-bold mt-4 mb-7">{{ $t('andMore') }}</span>
+      <span class="text-sm-h3 display-1 d-flex justify-center font-weight-bold mt-4 mb-7">{{ $t('andMore') }}</span>
       <v-container class="mb-10">
         <v-row no-gutters>
           <v-col
@@ -211,11 +211,11 @@
                     fas fa-award
                   </v-icon>
                 </div>
-                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
                   {{ $t('kudos') }}
                 </span>
               </div>
-              <span :class="textColor" class="text-h5 font-weight-light">
+              <span :class="textColor" class="text-h6 font-weight-light">
                 {{ $t('kudos.description') }}
               </span>
             </div>
@@ -231,11 +231,11 @@
                 <div>
                   <v-icon size="75" color="primary">fas fa-graduation-cap</v-icon>
                 </div>
-                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
                   {{ $t('badges') }}
                 </span>
               </div>
-              <span :class="textColor" class="text-h5 font-weight-light">
+              <span :class="textColor" class="text-h6 font-weight-light">
                 {{ $t('badges.description') }}
               </span>
             </div>
@@ -256,11 +256,11 @@
                     fas fa-wallet
                   </v-icon>
                 </div>
-                <span class="display-1 font-weight-bold d-flex align-center ms-5">
+                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
                   {{ $t('wallet') }}
                 </span>
               </div>
-              <span :class="textColor" class="text-h5 font-weight-light">
+              <span :class="textColor" class="text-h6 font-weight-light">
                 {{ $t('wallet.description') }}
               </span>
             </div>

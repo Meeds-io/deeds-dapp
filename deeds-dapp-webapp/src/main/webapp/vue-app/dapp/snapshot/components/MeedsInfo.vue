@@ -19,7 +19,7 @@
 <template>
   <v-card class="mt-8" flat>
     <v-card-title class="py-0 px-0 justify-center flex-nowrap">
-      <span class="col-12 col-lg-8 col-md-7 ps-0 ms-1 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('meedToken') }}</span>
+      <span class="col-12 col-lg-8 col-md-7 ps-0 ms-1 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('meedToken') }}</span>
       <v-spacer />
       <v-img 
         :src="`${parentLocation}/static/images/token_banner.webp`"
@@ -85,8 +85,7 @@
         :href="portfolioURL"
         class="px-8"
         color="primary"
-        width="250px"
-        height="75px"
+        height="60px"
         dark
         depressed>
         <span class="headline font-weight-bold">{{ $t('manageAssets') }}</span>

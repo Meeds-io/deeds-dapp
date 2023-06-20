@@ -36,7 +36,7 @@
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
         <v-card-title class="justify-center flex-nowrap mb-10">
-          <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.marketplace.deedsListTitle') }}</span>
+          <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('dapp.marketplace.deedsListTitle') }}</span>
           <v-spacer />
           <v-img 
             :src="`${parentLocation}/static/images/marketplace_banner.webp`"

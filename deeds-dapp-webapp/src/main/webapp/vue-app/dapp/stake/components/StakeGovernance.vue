@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 headline text-sm-h4 font-weight-bold">
       {{ $t('governance') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 text-h6 font-weight-normal">
       {{ $t('governanceIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center d-flex flex-column flex-sm-row">
