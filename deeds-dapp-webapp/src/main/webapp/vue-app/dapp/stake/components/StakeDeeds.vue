@@ -28,6 +28,7 @@
       <v-btn
         :href="ownersURL"
         name="displayOwnedDeedsButton"
+        height="40px"
         outlined
         text
         @click.prevent.stop="$root.$emit('switch-page', 'owners')">

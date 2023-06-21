@@ -30,6 +30,7 @@
         href="https://meeds.io/builders"
         target="_blank"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text>
         <v-img

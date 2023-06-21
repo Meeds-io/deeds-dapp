@@ -30,6 +30,7 @@
         href="https://discord.gg/7d9Byf4Fz6"
         target="_blank"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text
         class="me-sm-4">
@@ -46,6 +47,7 @@
         href="https://snapshot.org/#/meedsdao.eth"
         target="_blank"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text
         class="ms-0 ms-sm-4 mt-4 mt-sm-0">

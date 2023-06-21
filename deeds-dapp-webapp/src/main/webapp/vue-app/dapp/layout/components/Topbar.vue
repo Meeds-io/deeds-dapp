@@ -64,6 +64,7 @@
           class="hidden-xs-only"
           elevation="0"
           color="secondary"
+          height="40px"
           @click="$root.$emit('open-buy-meed-drawer')">
           {{ $t('buyMeedsButton') }}
         </v-btn>

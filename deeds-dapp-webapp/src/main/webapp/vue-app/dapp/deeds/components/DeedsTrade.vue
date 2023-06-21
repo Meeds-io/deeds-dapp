@@ -27,6 +27,7 @@
         :href="openSeaLink"
         :target="openSeaTarget"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text
         class="px-3">
