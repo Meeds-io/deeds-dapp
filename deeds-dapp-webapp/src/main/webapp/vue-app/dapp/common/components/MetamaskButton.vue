@@ -25,7 +25,6 @@
     rel="nofollow noreferrer noopener"
     color="primary"
     class="grey lighten-4 border-color-inherit"
-    height="40px"
     outlined>
     <img
       v-if="!appLoading"
@@ -34,13 +33,12 @@
       width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('installMetamaskButton') }}</span>
+    <span v-if="!isMobile" class="font-size-normal text-none">{{ $t('installMetamaskButton') }}</span>
   </v-btn>
   <v-btn
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
     color="secondary"
-    height="40px"
     outlined
     @click="switchMetamaskNetwork">
     <img
@@ -50,13 +48,12 @@
       width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('switchMetamaskNetworkButton') }}</span>
+    <span v-if="!isMobile" class="text-none font-size-normal">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
     v-else-if="!hasMetamaskConnectedAddress"
     name="topbarConnectMetamaskButton"
     color="primary"
-    height="40px"
     outlined
     @click="connectToMetamask">
     <img
@@ -66,7 +63,7 @@
       width="16px"
       alt=""
       class="me-0 me-sm-3 img-16px">
-    <span v-if="!isMobile" class="text-none">{{ $t('connectMetamaskButton') }}</span>
+    <span v-if="!isMobile" class="text-none font-size-normal">{{ $t('connectMetamaskButton') }}</span>
   </v-btn>
 </template>
 <script>
