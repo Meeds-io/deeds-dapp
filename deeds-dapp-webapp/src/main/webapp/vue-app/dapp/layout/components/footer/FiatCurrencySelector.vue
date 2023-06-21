@@ -26,7 +26,7 @@
         class="ps-2 pe-0"
         v-bind="attrs"
         v-on="on">
-        <div :class="textColor">{{ selectedFiatCurrencyLabel }}</div>
+        <span class="font-size-normal" :class="textColor">{{ selectedFiatCurrencyLabel }}</span>
         <v-icon size="12" class="mx-2 mt-n1px">fa fa-caret-down</v-icon>
       </v-btn>
     </template>

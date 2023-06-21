@@ -25,6 +25,7 @@
     rel="nofollow noreferrer noopener"
     color="primary"
     class="grey lighten-4 border-color-inherit"
+    height="40px"
     outlined>
     <img
       v-if="!appLoading"
@@ -39,6 +40,7 @@
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
     color="secondary"
+    height="40px"
     outlined
     @click="switchMetamaskNetwork">
     <img
@@ -54,6 +56,7 @@
     v-else-if="!hasMetamaskConnectedAddress"
     name="topbarConnectMetamaskButton"
     color="primary"
+    height="40px"
     outlined
     @click="connectToMetamask">
     <img

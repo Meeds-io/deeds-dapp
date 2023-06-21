@@ -32,7 +32,7 @@
     </v-card-title>
     <div v-if="hasTenants" class="align-self-end mt-6">
       <v-btn
-        height="36px"
+        height="40px"
         class="px-4 mt-4 rounded-pill"
         :color="collapsed && 'primary'"
         :class="!collapsed && 'primary'"
@@ -51,7 +51,7 @@
           <div v-if="!hasTenants" class="mb-7">
             <v-btn
               :href="marketplaceURL"
-              height="36px"
+              height="40px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
               outlined>
@@ -85,7 +85,7 @@
           <div class="mb-7">
             <v-btn
               :href="tourURL"
-              height="36px"
+              height="40px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
               outlined>
