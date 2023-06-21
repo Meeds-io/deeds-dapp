@@ -17,7 +17,7 @@
           size="18">
           fas fa-gas-pump
         </v-icon>
-        <div v-if="gasPriceGwei">{{ floorGasPriceGwei }} GWEI</div>
+        <div v-if="gasPriceGwei" class="font-size-normal">{{ floorGasPriceGwei }} GWEI</div>
         <v-skeleton-loader
           v-else
           type="chip"

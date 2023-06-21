@@ -30,7 +30,7 @@
           v-bind="attrs"
           v-on="on"
           @click="copyAddress(on)">
-          <div>{{ addressPart }}</div>
+          <span class="font-size-normal">{{ addressPart }}</span>
         </v-btn>
       </div>
     </template>
