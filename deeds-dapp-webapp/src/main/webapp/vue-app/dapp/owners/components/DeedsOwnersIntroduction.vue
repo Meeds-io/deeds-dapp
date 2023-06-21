@@ -39,7 +39,7 @@
     <div v-else>
       <div v-if="hasTenants" class="d-flex justify-end mt-6">
         <v-btn
-          height="36px"
+          height="40px"
           class="px-4 mt-4 rounded-pill"
           :color="collapsed && 'primary'"
           :class="!collapsed && 'primary'"
@@ -58,7 +58,7 @@
             <div class="mb-7">
               <v-btn
                 :href="deedsURL"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>
@@ -70,7 +70,7 @@
               <v-btn
                 :href="`${openSeaLink}`"
                 target="_blank"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>
@@ -105,7 +105,7 @@
             <div class="mb-7">
               <v-btn
                 :href="marketplaceURL"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>

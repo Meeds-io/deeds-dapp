@@ -43,7 +43,7 @@
         target="_blank"
         rel="nofollow noreferrer noopener"
         height="90px"
-        width="100px"
+        width="120px"
         outlined
         text
         class="rounded-lg me-4">
@@ -59,7 +59,7 @@
         target="_blank"
         rel="nofollow noreferrer noopener"
         height="90px"
-        width="100px"
+        width="120px"
         outlined
         text
         class="rounded-lg me-4">
@@ -73,7 +73,7 @@
         target="_blank"
         rel="nofollow noreferrer noopener"
         height="90px"
-        width="100px"
+        width="120px"
         outlined
         text
         class="rounded-lg me-4">
