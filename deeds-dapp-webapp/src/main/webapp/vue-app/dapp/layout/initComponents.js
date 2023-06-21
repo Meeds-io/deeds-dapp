@@ -23,12 +23,12 @@ import SiteFooter from './components/Footer.vue';
 import SiteLogo from './components/topbar/SiteLogo.vue';
 import Topbar from './components/Topbar.vue';
 import TopbarAddressSelector from './components/topbar/AddressSelector.vue';
-import TopbarFiatCurrencySelector from './components/topbar/FiatCurrencySelector.vue';
-import TopbarLanguageSelector from './components/topbar/LanguageSelector.vue';
 import TopbarGasPrice from './components/topbar/GasPrice.vue';
 import ThemeButton from './components/topbar/ThemeButton.vue';
 import TopbarMenu from './components/topbar/TopbarMenu.vue';
-
+//Footer components
+import FooterLanguageSelector from './components/footer/LanguageSelector.vue';
+import FooterFiatCurrencySelector from './components/footer/FiatCurrencySelector.vue';
 // Navbar components
 import Navbar from './components/Navbar.vue';
 // Page selector components
@@ -40,12 +40,12 @@ const components = {
   'deeds-site': Site,
   'deeds-site-content': SiteContent,
   'deeds-site-footer': SiteFooter,
+  'deeds-footer-language-selector': FooterLanguageSelector,
+  'deeds-footer-fiat-currency-selector': FooterFiatCurrencySelector,
   'deeds-topbar': Topbar,
   'deeds-topbar-menu': TopbarMenu,
   'deeds-topbar-logo': SiteLogo,
   'deeds-topbar-address-selector': TopbarAddressSelector,
-  'deeds-topbar-fiat-currency-selector': TopbarFiatCurrencySelector,
-  'deeds-topbar-language-selector': TopbarLanguageSelector,
   'deeds-topbar-gas-price': TopbarGasPrice,
   'deeds-navbar': Navbar,
   'deeds-page': Page,
