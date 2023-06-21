@@ -27,6 +27,7 @@ import TopbarFiatCurrencySelector from './components/topbar/FiatCurrencySelector
 import TopbarLanguageSelector from './components/topbar/LanguageSelector.vue';
 import TopbarGasPrice from './components/topbar/GasPrice.vue';
 import ThemeButton from './components/topbar/ThemeButton.vue';
+import TopbarMenu from './components/topbar/TopbarMenu.vue';
 
 // Navbar components
 import Navbar from './components/Navbar.vue';
@@ -40,6 +41,7 @@ const components = {
   'deeds-site-content': SiteContent,
   'deeds-site-footer': SiteFooter,
   'deeds-topbar': Topbar,
+  'deeds-topbar-menu': TopbarMenu,
   'deeds-topbar-logo': SiteLogo,
   'deeds-topbar-address-selector': TopbarAddressSelector,
   'deeds-topbar-fiat-currency-selector': TopbarFiatCurrencySelector,

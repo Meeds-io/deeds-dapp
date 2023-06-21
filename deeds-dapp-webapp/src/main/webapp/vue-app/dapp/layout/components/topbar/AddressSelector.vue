@@ -17,9 +17,11 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <v-tooltip bottom>
-      <template #activator="{ on, attrs }">
+  <deeds-topbar-menu>
+    <template #activator="{ on, attrs }">
+      <div 
+        v-bind="attrs"
+        v-on="on">
         <v-btn
           name="copyAddressButton"
           outlined
@@ -30,16 +32,48 @@
           @click="copyAddress(on)">
           <div>{{ addressPart }}</div>
         </v-btn>
-      </template>
-      <span>{{ address }}</span>
-    </v-tooltip>
-  </div>
+      </div>
+    </template>
+    <v-list>
+      <v-list-item :href="portfolioURL">
+        <v-list-item-avatar
+          height="25px"
+          width="23px"
+          min-width="23px"
+          tile>
+          <v-img :src="`${parentLocation}/static/images/portfolio_menu.webp`" />
+        </v-list-item-avatar>
+        <v-hover v-slot="{hover}">  
+          <v-list-item-content>
+            <v-list-item-title class="d-flex">
+              <span class="font-weight-black"> {{ $t('page.overview') }} </span>
+              <v-icon
+                v-if="hover"
+                class="ms-2 black--text text--color"
+                size="10">
+                fa fa-chevron-right
+              </v-icon>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <span  
+                :class="hover && 'black--text text--color'"
+                class="text-body-2"> 
+                {{ $t('page.portfolio.menu.description') }}
+              </span>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-hover>  
+      </v-list-item>
+    </v-list>
+  </deeds-topbar-menu>
 </template>
 <script>
 export default {
   computed: Vuex.mapState({
     address: state => state.address,
     ens: state => state.ens,
+    parentLocation: state => state.parentLocation,
+    portfolioURL: state => state.portfolioURL,
     addressPart() {
       if (this.ens) {
         return this.ens;
