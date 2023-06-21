@@ -26,7 +26,7 @@
         class="ps-2 pe-0"
         v-bind="attrs"
         v-on="on">
-        <span class="font-size-normal">{{ selectedFiatCurrencyLabel }}</span>
+        <span class="font-size-normal" :class="textColor">{{ selectedFiatCurrencyLabel }}</span>
         <v-icon size="12" class="mx-2 mt-n1px">fa fa-caret-down</v-icon>
       </v-btn>
     </template>
@@ -49,6 +49,7 @@ export default {
   computed: Vuex.mapState({
     isMobile: state => state.isMobile,
     selectedFiatCurrency: state => state.selectedFiatCurrency,
+    dark: state => state.dark,
     selectedFiatCurrencyLabel() {
       return this.isMobile ? this.symbolFiatCurrencies[this.fiatCurrencies.indexOf(this.selectedFiatCurrency)] : this.$t(`fiat.currency.${this.selectedFiatCurrency}`);
     },
@@ -57,6 +58,9 @@ export default {
         value: currency,
         label: this.isMobile ? this.symbolFiatCurrencies[index] : this.$t(`fiat.currency.${currency}`),
       }));
+    },
+    textColor() {
+      return this.dark && 'white--text' || 'text-sub-title';
     },
   }),
   methods: {

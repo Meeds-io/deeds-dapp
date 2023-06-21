@@ -179,9 +179,9 @@
       <v-spacer />
       <div class="d-flex">
         <div class="mx-4">
-          <deeds-topbar-fiat-currency-selector />
+          <deeds-footer-fiat-currency-selector v-if="!staticPage" />
         </div>
-        <deeds-topbar-language-selector />
+        <deeds-footer-language-selector />
         <deeds-theme-button
           css-class="ms-4" 
           topbar />
@@ -205,6 +205,7 @@ export default {
     whitepaperURL: state => state.whitepaperURL,
     hubsUrl: state => state.hubsUrl,
     dark: state => state.dark,
+    staticPage: state => state.staticPage,
     githubColor() {
       return this.dark && 'white' || 'black';
     },
