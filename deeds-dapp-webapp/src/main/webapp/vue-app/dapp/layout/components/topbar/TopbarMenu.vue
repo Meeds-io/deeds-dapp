@@ -30,7 +30,7 @@
           :on="on"
           :attrs="attrs"></slot>
       </template>
-      <div class="d-flex justify-center mx-2 mt-n1 mb-n3">
+      <div class="d-flex justify-center mx-2 mt-n1 mb-n3 pt-2">
         <v-icon :class="dark && 'dark-black-color' || 'white--text'" class="mb-2px">fa fa-caret-up</v-icon>
       </div>
       <div class="elevation-4 mx-2 mb-2">
