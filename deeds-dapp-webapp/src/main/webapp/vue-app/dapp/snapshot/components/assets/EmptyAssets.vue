@@ -21,11 +21,11 @@
     <v-col class="pa-0 mt-6 mb-12">
       <div class="d-flex flex-column">
         <span 
-          class="headline dark-grey--text" 
+          class="text-h6 font-weight-normal dark-grey--text" 
           v-html="$t(descriptionPart1, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart1)}</a>`})">
         </span>
         <span 
-          class="headline dark-grey--text mt-4" 
+          class="text-h6 font-weight-normal dark-grey--text mt-4" 
           v-html="$t(descriptionPart2, {0: `<a class='${id} primary--text embedded-link-text font-weight-bold v-btn v-btn--text theme--light text-none letter-spacing-normal' onclick='javascript:void(0)'>${$t(linkPart2)}</a>`})">
         </span>
       </div>

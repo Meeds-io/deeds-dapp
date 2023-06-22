@@ -21,8 +21,8 @@
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill col-12 col-md-6 text-h4"
-      height="75px"
+      class="rounded-pill col-12 col-md-6 headline"
+      height="60px"
       @keydown="enterEvent"  
       outlined
       hide-details
@@ -32,7 +32,7 @@
         <v-icon
           v-if="!keyword"
           class="mx-9 my-1"
-          size="34">
+          size="24">
           fa fa-search
         </v-icon>
         <div v-else class="ms-9"></div>
@@ -41,11 +41,11 @@
     <v-spacer />
     <v-btn
       :href="tenantsURL"
-      height="75px"
+      height="60px"
       class="rounded-pill px-7 mx-auto mt-md-0 mt-6 elevation-0"
       color="primary"
       dark>
-      <span class="display-1 font-weight-bold">{{ $t('hubs.button.getYourHub') }}</span>
+      <span class="headline font-weight-bold">{{ $t('hubs.button.getYourHub') }}</span>
     </v-btn>
   </div>
 </template>

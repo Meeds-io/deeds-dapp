@@ -65,7 +65,7 @@
           elevation="0"
           color="secondary"
           @click="$root.$emit('open-buy-meed-drawer')">
-          {{ $t('buyMeedsButton') }}
+          <span class="font-size-normal">{{ $t('buyMeedsButton') }}</span>
         </v-btn>
       </div>
     </div>

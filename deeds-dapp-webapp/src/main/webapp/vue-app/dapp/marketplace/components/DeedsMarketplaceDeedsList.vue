@@ -32,7 +32,7 @@
       </div>
     </v-scale-transition>
     <div v-show="noFilter">
-      <v-card-title class="dark-grey--text ps-0">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
+      <v-card-title class="dark-grey--text ps-0 headline text-sm-h4 font-weight-bold">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
     </div>
     <v-progress-linear
       v-if="loading"

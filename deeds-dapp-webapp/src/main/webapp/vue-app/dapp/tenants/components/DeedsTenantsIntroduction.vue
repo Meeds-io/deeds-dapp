@@ -19,8 +19,8 @@
 <template>
   <v-card class="d-flex flex-column" flat>
     <v-card-title class="pa-0 justify-center flex-nowrap">
-      <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitle') }}</span>
-      <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
+      <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitle') }}</span>
+      <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('dapp.tenants.tenantsListTitleWhenNoLeases') }}</span>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
         :src="`${parentLocation}/static/images/tenants_banner.webp`"
@@ -32,7 +32,7 @@
     </v-card-title>
     <div v-if="hasTenants" class="align-self-end mt-6">
       <v-btn
-        height="36px"
+        height="40px"
         class="px-4 mt-4 rounded-pill"
         :color="collapsed && 'primary'"
         :class="!collapsed && 'primary'"
@@ -46,12 +46,12 @@
     <div v-show="!collapsed || !hasTenants">
       <div class="d-flex flex-column flex-md-row pb-6 my-16">
         <div class="d-flex flex-column my-auto me-7">
-          <span class="dark-grey--text display-1 font-weight-bold">{{ $t('dapp.tenants.rentFromMarketplace.title') }}</span>
-          <span class="dark-grey--text mt-10 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
+          <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.tenants.rentFromMarketplace.title') }}</span>
+          <span class="dark-grey--text mt-10 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
           <div v-if="!hasTenants" class="mb-7">
             <v-btn
               :href="marketplaceURL"
-              height="36px"
+              height="40px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
               outlined>
@@ -80,12 +80,12 @@
           <source :src="`${beTenantVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="dark-grey--text display-1 font-weight-bold">{{ $t('dapp.tenants.manageYourHub.title') }}</span>
-          <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
+          <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.tenants.manageYourHub.title') }}</span>
+          <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
           <div class="mb-7">
             <v-btn
               :href="tourURL"
-              height="36px"
+              height="40px"
               class="px-4 mt-4 rounded-pill"
               color="primary"
               outlined>

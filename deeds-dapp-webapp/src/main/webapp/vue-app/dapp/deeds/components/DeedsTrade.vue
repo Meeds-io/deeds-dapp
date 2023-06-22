@@ -18,15 +18,16 @@
 -->
 <template>
   <v-card class="ms-md-2" flat>
-    <v-card-title class="pa-0">
+    <v-card-title class="pa-0 headline text-sm-h4 font-weight-bold">
       {{ $t('tradeDeeds') }}
     </v-card-title>
-    <v-card-text class="ps-0" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='link--color' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
+    <v-card-text class="ps-0 text-h6 font-weight-normal" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='link--color' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
     <v-card-actions class="ps-0 justify-center">
       <v-btn
         :href="openSeaLink"
         :target="openSeaTarget"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text
         class="px-3">

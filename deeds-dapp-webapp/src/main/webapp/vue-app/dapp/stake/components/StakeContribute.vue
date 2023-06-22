@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 headline text-sm-h4 font-weight-bold">
       {{ $t('contribute') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 text-h6 font-weight-normal">
       {{ $t('contributionIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
@@ -30,6 +30,7 @@
         href="https://meeds.io/builders"
         target="_blank"
         rel="nofollow noreferrer noopener"
+        height="40px"
         outlined
         text>
         <v-img

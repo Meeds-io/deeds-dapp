@@ -20,8 +20,8 @@
   <v-row class="my-15">
     <v-col cols="12">
       <div class="d-flex flex-row flex-grow-1">
-        <div v-if="keyword" class="display-1 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
-        <div v-else class="display-1 font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
+        <div v-if="keyword" class="headline text-sm-h4 font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
+        <div v-else class="headline text-sm-h4 font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
       </div>
     </v-col>
     <v-col

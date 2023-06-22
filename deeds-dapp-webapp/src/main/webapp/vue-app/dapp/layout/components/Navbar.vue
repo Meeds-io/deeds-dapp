@@ -177,7 +177,7 @@
         :href="hubsUrl"
         class="no-decoration black--text text--color"
         @click="openPage">
-        <span class="font-weight-black">{{ $t('page.hubs') }}</span>
+        <span class="font-weight-black title">{{ $t('page.hubs') }}</span>
       </a>
     </v-col>
     <v-col cols="auto" class="d-flex justify-center align-center mx-8">
@@ -186,7 +186,7 @@
           <div 
             v-bind="attrs"
             v-on="on">
-            <span class="font-weight-black"> {{ $t('tokens.title') }} </span>
+            <span class="font-weight-black title"> {{ $t('tokens.title') }} </span>
           </div>
         </template>
         <v-list 
@@ -288,7 +288,7 @@
           <div 
             v-bind="attrs"
             v-on="on">
-            <span class="font-weight-black"> {{ $t('nft.id') }} </span>
+            <span class="font-weight-black title"> {{ $t('nft.id') }} </span>
           </div>
         </template>
         <div class="d-flex">

@@ -18,16 +18,17 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="ps-0">
+    <v-card-title class="ps-0 headline text-sm-h4 font-weight-bold">
       {{ $t('deeds') }}
     </v-card-title>
-    <v-card-text class="ps-0">
+    <v-card-text class="ps-0 text-h6 font-weight-normal">
       {{ $t('deedsIntroduction') }}
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
         :href="ownersURL"
         name="displayOwnedDeedsButton"
+        height="40px"
         outlined
         text
         @click.prevent.stop="$root.$emit('switch-page', 'owners')">

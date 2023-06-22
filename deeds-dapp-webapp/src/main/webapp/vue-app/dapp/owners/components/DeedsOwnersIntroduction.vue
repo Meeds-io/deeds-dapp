@@ -20,8 +20,8 @@
   <v-card class="d-flex flex-column" flat>
     <v-card-title class="py-0 px-0 justify-center flex-nowrap">
       <div>
-        <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitle') }}</span>
-        <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h2 display-2 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitleWhenNoLeases') }}</span>
+        <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitle') }}</span>
+        <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitleWhenNoLeases') }}</span>
       </div>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
@@ -39,7 +39,7 @@
     <div v-else>
       <div v-if="hasTenants" class="d-flex justify-end mt-6">
         <v-btn
-          height="36px"
+          height="40px"
           class="px-4 mt-4 rounded-pill"
           :color="collapsed && 'primary'"
           :class="!collapsed && 'primary'"
@@ -53,24 +53,24 @@
       <div v-if="!collapsed || !hasTenants">
         <div class="d-flex flex-column flex-md-row pb-6 my-16">
           <div class="d-flex flex-column me-7">
-            <span class="dark-grey--text display-1 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
-            <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
+            <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
+            <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
                 :href="deedsURL"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>
                 <span>{{ $t('dapp.owners.mintDeed.button') }}</span>
               </v-btn>
             </div>
-            <span class="dark-grey--text mb-5 mb-md-0 text-h5 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart2') }}</span>
+            <span class="dark-grey--text mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
                 :href="`${openSeaLink}`"
                 target="_blank"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>
@@ -99,13 +99,13 @@
             <source :src="`${rentDeedVideoLink}`" type="video/mp4">
           </video>
           <div class="d-flex flex-column mx-0 mx-md-14">
-            <span class="dark-grey--text display-1 font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
-            <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart1') }}</span>
-            <span class="dark-grey--text text-h5 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
+            <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
+            <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart1') }}</span>
+            <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
                 :href="marketplaceURL"
-                height="36px"
+                height="40px"
                 class="px-4 mt-4 rounded-pill"
                 color="primary"
                 outlined>
