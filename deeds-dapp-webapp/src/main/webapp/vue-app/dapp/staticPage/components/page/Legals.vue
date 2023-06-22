@@ -19,10 +19,10 @@
 <template>
   <div class="d-flex flex-column mt-4 mt-sm-10">
     <v-card class="mb-9" flat>
-      <v-card-title class="py-0 justify-center">
-        <div class="d-flex flex-column col-12 col-md-7 text-center text-md-start">
-          <span class="text-sm-h3 display-1 font-weight-bold">{{ $t('legals.title') }}</span>
-          <span class="text-h5 font-weight-bold">{{ $t('legals.description') }}</span>
+      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
+        <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
+          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.legals.title') }}</span>
+          <span class="display-1 hidden-sm-and-down">{{ $t('page.legals.subtitle') }}</span>
         </div>
         <v-spacer />
         <v-img 
