@@ -18,10 +18,10 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <v-card-title class="py-0 px-0 justify-center flex-nowrap">
-      <div>
-        <span v-if="hasTenants" class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitle') }}</span>
-        <span v-else class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center">{{ $t('dapp.owners.ownersListTitleWhenNoLeases') }}</span>
+    <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
+      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
+        <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.owners.title') }}</span>
+        <span class="display-1 hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
       </div>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
@@ -52,7 +52,7 @@
       </div>
       <div v-if="!collapsed || !hasTenants">
         <div class="d-flex flex-column flex-md-row pb-6 my-16">
-          <div class="d-flex flex-column me-7">
+          <div class="d-flex flex-column me-7 ps-4 ps-sm-2">
             <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
@@ -90,7 +90,7 @@
         </div>
         <div class="d-flex flex-column-reverse flex-md-row py-16 mb-16">
           <video
-            class="ms-0 ms-sm-auto me-0 me-sm-auto"
+            class="ms-0 ms-sm-auto me-0 me-sm-auto ps-4 ps-sm-2"
             height="350px"
             loop="true"
             autoplay
