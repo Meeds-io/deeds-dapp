@@ -19,8 +19,11 @@
 <template>
   <div class="d-flex flex-column mt-8">
     <v-card class="mb-3" flat>
-      <v-card-title class="py-0 justify-center flex-nowrap">
-        <span class="col-12 col-lg-8 col-md-7 ps-0 text-sm-h3 display-1 font-weight-bold text-center text-md-start">{{ $t('whitepaper.title') }}</span>
+      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
+        <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
+          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.whitepaper.title') }}</span>
+          <span class="display-1 hidden-sm-and-down">{{ $t('page.whitepaper.subtitle') }}</span>
+        </div>
         <v-spacer />
         <v-img 
           :src="`${parentLocation}/static/images/whitepaper_banner.webp`"
