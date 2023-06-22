@@ -21,7 +21,7 @@
 <template>
   <v-card id="leasesList" flat>
     <v-row v-if="hasLeases || hasNfts" class="pa-0 my-0">
-      <v-col cols="12">
+      <v-col cols="12" class="ps-4 ps-sm-5">
         <div class="d-flex flex-row flex-grow-1">
           <div class="dark-grey--text headline text-sm-h4 font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
         </div>
