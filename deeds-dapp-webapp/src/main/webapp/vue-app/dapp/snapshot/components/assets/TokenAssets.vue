@@ -25,7 +25,7 @@
         max-width="81px"
         contain
         eager />
-      <span class="headline font-weight-bold align-center ms-5 mb-1">
+      <span class="headline font-weight-bold align-center mx-5 mb-1">
         {{ $t('tokens.title') }}
       </span>
       <v-spacer />
