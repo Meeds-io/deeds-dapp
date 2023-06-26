@@ -20,9 +20,10 @@
   <v-btn
     height="auto"
     color="primary"
+    class="pe-0 d-inline-block text-wrap"
     text
     @click="clickOnLink">
-    <span class="font-weight-bold headline">{{ label }}</span>
+    <span class="font-weight-bold text-h6 text-sm-h5">{{ label }}</span>
   </v-btn>
 </template>
 <script>
