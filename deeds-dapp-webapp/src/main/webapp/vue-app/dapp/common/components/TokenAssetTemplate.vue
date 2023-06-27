@@ -25,11 +25,12 @@
           class="my-0"
           width="50px"
           height="50px"
+          min-width="50px"
           tile>
           <slot name="image"></slot>
         </v-list-item-avatar>
-        <v-list-item-content class="py-0">
-          <v-list-item-title class="token-asset-title height-auto text-wrap d-flex mb-0 headline pe-2">
+        <v-list-item-content class="py-0 overflow-visible">
+          <v-list-item-title class="token-asset-title height-auto text-wrap d-flex text-h6 text-sm-h5 pe-2">
             <div class="my-auto me-auto">
               <slot name="col1"></slot>
             </div>
@@ -40,8 +41,8 @@
             </div>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-content v-if="extraCols" class="py-0 overflow-visible mb-auto">
-          <v-list-item-title class="dark-grey--text token-asset-title d-flex justify-center mb-0 headline font-weight-normal overflow-visible">
+        <v-list-item-content v-if="extraCols" class="py-0 overflow-visible flex-grow-0">
+          <v-list-item-title class="dark-grey--text token-asset-title height-auto d-flex justify-center text-h6 text-sm-h5 font-weight-normal overflow-visible">
             <div class="my-auto pt-2px">
               <slot name="col5"></slot>
             </div>
@@ -52,9 +53,9 @@
             </div>
           </v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-content class="py-0 overflow-visible mb-auto">
-          <v-list-item-title class="dark-grey--text token-asset-title d-flex mb-0 height-auto headline font-weight-normal overflow-visible">
-            <div class="my-auto ms-auto pt-2px">
+        <v-list-item-content class="py-0 overflow-visible">
+          <v-list-item-title class="dark-grey--text token-asset-title d-flex text-h6 text-sm-h5 font-weight-normal overflow-visible">
+            <div class="my-auto ms-auto">
               <slot name="col3"></slot>
             </div>
           </v-list-item-title>
