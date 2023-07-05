@@ -30,28 +30,57 @@
       <v-row class="ma-0 pa-0 flex-nowrap d-flex" no-gutters>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
           <v-btn
-            ref="marketplace"
-            id="marketplace"
-            :href="marketplaceURL"
-            value="marketplace"
+            ref="hubs"
+            id="hubs"
+            :href="hubsUrl"
+            value="hubs"
             class="px-0 full-height"
             link
             @click="openPage">
-            <h3 class="mx-2 font-size-normal">{{ $t('page.marketplace') }}</h3>
-            <v-icon class="mb-1 mt-2">fas fa-store</v-icon>
-            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+            <h3 class="mx-2 font-size-normal" :class="textHubsColor">{{ $t('page.hubs') }}</h3>
+            <v-img
+              :src="`${parentLocation}/static/images/tenantsMenu.webp`"
+              :position="positionHubsIconTab"
+              height="26px"
+              width="26px"
+              min-width="26px"
+              class="my-1" />
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
           <v-btn
-            ref="buy"
-            id="buy"
-            value="buy"
+            ref="tokens"
+            id="tokens"
+            value="tokens"
             class="px-0 full-height"
             link
-            @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
-            <h3 class="mx-2 font-size-normal">{{ $t('buy') }}</h3>
-            <v-icon class="font-normal font-weight-bold mb-1 mt-2">Ɱ</v-icon>
+            @click.prevent.stop="tokensMenu = !tokensMenu">
+            <h3 class="mx-2 font-size-normal" :class="textTokensColor">{{ $t('tokens.title') }}</h3>
+            <v-img
+              :src="`${parentLocation}/static/images/tokenMenu.webp`"
+              :position="positionTokensIconTab"
+              height="24px"
+              width="30px"
+              min-width="30px"
+              class="my-1" />
+          </v-btn>
+        </v-col>
+        <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
+          <v-btn
+            ref="nft"
+            id="nft"
+            value="nft"
+            class="px-0 full-height"
+            link
+            @click.prevent.stop="nftMenu = !nftMenu">
+            <h3 class="mx-2 font-size-normal" :class="textNftColor">{{ $t('nft.id') }}</h3>
+            <v-img
+              :src="`${parentLocation}/static/images/ownersMenu.webp`"
+              :position="positionNftIconTab"
+              height="24px"
+              width="30px"
+              min-width="30px"
+              class="my-1" />
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
@@ -63,106 +92,209 @@
             class="px-0 full-height"
             link
             @click="openPage">
-            <h3 class="mx-2 font-size-normal">{{ $t('page.overview') }}</h3>
-            <v-icon class="mb-1 mt-2">fas fa-coins</v-icon>
-            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
-          </v-btn>
-        </v-col>
-        <v-col cols="auto" class="my-0 pa-0">
-          <v-btn
-            ref="more"
-            id="more"
-            value="more"
-            class="px-0 full-height"
-            link
-            @click.prevent.stop="showMoreMenu = !showMoreMenu">
-            <h3 class="mx-2 font-size-normal">{{ $t('more') }}</h3>
-            <v-icon class="mb-1 mt-2">fas fa-ellipsis</v-icon>
-            <v-tabs-slider color="secondary" class="mobile-menu-slider" />
+            <h3 class="mx-2 font-size-normal" :class="textPortfolioColor">{{ $t('page.overview') }}</h3>
+            <v-img
+              :src="`${parentLocation}/static/images/portfolioMenu.webp`"
+              :position="positionPortfolioIconTab"
+              width="26px"
+              min-width="26px"
+              class="my-1" />
           </v-btn>
         </v-col>
       </v-row>
     </v-bottom-navigation>
     <v-bottom-sheet
-      v-model="showMoreMenu"
+      v-model="tokensMenu"
       content-class="mb-14"
       eager>
       <v-list
         :class="menuColor"
         dense>
         <v-list-item-group
-          v-model="selectedId"
+          v-model="selectedTokensId"
           :active-class="activeMenuColor"
-          :mandatory="selectedTab === 'more'">
-          <v-list-item
-            ref="tenants"
-            id="tenants"
-            :href="tenantsURL"
-            :active-class="activeMenuColor"
-            key="tenants"
-            value="tenants"
-            dense
-            @click="openPage">
-            <v-list-item-icon>
-              <v-icon>fas fa-building-user</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ $t('page.tenants') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            ref="owners"
-            id="owners"
-            :href="ownersURL"
-            :active-class="activeMenuColor"
-            key="owners"
-            value="owners"
-            dense
-            @click="openPage">
-            <v-list-item-icon>
-              <v-icon>fas fa-city</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ $t('page.owners') }}</v-list-item-title>
-          </v-list-item>
+          :mandatory="selectedTab === 'tokens'">
           <v-list-item
             ref="stake"
             id="stake"
             :href="stakeURL"
             :active-class="activeMenuColor"
+            class="py-2"
             key="stake"
             value="stake"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon>fas fa-piggy-bank</v-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/stakeMenu.webp`"
+                position="right"
+                height="30px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
             </v-list-item-icon>
-            <v-list-item-title>{{ $t('page.stake') }}</v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            ref="deeds"
-            id="deeds"
-            :href="deedsURL"
-            :active-class="activeMenuColor"
-            key="deeds"
-            value="deeds"
-            dense
-            @click="openPage">
-            <v-list-item-icon>
-              <v-icon class="transform-rotate-270">fas fa-trowel</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ $t('page.deeds') }}</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.stake') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.stake.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
           <v-list-item
             ref="farm"
             id="farm"
             :href="farmURL"
             :active-class="activeMenuColor"
+            class="py-2"
             key="farm"
             value="farm"
             dense
             @click="openPage">
             <v-list-item-icon>
-              <v-icon>fas fa-sack-dollar</v-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/farmMenu.webp`"
+                position="right"
+                height="23px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
             </v-list-item-icon>
-            <v-list-item-title>{{ $t('page.farm') }}</v-list-item-title>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.farm') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.farm.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            ref="tokens"
+            id="tokens"
+            :href="tokenomicsURL"
+            :active-class="activeMenuColor"
+            class="py-2"
+            key="tokens"
+            value="tokens"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/tokenMenu.webp`"
+                position="right"
+                height="24px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('tokens.title') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.token.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-bottom-sheet>
+    <v-bottom-sheet
+      v-model="nftMenu"
+      content-class="mb-14"
+      eager>
+      <v-list
+        :class="menuColor"
+        dense>
+        <v-list-item-group
+          v-model="selectedNftId"
+          :active-class="activeMenuColor"
+          :mandatory="selectedTab === 'nft'">
+          <v-list-item
+            ref="marketplace"
+            id="marketplace"
+            :href="marketplaceURL"
+            :active-class="activeMenuColor"
+            class="py-2"
+            key="marketplace"
+            value="marketplace"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/marketplaceMenu.webp`"
+                position="right"
+                height="26px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.marketplace') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.marketplace.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            ref="tenants"
+            id="tenants"
+            :href="tenantsURL"
+            :active-class="activeMenuColor"
+            class="py-2"
+            key="tenants"
+            value="tenants"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/tenantsMenu.webp`"
+                position="right"
+                height="26px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.tenants') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.tenants.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            ref="deeds"
+            id="deeds"
+            :href="deedsURL"
+            :active-class="activeMenuColor"
+            class="py-2"
+            key="deeds"
+            value="deeds"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/mintMenu.webp`"
+                position="right"
+                height="20px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.deeds') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.deeds.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item
+            ref="owners"
+            id="owners"
+            :href="ownersURL"
+            :active-class="activeMenuColor"
+            class="py-2"
+            key="owners"
+            value="owners"
+            dense
+            @click="openPage">
+            <v-list-item-icon>
+              <v-img
+                :src="`${parentLocation}/static/images/ownersMenu.webp`"
+                position="right"
+                height="26px"
+                width="24px"
+                min-width="24px"
+                class="my-1" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.owners') }}</v-list-item-title>
+              <v-list-item-subtitle class="caption">{{ $t('page.owners.menu.description') }}</v-list-item-subtitle>
+            </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -198,7 +330,9 @@
               width="25px"
               min-width="25px"
               tile>
-              <v-img :src="`${parentLocation}/static/images/stake_menu.webp`" />
+              <v-img 
+                :src="`${parentLocation}/static/images/stakeMenu.webp`"
+                position="left" />
             </v-list-item-avatar>
             <v-hover v-slot="{hover}">
               <v-list-item-content>
@@ -227,7 +361,9 @@
               width="27px"
               min-width="27px"
               tile>
-              <v-img :src="`${parentLocation}/static/images/farm_menu.webp`" />
+              <v-img 
+                :src="`${parentLocation}/static/images/farmMenu.webp`"
+                position="left" />
             </v-list-item-avatar>
             <v-hover v-slot="{hover}">
               <v-list-item-content>
@@ -256,7 +392,9 @@
               width="25px"
               min-width="25px"
               tile>
-              <v-img :src="`${parentLocation}/static/images/token_menu.webp`" />
+              <v-img 
+                :src="`${parentLocation}/static/images/tokenMenu.webp`"
+                position="left" />
             </v-list-item-avatar>
             <v-hover v-slot="{hover}">
               <v-list-item-content>
@@ -301,7 +439,9 @@
                 width="22px"
                 min-width="22px"
                 tile>
-                <v-img :src="`${parentLocation}/static/images/marketplace_menu.webp`" />
+                <v-img 
+                  :src="`${parentLocation}/static/images/marketplaceMenu.webp`"
+                  position="left" />
               </v-list-item-avatar>
               <v-hover v-slot="{hover}">
                 <v-list-item-content>
@@ -330,7 +470,9 @@
                 width="23px"
                 min-width="23px"
                 tile>
-                <v-img :src="`${parentLocation}/static/images/tenants_menu.webp`" />
+                <v-img 
+                  :src="`${parentLocation}/static/images/tenantsMenu.webp`"
+                  position="left" />
               </v-list-item-avatar>
               <v-hover v-slot="{hover}">
                 <v-list-item-content>
@@ -363,7 +505,9 @@
                 width="25px"
                 min-width="25px"
                 tile>
-                <v-img :src="`${parentLocation}/static/images/mint_menu.webp`" />
+                <v-img 
+                  :src="`${parentLocation}/static/images/mint_menu.webp`"
+                  position="left" />
               </v-list-item-avatar>
               <v-hover v-slot="{hover}">
                 <v-list-item-content>
@@ -392,7 +536,9 @@
                 width="26px"
                 min-width="25px"
                 tile>
-                <v-img :src="`${parentLocation}/static/images/owners_menu.webp`" />
+                <v-img 
+                  :src="`${parentLocation}/static/images/ownersMenu.webp`"
+                  position="left" />
               </v-list-item-avatar>
               <v-hover v-slot="{hover}">  
                 <v-list-item-content>
@@ -427,9 +573,11 @@ export default {
     selectedTab: null,
     avoidAddToHistory: false,
     avoidResetTab: false,
-    showMoreMenu: false,
+    tokensMenu: false,
+    nftMenu: false,
     showBottomNavigation: true,
-    selectedId: null,
+    selectedTokensId: null,
+    selectedNftId: null,
     updatingMenu: false,
     dappPages: [
       'hubs',
@@ -470,27 +618,67 @@ export default {
       const currentPageIndex = this.pageUriPerLanguages['en'].pages.indexOf(this.page);
       return `${this.parentLocation}/${this.pageUriPerLanguages[this.language].uriPrefix}${this.pageUriPerLanguages[this.language].pages[currentPageIndex]}`;
     },
+    selectedHubsTab() {
+      return this.selectedTab && this.selectedTab === 'hubs';
+    },
+    selectedTokensTab() {
+      return this.selectedTab && this.selectedTab === 'tokens';
+    },
+    selectedNftTab() {
+      return this.selectedTab && this.selectedTab === 'nft';
+    },
+    selectedPortfolioTab() {
+      return this.selectedTab && this.selectedTab === 'portfolio';
+    },
+    positionHubsIconTab() {
+      return this.selectedHubsTab && this.selectedHubsTab ? 'left' : 'right';
+    },
+    positionTokensIconTab() {
+      return this.selectedTokensTab && this.selectedTokensTab ? 'left' : 'right';
+    },
+    positionNftIconTab() {
+      return this.selectedNftTab && this.selectedNftTab ? 'left' : 'right';
+    },
+    positionPortfolioIconTab() {
+      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'left' : 'right';
+    },
+    textHubsColor() {
+      return this.selectedHubsTab && this.selectedHubsTab ? 'secondary--text' : 'text-sub-title';
+    },
+    textTokensColor() {
+      return this.selectedTokensTab && this.selectedTokensTab ? 'secondary--text' : 'text-sub-title';
+    },
+    textNftColor() {
+      return this.selectedNftTab && this.selectedNftTab ? 'secondary--text' : 'text-sub-title';
+    },
+    textPortfolioColor() {
+      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'secondary--text' : 'text-sub-title';
+    },
   }),
   watch: {
     isMobile() {
       this.initSelectedTab();
     },
     selectedTab(newVal, oldVal) {
-      if (newVal === 'buy') {
-        this.closeMobileMenuNow();
-      }
-      if (newVal === 'buy' || (newVal === 'more' && !this.selectedId)) {
+      if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
         this.$nextTick(() => {
           this.updateSelection(oldVal, null);
         });
-      } else if (this.selectedTab !== 'more' && this.selectedId) {
+      } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
         this.updateSelection(newVal, null);
       }
     },
-    selectedId() {
-      if (this.selectedId) {
+    selectedTokensId() {
+      if (this.selectedTokensId) {
         this.$nextTick(() => {
-          this.updateSelection('more', this.selectedId);
+          this.updateSelection('tokens', this.selectedTokensId);
+        });
+      }
+    },
+    selectedNftId() {
+      if (this.selectedNftId) {
+        this.$nextTick(() => {
+          this.updateSelection('nft', this.selectedNftId);
         });
       }
     },
@@ -525,11 +713,14 @@ export default {
           this.switchPage(this.page);
         } else {
           this.selectedTab = (this.dappPages.indexOf(this.page) >= 0) && tabToSelect || `${this.parentLocation}/static`;
-          if (this.isMobile && this.selectedTab !== 'marketplace' && this.selectedTab !== 'portfolio') {
-            this.$nextTick().then(() => {
-              this.selectedId = this.page;
-              this.selectedTab = 'more';
-            });
+          if (this.isMobile && this.selectedTab !== 'hubs' && this.selectedTab !== 'portfolio') {
+            if (this.selectedTab === 'stake' || this.selectedTab === 'farm' || this.selectedTab === 'tokens') {
+              this.selectedTokensId = this.page;
+              this.selectedTab = 'tokens';
+            } else if (this.selectedTab === 'marketplace' || this.selectedTab === 'tenants' || this.selectedTab === 'deeds' || this.selectedTab === 'owners') {
+              this.selectedNftId = this.page;
+              this.selectedTab = 'nft';
+            }
           }
         }
       }
@@ -542,8 +733,10 @@ export default {
       if (this.selectedTab !== tab) {
         this.selectedTab = tab;
       }
-      if (this.selectedTab !== 'more' && this.selectedId !== mobileMenuId) {
-        this.selectedId = mobileMenuId;
+      if (this.selectedTab !== 'tokens' && this.selectedTokensId !== mobileMenuId && this.selectedTokensId) {
+        this.selectedTokensId = mobileMenuId;
+      } else if (this.selectedTab !== 'nft' && this.selectedNftId !== mobileMenuId && this.selectedNftId) {
+        this.selectedNftId = mobileMenuId;
       }
       this.$nextTick(() => this.updatingMenu = false);
     },
@@ -585,7 +778,7 @@ export default {
       }
     },
     handlePageOpenedMobile() {
-      if (this.selectedTab === 'more') {
+      if (this.selectedTab === 'tokens' || this.selectedTab === 'nft') {
         this.closeMobileMenuAnimate();
       } else {
         this.closeMobileMenuNow();
@@ -593,10 +786,14 @@ export default {
       window.scrollTo(0, 0);
     },
     closeMobileMenuAnimate() {
-      window.setTimeout(() => this.showMoreMenu = false, 300);
+      window.setTimeout(() => {
+        this.tokensMenu = false;
+        this.nftMenu = false;
+      }, 300);
     },
     closeMobileMenuNow() {
-      this.showMoreMenu = false;
+      this.tokensMenu = false;
+      this.nftMenu = false;
     },
   },
 };
