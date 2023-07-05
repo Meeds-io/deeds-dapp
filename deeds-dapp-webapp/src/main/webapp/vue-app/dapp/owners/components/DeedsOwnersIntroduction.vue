@@ -53,7 +53,7 @@
       <div v-if="!collapsed || !hasTenants">
         <div class="d-flex flex-column flex-md-row pb-6 my-16">
           <div class="d-flex flex-column me-7 ps-4 ps-sm-2">
-            <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
+            <span class="headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
@@ -99,7 +99,7 @@
             <source :src="`${rentDeedVideoLink}`" type="video/mp4">
           </video>
           <div class="d-flex flex-column mx-0 mx-md-14">
-            <span class="dark-grey--text headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
+            <span class="headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
             <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart1') }}</span>
             <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">
