@@ -41,7 +41,9 @@
           width="23px"
           min-width="23px"
           tile>
-          <v-img :src="`${parentLocation}/static/images/portfolio_menu.webp`" />
+          <v-img 
+            :src="`${parentLocation}/static/images/portfolioMenu.webp`"
+            position="left" />
         </v-list-item-avatar>
         <v-hover v-slot="{hover}">  
           <v-list-item-content>
