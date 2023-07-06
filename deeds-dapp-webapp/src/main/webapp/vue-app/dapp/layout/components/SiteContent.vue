@@ -25,6 +25,27 @@
           v-if="mobileNavigationBar"
           id="navbar"
           role="navigation" />
+        <v-tooltip
+          bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              v-show="scrolled"
+              fab
+              dark
+              fixed
+              bottom
+              right
+              color="primary"
+              class="mb-8"
+              height="60px"
+              v-bind="attrs"
+              v-on="on"
+              @click="toTop">
+              <v-icon>fas fa-angle-up</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('scrollToTop') }}</span>
+        </v-tooltip>
         <deeds-page
           id="mainPageContent"
           class="mb-12 mb-sm-0"
@@ -36,13 +57,29 @@
 </template>
 <script>
 export default {
+  data: () => ({
+    scrolled: false
+  }),
   computed: Vuex.mapState({
     appLoading: state => state.appLoading,
     staticPage: state => state.staticPage,
     isMobile: state => state.isMobile,
     mobileNavigationBar() {
       return !this.staticPage && this.isMobile;
-    }
+    },
   }),
+  created() {
+    window.addEventListener('scroll', this.onScroll);
+  },
+  methods: {
+    onScroll(event) {
+      if (typeof window === 'undefined') {return;}
+      const top = window.pageYOffset ||   event.target.scrollTop || 0;
+      this.scrolled = top > 20;
+    },
+    toTop() {
+      this.$vuetify.goTo(0);
+    }
+  }
 };
 </script>
