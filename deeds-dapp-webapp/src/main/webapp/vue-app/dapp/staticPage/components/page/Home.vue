@@ -18,32 +18,44 @@
 -->
 <template>
   <div class="d-flex flex-column mt-0 mt-sm-4">
-    <v-card flat>
-      <v-card-title
-        class="justify-center text-center font-weight-black text-sm-h3 display-1">
-        {{ $t('homePage.title') }}
-      </v-card-title>
-    </v-card>
-    <span class="headline text-sm-h4 font-weight-light text-center mb-10 mt-4 mt-sm-2 grey--text">{{ $t('homePage.description') }}</span>
-    <div class="mx-auto mb-9 mb-sm-11">
-      <v-btn
-        :href="tourURL"
-        height="60px"
-        class="primary px-8"
-        depressed
-        dark
-        outlined>
-        <span class="headline font-weight-bold">{{ $t('discover') }}</span>
-        <v-icon class="ms-4" size="24px">fas fa-arrow-right</v-icon>
-      </v-btn>
+    <div class="d-flex flex-column flex-md-row">
+      <div class="my-auto d-flex flex-column">
+        <v-card flat>
+          <v-card-title
+            class="justify-center ps-0 font-weight-black text-center text-md-start text-sm-h3 display-1">
+            {{ $t('homePage.title') }}
+          </v-card-title>
+        </v-card>
+        <span class="headline text-sm-h4 mt-6 mt-md-4 mb-10 mb-md-14 font-weight-light text-center text-md-start grey--text">{{ $t('homePage.description') }}</span>
+        <div class="d-flex justify-center justify-md-start mb-12 mb-md-0">
+          <v-btn
+            :href="tenantsURL"
+            height="60px"
+            class="px-8 d-flex"
+            color="primary"
+            outlined>
+            <span class="headline font-weight-bold">{{ $t('create') }}</span>
+          </v-btn>
+          <v-btn
+            :href="hubsUrl"
+            height="60px"
+            class="primary px-8 ms-10"
+            depressed
+            dark
+            outlined>
+            <span class="headline font-weight-bold">{{ $t('explore') }}</span>
+          </v-btn>
+        </div>
+      </div>
+      <v-img
+        :src="`${parentLocation}/static/images/hero_image.webp`"
+        class="mb-16 py-5 mb-md-0 mx-auto"
+        width="727px"
+        alt=""
+        contain
+        eager />
     </div>
-    <v-img
-      :src="`${parentLocation}/static/images/hero_image.webp`"
-      class="mb-16 py-5 mb-md-0 mx-auto"
-      width="875px"
-      alt=""
-      contain
-      eager />
+    
     <v-card class="pa-5 mb-6 mt-16 mt-md-11" flat>
       <div class="d-block d-md-flex pb-15">
         <div class="col-12 col-md-6 my-auto">
@@ -148,14 +160,13 @@
       </div>
       <div class="d-flex justify-center mb-16">
         <v-btn
-          href="https://builders.meeds.io"
-          target="_blank"
+          :href="tourURL"
           height="60px"
-          class="px-8 d-flex"
-          color="primary"
+          class="px-8 primary"
+          depressed
+          dark
           outlined>
-          <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
-          <span class="headline font-weight-bold">{{ $t('try') }}</span>
+          <span class="headline font-weight-bold">{{ $t('discover') }}</span>
         </v-btn>
       </div>
     </v-card>
@@ -240,6 +251,42 @@
             cols="12"
             lg="6"
             md="12">
+            <div class="my-4 my-md-0 fill-height">
+              <div class="d-flex my-8">
+                <v-img
+                  :src="`${parentLocation}/static/images/contributor.webp`"
+                  height="81px"
+                  max-height="81px"
+                  max-width="135px"
+                  alt=""
+                  contain
+                  eager />
+                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
+                  {{ $t('contributor.title') }}
+                </span>
+              </div>
+              <div class="d-flex flex-column">
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart1') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
+                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
+              </div>
+              <div class="d-flex justify-center">
+                <v-btn
+                  :href="hubsUrl"
+                  height="60px"
+                  class="px-8 my-6 primary"
+                  dark
+                  depressed
+                  outlined>
+                  <span class="headline font-weight-bold">{{ $t('explore') }}</span>
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="6"
+            md="12">
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="d-flex my-8">
                 <v-img
@@ -262,50 +309,13 @@
               <v-spacer />
               <div class="d-flex justify-center">
                 <v-btn
-                  :href="marketplaceURL"
+                  :href="tenantsURL"
                   height="60px"
                   class="primary px-8 mt-6 mb-15 mb-md-6"
                   depressed
                   dark
                   outlined>
-                  <span class="headline font-weight-bold">{{ $t('getAHub') }}</span>
-                </v-btn>
-              </div>
-            </div>
-          </v-col>
-          <v-col
-            cols="12"
-            lg="6"
-            md="12">
-            <div class="my-4 my-md-0 fill-height">
-              <div class="d-flex my-8">
-                <v-img
-                  :src="`${parentLocation}/static/images/contributor.webp`"
-                  height="81px"
-                  max-height="81px"
-                  max-width="135px"
-                  alt=""
-                  contain
-                  eager />
-                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
-                  {{ $t('contributor.title') }}
-                </span>
-              </div>
-              <div class="d-flex flex-column">
-                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart1') }}</span>
-                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart2') }}</span>
-                <span class="text-h6 grey--text py-3 font-weight-light">{{ $t('contributor.descriptionPart3') }}</span>
-              </div>
-              <div class="d-flex justify-center">
-                <v-btn
-                  href="https://builders.meeds.io"
-                  target="_blank"
-                  height="60px"
-                  class="px-8 my-6 d-flex"
-                  color="primary"
-                  outlined>
-                  <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
-                  <span class="headline font-weight-bold">{{ $t('trynow') }}</span>
+                  <span class="headline font-weight-bold">{{ $t('create') }}</span>
                 </v-btn>
               </div>
             </div>
@@ -322,6 +332,8 @@ export default {
     marketplaceURL: state => state.marketplaceURL,
     tourURL: state => state.tourURL,
     whitepaperURL: state => state.whitepaperURL,
+    tenantsURL: state => state.tenantsURL,
+    hubsUrl: state => state.hubsUrl,
   }),
 };
 </script>
