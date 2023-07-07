@@ -29,21 +29,21 @@
         <span class="headline text-sm-h4 mt-6 mt-md-4 mb-10 mb-md-14 font-weight-light text-center text-md-start grey--text">{{ $t('homePage.description') }}</span>
         <div class="d-flex justify-center justify-md-start mb-12 mb-md-0">
           <v-btn
-            :href="tenantsURL"
-            height="60px"
-            class="px-8 d-flex"
-            color="primary"
-            outlined>
-            <span class="headline font-weight-bold">{{ $t('create') }}</span>
-          </v-btn>
-          <v-btn
             :href="hubsUrl"
             height="60px"
-            class="primary px-8 ms-10"
+            class="primary px-8"
             depressed
             dark
             outlined>
             <span class="headline font-weight-bold">{{ $t('explore') }}</span>
+          </v-btn>
+          <v-btn
+            :href="tenantsURL"
+            height="60px"
+            class="px-8 ms-10"
+            color="primary"
+            outlined>
+            <span class="headline font-weight-bold">{{ $t('create') }}</span>
           </v-btn>
         </div>
       </div>
@@ -172,76 +172,6 @@
     </v-card>
     <div class="pt-16 mt-0 mt-md-6">
       <span
-        class="d-flex justify-center text-center font-weight-bold text-sm-h3 display-1">
-        {{ $t('poweredByWeb3.title') }}
-      </span>
-      <v-card class="my-8 mx-4 d-block d-md-flex" flat>
-        <div class="ps-3 ps-md-0 my-2 col-12 col-md-4">
-          <div class="ps-0 d-flex justify-md-center justify-start my-6">
-            <v-img 
-              :src="`${parentLocation}/static/images/meed_circle.webp`" 
-              width="100px"
-              max-width="100px"
-              max-height="100px"
-              class="me-9"
-              alt=""
-              contain
-              eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
-          </div>
-          <span class="mt-3 text-h6 grey--text d-flex text-center font-weight-light">
-            {{ $t('tokens.description') }}
-          </span>
-        </div>
-        <div class="my-2 col-12 col-md-4">
-          <div class="ps-0 d-flex justify-md-center justify-start my-6">
-            <v-img
-              :src="`${parentLocation}/static/images/hand_holding_heart.webp`" 
-              height="100px"
-              max-height="100px"
-              max-width="100px"
-              class="me-9"
-              alt=""
-              contain
-              eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
-          </div>
-          <span class="text-h6 grey--text d-flex text-center font-weight-light">
-            {{ $t('store.description') }}
-          </span>
-        </div>
-        <div class="my-2 col-12 col-md-4">
-          <div class="ps-0 d-flex justify-md-center justify-start my-6">
-            <v-img
-              :src="`${parentLocation}/static/images/city.webp`" 
-              height="100px"
-              max-height="100px"
-              max-width="100px"
-              class="me-9"
-              alt=""
-              contain
-              eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
-          </div>
-          <span class="text-h6 grey--text d-flex text-center font-weight-light">
-            {{ $t('workMetaverse.description') }}
-          </span>
-        </div>
-      </v-card>
-      <div class="d-flex justify-center">
-        <v-btn
-          :href="whitepaperURL"
-          height="60px"
-          class="primary px-8 my-14"
-          depressed
-          dark
-          outlined>
-          <span class="headline font-weight-bold">{{ $t('learnMore') }}</span>
-        </v-btn>
-      </div>
-    </div>
-    <div class="pt-16 mt-16">
-      <span
         class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h3 display-1">
         {{ $t('whatInMeedForYou.title') }}
       </span>
@@ -322,6 +252,76 @@
           </v-col>
         </v-row>
       </v-container>
+    </div>
+    <div class="pt-16 mt-16">
+      <span
+        class="d-flex justify-center text-center font-weight-bold text-sm-h3 display-1">
+        {{ $t('poweredByWeb3.title') }}
+      </span>
+      <v-card class="my-8 mx-4 d-block d-md-flex" flat>
+        <div class="ps-3 ps-md-0 my-2 col-12 col-md-4">
+          <div class="ps-0 d-flex justify-md-center justify-start my-6">
+            <v-img 
+              :src="`${parentLocation}/static/images/meed_circle.webp`" 
+              width="100px"
+              max-width="100px"
+              max-height="100px"
+              class="me-9"
+              alt=""
+              contain
+              eager />
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
+          </div>
+          <span class="mt-3 text-h6 grey--text d-flex text-center font-weight-light">
+            {{ $t('tokens.description') }}
+          </span>
+        </div>
+        <div class="my-2 col-12 col-md-4">
+          <div class="ps-0 d-flex justify-md-center justify-start my-6">
+            <v-img
+              :src="`${parentLocation}/static/images/hand_holding_heart.webp`" 
+              height="100px"
+              max-height="100px"
+              max-width="100px"
+              class="me-9"
+              alt=""
+              contain
+              eager />
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
+          </div>
+          <span class="text-h6 grey--text d-flex text-center font-weight-light">
+            {{ $t('store.description') }}
+          </span>
+        </div>
+        <div class="my-2 col-12 col-md-4">
+          <div class="ps-0 d-flex justify-md-center justify-start my-6">
+            <v-img
+              :src="`${parentLocation}/static/images/city.webp`" 
+              height="100px"
+              max-height="100px"
+              max-width="100px"
+              class="me-9"
+              alt=""
+              contain
+              eager />
+            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
+          </div>
+          <span class="text-h6 grey--text d-flex text-center font-weight-light">
+            {{ $t('workMetaverse.description') }}
+          </span>
+        </div>
+      </v-card>
+      <div class="d-flex justify-center">
+        <v-btn
+          :href="whitepaperURL"
+          height="60px"
+          class="primary px-8 my-14"
+          depressed
+          dark
+          outlined>
+          <span class="headline font-weight-bold">{{ $t('learnMore') }}</span>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
