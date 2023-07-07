@@ -174,7 +174,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex flex-column-reverse flex-sm-row align-center my-2 footerLayout mx-auto">
+    <div class="d-flex flex-column-reverse flex-sm-row align-center my-2 footerLayout mx-auto mb-md-0 mb-10">
       <span :class="textColor" class="caption text-center text-sm-start">{{ $t('copyright') }}</span>
       <v-spacer />
       <div class="d-flex">
