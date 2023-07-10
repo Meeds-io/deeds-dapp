@@ -66,7 +66,7 @@
               width="25px"
               height="25px" />
             <div class="text-light-color font-weight-normal">
-              {{ hubUsersCount }}
+              {{ hubUsers }}
             </div>
           </div>
           <div class="d-flex align-center justify-center ms-10">
@@ -109,7 +109,10 @@ export default {
       return this.hub?.logoUrl;
     },
     hubUsersCount() {
-      return this.hub?.usersCount || 0;
+      return (this.hub?.usersCount > 999 ? this.hub?.usersCount / 1000 : this.hub?.usersCount) || 0;
+    },
+    hubUsers() {
+      return this.hub?.usersCount > 999 ? this.hubUsersCount.toString().concat('K') : this.hub?.usersCount;
     },
     hubUrl() {
       return this.hub?.hubUrl;
