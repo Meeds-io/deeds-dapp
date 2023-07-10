@@ -38,13 +38,14 @@
             link
             @click="openPage">
             <h3 class="mx-2 font-size-normal" :class="textHubsColor">{{ $t('page.hubs') }}</h3>
-            <v-img
+            <img
               :src="`${parentLocation}/static/images/tenantsMenu.webp`"
-              :position="positionHubsIconTab"
-              height="26px"
-              width="26px"
-              min-width="26px"
-              class="my-1" />
+              alt=""
+              height="27px"
+              width="24px"
+              min-width="24px"
+              class="my-1 object-fit-cover"
+              :class="positionHubsIconTab">
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
@@ -56,13 +57,13 @@
             link
             @click.prevent.stop="tokensMenu = !tokensMenu">
             <h3 class="mx-2 font-size-normal" :class="textTokensColor">{{ $t('tokens.title') }}</h3>
-            <v-img
+            <img
               :src="`${parentLocation}/static/images/tokenMenu.webp`"
-              :position="positionTokensIconTab"
-              height="24px"
-              width="30px"
-              min-width="30px"
-              class="my-1" />
+              height="25px"
+              width="25px"
+              min-width="25px"
+              class="my-1 object-fit-cover"
+              :class="positionTokensIconTab">
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
@@ -74,13 +75,13 @@
             link
             @click.prevent.stop="nftMenu = !nftMenu">
             <h3 class="mx-2 font-size-normal" :class="textNftColor">{{ $t('nft.id') }}</h3>
-            <v-img
+            <img
               :src="`${parentLocation}/static/images/ownersMenu.webp`"
-              :position="positionNftIconTab"
-              height="24px"
-              width="30px"
-              min-width="30px"
-              class="my-1" />
+              height="25px"
+              width="24px"
+              min-width="24px"
+              class="my-1 object-fit-cover"
+              :class="positionNftIconTab">
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
@@ -93,12 +94,13 @@
             link
             @click="openPage">
             <h3 class="mx-2 font-size-normal" :class="textPortfolioColor">{{ $t('page.overview') }}</h3>
-            <v-img
+            <img
               :src="`${parentLocation}/static/images/portfolioMenu.webp`"
-              :position="positionPortfolioIconTab"
-              width="26px"
-              min-width="26px"
-              class="my-1" />
+              height="27px"
+              width="24px"
+              min-width="24px"
+              class="my-1 object-fit-cover"
+              :class="positionPortfolioIconTab">
           </v-btn>
         </v-col>
       </v-row>
@@ -631,16 +633,16 @@ export default {
       return this.selectedTab && this.selectedTab === 'portfolio';
     },
     positionHubsIconTab() {
-      return this.selectedHubsTab && this.selectedHubsTab ? 'left' : 'right';
+      return this.selectedHubsTab && this.selectedHubsTab ? 'object-position-left' : 'object-position-right';
     },
     positionTokensIconTab() {
-      return this.selectedTokensTab && this.selectedTokensTab ? 'left' : 'right';
+      return this.selectedTokensTab && this.selectedTokensTab ? 'object-position-left' : 'object-position-right';
     },
     positionNftIconTab() {
-      return this.selectedNftTab && this.selectedNftTab ? 'left' : 'right';
+      return this.selectedNftTab && this.selectedNftTab ? 'object-position-left' : 'object-position-right';
     },
     positionPortfolioIconTab() {
-      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'left' : 'right';
+      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'object-position-left' : 'object-position-right';
     },
     textHubsColor() {
       return this.selectedHubsTab && this.selectedHubsTab ? 'secondary--text' : 'text-sub-title';
@@ -662,23 +664,23 @@ export default {
     selectedTab(newVal, oldVal) {
       if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
         this.$nextTick(() => {
-          this.updateSelection(oldVal, null);
+          this.updateSelection(oldVal);
         });
       } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
-        this.updateSelection(newVal, null);
+        this.updateSelection(newVal);
       }
     },
     selectedTokensId() {
       if (this.selectedTokensId) {
         this.$nextTick(() => {
-          this.updateSelection('tokens', this.selectedTokensId);
+          this.updateSelection('tokens');
         });
       }
     },
     selectedNftId() {
       if (this.selectedNftId) {
         this.$nextTick(() => {
-          this.updateSelection('nft', this.selectedNftId);
+          this.updateSelection('nft');
         });
       }
     },
@@ -725,7 +727,7 @@ export default {
         }
       }
     },
-    updateSelection(tab, mobileMenuId) {
+    updateSelection(tab) {
       if (this.updatingMenu) {
         return;
       }
@@ -733,10 +735,13 @@ export default {
       if (this.selectedTab !== tab) {
         this.selectedTab = tab;
       }
-      if (this.selectedTab !== 'tokens' && this.selectedTokensId !== mobileMenuId && this.selectedTokensId) {
-        this.selectedTokensId = mobileMenuId;
-      } else if (this.selectedTab !== 'nft' && this.selectedNftId !== mobileMenuId && this.selectedNftId) {
-        this.selectedNftId = mobileMenuId;
+      if (tab === 'tokens') {
+        this.selectedNftId = null;
+      } else if (tab === 'nft') {
+        this.selectedTokensId = null;
+      } else {
+        this.selectedTokensId = null;
+        this.selectedNftId = null;
       }
       this.$nextTick(() => this.updatingMenu = false);
     },
