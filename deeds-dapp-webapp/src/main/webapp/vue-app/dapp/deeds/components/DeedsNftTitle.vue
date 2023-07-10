@@ -32,7 +32,7 @@
         contain
         eager />
     </v-card-title>
-    <v-card-text class="ps-0 pt-0 pt-md-12 ms-md-2 text-h6 font-weight-normal" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='link--color' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <v-card-text class="ps-0 pt-0 pt-md-12 ms-md-2 text-h6 font-weight-normal" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='primary--text embedded-link-text font-weight-bold  v-btn v-btn--text letter-spacing-normal' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>
