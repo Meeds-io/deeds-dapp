@@ -44,7 +44,7 @@
       <div v-else>
         <v-btn
           :href="ownersURL"
-          class="rounded-pill px-5"
+          class="px-5"
           color="primary"
           height="40px"
           outlined>

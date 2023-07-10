@@ -39,7 +39,7 @@
       <v-spacer />
       <v-btn
         href=""
-        class="rounded-pill px-8"
+        class="px-8"
         color="secondary"
         height="45px"
         outlined

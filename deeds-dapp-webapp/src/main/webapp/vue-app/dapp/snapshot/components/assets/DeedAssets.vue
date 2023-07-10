@@ -31,7 +31,7 @@
       <v-spacer />
       <v-btn
         :href="deedsURL"
-        class="rounded-pill px-7"
+        class="px-7"
         color="primary"
         height="45px"
         outlined>

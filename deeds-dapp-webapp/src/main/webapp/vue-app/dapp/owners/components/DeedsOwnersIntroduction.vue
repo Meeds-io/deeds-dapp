@@ -40,7 +40,7 @@
       <div v-if="hasTenants" class="d-flex justify-end mt-6">
         <v-btn
           height="40px"
-          class="px-4 mt-4 rounded-pill"
+          class="px-4 mt-4"
           :color="collapsed && 'primary'"
           :class="!collapsed && 'primary'"
           :dark="!collapsed"
@@ -59,7 +59,7 @@
               <v-btn
                 :href="deedsURL"
                 height="40px"
-                class="px-4 mt-4 rounded-pill"
+                class="px-4 mt-4"
                 color="primary"
                 outlined>
                 <span>{{ $t('dapp.owners.mintDeed.button') }}</span>
@@ -71,7 +71,7 @@
                 :href="`${openSeaLink}`"
                 target="_blank"
                 height="40px"
-                class="px-4 mt-4 rounded-pill"
+                class="px-4 mt-4"
                 color="primary"
                 outlined>
                 <span>{{ $t('dapp.owners.buyDeed.button') }}</span>
@@ -106,7 +106,7 @@
               <v-btn
                 :href="marketplaceURL"
                 height="40px"
-                class="px-4 mt-4 rounded-pill"
+                class="px-4 mt-4"
                 color="primary"
                 outlined>
                 <span>{{ $t('dapp.owners.useOrRentDeed.button') }}</span>

@@ -31,7 +31,7 @@
       <v-spacer />
       <v-btn
         :href="stakeURL"
-        class="rounded-pill px-6"
+        class="px-6"
         color="primary"
         height="45px"
         outlined>
