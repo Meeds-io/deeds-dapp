@@ -42,7 +42,7 @@
     <v-btn
       :href="tenantsURL"
       height="60px"
-      class="rounded-pill px-7 mx-auto mt-md-0 mt-6 elevation-0"
+      class="px-7 mx-auto mt-md-0 mt-6 elevation-0"
       color="primary"
       dark>
       <span class="headline font-weight-bold">{{ $t('hubs.button.getYourHub') }}</span>

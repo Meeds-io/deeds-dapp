@@ -35,7 +35,7 @@
     <div v-if="hasTenants" class="align-self-end mt-6">
       <v-btn
         height="40px"
-        class="px-4 mt-4 rounded-pill"
+        class="px-4 mt-4"
         :color="collapsed && 'primary'"
         :class="!collapsed && 'primary'"
         :dark="!collapsed"
@@ -54,7 +54,7 @@
             <v-btn
               :href="marketplaceURL"
               height="40px"
-              class="px-4 mt-4 rounded-pill"
+              class="px-4 mt-4"
               color="primary"
               outlined>
               <span>{{ $t('dapp.tenants.rentFromMarketplace.button') }}</span>
@@ -88,7 +88,7 @@
             <v-btn
               :href="tourURL"
               height="40px"
-              class="px-4 mt-4 rounded-pill"
+              class="px-4 mt-4"
               color="primary"
               outlined>
               <span>{{ $t('dapp.tenants.manageYourHub.button') }}</span>
