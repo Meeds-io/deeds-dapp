@@ -36,7 +36,7 @@
               bottom
               right
               color="primary"
-              class="mb-8"
+              class="mb-16 mb-md-10"
               height="60px"
               v-bind="attrs"
               v-on="on"
