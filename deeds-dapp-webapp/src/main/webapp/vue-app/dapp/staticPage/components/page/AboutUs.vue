@@ -109,7 +109,7 @@
               <v-btn
                 :href="portfolioURL"
                 height="54px"
-                class="rounded-pill px-7"
+                class="px-7"
                 color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('tokenomics') }}</span>
@@ -145,7 +145,7 @@
               <v-btn
                 :href="tourURL"
                 height="54px"
-                class="rounded-pill px-7"
+                class="px-7"
                 color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('discover') }}</span>
@@ -181,7 +181,7 @@
               <v-btn
                 :href="whitepaperURL"
                 height="54px"
-                class="rounded-pill px-7"
+                class="px-7"
                 color="primary"
                 outlined>
                 <span class="text-h6 font-weight-bold">{{ $t('learnMore') }}</span>
@@ -260,7 +260,7 @@
                   href="https://exoplatform.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill px-7"
+                  class="px-7"
                   color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
@@ -292,7 +292,7 @@
                   href="https://bonitasoft.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill px-7"
+                  class="px-7"
                   color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
@@ -324,7 +324,7 @@
                   href="https://newlogic.com"
                   target="_blank"
                   height="54px"
-                  class="rounded-pill px-7"
+                  class="px-7"
                   color="primary"
                   outlined>
                   <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
