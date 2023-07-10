@@ -63,6 +63,22 @@ export default {
         hubUrl: 'https://builders.meeds.io',
         rewardsPerWeek: 1000
       },
+      {
+        id: 2,
+        name: {
+          fr: 'Communauté eXo',
+          en: 'eXo Community'
+        },
+        description: {
+          fr: 'Communauté officielle d\'eXo',
+          en: 'Official community of eXo'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1688983553/meedsdao-site/assets/images/exo-logo.webp',
+        backgroundColor: '#6083B6',
+        usersCount: 10000,
+        hubUrl: 'https://community.exoplatform.com',
+        rewardsPerWeek: 2000
+      },
     ],
   }),
   computed: Vuex.mapState({

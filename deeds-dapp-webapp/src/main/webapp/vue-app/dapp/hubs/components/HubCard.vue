@@ -45,7 +45,7 @@
       </v-card>
       <div class="d-flex flex-column pa-4">
         <div class="ms-16 ps-15">
-          <span class="headline text-sm-h4 font-weight-bold">
+          <span class="headline text-sm-h4 font-weight-bold text-no-wrap">
             {{ hubName }}
           </span>
         </div>
@@ -58,7 +58,7 @@
               width="40px"
               height="40px" />
             <h4 class="text-light-color font-weight-normal">
-              {{ hubUsersCount }}
+              {{ hubUsers }}
             </h4>
           </div>
           <v-spacer />
@@ -102,7 +102,10 @@ export default {
       return this.hub?.logoUrl;
     },
     hubUsersCount() {
-      return this.hub?.usersCount || 0;
+      return (this.hub?.usersCount > 999 ? this.hub?.usersCount / 1000 : this.hub?.usersCount) || 0;
+    },
+    hubUsers() {
+      return this.hub?.usersCount > 999 ? this.hubUsersCount.toString().concat('K') : this.hub?.usersCount;
     },
     hubUrl() {
       return this.hub?.hubUrl;
