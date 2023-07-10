@@ -508,7 +508,7 @@
                 min-width="25px"
                 tile>
                 <v-img 
-                  :src="`${parentLocation}/static/images/mint_menu.webp`"
+                  :src="`${parentLocation}/static/images/mintMenu.webp`"
                   position="left" />
               </v-list-item-avatar>
               <v-hover v-slot="{hover}">
