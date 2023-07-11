@@ -20,7 +20,7 @@ const Marketplace = { template: '<deeds-marketplace />' };
 const Tenants = { template: '<deeds-tenants />' };
 const Owners = { template: '<deeds-owners />' };
 const Stake = { template: '<deeds-stake />' };
-const Deeds = { template: '<deeds-deeds />' };
+const Mint = { template: '<deeds-deeds />' };
 const Farm = { template: '<deeds-farm />' };
 const Overview = { template: '<deeds-overview />' };
 const Tokenomics = { template: '<deeds-tokenomics />' };
@@ -37,7 +37,7 @@ export default {
   '/portefeuille': Overview,
   '/tokenomics': Tokenomics,
   '/rejoindre-dao': Stake,
-  '/deeds': Deeds,
+  '/mint': Mint,
   '/farm': Farm,
   '/marketplace': Marketplace,
   '/tenants': Tenants,

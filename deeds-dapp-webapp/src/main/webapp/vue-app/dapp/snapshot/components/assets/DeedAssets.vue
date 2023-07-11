@@ -30,7 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
-        :href="deedsURL"
+        :href="mintUrl"
         class="px-7"
         color="primary"
         height="45px"
@@ -57,7 +57,7 @@
       description-part2="noDeedsDescriptionPart2"
       link-part1="becomingADeedOwner"
       link-part2="deedTabLink"
-      target-tab="deeds" />
+      target-tab="mint" />
   </v-list>
 </template>
 <script>
@@ -69,7 +69,7 @@ export default {
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
     parentLocation: state => state.parentLocation,
-    deedsURL: state => state.deedsURL,
+    mintUrl: state => state.mintUrl,
     nftsByCardType() {
       const nftsByCardType = {};
       if (this.ownedNfts) {
