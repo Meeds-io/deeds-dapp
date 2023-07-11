@@ -251,13 +251,13 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
-            ref="deeds"
-            id="deeds"
-            :href="deedsURL"
+            ref="mint"
+            id="mint"
+            :href="mintUrl"
             :active-class="activeMenuColor"
             class="py-2"
-            key="deeds"
-            value="deeds"
+            key="mint"
+            value="mint"
             dense
             @click="openPage">
             <v-list-item-icon>
@@ -501,7 +501,7 @@
           <v-list 
             width="350px" 
             max-width="350px">
-            <v-list-item :href="deedsURL">
+            <v-list-item :href="mintUrl">
               <v-list-item-avatar
                 height="21px"
                 width="25px"
@@ -587,7 +587,7 @@ export default {
       'tenants',
       'owners',
       'stake',
-      'deeds',
+      'mint',
       'farm',
       'portfolio',
     ],
@@ -596,7 +596,7 @@ export default {
     parentLocation: state => state.parentLocation,
     portfolioURL: state => state.portfolioURL,
     marketplaceURL: state => state.marketplaceURL,
-    deedsURL: state => state.deedsURL,
+    mintUrl: state => state.mintUrl,
     stakeURL: state => state.stakeURL,
     ownersURL: state => state.ownersURL,
     farmURL: state => state.farmURL,
@@ -719,7 +719,7 @@ export default {
             if (this.selectedTab === 'stake' || this.selectedTab === 'farm' || this.selectedTab === 'tokens') {
               this.selectedTokensId = this.page;
               this.selectedTab = 'tokens';
-            } else if (this.selectedTab === 'marketplace' || this.selectedTab === 'tenants' || this.selectedTab === 'deeds' || this.selectedTab === 'owners') {
+            } else if (this.selectedTab === 'marketplace' || this.selectedTab === 'tenants' || this.selectedTab === 'mint' || this.selectedTab === 'owners') {
               this.selectedNftId = this.page;
               this.selectedTab = 'nft';
             }

@@ -25,7 +25,7 @@
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/deeds</loc>
+    <loc>https://www.meeds.io/mint</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
@@ -105,7 +105,7 @@
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/fr/deeds</loc>
+    <loc>https://www.meeds.io/fr/mint</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
   </url>
