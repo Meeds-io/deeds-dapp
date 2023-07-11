@@ -105,7 +105,7 @@
               {{ $t('meedsToken') }}
             </a>
             <a
-              :href="deedsURL"
+              :href="mintUrl"
               :class="textColor"
               class="text-capitalize no-decoration my-2">
               {{ $t('becomingADeedOwner') }}
@@ -201,7 +201,7 @@ export default {
     aboutUsURL: state => state.aboutUsURL,
     tokenomicsURL: state => state.tokenomicsURL,
     tenantsURL: state => state.tenantsURL,
-    deedsURL: state => state.deedsURL,
+    mintUrl: state => state.mintUrl,
     whitepaperURL: state => state.whitepaperURL,
     hubsUrl: state => state.hubsUrl,
     dark: state => state.dark,

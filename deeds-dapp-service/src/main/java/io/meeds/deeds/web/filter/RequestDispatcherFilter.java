@@ -79,7 +79,7 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/portfolio",
                                                                                             "/stake",
                                                                                             "/hubs",
-                                                                                            "/deeds",
+                                                                                            "/mint",
                                                                                             "/farm",
                                                                                             "/tokenomics");
 
@@ -90,7 +90,7 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/rejoindre-dao",
                                                                                             "/rejoindre-hubs");
 
-  protected static final List<String>        DAPP_PATHS_FR_COMM             = Arrays.asList("/deeds",
+  protected static final List<String>        DAPP_PATHS_FR_COMM             = Arrays.asList("/mint",
                                                                                             "/farm",
                                                                                             "/tokenomics");
 
