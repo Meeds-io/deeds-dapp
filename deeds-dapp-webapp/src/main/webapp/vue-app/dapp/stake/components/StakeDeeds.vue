@@ -30,8 +30,7 @@
         name="displayOwnedDeedsButton"
         height="40px"
         outlined
-        text
-        @click.prevent.stop="$root.$emit('switch-page', 'owners')">
+        text>
         <img
           :src="`${parentLocation}/static/images/deed-small.png`"
           alt=""
