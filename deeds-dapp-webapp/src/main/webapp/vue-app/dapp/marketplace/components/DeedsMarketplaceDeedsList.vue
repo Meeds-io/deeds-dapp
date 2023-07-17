@@ -31,15 +31,12 @@
           :selected-offer-types="selectedOfferTypes" />
       </div>
     </v-scale-transition>
-    <div v-show="noFilter">
-      <v-card-title class="ps-0 headline text-sm-h4 font-weight-bold">{{ $t('dapp.marketplace.deedsListSubtitle') }}</v-card-title>
-    </div>
     <v-progress-linear
       v-if="loading"
       color="primary"
       class="position-absolute"
       indeterminate />
-    <v-row v-if="hasOffers" class="pa-0 my-0">
+    <v-row v-if="hasOffers" class="pa-0 my-16">
       <v-col
         v-for="(offer, index) in offers"
         :key="`${offer.id}-${offer.updatedDate}-${index}`"
