@@ -57,7 +57,7 @@
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
-                :href="deedsURL"
+                :href="mintUrl"
                 height="40px"
                 class="px-4 mt-4"
                 color="primary"
@@ -132,7 +132,7 @@ export default {
     mintDeedVideoLink: state => state.mintDeedVideoLink,
     rentDeedVideoLink: state => state.rentDeedVideoLink,
     marketplaceURL: state => state.marketplaceURL,
-    deedsURL: state => state.deedsURL,
+    mintUrl: state => state.mintUrl,
     dark: state => state.dark,
     openSeaLink() {
       return this.openSeaCollectionLink || 'javascript:void(0)';
@@ -155,7 +155,7 @@ export default {
     },
     openDeeds(event) {
       if (event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', 'deeds');
+        this.$root.$emit('switch-page', 'mint');
       }
     },
     changeCollapsedTextVisibility() {
