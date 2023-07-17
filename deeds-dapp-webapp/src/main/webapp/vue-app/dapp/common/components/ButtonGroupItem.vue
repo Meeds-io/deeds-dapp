@@ -27,8 +27,9 @@
       :dark="dark"
       :value="value"
       :color="contextualColor"
-      :class="`${borderClass} ${paddingClass}`"
+      :class="`${borderClass} ${paddingClass} ${extraClass}`"
       :small="small"
+      :x-large="xLarge"
       class="elevation-0">
       <slot></slot>
     </v-btn>
@@ -61,17 +62,25 @@ export default {
       type: Boolean,
       default: false,
     },
+    xLarge: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
     },
+    extraClass: {
+      type: String,
+      default: null,
+    }
   },
   computed: {
     isSelected() {
       return (this.value && this.value === this.selectedValue) || (this.selectedValues?.indexOf(this.value) >= 0) || false;
     },
     contextualColor() {
-      return this.isSelected && this.selectedColor || this.color;
+      return this.isSelected && this.selectedColor || (this.extraClass && 'primary' || this.color);
     },
     dark() {
       return this.isSelected;

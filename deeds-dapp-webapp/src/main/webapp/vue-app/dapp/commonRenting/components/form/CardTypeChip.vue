@@ -23,8 +23,10 @@
     :selected-values="selectedCards"
     :value="card"
     :small="small"
+    :x-large="xLarge"
     :color="blackThemeColor"
-    selected-color="grey">
+    :extra-class="extraClass"
+    :selected-color="selectedColor">
     <v-list-item-avatar
       class="deed-avatar ms-0 me-1 my-auto"
       :min-width="`${avatarSize}px !important`"
@@ -32,7 +34,7 @@
       :width="`${avatarSize}px !important`">
       <v-img :src="cardImage" />
     </v-list-item-avatar>
-    <span class="text-capitalize">{{ cardTypeI18N }}</span>
+    <span class="text-capitalize" :class="textStyle">{{ cardTypeI18N }}</span>
   </deeds-button-group-item>
 </template>
 <script>
@@ -58,16 +60,30 @@ export default {
       type: Boolean,
       default: false,
     },
+    xLarge: {
+      type: Boolean,
+      default: false,
+    },
+    extraClass: {
+      type: String,
+      default: null,
+    }
   },
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     blackThemeColor: state => state.blackThemeColor,
     cardImage() {
-      return this.city && this.card && `${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.png`;
+      return this.city && this.card && `${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.card.toLowerCase()}.webp`;
     },
     cardTypeI18N() {
       return this.card && this.$t(this.card.toLowerCase());
     },
+    selectedColor() {
+      return this.extraClass ? 'primary' : 'grey';
+    },
+    textStyle() {
+      return this.extraClass && 'headline font-weight-bold';
+    }
   }),
 };
 </script>
