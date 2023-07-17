@@ -47,6 +47,7 @@
       </video>
       <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
+          id="tRent-button"
           :href="marketplaceURL"
           class="primary px-8 mx-5 mt-7"
           height="60px"
@@ -56,6 +57,7 @@
           <span class="headline font-weight-bold">{{ $t('startYourHub') }}</span>
         </v-btn>
         <v-btn
+          id="tExplore-button"
           href="https://builders.meeds.io"
           target="_blank"
           height="60px"
