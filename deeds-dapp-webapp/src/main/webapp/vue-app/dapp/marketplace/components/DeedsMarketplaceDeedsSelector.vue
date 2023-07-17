@@ -21,21 +21,6 @@
 <template>
   <div v-show="displaySelector">
     <v-layout class="d-flex flex-column align-center mx-2 mt-4 mb-8">
-      <v-row class="ma-0 text-center">
-        <v-btn-toggle
-          v-model="offerTypes"
-          multiple
-          outlined
-          dense
-          group>
-          <deeds-offer-type-chip
-            :selected-offers="offerTypes"
-            :label="$t('rentalsTag')"
-            offer-type="RENTING"
-            color="secondary"
-            class="mx-2" />
-        </v-btn-toggle>
-      </v-row>
       <v-row class="mt-4 mb-0 mx-0 text-center">
         <v-btn-toggle
           v-model="cardTypes"
@@ -50,8 +35,10 @@
               <deeds-card-type-chip
                 :card="cardType"
                 :selected-cards="cardTypes"
-                avatar-size="24"
-                class="ma-2" />
+                extra-class="rounded-pill px-5"
+                avatar-size="43"
+                class="my-2 mx-5"
+                x-large />
             </v-col>
           </v-row>
         </v-btn-toggle>
