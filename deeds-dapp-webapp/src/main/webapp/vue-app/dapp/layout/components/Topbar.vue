@@ -65,6 +65,7 @@
       </div>
       <div class="ms-4">
         <v-btn
+          id="tbBuy-button"
           class="hidden-xs-only"
           elevation="0"
           color="secondary"
