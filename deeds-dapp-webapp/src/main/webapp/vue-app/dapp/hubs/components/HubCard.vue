@@ -23,18 +23,20 @@
     target="_blank"
     flat>
     <v-card
-      class="rounded-xl"
+      class="rounded-lg"
+      height="270px"
+      max-height="270px"
       hover
       outlined>
       <v-card
         :color="hubBackgroundColor" 
-        height="120px"
+        height="100px"
         width="100%"
         flat />
       <v-card
-        height="100px"
-        width="100px"
-        class="ms-5 mt-n12 rounded-lg position-absolute"
+        height="75px"
+        width="75px"
+        class="ms-5 mt-n10 rounded-lg position-absolute"
         outlined>
         <v-img 
           :src="`${hubLogoUrl}`"
@@ -43,35 +45,40 @@
           width="90%"
           contain />
       </v-card>
-      <div class="d-flex flex-column pa-4">
-        <div class="ms-16 ps-15">
-          <span class="headline text-sm-h4 font-weight-bold text-no-wrap">
+      <div class="d-flex flex-column pt-2 px-4 pb-4">
+        <div class="ms-10 ps-15">
+          <span class="text-h6 font-weight-bold text-no-wrap">
             {{ hubName }}
           </span>
         </div>
-        <div class="text-light-color text-h6 font-weight-normal mt-3">{{ hubDescription }}</div>
-        <div class="d-flex">
-          <div class="d-flex align-center justify-center mt-9">
+        <v-card 
+          height="50px"
+          class="text-light-color font-weight-normal mt-3 text-truncate-2 pa-0"
+          flat>
+          {{ hubDescription }}
+        </v-card>
+        <v-spacer />
+        <div class="d-flex mt-4">
+          <div class="d-flex align-center justify-center">
             <v-img 
               :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
               class="me-2"
-              width="40px"
-              height="40px" />
-            <h4 class="text-light-color font-weight-normal">
+              width="25px"
+              height="25px" />
+            <div class="text-light-color font-weight-normal">
               {{ hubUsers }}
-            </h4>
+            </div>
           </div>
-          <v-spacer />
-          <div class="d-flex align-center justify-center mt-9">
+          <div class="d-flex align-center justify-center ms-10">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
-              width="40px"
-              height="40px" />
-            <h4 class="text-light-color d-flex font-weight-normal">
+              width="25px"
+              height="25px" />
+            <div class="text-light-color d-flex font-weight-normal">
               {{ hubRewardsPerWeek }}K
               <span class="ms-2 text-no-wrap">Ɱ / {{ $t('week') }}</span>
-            </h4>
+            </div>
           </div>
         </div>
       </div>
