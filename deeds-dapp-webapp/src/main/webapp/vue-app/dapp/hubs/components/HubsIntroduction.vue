@@ -17,11 +17,25 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column flex-md-row pt-0 pt-md-6 mt-16">
+  <div class="d-flex flex-column pt-0 pt-md-6 mt-16">
+    <v-card-title class="justify-center flex-nowrap mb-16 ps-4 ps-sm-1">
+      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
+        <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.hubs.title') }}</span>
+        <span class="display-1 hidden-sm-and-down">{{ $t('page.hubs.subtitle') }}</span>
+      </div>
+      <v-spacer />
+      <v-img 
+        :src="`${parentLocation}/static/images/marketplace_banner.webp`"
+        max-width="300px"
+        class="hidden-sm-and-down"
+        alt=""
+        contain
+        eager />
+    </v-card-title>
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill col-12 col-md-6 headline"
+      class="rounded-pill mx-auto col-6 headline"
       height="60px"
       @keydown="enterEvent"  
       outlined
@@ -38,15 +52,6 @@
         <div v-else class="ms-9"></div>
       </template>
     </v-text-field>
-    <v-spacer />
-    <v-btn
-      :href="tenantsURL"
-      height="60px"
-      class="px-7 mx-auto mt-md-0 mt-6 elevation-0"
-      color="primary"
-      dark>
-      <span class="headline font-weight-bold">{{ $t('hubs.button.getYourHub') }}</span>
-    </v-btn>
   </div>
 </template>
 <script>
@@ -56,6 +61,7 @@ export default {
   }),
   computed: Vuex.mapState({
     tenantsURL: state => state.tenantsURL,
+    parentLocation: state => state.parentLocation,
   }),
   watch: {
     keyword() {
