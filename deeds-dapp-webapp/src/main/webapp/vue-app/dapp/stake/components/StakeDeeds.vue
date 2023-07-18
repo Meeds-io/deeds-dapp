@@ -26,6 +26,7 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
+        id="sDeeds-button"
         :href="ownersURL"
         name="displayOwnedDeedsButton"
         height="40px"

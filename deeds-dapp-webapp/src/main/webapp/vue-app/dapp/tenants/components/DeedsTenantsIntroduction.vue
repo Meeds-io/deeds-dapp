@@ -52,6 +52,7 @@
           <span class="dark-grey--text mt-10 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
           <div v-if="!hasTenants" class="mb-7">
             <v-btn
+              id="teOffers-button"
               :href="marketplaceURL"
               height="40px"
               class="px-4 mt-4"
@@ -86,6 +87,7 @@
           <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.tenants.manageYourHub.description') }}</span>
           <div class="mb-7">
             <v-btn
+              id="teDiscover-button"
               :href="tourURL"
               height="40px"
               class="px-4 mt-4"

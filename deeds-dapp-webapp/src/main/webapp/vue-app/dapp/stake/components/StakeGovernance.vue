@@ -26,6 +26,7 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center d-flex flex-column flex-sm-row">
       <v-btn
+        id="sDiscord-button"
         name="discussOnDiscordLink"
         href="https://discord.gg/7d9Byf4Fz6"
         target="_blank"
@@ -43,6 +44,7 @@
         <span class="text-none">{{ $t('discussOnDiscord') }}</span>
       </v-btn>
       <v-btn
+        id="sSnapshot-button"
         name="voteOnSnapshotLink"
         href="https://snapshot.org/#/meedsdao.eth"
         target="_blank"

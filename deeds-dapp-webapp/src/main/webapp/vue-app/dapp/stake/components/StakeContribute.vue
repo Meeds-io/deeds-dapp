@@ -26,6 +26,7 @@
     </v-card-text>
     <v-card-actions class="ps-0 justify-center">
       <v-btn
+        id="sBuilders-button"
         name="getInvolvedLink"
         href="https://meeds.io/builders"
         target="_blank"

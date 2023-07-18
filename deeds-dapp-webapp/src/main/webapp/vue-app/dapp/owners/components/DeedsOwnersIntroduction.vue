@@ -57,6 +57,7 @@
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
+                id="oMint-button"
                 :href="mintUrl"
                 height="40px"
                 class="px-4 mt-4"
@@ -68,6 +69,7 @@
             <span class="dark-grey--text mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
+                id="oBuy-button"
                 :href="`${openSeaLink}`"
                 target="_blank"
                 height="40px"
@@ -104,6 +106,7 @@
             <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">
               <v-btn
+                id="oOffers-button"
                 :href="marketplaceURL"
                 height="40px"
                 class="px-4 mt-4"

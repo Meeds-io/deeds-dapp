@@ -85,6 +85,7 @@
     </v-row>
     <v-row class="pb-16 pt-6 justify-center">
       <v-btn
+        id="tAssets-button"
         :href="portfolioURL"
         class="px-8"
         color="primary"
