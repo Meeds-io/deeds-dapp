@@ -31,7 +31,7 @@
             class="mx-auto addLiquidityIcon"
             alt="Cometh Icon">
         </v-card-text>
-        <v-card-title class="justify-center pt-0 text-center text-break">
+        <v-card-title class="justify-center pt-0 text-center text-break text-h6">
           {{ $t('rentLiquidityOnCometh') }}
         </v-card-title>
         <v-card-subtitle class="justify-center pt-0 text-center text-break">
