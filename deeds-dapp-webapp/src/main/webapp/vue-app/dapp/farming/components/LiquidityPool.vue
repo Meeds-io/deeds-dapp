@@ -44,7 +44,7 @@
             </v-icon>
           </template>
         </v-card-text>
-        <v-card-title class="justify-center pt-0 text-center text-break">
+        <v-card-title class="justify-center pt-0 text-center text-break text-h6">
           <template v-if="$slots.title">
             <slot name="title"></slot>
           </template>
