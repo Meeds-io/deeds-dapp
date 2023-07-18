@@ -30,6 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
+        id="pMint-button"
         :href="mintUrl"
         class="px-7"
         color="primary"

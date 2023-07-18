@@ -66,6 +66,7 @@
     </div>
     <div class="d-flex justify-center my-15">
       <v-btn
+        id="aContact-button"
         href="mailto:contact@meeds.io" 
         height="60px"
         class="primary px-8"
@@ -107,6 +108,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
+                id="aToken-button"
                 :href="portfolioURL"
                 height="54px"
                 class="px-7"
@@ -143,6 +145,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
+                id="aTour-button"
                 :href="tourURL"
                 height="54px"
                 class="px-7"
@@ -179,6 +182,7 @@
           <v-list-item class="ps-0">
             <v-list-item-action>
               <v-btn
+                id="aWhitepaper-button"
                 :href="whitepaperURL"
                 height="54px"
                 class="px-7"
@@ -257,6 +261,7 @@
               <v-spacer />
               <div class="mb-10 mb-sm-0">
                 <v-btn
+                  id="aExo-button"
                   href="https://exoplatform.com"
                   target="_blank"
                   height="54px"
@@ -289,6 +294,7 @@
               <v-spacer />
               <div class="mb-10 mb-sm-0">
                 <v-btn
+                  id="aBonita-button"
                   href="https://bonitasoft.com"
                   target="_blank"
                   height="54px"
@@ -321,6 +327,7 @@
               <v-spacer />
               <div class="mb-10 mb-sm-0">
                 <v-btn
+                  id="aBonita-button"
                   href="https://newlogic.com"
                   target="_blank"
                   height="54px"

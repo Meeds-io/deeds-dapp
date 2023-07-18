@@ -76,6 +76,7 @@
           </v-card-subtitle>
           <div class="d-flex justify-center pt-3 pb-md-7">
             <v-btn
+              id="wRead-button"
               :href="whitepaperLink" 
               target="_blank"
               height="60px"
@@ -204,6 +205,7 @@
       <div class="d-flex flex-column ps-5"> 
         <div class="d-flex justify-center flex-wrap justify-md-start mb-16">
           <v-btn
+            id="wWork-button"
             :dark="!pageState || pageState === 'work'"
             :text="pageState === 'capital'"
             :class="(!pageState || pageState === 'work') && 'primary' || (pageState === 'capital' && 'primary--text primary-border-color')"
@@ -214,6 +216,7 @@
             <span class="text-h5 font-weight-bold">{{ $t('investWork') }}</span>
           </v-btn>
           <v-btn
+            id="wCapital-button"
             :dark="pageState === 'capital'"
             :text="!pageState || pageState === 'work'"
             :class="pageState === 'capital' && 'primary' || ((!pageState || pageState === 'work') && 'primary--text primary-border-color')"
@@ -268,6 +271,7 @@
     </div>
     <div class="d-flex justify-center  mb-16">
       <v-btn
+        id="wEarn-button"
         v-if="!pageState || pageState === 'work'"
         href="https://builders.meeds.io"
         target="_blank"
@@ -278,6 +282,7 @@
         <span class="headline font-weight-bold">{{ $t('startEarning') }}</span>
       </v-btn>
       <v-btn
+        id="wInvest-button"
         v-else
         :href="portfolioURL"
         height="60px"

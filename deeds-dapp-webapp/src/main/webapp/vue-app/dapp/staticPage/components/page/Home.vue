@@ -29,6 +29,7 @@
         <span class="headline text-sm-h4 mt-6 mt-md-4 mb-10 mb-md-14 font-weight-light text-center text-md-start grey--text">{{ $t('homePage.description') }}</span>
         <div class="d-flex justify-center justify-md-start mb-12 mb-md-0">
           <v-btn
+            id="hExplore-button"
             :href="hubsUrl"
             height="60px"
             class="primary px-8"
@@ -38,6 +39,7 @@
             <span class="headline font-weight-bold">{{ $t('explore') }}</span>
           </v-btn>
           <v-btn
+            id="hCreate-button"
             :href="tenantsURL"
             height="60px"
             class="px-8 ms-10"
@@ -160,6 +162,7 @@
       </div>
       <div class="d-flex justify-center mb-16">
         <v-btn
+          id="hTour-button"
           :href="tourURL"
           height="60px"
           class="px-8 primary"
@@ -202,6 +205,7 @@
               </div>
               <div class="d-flex justify-center">
                 <v-btn
+                  id="hContributor-button"
                   :href="hubsUrl"
                   height="60px"
                   class="px-8 my-6 primary"
@@ -239,6 +243,7 @@
               <v-spacer />
               <div class="d-flex justify-center">
                 <v-btn
+                  id="hLeader-button"
                   :href="tenantsURL"
                   height="60px"
                   class="primary px-8 mt-6 mb-15 mb-md-6"
@@ -313,6 +318,7 @@
       </v-card>
       <div class="d-flex justify-center">
         <v-btn
+          id="hWhitepaper-button"
           :href="whitepaperURL"
           height="60px"
           class="primary px-8 my-14"
