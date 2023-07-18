@@ -23,6 +23,7 @@
         v-bind="attrs"
         v-on="on">
         <v-btn
+          id="tbWallet-button"
           name="copyAddressButton"
           outlined
           text

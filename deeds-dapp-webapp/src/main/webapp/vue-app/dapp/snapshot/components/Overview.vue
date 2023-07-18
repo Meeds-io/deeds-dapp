@@ -20,6 +20,7 @@
   <div class="d-flex flex-column mt-8 mt-sm-10">
     <deeds-assets />
     <v-btn
+      id="pToken-button"
       :href="tokenomicsURL"
       class="px-8 mx-auto mb-16"
       color="primary"
