@@ -40,7 +40,7 @@
       :lg="largeScreenCols"
       :md="smallScreenCols">
       <v-card class="full-width fill-height py-2" flat>
-        <v-card-title class="justify-center headline text-light-color py-10">
+        <v-card-title class="justify-center headline py-10">
           <span v-if="!keyword">
             {{ $t('notListedYet') }}
           </span>
