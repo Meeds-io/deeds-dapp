@@ -20,8 +20,8 @@
   <v-card flat>
     <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
       <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.stake.title') }}</span>
-        <span class="display-1 hidden-sm-and-down">{{ $t('page.stake.subtitle') }}</span>
+        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.stake.title') }}</span>
+        <span class="headline hidden-sm-and-down">{{ $t('page.stake.subtitle') }}</span>
       </div>
       <v-spacer />
       <v-img 

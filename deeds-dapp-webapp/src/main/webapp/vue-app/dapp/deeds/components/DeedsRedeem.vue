@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card flat class="d-flex flex-column ms-md-2">
-    <v-card-title class="d-flex flex-nowrap pa-0 headline text-sm-h4 font-weight-bold">
+    <v-card-title class="d-flex flex-nowrap pa-0 headline font-weight-bold">
       {{ $t('deedsToRedeem') }}
       <deeds-contract-address
         :address="deedAddress"

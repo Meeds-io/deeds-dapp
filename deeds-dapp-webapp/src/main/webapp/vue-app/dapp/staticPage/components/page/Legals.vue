@@ -21,8 +21,8 @@
     <v-card class="mb-9" flat>
       <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
         <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.legals.title') }}</span>
-          <span class="display-1 hidden-sm-and-down">{{ $t('page.legals.subtitle') }}</span>
+          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.legals.title') }}</span>
+          <span class="headline hidden-sm-and-down">{{ $t('page.legals.subtitle') }}</span>
         </div>
         <v-spacer />
         <v-img 
