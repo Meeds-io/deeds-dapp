@@ -37,11 +37,17 @@
     </v-col>
     <v-col
       cols="12"
-      lg="4"
-      md="12">
+      :lg="largeScreenCols"
+      :md="smallScreenCols">
       <v-card class="full-width fill-height py-2" flat>
         <v-card-title class="justify-center headline text-light-color py-10">
-          {{ $t('notListedYet') }}
+          <span v-if="!keyword">
+            {{ $t('notListedYet') }}
+          </span>
+          <div v-else class="d-flex flex-column">
+            <span class="text-center"> {{ $t('joinWaitlist.descriptionPart1') }} </span>
+            <span class="text-center"> {{ $t('joinWaitlist.descriptionPart2') }} </span>
+          </div>
         </v-card-title>
         <v-card-actions class="py-10">
           <v-btn
@@ -105,6 +111,12 @@ export default {
       else {
         return this.hubs; 
       }
+    },
+    largeScreenCols() {
+      return !this.keyword && 4;
+    },
+    smallScreenCols() {
+      return !this.keyword && 12;
     }
   }),
 };
