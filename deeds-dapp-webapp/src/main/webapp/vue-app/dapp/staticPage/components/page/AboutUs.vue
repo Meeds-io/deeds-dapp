@@ -36,7 +36,7 @@
     </v-card>
     <div class="d-flex pt-15 ps-0 ps-sm-2">
       <div class="d-flex flex-column">
-        <span class="mb-5 headline font-weight-bold">
+        <span class="mb-5 display-1 font-weight-bold">
           {{ $t('governance.title') }}
         </span>
         <v-card
@@ -77,7 +77,7 @@
       </v-btn>
     </div>
     <div class="d-flex flex-column mb-16 ps-0 ps-sm-2">
-      <div class="px-0 headline font-weight-bold mb-12 mt-16">
+      <div class="px-0 display-1 font-weight-bold mb-12 mt-16">
         {{ $t('whatWeDo.title') }}
       </div> 
       <v-card class="d-block d-md-flex" flat>
@@ -210,7 +210,7 @@
             class="logo-m hidden-md-and-down mt-n3" />
         </div>
         <div class="position-relative">
-          <div class="pt-4 px-4 headline font-weight-bold">
+          <div class="pt-4 px-4 display-1 font-weight-bold">
             {{ $t('sustainability') }}
           </div>
           <div class="px-4 pb-2 pt-7 headline font-weight-light">
@@ -235,7 +235,7 @@
       </v-card>
     </div>
     <div class="d-flex flex-column mt-16 ps-0 ps-sm-2">
-      <div class="px-0 headline font-weight-bold">
+      <div class="px-0 display-1 font-weight-bold">
         {{ $t('foundingMembers') }}
       </div> 
       <v-container>
