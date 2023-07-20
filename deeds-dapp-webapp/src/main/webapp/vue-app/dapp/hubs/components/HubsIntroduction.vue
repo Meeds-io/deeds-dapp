@@ -35,7 +35,7 @@
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill mx-auto col-6 headline"
+      class="rounded-pill mx-auto col-12 col-sm-6 headline"
       height="60px"
       @keydown="enterEvent"  
       outlined
