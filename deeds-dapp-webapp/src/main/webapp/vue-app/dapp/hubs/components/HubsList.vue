@@ -35,6 +35,29 @@
         <deeds-hub-card :hub="hub" />
       </v-slide-x-transition>
     </v-col>
+    <v-col
+      cols="12"
+      lg="4"
+      md="12">
+      <v-card class="full-width fill-height py-2" flat>
+        <v-card-title class="justify-center headline text-light-color py-10">
+          {{ $t('notListedYet') }}
+        </v-card-title>
+        <v-card-actions class="py-10">
+          <v-btn
+            id="hJoin-button"
+            :href="formLink"
+            target="_blank"
+            class="mx-auto px-8"
+            color="primary"
+            height="60px"
+            dark
+            depressed>
+            <h4 class="font-weight-bold">{{ $t('joinWaitlist') }}</h4>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 <script>
@@ -64,6 +87,7 @@ export default {
         rewardsPerWeek: 1000
       },
     ],
+    formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
   }),
   computed: Vuex.mapState({
     language: state => state.language,
