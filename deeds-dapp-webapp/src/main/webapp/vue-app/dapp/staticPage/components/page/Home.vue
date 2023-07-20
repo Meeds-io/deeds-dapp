@@ -71,7 +71,7 @@
               eager />    
           </div>        
           <div class="d-flex flex-column">
-            <span class="headline text-sm-h4 font-weight-bold mb-6">
+            <span class="headline font-weight-bold mb-6">
               {{ $t('homepage.onboard.title') }}
             </span>
             <span class="text-h6 font-weight-light mt-6 grey--text">
@@ -110,7 +110,7 @@
               eager />
           </div>
           <div class="d-flex flex-column">
-            <span class="headline text-sm-h4 font-weight-bold mb-6">
+            <span class="headline font-weight-bold mb-6">
               {{ $t('homepage.organize.title') }}
             </span>
             <span class="text-h6 font-weight-light mt-6 grey--text">
@@ -138,7 +138,7 @@
                 eager />
             </div>
             <div class="d-flex flex-column">
-              <span class="headline text-sm-h4 font-weight-bold mb-6">
+              <span class="headline font-weight-bold mb-6">
                 {{ $t('homepage.reward.title') }}
               </span>
               <span class="text-h6 font-weight-light mt-6 grey--text">
@@ -194,7 +194,7 @@
                   alt=""
                   contain
                   eager />
-                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
+                <span class="headline d-flex align-center font-weight-bold ms-7">
                   {{ $t('contributor.title') }}
                 </span>
               </div>
@@ -231,7 +231,7 @@
                   alt=""
                   contain
                   eager />
-                <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-7">
+                <span class="headline d-flex align-center font-weight-bold ms-7">
                   {{ $t('leader.title') }}
                 </span>
               </div>
@@ -275,7 +275,7 @@
               alt=""
               contain
               eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
+            <span class="headline d-flex align-center font-weight-bold ms-md-7">{{ $t('tokens.title') }}</span>
           </div>
           <span class="mt-3 text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('tokens.description') }}
@@ -292,7 +292,7 @@
               alt=""
               contain
               eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
+            <span class="headline d-flex align-center font-weight-bold ms-md-7">{{ $t('store.title') }}</span>
           </div>
           <span class="text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('store.description') }}
@@ -309,7 +309,7 @@
               alt=""
               contain
               eager />
-            <span class="headline text-sm-h4 d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
+            <span class="headline d-flex align-center font-weight-bold ms-md-7">{{ $t('workMetaverse.title') }}</span>
           </div>
           <span class="text-h6 grey--text d-flex text-center font-weight-light">
             {{ $t('workMetaverse.description') }}

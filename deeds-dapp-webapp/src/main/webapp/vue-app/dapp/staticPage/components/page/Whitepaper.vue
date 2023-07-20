@@ -91,7 +91,7 @@
       </v-card>
     </div>
     <div class="d-flex flex-column mt-5">
-      <span class="headline font-weight-bold">
+      <span class="display-1 font-weight-bold">
         {{ $t('enterTheWorkMetaverse.title') }}
       </span> 
       <v-card
