@@ -21,8 +21,8 @@
     <v-card class="mb-3" flat>
       <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
         <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.whitepaper.title') }}</span>
-          <span class="display-1 hidden-sm-and-down">{{ $t('page.whitepaper.subtitle') }}</span>
+          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.whitepaper.title') }}</span>
+          <span class="headline hidden-sm-and-down">{{ $t('page.whitepaper.subtitle') }}</span>
         </div>
         <v-spacer />
         <v-img 
@@ -91,7 +91,7 @@
       </v-card>
     </div>
     <div class="d-flex flex-column mt-5">
-      <span class="headline text-sm-h4 font-weight-bold">
+      <span class="display-1 font-weight-bold">
         {{ $t('enterTheWorkMetaverse.title') }}
       </span> 
       <v-card
@@ -115,7 +115,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('meed') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('meed') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -146,7 +146,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('deed') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('deed') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -175,7 +175,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('xeed') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('xeed') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -199,8 +199,8 @@
           flat />
       </div>
     </div>
-    <div class="ps-0 py-3 font-weight-light headline text-sm-h4">{{ $t('invest.descriptionPart1') }}</div>
-    <div class="ps-0 py-3 font-weight-light headline text-sm-h4">{{ $t('invest.descriptionPart2') }}</div>
+    <div class="ps-0 py-3 font-weight-light headline">{{ $t('invest.descriptionPart1') }}</div>
+    <div class="ps-0 py-3 font-weight-light headline">{{ $t('invest.descriptionPart2') }}</div>
     <div class="d-flex flex-column flex-md-row py-16">
       <div class="d-flex flex-column ps-5"> 
         <div class="d-flex justify-center flex-wrap justify-md-start mb-16">

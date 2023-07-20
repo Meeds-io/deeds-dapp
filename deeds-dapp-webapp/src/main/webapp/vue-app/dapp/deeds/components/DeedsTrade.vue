@@ -18,7 +18,7 @@
 -->
 <template>
   <v-card class="ms-md-2" flat>
-    <v-card-title class="pa-0 headline text-sm-h4 font-weight-bold">
+    <v-card-title class="pa-0 headline font-weight-bold">
       {{ $t('tradeDeeds') }}
     </v-card-title>
     <v-card-text class="ps-0 text-h6 font-weight-normal" v-html="$t('tradeDeedsIntroduction', {0: `<a href='${openSeaLink}' target='${openSeaTarget}' class='primary--text embedded-link-text font-weight-bold  v-btn v-btn--text letter-spacing-normal' rel='nofollow noreferrer noopener'>OpenSea</a>`})" />
