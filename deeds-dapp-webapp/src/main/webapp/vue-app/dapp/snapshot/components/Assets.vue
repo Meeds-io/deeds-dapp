@@ -38,6 +38,7 @@
       </span>
       <v-spacer />
       <v-btn
+        id="pBuy-button"
         href=""
         class="px-8"
         color="secondary"

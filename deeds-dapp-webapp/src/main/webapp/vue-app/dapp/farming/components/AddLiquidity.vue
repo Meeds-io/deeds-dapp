@@ -41,6 +41,7 @@
       class="elevation-0 mt-4"
       background-color="transparent">
       <v-btn
+        id="fSushi-button"
         :href="addSushiswapLiquidityLink"
         name="addSushiswapLiquidityLink"
         target="_blank"
@@ -56,6 +57,7 @@
           class="my-3 addLiquidityIcon">
       </v-btn>
       <v-btn
+        id="fUniswap-button"
         v-if="addUniswapLiquidityLink"
         :href="addUniswapLiquidityLink"
         name="addUniswapLiquidityLink"
@@ -70,6 +72,7 @@
         <div class="my-3 headline">🦄</div>
       </v-btn>
       <v-btn
+        id="fCometh-button"
         v-if="addComethLiquidityLink"
         :href="addComethLiquidityLink"
         name="addComethLiquidityLink"

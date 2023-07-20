@@ -25,7 +25,10 @@
     elevate-on-scroll>
     <v-spacer />
     <div v-if="staticPage" class="d-flex headerLayout px-0 px-sm-7 mx-1">
-      <a :href="homeUrl" class="d-flex align-center no-decoration">
+      <a 
+        id="tbHome-button"
+        :href="homeUrl" 
+        class="d-flex align-center">
         <img
           :src="`${parentLocation}/static/images/meeds.png`"
           height="37px"
@@ -35,6 +38,7 @@
       <v-spacer />
       <div>
         <v-btn
+          id="tbHubs-button"
           :href="hubsUrl"
           class="px-5 font-weight-black"
           height="44px"
@@ -61,6 +65,7 @@
       </div>
       <div class="ms-4">
         <v-btn
+          id="tbBuy-button"
           class="hidden-xs-only"
           elevation="0"
           color="secondary"

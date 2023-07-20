@@ -18,6 +18,7 @@
 -->
 <template>
   <v-btn
+    id="tbInstallMetamask-button"
     v-if="!isMetamaskInstalled"
     :href="metamaskInstallLinlk"
     name="topbarInstallMetamaskLink"
@@ -36,6 +37,7 @@
     <span v-if="!isMobile" class="font-size-normal text-none">{{ $t('installMetamaskButton') }}</span>
   </v-btn>
   <v-btn
+    id="tbSwitchNetwork-button"
     v-else-if="!validNetwork"
     name="topbarSwitchMetamaskNetworkButton"
     color="secondary"
@@ -51,6 +53,7 @@
     <span v-if="!isMobile" class="text-none font-size-normal">{{ $t('switchMetamaskNetworkButton') }}</span>
   </v-btn>
   <v-btn
+    id="tbConnectWallet-button"
     v-else-if="!hasMetamaskConnectedAddress"
     name="topbarConnectMetamaskButton"
     color="primary"

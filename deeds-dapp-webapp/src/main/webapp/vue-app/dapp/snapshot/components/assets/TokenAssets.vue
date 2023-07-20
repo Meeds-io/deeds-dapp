@@ -30,6 +30,7 @@
       </span>
       <v-spacer />
       <v-btn
+        id="pStake-button"
         :href="stakeURL"
         class="px-6"
         color="primary"
