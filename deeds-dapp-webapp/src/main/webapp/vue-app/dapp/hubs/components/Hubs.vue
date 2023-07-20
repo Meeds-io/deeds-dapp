@@ -18,7 +18,7 @@
 -->
 <template>
   <div>
-    <deeds-hubs-toolbar
+    <deeds-hubs-introduction
       @keyword-changed="keyword = $event" />
     <deeds-hubs-list 
       :keyword="keyword" />
