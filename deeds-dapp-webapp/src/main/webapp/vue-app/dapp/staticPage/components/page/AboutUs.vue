@@ -21,8 +21,8 @@
     <v-card flat>
       <v-card-title class="py-0 px-0 px-sm-4 justify-center flew-nowrap ps-4 ps-sm-2">
         <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.aboutUs.title') }}</span>
-          <span class="display-1 hidden-sm-and-down">{{ $t('page.aboutUs.subtitle') }}</span>
+          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.aboutUs.title') }}</span>
+          <span class="headline hidden-sm-and-down">{{ $t('page.aboutUs.subtitle') }}</span>
         </div>
         <v-spacer />
         <v-img 
@@ -36,7 +36,7 @@
     </v-card>
     <div class="d-flex pt-15 ps-0 ps-sm-2">
       <div class="d-flex flex-column">
-        <span class="mb-5 headline text-sm-h4 font-weight-bold">
+        <span class="mb-5 headline font-weight-bold">
           {{ $t('governance.title') }}
         </span>
         <v-card
@@ -77,7 +77,7 @@
       </v-btn>
     </div>
     <div class="d-flex flex-column mb-16 ps-0 ps-sm-2">
-      <div class="px-0 headline text-sm-h4 font-weight-bold mb-12 mt-16">
+      <div class="px-0 headline font-weight-bold mb-12 mt-16">
         {{ $t('whatWeDo.title') }}
       </div> 
       <v-card class="d-block d-md-flex" flat>
@@ -94,7 +94,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('whatWeDo.meedToken') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('whatWeDo.meedToken') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -131,7 +131,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('meedSoftware') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('meedSoftware') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -168,7 +168,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span class="pb-4 headline text-sm-h4 font-weight-bold">{{ $t('deedsServices') }}</span>
+                <span class="pb-4 headline font-weight-bold">{{ $t('deedsServices') }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -210,10 +210,10 @@
             class="logo-m hidden-md-and-down mt-n3" />
         </div>
         <div class="position-relative">
-          <div class="pt-4 px-4 headline text-sm-h4 font-weight-bold">
+          <div class="pt-4 px-4 headline font-weight-bold">
             {{ $t('sustainability') }}
           </div>
-          <div class="px-4 pb-2 pt-7 headline text-sm-h4 font-weight-light">
+          <div class="px-4 pb-2 pt-7 headline font-weight-light">
             {{ $t('duringTheMintingPeriod') }}
           </div>
           <div :class="textColor" class="text-h6 font-weight-light pa-4">
@@ -222,7 +222,7 @@
           <div :class="textColor" class="text-h6 font-weight-light pa-4">
             {{ $t('duringTheMintingPeriod.descriptionPart2') }}
           </div>
-          <div class="px-4 pb-2 pt-3 headline text-sm-h4 font-weight-light">
+          <div class="px-4 pb-2 pt-3 headline font-weight-light">
             {{ $t('afterTheMintingPeriod') }}
           </div>
           <div :class="textColor" class="text-h6 font-weight-light pa-4">
@@ -235,7 +235,7 @@
       </v-card>
     </div>
     <div class="d-flex flex-column mt-16 ps-0 ps-sm-2">
-      <div class="px-0 headline text-sm-h4 font-weight-bold">
+      <div class="px-0 headline font-weight-bold">
         {{ $t('foundingMembers') }}
       </div> 
       <v-container>

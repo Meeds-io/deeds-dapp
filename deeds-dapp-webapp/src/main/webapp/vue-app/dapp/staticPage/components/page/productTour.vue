@@ -21,8 +21,8 @@
     <v-card flat>
       <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
         <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.productTour.title') }}</span>
-          <span class="display-1 hidden-sm-and-down">{{ $t('page.productTour.subtitle') }}</span>
+          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.productTour.title') }}</span>
+          <span class="headline hidden-sm-and-down">{{ $t('page.productTour.subtitle') }}</span>
         </div>
         <v-spacer />
         <v-img 
@@ -35,7 +35,7 @@
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column pt-4 pb-16 my-16">
-      <div :class="textColor" class="ps-0 headline text-sm-h4 align-center font-weight-light">{{ $t('productTour.description') }}</div>
+      <div :class="textColor" class="ps-0 headline align-center font-weight-light">{{ $t('productTour.description') }}</div>
       <video
         class="mt-11 mt-md-13 ms-0 ms-sm-auto me-0 me-sm-auto"
         height="360px"
@@ -72,7 +72,7 @@
     <div class="mt-16">
       <div class="d-flex flex-column flex-md-row pb-16 my-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline text-sm-h4 font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
+          <span class="headline font-weight-bold">{{ $t('contributionPrograms.title') }}</span>
           <span :class="textColor" class="mt-10 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('contributionPrograms.description') }}</span>
           <div class="position-absolute">
             <v-img
@@ -105,7 +105,7 @@
           <source :src="`${rewardsVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline text-sm-h4 font-weight-bold">{{ $t('rewards.title') }}</span>
+          <span class="headline font-weight-bold">{{ $t('rewards.title') }}</span>
           <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('rewards.description') }}</span>
           <div class="position-absolute">
             <v-img
@@ -120,7 +120,7 @@
       </div>
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline text-sm-h4 font-weight-bold">{{ $t('overview.title') }}</span>
+          <span class="headline font-weight-bold">{{ $t('overview.title') }}</span>
           <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('overview.description') }}</span>
           <div class="position-absolute">
             <v-img
@@ -153,7 +153,7 @@
           <source :src="`${perksVideoLink}`" type="video/mp4">
         </video>
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline text-sm-h4 font-weight-bold">{{ $t('perks.title') }}</span>
+          <span class="headline font-weight-bold">{{ $t('perks.title') }}</span>
           <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('perks.description') }}</span>
           <div class="position-absolute">
             <v-img
@@ -168,7 +168,7 @@
       </div>
       <div class="d-flex flex-column flex-md-row py-16 mb-16">
         <div class="d-flex flex-column my-auto mx-0 mx-md-14">
-          <span class="headline text-sm-h4 font-weight-bold">{{ $t('teamwork.title') }}</span>
+          <span class="headline font-weight-bold">{{ $t('teamwork.title') }}</span>
           <span :class="textColor" class="text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('teamwork.description') }}</span>
           <div class="position-absolute">
             <v-img
@@ -197,7 +197,7 @@
         width="140px"
         color="primary no-border-radius"
         flat />
-      <span class="text-sm-h3 display-1 d-flex justify-center font-weight-bold mt-4 mb-7">{{ $t('andMore') }}</span>
+      <span class="display-1 d-flex justify-center font-weight-bold mt-4 mb-7">{{ $t('andMore') }}</span>
       <v-container class="mb-10">
         <v-row no-gutters>
           <v-col
@@ -216,7 +216,7 @@
                     fas fa-award
                   </v-icon>
                 </div>
-                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
+                <span class="headline font-weight-bold d-flex align-center ms-5">
                   {{ $t('kudos') }}
                 </span>
               </div>
@@ -236,7 +236,7 @@
                 <div>
                   <v-icon size="75" color="primary">fas fa-graduation-cap</v-icon>
                 </div>
-                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
+                <span class="headline font-weight-bold d-flex align-center ms-5">
                   {{ $t('badges') }}
                 </span>
               </div>
@@ -261,7 +261,7 @@
                     fas fa-wallet
                   </v-icon>
                 </div>
-                <span class="headline text-sm-h4 font-weight-bold d-flex align-center ms-5">
+                <span class="headline font-weight-bold d-flex align-center ms-5">
                   {{ $t('wallet') }}
                 </span>
               </div>

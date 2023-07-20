@@ -20,8 +20,8 @@
   <v-card class="d-flex flex-column" flat>
     <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
       <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.owners.title') }}</span>
-        <span class="display-1 hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
+        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.owners.title') }}</span>
+        <span class="headline hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
       </div>
       <v-spacer class="hidden-sm-and-down" />
       <v-img 
@@ -53,7 +53,7 @@
       <div v-if="!collapsed || !hasTenants">
         <div class="d-flex flex-column flex-md-row pb-6 my-16">
           <div class="d-flex flex-column me-7 ps-4 ps-sm-2">
-            <span class="headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
+            <span class="headline font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>
             <div class="mb-7">
               <v-btn
@@ -101,7 +101,7 @@
             <source :src="`${rentDeedVideoLink}`" type="video/mp4">
           </video>
           <div class="d-flex flex-column mx-0 mx-md-14">
-            <span class="headline text-sm-h4 font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
+            <span class="headline font-weight-bold">{{ $t('dapp.owners.useOrRentDeed.title') }}</span>
             <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart1') }}</span>
             <span class="dark-grey--text text-h6 font-weight-light mt-10 mb-5 mb-md-0">{{ $t('dapp.owners.useOrRentDeed.descriptionPart2') }}</span>
             <div class="mb-7">

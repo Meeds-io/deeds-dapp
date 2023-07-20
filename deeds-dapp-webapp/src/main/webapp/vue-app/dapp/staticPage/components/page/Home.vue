@@ -175,7 +175,7 @@
     </v-card>
     <div class="pt-16 mt-0 mt-md-6">
       <span
-        class="d-flex justify-center text-center font-weight-bold mb-11 text-sm-h3 display-1">
+        class="d-flex justify-center text-center font-weight-bold mb-11 display-1">
         {{ $t('whatInMeedForYou.title') }}
       </span>
       <v-container>
@@ -260,7 +260,7 @@
     </div>
     <div class="pt-16 mt-16">
       <span
-        class="d-flex justify-center text-center font-weight-bold text-sm-h3 display-1">
+        class="d-flex justify-center text-center font-weight-bold display-1">
         {{ $t('poweredByWeb3.title') }}
       </span>
       <v-card class="my-8 mx-4 d-block d-md-flex" flat>
