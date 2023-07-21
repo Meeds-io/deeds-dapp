@@ -67,6 +67,10 @@ export default {
     extraClass: {
       type: String,
       default: null,
+    },
+    smallSizedText: {
+      type: Boolean,
+      default: false,
     }
   },
   computed: Vuex.mapState({
@@ -82,7 +86,7 @@ export default {
       return this.extraClass ? 'primary' : 'grey';
     },
     textStyle() {
-      return this.extraClass && 'headline font-weight-bold';
+      return this.smallSizedText ? 'subtitle-1 font-weight-bold' : (this.extraClass && 'headline font-weight-bold');
     }
   }),
 };

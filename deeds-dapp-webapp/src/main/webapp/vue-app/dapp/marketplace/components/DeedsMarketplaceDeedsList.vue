@@ -40,10 +40,12 @@
       <v-col
         v-for="(offer, index) in offers"
         :key="`${offer.id}-${offer.updatedDate}-${index}`"
-        class="d-flex justify-center">
+        class="d-flex justify-center"
+        cols="12"
+        lg="4"
+        md="12">
         <v-card
-          width="357"
-          max-width="100%"
+          width="100%"
           flat>
           <deeds-marketplace-offer-card
             :offer="offer"
