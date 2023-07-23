@@ -42,6 +42,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.meeds.deeds.web.utils.Utils;
 
@@ -111,6 +113,8 @@ public class RequestDispatcherFilter extends HttpFilter {
 
   protected static final Map<String, String> PAGE_METADATAS                 = new HashMap<>();
 
+  private static final Logger                LOG                            = LoggerFactory.getLogger(RequestDispatcherFilter.class);
+
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException { // NOSONAR
     HttpServletRequest request = (HttpServletRequest) req;
@@ -179,7 +183,18 @@ public class RequestDispatcherFilter extends HttpFilter {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
-        chain.doFilter(request, response);
+        try {
+          chain.doFilter(request, response);
+        } catch (Exception e) {
+          if (LOG.isDebugEnabled()) {
+            LOG.warn("Error while requesting resource", e);
+          } else {
+            LOG.warn(e.getMessage());
+          }
+          if (!response.isCommitted()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+          }
+        }
       }
     }
   }
