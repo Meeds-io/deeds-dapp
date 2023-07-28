@@ -121,7 +121,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
     if (StringUtils.contains(servletPath, "api")) { // REST API
-      chain.doFilter(request, response);
+      doFilter(chain, request, response);
     } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
                                                                                                                     // URI
       response.setHeader("Location", servletPath.substring(servletPath.indexOf("/static/")));
@@ -183,18 +183,22 @@ public class RequestDispatcherFilter extends HttpFilter {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/dapp.jsp");
         dispatcher.include(request, response);// NOSONAR
       } else {
-        try {
-          chain.doFilter(request, response);
-        } catch (Exception e) {
-          if (LOG.isDebugEnabled()) {
-            LOG.warn("Error while requesting resource", e);
-          } else {
-            LOG.warn(e.getMessage());
-          }
-          if (!response.isCommitted()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-          }
-        }
+        doFilter(chain, request, response);
+      }
+    }
+  }
+
+  private void doFilter(FilterChain chain, HttpServletRequest request, HttpServletResponse response) {
+    try {
+      chain.doFilter(request, response);
+    } catch (Exception e) {
+      if (LOG.isDebugEnabled()) {
+        LOG.warn("Error while requesting resource", e);
+      } else {
+        LOG.warn(e.getMessage());
+      }
+      if (!response.isCommitted()) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       }
     }
   }
