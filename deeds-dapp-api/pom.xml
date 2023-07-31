@@ -23,32 +23,27 @@
     <artifactId>deeds-dapp-parent</artifactId>
     <version>1.1.x-whitepaper-SNAPSHOT</version>
   </parent>
-  <artifactId>deeds-dapp-common</artifactId>
-  <name>Meeds:: Deeds Dapp - Common </name>
+  <artifactId>deeds-dapp-api</artifactId>
+  <name>Meeds:: Deeds Dapp - API </name>
   <properties>
-    <exo.test.coverage.ratio>0.65</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>deeds-dapp-contract</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>deeds-dapp-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-elasticsearch</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
+      <artifactId>spring-boot-starter-json</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava2</groupId>
+      <artifactId>rxjava</artifactId>
     </dependency>
 
     <!-- Provided artifacts in Server Shared library, used for compilation only -->
@@ -67,21 +62,11 @@
       <artifactId>commons-io</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- Used for compilation only -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <!-- Test artifacts -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-inline</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
   <build>
