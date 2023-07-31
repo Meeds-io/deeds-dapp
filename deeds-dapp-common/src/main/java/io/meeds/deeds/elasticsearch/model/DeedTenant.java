@@ -27,6 +27,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
