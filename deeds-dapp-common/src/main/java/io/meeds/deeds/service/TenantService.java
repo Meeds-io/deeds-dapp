@@ -121,9 +121,9 @@ public class TenantService {
     listenerService.publishEvent(DEED_EVENT_TENANT_EMAIL_UPDATED, deedTenant);
   }
 
-  public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId, // NOSONAR
-                                          boolean refreshFromBlockchain) throws ObjectNotFoundException, // NOSONAR
-                                                                         UnauthorizedOperationException {
+  public DeedTenant getDeedTenantOrImport(String managerAddress, // NOSONAR
+                                          Long nftId,
+                                          boolean refreshFromBlockchain) throws ObjectNotFoundException, UnauthorizedOperationException {
     DeedTenant deedTenant = getDeedTenantOrImport(managerAddress, nftId);
     if (refreshFromBlockchain && deedTenant != null) {
       boolean isPending = deedTenant.getTenantProvisioningStatus() != null
@@ -193,6 +193,15 @@ public class TenantService {
     }
     if (!canAccessProvisioningInformation(managerAddress, deedTenant)) {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
+    }
+    return deedTenant;
+  }
+
+  public DeedTenant getDeedTenantOrImport(Long nftId) throws ObjectNotFoundException {
+    DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
+    if (deedTenant == null) {
+      deedTenant = buildDeedTenantFromBlockchain(nftId);
+      deedTenant = saveDeedTenant(deedTenant);
     }
     return deedTenant;
   }
