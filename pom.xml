@@ -31,6 +31,7 @@
   <name>Meeds:: Deeds Dapp</name>
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
   <modules>
+    <module>deeds-dapp-api</module>
     <module>deeds-dapp-contract</module>
     <module>deeds-dapp-common</module>
     <module>deeds-dapp-service</module>
@@ -65,6 +66,11 @@
       </dependency>
 
       <!-- Current project artifacts -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>deeds-dapp-contract</artifactId>
