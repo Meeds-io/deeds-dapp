@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -192,7 +191,7 @@ public class BlockchainService {
                     .filter(TransactionReceipt::isStatusOK)
                     .map(this::getMinedDeedTenant)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .toList();
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs", e);
     }
@@ -230,7 +229,7 @@ public class BlockchainService {
                                                                                            : Stream.of(offerEvents, leaseEvents);
                     })
                     .filter(MapUtils::isNotEmpty)
-                    .collect(Collectors.toList());
+                    .toList();
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs of mined transactions", e);
     }
@@ -264,7 +263,7 @@ public class BlockchainService {
                                                        .filter(TransactionReceipt::isStatusOK)
                                                        .flatMap(this::getTransferOwnershipEvents)
                                                        .filter(Objects::nonNull)
-                                                       .collect(Collectors.toList());
+                                                       .toList();
       return new LinkedHashSet<>(events);
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs", e);
