@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,37 +15,39 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.web.rest.model;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package io.meeds.deeds.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(value = Include.NON_EMPTY)
-public class DeedTenantHub {
+@NoArgsConstructor
+public class HubConnectionRequest {
 
-  @JsonProperty("nftId")
-  @EqualsAndHashCode.Exclude
-  private long  nftId;
+  private long   deedId = -1;
 
-  @JsonProperty("city")
-  @EqualsAndHashCode.Exclude
-  private short city;
+  private String deedManagerAddress;
 
-  @JsonProperty("type")
-  @EqualsAndHashCode.Exclude
-  private short type;
+  private String hubAddress;
 
-  @JsonProperty("managerAddress")
-  @EqualsAndHashCode.Exclude
-  private String managerAddress;
+  private String hubName;
+
+  private String hubDescription;
+
+  private String hubUrl;
+
+  private String hubLogoUrl;
+
+  private String color;
+
+  private String earnerAddress;
+
+  private String signedMessage;
+
+  private String rawMessage;
+
+  private String token;
 
 }
