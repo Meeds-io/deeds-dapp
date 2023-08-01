@@ -43,13 +43,13 @@ public class WebSecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, DeedAuthenticationProvider authProvider) throws Exception {
     http
-        .authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/static/**", "/api/deeds/**").permitAll())
+        .authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/static/**", "/api/deeds/**", "/api/hubs/**").permitAll())
         .authenticationProvider(authProvider)
         .csrf(csrf -> {
           csrfTokenRepository.setCookiePath("/");
           csrfTokenRepository.setCookieHttpOnly(false);
           csrf.csrfTokenRepository(csrfTokenRepository);
-          csrf.ignoringAntMatchers("/static/**", "/api/deeds/**");
+          csrf.ignoringAntMatchers("/static/**", "/api/deeds/**", "/api/hubs/**");
         })
         .headers(headers -> {
           headers.frameOptions().disable();
