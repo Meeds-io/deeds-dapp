@@ -136,6 +136,8 @@
           <div>
             <v-btn
               id="hClaim-button"
+              :href="formLinkWithCommunityName"
+              target="_blank"
               class="px-6"
               color="primary"
               outlined>
@@ -162,6 +164,7 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     parentLocation: state => state.parentLocation,
+    formLink: state => state.formLink,
     hubName() {
       return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
     },
@@ -198,6 +201,9 @@ export default {
     hubGithubUrl() {
       return this.hub?.githubUrl;
     },
+    formLinkWithCommunityName() {
+      return this.formLink.concat('#communityName=', this.hubName);
+    }
   }),
 };
 </script>

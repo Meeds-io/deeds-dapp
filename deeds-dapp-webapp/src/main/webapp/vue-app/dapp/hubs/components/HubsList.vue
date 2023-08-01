@@ -224,10 +224,10 @@ export default {
         twitterURL: 'https://twitter.com/techfleetworks',
       },
     ],
-    formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
   }),
   computed: Vuex.mapState({
     language: state => state.language,
+    formLink: state => state.formLink,
     hubsCount() {
       return this.filteredHubs.length + this.filteredUpcomingHubs.length;
     },
