@@ -15,8 +15,11 @@
  */
 package io.meeds.dapp.model;
 
+import java.time.Instant;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -34,6 +37,21 @@ import lombok.Setter;
 @Document(indexName = "deed_tenant_hub", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class DeedTenantHub {
+
+  @Getter
+  @Setter
+  @Field(type = FieldType.Long)
+  private long    nftId;
+
+  @Getter
+  @Setter
+  @Field(type = FieldType.Short)
+  private short   city;
+
+  @Getter
+  @Setter
+  @Field(type = FieldType.Short)
+  private short   type;
 
   @Id
   @Getter
@@ -75,13 +93,13 @@ public class DeedTenantHub {
 
   @Getter
   @Setter
-  @Field(type = FieldType.Long)
-  private long    nftId;
-
-  @Getter
-  @Setter
   @Field(type = FieldType.Boolean)
   private boolean enabled;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  @Getter
+  @Setter
+  private Instant createdDate = Instant.now();
 
   public void setHubAddress(String hubAddress) {
     this.hubAddress = StringUtils.lowerCase(hubAddress);

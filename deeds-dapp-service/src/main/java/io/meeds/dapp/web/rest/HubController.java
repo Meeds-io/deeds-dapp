@@ -16,6 +16,11 @@
 package io.meeds.dapp.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +29,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.dapp.model.DeedTenantNft;
 import io.meeds.dapp.model.HubConnectionRequest;
+import io.meeds.dapp.model.HubPresentation;
 import io.meeds.dapp.service.HubService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.WoMConnectionRequestException;
 
 @RestController
@@ -39,19 +42,22 @@ public class HubController {
   @Autowired
   private HubService hubService;
 
+  @GetMapping
+  public PagedModel<EntityModel<HubPresentation>> getHubs(Pageable pageable,
+                                                                    PagedResourcesAssembler<HubPresentation> assembler) {
+    Page<HubPresentation> hubs = hubService.getHubs(pageable);
+    return assembler.toModel(hubs);
+  }
+
   @GetMapping("/{nftId}")
-  public ResponseEntity<DeedTenantNft> getDeedTenantHub(
-                                                        @PathVariable(name = "nftId")
-                                                        Long nftId) {
-    try {
-      DeedTenantNft deedTenantHub = hubService.getDeedTenant(nftId);
-      if (deedTenantHub == null) {
-        return ResponseEntity.notFound().build();
-      }
-      return ResponseEntity.ok(deedTenantHub);
-    } catch (ObjectNotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+  public ResponseEntity<HubPresentation> getHub(
+                                                          @PathVariable(name = "nftId")
+                                                          Long nftId) {
+    HubPresentation hub = hubService.getHub(nftId);
+    if (hub == null) {
+      return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.ok(hub);
   }
 
   @GetMapping("/{nftId}/{address}/manager")
