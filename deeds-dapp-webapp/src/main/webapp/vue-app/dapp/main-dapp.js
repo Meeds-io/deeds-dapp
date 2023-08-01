@@ -493,6 +493,7 @@ const store = new Vuex.Store({
     farmURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
     hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
+    formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
   },
   mutations: {
     echartsLoaded(state) {
