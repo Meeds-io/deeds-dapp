@@ -25,6 +25,7 @@ import * as authentication from './js/authentication.js';
 import * as authorizationCodeService from './js/authorizationCodeService.js';
 import * as userProfileService from './js/userProfileService.js';
 import * as tenantManagement from './js/tenantManagement.js';
+import * as hubService from './js/HubService.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
@@ -78,6 +79,10 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 
 window.Object.defineProperty(Vue.prototype, '$trialService', {
   value: trialService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$hubService', {
+  value: hubService,
 });
 
 Vue.use(Vuex);

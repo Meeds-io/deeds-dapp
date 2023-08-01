@@ -25,4 +25,6 @@ public interface HubRepository extends ElasticsearchRepository<DeedTenantHub, St
 
   Optional<DeedTenantHub> findByNftIdAndHubAddressNotAndEnabledIsTrue(long nftId, String hubAddress);
 
+  Optional<DeedTenantHub> findByNftIdAndEnabledIsTrue(long nftId);
+
 }
