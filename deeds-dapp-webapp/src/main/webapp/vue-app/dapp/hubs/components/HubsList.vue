@@ -20,14 +20,14 @@
   <v-row class="my-15">
     <v-col cols="12">
       <div class="d-flex flex-row flex-grow-1">
-        <div v-if="keyword" class="headline font-weight-bold ps-0 py-0">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
-        <div v-else class="headline font-weight-bold ps-0 py-0">{{ $t('hubs.title.featuredHubs') }}</div>
+        <div v-if="keyword" class="headline font-weight-bold pb-1">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
+        <div v-else class="headline font-weight-bold pb-1">{{ $t('hubs.title.featuredHubs') }}</div>
       </div>
     </v-col>
     <v-col
       v-for="(hub, index) in filteredHubs"
       :key="`${hub.id}-${index}`"
-      class="d-flex justify-center"
+      class="d-flex justify-center pb-12"
       cols="12"
       lg="4"
       md="12">
@@ -35,10 +35,25 @@
         <deeds-hub-card :hub="hub" />
       </v-slide-x-transition>
     </v-col>
+    <v-col cols="12">
+      <div class="d-flex flex-row flex-grow-1">
+        <div class="headline font-weight-bold pt-10 pb-1">{{ $t('hubs.title.upcomingHubs') }}</div>
+      </div>
+    </v-col>
     <v-col
+      v-for="(hub, index) in filteredUpcomingHubs"
+      :key="`${hub.id}-${index}`"
+      class="d-flex justify-center"
       cols="12"
-      :lg="largeScreenCols"
-      :md="smallScreenCols">
+      lg="4"
+      md="12">
+      <v-slide-x-transition>
+        <deeds-hub-card 
+          :hub="hub"
+          upcoming-hub />
+      </v-slide-x-transition>
+    </v-col>
+    <v-col cols="12">
       <v-card class="full-width fill-height py-2" flat>
         <v-card-title class="justify-center headline py-10">
           <span v-if="!keyword">
@@ -90,7 +105,7 @@ export default {
         backgroundColor: '#3F8487',
         usersCount: 248,
         hubUrl: 'https://builders.meeds.io',
-        rewardsPerWeek: 1000
+        rewardsPerWeek: 1000,
       },
       {
         id: 2,
@@ -106,7 +121,107 @@ export default {
         backgroundColor: '#6083B6',
         usersCount: 10000,
         hubUrl: 'https://community.exoplatform.com',
-        rewardsPerWeek: 2000
+        rewardsPerWeek: 2000,
+      },
+    ],
+    upcomingHubs: [
+      {
+        id: 1,
+        name: {
+          fr: 'Cabin',
+          en: 'Cabin'
+        },
+        description: {
+          fr: 'Cabin est une cité réseau qui met les gens en contact avec des expériences de coliving et des résidences de travail/séjour',
+          en: 'Cabin is a network city that connects people to coliving experiences and work/stay residencies'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/cabin_lqm3hf.webp',
+        backgroundColor: '#FEE9CB',
+        websiteUrl: 'https://cabin.city/',
+        twitterURL: 'https://twitter.com/creatorcabins',
+        discordUrl: 'https://discord.com/invite/TUaF464d9e',
+        githubUrl: 'https://github.com/CabinDAO',
+      },
+      {
+        id: 2,
+        name: {
+          fr: 'Radicle',
+          en: 'Radicle'
+        },
+        description: {
+          fr: 'Radicle est un réseau souverain peer-to-peer pour la collaboration de code, construit au-dessus de Git',
+          en: 'Radicle is a sovereign peer-to-peer network for code collaboration, built on top of Git'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/radicle_r3eoew.webp',
+        backgroundColor: '#5555FF',
+        websiteUrl: 'https://radicle.xyz',
+        discordUrl: 'https://discord.com/invite/HRdnwAwGbG',
+        githubUrl: 'https://github.com/radicle-dev',
+      },
+      {
+        id: 3,
+        name: {
+          fr: 'Hopr',
+          en: 'Hopr'
+        },
+        description: {
+          fr: 'Nous construisons un internet privé pour tout le monde',
+          en: 'We\'re building a private internet for everyone'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/hopr_czrkki.webp',
+        backgroundColor: '#FFFFFF',
+        websiteUrl: 'https://hoprnet.org/',
+        twitterURL: 'https://twitter.com/hoprnet',
+        discordUrl: 'https://discord.gg/dEAWC4G',
+      },
+      {
+        id: 4,
+        name: {
+          fr: 'Développeur DAO',
+          en: 'Developer DAO'
+        },
+        description: {
+          fr: 'Développeur DAO est une communauté de milliers de web3 builders qui créent un meilleur internet',
+          en: 'Developer DAO is a community of thousands of web3 builders creating a better internet'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/D_D_logo-dark_yzzsxi.webp',
+        backgroundColor: '#000000',
+        websiteUrl: 'https://www.developerdao.com/',
+        twitterURL: 'https://twitter.com/developer_dao/',
+        discordUrl: 'http://discord.gg/devdao',
+        githubUrl: 'https://github.com/Developer-DAO',
+      },
+      {
+        id: 5,
+        name: {
+          fr: 'Fondation ResearchHub',
+          en: 'ResearchHub Foundation'
+        },
+        description: {
+          fr: 'Une communauté mondiale décentralisée qui vise à harmoniser les incitations dans le monde universitaire',
+          en: 'A global decentralized community that aims to align incentives in academia'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/ResearchHub_ksnxlu.webp',
+        backgroundColor: '#64409E',
+        websiteUrl: 'https://www.researchhub.foundation',
+        twitterURL: 'https://twitter.com/ResearchHubF',
+        discordUrl: 'https://discord.com/invite/YdNtQfQmEg',
+        githubUrl: 'https://github.com/ResearchHub',
+      },
+      {
+        id: 6,
+        name: {
+          fr: 'Communauté Tech Fleet DAO',
+          en: 'Tech Fleet Community DAO'
+        },
+        description: {
+          fr: 'Développement professionnel et renforcement des compétences dans des rôles techniques tels que l\'UX, la gestion de produits et le développement',
+          en: 'Professional development and upskilling in tech roles like UX, product management, and dev'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/tech_fleet_c3smje.webp',
+        backgroundColor: '#01061E',
+        websiteUrl: 'https://techfleet.org/',
+        twitterURL: 'https://twitter.com/techfleetworks',
       },
     ],
     formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
@@ -114,7 +229,7 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     hubsCount() {
-      return this.filteredHubs.length;
+      return this.filteredHubs.length + this.filteredUpcomingHubs.length;
     },
     filteredHubs() {
       if (this.keyword) {
@@ -128,12 +243,18 @@ export default {
         return this.hubs; 
       }
     },
-    largeScreenCols() {
-      return !this.keyword && 4;
+    filteredUpcomingHubs() {
+      if (this.keyword) {
+        if (this.language === 'fr') {
+          return this.upcomingHubs.filter(hub => hub.name.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+        } else {
+          return this.upcomingHubs.filter(hub => hub.name.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+        }
+      } 
+      else {
+        return this.upcomingHubs; 
+      }
     },
-    smallScreenCols() {
-      return !this.keyword && 12;
-    }
   }),
 };
 </script>
