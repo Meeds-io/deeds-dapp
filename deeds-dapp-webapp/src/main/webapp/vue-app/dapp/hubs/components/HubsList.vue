@@ -90,6 +90,8 @@ export default {
     },
   },
   data: () => ({
+    loading: false,
+    limit: 10,
     hubs: [
       {
         address: '0xfefefefefefefefefefef1',
@@ -286,5 +288,22 @@ export default {
       }
     },
   }),
+  created() {
+    this.retrieveHubs();
+  },
+  methods: {
+    retrieveHubs() {
+      this.loading = true;
+      this.$hubService.getHubs({
+        page: 0,
+        size: this.limit,
+      })
+        .then(data => {
+          const hubs = data?._embedded?.hubs || [];
+          hubs.forEach(hub => this.hubs.push(hub));
+        })
+        .finally(() => this.loading = false);
+    },
+  },
 };
 </script>

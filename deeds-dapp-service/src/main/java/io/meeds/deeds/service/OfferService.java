@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -315,7 +314,7 @@ public class OfferService {
     return offerRepository.findByOfferTransactionStatusInOrderByCreatedDateAsc(Arrays.asList(TransactionStatus.IN_PROGRESS))
                                     .stream()
                                     .map(DeedTenantOfferMapper::toDTO)
-                                    .collect(Collectors.toList());
+                                    .toList();
   }
 
   public void updateRentingOfferStatusFromBlockchain(String offerId, // NOSONAR

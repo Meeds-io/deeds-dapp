@@ -169,34 +169,28 @@ export default {
     parentLocation: state => state.parentLocation,
     formLink: state => state.formLink,
     hubName() {
-      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
+      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.hubName;
     },
     hubDescription() {
-      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
+      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en || this.hub?.hubDescription;
     },
     hubBackgroundColor() {
-      return this.hub?.backgroundColor;
+      return this.hub?.backgroundColor || this.hub?.color;
     },
     hubLogoUrl() {
-      return this.hub?.logoUrl;
+      return this.hub?.logoUrl || this.hub?.hubLogoUrl;
     },
     hubUsersCount() {
-      return (this.hub?.usersCount > 999 ? this.hub?.usersCount / 1000 : this.hub?.usersCount) || 0;
+      return this.hub?.usersCount || 0;
     },
     hubUsers() {
-      return this.hub?.usersCount > 999 ? this.hubUsersCount.toString().concat('K') : this.hub?.usersCount;
+      return this.hubUsersCount > 999 ? `${parseInt(this.hubUsersCount / 1000)}K` : this.hubUsersCount;
     },
     hubUrl() {
       return this.hub?.hubUrl;
     },
-    hubRewards() {
-      return this.hub?.rewardsPerWeek / 1000 || this.hub?.rewardsPerMonth / 1000;
-    },
-    formattedHubRewards() {
-      return this.hubRewards >= 1 ? this.hubRewards.toString().concat('K') : (this.hub?.rewardsPerWeek || this.hub?.rewardsPerMonth);
-    },
-    hubRewardsPeriodicity() {
-      return this.hub?.rewardsPerWeek ? this.$t('week') : (this.hub?.rewardsPerMonth && this.$t('month'));
+    hubRewardsPerWeek() {
+      return (this.hub?.rewardsPerWeek || 0) / 1000;
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
