@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.web.rest.model;
+package io.meeds.dapp.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-public class DeedTenantHub {
+public class DeedTenantNft {
 
   @JsonProperty("nftId")
   @EqualsAndHashCode.Exclude
