@@ -20,13 +20,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.constant.WoMConnectionRequestException;
+import io.meeds.deeds.model.DeedTenantNft;
+import io.meeds.deeds.model.HubConnectionRequest;
 import io.meeds.deeds.service.HubService;
-import io.meeds.deeds.web.rest.model.DeedTenantHub;
 
 @RestController
 @RequestMapping("/api/hubs")
@@ -36,11 +40,11 @@ public class HubController {
   private HubService hubService;
 
   @GetMapping("/{nftId}")
-  public ResponseEntity<DeedTenantHub> getDeedTenantHub(
+  public ResponseEntity<DeedTenantNft> getDeedTenantHub(
                                                         @PathVariable(name = "nftId")
                                                         Long nftId) {
     try {
-      DeedTenantHub deedTenantHub = hubService.getDeedTenant(nftId);
+      DeedTenantNft deedTenantHub = hubService.getDeedTenant(nftId);
       if (deedTenantHub == null) {
         return ResponseEntity.notFound().build();
       }
@@ -63,6 +67,18 @@ public class HubController {
   @GetMapping("/token")
   public String generateToken() {
     return hubService.generateToken();
+  }
+
+  @PostMapping("/connect")
+  public ResponseEntity<Object> connectToWoM(
+                                             @RequestBody
+                                             HubConnectionRequest hubConnectionRequest) {
+    try {
+      hubService.connectToWoM(hubConnectionRequest);
+      return ResponseEntity.noContent().build();
+    } catch (WoMConnectionRequestException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 
 }
