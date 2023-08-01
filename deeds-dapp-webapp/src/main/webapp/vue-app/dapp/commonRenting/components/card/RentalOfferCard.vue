@@ -106,24 +106,24 @@
       </v-card>
     </div>
     <v-card-title class="ps-2 pt-7">
-      <div class="pa-0 mb-n2 flex-grow-1 d-flex flex-wrap justify-space-between">
-        <div class="py-0 mx-auto">
+      <div class="mb-n2 flex-grow-1 d-flex flex-wrap justify-space-between">
+        <div class="mx-auto d-flex align-center">
           <deeds-card-type-chip
             :card="cardType"
             :city="city"
             :selected-cards="selectedCards"
-            class="my-1 my-sm-0 ms-3"
+            class="my-2 my-sm-0 ms-0 ms-sm-3"
             avatar-size="30"
             extra-class="rounded-pill px-3 py-1"
             small-sized-text />
         </div>
         <v-spacer class="hidden-sm-and-down" />
-        <div class="d-flex flex-row mx-auto mt-4 mt-md-0">
-          <h4 class="d-flex align-center font-weight-normal">
+        <div class="d-flex flex-row my-2 mx-auto align-center">
+          <h4 class="font-weight-normal">
             {{ periodicTokenAmount }}
           </h4>
           <div v-text="$t('meedsSymbol')" class="secondary--text text-h6 font-weight-medium mx-1"></div>
-          <h4 class="d-flex align-center font-weight-normal">{{ rentPeriodicityLabel }}</h4>
+          <h4 class="font-weight-normal">{{ rentPeriodicityLabel }}</h4>
         </div>
         <template v-if="expirationTime">
           <v-list-item-action-text v-if="hasExpired" class="d-flex py-0">
