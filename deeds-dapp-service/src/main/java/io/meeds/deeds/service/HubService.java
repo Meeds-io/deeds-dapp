@@ -25,17 +25,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.WoMConnectionRequestException;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.model.DeedTenantHub;
-import io.meeds.deeds.model.DeedTenantNft;
+import io.meeds.deeds.model.HubPresentation;
 import io.meeds.deeds.model.HubConnectionRequest;
 import io.meeds.deeds.storage.HubRepository;
 
@@ -68,12 +69,31 @@ public class HubService {
     return tenantService.isDeedManager(address, nftId);
   }
 
-  public DeedTenantNft getDeedTenant(Long nftId) throws ObjectNotFoundException {
-    DeedTenant deedTenant = tenantService.getDeedTenantOrImport(nftId);
-    return new DeedTenantNft(deedTenant.getNftId(),
-                             deedTenant.getCityIndex(),
-                             deedTenant.getCardType(),
-                             deedTenant.getManagerAddress());
+  public Page<HubPresentation> getHubs(Pageable pageable) {
+    Page<DeedTenantHub> page = hubRepository.findAll(pageable);
+    return page.map(this::toHubPresentation);
+  }
+
+  public HubPresentation getHub(Long nftId) {
+    DeedTenantHub deedTenantHub = hubRepository.findByNftIdAndEnabledIsTrue(nftId)
+                                               .orElseGet(() -> {
+                                                 DeedTenant deedTenant = tenantService.getDeedTenant(nftId);
+                                                 if (deedTenant == null) {
+                                                   return null;
+                                                 } else {
+                                                   DeedTenantHub hub = new DeedTenantHub();
+                                                   hub.setNftId(nftId);
+                                                   hub.setCity(deedTenant.getCityIndex());
+                                                   hub.setType(deedTenant.getCardType());
+                                                   return hub;
+                                                 }
+                                               });
+    return toHubPresentation(deedTenantHub);
+  }
+
+  public HubPresentation getHub(String hubAddress) {
+    DeedTenantHub deedTenantHub = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElse(null);
+    return toHubPresentation(deedTenantHub);
   }
 
   public String generateToken() {
@@ -165,6 +185,11 @@ public class HubService {
 
   private void mapConnectionRequestToHub(DeedTenantHub deedTenantHub, HubConnectionRequest hubConnectionRequest) {
     deedTenantHub.setNftId(hubConnectionRequest.getDeedId());
+    DeedTenant deedTenant = tenantService.getDeedTenant(hubConnectionRequest.getDeedId());
+    if (deedTenant != null) {
+      deedTenantHub.setCity(deedTenant.getCityIndex());
+      deedTenantHub.setType(deedTenant.getCardType());
+    }
     deedTenantHub.setHubAddress(hubConnectionRequest.getHubAddress());
     deedTenantHub.setHubName(hubConnectionRequest.getHubName());
     deedTenantHub.setHubDescription(hubConnectionRequest.getHubDescription());
@@ -176,13 +201,33 @@ public class HubService {
   }
 
   private void checkDeedManager(String deedManagerAddress, long deedId) throws WoMConnectionRequestException {
-    if (!tenantService.isDeedManager(deedManagerAddress, deedId)) {
+    if (!isDeedManager(deedManagerAddress, deedId)) {
       throw new WoMConnectionRequestException("wom.notDeedManager");
     }
   }
 
   private void cleanInvalidTokens() {
     tokens.entrySet().removeIf(entry -> (entry.getValue() - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
+  }
+
+  private HubPresentation toHubPresentation(DeedTenantHub deedTenantHub) {
+    if (deedTenantHub == null) {
+      return null;
+    }
+    HubPresentation deedTenantHubPresentation = new HubPresentation();
+    deedTenantHubPresentation.setNftId(deedTenantHub.getNftId());
+    deedTenantHubPresentation.setCity(deedTenantHub.getCity());
+    deedTenantHubPresentation.setType(deedTenantHub.getType());
+    deedTenantHubPresentation.setManagerAddress(deedTenantHub.getDeedManagerAddress());
+    deedTenantHubPresentation.setHubAddress(deedTenantHub.getHubAddress());
+    deedTenantHubPresentation.setHubName(deedTenantHub.getHubName());
+    deedTenantHubPresentation.setHubDescription(deedTenantHub.getHubDescription());
+    deedTenantHubPresentation.setHubUrl(deedTenantHub.getHubUrl());
+    deedTenantHubPresentation.setHubLogoUrl(deedTenantHub.getHubLogoUrl());
+    deedTenantHubPresentation.setColor(deedTenantHub.getColor());
+    deedTenantHubPresentation.setEarnerAddress(deedTenantHub.getEarnerAddress());
+    deedTenantHubPresentation.setCreatedDate(deedTenantHub.getCreatedDate());
+    return deedTenantHubPresentation;
   }
 
 }
