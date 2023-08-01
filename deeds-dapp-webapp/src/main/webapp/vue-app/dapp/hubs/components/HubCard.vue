@@ -58,7 +58,7 @@
           {{ hubDescription }}
         </v-card>
         <v-spacer />
-        <div class="d-flex mt-4">
+        <div v-if="!upcomingHub" class="d-flex mt-4">
           <div class="d-flex align-center justify-center">
             <v-img 
               :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
@@ -81,6 +81,68 @@
             </div>
           </div>
         </div>
+        <div v-else class="d-flex flex-row py-4">
+          <div class="d-flex flex-row">
+            <v-btn
+              v-if="hubWebsiteUrl"
+              :href="hubWebsiteUrl"
+              target="_blank"
+              class="me-2"
+              icon>
+              <v-icon 
+                size="26" 
+                class="dark-grey-color">
+                fa-globe
+              </v-icon>
+            </v-btn>
+            <v-btn
+              v-if="hubTwitterUrl"
+              :href="hubTwitterUrl"
+              target="_blank"
+              class="mx-2"
+              icon>
+              <v-icon 
+                size="26" 
+                class="dark-grey-color">
+                fab fa-twitter
+              </v-icon>
+            </v-btn>
+            <v-btn
+              v-if="hubDiscordUrl"
+              :href="hubDiscordUrl" 
+              target="_blank"
+              class="mx-3"
+              icon>
+              <v-icon 
+                size="26" 
+                class="dark-grey-color">
+                fab fa-discord
+              </v-icon>
+            </v-btn>
+            <v-btn
+              v-if="hubGithubUrl"
+              :href="hubGithubUrl"
+              target="_blank"
+              class="mx-2"
+              icon>
+              <v-icon 
+                size="26" 
+                class="dark-grey-color">
+                fab fa-github
+              </v-icon>
+            </v-btn>
+          </div>
+          <v-spacer />
+          <div>
+            <v-btn
+              id="hClaim-button"
+              class="px-6"
+              color="primary"
+              outlined>
+              <span class="font-size-normal">{{ $t('claim') }}</span>
+            </v-btn>
+          </div>
+        </div>
       </div>
     </v-card>
   </v-card>
@@ -92,6 +154,10 @@ export default {
       type: Object,
       default: null,
     },
+    upcomingHub: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: Vuex.mapState({
     language: state => state.language,
@@ -119,7 +185,19 @@ export default {
     },
     hubRewardsPerWeek() {
       return this.hub?.rewardsPerWeek / 1000;
-    }
+    },
+    hubWebsiteUrl() {
+      return this.hub?.websiteUrl;
+    },
+    hubTwitterUrl() {
+      return this.hub?.twitterURL;
+    },
+    hubDiscordUrl() {
+      return this.hub?.discordUrl;
+    },
+    hubGithubUrl() {
+      return this.hub?.githubUrl;
+    },
   }),
 };
 </script>
