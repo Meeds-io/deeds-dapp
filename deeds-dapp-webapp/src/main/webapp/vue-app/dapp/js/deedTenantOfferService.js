@@ -40,7 +40,7 @@ export function getOffers(paramsObj, networkId) {
     credentials: 'include',
   }).then(resp => {
     if (!resp || !resp.ok) {
-      throw new Error(`Error getting offers for nft with params ${paramsObj}`);
+      throw new Error(`Error getting offers for nft with params ${JSON.stringify(paramsObj)}`);
     } else {
       return resp.json();
     }
