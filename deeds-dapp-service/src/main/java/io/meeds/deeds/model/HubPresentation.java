@@ -15,35 +15,46 @@
  */
 package io.meeds.deeds.model;
 
+import java.time.Instant;
+
+import org.springframework.hateoas.server.core.Relation;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-public class DeedTenantNft {
+@Relation(collectionRelation = "hubs", itemRelation = "hub")
+public class HubPresentation {
 
-  @JsonProperty("nftId")
-  @EqualsAndHashCode.Exclude
-  private long  nftId;
+  private long    nftId;
 
-  @JsonProperty("city")
-  @EqualsAndHashCode.Exclude
-  private short city;
+  private short   city;
 
-  @JsonProperty("type")
-  @EqualsAndHashCode.Exclude
-  private short type;
+  private short   type;
 
-  @JsonProperty("managerAddress")
-  @EqualsAndHashCode.Exclude
-  private String managerAddress;
+  private String  managerAddress;
+
+  private String  hubAddress;
+
+  private String  hubName;
+
+  private String  hubDescription;
+
+  private String  hubUrl;
+
+  private String  hubLogoUrl;
+
+  private String  color;
+
+  private String  earnerAddress;
+
+  private Instant createdDate;
 
 }
