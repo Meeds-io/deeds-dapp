@@ -40,7 +40,7 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.model.DeedTenantLease;
+import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.LeaseFilter;
