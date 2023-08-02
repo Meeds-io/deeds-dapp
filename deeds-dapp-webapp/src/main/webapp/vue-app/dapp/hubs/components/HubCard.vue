@@ -165,16 +165,16 @@ export default {
     parentLocation: state => state.parentLocation,
     formLink: state => state.formLink,
     hubName() {
-      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.hubName;
+      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.name;
     },
     hubDescription() {
-      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en || this.hub?.hubDescription;
+      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en || this.hub?.description;
     },
     hubBackgroundColor() {
       return this.hub?.backgroundColor || this.hub?.color;
     },
     hubLogoUrl() {
-      return this.hub?.logoUrl || this.hub?.hubLogoUrl;
+      return this.hub?.logoUrl;
     },
     hubUsersCount() {
       return this.hub?.usersCount || 0;
@@ -183,7 +183,7 @@ export default {
       return this.hubUsersCount > 999 ? `${parseInt(this.hubUsersCount / 1000)}K` : this.hubUsersCount;
     },
     hubUrl() {
-      return this.hub?.hubUrl;
+      return this.hub?.hubUrl || this.hub?.url;
     },
     hubRewardsPerWeek() {
       return (this.hub?.rewardsPerWeek || 0) / 1000;

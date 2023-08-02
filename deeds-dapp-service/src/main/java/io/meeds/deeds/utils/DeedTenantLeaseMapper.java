@@ -27,7 +27,7 @@ import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.model.DeedTenantLease;
+import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 
