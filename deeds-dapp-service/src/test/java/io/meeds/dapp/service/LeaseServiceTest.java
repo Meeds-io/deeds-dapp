@@ -62,7 +62,7 @@ import io.meeds.dapp.constant.NoticePeriod;
 import io.meeds.dapp.constant.OfferType;
 import io.meeds.dapp.constant.RentalDuration;
 import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.model.DeedTenantLease;
+import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.LeaseFilter;

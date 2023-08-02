@@ -34,7 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.service.BlockchainService;

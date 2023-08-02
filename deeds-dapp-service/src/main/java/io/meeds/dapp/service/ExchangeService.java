@@ -45,8 +45,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.CurrencyExchangeRate;
-import io.meeds.dapp.model.MeedExchangeRate;
+import io.meeds.dapp.elasticsearch.model.CurrencyExchangeRate;
+import io.meeds.dapp.elasticsearch.model.MeedExchangeRate;
 import io.meeds.dapp.model.MeedPrice;
 import io.meeds.dapp.storage.CurrencyExchangeRateRepository;
 import io.meeds.dapp.storage.MeedExchangeRateRepository;
