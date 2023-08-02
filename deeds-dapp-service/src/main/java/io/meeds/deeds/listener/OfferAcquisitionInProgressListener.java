@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.constant.ObjectAlreadyExistsException;
-import io.meeds.deeds.model.DeedTenantLease;
+import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.service.OfferService;
 import io.meeds.deeds.service.UserProfileService;

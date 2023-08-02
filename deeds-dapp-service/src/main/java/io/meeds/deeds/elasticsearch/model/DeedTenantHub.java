@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.model;
+package io.meeds.deeds.elasticsearch.model;
 
 import java.time.Instant;
 
@@ -38,6 +38,11 @@ import lombok.Setter;
 @Setting(replicas = 0, shards = 1)
 public class DeedTenantHub {
 
+  @Id
+  @Getter
+  @Field(type = FieldType.Keyword)
+  private String  hubAddress;
+
   @Getter
   @Setter
   @Field(type = FieldType.Long)
@@ -52,11 +57,6 @@ public class DeedTenantHub {
   @Setter
   @Field(type = FieldType.Short)
   private short   type;
-
-  @Id
-  @Getter
-  @Field(type = FieldType.Keyword)
-  private String  hubAddress;
 
   @Getter
   @Field(type = FieldType.Keyword)
