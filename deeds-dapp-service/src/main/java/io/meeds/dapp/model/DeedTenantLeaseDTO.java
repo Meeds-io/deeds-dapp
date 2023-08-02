@@ -28,6 +28,7 @@ import io.meeds.deeds.constant.DeedCard;
 import io.meeds.deeds.constant.TenantProvisioningStatus;
 import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.constant.TransactionStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
