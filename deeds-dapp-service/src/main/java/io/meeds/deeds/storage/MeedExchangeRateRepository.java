@@ -25,7 +25,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
 
 public interface MeedExchangeRateRepository extends ElasticsearchRepository<MeedExchangeRate, LocalDate> {
 

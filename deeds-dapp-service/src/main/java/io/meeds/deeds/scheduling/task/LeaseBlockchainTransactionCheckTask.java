@@ -27,8 +27,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.constant.BlockchainLeaseStatus;
+import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.model.DeedTenantLease;
 import io.meeds.deeds.service.BlockchainService;
 import io.meeds.deeds.service.LeaseService;
 

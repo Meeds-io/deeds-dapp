@@ -19,7 +19,7 @@ import java.time.LocalDate;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.MeedTokenMetric;
+import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;
 
 public interface MeedTokenMetricsRepository extends ElasticsearchRepository<MeedTokenMetric, LocalDate> {
 
