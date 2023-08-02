@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.model.DeedTenantOffer;
+import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
 import io.meeds.dapp.service.OfferService;
 import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.model.UserProfileDTO;

@@ -29,10 +29,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.ContentTypeOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.XXssConfig;
+import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -121,7 +121,8 @@ public class WebSecurityConfig implements ServletContextAware {
 
   private RequestMatcher staticResourcesRequestMatcher() {
     return request -> !StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/")
-                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/");
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/")
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hubs/");
   }
 
   private void handleLogout(HttpServletRequest request, HttpServletResponse response) {
