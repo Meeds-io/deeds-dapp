@@ -51,7 +51,7 @@
                 x-small
                 v-on="on"
                 v-bind="bind">
-                <v-icon>fa-crown</v-icon>
+                <v-icon size="27">fa-crown</v-icon>
               </v-btn>
             </template>
             <span>{{ $t('deedsOfferOwner') }}</span>
@@ -77,111 +77,54 @@
         </v-card-title>
         <v-card-text class="ps-sm-0 pb-6">
           <v-list dense>
-            <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
+            <v-list-item class="pa-0 my-n2">
+              <v-list-item-content class="py-0 text-h6 font-weight-normal">
                 {{ $t('cityName', {0: city}) }}
               </v-list-item-content>
-              <v-list-item-action-text class="d-flex py-0">
+              <div class="text-h6 font-weight-normal">
                 {{ maxUsersLabel }}
-              </v-list-item-action-text>
+              </div>
             </v-list-item>
-            <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
-                {{ $t('deedMintingPower') }}
-              </v-list-item-content>
-              <v-list-item-action-text class="d-flex py-0">
-                <v-tooltip
-                  z-index="4"
-                  max-width="300px"
-                  bottom>
-                  <template #activator="{ on, attrs }">
-                    <v-progress-circular
-                      :rotate="-90"
-                      :size="30"
-                      :width="5"
-                      :value="rentalTenantMintingPowerPercentage"
-                      color="success"
-                      v-bind="attrs"
-                      v-on="on">
-                      <small class="primary--text">{{ rentalTenantMintingPower }}</small>
-                    </v-progress-circular>
-                  </template>
-                  <span>{{ $t('deedMintingPowerDetails', {0: rentalTenantMintingPower}) }}</span>
-                </v-tooltip>
-              </v-list-item-action-text>
-            </v-list-item>
-            <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
+            <v-list-item class="pa-0 my-n2">
+              <v-list-item-content class="py-0 text-h6 font-weight-normal">
                 {{ $t('deedRentingDurationTitle') }}
               </v-list-item-content>
-              <v-list-item-action-text class="py-0">
+              <div class="text-h6 font-weight-normal">
                 {{ rentalDurationLabel }}
-              </v-list-item-action-text>
+              </div>
             </v-list-item>
-            <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
+            <v-list-item class="pa-0 my-n2">
+              <v-list-item-content class="py-0 text-h6 font-weight-normal">
                 {{ $t('deedRentingRewardDistribution') }}
               </v-list-item-content>
-              <v-list-item-action-text class="d-flex py-0">
-                <v-card min-width="50" flat>
-                  <v-tooltip
-                    z-index="4"
-                    max-width="300px"
-                    bottom>
-                    <template #activator="{ on, attrs }">
-                      <v-progress-linear
-                        :value="rentalTenantMintingPercentage"
-                        color="success"
-                        background-color="error"
-                        height="6"
-                        rounded
-                        v-bind="attrs"
-                        v-on="on" />
-                    </template>
-                    <span>{{ $t('deedMintingPercentageDetails', {0: rentalTenantMintingPercentage, 1: rentalOwnerMintingPercentage}) }}</span>
-                  </v-tooltip>
-                </v-card>
-              </v-list-item-action-text>
-            </v-list-item>
-            <v-list-item class="pa-0 my-n3">
-              <v-list-item-content class="py-0">
-                {{ $t('deedRentingPeriodicRentPrice') }}
-              </v-list-item-content>
-              <v-list-item-action-text class="py-0 d-flex">
-                <deeds-number-format
-                  :value="tokenAmount"
-                  :fractions="2"
-                  no-decimals>
-                  <span v-text="$t('meedsSymbol')" class="secondary--text font-weight-bold"></span>
-                </deeds-number-format>
-                <span class="ms-1 text-lowercase">{{ rentPeriodicityLabel }}</span>
-              </v-list-item-action-text>
+              <div class="text-h6 font-weight-normal">
+                {{ rentalTenantMintingPercentage }} %
+              </div>
             </v-list-item>
           </v-list>
         </v-card-text>
       </v-card>
     </div>
-    <v-card-text class="ps-2 pt-0">
-      <v-list-item class="pa-0 my-n3">
-        <v-list-item-content class="py-0">
-          <v-list-item-subtitle class="d-flex flex-wrap">
-            <deeds-offer-type-chip
-              :label="$t('rentalsTag')"
-              :selected-offers="selectedOffers"
-              class="my-1 my-sm-0 me-2"
-              color="secondary"
-              offer-type="RENTING"
-              active
-              small />
-            <deeds-card-type-chip
-              :card="cardType"
-              :city="city"
-              :selected-cards="selectedCards"
-              class="my-1 my-sm-0 me-2"
-              avatar-size="18"
-              small />
-          </v-list-item-subtitle>
-        </v-list-item-content>
+    <v-card-title class="ps-2 pt-7">
+      <div class="mb-n2 flex-grow-1 d-flex flex-wrap justify-space-between">
+        <div class="mx-auto d-flex align-center">
+          <deeds-card-type-chip
+            :card="cardType"
+            :city="city"
+            :selected-cards="selectedCards"
+            class="my-2 my-sm-0 ms-0 ms-sm-3"
+            avatar-size="30"
+            extra-class="rounded-pill px-3 py-1"
+            small-sized-text />
+        </div>
+        <v-spacer class="hidden-sm-and-down" />
+        <div class="d-flex flex-row my-2 mx-auto align-center">
+          <h4 class="font-weight-normal">
+            {{ periodicTokenAmount }}
+          </h4>
+          <div v-text="$t('meedsSymbol')" class="secondary--text text-h6 font-weight-medium mx-1"></div>
+          <h4 class="font-weight-normal">{{ rentPeriodicityLabel }}</h4>
+        </div>
         <template v-if="expirationTime">
           <v-list-item-action-text v-if="hasExpired" class="d-flex py-0">
             <span class="error--text">{{ $t('deedsOfferRentingExpired') }}</span>
@@ -194,8 +137,8 @@
               short-format />
           </v-list-item-action-text>
         </template>
-      </v-list-item>
-    </v-card-text>
+      </div>
+    </v-card-title>
   </v-card>
 </template>
 <script>
@@ -276,6 +219,13 @@ export default {
     tokenAmount() {
       return this.originalOffer?.amount || 0;
     },
+    reducedTokenAmount() {
+      return this.tokenAmount > 999 ? Math.trunc(this.tokenAmount / 1000) : this.tokenAmount;
+    },
+    periodicTokenAmount() {
+      return this.tokenAmount > 999 ? this.reducedTokenAmount.toString().concat('K') : this.tokenAmount;
+    },
+    
     rentPeriodicityLabel() {
       switch (this.paymentPeriodicity){
       case 'ONE_MONTH': return this.$t('deedRentingDurationPerMonth');
