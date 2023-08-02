@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.meeds.deeds.model.MeedTokenMetric;
+import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;
 import io.meeds.deeds.service.MeedTokenMetricService;
 import io.meeds.deeds.web.rest.MeedTokenMetricController;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;

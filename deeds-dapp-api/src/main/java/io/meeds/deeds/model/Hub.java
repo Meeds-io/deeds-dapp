@@ -13,20 +13,48 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.storage;
+package io.meeds.deeds.model;
 
 import java.time.Instant;
-import java.util.List;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.hateoas.server.core.Relation;
 
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-  List<DeedTenantLease> findByTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> asList);
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(value = Include.NON_EMPTY)
+@Relation(collectionRelation = "hubs", itemRelation = "hub")
+public class Hub {
 
-  List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
+  private long    deedId = -1;
+
+  private short   city   = -1;
+
+  private short   type   = -1;
+
+  private String  address;
+
+  private String  name;
+
+  private String  description;
+
+  private String  url;
+
+  private String  logoUrl;
+
+  private String  color;
+
+  private String  deedManagerAddress;
+
+  private String  earnerAddress;
+
+  private Instant createdDate;
 
 }
