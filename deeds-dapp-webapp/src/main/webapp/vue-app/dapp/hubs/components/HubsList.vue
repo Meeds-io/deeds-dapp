@@ -188,7 +188,7 @@ export default {
         backgroundColor: '#000000',
         websiteUrl: 'https://www.developerdao.com/',
         twitterURL: 'https://twitter.com/developer_dao/',
-        discordUrl: 'http://discord.gg/devdao',
+        discordUrl: 'https://discord.gg/devdao',
         githubUrl: 'https://github.com/Developer-DAO',
       },
       {
@@ -234,9 +234,9 @@ export default {
     filteredHubs() {
       if (this.keyword) {
         if (this.language === 'fr') {
-          return this.hubs.filter(hub => hub.name.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+          return this.hubs.filter(hub => hub?.name?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         } else {
-          return this.hubs.filter(hub => hub.name.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+          return this.hubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
       } 
       else {
@@ -246,9 +246,9 @@ export default {
     filteredUpcomingHubs() {
       if (this.keyword) {
         if (this.language === 'fr') {
-          return this.upcomingHubs.filter(hub => hub.name.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.fr.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+          return this.upcomingHubs.filter(hub => hub?.name?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         } else {
-          return this.upcomingHubs.filter(hub => hub.name.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub.description.en.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
+          return this.upcomingHubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
       } 
       else {
