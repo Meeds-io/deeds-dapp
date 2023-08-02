@@ -26,7 +26,7 @@
     </v-col>
     <v-col
       v-for="(hub, index) in filteredHubs"
-      :key="`${hub.id}-${index}`"
+      :key="`${hub.address}-${index}`"
       class="d-flex justify-center pb-12"
       cols="12"
       lg="4"
@@ -42,7 +42,7 @@
     </v-col>
     <v-col
       v-for="(hub, index) in filteredUpcomingHubs"
-      :key="`${hub.id}-${index}`"
+      :key="`${hub.address}-${index}`"
       class="d-flex justify-center"
       cols="12"
       lg="4"
@@ -92,7 +92,7 @@ export default {
   data: () => ({
     hubs: [
       {
-        id: 1,
+        address: '0xfefefefefefefefefefef1',
         name: {
           fr: 'Builders Hub',
           en: 'Builders Hub'
@@ -108,7 +108,7 @@ export default {
         rewardsPerWeek: 1000,
       },
       {
-        id: 2,
+        address: '0xfefefefefefefefefefef2',
         name: {
           fr: 'Communauté eXo',
           en: 'eXo Community'
@@ -126,7 +126,7 @@ export default {
     ],
     upcomingHubs: [
       {
-        id: 1,
+        address: '0xfefefefefefefefefefef3',
         name: {
           fr: 'Cabin',
           en: 'Cabin'
@@ -143,7 +143,7 @@ export default {
         githubUrl: 'https://github.com/CabinDAO',
       },
       {
-        id: 2,
+        address: '0xfefefefefefefefefefef4',
         name: {
           fr: 'Radicle',
           en: 'Radicle'
@@ -159,7 +159,7 @@ export default {
         githubUrl: 'https://github.com/radicle-dev',
       },
       {
-        id: 3,
+        address: '0xfefefefefefefefefefef5',
         name: {
           fr: 'Hopr',
           en: 'Hopr'
@@ -175,7 +175,7 @@ export default {
         discordUrl: 'https://discord.gg/dEAWC4G',
       },
       {
-        id: 4,
+        address: '0xfefefefefefefefefefef6',
         name: {
           fr: 'Développeur DAO',
           en: 'Developer DAO'
@@ -192,7 +192,7 @@ export default {
         githubUrl: 'https://github.com/Developer-DAO',
       },
       {
-        id: 5,
+        address: '0xfefefefefefefefefefef7',
         name: {
           fr: 'Fondation ResearchHub',
           en: 'ResearchHub Foundation'
@@ -209,7 +209,7 @@ export default {
         githubUrl: 'https://github.com/ResearchHub',
       },
       {
-        id: 6,
+        address: '0xfefefefefefefefefefef8',
         name: {
           fr: 'Communauté Tech Fleet DAO',
           en: 'Tech Fleet Community DAO'
