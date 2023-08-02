@@ -17,14 +17,20 @@ package io.meeds.deeds.storage;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.model.DeedTenantHub;
+import io.meeds.deeds.elasticsearch.model.DeedTenantHub;
 
 public interface HubRepository extends ElasticsearchRepository<DeedTenantHub, String> {
 
-  Optional<DeedTenantHub> findByNftIdAndHubAddressNotAndEnabledIsTrue(long nftId, String hubAddress);
+  boolean existsByNftIdAndHubAddressNotAndEnabledIsTrue(long nftId, String hubAddress);
 
   Optional<DeedTenantHub> findByNftIdAndEnabledIsTrue(long nftId);
+
+  Page<DeedTenantHub> findByEnabledIsTrue(Pageable pageable);
+
+  Optional<DeedTenantHub> findByHubAddressAndEnabledIsTrue(String hubAddress);
 
 }
