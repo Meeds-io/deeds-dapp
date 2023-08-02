@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.model.DeedTenantLease;
+import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.deeds.constant.TenantProvisioningStatus;

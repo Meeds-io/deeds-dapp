@@ -13,33 +13,46 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.model;
+package io.meeds.dapp.elasticsearch.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
-import io.meeds.dapp.constant.Currency;
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "currency_exchange_rate", createIndex = true)
+@Document(indexName = "meed_exchange_rate", createIndex = true)
 @Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
-public class CurrencyExchangeRate {
+public class MeedExchangeRate {
+
+  public MeedExchangeRate(LocalDate date) {
+    this.date = date;
+  }
 
   @Id
   @Field(type = FieldType.Date, format = DateFormat.year_month_day)
   private LocalDate  date;
 
-  @Field(type = FieldType.Keyword)
-  private Currency   currency;
+  private BigDecimal ethUsdPrice;
 
-  private BigDecimal rate;
+  private BigDecimal meedEthPrice;
+
+  private BigDecimal meedReserve;
+
+  private BigDecimal ethReserve;
+
+  private boolean    finalRate;
 
 }

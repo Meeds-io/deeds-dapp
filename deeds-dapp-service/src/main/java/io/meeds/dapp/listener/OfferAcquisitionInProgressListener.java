@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.model.DeedTenantLease;
+import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.service.OfferService;
 import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.listener.EventListener;

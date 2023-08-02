@@ -28,12 +28,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.dapp.model.HubConnectionRequest;
-import io.meeds.dapp.model.HubPresentation;
 import io.meeds.dapp.service.HubService;
-import io.meeds.deeds.constant.WoMConnectionRequestException;
+import io.meeds.deeds.constant.WomConnectionException;
+import io.meeds.deeds.model.Hub;
+import io.meeds.deeds.model.WomConnectionRequest;
+import io.meeds.deeds.model.WomDisconnectionRequest;
 
 @RestController
 @RequestMapping("/api/hubs")
@@ -43,30 +45,41 @@ public class HubController {
   private HubService hubService;
 
   @GetMapping
-  public PagedModel<EntityModel<HubPresentation>> getHubs(Pageable pageable,
-                                                                    PagedResourcesAssembler<HubPresentation> assembler) {
-    Page<HubPresentation> hubs = hubService.getHubs(pageable);
+  public PagedModel<EntityModel<Hub>> getHubs(Pageable pageable,
+                                              PagedResourcesAssembler<Hub> assembler) {
+    Page<Hub> hubs = hubService.getHubs(pageable);
     return assembler.toModel(hubs);
   }
 
-  @GetMapping("/{nftId}")
-  public ResponseEntity<HubPresentation> getHub(
-                                                          @PathVariable(name = "nftId")
-                                                          Long nftId) {
-    HubPresentation hub = hubService.getHub(nftId);
+  @GetMapping("/{hubAddress}")
+  public ResponseEntity<Hub> getHub(
+                                    @PathVariable(name = "hubAddress")
+                                    String hubAddress) {
+    Hub hub = hubService.getHub(hubAddress);
     if (hub == null) {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(hub);
   }
 
-  @GetMapping("/{nftId}/{address}/manager")
+  @GetMapping("/byNftId/{nftId}")
+  public ResponseEntity<Hub> getHubByNftId(
+                                           @PathVariable(name = "nftId")
+                                           long nftId) {
+    Hub hub = hubService.getHub(nftId);
+    if (hub == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(hub);
+  }
+
+  @GetMapping("/manager")
   public String isDeedTenantManager(
-                                    @PathVariable(name = "nftId")
+                                    @RequestParam(name = "nftId")
                                     Long nftId,
-                                    @PathVariable(name = "address")
-                                    String walletAddress) {
-    boolean isManager = hubService.isDeedManager(walletAddress, nftId);
+                                    @RequestParam(name = "address")
+                                    String address) {
+    boolean isManager = hubService.isDeedManager(address, nftId);
     return String.valueOf(isManager);
   }
 
@@ -78,11 +91,23 @@ public class HubController {
   @PostMapping("/connect")
   public ResponseEntity<Object> connectToWoM(
                                              @RequestBody
-                                             HubConnectionRequest hubConnectionRequest) {
+                                             WomConnectionRequest hubConnectionRequest) {
     try {
       hubService.connectToWoM(hubConnectionRequest);
       return ResponseEntity.noContent().build();
-    } catch (WoMConnectionRequestException e) {
+    } catch (WomConnectionException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+  }
+
+  @PostMapping("/disconnect")
+  public ResponseEntity<Object> disconnectFromWoM(
+                                                  @RequestBody
+                                                  WomDisconnectionRequest disconnectionRequest) {
+    try {
+      hubService.disconnectFromWoM(disconnectionRequest);
+      return ResponseEntity.noContent().build();
+    } catch (WomConnectionException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
   }

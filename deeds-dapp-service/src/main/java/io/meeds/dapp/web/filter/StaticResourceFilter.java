@@ -20,6 +20,8 @@ package io.meeds.dapp.web.filter;
 
 import java.io.IOException;
 
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -27,8 +29,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableWebMvc
 public class StaticResourceFilter extends HttpFilter {
