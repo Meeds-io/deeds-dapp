@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.model.MeedTokenMetric;
+import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;
 import io.meeds.deeds.storage.MeedTokenMetricsRepository;
 
 @SpringBootTest(

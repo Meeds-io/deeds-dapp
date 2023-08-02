@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.MeedTokenMetric;
+import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;
 import io.meeds.deeds.service.MeedTokenMetricService;
 
 @RestController

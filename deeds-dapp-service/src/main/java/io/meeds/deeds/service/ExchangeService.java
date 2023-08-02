@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.json.Json;
@@ -50,8 +49,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.CurrencyExchangeRate;
-import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
+import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
 import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
 import io.meeds.deeds.storage.MeedExchangeRateRepository;
@@ -63,7 +62,7 @@ public class ExchangeService {
 
   private static final LocalDate         MEEDS_TOKEN_FIRST_DATE            = LocalDate.of(2021, 11, 6);
 
-  private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");
+  private static final Pattern           LATEST_BLOCK_NUMBER_ERROR_PATTERN = Pattern.compile(".+ up to block number ([0-9]+) .+");// NOSONAR
 
   private static final String            PAIR_PARAM_NAME                   = "pair";
 
@@ -129,7 +128,7 @@ public class ExchangeService {
     }
     return exchangeRates.stream()
                         .map(exchangeRate -> toMeedPrice(exchangeRate, currencyExchangeRates, currency))
-                        .collect(Collectors.toList());
+                        .toList();
   }
 
   public BigDecimal getExchangeRate(Currency currency) {
