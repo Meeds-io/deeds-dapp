@@ -13,48 +13,40 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.model;
+package io.meeds.deeds.elasticsearch.model;
 
-import java.time.Instant;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
-import org.springframework.hateoas.server.core.Relation;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "hubs", itemRelation = "hub")
-public class HubPresentation {
+@NoArgsConstructor
+@Document(indexName = "meed_exchange_rate", createIndex = true)
+@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
+public class MeedExchangeRate {
 
-  private long    nftId;
+  public MeedExchangeRate(LocalDate date) {
+    this.date = date;
+  }
 
-  private short   city;
+  @Id
+  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
+  private LocalDate  date;
 
-  private short   type;
+  private BigDecimal ethUsdPrice;
 
-  private String  managerAddress;
+  private BigDecimal meedEthPrice;
 
-  private String  hubAddress;
+  private BigDecimal meedReserve;
 
-  private String  hubName;
+  private BigDecimal ethReserve;
 
-  private String  hubDescription;
-
-  private String  hubUrl;
-
-  private String  hubLogoUrl;
-
-  private String  color;
-
-  private String  earnerAddress;
-
-  private Instant createdDate;
+  private boolean    finalRate;
 
 }

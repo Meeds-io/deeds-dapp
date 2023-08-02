@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,30 +17,37 @@
  */
 package io.meeds.deeds.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
-import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
-
-import io.meeds.deeds.constant.Currency;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "currency_exchange_rate", createIndex = true)
-@Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
-public class CurrencyExchangeRate {
+public class WomConnectionRequest {
 
-  @Id
-  @Field(type = FieldType.Date, format = DateFormat.year_month_day)
-  private LocalDate  date;
+  private long   deedId = -1;
 
-  @Field(type = FieldType.Keyword)
-  private Currency   currency;
+  private String deedManagerAddress;
 
-  private BigDecimal rate;
+  private String hubAddress;
+
+  private String hubName;
+
+  private String hubDescription;
+
+  private String hubUrl;
+
+  private String hubLogoUrl;
+
+  private String color;
+
+  private String earnerAddress;
+
+  private String signedMessage;
+
+  private String rawMessage;
+
+  private String token;
 
 }

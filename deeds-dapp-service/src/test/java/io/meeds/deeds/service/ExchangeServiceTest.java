@@ -49,8 +49,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.deeds.constant.Currency;
-import io.meeds.deeds.model.CurrencyExchangeRate;
-import io.meeds.deeds.model.MeedExchangeRate;
+import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
+import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
 import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.service.ExchangeServiceTest.ExchangeServiceNoInit;
 import io.meeds.deeds.storage.CurrencyExchangeRateRepository;

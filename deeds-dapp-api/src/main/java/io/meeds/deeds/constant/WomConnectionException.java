@@ -17,15 +17,15 @@
  */
 package io.meeds.deeds.constant;
 
-public class WoMConnectionRequestException extends Exception {
+public class WomConnectionException extends Exception {
 
   private static final long serialVersionUID = -31643228664080493L;
 
-  public WoMConnectionRequestException(String message) {
+  public WomConnectionException(String message) {
     super(message);
   }
 
-  public WoMConnectionRequestException(String message, Exception e) {
+  public WomConnectionException(String message, Exception e) {
     super(message, e);
   }
 

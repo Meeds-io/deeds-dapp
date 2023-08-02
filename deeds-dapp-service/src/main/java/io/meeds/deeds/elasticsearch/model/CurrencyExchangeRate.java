@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.model;
+package io.meeds.deeds.elasticsearch.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,31 +22,23 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 import org.springframework.data.elasticsearch.annotations.Setting.SortOrder;
 
+import io.meeds.deeds.constant.Currency;
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "meed_exchange_rate", createIndex = true)
+@Document(indexName = "currency_exchange_rate", createIndex = true)
 @Setting(sortFields = "date", sortOrders = SortOrder.desc, replicas = 0, shards = 1)
-public class MeedExchangeRate {
-
-  public MeedExchangeRate(LocalDate date) {
-    this.date = date;
-  }
+public class CurrencyExchangeRate {
 
   @Id
   @Field(type = FieldType.Date, format = DateFormat.year_month_day)
   private LocalDate  date;
 
-  private BigDecimal ethUsdPrice;
+  @Field(type = FieldType.Keyword)
+  private Currency   currency;
 
-  private BigDecimal meedEthPrice;
-
-  private BigDecimal meedReserve;
-
-  private BigDecimal ethReserve;
-
-  private boolean    finalRate;
+  private BigDecimal rate;
 
 }
