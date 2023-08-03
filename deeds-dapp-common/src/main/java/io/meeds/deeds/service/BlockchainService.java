@@ -90,6 +90,10 @@ public class BlockchainService {
   @Qualifier("ethereumNetwork")
   private Web3j                  web3j;
 
+  @Autowired
+  @Qualifier("polygonNetwork")
+  private Web3j                  polygonWeb3j;
+
   @Autowired(required = false)
   private DeedTenantProvisioning deedTenantProvisioning;
 
@@ -117,7 +121,9 @@ public class BlockchainService {
   @Qualifier("sushiPairToken")
   private ERC20                  sushiPairToken;
 
-  private long                   networkId;
+  private long                   ethereumNetworkId;
+
+  private long                   polygonNetworkId;
 
   /**
    * Return DEED Tenant Status from Blockchain Contract
@@ -599,6 +605,14 @@ public class BlockchainService {
     return fundInfo;
   }
 
+  public String getEthereumMeedTokenAddress() {
+    return ethereumToken.getContractAddress();
+  }
+
+  public String getPolygonMeedTokenAddress() {
+    return polygonToken.getContractAddress();
+  }
+
   /**
    * @param  address Address to get its pending rewardings not minted yet
    * @return         {@link BigInteger} for Meed Token value with decimals
@@ -669,10 +683,17 @@ public class BlockchainService {
   }
 
   public long getNetworkId() throws IOException {
-    if (networkId == 0) {
-      networkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
+    if (ethereumNetworkId == 0) {
+      ethereumNetworkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
     }
-    return networkId;
+    return ethereumNetworkId;
+  }
+
+  public long getPolygonNetworkId() throws IOException {
+    if (polygonNetworkId == 0) {
+      polygonNetworkId = new BigInteger(polygonWeb3j.netVersion().send().getNetVersion()).longValue();
+    }
+    return polygonNetworkId;
   }
 
   @SuppressWarnings("rawtypes")
