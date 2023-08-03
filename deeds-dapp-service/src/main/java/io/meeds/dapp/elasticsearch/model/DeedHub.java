@@ -36,7 +36,7 @@ import lombok.Setter;
 @JsonInclude(value = Include.NON_EMPTY)
 @Document(indexName = "deed_tenant_hub", createIndex = true)
 @Setting(replicas = 0, shards = 1)
-public class DeedTenantHub {
+public class DeedHub {
 
   @Id
   @Getter
