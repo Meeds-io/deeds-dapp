@@ -15,18 +15,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.constant;
+package io.meeds.deeds.model;
 
-public class WomConnectionException extends Exception {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-  private static final long serialVersionUID = -31643228664080493L;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class WomErrorMessage {
 
-  public WomConnectionException(String message) {
-    super(message);
-  }
+  private int     code;
 
-  public WomConnectionException(String message, Exception e) {
-    super(message, e);
-  }
+  private boolean shouldRetry;
+
+  private String  messageKey;
 
 }
