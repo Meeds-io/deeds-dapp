@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -16,8 +18,8 @@
 package io.meeds.deeds.elasticsearch.model;
 
 import java.time.Instant;
+import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -28,89 +30,63 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @NoArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Document(indexName = "deed_tenant_hub", createIndex = true)
+@Document(indexName = "deed_tenant_hub_reward_report", createIndex = true)
 @Setting(replicas = 0, shards = 1)
-public class DeedTenantHub {
+public class DeedHubRewardReport {
 
   @Id
-  @Getter
   @Field(type = FieldType.Keyword)
-  private String  hubAddress;
+  private String      hash;
 
-  @Getter
-  @Setter
+  @Field(type = FieldType.Keyword)
+  private String      hubAddress;
+
   @Field(type = FieldType.Long)
-  private long    nftId;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Short)
-  private short   city;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Short)
-  private short   type;
-
-  @Getter
-  @Field(type = FieldType.Keyword)
-  private String  deedManagerAddress;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Text)
-  private String  hubName;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Text)
-  private String  hubDescription;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Auto)
-  private String  hubUrl;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Auto)
-  private String  hubLogoUrl;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Keyword)
-  private String  color;
-
-  @Getter
-  @Field(type = FieldType.Keyword)
-  private String  earnerAddress;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Boolean)
-  private boolean enabled;
+  private long        deedId;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  @Getter
-  @Setter
-  private Instant createdDate = Instant.now();
+  private Instant     fromDate;
 
-  public void setHubAddress(String hubAddress) {
-    this.hubAddress = StringUtils.lowerCase(hubAddress);
-  }
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  private Instant     toDate;
 
-  public void setDeedManagerAddress(String deedManagerAddress) {
-    this.deedManagerAddress = StringUtils.lowerCase(deedManagerAddress);
-  }
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  private Instant     sentRewardsDate;
 
-  public void setEarnerAddress(String earnerAddress) {
-    this.earnerAddress = StringUtils.lowerCase(earnerAddress);
-  }
+  @Field(type = FieldType.Keyword)
+  private String      periodType;
+
+  @Field(type = FieldType.Long)
+  private long        participantsCount;
+
+  @Field(type = FieldType.Long)
+  private long        recipientsCount;
+
+  @Field(type = FieldType.Long)
+  private long        achievementsCount;
+
+  @Field(type = FieldType.Double)
+  private double      rewardAmount;
+
+  @Field(type = FieldType.Text)
+  private String      rewardTokenAddress;
+
+  @Field(type = FieldType.Long)
+  private long        rewardTokenNetworkId;
+
+  @Field(type = FieldType.Text)
+  private Set<String> transactions;
+
+  @Field(type = FieldType.Keyword)
+  private String      signature;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  private Instant     createdDate = Instant.now();
 
 }

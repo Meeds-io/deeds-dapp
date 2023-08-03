@@ -23,6 +23,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.constant.WomConnectionException;
+import io.meeds.deeds.constant.WomAuthorizationException;
+import io.meeds.deeds.constant.WomException;
+import io.meeds.deeds.constant.WomParsingException;
+import io.meeds.deeds.constant.WomRequestException;
 import io.meeds.deeds.model.Hub;
 import io.meeds.deeds.model.WomConnectionRequest;
 import io.meeds.deeds.model.WomDisconnectionRequest;
@@ -62,6 +66,38 @@ public class HubController {
     return ResponseEntity.ok(hub);
   }
 
+  @PostMapping
+  public ResponseEntity<Object> connectToWoM(
+                                             @RequestBody
+                                             WomConnectionRequest hubConnectionRequest) {
+    try {
+      hubService.connectToWoM(hubConnectionRequest);
+      return ResponseEntity.noContent().build();
+    } catch (WomRequestException | WomParsingException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
+    } catch (WomAuthorizationException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
+    } catch (WomException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
+    }
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Object> disconnectFromWoM(
+                                                  @RequestBody
+                                                  WomDisconnectionRequest disconnectionRequest) {
+    try {
+      hubService.disconnectFromWoM(disconnectionRequest);
+      return ResponseEntity.noContent().build();
+    } catch (WomRequestException | WomParsingException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
+    } catch (WomAuthorizationException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
+    } catch (WomException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
+    }
+  }
+
   @GetMapping("/byNftId/{nftId}")
   public ResponseEntity<Hub> getHubByNftId(
                                            @PathVariable(name = "nftId")
@@ -86,30 +122,6 @@ public class HubController {
   @GetMapping("/token")
   public String generateToken() {
     return hubService.generateToken();
-  }
-
-  @PostMapping("/connect")
-  public ResponseEntity<Object> connectToWoM(
-                                             @RequestBody
-                                             WomConnectionRequest hubConnectionRequest) {
-    try {
-      hubService.connectToWoM(hubConnectionRequest);
-      return ResponseEntity.noContent().build();
-    } catch (WomConnectionException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-  }
-
-  @PostMapping("/disconnect")
-  public ResponseEntity<Object> disconnectFromWoM(
-                                                  @RequestBody
-                                                  WomDisconnectionRequest disconnectionRequest) {
-    try {
-      hubService.disconnectFromWoM(disconnectionRequest);
-      return ResponseEntity.noContent().build();
-    } catch (WomConnectionException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
   }
 
 }
