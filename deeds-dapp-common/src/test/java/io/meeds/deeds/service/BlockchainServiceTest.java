@@ -77,6 +77,9 @@ class BlockchainServiceTest {
   @MockBean(name = "ethereumNetwork")
   private Web3j                            web3j;
 
+  @MockBean(name = "polygonNetwork")
+  private Web3j                            polygonWeb3j;
+
   @MockBean
   private DeedTenantProvisioning           deedTenantProvisioning;
 
