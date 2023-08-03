@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,24 +15,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.storage;
+package io.meeds.deeds.constant;
 
-import java.util.Optional;
+public enum HubRewardReportStatusType {
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
-import io.meeds.dapp.elasticsearch.model.DeedHub;
-
-public interface HubRepository extends ElasticsearchRepository<DeedHub, String> {
-
-  boolean existsByNftIdAndHubAddressNotAndEnabledIsTrue(long nftId, String hubAddress);
-
-  Optional<DeedHub> findByNftIdAndEnabledIsTrue(long nftId);
-
-  Page<DeedHub> findByEnabledIsTrue(Pageable pageable);
-
-  Optional<DeedHub> findByHubAddressAndEnabledIsTrue(String hubAddress);
+  // Not sent yet
+  NONE,
+  // Not valid to be sent
+  INVALID,
+  // Sent to WoM
+  SENT,
+  // Error while sending to WoM
+  ERROR_SENDING,
+  // Pending for rewards to be sent
+  PENDING_REWARD,
+  // Rewards sent
+  REWARDED,
+  // Rejected by WoM
+  REJECTED;
 
 }
