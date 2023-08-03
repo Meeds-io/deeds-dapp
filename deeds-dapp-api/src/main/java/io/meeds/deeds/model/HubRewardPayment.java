@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,24 +15,27 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.storage;
+package io.meeds.deeds.model;
 
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import io.meeds.dapp.elasticsearch.model.DeedHub;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonInclude(value = Include.NON_EMPTY)
+public class HubRewardPayment {
 
-public interface HubRepository extends ElasticsearchRepository<DeedHub, String> {
+  private double                    receivedRewards;
 
-  boolean existsByNftIdAndHubAddressNotAndEnabledIsTrue(long nftId, String hubAddress);
+  private long                      globalHubsCount;
 
-  Optional<DeedHub> findByNftIdAndEnabledIsTrue(long nftId);
+  private double                    globalEngagementRate;
 
-  Page<DeedHub> findByEnabledIsTrue(Pageable pageable);
-
-  Optional<DeedHub> findByHubAddressAndEnabledIsTrue(String hubAddress);
+  private double                    globalSentRewards;
 
 }

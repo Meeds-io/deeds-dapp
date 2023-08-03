@@ -122,7 +122,8 @@ public class WebSecurityConfig implements ServletContextAware {
   private RequestMatcher staticResourcesRequestMatcher() {
     return request -> !StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/")
                       || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/")
-                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hubs/");
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hubs/")
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hub/");
   }
 
   private void handleLogout(HttpServletRequest request, HttpServletResponse response) {
