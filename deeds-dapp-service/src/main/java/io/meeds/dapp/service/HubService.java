@@ -33,9 +33,11 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantHub;
+import io.meeds.dapp.elasticsearch.model.DeedHub;
 import io.meeds.dapp.storage.HubRepository;
-import io.meeds.deeds.constant.WomConnectionException;
+import io.meeds.deeds.constant.WomAuthorizationException;
+import io.meeds.deeds.constant.WomException;
+import io.meeds.deeds.constant.WomRequestException;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.model.Hub;
 import io.meeds.deeds.model.WomConnectionRequest;
@@ -72,7 +74,7 @@ public class HubService {
   }
 
   public Page<Hub> getHubs(Pageable pageable) {
-    Page<DeedTenantHub> page = hubRepository.findByEnabledIsTrue(pageable);
+    Page<DeedHub> page = hubRepository.findByEnabledIsTrue(pageable);
     return page.map(this::toHubPresentation);
   }
 
@@ -109,12 +111,12 @@ public class HubService {
     return token;
   }
 
-  public void connectToWoM(WomConnectionRequest hubConnectionRequest) throws WomConnectionException {
+  public void connectToWoM(WomConnectionRequest hubConnectionRequest) throws WomException {
     validateHubCommunityConnectionRequest(hubConnectionRequest);
     saveDeedHubCommunity(hubConnectionRequest);
   }
 
-  public void disconnectFromWoM(WomDisconnectionRequest hubConnectionRequest) throws WomConnectionException {
+  public void disconnectFromWoM(WomDisconnectionRequest hubConnectionRequest) throws WomException {
     validateHubCommunityDisonnectionRequest(hubConnectionRequest);
     Hub hub = getHub(hubConnectionRequest.getHubAddress());
     if (hub != null) {
@@ -126,7 +128,7 @@ public class HubService {
       }
       disableDeedHubCommunity(hubConnectionRequest.getHubAddress());
     } else {
-      throw new WomConnectionException("wom.alreadyDisconnected");
+      throw new WomRequestException("wom.alreadyDisconnected");
     }
   }
 
@@ -146,7 +148,7 @@ public class HubService {
                  });
   }
 
-  private void validateHubCommunityConnectionRequest(WomConnectionRequest hubConnectionRequest) throws WomConnectionException {
+  private void validateHubCommunityConnectionRequest(WomConnectionRequest hubConnectionRequest) throws WomException {
     checkTokenInMessage(hubConnectionRequest.getToken());
     checkSignedMessage(hubConnectionRequest.getDeedManagerAddress(),
                        hubConnectionRequest.getSignedMessage(),
@@ -157,7 +159,7 @@ public class HubService {
     checkDeedNotUsed(hubConnectionRequest);
   }
 
-  private void validateHubCommunityDisonnectionRequest(WomDisconnectionRequest hubConnectionRequest) throws WomConnectionException {
+  private void validateHubCommunityDisonnectionRequest(WomDisconnectionRequest hubConnectionRequest) throws WomException {
     checkTokenInMessage(hubConnectionRequest.getToken());
     checkSignedMessage(hubConnectionRequest.getDeedManagerAddress(),
                        hubConnectionRequest.getSignedMessage(),
@@ -166,39 +168,39 @@ public class HubService {
   }
 
   private void saveDeedHubCommunity(WomConnectionRequest hubConnectionRequest) {
-    DeedTenantHub deedTenantHub = hubRepository.findById(StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))
-                                               .orElseGet(DeedTenantHub::new);
+    DeedHub deedTenantHub = hubRepository.findById(StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))
+                                               .orElseGet(DeedHub::new);
     mapConnectionRequestToHub(deedTenantHub, hubConnectionRequest);
     deedTenantHub.setEnabled(true);
     hubRepository.save(deedTenantHub);
   }
 
-  private void checkTokenInMessage(String token) throws WomConnectionException {
+  private void checkTokenInMessage(String token) throws WomException {
     if (StringUtils.isBlank(token)) {
-      throw new WomConnectionException("wom.emptyTokenForSignedMessage");
+      throw new WomAuthorizationException("wom.emptyTokenForSignedMessage");
     }
     cleanInvalidTokens();
     if (!tokens.containsKey(token)) {
-      throw new WomConnectionException("wom.invalidTokenForSignedMessage");
+      throw new WomAuthorizationException("wom.invalidTokenForSignedMessage");
     }
   }
 
   private void checkSignedMessage(String deedManagerAddress,
                                   String signedMessage,
                                   String rawMessage,
-                                  String token) throws WomConnectionException {
+                                  String token) throws WomException {
     if (StringUtils.isBlank(deedManagerAddress)) {
-      throw new WomConnectionException("wom.emptyDeedManagerAddress");
+      throw new WomAuthorizationException("wom.emptyDeedManagerAddress");
     } else if (StringUtils.isBlank(signedMessage) || StringUtils.isBlank(rawMessage)) {
-      throw new WomConnectionException("wom.emptySignedMessage");
+      throw new WomAuthorizationException("wom.emptySignedMessage");
     } else if (!StringUtils.contains(rawMessage, token)) {
-      throw new WomConnectionException("wom.invalidSignedMessage");
+      throw new WomAuthorizationException("wom.invalidSignedMessage");
     }
 
     try {
       byte[] signatureBytes = Numeric.hexStringToByteArray(signedMessage);
       if (signatureBytes.length < 64) {
-        throw new WomConnectionException("wom.invalidSignedMessage");
+        throw new WomAuthorizationException("wom.invalidSignedMessage");
       }
       byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
       byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
@@ -210,14 +212,16 @@ public class HubService {
       BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(), new SignatureData(v, r, s));
       String recoveredAddress = "0x" + Keys.getAddress(publicKey);
       if (!recoveredAddress.equalsIgnoreCase(deedManagerAddress)) {
-        throw new WomConnectionException("wom.invalidSignedMessage");
+        throw new WomAuthorizationException("wom.invalidSignedMessage");
       }
+    } catch (WomException e) {
+      throw e;
     } catch (Exception e) {
-      throw new WomConnectionException("wom.invalidSignedMessage", e);
+      throw new WomAuthorizationException("wom.invalidSignedMessage", e);
     }
   }
 
-  private void mapConnectionRequestToHub(DeedTenantHub deedTenantHub, WomConnectionRequest hubConnectionRequest) {
+  private void mapConnectionRequestToHub(DeedHub deedTenantHub, WomConnectionRequest hubConnectionRequest) {
     deedTenantHub.setNftId(hubConnectionRequest.getDeedId());
     DeedTenant deedTenant = tenantService.getDeedTenant(hubConnectionRequest.getDeedId());
     if (deedTenant != null) {
@@ -234,7 +238,7 @@ public class HubService {
     deedTenantHub.setColor(hubConnectionRequest.getColor());
   }
 
-  private void checkDeedNotUsed(WomConnectionRequest hubConnectionRequest) throws WomConnectionException {
+  private void checkDeedNotUsed(WomConnectionRequest hubConnectionRequest) throws WomException {
     Hub hub = getHub(hubConnectionRequest.getDeedId());
     if (hub != null) {
       if (!isHubManagerValid(hub)) {
@@ -242,14 +246,14 @@ public class HubService {
       }
       if (hubRepository.existsByNftIdAndHubAddressNotAndEnabledIsTrue(hubConnectionRequest.getDeedId(),
                                                                       StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))) {
-        throw new WomConnectionException("wom.deedAlreadyUsedByAHub");
+        throw new WomRequestException("wom.deedAlreadyUsedByAHub");
       }
     }
   }
 
-  private void checkDeedManager(String deedManagerAddress, long deedId) throws WomConnectionException {
+  private void checkDeedManager(String deedManagerAddress, long deedId) throws WomException {
     if (!isDeedManager(deedManagerAddress, deedId)) {
-      throw new WomConnectionException("wom.notDeedManager");
+      throw new WomAuthorizationException("wom.notDeedManager");
     }
   }
 
@@ -257,7 +261,7 @@ public class HubService {
     tokens.entrySet().removeIf(entry -> (entry.getValue() - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
   }
 
-  private Hub toHubPresentation(DeedTenantHub deedTenantHub) {
+  private Hub toHubPresentation(DeedHub deedTenantHub) {
     if (deedTenantHub == null) {
       return null;
     }
