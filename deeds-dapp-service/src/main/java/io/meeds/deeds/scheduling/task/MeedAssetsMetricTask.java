@@ -31,7 +31,7 @@ public class MeedAssetsMetricTask {
   @Autowired
   private MeedAssetsMetricsService meedAssetsMetricsService;
 
-  @Scheduled(cron = "0 0/15 * * * *")
+  @Scheduled(cron = "${meeds.token.assets.cron:0 0/15 * * * *}")
   public void computeMeedAssetsMetrics() {
     LOG.info("Start Computing Meed Assets Metrics for Investors app offline access");
     long start = System.currentTimeMillis();
