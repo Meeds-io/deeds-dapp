@@ -45,8 +45,8 @@ public class HubRewardReportStatus {
                                HubRewardReport hubRewardReport,
                                HubRewardReportStatusType status,
                                String error) {
-    this.hubRewardReport = hubRewardReport;
     this.hash = hash;
+    this.hubRewardReport = hubRewardReport;
     this.status = status;
     this.error = error;
   }

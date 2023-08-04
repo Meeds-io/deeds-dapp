@@ -30,6 +30,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.meeds.deeds.constant.HubRewardReportStatusType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,51 +43,54 @@ public class DeedHubRewardReport {
 
   @Id
   @Field(type = FieldType.Keyword)
-  private String      hash;
+  private String                    hash;
 
   @Field(type = FieldType.Keyword)
-  private String      hubAddress;
+  private String                    hubAddress;
 
   @Field(type = FieldType.Long)
-  private long        deedId;
+  private long                      deedId;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     fromDate;
+  private Instant                   fromDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     toDate;
+  private Instant                   toDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     sentRewardsDate;
+  private Instant                   sentRewardsDate;
 
   @Field(type = FieldType.Keyword)
-  private String      periodType;
+  private String                    periodType;
 
   @Field(type = FieldType.Long)
-  private long        participantsCount;
+  private long                      participantsCount;
 
   @Field(type = FieldType.Long)
-  private long        recipientsCount;
+  private long                      recipientsCount;
 
   @Field(type = FieldType.Long)
-  private long        achievementsCount;
+  private long                      achievementsCount;
 
   @Field(type = FieldType.Double)
-  private double      rewardAmount;
+  private double                    rewardAmount;
 
   @Field(type = FieldType.Text)
-  private String      rewardTokenAddress;
+  private String                    rewardTokenAddress;
 
   @Field(type = FieldType.Long)
-  private long        rewardTokenNetworkId;
+  private long                      rewardTokenNetworkId;
 
   @Field(type = FieldType.Text)
-  private Set<String> transactions;
+  private Set<String>               transactions;
 
   @Field(type = FieldType.Keyword)
-  private String      signature;
+  private String                    signature;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     createdDate = Instant.now();
+  private Instant                   createdDate = Instant.now();
+
+  @Field(type = FieldType.Keyword)
+  private HubRewardReportStatusType status;
 
 }
