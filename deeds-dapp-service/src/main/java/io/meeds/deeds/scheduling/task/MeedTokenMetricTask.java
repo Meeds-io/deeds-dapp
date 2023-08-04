@@ -31,7 +31,7 @@ public class MeedTokenMetricTask {
   @Autowired
   private MeedTokenMetricService meedTokenMetricService;
 
-  @Scheduled(cron = "0 0/30 * * * *")
+  @Scheduled(cron = "${meeds.token.metrics.cron:0 0/30 * * * *}")
   public void computeMeedTokenMetrics() {
     LOG.info("Start Computing circulating supply");
     long start = System.currentTimeMillis();
