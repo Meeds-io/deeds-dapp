@@ -17,21 +17,33 @@
  */
 package io.meeds.deeds.constant;
 
+import lombok.Getter;
+
 public enum HubRewardReportStatusType {
 
   // Not sent yet
-  NONE,
+  NONE(true, true),
   // Not valid to be sent
-  INVALID,
+  INVALID(false, false),
   // Sent to WoM
-  SENT,
+  SENT(true, false),
   // Error while sending to WoM
-  ERROR_SENDING,
+  ERROR_SENDING(true, true),
   // Pending for rewards to be sent
-  PENDING_REWARD,
+  PENDING_REWARD(true, false),
   // Rewards sent
-  REWARDED,
+  REWARDED(false, false),
   // Rejected by WoM
-  REJECTED;
+  REJECTED(false, false);
 
+  @Getter
+  private final boolean canRefresh;
+
+  @Getter
+  private final boolean canSend;
+
+  private HubRewardReportStatusType(boolean canRefresh, boolean canSend) {
+    this.canRefresh = canRefresh;
+    this.canSend = canSend;
+  }
 }
