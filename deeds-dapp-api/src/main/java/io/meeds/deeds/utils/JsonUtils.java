@@ -17,9 +17,13 @@
  */
 package io.meeds.deeds.utils;
 
+import java.util.TimeZone;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.meeds.deeds.constant.WomParsingException;
@@ -32,6 +36,8 @@ public class JsonUtils {
     // Workaround when Jackson is defined in shared library with different
     // version and without artifact jackson-datatype-jsr310
     OBJECT_MAPPER.registerModule(new JavaTimeModule());
+    OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    OBJECT_MAPPER.setDateFormat(new StdDateFormat().withTimeZone(TimeZone.getTimeZone("UTC")));
   }
 
   private JsonUtils() {

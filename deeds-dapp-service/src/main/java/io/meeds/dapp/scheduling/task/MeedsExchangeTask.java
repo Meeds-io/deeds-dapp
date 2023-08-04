@@ -15,8 +15,6 @@
  */
 package io.meeds.dapp.scheduling.task;
 
-import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ public class MeedsExchangeTask {
   @Autowired
   private ExchangeService     exchangeService;
 
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS, initialDelay = 2)
+  @Scheduled(cron = "${meeds.token.exchangeRate.cron:25 9 0/1 * * *}")
   public void computeExchangeRate() {
     LOG.info("Start Computing MEED exchange rates");
     long start = System.currentTimeMillis();
