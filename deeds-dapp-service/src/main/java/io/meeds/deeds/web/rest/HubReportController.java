@@ -20,6 +20,8 @@ package io.meeds.deeds.web.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,7 @@ import io.meeds.deeds.constant.WomException;
 import io.meeds.deeds.constant.WomParsingException;
 import io.meeds.deeds.constant.WomRequestException;
 import io.meeds.deeds.model.HubRewardReportRequest;
+import io.meeds.deeds.model.HubRewardReportStatus;
 import io.meeds.deeds.service.HubReportService;
 
 @RestController
@@ -44,14 +47,26 @@ public class HubReportController {
                                                  @RequestBody
                                                  HubRewardReportRequest hubRewardReportRequest) {
     try {
-      hubReportService.saveRewardReport(hubRewardReportRequest);
-      return ResponseEntity.noContent().build();
+      HubRewardReportStatus hubRewardReportStatus = hubReportService.saveRewardReport(hubRewardReportRequest);
+      return ResponseEntity.ok(hubRewardReportStatus);
     } catch (WomRequestException | WomParsingException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
+    }
+  }
+
+  @GetMapping("/{hash}")
+  public ResponseEntity<Object> getRewardReportByHash(
+                                                      @PathVariable(name = "hash")
+                                                      String hash) {
+    HubRewardReportStatus hubRewardReportStatus = hubReportService.getRewardReport(hash);
+    if (hubRewardReportStatus == null) {
+      return ResponseEntity.notFound().build();
+    } else {
+      return ResponseEntity.ok(hubRewardReportStatus);
     }
   }
 
