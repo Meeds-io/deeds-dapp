@@ -31,7 +31,7 @@ public class CurrencyExchangeTask {
   @Autowired
   private ExchangeService     exchangeService;
 
-  @Scheduled(cron = "0 0 0/12 * * *")
+  @Scheduled(cron = "${meeds.currency.exchangeRate.cron:0 0 0/12 * * *}")
   public void computeExchangeRate() {
     LOG.info("Start Computing EURO exchange rate");
     long start = System.currentTimeMillis();
