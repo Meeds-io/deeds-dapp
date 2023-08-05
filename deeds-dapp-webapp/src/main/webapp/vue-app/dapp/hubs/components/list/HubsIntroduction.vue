@@ -23,30 +23,39 @@
         {{ $t('page.hubs.title') }}
       </template>
     </deeds-page-title-layout>
-    <v-text-field
-      v-model="keyword"
-      :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill mx-auto col-12 col-sm-6 headline pt-4 pt-md-6"
-      height="60px"
-      @keydown="enterEvent"  
-      outlined
-      hide-details
-      clearable
-      clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
-      <template #prepend-inner>
-        <v-icon
-          v-if="!keyword"
-          class="mx-9 my-1"
-          size="24">
-          fa fa-search
-        </v-icon>
-        <div v-else class="ms-9"></div>
-      </template>
-    </v-text-field>
+    <v-scale-transition>
+      <v-text-field
+        v-if="!reduced"
+        v-model="keyword"
+        :placeholder="$t('hubs.search.placeholder')"
+        class="rounded-pill mx-auto col-12 col-sm-6 headline pt-4 pt-md-6"
+        height="60px"
+        @keydown="enterEvent"  
+        outlined
+        hide-details
+        clearable
+        clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
+        <template #prepend-inner>
+          <v-icon
+            v-if="!keyword"
+            class="mx-9 my-1"
+            size="24">
+            fa fa-search
+          </v-icon>
+          <div v-else class="ms-9"></div>
+        </template>
+      </v-text-field>
+    </v-scale-transition>
   </div>
 </template>
 <script>
 export default {
+  props: {
+    reduced: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data: () => ({
     keyword: null
   }),
