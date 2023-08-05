@@ -26,6 +26,7 @@ import * as authorizationCodeService from './js/authorizationCodeService.js';
 import * as userProfileService from './js/userProfileService.js';
 import * as tenantManagement from './js/tenantManagement.js';
 import * as hubService from './js/HubService.js';
+import * as hubReportService from './js/HubReportService.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
@@ -78,6 +79,10 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 
 window.Object.defineProperty(Vue.prototype, '$hubService', {
   value: hubService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$hubReportService', {
+  value: hubReportService,
 });
 
 Vue.use(Vuex);
@@ -1478,11 +1483,42 @@ function initializeVueApp(language) {
       i18n.mergeLocaleMessage(language, data);
       if (!app) {
         app = new Vue({
-          el: '#deedsApp',
+          computed: {
+            blockchains() {
+              return {
+                0: {
+                  name: this.$t('wom.unkownBlockchain'),
+                  blockexplorer: '',
+                  testnet: true,
+                },
+                1: {
+                  name: 'Mainnet',
+                  blockexplorer: 'https://etherscan.io',
+                  testnet: false,
+                },
+                5: {
+                  name: 'Goerli',
+                  blockexplorer: 'https://goerli.etherscan.io',
+                  testnet: true,
+                },
+                137: {
+                  name: 'Polygon',
+                  blockexplorer: 'https://polygonscan.com',
+                  testnet: false,
+                },
+                80001: {
+                  name: 'Mumbai',
+                  blockexplorer: 'https://mumbai.polygonscan.com',
+                  testnet: true,
+                },
+              };
+            },
+          },
           template: '<deeds-site id="deedsApp" />',
           store,
           i18n,
           vuetify,
+          el: '#deedsApp',
         });
       }
 
