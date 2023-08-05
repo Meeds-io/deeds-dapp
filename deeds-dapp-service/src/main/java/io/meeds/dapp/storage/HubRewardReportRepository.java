@@ -17,10 +17,14 @@
  */
 package io.meeds.dapp.storage;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.dapp.elasticsearch.model.DeedHubRewardReport;
 
 public interface HubRewardReportRepository extends ElasticsearchRepository<DeedHubRewardReport, String> {
+
+  Page<DeedHubRewardReport> findByHubAddress(String hubAddress, Pageable pageable);
 
 }

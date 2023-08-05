@@ -17,15 +17,42 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import DeedsHubs from './components/Hubs.vue';
-import HubsList from './components/HubsList.vue';
-import HubCard from './components/HubCard.vue';
-import HubsIntroduction from './components/HubsIntroduction.vue';
+
+import HubsIntroduction from './components/list/HubsIntroduction.vue';
+
+import HubCard from './components/card/HubCard.vue';
+import UpcominHubCard from './components/card/UpcominHubCard.vue';
+
+import HubDetails from './components/details/HubDetails.vue';
+
+import HubDeedCard from './components/details/header/HubDeedCard.vue';
+import HubDeedCardTopbar from './components/details/header/HubDeedCardTopbar.vue';
+
+import HubRewards from './components/details/rewards/HubRewards.vue';
+import HubRewardItem from './components/details/rewards/HubRewardItem.vue';
+import HubRewardStatus from './components/details/rewards/HubRewardStatus.vue';
+
+import Address from './components/common/Address.vue';
+import AddressIcon from './components/common/AddressIcon.vue';
+import BlockchainChip from './components/common/BlockchainChip.vue';
 
 const components = {
   'deeds-hubs': DeedsHubs,
-  'deeds-hubs-list': HubsList,
-  'deeds-hub-card': HubCard,
   'deeds-hubs-introduction': HubsIntroduction,
+
+  'deeds-hub-card': HubCard,
+  'deeds-hub-upcoming-card': UpcominHubCard,
+
+  'deeds-hub-details': HubDetails,
+  'deeds-hub-details-deed-card': HubDeedCard,
+  'deeds-hub-details-deed-card-topbar': HubDeedCardTopbar,
+  'deeds-hub-details-rewards': HubRewards,
+  'deeds-hub-details-reward-item': HubRewardItem,
+  'deeds-hub-details-reward-status': HubRewardStatus,
+
+  'deeds-hub-address': Address,
+  'deeds-hub-address-icon': AddressIcon,
+  'deeds-hub-blockchain-chip': BlockchainChip,
 };
 
 for (const key in components) {

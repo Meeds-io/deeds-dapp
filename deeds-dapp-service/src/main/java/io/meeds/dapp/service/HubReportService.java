@@ -28,6 +28,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.web3j.crypto.Hash;
@@ -74,6 +76,18 @@ public class HubReportService {
 
   private List<HubRewardContract>   whitelistRewardContracts;
 
+  public Page<HubRewardReportStatus> getRewardReports(String hubAddress,
+                                                      Pageable pageable) {
+    return hubRewardReportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable)
+                                    .map(this::fromEntity);
+  }
+
+  public HubRewardReportStatus getRewardReport(String hash) {
+    return hubRewardReportRepository.findById(StringUtils.lowerCase(hash))
+                                    .map(this::fromEntity)
+                                    .orElse(null);
+  }
+
   public HubRewardReportStatus saveRewardReport(HubRewardReportRequest hubRewardReportRequest) throws WomException {
     HubRewardReport rewardReport = hubRewardReportRequest.getRewardReport();
     String rawMessage = toJsonString(rewardReport);
@@ -92,12 +106,6 @@ public class HubReportService {
     DeedHubRewardReport deedHubRewardReport = saveRewardReportRequest(hubRewardReportRequest);
     listenerService.publishEvent("wom.hubRewardReport.saved", deedHubRewardReport);
     return fromEntity(deedHubRewardReport);
-  }
-
-  public HubRewardReportStatus getRewardReport(String hash) {
-    return hubRewardReportRepository.findById(hash)
-                                    .map(this::fromEntity)
-                                    .orElse(null);
   }
 
   private DeedHubRewardReport saveRewardReportRequest(HubRewardReportRequest hubRewardReportRequest) {
