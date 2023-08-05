@@ -17,6 +17,8 @@
  */
 package io.meeds.deeds.model;
 
+import org.springframework.hateoas.server.core.Relation;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -29,6 +31,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
+@Relation(collectionRelation = "reports", itemRelation = "report")
 public class HubRewardReportStatus {
 
   private String                    hash;
