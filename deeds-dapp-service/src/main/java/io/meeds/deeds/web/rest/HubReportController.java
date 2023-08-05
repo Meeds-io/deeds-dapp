@@ -18,6 +18,11 @@
 package io.meeds.deeds.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.deeds.constant.WomAuthorizationException;
@@ -42,6 +48,28 @@ public class HubReportController {
   @Autowired
   private HubReportService hubReportService;
 
+  @GetMapping
+  public PagedModel<EntityModel<HubRewardReportStatus>> getHubReports(
+                                                                      @RequestParam(name = "hubAddress", required = true)
+                                                                      String hubAddress,
+                                                                      Pageable pageable,
+                                                                      PagedResourcesAssembler<HubRewardReportStatus> assembler) {
+    Page<HubRewardReportStatus> reports = hubReportService.getRewardReports(hubAddress, pageable);
+    return assembler.toModel(reports);
+  }
+
+  @GetMapping("/{hash}")
+  public ResponseEntity<Object> getRewardReportByHash(
+                                                      @PathVariable(name = "hash")
+                                                      String hash) {
+    HubRewardReportStatus hubRewardReportStatus = hubReportService.getRewardReport(hash);
+    if (hubRewardReportStatus == null) {
+      return ResponseEntity.notFound().build();
+    } else {
+      return ResponseEntity.ok(hubRewardReportStatus);
+    }
+  }
+
   @PostMapping
   public ResponseEntity<Object> saveRewardReport(
                                                  @RequestBody
@@ -55,18 +83,6 @@ public class HubReportController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
-    }
-  }
-
-  @GetMapping("/{hash}")
-  public ResponseEntity<Object> getRewardReportByHash(
-                                                      @PathVariable(name = "hash")
-                                                      String hash) {
-    HubRewardReportStatus hubRewardReportStatus = hubReportService.getRewardReport(hash);
-    if (hubRewardReportStatus == null) {
-      return ResponseEntity.notFound().build();
-    } else {
-      return ResponseEntity.ok(hubRewardReportStatus);
     }
   }
 
