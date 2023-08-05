@@ -1,7 +1,7 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2023 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -11,12 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function getHubs(paramsObj) {
+
+export function getReports(paramsObj) {
   const formData = new FormData();
   if (paramsObj) {
     Object.keys(paramsObj).forEach(key => {
@@ -29,25 +29,44 @@ export function getHubs(paramsObj) {
     });
   }
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${window.parentAppLocation}/api/hubs?${params}`, {
+  return fetch(`${window.parentAppLocation}/api/hub/reports?${params}`, {
     method: 'GET',
-  }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error(`Error getting hubs with params ${JSON.stringify(paramsObj)}`);
-    } else {
+  }).then((resp) => {
+    if (resp?.status === 200) {
       return resp.json();
+    } else if (resp?.status === 404) {
+      return null;
+    } else {
+      return handleResponseError(resp);
     }
   });
 }
 
-export function getHub(address) {
-  return fetch(`${window.parentAppLocation}/api/hubs/${address}`, {
+export function getReport(hash) {
+  return fetch(`${window.parentAppLocation}/api/hub/reports/${hash}`, {
     method: 'GET',
-  }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error(`Error getting hub with address ${address}`);
-    } else {
+  }).then((resp) => {
+    if (resp?.status === 200) {
       return resp.json();
+    } else if (resp?.status === 404) {
+      return null;
+    } else {
+      return handleResponseError(resp);
     }
   });
+}
+
+export function getErrorKey(error) {
+  try {
+    return JSON.parse(error).messageKey.split(':')[0];
+  } catch (e) {
+    return String(error).split(':')[0];
+  }
+}
+
+function handleResponseError(resp) {
+  return resp.text()
+    .then(error => {
+      throw new Error(getErrorKey(error));
+    });
 }
