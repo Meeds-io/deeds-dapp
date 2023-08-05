@@ -38,7 +38,8 @@
         width="75px"
         class="ms-5 mt-n10 rounded-lg position-absolute"
         outlined>
-        <v-img 
+        <v-img
+          v-if="hubLogoUrl"
           :src="`${hubLogoUrl}`"
           class="no-border-radius mx-auto"
           height="100%"
@@ -58,30 +59,7 @@
           {{ hubDescription }}
         </v-card>
         <v-spacer />
-        <div v-if="!upcomingHub" class="d-flex mt-4">
-          <div class="d-flex align-center justify-center">
-            <v-img 
-              :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color font-weight-normal">
-              {{ hubUsers }}
-            </div>
-          </div>
-          <div class="d-flex align-center justify-center ms-10">
-            <v-img 
-              :src="`${parentLocation}/static/images/meed_circle.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color d-flex font-weight-normal">
-              {{ hubRewardsPerWeek }}K
-              <span class="ms-2 text-no-wrap">Ɱ / {{ $t('week') }}</span>
-            </div>
-          </div>
-        </div>
-        <div v-else class="d-flex flex-row py-4">
+        <div class="d-flex flex-row py-4">
           <div class="d-flex flex-row">
             <v-btn
               v-if="hubWebsiteUrl"
@@ -156,10 +134,6 @@ export default {
       type: Object,
       default: null,
     },
-    upcomingHub: {
-      type: Boolean,
-      default: false,
-    }
   },
   computed: Vuex.mapState({
     language: state => state.language,
