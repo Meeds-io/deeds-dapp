@@ -17,6 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents-dapp';
+import './js/purifyVue';
+
 import * as utils from './js/utils.js';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';

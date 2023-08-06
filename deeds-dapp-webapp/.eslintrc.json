@@ -10,6 +10,8 @@
     "BigNumber": true,
     "echarts": true,
     "Vuex": true,
-    "jdenticon": true
+    "jdenticon": true,
+    "DOMPurify": true,
+    "Autolinker": true
   }
 }
