@@ -1,8 +1,9 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
- 
+
  Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
@@ -11,10 +12,11 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <v-card
@@ -30,6 +32,21 @@
       max-height="270px"
       class="mx-auto overflow-hidden position-relative z-index-two rounded-lg d-flex flex-column"
       flat>
+      <v-card-actions
+        v-if="isManager"
+        class="position-absolute z-index-two r-0">
+        <v-btn
+          :title="$t('wom.disconnectHubTooltip')"
+          icon
+          class="mx-0 px-0 elevation-1 white"
+          @click.prevent.stop="$root.$emit('disconnect-hub')">
+          <v-icon
+            size="22"
+            color="error">
+            fa-power-off
+          </v-icon>
+        </v-btn>
+      </v-card-actions>
       <v-card
         class="d-flex position-absolute z-index-zero ms-n4"
         height="100%"
@@ -79,15 +96,15 @@
           </div>
           <div
             :title="hubDescription"
+            v-sanitized-html="hubDescription"
             class="text-light-color transparent font-weight-normal mt-3 text-truncate-2 flex-grow-1 pa-0"
             flat
             tile>
-            {{ hubDescription }}
           </div>
           <div class="d-flex mt-4">
             <div class="d-flex align-center justify-center">
               <v-img 
-                src="/deeds-tenant/images/teamwork_icon_red.webp"
+                :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
                 class="me-2"
                 width="25px"
                 height="25px" />
@@ -97,7 +114,7 @@
             </div>
             <div class="d-flex align-center justify-center ms-10">
               <v-img 
-                src="/deeds-tenant/images/meed_circle.webp"
+                :src="`${parentLocation}/static/images/meed_circle.webp`"
                 class="me-2"
                 width="25px"
                 height="25px" />
@@ -118,6 +135,10 @@ export default {
     hub: {
       type: Object,
       default: null,
+    },
+    isManager: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: Vuex.mapState({
