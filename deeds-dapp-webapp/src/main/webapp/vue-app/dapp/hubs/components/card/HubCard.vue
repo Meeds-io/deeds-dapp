@@ -29,6 +29,27 @@
       max-height="270px"
       hover
       outlined>
+      <v-card-actions class="position-absolute z-index-two r-0">
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              small
+              dense
+              class="mx-0 px-0 elevation-1 white"
+              v-bind="attrs"
+              v-on="on"
+              @click.prevent.stop="$root.$emit('open-hub-details', hub)">
+              <v-icon
+                size="14"
+                color="info">
+                fa-info
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('wom.openHubDetails') }}</span>
+        </v-tooltip>
+      </v-card-actions>
       <v-card
         :color="hubBackgroundColor" 
         height="100px"
@@ -61,39 +82,48 @@
         </v-card>
         <v-spacer />
         <div class="d-flex mt-4">
-          <v-btn
-            v-if="hubUrl"
-            :href="hubUrl"
-            target="_blank"
-            class="me-4"
-            icon
-            @click="nop">
-            <v-icon 
-              size="26" 
-              class="dark-grey-color">
-              fa-globe
-            </v-icon>
-          </v-btn>
-          <v-btn
-            v-if="deedId"
-            :href="`${openSeaBaseLink}/${deedId}`"
-            target="_blank"
-            rel="nofollow noreferrer noopener"
-            max-height="36"
-            class="me-4 px-0 overflow-hidden d-block position-relative"
-            text
-            @click="nop">
-            <v-avatar
-              class="deed-avatar"
-              min-width="36"
-              width="36"
-              height="36">
-              <v-img :src="cardImage" />
-            </v-avatar>
-            <div class="text-light-color font-weight-normal body-1">
-              #{{ deedId }}
-            </div>
-          </v-btn>
+          <v-tooltip v-if="deedId" bottom>
+            <template #activator="{ on, attrs }">
+              <v-chip
+                :href="`${openSeaBaseLink}/${deedId}`"
+                target="_blank"
+                rel="nofollow noreferrer noopener"
+                class="overflow-hidden d-block me-2"
+                outlined
+                v-bind="attrs"
+                v-on="on"
+                @click="nop">
+                <v-img
+                  :src="cardImage"
+                  max-height="36"
+                  max-width="36"
+                  class="rounded-circle ms-n3" />
+                <div class="text-light-color font-weight-normal body-1">
+                  #{{ deedId }}
+                </div>
+              </v-chip>
+            </template>
+            <span>{{ $t('wom.openDeedInOpenSea') }}</span>
+          </v-tooltip>
+          <v-tooltip v-if="hubUrl" bottom>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                :href="hubUrl"
+                target="_blank"
+                class="me-2"
+                icon
+                v-bind="attrs"
+                v-on="on"
+                @click="nop">
+                <v-icon
+                  size="26"
+                  class="dark-grey-color">
+                  fa-globe
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>{{ $t('wom.openHubWebsite') }}</span>
+          </v-tooltip>
           <div class="d-flex align-center justify-center ms-auto">
             <v-img 
               :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
@@ -104,7 +134,7 @@
               {{ hubUsers }}
             </div>
           </div>
-          <div class="d-flex align-center justify-center ms-4">
+          <div class="d-flex align-center justify-center ms-2">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
