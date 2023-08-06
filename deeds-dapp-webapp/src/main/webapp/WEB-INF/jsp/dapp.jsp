@@ -53,8 +53,9 @@
     <% if (staticPage != null && !staticPage) { %>
       <link rel="preload" href="<%=basePath%>static/js/bignumber.min.js?_=v9.0.1" as="script" type="text/javascript">
       <link rel="preload" href="<%=basePath%>static/js/ethers.umd.min.js?_=5.5.1" as="script" type="text/javascript">
-      <link rel="preload" href="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>" as="script" type="text/javascript">
       <link rel="preload" href="<%=basePath%>static/js/jdenticon.min.js?_=3.1.1" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/purifyGRP.js?_=2.3.8" as="script" type="text/javascript">
+      <link rel="preload" href="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <% } else { %>
       <link rel="preload" href="<%=basePath%>static/js/static.js?_=<%=buildnumber%>" as="script" type="text/javascript">
     <% } %>
@@ -113,8 +114,9 @@
     <% if (staticPage != null && !staticPage) { %>
       <script id="bignumber" src="<%=basePath%>static/js/bignumber.min.js?_=v9.0.1"></script>
       <script id="ethers" src="<%=basePath%>static/js/ethers.umd.min.js?_=5.5.1"></script>
-      <script id="deeds" src="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>"></script>
       <script id="jdenticon" src="<%=basePath%>static/js/jdenticon.min.js?_=3.1.1"></script>
+      <script id="jdenticon" src="<%=basePath%>static/js/purifyGRP.js?_=2.3.8"></script>
+      <script id="deeds" src="<%=basePath%>static/js/dapp.js?_=<%=buildnumber%>"></script>
     <% } else { %>
       <script id="static" src="<%=basePath%>static/js/static.js?_=<%=buildnumber%>"></script>
     <% } %>
