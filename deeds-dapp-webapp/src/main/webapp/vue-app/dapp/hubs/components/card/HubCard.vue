@@ -65,15 +65,36 @@
             v-if="hubUrl"
             :href="hubUrl"
             target="_blank"
-            class="me-auto"
-            icon>
+            class="me-4"
+            icon
+            @click="nop">
             <v-icon 
               size="26" 
               class="dark-grey-color">
               fa-globe
             </v-icon>
           </v-btn>
-          <div class="d-flex align-center justify-center">
+          <v-btn
+            v-if="deedId"
+            :href="`${openSeaBaseLink}/${deedId}`"
+            target="_blank"
+            rel="nofollow noreferrer noopener"
+            max-height="36"
+            class="me-4 px-0 overflow-hidden d-block position-relative"
+            text
+            @click="nop">
+            <v-avatar
+              class="deed-avatar"
+              min-width="36"
+              width="36"
+              height="36">
+              <v-img :src="cardImage" />
+            </v-avatar>
+            <div class="text-light-color font-weight-normal body-1">
+              #{{ deedId }}
+            </div>
+          </v-btn>
+          <div class="d-flex align-center justify-center ms-auto">
             <v-img 
               :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
               class="me-2"
@@ -83,7 +104,7 @@
               {{ hubUsers }}
             </div>
           </div>
-          <div class="d-flex align-center justify-center ms-10">
+          <div class="d-flex align-center justify-center ms-4">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
@@ -110,7 +131,10 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     parentLocation: state => state.parentLocation,
+    cardTypes: state => state.cardTypes,
+    cities: state => state.cities,
     formLink: state => state.formLink,
+    openSeaBaseLink: state => state.openSeaBaseLink,
     hubName() {
       return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.name;
     },
@@ -149,7 +173,32 @@ export default {
     },
     formLinkWithCommunityName() {
       return this.formLink.concat('#communityName=', this.hubName);
-    }
+    },
+    deedId() {
+      return this.hub?.deedId;
+    },
+    cityIndex() {
+      return this.hub?.city;
+    },
+    cardTypeIndex() {
+      return this.hub?.type;
+    },
+    city() {
+      return this.cities[this.cityIndex];
+    },
+    cardType() {
+      return this.cardTypes[this.cardTypeIndex];
+    },
+    cardImage() {
+      return this.city && this.cardType && `${this.parentLocation}/static/images/nft/${this.city.toLowerCase()}-${this.cardType.toLowerCase()}.png`;
+    },
   }),
+  methods: {
+    nop(event) {
+      if (event) {
+        event.stopPropagation();
+      }
+    },
+  },
 };
 </script>

@@ -100,7 +100,9 @@ export default {
   data: () => ({
     keyword: null,
     loading: false,
-    limit: 10,
+    pageSize: 10,
+    page: -1,
+    hasMore: false,
     hubs: [],
     selectedHub: null,
     upcomingHubs: [
@@ -239,6 +241,7 @@ export default {
     this.retrieveHubs();
     this.$root.$on('open-hub-details', this.openHubDetails);
     this.$root.$on('close-hub-details', this.closeHubDetails);
+    this.$root.$on('hub-disconnection-success', this.closeHubDetailsAndRefresh);
   },
   methods: {
     openHubDetails(hub) {
@@ -247,15 +250,25 @@ export default {
     closeHubDetails() {
       this.selectedHub = null;
     },
+    closeHubDetailsAndRefresh() {
+      this.page = 0;
+      this.hubs = [];
+      this.retrieveHubs();
+      this.closeHubDetails();
+    },
     retrieveHubs() {
       this.loading = true;
       this.$hubService.getHubs({
-        page: 0,
-        size: this.limit,
+        page: this.page,
+        size: this.pageSize,
       })
         .then(data => {
-          const hubs = data?._embedded?.hubs || [];
-          hubs.forEach(hub => this.hubs.push(hub));
+          if (data?._embedded?.hubs?.length) {
+            this.hubs.push(...data._embedded.hubs);
+            this.hasMore = data.page.totalPages > (this.page + 1);
+          } else {
+            this.hasMore = false;
+          }
         })
         .finally(() => this.loading = false);
     },

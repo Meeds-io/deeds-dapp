@@ -23,10 +23,14 @@
     flat>
     <deeds-hub-details-deed-card-topbar />
     <deeds-hub-details-deed-card
-      :hub="hub" />
+      :hub="hub"
+      :is-manager="isManager" />
     <deeds-hub-details-rewards
       :hub="hub"
       class="mt-4" />
+    <deeds-hub-disconnection-drawer
+      ref="disconnectionDrawer"
+      :hub="hub" />
   </v-card>
 </template>
 <script>
@@ -37,8 +41,19 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    isManager: false,
+  }),
+  computed: Vuex.mapState({
+    address: state => state.address,
+    tenantProvisioningContract: state => state.tenantProvisioningContract,
+    deedId() {
+      return this.hub?.deedId;
+    },
+  }),
   watch: {
     hub() {
+      this.checkManager();
       this.refreshUrl();      
     },
   },
@@ -53,6 +68,12 @@ export default {
     }
   },
   methods: {
+    checkManager() {
+      if (this.address && this.deedId) {
+        return this.tenantProvisioningContract.isProvisioningManager(this.address, this.deedId)
+          .then(provisioningManager => this.isManager = provisioningManager);
+      }
+    },
     refresh(hubAddress) {
       this.loading = true;
       return this.$hubService.getHub(hubAddress)
