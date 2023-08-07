@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,12 +15,16 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.model;
+package io.meeds.dapp.elasticsearch.model;
 
 import java.time.Instant;
-import java.util.Map;
 
-import org.springframework.hateoas.server.core.Relation;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -28,40 +34,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "hubs", itemRelation = "hub")
-public class Hub {
+@Document(indexName = "deed_file", createIndex = true)
+@Setting(replicas = 0, shards = 1)
+public class DeedFileBinary {
 
-  private long                deedId = -1;
+  public static final int MAX_FILE_LENGTH = 524288000;
 
-  private short               city   = -1;
+  @Id
+  private String          id;
 
-  private short               type   = -1;
+  @Field(type = FieldType.Text)
+  private String          name;
 
-  private String              address;
+  @Field(type = FieldType.Keyword)
+  private String          mimeType;
 
-  private Map<String, String> name;
+  @Field(type = FieldType.Binary, index = false)
+  private String          binary;
 
-  private Map<String, String> description;
-
-  private String              url;
-
-  private String              color;
-
-  private String              deedManagerAddress;
-
-  private String              earnerAddress;
-
-  private Instant             createdDate;
-
-  private Instant             updatedDate;
-
-  private long                usersCount;
-
-  private String              rewardsPeriodType;
-
-  private double              rewardsPerPeriod;
+  @Field(type = FieldType.Date, format = DateFormat.epoch_millis)
+  private Instant         updatedDate;
 
 }
