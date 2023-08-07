@@ -140,8 +140,8 @@
               width="25px"
               height="25px" />
             <div class="text-light-color d-flex font-weight-normal">
-              {{ hubRewardsPerWeek }}K
-              <span class="ms-2 text-no-wrap">Ɱ / {{ $t('week') }}</span>
+              {{ hubRewardsAmount }}
+              <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
             </div>
           </div>
         </div>
@@ -191,8 +191,18 @@ export default {
     hubUrl() {
       return this.hub?.hubUrl || this.hub?.url;
     },
-    hubRewardsPerWeek() {
-      return (this.hub?.rewardsPerWeek || 0) / 1000;
+    hubRewardsPeriodType() {
+      return this.hub?.rewardsPeriodType?.toLowerCase();
+    },
+    hubRewardsPeriod() {
+      return this.$t(`wom.${this.hubRewardsPeriodType}`);
+    },
+    hubRewardsAmount() {
+      return new Intl.NumberFormat(this.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(this.hub?.rewardsPerPeriod || 0);
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
