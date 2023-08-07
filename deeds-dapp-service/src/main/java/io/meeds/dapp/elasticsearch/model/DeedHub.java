@@ -16,6 +16,7 @@
 package io.meeds.dapp.elasticsearch.model;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
@@ -34,75 +35,100 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Document(indexName = "deed_tenant_hub", createIndex = true)
+@Document(indexName = "deed_hub", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class DeedHub {
 
   @Id
   @Getter
   @Field(type = FieldType.Keyword)
-  private String  hubAddress;
+  private String              address;
 
   @Getter
   @Setter
   @Field(type = FieldType.Long)
-  private long    nftId;
+  private long                nftId;
 
   @Getter
   @Setter
   @Field(type = FieldType.Short)
-  private short   city;
+  private short               city;
 
   @Getter
   @Setter
   @Field(type = FieldType.Short)
-  private short   type;
+  private short               type;
 
   @Getter
   @Field(type = FieldType.Keyword)
-  private String  deedManagerAddress;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Text)
-  private String  hubName;
-
-  @Getter
-  @Setter
-  @Field(type = FieldType.Text)
-  private String  hubDescription;
+  private String              deedManagerAddress;
 
   @Getter
   @Setter
   @Field(type = FieldType.Auto)
-  private String  hubUrl;
+  private Map<String, String> name;
 
   @Getter
   @Setter
   @Field(type = FieldType.Auto)
-  private String  hubLogoUrl;
+  private Map<String, String> description;
+
+  @Getter
+  @Setter
+  @Field(type = FieldType.Auto)
+  private String              url;
 
   @Getter
   @Setter
   @Field(type = FieldType.Keyword)
-  private String  color;
+  private String              color;
 
   @Getter
   @Field(type = FieldType.Keyword)
-  private String  earnerAddress;
+  private String              earnerAddress;
+
+  @Field(type = FieldType.Keyword)
+  @Getter
+  @Setter
+  private String              avatarId;
+
+  @Field(type = FieldType.Keyword)
+  @Getter
+  @Setter
+  private String              bannerId;
+
+  @Field(type = FieldType.Long)
+  @Getter
+  @Setter
+  private long                usersCount;
+
+  @Field(type = FieldType.Keyword)
+  @Getter
+  @Setter
+  private String              rewardsPeriodType;
+
+  @Field(type = FieldType.Double)
+  @Getter
+  @Setter
+  private double              rewardsPerPeriod;
 
   @Getter
   @Setter
   @Field(type = FieldType.Boolean)
-  private boolean enabled;
+  private boolean             enabled;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @Getter
   @Setter
-  private Instant createdDate = Instant.now();
+  private Instant             createdDate = Instant.now();
 
-  public void setHubAddress(String hubAddress) {
-    this.hubAddress = StringUtils.lowerCase(hubAddress);
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  @Getter
+  @Setter
+  private Instant             updatedDate = Instant.now();
+
+  public void setAddress(String address) {
+    this.address = StringUtils.lowerCase(address);
   }
 
   public void setDeedManagerAddress(String deedManagerAddress) {

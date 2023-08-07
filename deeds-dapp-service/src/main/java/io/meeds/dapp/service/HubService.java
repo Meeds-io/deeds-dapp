@@ -17,7 +17,9 @@
  */
 package io.meeds.dapp.service;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
@@ -27,14 +29,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
+import io.meeds.dapp.elasticsearch.model.DeedFileBinary;
 import io.meeds.dapp.elasticsearch.model.DeedHub;
+import io.meeds.dapp.model.AttachmentType;
+import io.meeds.dapp.model.FileBinary;
 import io.meeds.dapp.storage.HubRepository;
+import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.WomAuthorizationException;
 import io.meeds.deeds.constant.WomException;
 import io.meeds.deeds.constant.WomRequestException;
@@ -67,6 +75,9 @@ public class HubService {
   @Autowired
   private HubRepository       hubRepository;
 
+  @Autowired
+  private FileService         fileService;
+
   private Map<String, Long>   tokens                    = new ConcurrentHashMap<>();
 
   public boolean isDeedManager(String address, Long nftId) {
@@ -96,7 +107,7 @@ public class HubService {
   }
 
   public Hub getHub(String hubAddress) {
-    return hubRepository.findByHubAddressAndEnabledIsTrue(StringUtils.lowerCase(hubAddress))
+    return hubRepository.findByAddressAndEnabledIsTrue(StringUtils.lowerCase(hubAddress))
                         .map(this::toHubPresentation)
                         .orElse(null);
   }
@@ -132,6 +143,42 @@ public class HubService {
     }
   }
 
+  public void saveHubAvatar(String hubAddress,
+                            String signedMessage,
+                            String rawMessage,
+                            String token,
+                            MultipartFile file) throws ObjectNotFoundException,
+                                                WomException,
+                                                IOException {
+    validateSignedHubManagerMessage(hubAddress,
+                                    signedMessage,
+                                    rawMessage,
+                                    token);
+    saveHubAttachment(hubAddress, file, AttachmentType.AVATAR);
+  }
+
+  public void saveHubBanner(String hubAddress,
+                            String signedMessage,
+                            String rawMessage,
+                            String token,
+                            MultipartFile file) throws ObjectNotFoundException,
+                                                WomException,
+                                                IOException {
+    validateSignedHubManagerMessage(hubAddress,
+                                    signedMessage,
+                                    rawMessage,
+                                    token);
+    saveHubAttachment(hubAddress, file, AttachmentType.BANNER);
+  }
+
+  public FileBinary getHubAvatar(String hubAddress) {
+    return fileService.getFile(getAvatarId(hubAddress));
+  }
+
+  public FileBinary getHubBanner(String hubAddress) {
+    return fileService.getFile(getBannerId(hubAddress));
+  }
+
   public boolean isHubManagerValid(Hub hub) {
     // checks whether current manager of hub is still always the same
     return StringUtils.isBlank(hub.getDeedManagerAddress())
@@ -146,6 +193,76 @@ public class HubService {
                      hubRepository.save(deedTenantHub);
                    }
                  });
+  }
+
+  private void saveHubAttachment(String hubAddress, MultipartFile file, AttachmentType attachmentType) throws IOException,
+                                                                                                       WomException {
+    if (file == null) {
+      throw new IllegalArgumentException("wom.fileIsMandatory");
+    }
+    if (file.getSize() > DeedFileBinary.MAX_FILE_LENGTH) {
+      throw new WomRequestException("wom.fileTooBig");
+    }
+    if (attachmentType == null) {
+      throw new IllegalArgumentException("wom.attachmentTypeIsMandatory");
+    }
+    String fileId = switch (attachmentType) {
+    case AVATAR:
+      yield getAvatarId(hubAddress);
+    case BANNER:
+      yield getBannerId(hubAddress);
+    default:
+      throw new IllegalArgumentException("wom.attachmentTypeIsUnsupported:" + attachmentType);
+    };
+    String contentType = StringUtils.contains(file.getContentType(), "image/") ? file.getContentType()
+                                                                               : MediaType.IMAGE_PNG_VALUE;
+    FileBinary fileBinary = new FileBinary(fileId,
+                                           file.getName(),
+                                           contentType,
+                                           file.getInputStream(),
+                                           Instant.now());
+    String savedFileId = fileService.saveFile(fileBinary);
+    DeedHub deedHub = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElseThrow();
+    switch (attachmentType) {
+    case AVATAR: {
+      deedHub.setAvatarId(savedFileId);
+      break;
+    }
+    case BANNER: {
+      deedHub.setBannerId(savedFileId);
+      break;
+    }
+    default:
+      throw new IllegalArgumentException("wom.attachmentTypeIsUnsupported:" + attachmentType);
+    }
+    deedHub.setUpdatedDate(Instant.now());
+    hubRepository.save(deedHub);
+  }
+
+  private String getAvatarId(String hubAddress) {
+    DeedHub deedHub = hubRepository.findByAddressAndEnabledIsTrue(StringUtils.lowerCase(hubAddress)).orElseThrow();
+    return deedHub.getAvatarId();
+  }
+
+  private String getBannerId(String hubAddress) {
+    DeedHub deedHub = hubRepository.findByAddressAndEnabledIsTrue(StringUtils.lowerCase(hubAddress)).orElseThrow();
+    return deedHub.getBannerId();
+  }
+
+  private void validateSignedHubManagerMessage(String hubAddress, String signedMessage, String rawMessage,
+                                               String token) throws ObjectNotFoundException, WomException {
+    Hub hub = getHub(hubAddress);
+    if (hub == null) {
+      throw new ObjectNotFoundException("wom.hubDoesNotExist");
+    }
+    checkTokenInMessage(token);
+    checkSignedMessage(hub.getDeedManagerAddress(),
+                       signedMessage,
+                       rawMessage,
+                       token);
+
+    checkDeedManager(hub.getDeedManagerAddress(),
+                     hub.getDeedId());
   }
 
   private void validateHubCommunityConnectionRequest(WomConnectionRequest hubConnectionRequest) throws WomException {
@@ -169,8 +286,9 @@ public class HubService {
 
   private void saveDeedHubCommunity(WomConnectionRequest hubConnectionRequest) {
     DeedHub deedTenantHub = hubRepository.findById(StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))
-                                               .orElseGet(DeedHub::new);
+                                         .orElseGet(DeedHub::new);
     mapConnectionRequestToHub(deedTenantHub, hubConnectionRequest);
+    deedTenantHub.setUpdatedDate(Instant.now());
     deedTenantHub.setEnabled(true);
     hubRepository.save(deedTenantHub);
   }
@@ -221,31 +339,14 @@ public class HubService {
     }
   }
 
-  private void mapConnectionRequestToHub(DeedHub deedTenantHub, WomConnectionRequest hubConnectionRequest) {
-    deedTenantHub.setNftId(hubConnectionRequest.getDeedId());
-    DeedTenant deedTenant = tenantService.getDeedTenant(hubConnectionRequest.getDeedId());
-    if (deedTenant != null) {
-      deedTenantHub.setCity(deedTenant.getCityIndex());
-      deedTenantHub.setType(deedTenant.getCardType());
-    }
-    deedTenantHub.setHubAddress(hubConnectionRequest.getHubAddress());
-    deedTenantHub.setHubName(hubConnectionRequest.getHubName());
-    deedTenantHub.setHubDescription(hubConnectionRequest.getHubDescription());
-    deedTenantHub.setHubUrl(hubConnectionRequest.getHubUrl());
-    deedTenantHub.setHubLogoUrl(hubConnectionRequest.getHubLogoUrl());
-    deedTenantHub.setDeedManagerAddress(hubConnectionRequest.getDeedManagerAddress());
-    deedTenantHub.setEarnerAddress(hubConnectionRequest.getEarnerAddress());
-    deedTenantHub.setColor(hubConnectionRequest.getColor());
-  }
-
   private void checkDeedNotUsed(WomConnectionRequest hubConnectionRequest) throws WomException {
     Hub hub = getHub(hubConnectionRequest.getDeedId());
     if (hub != null) {
       if (!isHubManagerValid(hub)) {
         disableDeedHubCommunity(hub.getAddress());
       }
-      if (hubRepository.existsByNftIdAndHubAddressNotAndEnabledIsTrue(hubConnectionRequest.getDeedId(),
-                                                                      StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))) {
+      if (hubRepository.existsByNftIdAndAddressNotAndEnabledIsTrue(hubConnectionRequest.getDeedId(),
+                                                                   StringUtils.lowerCase(hubConnectionRequest.getHubAddress()))) {
         throw new WomRequestException("wom.deedAlreadyUsedByAHub");
       }
     }
@@ -270,15 +371,37 @@ public class HubService {
     deedTenantHubPresentation.setCity(deedTenantHub.getCity());
     deedTenantHubPresentation.setType(deedTenantHub.getType());
     deedTenantHubPresentation.setDeedManagerAddress(deedTenantHub.getDeedManagerAddress());
-    deedTenantHubPresentation.setAddress(deedTenantHub.getHubAddress());
-    deedTenantHubPresentation.setName(deedTenantHub.getHubName());
-    deedTenantHubPresentation.setDescription(deedTenantHub.getHubDescription());
-    deedTenantHubPresentation.setUrl(deedTenantHub.getHubUrl());
-    deedTenantHubPresentation.setLogoUrl(deedTenantHub.getHubLogoUrl());
+    deedTenantHubPresentation.setAddress(deedTenantHub.getAddress());
+    deedTenantHubPresentation.setName(deedTenantHub.getName());
+    deedTenantHubPresentation.setDescription(deedTenantHub.getDescription());
+    deedTenantHubPresentation.setUrl(deedTenantHub.getUrl());
     deedTenantHubPresentation.setColor(deedTenantHub.getColor());
     deedTenantHubPresentation.setEarnerAddress(deedTenantHub.getEarnerAddress());
     deedTenantHubPresentation.setCreatedDate(deedTenantHub.getCreatedDate());
+    deedTenantHubPresentation.setUpdatedDate(deedTenantHub.getUpdatedDate());
+    deedTenantHubPresentation.setRewardsPeriodType(deedTenantHub.getRewardsPeriodType());
+    deedTenantHubPresentation.setRewardsPerPeriod(deedTenantHub.getRewardsPerPeriod());
+    deedTenantHubPresentation.setUsersCount(deedTenantHub.getUsersCount());
     return deedTenantHubPresentation;
+  }
+
+  private void mapConnectionRequestToHub(DeedHub deedTenantHub, WomConnectionRequest hubConnectionRequest) {
+    deedTenantHub.setNftId(hubConnectionRequest.getDeedId());
+    DeedTenant deedTenant = tenantService.getDeedTenant(hubConnectionRequest.getDeedId());
+    if (deedTenant != null) {
+      deedTenantHub.setCity(deedTenant.getCityIndex());
+      deedTenantHub.setType(deedTenant.getCardType());
+    }
+    deedTenantHub.setAddress(hubConnectionRequest.getHubAddress());
+    deedTenantHub.setName(hubConnectionRequest.getHubName());
+    deedTenantHub.setDescription(hubConnectionRequest.getHubDescription());
+    deedTenantHub.setUrl(hubConnectionRequest.getHubUrl());
+    deedTenantHub.setDeedManagerAddress(hubConnectionRequest.getDeedManagerAddress());
+    deedTenantHub.setEarnerAddress(hubConnectionRequest.getEarnerAddress());
+    deedTenantHub.setColor(hubConnectionRequest.getColor());
+    deedTenantHub.setUsersCount(hubConnectionRequest.getUsersCount());
+    deedTenantHub.setRewardsPerPeriod(hubConnectionRequest.getRewardsPerPeriod());
+    deedTenantHub.setRewardsPeriodType(hubConnectionRequest.getRewardsPeriodType());
   }
 
 }
