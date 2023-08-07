@@ -75,11 +75,10 @@
           </span>
         </div>
         <v-card
+          v-sanitized-html="hubDescription"
           height="50px"
           class="text-light-color font-weight-normal mt-3 text-truncate-2 pa-0"
-          flat>
-          {{ hubDescription }}
-        </v-card>
+          flat />
         <v-spacer />
         <div class="d-flex mt-4">
           <v-tooltip v-if="deedId" bottom>
@@ -166,16 +165,22 @@ export default {
     formLink: state => state.formLink,
     openSeaBaseLink: state => state.openSeaBaseLink,
     hubName() {
-      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.name;
+      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
     },
     hubDescription() {
-      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en || this.hub?.description;
+      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
     hubBackgroundColor() {
       return this.hub?.backgroundColor || this.hub?.color;
     },
+    hubAddress() {
+      return this.hub?.address;
+    },
+    hubUpdateTime() {
+      return this.hub?.updatedDate && new Date(this.hub?.updatedDate).getTime();
+    },
     hubLogoUrl() {
-      return this.hub?.logoUrl;
+      return `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
     },
     hubUsersCount() {
       return this.hub?.usersCount || 0;

@@ -146,14 +146,26 @@ export default {
     cities: state => state.cities,
     language: state => state.language,
     parentLocation: state => state.parentLocation,
+    hubNames() {
+      return this.hub?.name || {};
+    },
+    hubDescriptions() {
+      return this.hub?.description || {};
+    },
     hubName() {
-      return this.hub?.name;
+      return this.hubNames[this.language] || this.hubNames['en'] || '';
     },
     hubDescription() {
-      return this.hub?.description;
+      return this.hubDescriptions[this.language] || this.hubDescriptions['en'] || '';
+    },
+    hubAddress() {
+      return this.hub?.address;
+    },
+    hubUpdateTime() {
+      return this.hub?.updatedDate && new Date(this.hub?.updatedDate).getTime();
     },
     hubLogoUrl() {
-      return this.hub?.logoUrl;
+      return `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
     },
     hubUrl() {
       return this.hub?.url;

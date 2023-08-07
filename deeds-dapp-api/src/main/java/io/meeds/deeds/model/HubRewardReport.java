@@ -60,6 +60,14 @@ public class HubRewardReport {
 
   @Getter
   @Setter
+  private double      rewardsPerPeriod;
+
+  @Getter
+  @Setter
+  private long        usersCount;
+
+  @Getter
+  @Setter
   private long        participantsCount;
 
   @Getter
