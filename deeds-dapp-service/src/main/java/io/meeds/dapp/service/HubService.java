@@ -189,8 +189,20 @@ public class HubService {
     hubRepository.findById(StringUtils.lowerCase(hubAddress))
                  .ifPresent(deedTenantHub -> {
                    if (deedTenantHub.isEnabled()) {
+                     String avatarId = deedTenantHub.getAvatarId();
+                     String bannerId = deedTenantHub.getBannerId();
+
                      deedTenantHub.setEnabled(false);
+                     deedTenantHub.setAvatarId(null);
+                     deedTenantHub.setBannerId(null);
                      hubRepository.save(deedTenantHub);
+
+                     if (StringUtils.isNotBlank(avatarId)) {
+                       fileService.removeFile(avatarId);
+                     }
+                     if (StringUtils.isNotBlank(bannerId)) {
+                       fileService.removeFile(bannerId);
+                     }
                    }
                  });
   }
