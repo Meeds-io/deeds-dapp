@@ -17,43 +17,6 @@
  */
 package io.meeds.deeds.model;
 
-import java.util.Map;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class WomConnectionRequest {
-
-  private long                deedId = -1;
-
-  private String              deedManagerAddress;
-
-  private String              hubAddress;
-
-  private Map<String, String> hubName;
-
-  private Map<String, String> hubDescription;
-
-  private String              hubUrl;
-
-  private String              color;
-
-  private String              earnerAddress;
-
-  private String              signedMessage;
-
-  private String              rawMessage;
-
-  private String              token;
-
-  private String              rewardsPeriodType;
-
-  private double              rewardsPerPeriod;
-
-  private long                usersCount;
-
+public enum AttachmentType {
+  AVATAR, BANNER;
 }
