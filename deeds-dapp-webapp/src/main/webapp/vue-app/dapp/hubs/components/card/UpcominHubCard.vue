@@ -169,10 +169,10 @@ export default {
     parentLocation: state => state.parentLocation,
     formLink: state => state.formLink,
     hubName() {
-      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en || this.hub?.name;
+      return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
     },
     hubDescription() {
-      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en || this.hub?.description;
+      return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
     hubBackgroundColor() {
       return this.hub?.backgroundColor || this.hub?.color;
