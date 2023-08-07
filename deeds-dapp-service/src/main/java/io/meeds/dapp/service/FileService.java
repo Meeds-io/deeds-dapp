@@ -59,4 +59,8 @@ public class FileService {
                                          file.getUpdatedDate());
   }
 
+  public void removeFile(String fileId) {
+    fileRepository.deleteById(fileId);
+  }
+
 }
