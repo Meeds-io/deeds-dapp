@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,8 +17,8 @@
  */
 package io.meeds.deeds.model;
 
+import java.io.InputStream;
 import java.time.Instant;
-import java.util.Map;
 
 import org.springframework.hateoas.server.core.Relation;
 
@@ -31,37 +33,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "hubs", itemRelation = "hub")
-public class Hub {
+@Relation(collectionRelation = "files", itemRelation = "file")
+public class FileBinary {
 
-  private long                deedId = -1;
+  private String      id;
 
-  private short               city   = -1;
+  private String      name;
 
-  private short               type   = -1;
+  private String      mimeType;
 
-  private String              address;
+  private InputStream binary;
 
-  private Map<String, String> name;
-
-  private Map<String, String> description;
-
-  private String              url;
-
-  private String              color;
-
-  private String              deedManagerAddress;
-
-  private String              earnerAddress;
-
-  private Instant             createdDate;
-
-  private Instant             updatedDate;
-
-  private long                usersCount;
-
-  private String              rewardsPeriodType;
-
-  private double              rewardsPerPeriod;
+  private Instant     updatedDate;
 
 }
