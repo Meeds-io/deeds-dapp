@@ -9,10 +9,12 @@
         class="overflow-y-auto fill-height"
         flat>
         <v-card-title class="title d-flex flex-sm-nowrap">
-          <v-icon color="secondary" class="d-none d-sm-block mt-n1">fa-calendar</v-icon>
-          <div
-            :class="expand && 'justify-start ms-0 ms-sm-2' || 'justify-center'"
-            class="d-flex flex-column flex-sm-row flex-grow-1 flex-shrink-1 align-center">
+          <v-icon
+            color="secondary"
+            class="d-none d-sm-block mt-n1 me-2">
+            fa-calendar
+          </v-icon>
+          <div class="d-flex flex-column flex-sm-row flex-grow-1 flex-shrink-1 ms-0 ms-sm-2 justify-start align-center">
             <deeds-date-format
               :value="fromDate"
               :format="dateFormat"
@@ -23,6 +25,12 @@
               :format="dateFormat"
               class="text-break" />
           </div>
+          <deeds-hub-details-reward-item-menu
+            :report="report"
+            :loading="loading"
+            :expanded="expand"
+            @expand="$emit('expand')"
+            @collapse="$emit('collapse')" />
         </v-card-title>
         <v-card-text
           :class="expand && 'mt-4 pb-6' || 'mt-n2 pb-2'"

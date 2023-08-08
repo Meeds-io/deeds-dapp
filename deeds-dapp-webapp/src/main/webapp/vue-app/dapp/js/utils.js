@@ -53,3 +53,13 @@ export function sortByName(tab, lang) {
     return tab.sort((obj1,obj2) => ((obj1?.name?.en.toLowerCase() > obj2?.name?.en.toLowerCase()) ? 1 : ((obj2?.name?.en.toLowerCase() > obj1?.name?.en.toLowerCase() ? -1 : 0))));
   }
 }
+
+export function refreshHubUrl(hubAddress, reportHash) {
+  const link = hubAddress && reportHash && `${window.location.pathname}?address=${hubAddress}&report=${reportHash}`
+      || (hubAddress && `${window.location.pathname}?address=${hubAddress}`)
+      || window.location.pathname;
+  if (!window.location.href !== link) {
+    const fullLink = `${origin}${link}`;
+    window.setTimeout(() => window.history.pushState({}, '', fullLink), 50);
+  }
+}
