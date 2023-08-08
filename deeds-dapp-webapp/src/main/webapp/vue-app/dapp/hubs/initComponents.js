@@ -24,14 +24,17 @@ import HubCard from './components/card/HubCard.vue';
 import UpcominHubCard from './components/card/UpcominHubCard.vue';
 
 import HubDetails from './components/details/HubDetails.vue';
+import HubNotFound from './components/details/HubNotFound.vue';
+import HubReportNotFound from './components/details/HubReportNotFound.vue';
 
-import HubDeedCard from './components/details/header/HubDeedCard.vue';
+import HubDeedCard from './components/details/card/HubDeedCard.vue';
 import HubDeedCardTopbar from './components/details/header/HubDeedCardTopbar.vue';
 
 import HubDisconnectionDrawer from './components/details/drawer/HubDisconnectionDrawer.vue';
 
 import HubRewards from './components/details/rewards/HubRewards.vue';
 import HubRewardItem from './components/details/rewards/HubRewardItem.vue';
+import HubRewardItemMenu from './components/details/rewards/HubRewardItemMenu.vue';
 import HubRewardStatus from './components/details/rewards/HubRewardStatus.vue';
 
 import Address from './components/common/Address.vue';
@@ -48,10 +51,13 @@ const components = {
   'deeds-hub-upcoming-card': UpcominHubCard,
 
   'deeds-hub-details': HubDetails,
+  'deeds-hub-not-found': HubNotFound,
+  'deeds-hub-report-not-found': HubReportNotFound,
   'deeds-hub-details-deed-card': HubDeedCard,
   'deeds-hub-details-deed-card-topbar': HubDeedCardTopbar,
   'deeds-hub-details-rewards': HubRewards,
   'deeds-hub-details-reward-item': HubRewardItem,
+  'deeds-hub-details-reward-item-menu': HubRewardItemMenu,
   'deeds-hub-details-reward-status': HubRewardStatus,
 
   'deeds-hub-disconnection-drawer': HubDisconnectionDrawer,
