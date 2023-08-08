@@ -48,6 +48,12 @@ public class DeedHubRewardReport {
   @Field(type = FieldType.Keyword)
   private String                    hubAddress;
 
+  @Field(type = FieldType.Keyword)
+  private String                    earnerAddress;
+
+  @Field(type = FieldType.Keyword)
+  private String                    deedManagerAddress;
+
   @Field(type = FieldType.Long)
   private long                      deedId;
 
