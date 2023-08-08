@@ -103,14 +103,14 @@ public class HubReportService {
     checkRewardDates(hub, rewardReport);
     checkTokenWhitelisted(rewardReport);
 
-    DeedHubRewardReport deedHubRewardReport = saveRewardReportRequest(hubRewardReportRequest);
+    DeedHubRewardReport deedHubRewardReport = saveRewardReportRequest(hub, hubRewardReportRequest);
     listenerService.publishEvent("wom.hubRewardReport.saved", deedHubRewardReport);
     return fromEntity(deedHubRewardReport);
   }
 
-  private DeedHubRewardReport saveRewardReportRequest(HubRewardReportRequest hubRewardReportRequest) {
+  private DeedHubRewardReport saveRewardReportRequest(Hub hub, HubRewardReportRequest hubRewardReportRequest) {
     DeedHubRewardReport existingEntity = hubRewardReportRepository.findById(hubRewardReportRequest.getHash()).orElse(null);
-    DeedHubRewardReport deedHubRewardReport = toEntity(hubRewardReportRequest, existingEntity);
+    DeedHubRewardReport deedHubRewardReport = toEntity(hub, hubRewardReportRequest, existingEntity);
     if (existingEntity == null) {
       deedHubRewardReport.setStatus(HubRewardReportStatusType.SENT);
     }
@@ -205,12 +205,15 @@ public class HubReportService {
     return whitelistRewardContracts.contains(new HubRewardContract(networkId, StringUtils.lowerCase(contractAddress)));
   }
 
-  private DeedHubRewardReport toEntity(HubRewardReportRequest hubRewardReportRequest, DeedHubRewardReport existingEntity) {
+  private DeedHubRewardReport toEntity(Hub hub, HubRewardReportRequest hubRewardReportRequest,
+                                       DeedHubRewardReport existingEntity) {
     HubRewardReport rewardReport = hubRewardReportRequest.getRewardReport();
     DeedHubRewardReport deedHubRewardReport = existingEntity == null ? new DeedHubRewardReport() : existingEntity;
     deedHubRewardReport.setHash(hubRewardReportRequest.getHash());
     deedHubRewardReport.setSignature(hubRewardReportRequest.getSignature());
     deedHubRewardReport.setHubAddress(rewardReport.getHubAddress());
+    deedHubRewardReport.setEarnerAddress(StringUtils.lowerCase(hub.getEarnerAddress()));
+    deedHubRewardReport.setDeedManagerAddress(StringUtils.lowerCase(hub.getDeedManagerAddress()));
     deedHubRewardReport.setDeedId(rewardReport.getDeedId());
     deedHubRewardReport.setFromDate(rewardReport.getFromDate());
     deedHubRewardReport.setToDate(rewardReport.getToDate());
@@ -245,6 +248,8 @@ public class HubReportService {
     HubRewardPayment rewardPayment = null; // TODO
     return new HubRewardReportStatus(deedHubRewardReport.getHash(),
                                      rewardReport,
+                                     StringUtils.lowerCase(deedHubRewardReport.getEarnerAddress()),
+                                     StringUtils.lowerCase(deedHubRewardReport.getDeedManagerAddress()),
                                      deedHubRewardReport.getStatus(),
                                      null,
                                      rewardPayment);
