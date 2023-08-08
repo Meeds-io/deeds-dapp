@@ -29,6 +29,41 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/</outputDirectory>
       <includes>
+        <include>*:*:jar</include>
+      </includes>
+      <excludes>
+        <!-- Package in WAR for Spring Context initialization -->
+        <exclude>${project.groupId}:deeds-dapp-service:jar</exclude>
+
+        <!-- Prepackage libraries in Meeds -->
+        <exclude>org.ow2.asm:asm:jar</exclude>
+        <exclude>commons-codec:commons-codec:jar</exclude>
+        <exclude>commons-io:commons-io:jar</exclude>
+        <exclude>com.google.code.findbugs:jsr305:jar</exclude>
+        <exclude>org.apache.commons:commons-lang3:jar</exclude>
+        <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+        <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
+        <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
+        <exclude>com.fasterxml.jackson.core:jackson-core:jar</exclude>
+        <exclude>com.fasterxml.jackson.core:jackson-databind:jar</exclude>
+        <exclude>jakarta.annotation:jakarta.annotation-api:jar</exclude>
+        <exclude>org.jetbrains.kotlin:kotlin-stdlib:jar</exclude>
+        <exclude>org.jetbrains.kotlin:kotlin-stdlib-common:jar</exclude>
+        <exclude>org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar</exclude>
+        <exclude>org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar</exclude>
+        <exclude>com.squareup.okhttp3:logging-interceptor:jar</exclude>
+        <exclude>com.squareup.okhttp3:okhttp:jar</exclude>
+        <exclude>org.reactivestreams:reactive-streams:jar</exclude>
+        <exclude>io.reactivex.rxjava2:rxjava:jar</exclude>
+        <exclude>org.yaml:snakeyaml:jar</exclude>
+      </excludes>
+      <scope>provided</scope>
+      <outputFileNameMapping>${artifact.artifactId}.jar</outputFileNameMapping>
+    </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>/</outputDirectory>
+      <includes>
         <include>${project.groupId}:*:war</include>
       </includes>
       <scope>provided</scope>
