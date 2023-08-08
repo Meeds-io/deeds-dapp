@@ -38,6 +38,10 @@ public class HubRewardReportStatus {
 
   private HubRewardReport           hubRewardReport;
 
+  private String                    earnerAddress;
+
+  private String                    deedManagerAddress;
+
   private HubRewardReportStatusType status;
 
   private String                    error;
@@ -52,6 +56,18 @@ public class HubRewardReportStatus {
     this.hubRewardReport = hubRewardReport;
     this.status = status;
     this.error = error;
+  }
+
+  public HubRewardReportStatus(String hash,
+                               HubRewardReport hubRewardReport,
+                               HubRewardReportStatusType status,
+                               String error,
+                               HubRewardPayment rewardPayment) {
+    this.hash = hash;
+    this.hubRewardReport = hubRewardReport;
+    this.status = status;
+    this.error = error;
+    this.rewardPayment = rewardPayment;
   }
 
 }
