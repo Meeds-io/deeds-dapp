@@ -22,15 +22,24 @@
     class="pa-4"
     flat>
     <deeds-hub-details-deed-card-topbar />
-    <deeds-hub-details-deed-card
-      :hub="hub"
-      :is-manager="isManager" />
-    <deeds-hub-details-rewards
-      :hub="hub"
-      class="mt-4" />
-    <deeds-hub-disconnection-drawer
-      ref="disconnectionDrawer"
-      :hub="hub" />
+    <deeds-hub-not-found
+      v-if="hub.notFound"
+      :address="hub.address" />
+    <deeds-hub-report-not-found
+      v-else-if="hub.reportNotFound"
+      :hash="hub.reportHash" />
+    <template v-else>
+      <deeds-hub-details-deed-card
+        :hub="hub"
+        :is-manager="isManager" />
+      <deeds-hub-details-rewards
+        :hub="hub"
+        :selected-report="selectedReport"
+        class="mt-4" />
+      <deeds-hub-disconnection-drawer
+        ref="disconnectionDrawer"
+        :hub="hub" />
+    </template>
   </v-card>
 </template>
 <script>
@@ -43,6 +52,8 @@ export default {
   },
   data: () => ({
     isManager: false,
+    initialized: false,
+    selectedReport: null,
   }),
   computed: Vuex.mapState({
     address: state => state.address,
@@ -54,48 +65,72 @@ export default {
   watch: {
     hub() {
       this.checkManager();
-      this.refreshUrl();      
+      if (this.initialized) {
+        this.refreshUrl();      
+      }
     },
   },
   created() {
     if (!this.hub) {
-      const hubAddress = this.$utils.getQueryParam('address');
-      if (hubAddress) {
-        this.refresh(hubAddress);
-      } else {
-        this.$root.$emit('close-hub-details');
-      }
+      Promise.resolve(this.init())
+        .then(() => this.$nextTick())
+        .finally(() => this.initialized = true);
     }
   },
   methods: {
+    init() {
+      const hubAddress = this.$utils.getQueryParam('address');
+      const hubReportHash = this.$utils.getQueryParam('report');
+      if (hubReportHash) {
+        return this.$hubReportService.getReport(hubReportHash)
+          .then(report => {
+            if (report?.hubRewardReport?.hubAddress) {
+              this.selectedReport = report;
+              return this.refresh(report?.hubRewardReport?.hubAddress, hubReportHash);
+            } else {
+              this.$root.$emit('report-not-found', hubReportHash);
+            }
+          })
+          .catch(() => this.$root.$emit('report-not-found', hubReportHash))
+          .finally(() => this.loading = false);
+      } else {
+        if (hubAddress) {
+          return this.refresh(hubAddress);
+        } else {
+          this.$root.$emit('close-hub-details');
+        }
+      }
+    },
     checkManager() {
       if (this.address && this.deedId) {
         return this.tenantProvisioningContract.isProvisioningManager(this.address, this.deedId)
           .then(provisioningManager => this.isManager = provisioningManager);
       }
     },
-    refresh(hubAddress) {
+    refresh(hubAddress, hubReportHash) {
       this.loading = true;
       return this.$hubService.getHub(hubAddress)
         .then(hub => {
           if (hub) {
             this.$root.$emit('open-hub-details', hub);
+          } else if (hubReportHash) {
+            this.$root.$emit('report-not-found', hubReportHash);
           } else {
-            this.$root.$emit('close-hub-details');
-            this.refreshUrl();
+            this.$root.$emit('hub-not-found', hubAddress);
+          }
+        })
+        .catch(() => {
+          if (hubReportHash) {
+            this.$root.$emit('report-not-found', hubReportHash);
+          } else {
+            this.$root.$emit('hub-not-found', hubAddress);
           }
         })
         .finally(() => this.loading = false);
     },
     refreshUrl() {
-      const link = this.hub
-          && `${window.location.pathname}?address=${this.hub.address}`
-          || window.location.pathname;
-      if (!window.location.href.endsWith(link)) {
-        const fullLink = `${origin}${link}`;
-        this.$nextTick().then(() =>
-          window.history.pushState({}, '', fullLink)
-        );
+      if (!this.hub || (!this.hub.notFound && !this.hub.reportNotFound)) {
+        this.$utils.refreshHubUrl(this.hub?.address);
       }
     },
   },
