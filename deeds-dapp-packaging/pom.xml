@@ -38,6 +38,12 @@
       <artifactId>deeds-dapp-webapp</artifactId>
       <scope>runtime</scope>
       <type>war</type>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
