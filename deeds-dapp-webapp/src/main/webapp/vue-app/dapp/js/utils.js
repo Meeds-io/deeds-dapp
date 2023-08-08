@@ -45,3 +45,13 @@ export function copyToClipboard(text) {
     return false;
   }
 }
+
+export function refreshHubUrl(hubAddress, reportHash) {
+  const link = hubAddress && reportHash && `${window.location.pathname}?address=${hubAddress}&report=${reportHash}`
+      || (hubAddress && `${window.location.pathname}?address=${hubAddress}`)
+      || window.location.pathname;
+  if (!window.location.href !== link) {
+    const fullLink = `${origin}${link}`;
+    window.setTimeout(() => window.history.pushState({}, '', fullLink), 50);
+  }
+}
