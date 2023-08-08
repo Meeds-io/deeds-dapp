@@ -241,9 +241,23 @@ export default {
     this.retrieveHubs();
     this.$root.$on('open-hub-details', this.openHubDetails);
     this.$root.$on('close-hub-details', this.closeHubDetails);
+    this.$root.$on('hub-not-found', this.openHubNotFound);
+    this.$root.$on('report-not-found', this.openHubReportNotFound);
     this.$root.$on('hub-disconnection-success', this.closeHubDetailsAndRefresh);
   },
   methods: {
+    openHubNotFound(hubAddress) {
+      this.selectedHub = {
+        address: hubAddress,
+        notFound: true,
+      };
+    },
+    openHubReportNotFound(reportHash) {
+      this.selectedHub = {
+        reportHash: reportHash,
+        reportNotFound: true,
+      };
+    },
     openHubDetails(hub) {
       this.selectedHub = hub;
     },
