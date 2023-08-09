@@ -88,7 +88,7 @@
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>src/main/assemblies/assembly.xml</descriptor>
+                <descriptor>src/main/assemblies/meeds-addon.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
