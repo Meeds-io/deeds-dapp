@@ -35,6 +35,9 @@
         <!-- Package in WAR for Spring Context initialization -->
         <exclude>${project.groupId}:deeds-dapp-service:jar</exclude>
 
+        <!-- Exclude it temporary from dapp packaging since deed-tenant addon is defining it as well -->
+        <exclude>${project.groupId}:deeds-dapp-api:jar</exclude>
+
         <!-- Prepackage libraries in Meeds -->
         <exclude>org.ow2.asm:asm:jar</exclude>
         <exclude>commons-codec:commons-codec:jar</exclude>
@@ -46,6 +49,7 @@
         <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
         <exclude>com.fasterxml.jackson.core:jackson-core:jar</exclude>
         <exclude>com.fasterxml.jackson.core:jackson-databind:jar</exclude>
+        <exclude>com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar</exclude>
         <exclude>jakarta.annotation:jakarta.annotation-api:jar</exclude>
         <exclude>org.jetbrains.kotlin:kotlin-stdlib:jar</exclude>
         <exclude>org.jetbrains.kotlin:kotlin-stdlib-common:jar</exclude>
