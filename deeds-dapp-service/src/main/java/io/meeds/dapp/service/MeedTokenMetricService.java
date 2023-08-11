@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import io.meeds.dapp.constant.Currency;
 import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.service.BlockchainService;
 
 import lombok.Getter;
 import lombok.Setter;

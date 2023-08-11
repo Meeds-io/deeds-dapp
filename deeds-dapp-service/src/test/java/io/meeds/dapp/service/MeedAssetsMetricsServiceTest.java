@@ -34,9 +34,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.model.DeedCity;
-import io.meeds.deeds.model.FundInfo;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.model.DeedCity;
+import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @SpringBootTest(classes = {
     MeedAssetsMetricsService.class

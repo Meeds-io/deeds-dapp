@@ -21,7 +21,7 @@ import java.util.List;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
 

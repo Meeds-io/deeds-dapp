@@ -43,10 +43,10 @@ import io.meeds.dapp.web.rest.TenantController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 
 @SpringBootTest(classes = {
     TenantController.class,

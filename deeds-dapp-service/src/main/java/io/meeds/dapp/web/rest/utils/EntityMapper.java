@@ -31,11 +31,11 @@ import org.springframework.http.ResponseEntity.BodyBuilder;
 
 import io.meeds.dapp.web.rest.model.DeedMetadataPresentation;
 import io.meeds.dapp.web.rest.model.DeedTenantPresentation;
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
 
 public class EntityMapper {
 

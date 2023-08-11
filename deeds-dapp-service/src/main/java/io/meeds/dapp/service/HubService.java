@@ -42,15 +42,15 @@ import io.meeds.dapp.elasticsearch.model.DeedHub;
 import io.meeds.dapp.model.AttachmentType;
 import io.meeds.dapp.model.FileBinary;
 import io.meeds.dapp.storage.HubRepository;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.WomAuthorizationException;
 import io.meeds.deeds.constant.WomException;
 import io.meeds.deeds.constant.WomRequestException;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.model.Hub;
 import io.meeds.deeds.model.WomConnectionRequest;
 import io.meeds.deeds.model.WomDisconnectionRequest;
-import io.meeds.deeds.service.TenantService;
 
 @Component
 public class HubService {

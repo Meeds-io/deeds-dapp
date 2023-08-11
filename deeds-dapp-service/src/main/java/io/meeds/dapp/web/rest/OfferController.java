@@ -15,8 +15,8 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -51,12 +51,12 @@ import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.OfferFilter;
 import io.meeds.dapp.service.OfferService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
-import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.service.AuthorizationCodeService;
 
 @RestController
 @RequestMapping("/api/offers")
