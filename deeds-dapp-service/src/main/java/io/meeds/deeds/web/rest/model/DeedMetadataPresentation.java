@@ -21,7 +21,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.meeds.deeds.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
