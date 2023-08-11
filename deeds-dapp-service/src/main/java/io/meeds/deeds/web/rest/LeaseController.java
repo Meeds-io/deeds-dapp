@@ -15,8 +15,8 @@
  */
 package io.meeds.deeds.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 
 import java.security.Principal;
 import java.util.List;
@@ -45,12 +45,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.deeds.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.model.LeaseFilter;
-import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.LeaseService;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 

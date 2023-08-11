@@ -22,10 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
 import io.meeds.deeds.elasticsearch.model.DeedTenantOffer;
-import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.service.OfferService;
-import io.meeds.deeds.service.UserProfileService;
 
 @Service
 public class OfferCreatedListener implements EventListener<DeedTenantOffer> {
