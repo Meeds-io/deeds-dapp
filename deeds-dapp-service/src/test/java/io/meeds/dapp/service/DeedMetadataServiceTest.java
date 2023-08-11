@@ -33,7 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 import io.meeds.deeds.constant.DisplayType;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.elasticsearch.model.DeedMetadataAttribute;
+import io.meeds.deeds.model.DeedMetadataAttribute;
 import io.meeds.deeds.service.BlockchainService;
 import io.meeds.deeds.storage.DeedMetadataRepository;
 
