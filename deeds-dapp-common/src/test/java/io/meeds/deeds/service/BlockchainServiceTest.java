@@ -65,7 +65,7 @@ import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
-import io.meeds.deeds.elasticsearch.model.DeedCity;
+import io.meeds.deeds.model.DeedCity;
 import io.meeds.deeds.model.DeedOfferBlockchainState;
 import io.meeds.deeds.model.FundInfo;
 
