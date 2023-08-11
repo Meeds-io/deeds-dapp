@@ -15,7 +15,7 @@
  */
 package io.meeds.deeds.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,7 +43,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.meeds.deeds.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 import io.meeds.deeds.web.rest.AuthorizationCodeController;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;
