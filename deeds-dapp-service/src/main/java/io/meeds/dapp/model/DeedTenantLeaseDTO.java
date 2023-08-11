@@ -24,10 +24,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.meeds.dapp.constant.NoticePeriod;
 import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,7 +44,7 @@ public class DeedTenantLeaseDTO {
 
   private long                             nftId;
 
-  private io.meeds.deeds.constant.DeedCity city;
+  private io.meeds.deeds.common.constant.DeedCity city;
 
   private DeedCard                         cardType;
 

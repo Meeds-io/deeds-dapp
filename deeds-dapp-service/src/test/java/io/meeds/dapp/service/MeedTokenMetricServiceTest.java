@@ -36,8 +36,8 @@ import org.springframework.test.context.TestPropertySource;
 import io.meeds.dapp.constant.Currency;
 import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
+import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.service.BlockchainService;
 
 @SpringBootTest(
     classes = {

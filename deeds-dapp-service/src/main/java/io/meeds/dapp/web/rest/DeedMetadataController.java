@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.service.DeedMetadataService;
 import io.meeds.dapp.web.rest.model.DeedMetadataPresentation;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 
 @RestController
 @RequestMapping("/api/deeds")

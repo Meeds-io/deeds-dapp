@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.meeds.deeds.constant.HubRewardReportStatusType;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

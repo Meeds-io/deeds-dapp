@@ -42,8 +42,8 @@ import io.meeds.dapp.web.rest.UserProfileController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
 
 import jakarta.servlet.Filter;
 

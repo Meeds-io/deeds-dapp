@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.meeds.deeds.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

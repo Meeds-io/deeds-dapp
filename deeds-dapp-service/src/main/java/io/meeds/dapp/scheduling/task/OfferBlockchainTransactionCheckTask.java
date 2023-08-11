@@ -29,9 +29,9 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.constant.BlockchainOfferStatus;
-import io.meeds.deeds.model.DeedOfferBlockchainState;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.constant.BlockchainOfferStatus;
+import io.meeds.deeds.common.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @Component
 public class OfferBlockchainTransactionCheckTask {
