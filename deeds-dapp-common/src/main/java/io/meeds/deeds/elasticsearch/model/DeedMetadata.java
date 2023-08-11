@@ -24,6 +24,9 @@ import org.springframework.data.elasticsearch.annotations.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import io.meeds.deeds.model.DeedMetadataAttribute;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
