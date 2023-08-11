@@ -29,9 +29,9 @@ import org.springframework.stereotype.Service;
 
 import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.service.TenantService;
 
 @Service
 public class OfferAcquiredListener implements EventListener<DeedTenantLeaseDTO> {

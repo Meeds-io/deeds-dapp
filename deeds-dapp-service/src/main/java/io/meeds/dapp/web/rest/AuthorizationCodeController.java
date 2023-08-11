@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 
 import java.security.Principal;
 
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.deeds.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 
 import jakarta.servlet.http.HttpServletRequest;
 

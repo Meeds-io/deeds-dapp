@@ -20,7 +20,7 @@ import java.util.List;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 public interface OfferRepository extends ElasticsearchRepository<DeedTenantOffer, String> {
 

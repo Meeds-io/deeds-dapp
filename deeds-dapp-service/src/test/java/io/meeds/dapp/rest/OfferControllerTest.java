@@ -15,8 +15,8 @@
  */
 package io.meeds.dapp.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
-import static io.meeds.deeds.listerner.model.EventSerialization.OBJECT_MAPPER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.listerner.model.EventSerialization.OBJECT_MAPPER;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -71,12 +71,12 @@ import io.meeds.dapp.web.rest.OfferController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.service.AuthorizationCodeService;
 
 import jakarta.servlet.Filter;
 

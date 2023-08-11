@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,7 +46,7 @@ import io.meeds.dapp.web.rest.AuthorizationCodeController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 
 import jakarta.servlet.Filter;
 

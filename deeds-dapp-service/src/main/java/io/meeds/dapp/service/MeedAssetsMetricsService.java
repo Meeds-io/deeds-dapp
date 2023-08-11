@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.model.FundInfo;
-import io.meeds.deeds.model.MeedAssetsMetrics;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.model.MeedAssetsMetrics;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @Component
 public class MeedAssetsMetricsService {
