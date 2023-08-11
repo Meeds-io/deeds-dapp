@@ -202,7 +202,7 @@ export default {
       return this.hub?.githubUrl;
     },
     formLinkWithCommunityName() {
-      return this.formLink.concat('#communityName=', this.hubName);
+      return this.formLink.concat('#community_name=', this.hubName);
     }
   }),
 };
