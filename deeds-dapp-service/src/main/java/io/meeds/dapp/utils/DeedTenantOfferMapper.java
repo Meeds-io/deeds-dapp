@@ -27,7 +27,7 @@ import io.meeds.dapp.constant.RentalDuration;
 import io.meeds.dapp.constant.RentalPaymentPeriodicity;
 import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 public class DeedTenantOfferMapper {
 

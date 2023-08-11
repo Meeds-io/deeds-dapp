@@ -28,8 +28,8 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.dapp.constant.OfferType;
 import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,7 +53,7 @@ public class DeedTenantOffer implements Cloneable {
   private long                             nftId;
 
   @Field(type = FieldType.Auto)
-  private io.meeds.deeds.constant.DeedCity city;
+  private io.meeds.deeds.common.constant.DeedCity city;
 
   @Field(type = FieldType.Auto)
   private DeedCard                         cardType;

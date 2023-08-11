@@ -40,6 +40,8 @@ import org.web3j.utils.Numeric;
 
 import io.meeds.dapp.elasticsearch.model.DeedHubRewardReport;
 import io.meeds.dapp.storage.HubRewardReportRepository;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.constant.HubRewardReportStatusType;
 import io.meeds.deeds.constant.WomAuthorizationException;
 import io.meeds.deeds.constant.WomException;
@@ -50,8 +52,6 @@ import io.meeds.deeds.model.HubRewardPayment;
 import io.meeds.deeds.model.HubRewardReport;
 import io.meeds.deeds.model.HubRewardReportRequest;
 import io.meeds.deeds.model.HubRewardReportStatus;
-import io.meeds.deeds.service.BlockchainService;
-import io.meeds.deeds.service.ListenerService;
 
 @Component
 public class HubReportService {

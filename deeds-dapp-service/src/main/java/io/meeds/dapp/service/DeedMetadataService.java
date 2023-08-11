@@ -28,12 +28,12 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.storage.DeedMetadataRepository;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.service.BlockchainService;
-import io.meeds.deeds.storage.DeedMetadataRepository;
 
 import jakarta.annotation.PostConstruct;
 

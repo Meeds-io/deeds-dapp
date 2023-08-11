@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.service.MeedAssetsMetricsService;
-import io.meeds.deeds.model.MeedAssetsMetrics;
+import io.meeds.deeds.common.model.MeedAssetsMetrics;
 
 @RestController
 @RequestMapping("/api/token/assets")
