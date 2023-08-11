@@ -52,18 +52,18 @@ import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.OfferFilter;
 import io.meeds.dapp.storage.OfferRepository;
 import io.meeds.dapp.utils.DeedTenantOfferMapper;
-import io.meeds.deeds.constant.BlockchainOfferStatus;
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.common.constant.BlockchainOfferStatus;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.ListenerService;
+import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.model.DeedOfferBlockchainState;
-import io.meeds.deeds.service.BlockchainService;
-import io.meeds.deeds.service.ListenerService;
-import io.meeds.deeds.service.TenantService;
 
 @Component
 public class OfferService {

@@ -17,8 +17,8 @@ package io.meeds.dapp.model;
 
 import java.util.List;
 
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.TransactionStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

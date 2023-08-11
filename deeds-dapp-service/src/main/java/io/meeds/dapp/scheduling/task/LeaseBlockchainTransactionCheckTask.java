@@ -28,9 +28,9 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.service.LeaseService;
-import io.meeds.deeds.constant.BlockchainLeaseStatus;
-import io.meeds.deeds.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
+import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @Component
 public class LeaseBlockchainTransactionCheckTask {

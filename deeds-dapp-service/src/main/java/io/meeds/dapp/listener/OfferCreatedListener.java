@@ -24,9 +24,9 @@ import org.springframework.stereotype.Service;
 
 import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
 import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
 
 @Service
 public class OfferCreatedListener implements EventListener<DeedTenantOffer> {
