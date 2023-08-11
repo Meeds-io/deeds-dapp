@@ -39,8 +39,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
 import io.meeds.deeds.web.rest.UserProfileController;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;

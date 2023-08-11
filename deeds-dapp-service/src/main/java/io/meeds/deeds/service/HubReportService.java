@@ -38,18 +38,20 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
+import io.meeds.deeds.common.elasticsearch.model.DeedHubRewardReport;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.ListenerService;
+import io.meeds.deeds.common.storage.HubRewardReportRepository;
 import io.meeds.deeds.constant.HubRewardReportStatusType;
 import io.meeds.deeds.constant.WomAuthorizationException;
 import io.meeds.deeds.constant.WomException;
 import io.meeds.deeds.constant.WomRequestException;
-import io.meeds.deeds.elasticsearch.model.DeedHubRewardReport;
 import io.meeds.deeds.model.Hub;
 import io.meeds.deeds.model.HubRewardContract;
 import io.meeds.deeds.model.HubRewardPayment;
 import io.meeds.deeds.model.HubRewardReport;
 import io.meeds.deeds.model.HubRewardReportRequest;
 import io.meeds.deeds.model.HubRewardReportStatus;
-import io.meeds.deeds.storage.HubRewardReportRepository;
 
 @Component
 public class HubReportService {

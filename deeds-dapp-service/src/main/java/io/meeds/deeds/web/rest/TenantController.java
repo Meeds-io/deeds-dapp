@@ -15,7 +15,7 @@
  */
 package io.meeds.deeds.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
 import static io.meeds.deeds.web.rest.utils.EntityMapper.getDeedTenantResponse;
 
 import java.security.Principal;
@@ -42,11 +42,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
 import io.meeds.deeds.web.rest.utils.EntityMapper;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;

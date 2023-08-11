@@ -22,11 +22,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.constant.NoticePeriod;
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
