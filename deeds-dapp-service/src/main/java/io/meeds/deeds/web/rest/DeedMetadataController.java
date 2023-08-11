@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.service.DeedMetadataService;
 import io.meeds.deeds.web.rest.model.DeedMetadataPresentation;
 

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.model.MeedAssetsMetrics;
+import io.meeds.deeds.common.model.MeedAssetsMetrics;
 import io.meeds.deeds.service.MeedAssetsMetricsService;
 
 @RestController

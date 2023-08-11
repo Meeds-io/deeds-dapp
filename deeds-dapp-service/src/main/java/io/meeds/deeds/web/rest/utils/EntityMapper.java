@@ -29,11 +29,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
 import io.meeds.deeds.web.rest.model.DeedMetadataPresentation;
 import io.meeds.deeds.web.rest.model.DeedTenantPresentation;
 

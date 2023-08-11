@@ -37,19 +37,20 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
+import io.meeds.deeds.common.elasticsearch.model.DeedHub;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.storage.HubRepository;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.WomAuthorizationException;
 import io.meeds.deeds.constant.WomException;
 import io.meeds.deeds.constant.WomRequestException;
 import io.meeds.deeds.elasticsearch.model.DeedFileBinary;
-import io.meeds.deeds.elasticsearch.model.DeedHub;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.model.AttachmentType;
 import io.meeds.deeds.model.FileBinary;
 import io.meeds.deeds.model.Hub;
 import io.meeds.deeds.model.WomConnectionRequest;
 import io.meeds.deeds.model.WomDisconnectionRequest;
-import io.meeds.deeds.storage.HubRepository;
 
 @Component
 public class HubService {

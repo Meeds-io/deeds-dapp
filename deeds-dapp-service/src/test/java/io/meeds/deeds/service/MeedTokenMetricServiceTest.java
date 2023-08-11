@@ -33,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
+import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;

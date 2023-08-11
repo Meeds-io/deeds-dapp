@@ -15,8 +15,8 @@
  */
 package io.meeds.deeds.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
-import static io.meeds.deeds.listerner.model.EventSerialization.OBJECT_MAPPER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.listerner.model.EventSerialization.OBJECT_MAPPER;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,18 +61,18 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
 import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.constant.NoticePeriod;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
-import io.meeds.deeds.constant.TransactionStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
-import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.OfferService;
 import io.meeds.deeds.web.rest.OfferController;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
