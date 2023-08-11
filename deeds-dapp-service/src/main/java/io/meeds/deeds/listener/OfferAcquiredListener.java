@@ -27,10 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.deeds.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.service.OfferService;
-import io.meeds.deeds.service.TenantService;
 
 @Service
 public class OfferAcquiredListener implements EventListener<DeedTenantLeaseDTO> {

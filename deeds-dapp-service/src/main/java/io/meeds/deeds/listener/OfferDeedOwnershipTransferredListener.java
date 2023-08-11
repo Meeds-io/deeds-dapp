@@ -15,7 +15,7 @@
  */
 package io.meeds.deeds.listener;
 
-import static io.meeds.deeds.constant.CommonConstants.DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT;
+import static io.meeds.deeds.common.constant.CommonConstants.DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
+import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
+import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.service.OfferService;
 
 @Service

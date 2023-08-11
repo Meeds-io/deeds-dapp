@@ -45,7 +45,7 @@
     <tag>HEAD</tag>
   </scm>
   <properties>
-    <spring-boot-dependencies.version>2.7.5</spring-boot-dependencies.version>
+    <spring-boot-dependencies.version>2.7.14</spring-boot-dependencies.version>
     <commons-io.version>2.9.0</commons-io.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <org.web3j.version>4.9.4</org.web3j.version>

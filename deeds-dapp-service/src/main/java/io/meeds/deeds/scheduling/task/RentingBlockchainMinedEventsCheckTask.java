@@ -27,14 +27,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.constant.BlockchainLeaseStatus;
-import io.meeds.deeds.constant.BlockchainOfferStatus;
-import io.meeds.deeds.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.model.DeedOfferBlockchainState;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
+import io.meeds.deeds.common.constant.BlockchainOfferStatus;
+import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
+import io.meeds.deeds.common.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.SettingService;
 import io.meeds.deeds.service.LeaseService;
 import io.meeds.deeds.service.OfferService;
-import io.meeds.deeds.service.SettingService;
 
 @Component
 public class RentingBlockchainMinedEventsCheckTask {

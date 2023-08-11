@@ -27,10 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.constant.BlockchainOfferStatus;
-import io.meeds.deeds.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.constant.BlockchainOfferStatus;
+import io.meeds.deeds.common.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
-import io.meeds.deeds.service.BlockchainService;
 import io.meeds.deeds.service.OfferService;
 
 @Component
