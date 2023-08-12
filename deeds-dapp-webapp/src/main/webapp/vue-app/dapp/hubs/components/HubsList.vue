@@ -223,6 +223,21 @@ export default {
         websiteUrl: 'https://techfleet.org/',
         twitterURL: 'https://twitter.com/techfleetworks',
       },
+      {
+        address: '0xfefefefefefefefefefef9',
+        name: {
+          fr: 'Vigilance DAO',
+          en: 'Vigilance DAO'
+        },
+        description: {
+          fr: 'Nous protégeons les gens contre l\'arnaque aux liens d\'hameçonnage.',
+          en: 'We are saving people from getting scammed to phishing links'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1691769965/meedsdao-site/assets/images/upcoming%20hubs/Vigilance_ltuwgl.jpg',
+        backgroundColor: '#FFFFFF',
+        websiteUrl: 'https://www.vigilancedao.org/',
+        discordUrl: 'https://discord.gg/zBnAaRWR',
+      },
     ],
   }),
   computed: Vuex.mapState({
