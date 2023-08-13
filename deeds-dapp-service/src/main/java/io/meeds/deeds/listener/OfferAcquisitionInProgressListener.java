@@ -30,10 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import io.meeds.deeds.api.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.model.UserProfileDTO;
 import io.meeds.deeds.common.service.UserProfileService;
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.service.OfferService;
 

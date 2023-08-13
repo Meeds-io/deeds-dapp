@@ -54,7 +54,7 @@ export default {
       return this.hub?.createdDate && new Date(this.hub?.createdDate);
     },
     reportEndDate() {
-      return this.report?.hubRewardReport?.toDate && new Date(this.report?.hubRewardReport?.toDate);
+      return this.report?.toDate && new Date(this.report?.toDate);
     },
     outdatedReport() {
       return this.hubJoinDate && this.reportEndDate && this.hubJoinDate.getTime() > this.reportEndDate.getTime();
