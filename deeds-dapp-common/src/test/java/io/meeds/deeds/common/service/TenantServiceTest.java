@@ -48,10 +48,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
-import io.meeds.deeds.common.storage.DeedTenantManagerRepository;
+import io.meeds.deeds.common.elasticsearch.storage.DeedTenantManagerRepository;
 
 @SpringBootTest(classes = {
     TenantService.class

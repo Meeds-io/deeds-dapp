@@ -71,12 +71,12 @@ import io.meeds.dapp.web.rest.OfferController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 
 import jakarta.servlet.Filter;
 
