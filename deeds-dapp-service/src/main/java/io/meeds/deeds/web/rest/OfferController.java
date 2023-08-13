@@ -47,12 +47,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.meeds.deeds.api.constant.ObjectAlreadyExistsException;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.OfferFilter;
