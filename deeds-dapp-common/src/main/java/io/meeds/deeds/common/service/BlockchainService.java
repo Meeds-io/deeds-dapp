@@ -54,6 +54,7 @@ import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tuples.generated.Tuple8;
 import org.web3j.utils.Numeric;
 
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
@@ -62,7 +63,6 @@ import io.meeds.deeds.common.model.DeedCity;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.model.FundInfo;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
@@ -451,7 +451,8 @@ public class BlockchainService {
    * @return         true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
-    return WalletUtils.isValidAddress(address) && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
+    return WalletUtils.isValidAddress(address)
+        && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
   /**
@@ -462,7 +463,8 @@ public class BlockchainService {
    * @return         true if is owner else false
    */
   public boolean isDeedOwner(String address, long nftId) {
-    return WalletUtils.isValidAddress(address) && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
+    return WalletUtils.isValidAddress(address)
+        && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
   }
 
   /**

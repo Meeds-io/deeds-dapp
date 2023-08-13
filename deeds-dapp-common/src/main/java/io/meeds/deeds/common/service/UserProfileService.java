@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.UserProfile;
+import io.meeds.deeds.common.elasticsearch.storage.UserProfileRepository;
 import io.meeds.deeds.common.model.UserProfileDTO;
-import io.meeds.deeds.common.storage.UserProfileRepository;
 import io.meeds.deeds.common.utils.UserProfileMapper;
 
 @Component

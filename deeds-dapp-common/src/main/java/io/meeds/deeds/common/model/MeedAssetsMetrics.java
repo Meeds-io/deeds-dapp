@@ -35,12 +35,12 @@ public class MeedAssetsMetrics {
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger     totalAllocationPoints;
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger     totalFixedPercentage;
 
   @Getter

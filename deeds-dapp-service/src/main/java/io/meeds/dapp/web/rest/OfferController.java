@@ -51,12 +51,12 @@ import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.OfferFilter;
 import io.meeds.dapp.service.OfferService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
+import io.meeds.deeds.api.constant.ObjectAlreadyExistsException;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("/api/offers")

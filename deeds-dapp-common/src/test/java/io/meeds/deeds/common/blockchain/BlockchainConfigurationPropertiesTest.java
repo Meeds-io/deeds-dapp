@@ -24,8 +24,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
-
 @SpringBootTest(classes = BlockchainConfigurationProperties.class)
 @EnableConfigurationProperties(value = BlockchainConfigurationProperties.class)
 @TestPropertySource(properties = {
@@ -84,7 +82,8 @@ class BlockchainConfigurationPropertiesTest {
                                                                                          POLYGON_MEED_ADDRESS_VALUE,
                                                                                          X_MEED_ADDRESS_VALUE,
                                                                                          TOKEN_FACTORY_ADDRESS_VALUE,
-                                                                                         SUSHI_PAIR_ADDRESS_VALUE);
+                                                                                         SUSHI_PAIR_ADDRESS_VALUE,
+                                                                                         null);
     assertEquals(properties, blockchainConfigurationProperties);
     assertEquals(properties.hashCode(), blockchainConfigurationProperties.hashCode());
     assertEquals(properties.toString(), blockchainConfigurationProperties.toString());

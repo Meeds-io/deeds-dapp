@@ -17,19 +17,33 @@
  */
 package io.meeds.dapp.service;
 
-import static io.meeds.deeds.utils.JsonUtils.toJsonString;
+import static io.meeds.deeds.api.constant.HubReportStatusType.NONE;
+import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
+import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
+import static io.meeds.deeds.api.constant.HubReportStatusType.SENT;
+import static io.meeds.deeds.common.utils.HubReportMapper.fromEntity;
+import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.web3j.crypto.Hash;
@@ -38,83 +52,133 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
-import io.meeds.dapp.elasticsearch.model.DeedHubRewardReport;
-import io.meeds.dapp.storage.HubRewardReportRepository;
+import io.meeds.deeds.api.constant.HubReportStatusType;
+import io.meeds.deeds.api.constant.WomAuthorizationException;
+import io.meeds.deeds.api.constant.WomException;
+import io.meeds.deeds.api.constant.WomRequestException;
+import io.meeds.deeds.api.model.Hub;
+import io.meeds.deeds.api.model.HubContract;
+import io.meeds.deeds.api.model.HubReport;
+import io.meeds.deeds.api.model.HubReportData;
+import io.meeds.deeds.api.model.HubReportRequest;
+import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
+import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
+import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.constant.HubRewardReportStatusType;
-import io.meeds.deeds.constant.WomAuthorizationException;
-import io.meeds.deeds.constant.WomException;
-import io.meeds.deeds.constant.WomRequestException;
-import io.meeds.deeds.model.Hub;
-import io.meeds.deeds.model.HubRewardContract;
-import io.meeds.deeds.model.HubRewardPayment;
-import io.meeds.deeds.model.HubRewardReport;
-import io.meeds.deeds.model.HubRewardReportRequest;
-import io.meeds.deeds.model.HubRewardReportStatus;
+import io.meeds.deeds.common.service.SettingService;
+import io.meeds.deeds.common.utils.HubReportMapper;
+
+import lombok.Getter;
 
 @Component
 public class HubReportService {
 
   @Autowired
-  private BlockchainService         blockchainService;
+  private BlockchainService                 blockchainService;
 
   @Autowired
-  private HubService                hubService;
+  private HubService                        hubService;
 
   @Autowired
-  private ListenerService           listenerService;
+  private ListenerService                   listenerService;
 
   @Autowired
-  private HubRewardReportRepository hubRewardReportRepository;
+  private HubReportRepository               reportRepository;
+
+  @Autowired
+  private SettingService                    settingService;
+
+  @Autowired
+  private BlockchainConfigurationProperties blockchainProperties;
 
   @Value("${io.meeds.whitelistRewardContracts:}")
-  private List<String>              whitelistRewardContractsValues;
+  private List<String>                      whitelistRewardContractsValues;
 
   @Value("${io.meeds.test.acceptOudatedReport:false}")
-  private boolean                   acceptOudatedReport;
+  private boolean                           acceptOudatedReport;
 
-  private List<HubRewardContract>   whitelistRewardContracts;
+  @Getter
+  private Instant                           uemStartDate;
 
-  public Page<HubRewardReportStatus> getRewardReports(String hubAddress,
-                                                      Pageable pageable) {
-    return hubRewardReportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable)
-                                    .map(this::fromEntity);
+  private List<HubContract>                 whitelistRewardContracts;
+
+  @PostConstruct
+  public void init() {
+    String value = settingService.get("uemStartDate");
+    if (StringUtils.isNotBlank(value)) {
+      uemStartDate = Instant.ofEpochMilli(Long.parseLong(value));
+    } else if (StringUtils.isNotBlank(blockchainProperties.getUemAddress())) {
+      uemStartDate = Instant.now();
+      settingService.save("uemStartDate", String.valueOf(uemStartDate.toEpochMilli()));
+    }
   }
 
-  public HubRewardReportStatus getRewardReport(String hash) {
-    return hubRewardReportRepository.findById(StringUtils.lowerCase(hash))
-                                    .map(this::fromEntity)
-                                    .orElse(null);
+  public Page<HubReport> getReports(String hubAddress, Pageable pageable) {
+    pageable = PageRequest.of(pageable.getPageNumber(),
+                              pageable.getPageSize(),
+                              pageable.getSortOr(Sort.by(Direction.DESC, "fromDate", "createdDate")));
+    return reportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable)
+                           .map(HubReportMapper::fromEntity);
   }
 
-  public HubRewardReportStatus saveRewardReport(HubRewardReportRequest hubRewardReportRequest) throws WomException {
-    HubRewardReport rewardReport = hubRewardReportRequest.getRewardReport();
-    String rawMessage = toJsonString(rewardReport);
-    String signature = hubRewardReportRequest.getSignature();
+  public HubReport getReport(String hash) {
+    return reportRepository.findById(StringUtils.lowerCase(hash))
+                           .map(HubReportMapper::fromEntity)
+                           .orElse(null);
+  }
 
-    checkSignedMessage(rewardReport.getHubAddress(),
+  public HubReport saveReport(HubReportRequest reportRequest) throws WomException {
+    HubReportData reportData = reportRequest.getReport();
+    String signature = reportRequest.getSignature();
+    String hash = StringUtils.lowerCase(reportRequest.getHash());
+    String rawMessage = reportData.getRawMessage();
+    String hubAddress = reportData.getHubAddress();
+
+    Hub hub = hubService.getHub(hubAddress);
+
+    checkSignedMessage(hubAddress,
                        signature,
                        rawMessage);
-    checkHash(hubRewardReportRequest.getHash(), signature);
-
-    Hub hub = hubService.getHub(rewardReport.getHubAddress());
+    checkHash(hash, signature);
     checkHubValidity(hub);
-    checkRewardDates(hub, rewardReport);
-    checkTokenWhitelisted(rewardReport);
+    checkRewardDates(hub, hash, reportData);
+    checkTokenWhitelisted(reportData);
 
-    DeedHubRewardReport deedHubRewardReport = saveRewardReportRequest(hub, hubRewardReportRequest);
-    listenerService.publishEvent("wom.hubRewardReport.saved", deedHubRewardReport);
-    return fromEntity(deedHubRewardReport);
+    HubReportEntity reportEntity = toReportEntity(hash, signature, hub, reportData);
+    reportEntity = reportRepository.save(reportEntity);
+    listenerService.publishEvent("wom.hubReport.saved", hash);
+    return fromEntity(reportEntity);
   }
 
-  private DeedHubRewardReport saveRewardReportRequest(Hub hub, HubRewardReportRequest hubRewardReportRequest) {
-    DeedHubRewardReport existingEntity = hubRewardReportRepository.findById(hubRewardReportRequest.getHash()).orElse(null);
-    DeedHubRewardReport deedHubRewardReport = toEntity(hub, hubRewardReportRequest, existingEntity);
-    if (existingEntity == null) {
-      deedHubRewardReport.setStatus(HubRewardReportStatusType.SENT);
-    }
-    return hubRewardReportRepository.save(deedHubRewardReport);
+  private HubReportEntity toReportEntity(String hash, String signature, Hub hub, HubReportData reportData) {
+    HubReportEntity existingEntity = reportRepository.findById(hash)
+                                                     .orElse(null);
+    HubReport report = new HubReport(hash,
+                                     signature,
+                                     StringUtils.lowerCase(hub.getEarnerAddress()),
+                                     StringUtils.lowerCase(hub.getDeedManagerAddress()),
+                                     existingEntity == null ? HubReportStatusType.SENT
+                                                            : existingEntity.getStatus(),
+                                     null,
+                                     existingEntity == null ? Instant.now()
+                                                            : existingEntity.getCreatedDate(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getUemRewardIndex(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getUemRewardAmount(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getLastPeriodUemRewardAmount(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getHubRewardAmountPerPeriod(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
+                                     existingEntity == null ? null
+                                                            : existingEntity.getRewardId(),
+                                     existingEntity == null ? null
+                                                            : existingEntity.getRewardHash());
+    report.setReportData(reportData);
+    return toEntity(report);
   }
 
   private void checkHash(String hash, String signature) throws WomAuthorizationException {
@@ -123,10 +187,35 @@ public class HubReportService {
     }
   }
 
-  private void checkRewardDates(Hub hub, HubRewardReport rewardReport) throws WomRequestException {
-    if (!acceptOudatedReport && rewardReport.getToDate().isBefore(hub.getCreatedDate())) {
-      throw new WomRequestException("wom.sentRewardReportEndDateIsBeforeWoMConnection");
+  private void checkRewardDates(Hub hub, String hash, HubReportData report) throws WomRequestException {
+    if (!acceptOudatedReport && report.getToDate().isBefore(hub.getCreatedDate())) {
+      throw new WomRequestException("wom.sentReportIsBeforeWoMConnection");
+    } else if (!acceptOudatedReport && !isReportPeriodValid(report)) {
+      throw new WomRequestException("wom.sentReportIsBeforeUEM");
     }
+
+    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), hash);
+    if (!acceptOudatedReport
+        && lastRewardedReport != null
+        && Duration.between(lastRewardedReport.getToDate(), report.getFromDate()).toDays() < 0) {
+      throw new WomRequestException("wom.sentReportIsBeforeLastRewardedReport");
+    }
+  }
+
+  private HubReport getLastHubReport(String hubAddress, String hash) {
+    Pageable pageable = Pageable.ofSize(1);
+    return reportRepository.findByHubAddressAndHashNotAndStatusInOrderByFromDateDesc(hubAddress,
+                                                                                     hash,
+                                                                                     Stream.of(NONE,
+                                                                                               SENT,
+                                                                                               PENDING_REWARD,
+                                                                                               REWARDED)
+                                                                                           .toList(),
+                                                                                     pageable)
+                           .get()
+                           .findFirst()
+                           .map(HubReportMapper::fromEntity)
+                           .orElse(null);
   }
 
   private void checkHubValidity(Hub hub) throws WomRequestException {
@@ -138,8 +227,8 @@ public class HubReportService {
     }
   }
 
-  private void checkTokenWhitelisted(HubRewardReport rewardReport) throws WomException {
-    if (!isWhitelistRewardContract(rewardReport.getRewardTokenNetworkId(), rewardReport.getRewardTokenAddress())) {
+  private void checkTokenWhitelisted(HubReportData report) throws WomException {
+    if (!isWhitelistRewardContract(report.getRewardTokenNetworkId(), report.getRewardTokenAddress())) {
       throw new WomAuthorizationException("wom.unsupporedRewardContract");
     }
   }
@@ -165,7 +254,8 @@ public class HubReportService {
         v += 27;
       }
 
-      BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(), new SignatureData(v, r, s));
+      BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(StandardCharsets.UTF_8),
+                                                             new SignatureData(v, r, s));
       String recoveredAddress = "0x" + Keys.getAddress(publicKey);
       if (!recoveredAddress.equalsIgnoreCase(hubAddress)) {
         throw new WomAuthorizationException("wom.invalidSignedMessage");
@@ -177,13 +267,21 @@ public class HubReportService {
     }
   }
 
+  private boolean isReportPeriodValid(HubReportData reportData) {
+    if (uemStartDate == null) {
+      return true;
+    } else {
+      return uemStartDate.isBefore(reportData.getToDate());
+    }
+  }
+
   private boolean isWhitelistRewardContract(long networkId, String contractAddress) throws WomRequestException {
     if (CollectionUtils.isEmpty(whitelistRewardContracts)) {
       try {
-        HubRewardContract ethereumMeedToken = new HubRewardContract(blockchainService.getNetworkId(),
-                                                                    StringUtils.lowerCase(blockchainService.getEthereumMeedTokenAddress()));
-        HubRewardContract polygonMeedToken = new HubRewardContract(blockchainService.getPolygonNetworkId(),
-                                                                   StringUtils.lowerCase(blockchainService.getPolygonMeedTokenAddress()));
+        HubContract ethereumMeedToken = new HubContract(blockchainService.getNetworkId(),
+                                                        StringUtils.lowerCase(blockchainService.getEthereumMeedTokenAddress()));
+        HubContract polygonMeedToken = new HubContract(blockchainService.getPolygonNetworkId(),
+                                                       StringUtils.lowerCase(blockchainService.getPolygonMeedTokenAddress()));
 
         whitelistRewardContracts = new ArrayList<>();
         whitelistRewardContracts.add(ethereumMeedToken);
@@ -197,62 +295,12 @@ public class HubReportService {
                                       .filter(s -> s.contains(":"))
                                       .map(s -> {
                                         String[] parts = s.split(":");
-                                        return new HubRewardContract(Long.parseLong(parts[0]), StringUtils.lowerCase(parts[1]));
+                                        return new HubContract(Long.parseLong(parts[0]), StringUtils.lowerCase(parts[1]));
                                       })
                                       .forEach(whitelistRewardContracts::add);
       }
     }
-    return whitelistRewardContracts.contains(new HubRewardContract(networkId, StringUtils.lowerCase(contractAddress)));
-  }
-
-  private DeedHubRewardReport toEntity(Hub hub, HubRewardReportRequest hubRewardReportRequest,
-                                       DeedHubRewardReport existingEntity) {
-    HubRewardReport rewardReport = hubRewardReportRequest.getRewardReport();
-    DeedHubRewardReport deedHubRewardReport = existingEntity == null ? new DeedHubRewardReport() : existingEntity;
-    deedHubRewardReport.setHash(hubRewardReportRequest.getHash());
-    deedHubRewardReport.setSignature(hubRewardReportRequest.getSignature());
-    deedHubRewardReport.setHubAddress(rewardReport.getHubAddress());
-    deedHubRewardReport.setEarnerAddress(StringUtils.lowerCase(hub.getEarnerAddress()));
-    deedHubRewardReport.setDeedManagerAddress(StringUtils.lowerCase(hub.getDeedManagerAddress()));
-    deedHubRewardReport.setDeedId(rewardReport.getDeedId());
-    deedHubRewardReport.setFromDate(rewardReport.getFromDate());
-    deedHubRewardReport.setToDate(rewardReport.getToDate());
-    deedHubRewardReport.setSentRewardsDate(rewardReport.getSentRewardsDate());
-    deedHubRewardReport.setPeriodType(rewardReport.getPeriodType());
-    deedHubRewardReport.setParticipantsCount(rewardReport.getParticipantsCount());
-    deedHubRewardReport.setRecipientsCount(rewardReport.getRecipientsCount());
-    deedHubRewardReport.setAchievementsCount(rewardReport.getAchievementsCount());
-    deedHubRewardReport.setRewardAmount(rewardReport.getRewardAmount());
-    deedHubRewardReport.setRewardTokenAddress(rewardReport.getRewardTokenAddress());
-    deedHubRewardReport.setRewardTokenNetworkId(rewardReport.getRewardTokenNetworkId());
-    deedHubRewardReport.setTransactions(rewardReport.getTransactions());
-    return deedHubRewardReport;
-  }
-
-  private HubRewardReportStatus fromEntity(DeedHubRewardReport deedHubRewardReport) {
-    HubRewardReport rewardReport = new HubRewardReport();
-    rewardReport.setHubAddress(deedHubRewardReport.getHubAddress());
-    rewardReport.setDeedId(deedHubRewardReport.getDeedId());
-    rewardReport.setFromDate(deedHubRewardReport.getFromDate());
-    rewardReport.setToDate(deedHubRewardReport.getToDate());
-    rewardReport.setSentRewardsDate(deedHubRewardReport.getSentRewardsDate());
-    rewardReport.setPeriodType(deedHubRewardReport.getPeriodType());
-    rewardReport.setParticipantsCount(deedHubRewardReport.getParticipantsCount());
-    rewardReport.setRecipientsCount(deedHubRewardReport.getRecipientsCount());
-    rewardReport.setAchievementsCount(deedHubRewardReport.getAchievementsCount());
-    rewardReport.setRewardAmount(deedHubRewardReport.getRewardAmount());
-    rewardReport.setRewardTokenAddress(deedHubRewardReport.getRewardTokenAddress());
-    rewardReport.setRewardTokenNetworkId(deedHubRewardReport.getRewardTokenNetworkId());
-    rewardReport.setTransactions(deedHubRewardReport.getTransactions());
-
-    HubRewardPayment rewardPayment = null; // TODO
-    return new HubRewardReportStatus(deedHubRewardReport.getHash(),
-                                     rewardReport,
-                                     StringUtils.lowerCase(deedHubRewardReport.getEarnerAddress()),
-                                     StringUtils.lowerCase(deedHubRewardReport.getDeedManagerAddress()),
-                                     deedHubRewardReport.getStatus(),
-                                     null,
-                                     rewardPayment);
+    return whitelistRewardContracts.contains(new HubContract(networkId, StringUtils.lowerCase(contractAddress)));
   }
 
 }

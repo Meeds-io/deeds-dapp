@@ -26,10 +26,10 @@ import io.meeds.deeds.common.service.ListenerService;
 @Component
 public class ListenerEventCleanupTask {
 
-  private static final Logger    LOG = LoggerFactory.getLogger(ListenerEventCleanupTask.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ListenerEventCleanupTask.class);
 
   @Autowired(required = false)
-  private ListenerService listenerService;
+  private ListenerService     listenerService;
 
   @Scheduled(cron = "0 0 0/12 * * *")
   public synchronized void triggerCleanupEvents() {
