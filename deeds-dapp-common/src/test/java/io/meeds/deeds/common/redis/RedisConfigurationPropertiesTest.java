@@ -24,8 +24,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.deeds.common.redis.RedisConfigurationProperties;
-
 @SpringBootTest(classes = RedisConfigurationProperties.class)
 @EnableConfigurationProperties(value = RedisConfigurationProperties.class)
 @TestPropertySource(properties = {

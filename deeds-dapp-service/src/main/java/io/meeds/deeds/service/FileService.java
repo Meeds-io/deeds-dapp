@@ -27,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.elasticsearch.model.DeedFileBinary;
+import io.meeds.deeds.elasticsearch.storage.DeedFileRepository;
 import io.meeds.deeds.model.FileBinary;
-import io.meeds.deeds.storage.DeedFileRepository;
 
 @Component
 public class FileService {

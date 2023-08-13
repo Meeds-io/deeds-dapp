@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.common.storage.DeedTenantManagerRepository;
-import io.meeds.deeds.constant.ObjectNotFoundException;
+import io.meeds.deeds.common.elasticsearch.storage.DeedTenantManagerRepository;
 
 @Component
 public class TenantService {
@@ -63,6 +63,17 @@ public class TenantService {
       throw new UnauthorizedOperationException(getUnauthorizedMessage(address, nftId));
     }
     return getDeedTenant(nftId);
+  }
+
+  /**
+   * @param  nftId                   DEED NFT id in the blockchain
+   * @return                         Deed Card Type
+   * @throws ObjectNotFoundException when NFT with selected identifier doesn't
+   *                                   exists
+   */
+  public short getCardType(long nftId) throws ObjectNotFoundException {
+    DeedTenant deedTenant = getDeedTenantOrImport(nftId);
+    return deedTenant.getCardType();
   }
 
   /**
@@ -123,7 +134,8 @@ public class TenantService {
 
   public DeedTenant getDeedTenantOrImport(String managerAddress, // NOSONAR
                                           Long nftId,
-                                          boolean refreshFromBlockchain) throws ObjectNotFoundException, UnauthorizedOperationException {
+                                          boolean refreshFromBlockchain) throws ObjectNotFoundException,
+                                                                         UnauthorizedOperationException {
     DeedTenant deedTenant = getDeedTenantOrImport(managerAddress, nftId);
     if (refreshFromBlockchain && deedTenant != null) {
       boolean isPending = deedTenant.getTenantProvisioningStatus() != null
