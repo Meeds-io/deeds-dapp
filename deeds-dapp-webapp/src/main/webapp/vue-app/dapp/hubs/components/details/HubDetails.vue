@@ -84,9 +84,9 @@ export default {
       if (hubReportHash) {
         return this.$hubReportService.getReport(hubReportHash)
           .then(report => {
-            if (report?.hubRewardReport?.hubAddress) {
+            if (report?.hubAddress) {
               this.selectedReport = report;
-              return this.refresh(report?.hubRewardReport?.hubAddress, hubReportHash);
+              return this.refresh(report?.hubAddress, hubReportHash);
             } else {
               this.$root.$emit('report-not-found', hubReportHash);
             }

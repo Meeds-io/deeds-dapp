@@ -24,7 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.model.Hub;
+import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.service.HubService;
 
 @Component

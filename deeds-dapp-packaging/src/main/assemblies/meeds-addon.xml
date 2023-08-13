@@ -32,9 +32,6 @@
         <include>*:*:jar</include>
       </includes>
       <excludes>
-        <!-- Package in WAR for Spring Context initialization -->
-        <exclude>${project.groupId}:deeds-dapp-service:jar</exclude>
-
         <!-- Exclude it temporary from dapp packaging since deed-tenant addon is defining it as well -->
         <exclude>${project.groupId}:deeds-dapp-api:jar</exclude>
 
