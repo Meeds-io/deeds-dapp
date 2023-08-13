@@ -41,8 +41,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.deeds.common.listerner.model.EmailSendingCommand;
-import io.meeds.deeds.common.service.AuthorizationCodeService;
-import io.meeds.deeds.common.service.ListenerService;
 
 @SpringBootTest(classes = {
     AuthorizationCodeService.class,

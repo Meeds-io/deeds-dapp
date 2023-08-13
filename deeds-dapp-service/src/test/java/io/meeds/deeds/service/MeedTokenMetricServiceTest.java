@@ -37,7 +37,7 @@ import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.elasticsearch.model.MeedTokenMetric;
-import io.meeds.deeds.storage.MeedTokenMetricsRepository;
+import io.meeds.deeds.elasticsearch.storage.MeedTokenMetricsRepository;
 
 @SpringBootTest(
     classes = {
