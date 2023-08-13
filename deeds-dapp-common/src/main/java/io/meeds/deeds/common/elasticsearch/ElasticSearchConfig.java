@@ -107,7 +107,8 @@ public class ElasticSearchConfig {
       try {
         ClusterHealth elasticHealth = elasticsearchTemplate.cluster().health();
         if (elasticHealth.isTimedOut() || elasticHealth.getActiveShardsPercent() < 1 || elasticHealth.getActiveShards() == 0) {
-          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = " + elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
+          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = "
+              + elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
         } else {
           LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
           i = 0;
