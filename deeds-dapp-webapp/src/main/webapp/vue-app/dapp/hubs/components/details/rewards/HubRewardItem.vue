@@ -142,48 +142,45 @@ export default {
         }
       } || {};
     },
-    hubRewardReport() {
-      return this.report?.hubRewardReport;
-    },
     fromDate() {
-      return this.hubRewardReport?.fromDate;
+      return this.report?.fromDate;
     },
     toDate() {
-      return this.hubRewardReport?.toDate;
+      return this.report?.toDate;
     },
     participantsCount() {
       return new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(this.hubRewardReport?.participantsCount || 0);
+      }).format(this.report?.participantsCount || 0);
     },
     recipientsCount() {
       return new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(this.hubRewardReport?.recipientsCount || 0);
+      }).format(this.report?.recipientsCount || 0);
     },
     achievementsCount() {
       return new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(this.hubRewardReport?.achievementsCount || 0);
+      }).format(this.report?.achievementsCount || 0);
     },
     rewardAmount() {
       return new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(this.hubRewardReport?.rewardAmount || 0);
+      }).format(this.report?.rewardAmount || 0);
     },
     blockchainNetworkId() {
-      return this.hubRewardReport?.rewardTokenNetworkId || 0;
+      return this.report?.rewardTokenNetworkId || 0;
     },
     tokenAddress() {
-      return this.hubRewardReport?.rewardTokenAddress || 0;
+      return this.report?.rewardTokenAddress || 0;
     },
   }),
 };

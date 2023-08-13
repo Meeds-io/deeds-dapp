@@ -37,19 +37,19 @@ public class FundInfo {
   private String     address;
 
   @Getter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger fixedPercentage;
 
   @Getter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger allocationPoint;
 
   @Getter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger lastRewardTime;
 
   @Getter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger accMeedPerShare;
 
   @Getter
@@ -58,27 +58,27 @@ public class FundInfo {
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger meedsBalance;
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger totalSupply;
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger xMeedPendingReward;
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private BigInteger lpBalanceOfTokenFactory;
 
   @Getter
   @Setter
-  @JsonFormat(shape=Shape.STRING)
+  @JsonFormat(shape = Shape.STRING)
   private String     symbol;
 
   public FundInfo(String address,

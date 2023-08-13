@@ -68,6 +68,7 @@ import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.LeaseFilter;
 import io.meeds.dapp.storage.LeaseRepository;
 import io.meeds.dapp.utils.DeedTenantLeaseMapper;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
@@ -78,7 +79,6 @@ import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.common.service.TenantService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 
 @SpringBootTest(classes = {
     LeaseService.class,

@@ -51,13 +51,12 @@ import org.web3j.tuples.generated.Tuple12;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.common.model.DeedCity;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.model.FundInfo;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
 import io.meeds.deeds.contract.DeedRenting;
