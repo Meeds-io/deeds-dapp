@@ -51,10 +51,10 @@ import org.springframework.test.context.TestPropertySource;
 import io.meeds.deeds.constant.Currency;
 import io.meeds.deeds.elasticsearch.model.CurrencyExchangeRate;
 import io.meeds.deeds.elasticsearch.model.MeedExchangeRate;
+import io.meeds.deeds.elasticsearch.storage.CurrencyExchangeRateRepository;
+import io.meeds.deeds.elasticsearch.storage.MeedExchangeRateRepository;
 import io.meeds.deeds.model.MeedPrice;
 import io.meeds.deeds.service.ExchangeServiceTest.ExchangeServiceNoInit;
-import io.meeds.deeds.storage.CurrencyExchangeRateRepository;
-import io.meeds.deeds.storage.MeedExchangeRateRepository;
 
 @SpringBootTest(
     classes = {

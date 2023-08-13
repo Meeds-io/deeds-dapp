@@ -57,6 +57,7 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
@@ -69,15 +70,14 @@ import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.constant.ExpirationDuration;
 import io.meeds.deeds.constant.NoticePeriod;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.OfferType;
 import io.meeds.deeds.constant.RentalDuration;
 import io.meeds.deeds.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.elasticsearch.storage.LeaseRepository;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.LeaseFilter;
-import io.meeds.deeds.storage.LeaseRepository;
 import io.meeds.deeds.utils.DeedTenantLeaseMapper;
 
 @SpringBootTest(classes = {

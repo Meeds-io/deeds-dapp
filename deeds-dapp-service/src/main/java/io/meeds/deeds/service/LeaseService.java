@@ -40,6 +40,7 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
@@ -48,12 +49,11 @@ import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.common.service.TenantService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.elasticsearch.storage.LeaseRepository;
 import io.meeds.deeds.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.model.LeaseFilter;
-import io.meeds.deeds.storage.LeaseRepository;
 import io.meeds.deeds.utils.DeedTenantLeaseMapper;
 import io.meeds.deeds.utils.DeedTenantOfferMapper;
 

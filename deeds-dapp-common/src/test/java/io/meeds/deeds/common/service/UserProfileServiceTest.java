@@ -28,10 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import io.meeds.deeds.common.elasticsearch.model.UserProfile;
+import io.meeds.deeds.common.elasticsearch.storage.UserProfileRepository;
 import io.meeds.deeds.common.model.UserProfileDTO;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.UserProfileService;
-import io.meeds.deeds.common.storage.UserProfileRepository;
 
 @SpringBootTest(classes = {
     UserProfileService.class,

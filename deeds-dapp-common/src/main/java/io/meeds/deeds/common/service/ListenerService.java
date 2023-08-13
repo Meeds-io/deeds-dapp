@@ -52,12 +52,12 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenantEvent;
+import io.meeds.deeds.common.elasticsearch.storage.DeedTenantEventRepository;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.listerner.model.Event;
 import io.meeds.deeds.common.redis.RedisConfigurationProperties;
 import io.meeds.deeds.common.scheduling.task.ListenerEventCleanupTask;
 import io.meeds.deeds.common.scheduling.task.ListenerEventTriggerTask;
-import io.meeds.deeds.common.storage.DeedTenantEventRepository;
 
 @Component
 public class ListenerService implements ApplicationContextAware {
@@ -260,7 +260,8 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   private boolean isTenantRelatedToWom() {
-    boolean isTenantProvisioningOrDapp = StringUtils.contains(this.getClientName(), "dApp") || StringUtils.contains(this.getClientName(), "tenant-provisioning");
+    boolean isTenantProvisioningOrDapp = StringUtils.contains(this.getClientName(), "dApp")
+        || StringUtils.contains(this.getClientName(), "tenant-provisioning");
     return isTenantProvisioningOrDapp || this.enabled;
   }
 
