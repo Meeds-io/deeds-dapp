@@ -49,4 +49,6 @@ public class BlockchainConfigurationProperties {
 
   private String sushiPairAddress          = "0x960bd61d0b960b107ff5309a2dcced4705567070";
 
+  private String uemAddress                = null;
+
 }

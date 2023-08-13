@@ -25,7 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import io.meeds.dapp.service.HubService;
-import io.meeds.deeds.model.Hub;
+import io.meeds.deeds.api.model.Hub;
 
 @Component
 public class HubStatusCheckTask {

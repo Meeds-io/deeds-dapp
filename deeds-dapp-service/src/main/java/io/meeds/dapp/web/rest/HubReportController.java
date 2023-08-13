@@ -34,49 +34,49 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.service.HubReportService;
-import io.meeds.deeds.constant.WomAuthorizationException;
-import io.meeds.deeds.constant.WomException;
-import io.meeds.deeds.constant.WomParsingException;
-import io.meeds.deeds.constant.WomRequestException;
-import io.meeds.deeds.model.HubRewardReportRequest;
-import io.meeds.deeds.model.HubRewardReportStatus;
+import io.meeds.deeds.api.constant.WomAuthorizationException;
+import io.meeds.deeds.api.constant.WomException;
+import io.meeds.deeds.api.constant.WomParsingException;
+import io.meeds.deeds.api.constant.WomRequestException;
+import io.meeds.deeds.api.model.HubReport;
+import io.meeds.deeds.api.model.HubReportRequest;
 
 @RestController
 @RequestMapping("/api/hub/reports")
 public class HubReportController {
 
   @Autowired
-  private HubReportService hubReportService;
+  private HubReportService reportService;
 
   @GetMapping
-  public PagedModel<EntityModel<HubRewardReportStatus>> getHubReports(
-                                                                      @RequestParam(name = "hubAddress", required = true)
-                                                                      String hubAddress,
-                                                                      Pageable pageable,
-                                                                      PagedResourcesAssembler<HubRewardReportStatus> assembler) {
-    Page<HubRewardReportStatus> reports = hubReportService.getRewardReports(hubAddress, pageable);
+  public PagedModel<EntityModel<HubReport>> getHubReports(
+                                                                @RequestParam(name = "hubAddress", required = true)
+                                                                String hubAddress,
+                                                                Pageable pageable,
+                                                                PagedResourcesAssembler<HubReport> assembler) {
+    Page<HubReport> reports = reportService.getReports(hubAddress, pageable);
     return assembler.toModel(reports);
   }
 
   @GetMapping("/{hash}")
-  public ResponseEntity<Object> getRewardReportByHash(
-                                                      @PathVariable(name = "hash")
-                                                      String hash) {
-    HubRewardReportStatus hubRewardReportStatus = hubReportService.getRewardReport(hash);
-    if (hubRewardReportStatus == null) {
+  public ResponseEntity<Object> getReportByHash(
+                                                @PathVariable(name = "hash")
+                                                String hash) {
+    HubReport report = reportService.getReport(hash);
+    if (report == null) {
       return ResponseEntity.notFound().build();
     } else {
-      return ResponseEntity.ok(hubRewardReportStatus);
+      return ResponseEntity.ok(report);
     }
   }
 
   @PostMapping
-  public ResponseEntity<Object> saveRewardReport(
-                                                 @RequestBody
-                                                 HubRewardReportRequest hubRewardReportRequest) {
+  public ResponseEntity<Object> saveReport(
+                                           @RequestBody
+                                           HubReportRequest reportRequest) {
     try {
-      HubRewardReportStatus hubRewardReportStatus = hubReportService.saveRewardReport(hubRewardReportRequest);
-      return ResponseEntity.ok(hubRewardReportStatus);
+      HubReport report = reportService.saveReport(reportRequest);
+      return ResponseEntity.ok(report);
     } catch (WomRequestException | WomParsingException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.DeedSetting;
-import io.meeds.deeds.common.storage.SettingRepository;
+import io.meeds.deeds.common.elasticsearch.storage.SettingRepository;
 
 @Component
 public class SettingService {

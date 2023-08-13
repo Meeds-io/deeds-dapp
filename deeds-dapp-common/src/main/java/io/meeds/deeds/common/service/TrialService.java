@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import io.meeds.deeds.common.constant.TrialStatus;
 import io.meeds.deeds.common.elasticsearch.model.TrialContactInformation;
-import io.meeds.deeds.common.storage.TrialRepository;
+import io.meeds.deeds.common.elasticsearch.storage.TrialRepository;
 
 @Service
 public class TrialService {

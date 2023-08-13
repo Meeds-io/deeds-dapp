@@ -31,7 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import io.meeds.deeds.common.elasticsearch.model.TrialContactInformation;
-import io.meeds.deeds.common.storage.TrialRepository;
+import io.meeds.deeds.common.elasticsearch.storage.TrialRepository;
 
 @SpringBootTest(classes = {
                             TrialService.class,

@@ -44,11 +44,11 @@ import org.springframework.web.server.ResponseStatusException;
 import io.meeds.dapp.web.rest.model.DeedTenantPresentation;
 import io.meeds.dapp.web.rest.utils.EntityMapper;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.TenantStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.service.TenantService;
-import io.meeds.deeds.constant.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("/api/tenants")
