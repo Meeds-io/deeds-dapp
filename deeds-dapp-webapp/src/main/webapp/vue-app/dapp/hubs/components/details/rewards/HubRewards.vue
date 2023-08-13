@@ -122,7 +122,7 @@ export default {
     refreshReportByHash(reportHash) {
       return this.$hubReportService.getReport(reportHash)
         .then(report => {
-          if (this.hub?.address === report?.hubRewardReport?.hubAddress) {
+          if (this.hub?.address === report?.hubAddress) {
             this.refreshReport(report);
           } else {
             this.$root.$emit('report-not-found', reportHash);
