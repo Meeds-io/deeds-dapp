@@ -143,4 +143,19 @@ public class HubReport extends HubReportData {
     }
   }
 
+  public double getDr() {
+    return lastPeriodUemRewardAmountPerPeriod == 0 ? 1d
+                                                   : BigDecimal.valueOf(hubRewardAmountPerPeriod)
+                                                               .divide(BigDecimal.valueOf(lastPeriodUemRewardAmountPerPeriod),
+                                                                       MathContext.DECIMAL128)
+                                                               .doubleValue();
+  }
+
+  public double getDs() {
+    return getUsersCount() == 0 ? 0d
+                                : BigDecimal.valueOf(getRecipientsCount())
+                                            .divide(BigDecimal.valueOf(getUsersCount()), MathContext.DECIMAL128)
+                                            .doubleValue();
+  }
+
 }
