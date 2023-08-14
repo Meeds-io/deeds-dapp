@@ -50,10 +50,10 @@ public class HubReportController {
 
   @GetMapping
   public PagedModel<EntityModel<HubReport>> getHubReports(
-                                                                @RequestParam(name = "hubAddress", required = true)
-                                                                String hubAddress,
-                                                                Pageable pageable,
-                                                                PagedResourcesAssembler<HubReport> assembler) {
+                                                          @RequestParam(name = "hubAddress", required = true)
+                                                          String hubAddress,
+                                                          Pageable pageable,
+                                                          PagedResourcesAssembler<HubReport> assembler) {
     Page<HubReport> reports = reportService.getReports(hubAddress, pageable);
     return assembler.toModel(reports);
   }
