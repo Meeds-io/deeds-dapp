@@ -19,6 +19,7 @@ package io.meeds.deeds.common.elasticsearch.storage;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,5 +57,7 @@ public interface HubReportRepository extends ElasticsearchRepository<HubReportEn
                                                                                                      String hash,
                                                                                                      List<HubReportStatusType> statuses,
                                                                                                      Pageable pageable);
+
+  Optional<HubReportEntity> findByRewardIdAndHubAddress(String rewardId, String hubAddress);
 
 }
