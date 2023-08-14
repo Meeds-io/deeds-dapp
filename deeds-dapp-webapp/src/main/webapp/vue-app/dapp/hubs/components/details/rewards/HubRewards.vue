@@ -9,7 +9,10 @@
     <v-data-iterator
       :items="reports"
       :loading="loading"
-      item-key="id"
+      item-key="hash"
+      disable-pagination
+      disable-filtering
+      disable-sort
       hide-default-footer>
       <template #no-data>
         <div class="align-center justify-center text-subtitle dark-grey-color">
@@ -46,7 +49,9 @@
     </v-data-iterator>
     <v-btn
       v-if="hasMore"
-      class="btn"
+      class="mx-3 my-4 btn"
+      elevation="0"
+      outlined
       block
       @click="loadMore">
       {{ $t('wom.loadMore') }}
