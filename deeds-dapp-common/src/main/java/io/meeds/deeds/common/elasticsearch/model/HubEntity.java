@@ -31,11 +31,13 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
 @Document(indexName = "deed_hub", createIndex = true)
 @Setting(replicas = 0, shards = 1)
