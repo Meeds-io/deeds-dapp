@@ -47,12 +47,12 @@ import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.api.model.WomConnectionRequest;
 import io.meeds.deeds.api.model.WomDisconnectionRequest;
+import io.meeds.deeds.common.constant.AttachmentType;
+import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.service.TenantService;
 import io.meeds.deeds.common.utils.HubMapper;
-import io.meeds.deeds.elasticsearch.model.DeedFileBinary;
-import io.meeds.deeds.model.AttachmentType;
 import io.meeds.deeds.model.FileBinary;
 
 @Component

@@ -94,30 +94,38 @@ public class HubReportEntity {
   @Field(type = FieldType.Keyword)
   private String              signature;
 
+  // UEM computed field
   @Field(type = FieldType.Keyword)
   private HubReportStatusType status;
 
+  // UEM computed field
   @Field(type = FieldType.Keyword)
   private String              rewardId;
 
+  // UEM computed field
   @Field(type = FieldType.Keyword)
   private String              rewardHash;
 
   @Field(type = FieldType.Double)
   private double              hubRewardAmount;
 
+  // UEM computed field
   @Field(type = FieldType.Double)
   private double              uemRewardIndex;
 
+  // UEM computed field
   @Field(type = FieldType.Double)
   private double              uemRewardAmount;
 
+  // UEM computed field
   @Field(type = FieldType.Double)
   private double              lastPeriodUemRewardAmount;
 
+  // UEM computed field
   @Field(type = FieldType.Double)
   private double              hubRewardAmountPerPeriod;
 
+  // UEM computed field
   @Field(type = FieldType.Double)
   private double              lastPeriodUemRewardAmountPerPeriod;
 
