@@ -140,7 +140,11 @@ export default {
             this.$emit('collapse');
           }
         }
-      } || {};
+      } || {
+        click: () => {
+          this.$emit('expand');
+        }
+      };
     },
     fromDate() {
       return this.report?.fromDate;

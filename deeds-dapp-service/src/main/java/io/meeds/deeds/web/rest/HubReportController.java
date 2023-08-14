@@ -37,8 +37,8 @@ import io.meeds.deeds.api.constant.WomAuthorizationException;
 import io.meeds.deeds.api.constant.WomException;
 import io.meeds.deeds.api.constant.WomParsingException;
 import io.meeds.deeds.api.constant.WomRequestException;
-import io.meeds.deeds.api.model.HubReportRequest;
 import io.meeds.deeds.api.model.HubReport;
+import io.meeds.deeds.api.model.HubReportRequest;
 import io.meeds.deeds.service.HubReportService;
 
 @RestController
@@ -50,10 +50,10 @@ public class HubReportController {
 
   @GetMapping
   public PagedModel<EntityModel<HubReport>> getHubReports(
-                                                                @RequestParam(name = "hubAddress", required = true)
-                                                                String hubAddress,
-                                                                Pageable pageable,
-                                                                PagedResourcesAssembler<HubReport> assembler) {
+                                                          @RequestParam(name = "hubAddress", required = true)
+                                                          String hubAddress,
+                                                          Pageable pageable,
+                                                          PagedResourcesAssembler<HubReport> assembler) {
     Page<HubReport> reports = reportService.getReports(hubAddress, pageable);
     return assembler.toModel(reports);
   }
