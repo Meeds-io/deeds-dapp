@@ -234,9 +234,9 @@ export default {
           en: 'We are saving people from getting scammed to phishing links'
         },
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1691769965/meedsdao-site/assets/images/upcoming%20hubs/Vigilance_ltuwgl.jpg',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#5400CD',
         websiteUrl: 'https://www.vigilancedao.org/',
-        discordUrl: 'https://discord.gg/zBnAaRWR',
+        discordUrl: 'https://discord.gg/xUSf2zdYmD',
       },
     ],
   }),
