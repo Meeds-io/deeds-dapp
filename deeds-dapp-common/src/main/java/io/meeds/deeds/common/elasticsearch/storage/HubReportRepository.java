@@ -58,6 +58,8 @@ public interface HubReportRepository extends ElasticsearchRepository<HubReportEn
                                                                                                      List<HubReportStatusType> statuses,
                                                                                                      Pageable pageable);
 
-  Optional<HubReportEntity> findByRewardIdAndHubAddress(String rewardId, String hubAddress);
+  Optional<HubReportEntity> findByRewardIdAndHubAddressAndStatusNotIn(String rewardId,
+                                                                      String hubAddress,
+                                                                      List<HubReportStatusType> statuses);
 
 }
