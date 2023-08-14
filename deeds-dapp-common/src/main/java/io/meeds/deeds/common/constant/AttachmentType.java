@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -13,12 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.elasticsearch.storage;
+package io.meeds.deeds.common.constant;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
-import io.meeds.deeds.elasticsearch.model.DeedFileBinary;
-
-public interface DeedFileRepository extends ElasticsearchRepository<DeedFileBinary, String> {
-
+public enum AttachmentType {
+  AVATAR, BANNER;
 }
