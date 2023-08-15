@@ -123,11 +123,23 @@ public class HubReportEntity {
 
   // UEM computed field
   @Field(type = FieldType.Double)
+  private double              lastPeriodUemDiff;
+
+  // UEM computed field
+  @Field(type = FieldType.Double)
   private double              hubRewardAmountPerPeriod;
 
   // UEM computed field
   @Field(type = FieldType.Double)
+  private double              hubRewardLastPeriodDiff;
+
+  // UEM computed field
+  @Field(type = FieldType.Double)
   private double              lastPeriodUemRewardAmountPerPeriod;
+
+  // UEM computed field
+  @Field(type = FieldType.Double)
+  private double              mp;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @CreatedDate
