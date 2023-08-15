@@ -169,9 +169,15 @@ public class HubReportService {
                                      existingEntity == null ? 0d
                                                             : existingEntity.getLastPeriodUemRewardAmount(),
                                      existingEntity == null ? 0d
+                                                            : existingEntity.getLastPeriodUemDiff(),
+                                     existingEntity == null ? 0d
                                                             : existingEntity.getHubRewardAmountPerPeriod(),
                                      existingEntity == null ? 0d
+                                                            : existingEntity.getHubRewardLastPeriodDiff(),
+                                     existingEntity == null ? 0d
                                                             : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
+                                     existingEntity == null ? 0d
+                                                            : existingEntity.getMp(),
                                      existingEntity == null ? null
                                                             : existingEntity.getRewardId(),
                                      existingEntity == null ? null
