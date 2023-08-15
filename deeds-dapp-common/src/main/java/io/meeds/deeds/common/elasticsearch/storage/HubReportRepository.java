@@ -31,8 +31,11 @@ import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 
 public interface HubReportRepository extends ElasticsearchRepository<HubReportEntity, String> {
 
-  Page<HubReportEntity> findByHubAddress(String hubAddress,
-                                         Pageable pageable);
+  Page<HubReportEntity> findByHubAddress(String hubAddress, Pageable pageable);
+
+  Page<HubReportEntity> findByRewardId(String rewardId, Pageable pageable);
+
+  Page<HubReportEntity> findByRewardIdAndHubAddress(String rewardId, String hubAddress, Pageable pageable);
 
   Streamable<HubReportEntity> findByCreatedDateBetweenAndStatusNotIn(Instant from,
                                                                      Instant to,
