@@ -82,11 +82,23 @@ public class HubReport extends HubReportData {
 
   @Getter
   @Setter
+  private double              lastPeriodUemDiff;
+
+  @Getter
+  @Setter
   private double              hubRewardAmountPerPeriod;
 
   @Getter
   @Setter
+  private double              hubRewardLastPeriodDiff;
+
+  @Getter
+  @Setter
   private double              lastPeriodUemRewardAmountPerPeriod;
+
+  @Getter
+  @Setter
+  private double              mp;
 
   @Getter
   @Setter
@@ -144,11 +156,11 @@ public class HubReport extends HubReportData {
   }
 
   public double getDr() {
-    return lastPeriodUemRewardAmountPerPeriod == 0 ? 1d
-                                                   : BigDecimal.valueOf(hubRewardAmountPerPeriod)
-                                                               .divide(BigDecimal.valueOf(lastPeriodUemRewardAmountPerPeriod),
-                                                                       MathContext.DECIMAL128)
-                                                               .doubleValue();
+    return lastPeriodUemRewardAmount == 0 ? 1d
+                                          : BigDecimal.valueOf(getHubRewardAmount())
+                                                      .divide(BigDecimal.valueOf(lastPeriodUemRewardAmount),
+                                                              MathContext.DECIMAL128)
+                                                      .doubleValue();
   }
 
   public double getDs() {
