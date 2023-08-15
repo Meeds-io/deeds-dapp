@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import io.meeds.deeds.api.model.HubReportData;
 import io.meeds.deeds.api.model.HubReport;
+import io.meeds.deeds.api.model.HubReportData;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 
 public class HubReportMapper {
@@ -59,8 +59,11 @@ public class HubReportMapper {
                                report.getUemRewardIndex(),
                                report.getUemRewardAmount(),
                                report.getLastPeriodUemRewardAmount(),
+                               report.getLastPeriodUemDiff(),
                                report.getHubRewardAmountPerPeriod(),
+                               report.getHubRewardLastPeriodDiff(),
                                report.getLastPeriodUemRewardAmountPerPeriod(),
+                               report.getMp(),
                                report.getSentDate(),
                                Instant.now());
   }
@@ -76,8 +79,11 @@ public class HubReportMapper {
                                            entity.getUemRewardIndex(),
                                            entity.getUemRewardAmount(),
                                            entity.getLastPeriodUemRewardAmount(),
+                                           entity.getLastPeriodUemDiff(),
                                            entity.getHubRewardAmountPerPeriod(),
+                                           entity.getHubRewardLastPeriodDiff(),
                                            entity.getLastPeriodUemRewardAmountPerPeriod(),
+                                           entity.getMp(),
                                            entity.getRewardId(),
                                            entity.getRewardHash());
     reportStatus.setReportData(new HubReportData(entity.getHubAddress(),
