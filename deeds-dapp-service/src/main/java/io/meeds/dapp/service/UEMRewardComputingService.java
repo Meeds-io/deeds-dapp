@@ -129,17 +129,17 @@ public class UEMRewardComputingService {
 
     reward.setHash(null);
     reward.setPreviousHash(null);
-    reward.setHubAddress(reports.stream()
-                                .map(HubReport::getHubAddress)
-                                .collect(Collectors.toSet()));
+    reward.setHubAddresses(reports.stream()
+                                  .map(HubReport::getHubAddress)
+                                  .collect(Collectors.toSet()));
     reward.setHubRewardsAmount(reports.stream()
                                       .map(HubReport::getHubRewardAmount)
                                       .map(BigDecimal::valueOf)
                                       .reduce(BigDecimal.ZERO, BigDecimal::add)
                                       .doubleValue());
-    reward.setReportHash(reports.stream()
-                                .map(HubReport::getHash)
-                                .collect(Collectors.toSet()));
+    reward.setReportHashes(reports.stream()
+                                  .map(HubReport::getHash)
+                                  .collect(Collectors.toSet()));
     reward.setHubAchievementsCount(reports.stream()
                                           .map(HubReport::getAchievementsCount)
                                           .reduce(0l, Long::sum));
