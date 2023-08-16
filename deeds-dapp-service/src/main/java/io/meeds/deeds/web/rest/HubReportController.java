@@ -39,7 +39,7 @@ import io.meeds.deeds.api.constant.WomParsingException;
 import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.HubReportRequest;
-import io.meeds.deeds.service.HubReportService;
+import io.meeds.deeds.common.service.HubReportService;
 
 @RestController
 @RequestMapping("/api/hub/reports")
