@@ -15,35 +15,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.model;
-
-import java.io.InputStream;
-import java.time.Instant;
-
-import org.springframework.hateoas.server.core.Relation;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+package io.meeds.deeds.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "files", itemRelation = "file")
-public class FileBinary {
+@NoArgsConstructor
+public class UEMConfiguration {
 
-  private String      id;
+  private long   networkId;
 
-  private String      name;
+  private String meedAddress;
 
-  private String      mimeType;
+  private String womServerUrl;
 
-  private InputStream binary;
-
-  private Instant     updatedDate;
+  private Double uemRewardAmount;
 
 }

@@ -17,7 +17,6 @@ package io.meeds.deeds.scheduling.task;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class LeaseBlockchainTransactionCheckTask {
   @Autowired
   private BlockchainService   blockchainService;
 
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES, initialDelay = 1)
+  @Scheduled(cron = "${meeds.deed.lease.checkPending.cron:0 0/1 * * * *}")
   public void checkPendingLeases() {
     List<DeedTenantLease> pendingLeases = leaseService.getPendingTransactions();
     int pendingLeasesSize = pendingLeases.size();
