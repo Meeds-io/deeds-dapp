@@ -15,10 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.service;
+package io.meeds.deeds.common.service;
 
+import static io.meeds.deeds.api.constant.HubReportStatusType.ERROR_SENDING;
+import static io.meeds.deeds.api.constant.HubReportStatusType.INVALID;
 import static io.meeds.deeds.api.constant.HubReportStatusType.NONE;
 import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
+import static io.meeds.deeds.api.constant.HubReportStatusType.REJECTED;
 import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
 import static io.meeds.deeds.api.constant.HubReportStatusType.SENT;
 import static io.meeds.deeds.common.utils.HubReportMapper.fromEntity;
@@ -64,43 +67,47 @@ import io.meeds.deeds.api.model.HubReportRequest;
 import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.SettingService;
+import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.HubReportMapper;
 import lombok.Getter;
 
 @Component
 public class HubReportService {
 
-  @Autowired
-  private BlockchainService                 blockchainService;
+  private static final List<HubReportStatusType> INVALID_STATUSES = Stream.of(NONE,
+                                                                              INVALID,
+                                                                              REJECTED,
+                                                                              ERROR_SENDING)
+                                                                          .toList();
 
   @Autowired
-  private HubService                        hubService;
+  private BlockchainService                      blockchainService;
 
   @Autowired
-  private ListenerService                   listenerService;
+  private HubService                             hubService;
 
   @Autowired
-  private HubReportRepository               reportRepository;
+  private ListenerService                        listenerService;
 
   @Autowired
-  private SettingService                    settingService;
+  private HubReportRepository                    reportRepository;
 
   @Autowired
-  private BlockchainConfigurationProperties blockchainProperties;
+  private SettingService                         settingService;
+
+  @Autowired
+  private BlockchainConfigurationProperties      blockchainProperties;
 
   @Value("${io.meeds.whitelistRewardContracts:}")
-  private List<String>                      whitelistRewardContractsValues;
+  private List<String>                           whitelistRewardContractsValues;
 
   @Value("${io.meeds.test.acceptOudatedReport:false}")
-  private boolean                           acceptOudatedReport;
+  private boolean                                acceptOudatedReport;
 
   @Getter
-  private Instant                           uemStartDate;
+  private Instant                                uemStartDate;
 
-  private List<HubContract>                 whitelistRewardContracts;
+  private List<HubContract>                      whitelistRewardContracts;
 
   @PostConstruct
   public void init() {
@@ -114,17 +121,76 @@ public class HubReportService {
   }
 
   public Page<HubReport> getReports(String hubAddress, Pageable pageable) {
-    pageable = PageRequest.of(pageable.getPageNumber(),
-                              pageable.getPageSize(),
-                              pageable.getSortOr(Sort.by(Direction.DESC, "fromDate", "createdDate")));
-    return reportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable)
-                           .map(HubReportMapper::fromEntity);
+    return getReports(hubAddress, null, pageable);
+  }
+
+  public Page<HubReport> getReports(String hubAddress, String rewardId, Pageable pageable) {
+    Page<HubReportEntity> page;
+    if (StringUtils.isBlank(hubAddress) && StringUtils.isBlank(rewardId)) {
+      pageable = PageRequest.of(pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
+      page = reportRepository.findAll(pageable);
+    } else if (StringUtils.isBlank(rewardId)) {
+      pageable = PageRequest.of(pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+      page = reportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable);
+    } else if (StringUtils.isBlank(hubAddress)) {
+      pageable = PageRequest.of(pageable.getPageNumber(),
+                                pageable.getPageSize(),
+                                pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+      page = reportRepository.findByRewardId(rewardId, pageable);
+    } else {
+      page = reportRepository.findByRewardIdAndHubAddress(rewardId, StringUtils.lowerCase(hubAddress), pageable);
+    }
+    return page.map(HubReportMapper::fromEntity);
   }
 
   public HubReport getReport(String hash) {
     return reportRepository.findById(StringUtils.lowerCase(hash))
                            .map(HubReportMapper::fromEntity)
                            .orElse(null);
+  }
+
+  public List<HubReport> getValidReports(RewardPeriod rewardPeriod) {
+    return reportRepository.findByCreatedDateBetweenAndStatusNotIn(rewardPeriod.getFrom(),
+                                                                   rewardPeriod.getTo(),
+                                                                   INVALID_STATUSES)
+                           .map(HubReportMapper::fromEntity)
+                           .toList();
+  }
+
+  public HubReport getValidReport(String rewardId, String hubAddress) {
+    return reportRepository.findByRewardIdAndHubAddressAndStatusNotIn(rewardId,
+                                                                      StringUtils.lowerCase(hubAddress),
+                                                                      INVALID_STATUSES)
+                           .map(HubReportMapper::fromEntity)
+                           .orElse(null);
+  }
+
+  public HubReport getLastReport(String hubAddress,
+                                 Instant beforeDate,
+                                 String hash,
+                                 List<HubReportStatusType> statuses) {
+    Pageable pageable = Pageable.ofSize(1);
+    Page<HubReportEntity> page;
+    if (StringUtils.isBlank(hash)) {
+      page = reportRepository.findByHubAddressAndCreatedDateBeforeAndStatusInOrderByFromDateDesc(hubAddress,
+                                                                                                 beforeDate,
+                                                                                                 statuses,
+                                                                                                 pageable);
+    } else {
+      page = reportRepository.findByHubAddressAndCreatedDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(hubAddress,
+                                                                                                           beforeDate,
+                                                                                                           StringUtils.lowerCase(hash),
+                                                                                                           statuses,
+                                                                                                           pageable);
+    }
+    return page.get()
+               .findFirst()
+               .map(HubReportMapper::fromEntity)
+               .orElse(null);
   }
 
   public HubReport saveReport(HubReportRequest reportRequest) throws WomException {
@@ -148,6 +214,45 @@ public class HubReportService {
     reportEntity = reportRepository.save(reportEntity);
     listenerService.publishEvent("wom.hubReport.saved", hash);
     return fromEntity(reportEntity);
+  }
+
+  public void saveReportStatus(String hash, HubReportStatusType status) {
+    reportRepository.findById(hash)
+                    .ifPresent(report -> {
+                      report.setStatus(status);
+                      if (INVALID_STATUSES.contains(status)) {
+                        report.setRewardId(null);
+                        report.setRewardHash(null);
+                        report.setUemRewardIndex(0d);
+                        report.setUemRewardAmount(0d);
+                        report.setHubRewardAmountPerPeriod(0d);
+                        report.setLastPeriodUemRewardAmount(0d);
+                        report.setLastPeriodUemRewardAmountPerPeriod(0d);
+                      }
+                      reportRepository.save(report);
+                    });
+  }
+
+  public void saveReportUEMProperties(HubReport report) {
+    reportRepository.findById(report.getHash())
+                    .ifPresent(r -> {
+                      r.setRewardId(report.getRewardId());
+                      r.setRewardHash(report.getRewardHash());
+
+                      r.setUemRewardIndex(report.getUemRewardIndex());
+                      r.setUemRewardAmount(report.getUemRewardAmount());
+
+                      r.setHubRewardLastPeriodDiff(report.getHubRewardLastPeriodDiff());
+                      r.setHubRewardAmountPerPeriod(report.getHubRewardAmountPerPeriod());
+
+                      r.setLastPeriodUemRewardAmount(report.getLastPeriodUemRewardAmount());
+                      r.setLastPeriodUemDiff(report.getLastPeriodUemDiff());
+                      r.setLastPeriodUemRewardAmountPerPeriod(report.getLastPeriodUemRewardAmountPerPeriod());
+
+                      r.setMp(report.getMp());
+                      r.setStatus(report.getStatus());
+                      reportRepository.save(r);
+                    });
   }
 
   private HubReportEntity toReportEntity(String hash, String signature, Hub hub, HubReportData reportData) {
