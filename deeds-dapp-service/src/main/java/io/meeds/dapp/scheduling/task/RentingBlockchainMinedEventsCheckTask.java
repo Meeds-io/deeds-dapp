@@ -18,7 +18,6 @@ package io.meeds.dapp.scheduling.task;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +55,8 @@ public class RentingBlockchainMinedEventsCheckTask {
   @Autowired
   private SettingService      settingService;
 
-  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES, initialDelay = 2)
   @SuppressWarnings("unchecked")
+  @Scheduled(cron = "${meeds.deed.renting.checkTransactions.cron:0 0/5 * * * *}")
   public void checkMinedRentingEvents() {
     long lastBlock = blockchainService.getLastBlock();
     long lastCheckedBlock = getLastCheckedBlock();

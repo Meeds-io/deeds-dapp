@@ -33,13 +33,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.dapp.service.HubReportService;
 import io.meeds.deeds.api.constant.WomAuthorizationException;
 import io.meeds.deeds.api.constant.WomException;
 import io.meeds.deeds.api.constant.WomParsingException;
 import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.HubReportRequest;
+import io.meeds.deeds.common.service.HubReportService;
 
 @RestController
 @RequestMapping("/api/hub/reports")

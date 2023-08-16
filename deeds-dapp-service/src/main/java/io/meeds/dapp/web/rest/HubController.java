@@ -42,8 +42,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.dapp.model.FileBinary;
-import io.meeds.dapp.service.HubService;
 import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.api.constant.WomAuthorizationException;
 import io.meeds.deeds.api.constant.WomException;
@@ -52,6 +50,8 @@ import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.api.model.WomConnectionRequest;
 import io.meeds.deeds.api.model.WomDisconnectionRequest;
+import io.meeds.deeds.common.model.FileBinary;
+import io.meeds.deeds.common.service.HubService;
 
 @RestController
 @RequestMapping("/api/hubs")
