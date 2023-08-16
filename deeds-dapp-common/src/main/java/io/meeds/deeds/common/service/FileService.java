@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,9 +26,9 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.dapp.elasticsearch.model.DeedFileBinary;
-import io.meeds.dapp.model.FileBinary;
-import io.meeds.dapp.storage.DeedFileRepository;
+import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
+import io.meeds.deeds.common.elasticsearch.storage.DeedFileRepository;
+import io.meeds.deeds.common.model.FileBinary;
 
 @Component
 public class FileService {
