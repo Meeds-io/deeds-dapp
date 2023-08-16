@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
 import static io.meeds.deeds.common.utils.HubMapper.toEntity;
 
@@ -27,10 +27,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,20 +43,22 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
-import io.meeds.dapp.elasticsearch.model.DeedFileBinary;
-import io.meeds.dapp.model.AttachmentType;
-import io.meeds.dapp.model.FileBinary;
 import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.api.constant.WomAuthorizationException;
 import io.meeds.deeds.api.constant.WomException;
 import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.Hub;
+import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.WomConnectionRequest;
 import io.meeds.deeds.api.model.WomDisconnectionRequest;
+import io.meeds.deeds.common.constant.AttachmentType;
+import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
+import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
+import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.utils.HubMapper;
 
 @Component
@@ -76,10 +82,13 @@ public class HubService {
   private TenantService       tenantService;
 
   @Autowired
+  private FileService         fileService;
+
+  @Autowired
   private HubRepository       hubRepository;
 
   @Autowired
-  private FileService         fileService;
+  private UEMRewardRepository rewardRepository;
 
   private Map<String, Long>   tokens                    = new ConcurrentHashMap<>();
 
@@ -88,7 +97,24 @@ public class HubService {
   }
 
   public Page<Hub> getHubs(Pageable pageable) {
-    Page<HubEntity> page = hubRepository.findByEnabledIsTrue(pageable);
+    return getHubs(null, pageable);
+  }
+
+  public Page<Hub> getHubs(String rewardId, Pageable pageable) {
+    pageable = PageRequest.of(pageable.getPageNumber(),
+                              pageable.getPageSize(),
+                              pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+    Page<HubEntity> page;
+    if (StringUtils.isBlank(rewardId)) {
+      page = hubRepository.findByEnabledIsTrue(pageable);
+    } else {
+      UEMRewardEntity rewardEntity = rewardRepository.findById(rewardId).orElse(null);
+      if (rewardEntity == null || CollectionUtils.isEmpty(rewardEntity.getHubAddress())) {
+        return Page.empty(pageable);
+      } else {
+        page = hubRepository.findByAddressInAndEnabledIsTrue(rewardEntity.getHubAddress(), pageable);
+      }
+    }
     return page.map(HubMapper::fromEntity);
   }
 
@@ -210,6 +236,16 @@ public class HubService {
                  });
   }
 
+  public void saveHubUEMProperties(String hubAddress, HubReport report) {
+    hubRepository.findById(StringUtils.lowerCase(hubAddress))
+                 .ifPresent(hub -> {
+                   hub.setUsersCount(report.getUsersCount());
+                   hub.setRewardsPeriodType(report.getPeriodType());
+                   hub.setRewardsPerPeriod(report.getHubRewardAmountPerPeriod());
+                   hubRepository.save(hub);
+                 });
+  }
+
   private void saveHubAttachment(String hubAddress, MultipartFile file, AttachmentType attachmentType) throws IOException,
                                                                                                        WomException {
     if (file == null) {
@@ -301,11 +337,11 @@ public class HubService {
 
   private void saveHub(Hub hub) {
     HubEntity existingDeedHub = hubRepository.findById(StringUtils.lowerCase(hub.getAddress()))
-                                           .orElseGet(HubEntity::new);
+                                             .orElseGet(HubEntity::new);
     DeedTenant deedTenant = tenantService.getDeedTenant(hub.getDeedId());
     HubEntity deedHub = toEntity(hub,
-                               deedTenant,
-                               existingDeedHub);
+                                 deedTenant,
+                                 existingDeedHub);
     deedHub.setUpdatedDate(Instant.now());
     deedHub.setEnabled(true);
     hubRepository.save(deedHub);
