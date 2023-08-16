@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,24 +50,49 @@ public class HubReportController {
   private HubReportService reportService;
 
   @GetMapping
-  public PagedModel<EntityModel<HubReport>> getHubReports(
-                                                          @RequestParam(name = "hubAddress", required = true)
-                                                          String hubAddress,
-                                                          Pageable pageable,
-                                                          PagedResourcesAssembler<HubReport> assembler) {
-    Page<HubReport> reports = reportService.getReports(hubAddress, pageable);
-    return assembler.toModel(reports);
+  public ResponseEntity<PagedModel<EntityModel<HubReport>>> getReports(Pageable pageable,
+                                                                       PagedResourcesAssembler<HubReport> assembler,
+                                                                       @RequestParam(name = "hubAddress", required = false)
+                                                                       String hubAddress,
+                                                                       @RequestParam(name = "rewardId", required = false)
+                                                                       String rewardId) {
+    Page<HubReport> reports = reportService.getReports(hubAddress, rewardId, pageable);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.noStore())
+                         .body(assembler.toModel(reports));
   }
 
   @GetMapping("/{hash}")
-  public ResponseEntity<Object> getReportByHash(
-                                                @PathVariable(name = "hash")
-                                                String hash) {
-    HubReport report = reportService.getReport(hash);
-    if (report == null) {
-      return ResponseEntity.notFound().build();
+  public ResponseEntity<Object> getReport(
+                                          @PathVariable(name = "hash")
+                                          String hash) {
+    HubReport hubReport = reportService.getReport(hash);
+    if (hubReport == null) {
+      return ResponseEntity.notFound()
+                           .cacheControl(CacheControl.noStore())
+                           .build();
     } else {
-      return ResponseEntity.ok(report);
+      return ResponseEntity.ok()
+                           .cacheControl(CacheControl.noStore())
+                           .body(hubReport);
+    }
+  }
+
+  @GetMapping("/{rewardId}/{hubAddress}")
+  public ResponseEntity<Object> getReport(
+                                          @PathVariable(name = "rewardId")
+                                          String rewardId,
+                                          @PathVariable(name = "hubAddress")
+                                          String hubAddress) {
+    HubReport hubReport = reportService.getValidReport(rewardId, hubAddress);
+    if (hubReport == null) {
+      return ResponseEntity.notFound()
+                           .cacheControl(CacheControl.noStore())
+                           .build();
+    } else {
+      return ResponseEntity.ok()
+                           .cacheControl(CacheControl.noStore())
+                           .body(hubReport);
     }
   }
 
