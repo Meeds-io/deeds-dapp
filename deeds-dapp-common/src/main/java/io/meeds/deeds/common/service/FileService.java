@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.service;
+package io.meeds.deeds.common.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.storage.DeedFileRepository;
-import io.meeds.deeds.model.FileBinary;
+import io.meeds.deeds.common.model.FileBinary;
 
 @Component
 public class FileService {
