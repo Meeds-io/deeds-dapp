@@ -15,36 +15,21 @@
  */
 package io.meeds.dapp.scheduling.task;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.model.Hub;
-import io.meeds.deeds.common.service.HubService;
+import io.meeds.dapp.service.UEMRewardComputingService;
 
 @Component
-public class HubStatusCheckTask {
-
-  private static final int PAGE_SIZE = 10;
+public class UEMRewardComputationTask {
 
   @Autowired
-  private HubService       hubService;
+  private UEMRewardComputingService rewardComputingService;
 
-  @Scheduled(cron = "${meeds.hub.checkStatus.cron:0 0 0/3 * * *}")
-  public void checkHubsStatus() {
-    Page<Hub> hubs = hubService.getHubs(PageRequest.of(0, PAGE_SIZE));
-    while (hubs.getSize() > 0) {
-      for (Hub hub : hubs) {
-        if (StringUtils.isNotBlank(hub.getAddress())
-            && !hubService.isDeedManager(hub.getDeedManagerAddress(), hub.getDeedId())) {
-          hubService.disableDeedHubCommunity(hub.getAddress());
-        }
-      }
-      hubs = hubService.getHubs(hubs.nextPageable());
-    }
+  @Scheduled(cron = "${meeds.uem.rewardComputation.cron:0 0/15 * * * *}")
+  public synchronized void checkPendingTenants() {
+    rewardComputingService.computePendingRewards();
   }
 
 }
