@@ -18,7 +18,6 @@ package io.meeds.deeds.scheduling.task;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,7 +43,7 @@ public class OfferBlockchainTransactionCheckTask {
   @Autowired
   private BlockchainService   blockchainService;
 
-  @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES, initialDelay = 1)
+  @Scheduled(cron = "${meeds.deed.offer.checkPending.cron:0 0/1 * * * *}")
   public void checkPendingOffers() {
     List<DeedTenantOfferDTO> pendingOffers = offerService.getPendingTransactions();
     int pendingOffersSize = pendingOffers.size();
@@ -60,7 +59,8 @@ public class OfferBlockchainTransactionCheckTask {
           if (StringUtils.isBlank(transactionHash)) {
             offerService.updateRentingOfferStatusFromBlockchain(deedOffer.getId(), Collections.emptyMap());
           } else if (blockchainService.isTransactionMined(transactionHash)) {
-            Map<BlockchainOfferStatus, DeedOfferBlockchainState> minedEvents = blockchainService.getOfferTransactionEvents(transactionHash);
+            Map<BlockchainOfferStatus, DeedOfferBlockchainState> minedEvents =
+                                                                             blockchainService.getOfferTransactionEvents(transactionHash);
             offerService.updateRentingOfferStatusFromBlockchain(deedOffer.getId(), minedEvents);
           }
         } catch (Exception e) {

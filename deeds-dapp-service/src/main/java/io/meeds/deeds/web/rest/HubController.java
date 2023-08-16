@@ -50,8 +50,8 @@ import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.api.model.WomConnectionRequest;
 import io.meeds.deeds.api.model.WomDisconnectionRequest;
-import io.meeds.deeds.model.FileBinary;
-import io.meeds.deeds.service.HubService;
+import io.meeds.deeds.common.model.FileBinary;
+import io.meeds.deeds.common.service.HubService;
 
 @RestController
 @RequestMapping("/api/hubs")
