@@ -24,71 +24,71 @@ import java.util.Set;
 
 import org.springframework.hateoas.server.core.Relation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.meeds.deeds.api.constant.UEMRewardStatusType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
 @Relation(collectionRelation = "rewards", itemRelation = "reward")
-public class UEMReward {
+public class UEMReward extends UEMRewardData {
 
   private String              id;
 
   private String              hash;
 
-  private String              previousHash;
-
-  private Instant             fromDate;
-
-  private Instant             toDate;
-
-  private String              periodType;
-
-  private Set<String>         hubAddress;
-
-  private Set<String>         reportHash;
-
-  /**
-   * Total internal hub achievements
-   */
-  private long                hubAchievementsCount;
-
-  /**
-   * Total internal hub rewards sent to hub users
-   */
-  private double              hubRewardsAmount;
-
-  /**
-   * Total internal hub reward indices
-   */
-  private double              uemRewardIndex;
-
-  /**
-   * Total internal rewarded amount to hubs sent to hub users
-   */
-  private double              uemRewardAmount;
-
   private double              globalEngagementRate;
-
-  private long                tokenNetworkId;
-
-  private String              tokenAddress;
 
   private UEMRewardStatusType status;
 
   private Instant             createdDate;
 
-  @JsonIgnore
+  public UEMReward(String id, // NOSONAR
+                   String hash,
+                   String previousHash,
+                   Instant fromDate,
+                   Instant toDate,
+                   String periodType,
+                   Set<String> hubAddresses,
+                   Set<String> reportHashes,
+                   long hubAchievementsCount,
+                   double hubRewardsAmount,
+                   double uemRewardIndex,
+                   double uemRewardAmount,
+                   long tokenNetworkId,
+                   String tokenAddress,
+                   double globalEngagementRate,
+                   UEMRewardStatusType status,
+                   Instant createdDate) {
+    super(previousHash,
+          fromDate,
+          toDate,
+          periodType,
+          hubAddresses,
+          reportHashes,
+          hubAchievementsCount,
+          hubRewardsAmount,
+          uemRewardIndex,
+          uemRewardAmount,
+          tokenNetworkId,
+          tokenAddress);
+    this.id = id;
+    this.hash = hash;
+    this.globalEngagementRate = globalEngagementRate;
+    this.status = status;
+    this.createdDate = createdDate;
+  }
+
   public long getHubsCount() {
-    return hubAddress == null ? 0 : hubAddress.size();
+    return getHubAddresses() == null ? 0 : getHubAddresses().size();
   }
 
   public double getEw() {
