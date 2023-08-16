@@ -31,7 +31,7 @@ import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 
 public interface UEMRewardRepository extends ElasticsearchRepository<UEMRewardEntity, String> {
 
-  Page<UEMRewardEntity> findByHubAddress(String hubAddress, Pageable pageable);
+  Page<UEMRewardEntity> findByHubAddresses(String hubAddress, Pageable pageable);
 
   Optional<UEMRewardEntity> findByFromDateIsAndToDateIs(Instant from, Instant to);
 

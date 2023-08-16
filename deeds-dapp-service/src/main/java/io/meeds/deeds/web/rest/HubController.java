@@ -63,10 +63,12 @@ public class HubController {
   private HubService          hubService;
 
   @GetMapping
-  public PagedModel<EntityModel<Hub>> getHubs(Pageable pageable,
-                                              PagedResourcesAssembler<Hub> assembler) {
+  public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
+                                                              PagedResourcesAssembler<Hub> assembler) {
     Page<Hub> hubs = hubService.getHubs(pageable);
-    return assembler.toModel(hubs);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.noStore())
+                         .body(assembler.toModel(hubs));
   }
 
   @GetMapping("/{hubAddress}")
@@ -77,7 +79,9 @@ public class HubController {
     if (hub == null) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok(hub);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.noStore())
+                         .body(hub);
   }
 
   @PostMapping("/{hubAddress}/avatar")

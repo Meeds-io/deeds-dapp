@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -16,7 +18,7 @@
 package io.meeds.deeds.api.model;
 
 import java.time.Instant;
-import java.util.Map;
+import java.util.Set;
 
 import org.springframework.hateoas.server.core.Relation;
 
@@ -31,40 +33,43 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "hubs", itemRelation = "hub")
-public class Hub {
+@Relation(collectionRelation = "rewards", itemRelation = "reward")
+public class UEMRewardData {
 
-  private long                deedId = -1;
+  private String      previousHash;
 
-  private short               city   = -1;
+  private Instant     fromDate;
 
-  private short               type   = -1;
+  private Instant     toDate;
 
-  private String              address;
+  private String      periodType;
 
-  private Map<String, String> name;
+  private Set<String> hubAddresses;
 
-  private Map<String, String> description;
+  private Set<String> reportHashes;
 
-  private String              url;
+  /**
+   * Total internal hub achievements
+   */
+  private long        hubAchievementsCount;
 
-  private String              color;
+  /**
+   * Total internal hub rewards sent to hub users
+   */
+  private double      hubRewardsAmount;
 
-  private String              deedManagerAddress;
+  /**
+   * Total internal hub reward indices
+   */
+  private double      uemRewardIndex;
 
-  private String              earnerAddress;
+  /**
+   * UEM Reward amount sent to Hub earner address
+   */
+  private double      uemRewardAmount;
 
-  private Instant             createdDate;
+  private long        tokenNetworkId;
 
-  private Instant             updatedDate;
-
-  // Changed by Sent Report in UEM computing engine
-  private long                usersCount;
-
-  // Changed by Sent Report in UEM computing engine
-  private String              rewardsPeriodType;
-
-  // Changed by Sent Report in UEM computing engine
-  private double              rewardsPerPeriod;
+  private String      tokenAddress;
 
 }
