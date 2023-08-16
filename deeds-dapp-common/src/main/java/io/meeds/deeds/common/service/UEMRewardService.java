@@ -56,7 +56,7 @@ public class UEMRewardService {
       return rewardRepository.findAll(pageable)
                              .map(UEMRewardMapper::fromEntity);
     } else {
-      return rewardRepository.findByHubAddress(hubAddress, pageable)
+      return rewardRepository.findByHubAddresses(hubAddress, pageable)
                              .map(UEMRewardMapper::fromEntity);
     }
   }
