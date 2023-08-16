@@ -109,10 +109,10 @@ public class HubService {
       page = hubRepository.findByEnabledIsTrue(pageable);
     } else {
       UEMRewardEntity rewardEntity = rewardRepository.findById(rewardId).orElse(null);
-      if (rewardEntity == null || CollectionUtils.isEmpty(rewardEntity.getHubAddress())) {
+      if (rewardEntity == null || CollectionUtils.isEmpty(rewardEntity.getHubAddresses())) {
         return Page.empty(pageable);
       } else {
-        page = hubRepository.findByAddressInAndEnabledIsTrue(rewardEntity.getHubAddress(), pageable);
+        page = hubRepository.findByAddressInAndEnabledIsTrue(rewardEntity.getHubAddresses(), pageable);
       }
     }
     return page.map(HubMapper::fromEntity);

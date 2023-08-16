@@ -298,15 +298,18 @@ public class HubReportService {
   }
 
   private void checkRewardDates(Hub hub, String hash, HubReportData report) throws WomRequestException {
-    if (!acceptOudatedReport && report.getToDate().isBefore(hub.getCreatedDate())) {
+    if (!acceptOudatedReport) {
+      // Testing environment
+      return;
+    }
+    if (report.getToDate().isBefore(hub.getCreatedDate())) {
       throw new WomRequestException("wom.sentReportIsBeforeWoMConnection");
-    } else if (!acceptOudatedReport && !isReportPeriodValid(report)) {
+    }
+    if (!isReportPeriodValid(report)) {
       throw new WomRequestException("wom.sentReportIsBeforeUEM");
     }
-
     HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), hash);
-    if (!acceptOudatedReport
-        && lastRewardedReport != null
+    if (lastRewardedReport != null
         && Duration.between(lastRewardedReport.getToDate(), report.getFromDate()).toDays() < 0) {
       throw new WomRequestException("wom.sentReportIsBeforeLastRewardedReport");
     }

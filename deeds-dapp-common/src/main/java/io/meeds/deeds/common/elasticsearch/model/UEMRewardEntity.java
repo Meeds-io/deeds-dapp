@@ -63,10 +63,10 @@ public class UEMRewardEntity {
   private String              periodType;
 
   @Field(type = FieldType.Keyword)
-  private Set<String>         hubAddress;
+  private Set<String>         hubAddresses;
 
   @Field(type = FieldType.Keyword)
-  private Set<String>         reportHash;
+  private Set<String>         reportHashes;
 
   /**
    * Total internal hub achievements
@@ -81,28 +81,25 @@ public class UEMRewardEntity {
   private double              hubRewardsAmount;
 
   /**
-   * Total internal hubs computed reward index
+   * Total hubs computed reward index
    */
   @Field(type = FieldType.Double)
   private double              uemRewardIndex;
 
   /**
-   * Total internal rewarded amount to hubs sent to hub users
+   * Total UEM reward budget
    */
   @Field(type = FieldType.Double)
   private double              uemRewardAmount;
-
-  /**
-   * Total internal hub rewards sent to hub users
-   */
-  @Field(type = FieldType.Double)
-  private double              globalEngagementRate;
 
   @Field(type = FieldType.Long)
   private long                tokenNetworkId;
 
   @Field(type = FieldType.Keyword)
   private String              tokenAddress;
+
+  @Field(type = FieldType.Double)
+  private double              globalEngagementRate;
 
   @Field(type = FieldType.Keyword)
   private UEMRewardStatusType status;
