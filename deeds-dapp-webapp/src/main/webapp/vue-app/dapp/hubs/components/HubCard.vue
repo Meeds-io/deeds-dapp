@@ -24,8 +24,7 @@
     flat>
     <v-card
       class="rounded-lg"
-      height="270px"
-      max-height="270px"
+      min-height="270px"
       hover
       outlined>
       <v-card
@@ -81,7 +80,7 @@
             </div>
           </div>
         </div>
-        <div v-else class="d-flex flex-row py-4">
+        <div v-else class="d-flex flex-row pt-4">
           <div class="d-flex flex-row">
             <v-btn
               v-if="hubWebsiteUrl"
