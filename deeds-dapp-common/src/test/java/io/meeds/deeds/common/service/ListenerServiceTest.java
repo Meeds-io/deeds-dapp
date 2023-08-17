@@ -84,7 +84,7 @@ class ListenerServiceTest {
   public void setup() {
     ListenerService.LISTENERS.clear();
     ListenerService.EVENT_LISTENERS.clear();
-    ListenerService.esEnabled = true;
+    ListenerService.persistentFeatureEnabled = true;
 
     eventData = newData(2);
     eventListener = new ListenerTest();
