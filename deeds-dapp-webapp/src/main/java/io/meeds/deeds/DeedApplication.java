@@ -15,11 +15,7 @@
  */
 package io.meeds.deeds;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
@@ -29,11 +25,13 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+
 @SpringBootApplication(scanBasePackages = {
-    "io.meeds.deeds",
+    "io.meeds.deeds.common",
     "io.meeds.dapp",
   }, exclude = {
-    RedisAutoConfiguration.class,
     LiquibaseAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
