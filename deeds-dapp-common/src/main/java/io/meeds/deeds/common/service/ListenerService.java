@@ -32,11 +32,8 @@ import java.util.concurrent.locks.StampedLock;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -52,7 +49,7 @@ import io.meeds.deeds.common.scheduling.task.ListenerEventTriggerTask;
 import jakarta.annotation.PostConstruct;
 
 @Component
-public class ListenerService implements ApplicationContextAware {
+public class ListenerService {
 
   public static final String                                 ES_LAST_SCANNED_DATE_SETTING_NAME = "ES-LAST-SCANNED-DATE";
 
@@ -65,7 +62,7 @@ public class ListenerService implements ApplicationContextAware {
 
   protected static final StampedLock                         ELASTIC_SEARCH_EVENT_READING_LOCK = new StampedLock();
 
-  protected static boolean                                   esEnabled;
+  protected static boolean                                   persistentFeatureEnabled          = true;
 
   @Autowired(required = false)
   private SettingService                                     settingService;
@@ -78,22 +75,6 @@ public class ListenerService implements ApplicationContextAware {
 
   @Value("${meeds.elasticsearch.listener.clientName}")
   protected String                                           esClientName;
-
-  private ApplicationContext                                 applicationContext;
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
-  }
-
-  @PostConstruct
-  public void init() {
-    if (!LISTENERS.isEmpty()) {
-      // Disable ES scanning
-      esEnabled = false; // NOSONAR
-    }
-    registerListeners();
-  }
 
   /**
    * Triggers an event locally and remotely using persistent event listening
@@ -217,7 +198,7 @@ public class ListenerService implements ApplicationContextAware {
   }
 
   private boolean isUsePerisistentEvents() {
-    return esEnabled
+    return persistentFeatureEnabled
         && (StringUtils.contains(esClientName, "dApp")
             || StringUtils.contains(esClientName, "tenant-provisioning"));
   }
@@ -266,24 +247,6 @@ public class ListenerService implements ApplicationContextAware {
                   data);
         listener.handleEvent(eventName, data);
       });
-    }
-  }
-
-  /**
-   * Retrieves and registers automatically the list of listeners registered in
-   * Spring {@link ApplicationContext} as a {@link Component} and that extends
-   * {@link EventListener}
-   */
-  @SuppressWarnings("rawtypes")
-  private synchronized void registerListeners() {
-    Map<String, EventListener> eventListenerBeans = applicationContext.getBeansOfType(EventListener.class);
-    for (EventListener<?> eventListener : eventListenerBeans.values()) {
-      EVENT_LISTENERS.add(eventListener);
-    }
-    // Reorder Listeners by Event Name and use a new Map
-    // In order to allow programmatically add/remove listeners
-    if (!CollectionUtils.isEmpty(EVENT_LISTENERS)) {
-      EVENT_LISTENERS.forEach(this::addListener);
     }
   }
 
