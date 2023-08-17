@@ -19,13 +19,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
-@SpringBootApplication(exclude = RedisAutoConfiguration.class)
+@SpringBootApplication
 @EnableCaching
 @EnableSpringDataWebSupport
 @PropertySource("classpath:dApp.properties")
