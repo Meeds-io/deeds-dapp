@@ -21,9 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,28 +30,18 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.pubsub.RedisPubSubAdapter;
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
-import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.common.elasticsearch.storage.DeedTenantEventRepository;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.listerner.model.Event;
-import io.meeds.deeds.common.redis.RedisConfigurationProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -62,49 +49,43 @@ import lombok.NoArgsConstructor;
 
 @SpringBootTest(classes = {
     ListenerService.class,
-    RedisConfigurationProperties.class,
 }, properties = {
-    "meeds.redis.clientName=" + ListenerServiceTest.CLIENT_NAME,
+    "meeds.elasticsearch.listener.clientName=" + ListenerServiceTest.CLIENT_NAME,
     "meeds.elasticsearch.listener.events.cleanupHoursPeriodicity=" + ListenerServiceTest.CLEANUP_HOURS_PERIODICITY,
 })
 class ListenerServiceTest {
 
-  public static final String                    CLIENT_NAME               = "TestClientName";
+  public static final String        CLIENT_NAME               = "dApp";
 
-  public static final long                      CLEANUP_HOURS_PERIODICITY = 1l;
+  public static final long          CLEANUP_HOURS_PERIODICITY = 1l;
 
-  private static final String                   EVENT_NAME                = "test.event";
+  private static final String       EVENT_NAME                = "test.event";
 
-  private static final String                   OTHER_EVENT_NAME          = "test.otherevent";
+  private static final String       OTHER_EVENT_NAME          = "test.otherevent";
 
-  private static final String                   LISENER_NAME              = "listener.event";
-
-  @MockBean
-  private RedisClient                           redisClient;
+  private static final String       LISENER_NAME              = "listener.event";
 
   @MockBean
-  private SettingService                        settingService;
+  private SettingService            settingService;
 
   @MockBean
-  private DeedTenantEventRepository             deedTenantEventRepository;
+  private DeedTenantEventRepository deedTenantEventRepository;
 
   @Autowired
-  private ListenerService                       listenerService;
+  private ListenerService           listenerService;
 
-  long                                          persistentEventId;
+  long                              persistentEventId;
 
-  EventData                                     eventData;
+  EventData                         eventData;
 
-  ListenerTest                                  eventListener;
-
-  StatefulRedisPubSubConnection<String, String> redisConnection;
-
-  RedisPubSubAdapter<String, String>            redisListener;
-
-  RedisPubSubAsyncCommands<String, String>      redisCommand;
+  ListenerTest                      eventListener;
 
   @BeforeEach
   public void setup() {
+    ListenerService.LISTENERS.clear();
+    ListenerService.EVENT_LISTENERS.clear();
+    ListenerService.esEnabled = true;
+
     eventData = newData(2);
     eventListener = new ListenerTest();
     listenerService.addListener(eventListener);
@@ -120,8 +101,6 @@ class ListenerServiceTest {
 
   @Test
   void testPublishEvent() {
-    initRedis();
-
     listenerService.publishEvent("otherEvent", eventData);
     assertEquals(0, eventListener.getEventCount());
     assertNull(eventListener.getEventData());
@@ -205,81 +184,6 @@ class ListenerServiceTest {
 
     verify(deedTenantEventRepository, times(1)).deleteByDateLessThan(now.minus(CLEANUP_HOURS_PERIODICITY,
                                                                                ChronoUnit.HOURS));
-  }
-
-  @Test
-  void testTriggerEventFromRedis() throws Exception {
-    initRedis();
-
-    Instant eventDate = Instant.now();
-    List<String> consumers = Collections.emptyList();
-    String objectJson = OBJECT_MAPPER.writeValueAsString(new Event(EVENT_NAME, eventData, eventData.getClass().getName()));
-    DeedTenantEvent deedTenantEvent = new DeedTenantEvent(EVENT_NAME, objectJson, consumers, eventDate);
-    deedTenantEvent.setId("PersistentEventId");
-    when(deedTenantEventRepository.findById(deedTenantEvent.getId())).thenReturn(Optional.of(deedTenantEvent));
-
-    Map<String, String> redisEvent = Collections.singletonMap(deedTenantEvent.getId(), EVENT_NAME);
-    redisListener.message(null, "channel", OBJECT_MAPPER.writeValueAsString(redisEvent));
-
-    assertEquals(1, eventListener.getEventCount());
-    assertEquals(eventData, eventListener.getEventData());
-    assertEquals(EVENT_NAME, eventListener.getEventName());
-
-    verify(deedTenantEventRepository, times(1)).save(argThat(new ArgumentMatcher<DeedTenantEvent>() {
-      @Override
-      public boolean matches(DeedTenantEvent deedTenantEvent) {
-        return deedTenantEvent != null && deedTenantEvent.getConsumers().contains(CLIENT_NAME);
-      }
-    }));
-  }
-
-  @Test
-  void testTriggerEventFromRedisAlreadyHandled() throws Exception {
-    initRedis();
-
-    Instant eventDate = Instant.now();
-    List<String> consumers = Collections.singletonList(CLIENT_NAME);
-    String objectJson = OBJECT_MAPPER.writeValueAsString(new Event(EVENT_NAME, eventData, eventData.getClass().getName()));
-    DeedTenantEvent deedTenantEvent = new DeedTenantEvent(EVENT_NAME, objectJson, consumers, eventDate);
-    deedTenantEvent.setId("PersistentEventId");
-    lenient().when(deedTenantEventRepository.findById(deedTenantEvent.getId())).thenReturn(Optional.of(deedTenantEvent));
-
-    Map<String, String> redisEvent = Collections.singletonMap(deedTenantEvent.getId(), EVENT_NAME);
-    redisListener.message(null, "channel", OBJECT_MAPPER.writeValueAsString(redisEvent));
-
-    assertEquals(0, eventListener.getEventCount());
-    assertNull(eventListener.getEventData());
-    assertNull(eventListener.getEventName());
-
-    verify(deedTenantEventRepository, never()).save(any());
-  }
-
-  @Test
-  void testDestroy() {
-    initRedis();
-
-    listenerService.destroy();
-    verify(redisConnection, atLeast(1)).close();
-  }
-
-  @SuppressWarnings("unchecked")
-  private void initRedis() {
-    if (redisListener == null) {
-      redisConnection = Mockito.mock(StatefulRedisPubSubConnection.class);
-      when(redisClient.connectPubSub()).thenReturn(redisConnection);
-      Mockito.doAnswer(new Answer<Object>() {
-        @Override
-        public Object answer(InvocationOnMock invocation) throws Throwable {
-          redisListener = invocation.getArgument(0);
-          return null;
-        }
-      }).when(redisConnection).addListener(any(RedisPubSubAdapter.class));
-
-      redisCommand = Mockito.mock(RedisPubSubAsyncCommands.class);
-      when(redisConnection.async()).thenReturn(redisCommand);
-      when(redisConnection.isOpen()).thenReturn(true);
-    }
-    listenerService.init();
   }
 
   private EventData newData(int data) {
