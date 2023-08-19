@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "deed_tenant_manager", createIndex = false)
+@Document(indexName = "deed_tenant_manager", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class DeedTenant {
 

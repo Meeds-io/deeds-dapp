@@ -18,15 +18,14 @@
 package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.HubReportData;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 
 public class HubReportMapper {
@@ -43,6 +42,7 @@ public class HubReportMapper {
                                report.getDeedId(),
                                report.getFromDate(),
                                report.getToDate(),
+                               report.getSentDate(),
                                report.getPeriodType(),
                                report.getUsersCount(),
                                report.getParticipantsCount(),
@@ -53,8 +53,10 @@ public class HubReportMapper {
                                lowerCase(report.getTransactions()),
                                report.getSignature(),
                                report.getStatus(),
+                               report.getError(),
                                report.getRewardId(),
                                StringUtils.lowerCase(report.getRewardHash()),
+                               StringUtils.lowerCase(report.getRewardTransactionHash()),
                                report.getHubRewardAmount(),
                                report.getUemRewardIndex(),
                                report.getUemRewardAmount(),
@@ -64,51 +66,52 @@ public class HubReportMapper {
                                report.getHubRewardLastPeriodDiff(),
                                report.getLastPeriodUemRewardAmountPerPeriod(),
                                report.getMp(),
-                               report.getSentDate(),
+                               Instant.now(),
                                Instant.now());
   }
 
   public static HubReport fromEntity(HubReportEntity entity) {
-    HubReport reportStatus = new HubReport(entity.getHash(),
-                                           entity.getSignature(),
-                                           entity.getEarnerAddress(),
-                                           entity.getDeedManagerAddress(),
-                                           entity.getStatus(),
-                                           null,
-                                           entity.getCreatedDate(),
-                                           entity.getUemRewardIndex(),
-                                           entity.getUemRewardAmount(),
-                                           entity.getLastPeriodUemRewardAmount(),
-                                           entity.getLastPeriodUemDiff(),
-                                           entity.getHubRewardAmountPerPeriod(),
-                                           entity.getHubRewardLastPeriodDiff(),
-                                           entity.getLastPeriodUemRewardAmountPerPeriod(),
-                                           entity.getMp(),
-                                           entity.getRewardId(),
-                                           entity.getRewardHash());
-    reportStatus.setReportData(new HubReportData(entity.getHubAddress(),
-                                                 entity.getDeedId(),
-                                                 entity.getFromDate(),
-                                                 entity.getToDate(),
-                                                 entity.getPeriodType(),
-                                                 entity.getUsersCount(),
-                                                 entity.getParticipantsCount(),
-                                                 entity.getRecipientsCount(),
-                                                 entity.getAchievementsCount(),
-                                                 entity.getRewardTokenAddress(),
-                                                 entity.getRewardTokenNetworkId(),
-                                                 entity.getHubRewardAmount(),
-                                                 entity.getTransactions()));
-    return reportStatus;
+    return new HubReport(entity.getHash(),
+                         entity.getSignature(),
+                         entity.getHubAddress(),
+                         entity.getDeedId(),
+                         entity.getFromDate(),
+                         entity.getToDate(),
+                         entity.getSentDate(),
+                         entity.getPeriodType(),
+                         entity.getUsersCount(),
+                         entity.getParticipantsCount(),
+                         entity.getRecipientsCount(),
+                         entity.getAchievementsCount(),
+                         entity.getRewardTokenAddress(),
+                         entity.getRewardTokenNetworkId(),
+                         entity.getHubRewardAmount(),
+                         entity.getTransactions(),
+                         entity.getEarnerAddress(),
+                         entity.getDeedManagerAddress(),
+                         entity.getStatus(),
+                         entity.getError(),
+                         entity.getUemRewardIndex(),
+                         entity.getUemRewardAmount(),
+                         entity.getLastPeriodUemRewardAmount(),
+                         entity.getLastPeriodUemDiff(),
+                         entity.getHubRewardAmountPerPeriod(),
+                         entity.getHubRewardLastPeriodDiff(),
+                         entity.getLastPeriodUemRewardAmountPerPeriod(),
+                         entity.getMp(),
+                         entity.getRewardId(),
+                         entity.getRewardHash(),
+                         entity.getRewardTransactionHash());
   }
 
-  public static Set<String> lowerCase(Set<String> hashes) {
+  public static SortedSet<String> lowerCase(SortedSet<String> hashes) {
     if (CollectionUtils.isEmpty(hashes)) {
-      return Collections.emptySet();
+      return new TreeSet<>();
     } else {
       return hashes.stream()
                    .map(StringUtils::lowerCase)
-                   .collect(Collectors.toSet());
+                   .collect(Collectors.toCollection(TreeSet::new));
     }
   }
+
 }

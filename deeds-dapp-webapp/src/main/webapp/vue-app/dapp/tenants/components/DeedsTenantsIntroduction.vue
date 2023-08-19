@@ -59,7 +59,7 @@
         <video
           class="ms-0 ms-sm-auto me-0 me-sm-auto"
           height="350px"
-          loop="true"
+          loop
           autoplay
           muted
           controls>
@@ -70,7 +70,7 @@
         <video
           class="ms-0 ms-sm-auto me-0 me-sm-auto ps-4 ps-sm-2"
           height="350px"
-          loop="true"
+          loop
           autoplay
           muted
           controls>

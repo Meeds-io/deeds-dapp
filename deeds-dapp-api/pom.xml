@@ -44,6 +44,16 @@
 
     <!-- Provided artifacts in Server Shared library, used for compilation only -->
     <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>utils</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>crypto</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <scope>provided</scope>
