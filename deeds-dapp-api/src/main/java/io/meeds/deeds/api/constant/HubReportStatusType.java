@@ -31,6 +31,8 @@ public enum HubReportStatusType {
   ERROR_SENDING(true, true),
   // Pending for rewards to be sent
   PENDING_REWARD(true, false),
+  // Pending for rewards to be sent
+  REWARD_TRANSACTION_ERROR(true, false),
   // Rewards sent
   REWARDED(false, false),
   // Rejected by WoM
