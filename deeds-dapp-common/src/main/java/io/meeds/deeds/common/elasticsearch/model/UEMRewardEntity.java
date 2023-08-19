@@ -51,7 +51,7 @@ public class UEMRewardEntity {
   private String              hash;
 
   @Field(type = FieldType.Keyword)
-  private String              previousHash;
+  private String              reportsMerkleRoot;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant             fromDate;
@@ -67,6 +67,9 @@ public class UEMRewardEntity {
 
   @Field(type = FieldType.Keyword)
   private Set<String>         reportHashes;
+
+  @Field(type = FieldType.Keyword)
+  private Set<String>         transactionHashes;
 
   /**
    * Total internal hub achievements

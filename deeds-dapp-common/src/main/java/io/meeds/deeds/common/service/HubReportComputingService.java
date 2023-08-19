@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.service;
+package io.meeds.deeds.common.service;
 
 import static io.meeds.deeds.api.constant.HubReportStatusType.NONE;
 import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
@@ -38,12 +38,9 @@ import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.model.RewardPeriod;
-import io.meeds.deeds.common.service.HubReportService;
-import io.meeds.deeds.common.service.TenantService;
-import io.meeds.deeds.common.service.UEMRewardService;
 
 @Component
-public class HubRewardComputingService {
+public class HubReportComputingService {
 
   public static final double                     UEM_REWARD_PERIOD_IN_DAYS = 7d;
 

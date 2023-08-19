@@ -28,7 +28,13 @@ public class UEMConfiguration {
 
   private long   networkId;
 
+  private long   polygonNetworkId;
+
   private String meedAddress;
+
+  private String polygonMeedAddress;
+
+  private String uemAddress;
 
   private String womServerUrl;
 

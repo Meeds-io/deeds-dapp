@@ -18,7 +18,9 @@
 package io.meeds.deeds.common.utils;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -26,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.deeds.api.constant.UEMRewardStatusType;
 import io.meeds.deeds.api.model.UEMReward;
+import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 
 public class UEMRewardMapper {
@@ -34,15 +37,25 @@ public class UEMRewardMapper {
     // Utils class
   }
 
-  public static UEMReward fromEntity(UEMRewardEntity entity) {
+  public static UEMReward fromEntity(UEMRewardEntity entity, List<HubReportEntity> reports) {
     return new UEMReward(entity.getId(),
                          StringUtils.lowerCase(entity.getHash()),
-                         StringUtils.lowerCase(entity.getPreviousHash()),
+                         StringUtils.lowerCase(entity.getReportsMerkleRoot()),
                          entity.getFromDate(),
                          entity.getToDate(),
                          entity.getPeriodType(),
                          lowerCase(entity.getHubAddresses()),
                          lowerCase(entity.getReportHashes()),
+                         lowerCase(entity.getTransactionHashes()),
+                         reports.stream()
+                                .collect(Collectors.toMap(HubReportEntity::getHash,
+                                                          HubReportEntity::getUemRewardAmount,
+                                                          (v1, v2) -> {
+                                                            throw new IllegalStateException(String.format("Duplicate key for values %s and %s",
+                                                                                                          v1,
+                                                                                                          v2));
+                                                          },
+                                                          TreeMap::new)),
                          entity.getHubAchievementsCount(),
                          entity.getHubRewardsAmount(),
                          entity.getUemRewardIndex(),
@@ -57,12 +70,13 @@ public class UEMRewardMapper {
   public static UEMRewardEntity toEntity(UEMReward reward) {
     return new UEMRewardEntity(reward.getId(),
                                StringUtils.lowerCase(reward.getHash()),
-                               StringUtils.lowerCase(reward.getPreviousHash()),
+                               StringUtils.lowerCase(reward.getReportsMerkleRoot()),
                                reward.getFromDate(),
                                reward.getToDate(),
                                reward.getPeriodType(),
                                lowerCase(reward.getHubAddresses()),
                                lowerCase(reward.getReportHashes()),
+                               lowerCase(reward.getTransactionHashes()),
                                reward.getHubAchievementsCount(),
                                reward.getHubRewardsAmount(),
                                reward.getUemRewardIndex(),
