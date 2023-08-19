@@ -17,7 +17,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.dapp.service.UEMRewardComputingService.UEM_HUB_REPORT_REWARD_COMPUTED;
+import static io.meeds.deeds.common.service.UEMRewardComputingService.UEM_HUB_REPORT_REWARD_COMPUTED;
 
 import java.util.Arrays;
 import java.util.List;
