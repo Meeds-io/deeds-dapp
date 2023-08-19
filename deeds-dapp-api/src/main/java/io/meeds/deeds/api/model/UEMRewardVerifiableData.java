@@ -18,58 +18,46 @@
 package io.meeds.deeds.api.model;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.SortedMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.hateoas.server.core.Relation;
+import org.web3j.crypto.Hash;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
 @Relation(collectionRelation = "rewards", itemRelation = "reward")
-public class UEMRewardData {
+public class UEMRewardVerifiableData extends UEMRewardPayload implements VerifiableData {
 
-  private String      previousHash;
+  private String hash;
 
-  private Instant     fromDate;
+  public UEMRewardVerifiableData(String hash,
+                                 String reportsMerkleRoot,
+                                 Instant fromDate,
+                                 Instant toDate,
+                                 double uemRewardAmount,
+                                 SortedMap<String, Double> reportRewards) {
+    super(reportsMerkleRoot, fromDate, toDate, uemRewardAmount, reportRewards);
+    this.hash = hash;
+  }
 
-  private Instant     toDate;
+  @Override
+  public String generateHash() {
+    return StringUtils.lowerCase(Hash.sha3(generateRawMessage()));
+  }
 
-  private String      periodType;
-
-  private Set<String> hubAddresses;
-
-  private Set<String> reportHashes;
-
-  /**
-   * Total internal hub achievements
-   */
-  private long        hubAchievementsCount;
-
-  /**
-   * Total internal hub rewards sent to hub users
-   */
-  private double      hubRewardsAmount;
-
-  /**
-   * Total internal hub reward indices
-   */
-  private double      uemRewardIndex;
-
-  /**
-   * UEM Reward amount sent to Hub earner address
-   */
-  private double      uemRewardAmount;
-
-  private long        tokenNetworkId;
-
-  private String      tokenAddress;
+  @Override
+  public boolean isValid() throws Exception {
+    return isValidHash();
+  }
 
 }
