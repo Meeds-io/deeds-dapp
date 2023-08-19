@@ -64,8 +64,10 @@ public class HubController {
 
   @GetMapping
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
-                                                              PagedResourcesAssembler<Hub> assembler) {
-    Page<Hub> hubs = hubService.getHubs(pageable);
+                                                              PagedResourcesAssembler<Hub> assembler,
+                                                              @RequestParam(name = "rewardId", required = false)
+                                                              String rewardId) {
+    Page<Hub> hubs = hubService.getHubs(rewardId, pageable);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
                          .body(assembler.toModel(hubs));

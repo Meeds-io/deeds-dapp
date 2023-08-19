@@ -20,7 +20,9 @@ package io.meeds.deeds.api.model;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedMap;
 
 import org.springframework.hateoas.server.core.Relation;
 
@@ -39,13 +41,41 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
 @Relation(collectionRelation = "rewards", itemRelation = "reward")
-public class UEMReward extends UEMRewardData {
+public class UEMReward extends UEMRewardVerifiableData {
 
   private String              id;
 
-  private String              hash;
+  private Set<String>         hubAddresses;
+
+  /**
+   * Report Hashes
+   */
+  private Set<String>         reportHashes;
+
+  private Set<String>         transactionHashes;
+
+  /**
+   * Total internal hub achievements
+   */
+  private long                hubAchievementsCount;
+
+  /**
+   * Total internal hub rewards sent to hub users
+   */
+  private double              hubRewardsAmount;
+
+  /**
+   * Total internal hub reward indices
+   */
+  private double              uemRewardIndex;
 
   private double              globalEngagementRate;
+
+  private String              periodType;
+
+  private long                tokenNetworkId;
+
+  private String              tokenAddress;
 
   private UEMRewardStatusType status;
 
@@ -53,12 +83,14 @@ public class UEMReward extends UEMRewardData {
 
   public UEMReward(String id, // NOSONAR
                    String hash,
-                   String previousHash,
+                   String reportMerkleRoot,
                    Instant fromDate,
                    Instant toDate,
                    String periodType,
                    Set<String> hubAddresses,
                    Set<String> reportHashes,
+                   Set<String> transactionHashes,
+                   SortedMap<String, Double> reportRewards,
                    long hubAchievementsCount,
                    double hubRewardsAmount,
                    double uemRewardIndex,
@@ -68,20 +100,22 @@ public class UEMReward extends UEMRewardData {
                    double globalEngagementRate,
                    UEMRewardStatusType status,
                    Instant createdDate) {
-    super(previousHash,
+    super(hash,
+          reportMerkleRoot,
           fromDate,
           toDate,
-          periodType,
-          hubAddresses,
-          reportHashes,
-          hubAchievementsCount,
-          hubRewardsAmount,
-          uemRewardIndex,
           uemRewardAmount,
-          tokenNetworkId,
-          tokenAddress);
+          reportRewards);
     this.id = id;
-    this.hash = hash;
+    this.periodType = periodType;
+    this.hubAddresses = hubAddresses;
+    this.reportHashes = reportHashes;
+    this.transactionHashes = transactionHashes;
+    this.hubAchievementsCount = hubAchievementsCount;
+    this.hubRewardsAmount = hubRewardsAmount;
+    this.uemRewardIndex = uemRewardIndex;
+    this.tokenNetworkId = tokenNetworkId;
+    this.tokenAddress = tokenAddress;
     this.globalEngagementRate = globalEngagementRate;
     this.status = status;
     this.createdDate = createdDate;
@@ -92,11 +126,20 @@ public class UEMReward extends UEMRewardData {
   }
 
   public double getEw() {
-    double hubsCount = getHubsCount();
+    long hubsCount = reportHashes == null ? 0 : reportHashes.size();
     return hubsCount == 0 ? 0d
                           : BigDecimal.valueOf(globalEngagementRate)
                                       .divide(BigDecimal.valueOf(hubsCount), MathContext.DECIMAL128)
                                       .doubleValue();
+  }
+
+  public void addTransactionHash(String transactionHash) {
+    if (transactionHashes == null) {
+      transactionHashes = new HashSet<>();
+    } else {
+      transactionHashes = new HashSet<>(transactionHashes);
+    }
+    transactionHashes.add(transactionHash);
   }
 
 }

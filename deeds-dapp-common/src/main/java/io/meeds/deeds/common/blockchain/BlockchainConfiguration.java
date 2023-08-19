@@ -17,6 +17,7 @@ package io.meeds.deeds.common.blockchain;
 
 import java.math.BigInteger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
+import io.meeds.deeds.contract.UserEngagementMinting;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 
 @Configuration
@@ -135,6 +137,20 @@ public class BlockchainConfiguration {
                            web3j,
                            getTransactionManager(web3j),
                            CONTRACT_GAS_PROVIDER);
+  }
+
+  @Bean
+  public UserEngagementMinting getUserEngagementMinting(
+                                                        @Qualifier("polygonNetwork")
+                                                        Web3j web3j) {
+    if (StringUtils.isBlank(properties.getUemAddress())) {
+      return null;
+    } else {
+      return UserEngagementMinting.load(properties.getUemAddress(),
+                                        web3j,
+                                        getTransactionManager(web3j),
+                                        CONTRACT_GAS_PROVIDER);
+    }
   }
 
   private ReadonlyTransactionManager getTransactionManager(Web3j web3j) {
