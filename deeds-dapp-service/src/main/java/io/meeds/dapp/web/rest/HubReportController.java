@@ -39,7 +39,7 @@ import io.meeds.deeds.api.constant.WomException;
 import io.meeds.deeds.api.constant.WomParsingException;
 import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.HubReportRequest;
+import io.meeds.deeds.api.model.HubReportVerifiableData;
 import io.meeds.deeds.common.service.HubReportService;
 
 @RestController
@@ -99,7 +99,7 @@ public class HubReportController {
   @PostMapping
   public ResponseEntity<Object> saveReport(
                                            @RequestBody
-                                           HubReportRequest reportRequest) {
+                                           HubReportVerifiableData reportRequest) {
     try {
       HubReport report = reportService.saveReport(reportRequest);
       return ResponseEntity.ok(report);

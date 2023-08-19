@@ -29,7 +29,7 @@ import lombok.With;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "deed_user_profile", createIndex = false)
+@Document(indexName = "deed_user_profile", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class UserProfile {
 

@@ -17,22 +17,15 @@
  */
 package io.meeds.deeds.api.model;
 
-import org.springframework.hateoas.server.core.Relation;
+import static io.meeds.deeds.api.utils.JsonUtils.toJsonStringNoCheckedEx;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
+public interface DataPayload {
 
-@Data
-@JsonInclude(value = Include.NON_EMPTY)
-@Relation(collectionRelation = "reportRequests", itemRelation = "reportRequest")
-public class HubReportRequest {
-
-  private HubReportData report;
-
-  private String        signature;
-
-  private String        hash;
+  @JsonIgnore
+  public default String generateRawMessage() {
+    return toJsonStringNoCheckedEx(this);
+  }
 
 }

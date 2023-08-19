@@ -18,7 +18,7 @@
 package io.meeds.deeds.common.elasticsearch.model;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.SortedSet;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -67,6 +67,9 @@ public class HubReportEntity {
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant             toDate;
 
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  private Instant             sentDate;
+
   @Field(type = FieldType.Keyword)
   private String              periodType;
 
@@ -89,7 +92,7 @@ public class HubReportEntity {
   private long                rewardTokenNetworkId;
 
   @Field(type = FieldType.Text)
-  private Set<String>         transactions;
+  private SortedSet<String>   transactions;
 
   @Field(type = FieldType.Keyword)
   private String              signature;
@@ -98,6 +101,10 @@ public class HubReportEntity {
   @Field(type = FieldType.Keyword)
   private HubReportStatusType status;
 
+  // Report validation error code
+  @Field(type = FieldType.Keyword)
+  private String              error;
+
   // UEM computed field
   @Field(type = FieldType.Keyword)
   private String              rewardId;
@@ -105,6 +112,9 @@ public class HubReportEntity {
   // UEM computed field
   @Field(type = FieldType.Keyword)
   private String              rewardHash;
+
+  @Field(type = FieldType.Keyword)
+  private String              rewardTransactionHash;
 
   @Field(type = FieldType.Double)
   private double              hubRewardAmount;

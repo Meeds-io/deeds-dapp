@@ -21,10 +21,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.service.UEMRewardComputingService;
 import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.service.HubReportService;
+import io.meeds.deeds.common.service.UEMRewardComputingService;
 
 @Service
 public class HubReportSentListener implements EventListener<String> {
