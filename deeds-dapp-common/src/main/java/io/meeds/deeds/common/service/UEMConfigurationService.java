@@ -49,21 +49,17 @@ public class UEMConfigurationService {
 
   public UEMConfiguration getConfiguration() {
     if (uemConfiguration == null) {
-      double uemRewardAmount = 0d;
-      String value = settingService.get(UEM_REWARD_AMOUNT_KEY);
-      if (StringUtils.isNotBlank(value)) {
-        uemRewardAmount = Double.parseDouble(value);
-      }
-      long networkId;
       try {
-        networkId = blockchainService.getNetworkId();
+        uemConfiguration = new UEMConfiguration(blockchainService.getNetworkId(),
+                                                blockchainService.getPolygonNetworkId(),
+                                                blockchainService.getEthereumMeedTokenAddress(),
+                                                blockchainService.getPolygonMeedTokenAddress(),
+                                                blockchainService.getUemAddress(),
+                                                womUrl,
+                                                getStoredUemRewardAmount());
       } catch (IOException e) {
         throw new IllegalStateException("Can't get Blockchain network identifier", e);
       }
-      uemConfiguration = new UEMConfiguration(networkId,
-                                              blockchainService.getEthereumMeedTokenAddress(),
-                                              womUrl,
-                                              uemRewardAmount);
     }
     return uemConfiguration;
   }
@@ -76,6 +72,15 @@ public class UEMConfigurationService {
 
   public double getUemRewardAmount() {
     return getConfiguration().getUemRewardAmount();
+  }
+
+  private double getStoredUemRewardAmount() {
+    String value = settingService.get(UEM_REWARD_AMOUNT_KEY);
+    if (StringUtils.isNotBlank(value)) {
+      return Double.parseDouble(value);
+    } else {
+      return 0d;
+    }
   }
 
 }

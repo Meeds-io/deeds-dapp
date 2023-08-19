@@ -15,17 +15,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.deeds.api.constant;
+package io.meeds.deeds.api.model;
 
-public enum UEMRewardStatusType {
+import org.apache.commons.lang3.StringUtils;
 
-  // Not sent yet
-  NONE,
-  // Pending for rewards to be sent
-  PENDING_REWARD,
-  // Error while sending one or all reward transactions
-  REWARD_TRANSACTION_ERROR,
-  // Rewards sent
-  REWARDED;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public interface VerifiableData extends DataPayload {
+
+  String getHash();
+
+  String generateHash();
+
+  @JsonIgnore
+  default boolean isValidHash() {
+    return StringUtils.equalsIgnoreCase(generateHash(), getHash());
+  }
+
+  @JsonIgnore
+  boolean isValid() throws Exception; // NOSONAR
 
 }

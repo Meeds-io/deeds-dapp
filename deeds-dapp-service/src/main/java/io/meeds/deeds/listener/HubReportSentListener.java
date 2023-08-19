@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.service.HubReportService;
-import io.meeds.deeds.service.UEMRewardComputingService;
+import io.meeds.deeds.common.service.UEMRewardComputingService;
 
 @Service
 public class HubReportSentListener implements EventListener<String> {
