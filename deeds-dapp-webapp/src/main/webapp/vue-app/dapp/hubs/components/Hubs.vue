@@ -101,7 +101,7 @@ export default {
     keyword: null,
     loading: false,
     pageSize: 10,
-    page: -1,
+    page: 0,
     hasMore: false,
     hubs: [],
     selectedHub: null,
