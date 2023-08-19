@@ -18,10 +18,11 @@
 package io.meeds.deeds.common.service;
 
 import static io.meeds.deeds.api.constant.UEMRewardStatusType.NONE;
-import static io.meeds.deeds.common.utils.UEMRewardMapper.fromEntity;
+import static io.meeds.deeds.api.constant.UEMRewardStatusType.PENDING_REWARD;
 import static io.meeds.deeds.common.utils.UEMRewardMapper.toEntity;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,9 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.api.constant.UEMRewardStatusType;
 import io.meeds.deeds.api.model.UEMReward;
+import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
+import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
 import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.UEMRewardMapper;
@@ -43,10 +46,20 @@ import io.meeds.deeds.common.utils.UEMRewardMapper;
 @Component
 public class UEMRewardService {
 
-  private static final List<UEMRewardStatusType> NOT_SENT_STATUSES = Stream.of(NONE).toList();
+  public static final String                     UEM_REWARD_STATUS_CHANGED    = "uem.Reward.statusChanged";
+
+  private static final List<UEMRewardStatusType> NOT_SENT_STATUSES            = Stream.of(NONE).toList();
+
+  private static final List<UEMRewardStatusType> PENDING_TRANSACTION_STATUSES = Stream.of(PENDING_REWARD).toList();
+
+  @Autowired
+  private ListenerService                        listenerService;
 
   @Autowired
   private UEMRewardRepository                    rewardRepository;
+
+  @Autowired
+  private HubReportRepository                    reportRepository;
 
   public Page<UEMReward> getRewards(String hubAddress, Pageable pageable) {
     pageable = PageRequest.of(pageable.getPageNumber(),
@@ -54,16 +67,22 @@ public class UEMRewardService {
                               pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
     if (StringUtils.isBlank(hubAddress)) {
       return rewardRepository.findAll(pageable)
-                             .map(UEMRewardMapper::fromEntity);
+                             .map(this::fromEntity);
     } else {
       return rewardRepository.findByHubAddresses(hubAddress, pageable)
-                             .map(UEMRewardMapper::fromEntity);
+                             .map(this::fromEntity);
     }
   }
 
   public Stream<UEMReward> getPendingRewards() {
     return rewardRepository.findByStatusIn(NOT_SENT_STATUSES)
-                           .map(UEMRewardMapper::fromEntity);
+                           .map(this::fromEntity);
+  }
+
+  public List<UEMReward> getPendingTransactionRewards() {
+    return rewardRepository.findByStatusIn(PENDING_TRANSACTION_STATUSES)
+                           .map(this::fromEntity)
+                           .toList();
   }
 
   public UEMReward saveReward(UEMReward reward) {
@@ -74,14 +93,41 @@ public class UEMRewardService {
 
   public UEMReward getReward(RewardPeriod period) {
     return rewardRepository.findByFromDateIsAndToDateIs(period.getFrom(), period.getTo())
-                           .map(UEMRewardMapper::fromEntity)
+                           .map(this::fromEntity)
                            .orElse(null);
   }
 
   public UEMReward getRewardById(String rewardId) {
     return rewardRepository.findById(rewardId)
-                           .map(UEMRewardMapper::fromEntity)
+                           .map(this::fromEntity)
                            .orElse(null);
+  }
+
+  public void saveRewardStatus(String rewardId, UEMRewardStatusType rewardStatus) {
+    UEMReward reward = getRewardById(rewardId);
+    reward.setStatus(rewardStatus);
+    UEMRewardEntity rewardEntity = toEntity(reward);
+    rewardRepository.save(rewardEntity);
+    listenerService.publishEvent(UEM_REWARD_STATUS_CHANGED, rewardId);
+  }
+
+  public void saveRewardTransactionHash(String rewardId, String transactionHash) {
+    UEMReward reward = getRewardById(rewardId);
+    reward.addTransactionHash(transactionHash);
+    reward.setStatus(UEMRewardStatusType.PENDING_REWARD);
+    UEMRewardEntity rewardEntity = toEntity(reward);
+    rewardRepository.save(rewardEntity);
+    listenerService.publishEvent(UEM_REWARD_STATUS_CHANGED, reward.getId());
+  }
+
+  private UEMReward fromEntity(UEMRewardEntity rewardEntity) {
+    List<HubReportEntity> reports = rewardEntity.getReportHashes()
+                                                .stream()
+                                                .map(hash -> reportRepository.findById(hash)
+                                                                             .orElse(null))
+                                                .filter(Objects::nonNull)
+                                                .toList();
+    return UEMRewardMapper.fromEntity(rewardEntity, reports);
   }
 
 }

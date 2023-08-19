@@ -28,12 +28,9 @@ import static io.meeds.deeds.common.utils.HubReportMapper.fromEntity;
 import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -49,11 +46,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.web3j.crypto.Hash;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.Sign;
-import org.web3j.crypto.Sign.SignatureData;
-import org.web3j.utils.Numeric;
 
 import io.meeds.deeds.api.constant.HubReportStatusType;
 import io.meeds.deeds.api.constant.WomAuthorizationException;
@@ -62,8 +54,8 @@ import io.meeds.deeds.api.constant.WomRequestException;
 import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.api.model.HubContract;
 import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.HubReportData;
-import io.meeds.deeds.api.model.HubReportRequest;
+import io.meeds.deeds.api.model.HubReportPayload;
+import io.meeds.deeds.api.model.HubReportVerifiableData;
 import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
@@ -74,11 +66,15 @@ import lombok.Getter;
 @Component
 public class HubReportService {
 
-  private static final List<HubReportStatusType> INVALID_STATUSES = Stream.of(NONE,
-                                                                              INVALID,
-                                                                              REJECTED,
-                                                                              ERROR_SENDING)
-                                                                          .toList();
+  public static final String                     HUB_REPORT_STATUS_CHANGED   = "HubReport.status.changed";
+
+  public static final String                     HUB_REPORT_TRANSACTION_SENT = "HubReport.status.transactionSent";
+
+  private static final List<HubReportStatusType> INVALID_STATUSES            = Stream.of(NONE,
+                                                                                         INVALID,
+                                                                                         REJECTED,
+                                                                                         ERROR_SENDING)
+                                                                                     .toList();
 
   @Autowired
   private BlockchainService                      blockchainService;
@@ -176,16 +172,18 @@ public class HubReportService {
     Pageable pageable = Pageable.ofSize(1);
     Page<HubReportEntity> page;
     if (StringUtils.isBlank(hash)) {
-      page = reportRepository.findByHubAddressAndCreatedDateBeforeAndStatusInOrderByFromDateDesc(hubAddress,
-                                                                                                 beforeDate,
-                                                                                                 statuses,
-                                                                                                 pageable);
+      page =
+           reportRepository.findByHubAddressAndCreatedDateBeforeAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                               beforeDate,
+                                                                                               statuses,
+                                                                                               pageable);
     } else {
-      page = reportRepository.findByHubAddressAndCreatedDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(hubAddress,
-                                                                                                           beforeDate,
-                                                                                                           StringUtils.lowerCase(hash),
-                                                                                                           statuses,
-                                                                                                           pageable);
+      page =
+           reportRepository.findByHubAddressAndCreatedDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                                         beforeDate,
+                                                                                                         StringUtils.lowerCase(hash),
+                                                                                                         statuses,
+                                                                                                         pageable);
     }
     return page.get()
                .findFirst()
@@ -193,33 +191,30 @@ public class HubReportService {
                .orElse(null);
   }
 
-  public HubReport saveReport(HubReportRequest reportRequest) throws WomException {
-    HubReportData reportData = reportRequest.getReport();
-    String signature = reportRequest.getSignature();
-    String hash = StringUtils.lowerCase(reportRequest.getHash());
-    String rawMessage = reportData.getRawMessage();
-    String hubAddress = reportData.getHubAddress();
+  public HubReport saveReport(HubReportVerifiableData reportData) throws WomException {
+    try {
+      if (!reportData.isValid()) {
+        throw new WomAuthorizationException("wom.invalidSignedMessage");
+      }
+    } catch (Exception e) {
+      throw new WomAuthorizationException("wom.invalidSignedMessage", e);
+    }
 
-    Hub hub = hubService.getHub(hubAddress);
+    Hub hub = hubService.getHub(reportData.getHubAddress());
 
-    checkSignedMessage(hubAddress,
-                       signature,
-                       rawMessage);
-    checkHash(hash, signature);
     checkHubValidity(hub);
-    checkRewardDates(hub, hash, reportData);
+    checkRewardDates(hub, reportData);
     checkTokenWhitelisted(reportData);
 
-    HubReportEntity reportEntity = toReportEntity(hash, signature, hub, reportData);
+    HubReportEntity reportEntity = toReportEntity(hub, reportData);
     reportEntity = reportRepository.save(reportEntity);
-    listenerService.publishEvent("wom.hubReport.saved", hash);
+    listenerService.publishEvent("wom.hubReport.saved", reportData.getHash());
     return fromEntity(reportEntity);
   }
 
   public void saveReportStatus(String hash, HubReportStatusType status) {
-    reportRepository.findById(hash)
+    reportRepository.findById(StringUtils.lowerCase(hash))
                     .ifPresent(report -> {
-                      report.setStatus(status);
                       if (INVALID_STATUSES.contains(status)) {
                         report.setRewardId(null);
                         report.setRewardHash(null);
@@ -229,12 +224,24 @@ public class HubReportService {
                         report.setLastPeriodUemRewardAmount(0d);
                         report.setLastPeriodUemRewardAmountPerPeriod(0d);
                       }
+                      report.setStatus(status);
                       reportRepository.save(report);
+                      listenerService.publishEvent(HUB_REPORT_STATUS_CHANGED, hash);
+                    });
+  }
+
+  public void saveReportTransactionHash(String hash, String transactionHash) {
+    reportRepository.findById(StringUtils.lowerCase(hash))
+                    .ifPresent(report -> {
+                      report.setStatus(PENDING_REWARD);
+                      report.setRewardTransactionHash(transactionHash);
+                      reportRepository.save(report);
+                      listenerService.publishEvent(HUB_REPORT_TRANSACTION_SENT, hash);
                     });
   }
 
   public void saveReportUEMProperties(HubReport report) {
-    reportRepository.findById(report.getHash())
+    reportRepository.findById(StringUtils.lowerCase(report.getHash()))
                     .ifPresent(r -> {
                       r.setRewardId(report.getRewardId());
                       r.setRewardHash(report.getRewardHash());
@@ -255,18 +262,30 @@ public class HubReportService {
                     });
   }
 
-  private HubReportEntity toReportEntity(String hash, String signature, Hub hub, HubReportData reportData) {
-    HubReportEntity existingEntity = reportRepository.findById(hash)
+  private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) {
+    HubReportEntity existingEntity = reportRepository.findById(StringUtils.lowerCase(reportData.getHash()))
                                                      .orElse(null);
-    HubReport report = new HubReport(hash,
-                                     signature,
+    HubReport report = new HubReport(reportData.getHash(),
+                                     reportData.getSignature(),
+                                     reportData.getHubAddress(),
+                                     reportData.getDeedId(),
+                                     reportData.getFromDate(),
+                                     reportData.getToDate(),
+                                     reportData.getSentDate(),
+                                     reportData.getPeriodType(),
+                                     reportData.getUsersCount(),
+                                     reportData.getParticipantsCount(),
+                                     reportData.getRecipientsCount(),
+                                     reportData.getAchievementsCount(),
+                                     reportData.getRewardTokenAddress(),
+                                     reportData.getRewardTokenNetworkId(),
+                                     reportData.getHubRewardAmount(),
+                                     reportData.getTransactions(),
                                      StringUtils.lowerCase(hub.getEarnerAddress()),
                                      StringUtils.lowerCase(hub.getDeedManagerAddress()),
                                      existingEntity == null ? HubReportStatusType.SENT
                                                             : existingEntity.getStatus(),
                                      null,
-                                     existingEntity == null ? Instant.now()
-                                                            : existingEntity.getCreatedDate(),
                                      existingEntity == null ? 0d
                                                             : existingEntity.getUemRewardIndex(),
                                      existingEntity == null ? 0d
@@ -286,19 +305,14 @@ public class HubReportService {
                                      existingEntity == null ? null
                                                             : existingEntity.getRewardId(),
                                      existingEntity == null ? null
-                                                            : existingEntity.getRewardHash());
-    report.setReportData(reportData);
+                                                            : existingEntity.getRewardHash(),
+                                     existingEntity == null ? null
+                                                            : existingEntity.getRewardTransactionHash());
     return toEntity(report);
   }
 
-  private void checkHash(String hash, String signature) throws WomAuthorizationException {
-    if (!StringUtils.equalsIgnoreCase(hash, Hash.sha3(signature))) {
-      throw new WomAuthorizationException("wom.wrongSignatureHash");
-    }
-  }
-
-  private void checkRewardDates(Hub hub, String hash, HubReportData report) throws WomRequestException {
-    if (!acceptOudatedReport) {
+  private void checkRewardDates(Hub hub, HubReportVerifiableData report) throws WomRequestException {
+    if (acceptOudatedReport) {
       // Testing environment
       return;
     }
@@ -308,7 +322,7 @@ public class HubReportService {
     if (!isReportPeriodValid(report)) {
       throw new WomRequestException("wom.sentReportIsBeforeUEM");
     }
-    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), hash);
+    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), report.getHash());
     if (lastRewardedReport != null
         && Duration.between(lastRewardedReport.getToDate(), report.getFromDate()).toDays() < 0) {
       throw new WomRequestException("wom.sentReportIsBeforeLastRewardedReport");
@@ -317,8 +331,8 @@ public class HubReportService {
 
   private HubReport getLastHubReport(String hubAddress, String hash) {
     Pageable pageable = Pageable.ofSize(1);
-    return reportRepository.findByHubAddressAndHashNotAndStatusInOrderByFromDateDesc(hubAddress,
-                                                                                     hash,
+    return reportRepository.findByHubAddressAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                     StringUtils.lowerCase(hash),
                                                                                      Stream.of(NONE,
                                                                                                SENT,
                                                                                                PENDING_REWARD,
@@ -340,47 +354,13 @@ public class HubReportService {
     }
   }
 
-  private void checkTokenWhitelisted(HubReportData report) throws WomException {
+  private void checkTokenWhitelisted(HubReportPayload report) throws WomException {
     if (!isWhitelistRewardContract(report.getRewardTokenNetworkId(), report.getRewardTokenAddress())) {
       throw new WomAuthorizationException("wom.unsupporedRewardContract");
     }
   }
 
-  private void checkSignedMessage(String hubAddress,
-                                  String signedMessage,
-                                  String rawMessage) throws WomException {
-    if (StringUtils.isBlank(hubAddress)) {
-      throw new WomAuthorizationException("wom.emptyHubAddress");
-    } else if (StringUtils.isBlank(signedMessage) || StringUtils.isBlank(rawMessage)) {
-      throw new WomAuthorizationException("wom.emptySignedMessage");
-    }
-
-    try {
-      byte[] signatureBytes = Numeric.hexStringToByteArray(signedMessage);
-      if (signatureBytes.length < 64) {
-        throw new WomAuthorizationException("wom.invalidSignedMessage");
-      }
-      byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
-      byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
-      byte v = signatureBytes[64];
-      if (v < 27) {
-        v += 27;
-      }
-
-      BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(StandardCharsets.UTF_8),
-                                                             new SignatureData(v, r, s));
-      String recoveredAddress = "0x" + Keys.getAddress(publicKey);
-      if (!recoveredAddress.equalsIgnoreCase(hubAddress)) {
-        throw new WomAuthorizationException("wom.invalidSignedMessage");
-      }
-    } catch (WomException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new WomAuthorizationException("wom.invalidSignedMessage", e);
-    }
-  }
-
-  private boolean isReportPeriodValid(HubReportData reportData) {
+  private boolean isReportPeriodValid(HubReportPayload reportData) {
     if (uemStartDate == null) {
       return true;
     } else {

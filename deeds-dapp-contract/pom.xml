@@ -49,6 +49,7 @@
       <plugin>
         <groupId>org.web3j</groupId>
         <artifactId>web3j-maven-plugin</artifactId>
+        <version>4.10.0</version>
         <executions>
           <execution>
             <id>generate-sources</id>

@@ -36,8 +36,6 @@ public class DeedApplication extends SpringBootServletInitializer {
     // Used to disable LogBack initialization in WebApp context after having
     // initialized it already in Meeds Server globally
     System.setProperty("org.springframework.boot.logging.LoggingSystem", "none");
-    // Allow creating Deed Tenant Indexes
-    System.setProperty("meeds.elasticsearch.autoCreateIndex", "true");
     super.onStartup(servletContext);
   }
 

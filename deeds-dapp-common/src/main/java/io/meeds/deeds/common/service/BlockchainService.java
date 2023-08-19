@@ -79,6 +79,7 @@ import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
+import io.meeds.deeds.contract.UserEngagementMinting;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 
 @Component
@@ -108,6 +109,9 @@ public class BlockchainService {
 
   @Autowired
   private XMeedsNFTRewarding     xMeedsToken;
+
+  @Autowired(required = false)
+  private UserEngagementMinting  uemContract;
 
   @Autowired
   @Qualifier("ethereumMeedToken")
@@ -148,6 +152,20 @@ public class BlockchainService {
   public boolean isTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
     return receipt != null;
+  }
+
+  public boolean isPolygonTransactionMined(String transactionHash) {
+    TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
+    return receipt != null;
+  }
+
+  /**
+   * @param  transactionHash Blockchain Transaction Hash
+   * @return                 true if Transaction is Successful
+   */
+  public boolean isPolygonTransactionConfirmed(String transactionHash) {
+    TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
+    return receipt != null && receipt.isStatusOK();
   }
 
   /**
@@ -615,6 +633,10 @@ public class BlockchainService {
     return polygonToken.getContractAddress();
   }
 
+  public String getUemAddress() {
+    return uemContract == null ? null : uemContract.getContractAddress();
+  }
+
   /**
    * @param  address Address to get its pending rewardings not minted yet
    * @return         {@link BigInteger} for Meed Token value with decimals
@@ -765,9 +787,17 @@ public class BlockchainService {
     return null;
   }
 
+  private TransactionReceipt getPolygonTransactionReceipt(String transactionHash) {
+    return getTransactionReceipt(transactionHash, polygonWeb3j);
+  }
+
   private TransactionReceipt getTransactionReceipt(String transactionHash) {
+    return getTransactionReceipt(transactionHash, web3j);
+  }
+
+  private TransactionReceipt getTransactionReceipt(String transactionHash, Web3j customWeb3j) {
     try {
-      EthGetTransactionReceipt ethGetTransactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
+      EthGetTransactionReceipt ethGetTransactionReceipt = customWeb3j.ethGetTransactionReceipt(transactionHash).send();
       if (ethGetTransactionReceipt != null) {
         return ethGetTransactionReceipt.getResult();
       }
