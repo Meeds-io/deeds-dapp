@@ -58,6 +58,7 @@
             <h3 class="mx-2 font-size-normal" :class="textTokensColor">{{ $t('tokens.title') }}</h3>
             <img
               :src="`${parentLocation}/static/images/tokenMenu.webp`"
+              alt=""
               height="25px"
               width="25px"
               min-width="25px"
@@ -76,6 +77,7 @@
             <h3 class="mx-2 font-size-normal" :class="textNftColor">{{ $t('nft.id') }}</h3>
             <img
               :src="`${parentLocation}/static/images/ownersMenu.webp`"
+              alt=""
               height="25px"
               width="24px"
               min-width="24px"
@@ -95,6 +97,7 @@
             <h3 class="mx-2 font-size-normal" :class="textPortfolioColor">{{ $t('page.overview') }}</h3>
             <img
               :src="`${parentLocation}/static/images/portfolioMenu.webp`"
+              alt=""
               height="27px"
               width="24px"
               min-width="24px"

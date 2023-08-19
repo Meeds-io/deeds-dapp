@@ -46,8 +46,6 @@ import io.meeds.deeds.common.listerner.model.Event;
 import io.meeds.deeds.common.scheduling.task.ListenerEventCleanupTask;
 import io.meeds.deeds.common.scheduling.task.ListenerEventTriggerTask;
 
-import jakarta.annotation.PostConstruct;
-
 @Component
 public class ListenerService {
 

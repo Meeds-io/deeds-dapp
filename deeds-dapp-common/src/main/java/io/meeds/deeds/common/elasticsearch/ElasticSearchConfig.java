@@ -28,17 +28,10 @@ import org.springframework.data.elasticsearch.client.ClientConfiguration.MaybeSe
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.RefreshPolicy;
 import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-
-import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.common.elasticsearch.model.DeedSetting;
-import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.common.elasticsearch.model.DeedTenantEvent;
-import io.meeds.deeds.common.elasticsearch.model.UserProfile;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
@@ -68,9 +61,6 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
   @Value("${meeds.elasticsearch.connectionRetry:30}")
   private int                 connectionRetry;
 
-  @Value("${meeds.elasticsearch.autoCreateIndex:true}")
-  private boolean             createDeedIndexes;
-
   @Override
   public ClientConfiguration clientConfiguration() {
     String hostAndPort = esUrl.split("//")[1];
@@ -93,13 +83,6 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
     elasticsearchTemplate.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
     tryConnection(elasticsearchTemplate);
-    if (createDeedIndexes) {
-      createIndex(elasticsearchTemplate, DeedSetting.class);
-      createIndex(elasticsearchTemplate, DeedTenant.class);
-      createIndex(elasticsearchTemplate, DeedMetadata.class);
-      createIndex(elasticsearchTemplate, DeedTenantEvent.class);
-      createIndex(elasticsearchTemplate, UserProfile.class);
-    }
     return elasticsearchTemplate;
   }
 
@@ -128,14 +111,6 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
           }
         }
       }
-    }
-  }
-
-  private void createIndex(ElasticsearchTemplate elasticsearchTemplate, Class<?> esDocumentModelClass) {
-    IndexOperations indexOperations = elasticsearchTemplate.indexOps(esDocumentModelClass);
-    boolean indexExists = indexOperations.exists();
-    if (!indexExists) {
-      indexOperations.createWithMapping();
     }
   }
 
