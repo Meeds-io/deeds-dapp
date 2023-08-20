@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "./abstract/Initializable.sol";
 import "./abstract/SafeMath.sol";
-import "./abstract/MeedsToken.sol";
+import "./abstract/IERC20.sol";
 import "./abstract/ManagerRole.sol";
 import "./abstract/UUPSUpgradeable.sol";
 
@@ -34,7 +34,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     /**
      * @dev The Meeds DAO Token
      */
-    MeedsToken public meed;
+    IERC20 public meed;
 
     /**
      * @dev Total cumulative rewards
@@ -164,7 +164,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         balances[earner][nftId] = balances[earner][nftId].sub(amount, "uem.amountExceedsBalance");
         claimedRewards = claimedRewards.add(amount);
 
-        bool result = meed.transferFrom(address(this), recipient, amount);
+        bool result = meed.transfer(recipient, amount);
         if (result) {
           emit RewardClaimed(nftId, earner, recipient, amount);
         }
