@@ -25,6 +25,8 @@ public enum UEMRewardStatusType {
   PENDING_REWARD,
   // Error while sending one or all reward transactions
   REWARD_TRANSACTION_ERROR,
+  // Pending for rewards to be sent
+  PARTIAL_REWARD,
   // Rewards sent
   REWARDED;
 

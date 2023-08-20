@@ -67,15 +67,19 @@ import lombok.Getter;
 @Component
 public class HubReportService {
 
-  public static final String                     HUB_REPORT_STATUS_CHANGED   = "HubReport.status.changed";
+  public static final String                     HUB_REPORT_SAVED               = "uem.report.saved";
 
-  public static final String                     HUB_REPORT_TRANSACTION_SENT = "HubReport.status.transactionSent";
+  public static final String                     HUB_REPORT_STATUS_CHANGED      = "uem.report.status.changed";
 
-  private static final List<HubReportStatusType> INVALID_STATUSES            = Stream.of(NONE,
-                                                                                         INVALID,
-                                                                                         REJECTED,
-                                                                                         ERROR_SENDING)
-                                                                                     .toList();
+  public static final String                     HUB_REPORT_TRANSACTION_SENT    = "uem.report.status.transactionSent";
+
+  public static final String                     HUB_REPORT_UEM_REWARD_COMPUTED = "uem.report.computed";
+
+  private static final List<HubReportStatusType> INVALID_STATUSES               = Stream.of(NONE,
+                                                                                            INVALID,
+                                                                                            REJECTED,
+                                                                                            ERROR_SENDING)
+                                                                                        .toList();
 
   @Autowired
   private BlockchainService                      blockchainService;
@@ -117,26 +121,33 @@ public class HubReportService {
     }
   }
 
-  public Page<HubReport> getReports(String hubAddress, Pageable pageable) {
+  public Page<HubReport> getReportsByHub(String hubAddress, Pageable pageable) {
     return getReports(hubAddress, null, pageable);
+  }
+
+  public Page<HubReport> getReportsByReward(String rewardId, Pageable pageable) {
+    return getReports(null, rewardId, pageable);
   }
 
   public Page<HubReport> getReports(String hubAddress, String rewardId, Pageable pageable) {
     Page<HubReportEntity> page;
     if (StringUtils.isBlank(hubAddress) && StringUtils.isBlank(rewardId)) {
-      pageable = PageRequest.of(pageable.getPageNumber(),
-                                pageable.getPageSize(),
-                                pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
+      pageable = pageable.isUnpaged() ? pageable
+                                      : PageRequest.of(pageable.getPageNumber(),
+                                                       pageable.getPageSize(),
+                                                       pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
       page = reportRepository.findAll(pageable);
     } else if (StringUtils.isBlank(rewardId)) {
-      pageable = PageRequest.of(pageable.getPageNumber(),
-                                pageable.getPageSize(),
-                                pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+      pageable = pageable.isUnpaged() ? pageable
+                                      : PageRequest.of(pageable.getPageNumber(),
+                                                       pageable.getPageSize(),
+                                                       pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
       page = reportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable);
     } else if (StringUtils.isBlank(hubAddress)) {
-      pageable = PageRequest.of(pageable.getPageNumber(),
-                                pageable.getPageSize(),
-                                pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+      pageable = pageable.isUnpaged() ? pageable
+                                      : PageRequest.of(pageable.getPageNumber(),
+                                                       pageable.getPageSize(),
+                                                       pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
       page = reportRepository.findByRewardId(rewardId, pageable);
     } else {
       page = reportRepository.findByRewardIdAndHubAddress(rewardId, StringUtils.lowerCase(hubAddress), pageable);
@@ -151,9 +162,9 @@ public class HubReportService {
   }
 
   public List<HubReport> getValidReports(RewardPeriod rewardPeriod) {
-    return reportRepository.findByCreatedDateBetweenAndStatusNotIn(rewardPeriod.getFrom(),
-                                                                   rewardPeriod.getTo(),
-                                                                   INVALID_STATUSES)
+    return reportRepository.findBySentDateBetweenAndStatusNotIn(rewardPeriod.getFrom(),
+                                                                rewardPeriod.getTo(),
+                                                                INVALID_STATUSES)
                            .map(HubReportMapper::fromEntity)
                            .toList();
   }
@@ -174,17 +185,17 @@ public class HubReportService {
     Page<HubReportEntity> page;
     if (StringUtils.isBlank(hash)) {
       page =
-           reportRepository.findByHubAddressAndCreatedDateBeforeAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                               beforeDate,
-                                                                                               statuses,
-                                                                                               pageable);
+           reportRepository.findByHubAddressAndSentDateBeforeAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                            beforeDate,
+                                                                                            statuses,
+                                                                                            pageable);
     } else {
       page =
-           reportRepository.findByHubAddressAndCreatedDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                                         beforeDate,
-                                                                                                         StringUtils.lowerCase(hash),
-                                                                                                         statuses,
-                                                                                                         pageable);
+           reportRepository.findByHubAddressAndSentDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                                      beforeDate,
+                                                                                                      StringUtils.lowerCase(hash),
+                                                                                                      statuses,
+                                                                                                      pageable);
     }
     return page.get()
                .findFirst()
@@ -209,7 +220,7 @@ public class HubReportService {
 
     HubReportEntity reportEntity = toReportEntity(hub, reportData);
     reportEntity = reportRepository.save(reportEntity);
-    listenerService.publishEvent("wom.hubReport.saved", reportData.getHash());
+    listenerService.publishEvent(HUB_REPORT_SAVED, reportData.getHash());
     return fromEntity(reportEntity);
   }
 
@@ -260,6 +271,7 @@ public class HubReportService {
                       r.setMp(report.getMp());
                       r.setStatus(report.getStatus());
                       reportRepository.save(r);
+                      listenerService.publishEvent(HUB_REPORT_UEM_REWARD_COMPUTED, r.getHash());
                     });
   }
 
