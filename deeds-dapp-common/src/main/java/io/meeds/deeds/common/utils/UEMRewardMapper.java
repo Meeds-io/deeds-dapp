@@ -27,8 +27,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.deeds.api.constant.UEMRewardStatusType;
+import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.UEMReward;
-import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 
 public class UEMRewardMapper {
@@ -37,7 +37,7 @@ public class UEMRewardMapper {
     // Utils class
   }
 
-  public static UEMReward fromEntity(UEMRewardEntity entity, List<HubReportEntity> reports) {
+  public static UEMReward fromEntity(UEMRewardEntity entity, List<HubReport> reports) {
     return new UEMReward(entity.getId(),
                          StringUtils.lowerCase(entity.getHash()),
                          StringUtils.lowerCase(entity.getReportsMerkleRoot()),
@@ -48,8 +48,8 @@ public class UEMRewardMapper {
                          lowerCase(entity.getReportHashes()),
                          lowerCase(entity.getTransactionHashes()),
                          reports.stream()
-                                .collect(Collectors.toMap(HubReportEntity::getHash,
-                                                          HubReportEntity::getUemRewardAmount,
+                                .collect(Collectors.toMap(HubReport::getHash,
+                                                          HubReport::getUemRewardAmount,
                                                           (v1, v2) -> {
                                                             throw new IllegalStateException(String.format("Duplicate key for values %s and %s",
                                                                                                           v1,

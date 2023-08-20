@@ -37,9 +37,9 @@ public interface HubReportRepository extends ElasticsearchRepository<HubReportEn
 
   Page<HubReportEntity> findByRewardIdAndHubAddress(String rewardId, String hubAddress, Pageable pageable);
 
-  Streamable<HubReportEntity> findByCreatedDateBetweenAndStatusNotIn(Instant from,
-                                                                     Instant to,
-                                                                     List<HubReportStatusType> statuses);
+  Streamable<HubReportEntity> findBySentDateBetweenAndStatusNotIn(Instant from,
+                                                                  Instant to,
+                                                                  List<HubReportStatusType> statuses);
 
   Page<HubReportEntity> findByHubAddressAndStatusInOrderByFromDateDesc(String address,
                                                                        List<HubReportStatusType> statuses,
@@ -50,16 +50,16 @@ public interface HubReportRepository extends ElasticsearchRepository<HubReportEn
                                                                                  List<HubReportStatusType> statuses,
                                                                                  Pageable pageable);
 
-  Page<HubReportEntity> findByHubAddressAndCreatedDateBeforeAndStatusInOrderByFromDateDesc(String address,
-                                                                                           Instant beforeDate,
-                                                                                           List<HubReportStatusType> statuses,
-                                                                                           Pageable pageable);
+  Page<HubReportEntity> findByHubAddressAndSentDateBeforeAndStatusInOrderByFromDateDesc(String address,
+                                                                                        Instant beforeDate,
+                                                                                        List<HubReportStatusType> statuses,
+                                                                                        Pageable pageable);
 
-  Page<HubReportEntity> findByHubAddressAndCreatedDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(String hubAddress,
-                                                                                                     Instant beforeDate,
-                                                                                                     String hash,
-                                                                                                     List<HubReportStatusType> statuses,
-                                                                                                     Pageable pageable);
+  Page<HubReportEntity> findByHubAddressAndSentDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(String hubAddress,
+                                                                                                  Instant beforeDate,
+                                                                                                  String hash,
+                                                                                                  List<HubReportStatusType> statuses,
+                                                                                                  Pageable pageable);
 
   Optional<HubReportEntity> findByRewardIdAndHubAddressAndStatusNotIn(String rewardId,
                                                                       String hubAddress,
