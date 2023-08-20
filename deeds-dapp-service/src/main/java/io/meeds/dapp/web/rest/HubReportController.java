@@ -101,7 +101,7 @@ public class HubReportController {
                                            @RequestBody
                                            HubReportVerifiableData reportRequest) {
     try {
-      HubReport report = reportService.saveReport(reportRequest);
+      HubReport report = reportService.sendReport(reportRequest);
       return ResponseEntity.ok(report);
     } catch (WomRequestException | WomParsingException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
