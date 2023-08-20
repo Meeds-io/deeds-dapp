@@ -202,7 +202,7 @@ public class HubReportService {
                .orElse(null);
   }
 
-  public HubReport saveReport(HubReportVerifiableData reportData) throws WomException {
+  public HubReport sendReport(HubReportVerifiableData reportData) throws WomException {
     try {
       if (!reportData.isValid()) {
         throw new WomAuthorizationException("wom.invalidSignedMessage");
@@ -251,6 +251,15 @@ public class HubReportService {
                     });
   }
 
+  public void saveReportLeaseStatus(HubReport report) {
+    reportRepository.findById(report.getHash())
+                    .ifPresent(reportEntity -> {
+                      reportEntity.setOwnerAddress(report.getOwnerAddress());
+                      reportEntity.setOwnerMintingPercentage(report.getOwnerMintingPercentage());
+                      reportRepository.save(reportEntity);
+                    });
+  }
+
   public void saveReportUEMProperties(HubReport report) {
     reportRepository.findById(StringUtils.lowerCase(report.getHash()))
                     .ifPresent(r -> {
@@ -295,6 +304,8 @@ public class HubReportService {
                                      reportData.getTransactions(),
                                      StringUtils.lowerCase(hub.getEarnerAddress()),
                                      StringUtils.lowerCase(hub.getDeedManagerAddress()),
+                                     null,
+                                     0,
                                      existingEntity == null ? HubReportStatusType.SENT
                                                             : existingEntity.getStatus(),
                                      null,
