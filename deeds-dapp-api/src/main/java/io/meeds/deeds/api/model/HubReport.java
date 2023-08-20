@@ -49,6 +49,13 @@ public class HubReport extends HubReportVerifiableData {
   private String              deedManagerAddress;
 
   @Getter
+  private String              ownerAddress;
+
+  @Getter
+  @Setter
+  private int                 ownerMintingPercentage;
+
+  @Getter
   @Setter
   private HubReportStatusType status;
 
@@ -116,6 +123,8 @@ public class HubReport extends HubReportVerifiableData {
                    SortedSet<String> transactions,
                    String earnerAddress,
                    String deedManagerAddress,
+                   String ownerAddress,
+                   int ownerMintingPercentage,
                    HubReportStatusType status,
                    String error,
                    double uemRewardIndex,
@@ -147,6 +156,8 @@ public class HubReport extends HubReportVerifiableData {
           lowerCase(transactions));
     this.earnerAddress = StringUtils.lowerCase(earnerAddress);
     this.deedManagerAddress = StringUtils.lowerCase(deedManagerAddress);
+    this.ownerAddress = StringUtils.lowerCase(ownerAddress);
+    this.ownerMintingPercentage = ownerMintingPercentage;
     this.status = status;
     this.error = error;
     this.uemRewardIndex = uemRewardIndex;
@@ -168,6 +179,10 @@ public class HubReport extends HubReportVerifiableData {
 
   public void setDeedManagerAddress(String deedManagerAddress) {
     this.deedManagerAddress = StringUtils.lowerCase(deedManagerAddress);
+  }
+
+  public void setOwnerAddress(String ownerAddress) {
+    this.ownerAddress = StringUtils.lowerCase(ownerAddress);
   }
 
   public void setRewardHash(String rewardHash) {

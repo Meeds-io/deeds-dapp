@@ -58,6 +58,12 @@ public class HubReportEntity {
   @Field(type = FieldType.Keyword)
   private String              deedManagerAddress;
 
+  @Field(type = FieldType.Keyword)
+  private String              ownerAddress;
+
+  @Field(type = FieldType.Integer)
+  private int                 ownerMintingPercentage;
+
   @Field(type = FieldType.Long)
   private long                deedId;
 
