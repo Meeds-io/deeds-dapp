@@ -24,12 +24,12 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     /**
      * @dev An event that will be triggered once a partial reward report is sent.
      */
-    event UEMPartialReward(uint256 indexed _fromDate, uint256 _toDate, bytes32 indexed _blockHash);
+    event UEMPartialReward(uint256 indexed _fromDate, uint256 _toDate, bytes32 indexed _rewardHash);
 
     /**
      * @dev An event that will be triggered once a reward report is fully sent for a given period.
      */
-    event UEMRewardCompleted(uint256 indexed _fromDate, uint256 _toDate, bytes32 indexed _blockHash);
+    event UEMRewardCompleted(uint256 indexed _fromDate, uint256 _toDate, bytes32 indexed _rewardHash);
 
     /**
      * @dev The Meeds DAO Token
@@ -78,7 +78,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     /**
      * This method replaces the constructor since this is about an Upgradable Contract
      */
-    function initialize(MeedsToken _meed)
+    function initialize(IERC20 _meed)
         public
         initializer {
         meed = _meed;
@@ -91,7 +91,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
      * 
      * @param _fromDate        Reward period start date
      * @param _toDate          Reward period end date
-     * @param _blockHash       Reward block hash as stored in Meeds DAO
+     * @param _rewardHash       Reward block hash as stored in Meeds DAO
      * @param _hubAddress      Hub addresses being rewarded
      * @param _nftId           Deed NFT identifiers corresponding to Hubs being rewarded
      * @param _managerAddress  Deed NFT Tenant/Owner being rewarded
@@ -100,7 +100,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     function sendRewards(
         uint256 _fromDate,
         uint256 _toDate,
-        bytes32 _blockHash,
+        bytes32 _rewardHash,
         bool partialReward,
         address[] memory _hubAddress,
         uint256[] memory _nftId,
@@ -117,9 +117,9 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         }
 
         if (partialReward) {
-            emit UEMPartialReward(_fromDate, _toDate, _blockHash);
+            emit UEMPartialReward(_fromDate, _toDate, _rewardHash);
         } else {
-            emit UEMRewardCompleted(_fromDate, _toDate, _blockHash);
+            emit UEMRewardCompleted(_fromDate, _toDate, _rewardHash);
         }
     }
 
