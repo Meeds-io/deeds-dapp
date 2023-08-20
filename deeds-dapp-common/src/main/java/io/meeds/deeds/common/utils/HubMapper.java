@@ -29,55 +29,55 @@ public class HubMapper {
     // Utils class
   }
 
-  public static Hub fromEntity(HubEntity deedTenantHub) {
-    if (deedTenantHub == null) {
+  public static Hub fromEntity(HubEntity hubEntity) {
+    if (hubEntity == null) {
       return null;
     }
-    Hub deedTenantHubPresentation = new Hub();
-    deedTenantHubPresentation.setDeedId(deedTenantHub.getNftId());
-    deedTenantHubPresentation.setCity(deedTenantHub.getCity());
-    deedTenantHubPresentation.setType(deedTenantHub.getType());
-    deedTenantHubPresentation.setDeedManagerAddress(deedTenantHub.getDeedManagerAddress());
-    deedTenantHubPresentation.setAddress(deedTenantHub.getAddress());
-    deedTenantHubPresentation.setName(deedTenantHub.getName());
-    deedTenantHubPresentation.setDescription(deedTenantHub.getDescription());
-    deedTenantHubPresentation.setUrl(deedTenantHub.getUrl());
-    deedTenantHubPresentation.setColor(deedTenantHub.getColor());
-    deedTenantHubPresentation.setEarnerAddress(deedTenantHub.getEarnerAddress());
-    deedTenantHubPresentation.setCreatedDate(deedTenantHub.getCreatedDate());
-    deedTenantHubPresentation.setUpdatedDate(deedTenantHub.getUpdatedDate());
-    deedTenantHubPresentation.setRewardsPeriodType(deedTenantHub.getRewardsPeriodType());
-    deedTenantHubPresentation.setRewardsPerPeriod(deedTenantHub.getRewardsPerPeriod());
-    deedTenantHubPresentation.setUsersCount(deedTenantHub.getUsersCount());
-    return deedTenantHubPresentation;
+    Hub hub = new Hub();
+    hub.setDeedId(hubEntity.getNftId());
+    hub.setCity(hubEntity.getCity());
+    hub.setType(hubEntity.getType());
+    hub.setDeedManagerAddress(hubEntity.getDeedManagerAddress());
+    hub.setAddress(hubEntity.getAddress());
+    hub.setName(hubEntity.getName());
+    hub.setDescription(hubEntity.getDescription());
+    hub.setUrl(hubEntity.getUrl());
+    hub.setColor(hubEntity.getColor());
+    hub.setEarnerAddress(hubEntity.getEarnerAddress());
+    hub.setCreatedDate(hubEntity.getCreatedDate());
+    hub.setUpdatedDate(hubEntity.getUpdatedDate());
+    hub.setRewardsPeriodType(hubEntity.getRewardsPeriodType());
+    hub.setRewardsPerPeriod(hubEntity.getRewardsPerPeriod());
+    hub.setUsersCount(hubEntity.getUsersCount());
+    return hub;
   }
 
   public static HubEntity toEntity(Hub hub,
                                    DeedTenant deedTenant,
                                    HubEntity existingEntity) {
-    HubEntity deedHub;
+    HubEntity hubEntity;
     if (existingEntity == null) {
-      deedHub = new HubEntity();
-      deedHub.setCreatedDate(Instant.now());
+      hubEntity = new HubEntity();
+      hubEntity.setCreatedDate(Instant.now());
     } else {
-      deedHub = existingEntity;
+      hubEntity = existingEntity;
     }
-    deedHub.setNftId(hub.getDeedId());
+    hubEntity.setNftId(hub.getDeedId());
     if (deedTenant != null) {
-      deedHub.setCity(deedTenant.getCityIndex());
-      deedHub.setType(deedTenant.getCardType());
+      hubEntity.setCity(deedTenant.getCityIndex());
+      hubEntity.setType(deedTenant.getCardType());
     }
-    deedHub.setAddress(hub.getAddress());
-    deedHub.setName(hub.getName());
-    deedHub.setDescription(hub.getDescription());
-    deedHub.setUrl(hub.getUrl());
-    deedHub.setDeedManagerAddress(hub.getDeedManagerAddress());
-    deedHub.setEarnerAddress(hub.getEarnerAddress());
-    deedHub.setColor(hub.getColor());
-    deedHub.setUsersCount(hub.getUsersCount());
-    deedHub.setRewardsPerPeriod(existingEntity == null ? 0d : existingEntity.getRewardsPerPeriod());
-    deedHub.setRewardsPeriodType(hub.getRewardsPeriodType());
-    return deedHub;
+    hubEntity.setAddress(hub.getAddress());
+    hubEntity.setName(hub.getName());
+    hubEntity.setDescription(hub.getDescription());
+    hubEntity.setUrl(hub.getUrl());
+    hubEntity.setDeedManagerAddress(hub.getDeedManagerAddress());
+    hubEntity.setEarnerAddress(hub.getEarnerAddress());
+    hubEntity.setColor(hub.getColor());
+    hubEntity.setUsersCount(hub.getUsersCount());
+    hubEntity.setRewardsPerPeriod(existingEntity == null ? 0d : existingEntity.getRewardsPerPeriod());
+    hubEntity.setRewardsPeriodType(hub.getRewardsPeriodType());
+    return hubEntity;
   }
 
 }
