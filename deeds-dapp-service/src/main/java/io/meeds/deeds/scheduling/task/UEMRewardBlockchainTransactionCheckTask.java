@@ -16,9 +16,6 @@
 package io.meeds.deeds.scheduling.task;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,23 +24,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.api.model.UEMReward;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.UEMRewardComputingService;
 import io.meeds.deeds.common.service.UEMRewardService;
+import io.meeds.deeds.common.service.UEMRewardStatusService;
 
 @Component
 public class UEMRewardBlockchainTransactionCheckTask {
 
-  private static final Logger       LOG = LoggerFactory.getLogger(UEMRewardBlockchainTransactionCheckTask.class);
+  private static final Logger    LOG = LoggerFactory.getLogger(UEMRewardBlockchainTransactionCheckTask.class);
 
   @Autowired
-  private UEMRewardService          rewardService;
+  private UEMRewardService       rewardService;
 
   @Autowired
-  private UEMRewardComputingService rewardComputingService;
-
-  @Autowired
-  private BlockchainService         blockchainService;
+  private UEMRewardStatusService rewardStatusService;
 
   @Scheduled(cron = "${meeds.deed.uem.checkPendingTransactions.cron:0 0/1 * * * *}")
   public void checkPendingTransactions() {
@@ -55,25 +48,14 @@ public class UEMRewardBlockchainTransactionCheckTask {
     long start = System.currentTimeMillis();
     LOG.info("Check {} pending UEM Reward pending transaction.", pendingSize);
     try {
-      pendingRewards.forEach(this::saveRewardTransactionStatus);
+      pendingRewards.stream()
+                    .map(UEMReward::getId)
+                    .forEach(rewardStatusService::refreshRewardTransactionStatus);
     } finally {
       LOG.info("End checking {} pending UEM Reward transaction in {}ms.",
                pendingSize,
                System.currentTimeMillis() - start);
     }
-  }
-
-  private void saveRewardTransactionStatus(UEMReward reward) {
-    Map<String, Boolean> minedTransactions = getMinedTransactionStatuses(reward);
-    rewardComputingService.saveRewardTransactionStatus(reward.getId(), minedTransactions);
-  }
-
-  private Map<String, Boolean> getMinedTransactionStatuses(UEMReward reward) {
-    return reward.getTransactionHashes()
-                 .stream()
-                 .filter(blockchainService::isPolygonTransactionMined)
-                 .collect(Collectors.toMap(Function.identity(),
-                                           blockchainService::isPolygonTransactionConfirmed));
   }
 
 }

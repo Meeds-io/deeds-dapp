@@ -17,7 +17,7 @@
  */
 package io.meeds.deeds.listener;
 
-import static io.meeds.deeds.common.service.UEMRewardComputingService.UEM_HUB_REPORT_REWARD_COMPUTED;
+import static io.meeds.deeds.common.service.HubReportService.HUB_REPORT_UEM_REWARD_COMPUTED;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ public class HubRewardComptedListener implements EventListener<String> {
 
   public static final String        LISTENER_NAME    = "HubReportComputed";
 
-  private static final List<String> SUPPORTED_EVENTS = Arrays.asList(UEM_HUB_REPORT_REWARD_COMPUTED);
+  private static final List<String> SUPPORTED_EVENTS = Arrays.asList(HUB_REPORT_UEM_REWARD_COMPUTED);
 
   @Autowired
   private HubReportService          reportService;

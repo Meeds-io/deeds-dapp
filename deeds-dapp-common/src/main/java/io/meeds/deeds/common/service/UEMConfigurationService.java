@@ -48,7 +48,11 @@ public class UEMConfigurationService {
   private UEMConfiguration    uemConfiguration;
 
   public UEMConfiguration getConfiguration() {
-    if (uemConfiguration == null) {
+    return getConfiguration(false);
+  }
+
+  public UEMConfiguration getConfiguration(boolean compute) {
+    if (compute || uemConfiguration == null) {
       try {
         uemConfiguration = new UEMConfiguration(blockchainService.getNetworkId(),
                                                 blockchainService.getPolygonNetworkId(),
@@ -71,7 +75,7 @@ public class UEMConfigurationService {
   }
 
   public double getUemRewardAmount() {
-    return getConfiguration().getUemRewardAmount();
+    return getConfiguration(true).getUemRewardAmount();
   }
 
   private double getStoredUemRewardAmount() {

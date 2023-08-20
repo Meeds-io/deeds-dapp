@@ -18,8 +18,7 @@
 package io.meeds.deeds.common.service;
 
 import static io.meeds.deeds.api.constant.HubReportStatusType.REJECTED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARD_TRANSACTION_ERROR;
+import static io.meeds.deeds.common.service.UEMRewardService.UEM_REWARD_COMPUTED;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,21 +27,17 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.web3j.crypto.Hash;
 
-import io.meeds.deeds.api.constant.HubReportStatusType;
 import io.meeds.deeds.api.constant.UEMRewardStatusType;
 import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.UEMReward;
@@ -51,16 +46,9 @@ import io.meeds.deeds.common.model.RewardPeriod;
 @Component
 public class UEMRewardComputingService {
 
-  private static final Logger              LOG                            =
-                                               LoggerFactory.getLogger(UEMRewardComputingService.class);
+  public static final String               UEM_REWARD_PERIOD_TYPE = "WEEK";
 
-  public static final String               UEM_HUB_REPORT_REWARD_COMPUTED = "uem.HubReportReward.computed";
-
-  public static final String               UEM_REWARD_COMPUTED            = "uem.Reward.computed";
-
-  public static final String               UEM_REWARD_PERIOD_TYPE         = "WEEK";
-
-  private static final UEMRewardStatusType INITIAL_REWARD_STATUS          = UEMRewardStatusType.NONE;
+  private static final UEMRewardStatusType INITIAL_REWARD_STATUS  = UEMRewardStatusType.NONE;
 
   @Autowired
   private UEMConfigurationService          uemConfigurationService;
@@ -108,43 +96,6 @@ public class UEMRewardComputingService {
     return computeUEMReward(period, existingReward);
   }
 
-  public void saveRewardTransactionHash(String rewardId, Set<String> reportHashes, String transactionHash) {
-    rewardService.saveRewardTransactionHash(rewardId, transactionHash);
-    reportHashes.forEach(reportHash -> reportService.saveReportTransactionHash(reportHash, transactionHash));
-  }
-
-  public void saveRewardTransactionStatus(String rewardId, Map<String, Boolean> minedTransactions) {
-    UEMReward reward = rewardService.getRewardById(rewardId);
-    Set<String> pendingTransactions = reward.getTransactionHashes();
-    reward.getReportHashes().forEach(reportHash -> saveReportTransactionStatus(reportHash, minedTransactions));
-    boolean isCompletelyMined = pendingTransactions.size() == minedTransactions.size();
-    boolean isCompletelyConfirmed = minedTransactions.values().stream().allMatch(Boolean::booleanValue);
-    if (isCompletelyMined) {
-      UEMRewardStatusType rewardStatus = isCompletelyConfirmed ? UEMRewardStatusType.REWARDED
-                                                               : UEMRewardStatusType.REWARD_TRANSACTION_ERROR;
-      if (rewardStatus != reward.getStatus()) {
-        rewardService.saveRewardStatus(reward.getId(), rewardStatus);
-      }
-    }
-  }
-
-  private void saveReportTransactionStatus(String reportHash, Map<String, Boolean> minedTransactions) {
-    HubReport report = reportService.getReport(reportHash);
-    if (StringUtils.isNotBlank(report.getRewardTransactionHash())) {
-      Boolean confirmed = minedTransactions.get(report.getRewardTransactionHash());
-      if (confirmed == null) {
-        LOG.warn("Report {} seems to have a transaction that is not referenced in its reward {} transactions list",
-                 reportHash,
-                 report.getRewardId());
-      } else {
-        HubReportStatusType reportStatus = confirmed.booleanValue() ? REWARDED : REWARD_TRANSACTION_ERROR;
-        if (report.getStatus() != reportStatus) {
-          reportService.saveReportStatus(reportHash, reportStatus);
-        }
-      }
-    }
-  }
-
   private UEMReward computeUEMReward(RewardPeriod period, UEMReward rewardToRefresh) {
     if (rewardToRefresh != null
         && !CollectionUtils.isEmpty(rewardToRefresh.getTransactionHashes())) {
@@ -177,22 +128,26 @@ public class UEMRewardComputingService {
     Long hubAchievementsCount = hubAchievementsCount(reports);
     double globalEngagementRate = globalEngagementRate(reports);
     double uemRewardAmount = getUemRewardAmount();
+    String reportsMerkleRoot = merkleRoot(reports);
 
+    /// 1. Set Reward data from reports
     reward.setHubAddresses(hubAddresses);
     reward.setHubRewardsAmount(hubRewardsAmount);
     reward.setReportHashes(reportHashes);
     reward.setHubAchievementsCount(hubAchievementsCount);
     reward.setGlobalEngagementRate(globalEngagementRate);
     reward.setUemRewardAmount(uemRewardAmount);
-
-    // Compute reports indexes
-    reports = computeUEMHubRewards(reward, reports);
-    double uemRewardIndex = uemRewardIndex(reports);
-    reward.setUemRewardIndex(uemRewardIndex);
-    TreeMap<String, Double> reportRewards = reportRewards(reports);
-    reward.setReportRewards(reportRewards);
-    String reportsMerkleRoot = merkleRoot(reward);
     reward.setReportsMerkleRoot(reportsMerkleRoot);
+
+    // 2. Compute reports indexes
+    reports = computeUEMHubRewards(reward, reports);
+
+    // 3. Set Reward properties from report
+    double uemRewardIndex = uemRewardIndex(reports);
+    TreeMap<String, Double> reportRewards = reportRewards(reports);
+
+    reward.setUemRewardIndex(uemRewardIndex);
+    reward.setReportRewards(reportRewards);
 
     // Use new instance to validate constructor input and to have compilation
     // error when the parameters list changes
@@ -215,11 +170,12 @@ public class UEMRewardComputingService {
                                                                    globalEngagementRate,
                                                                    reward.getStatus(),
                                                                    reward.getCreatedDate()));
+
+    // 4. Update each report prorata reward amount
     reports.stream()
            .forEach(r -> {
-             setUemRewardAmount(savedReward, r);
+             setUemRewardProperties(savedReward, r);
              reportService.saveReportUEMProperties(r);
-             listenerService.publishEvent(UEM_HUB_REPORT_REWARD_COMPUTED, r.getHash());
            });
     listenerService.publishEvent(UEM_REWARD_COMPUTED, savedReward.getId());
     return savedReward;
@@ -303,7 +259,9 @@ public class UEMRewardComputingService {
                   .collect(Collectors.toSet());
   }
 
-  private void setUemRewardAmount(UEMReward reward, HubReport report) {
+  private void setUemRewardProperties(UEMReward reward, HubReport report) {
+    report.setRewardId(reward.getId());
+    report.setRewardHash(reward.getHash());
     if (reward.getUemRewardIndex() > 0) {
       report.setUemRewardAmount(BigDecimal.valueOf(report.getUemRewardIndex())
                                           .multiply(BigDecimal.valueOf(reward.getUemRewardAmount()))
@@ -348,31 +306,27 @@ public class UEMRewardComputingService {
     }
   }
 
-  private String merkleRoot(UEMReward reward) {
-    return merkleRoot(reward.getReportRewards()
-                            .keySet()
-                            .stream()
-                            .sorted(String::compareToIgnoreCase)
-                            .toList());
-  }
-
-  private String merkleRoot(List<String> reportHashList) {
-    return StringUtils.lowerCase(merkleTree(reportHashList).get(0));
+  private String merkleRoot(List<HubReport> reports) {
+    return merkleTree(reports.stream()
+                             .map(HubReport::getHash)
+                             .sorted(String::compareToIgnoreCase)
+                             .toList()).get(0);
   }
 
   private List<String> merkleTree(List<String> reportHashList) {
-    if (reportHashList.size() == 1) {
+    int size = reportHashList.size();
+    if (size == 1) {
       return reportHashList;
     }
     List<String> parentHashes = new ArrayList<>();
-    for (int i = 0; i < reportHashList.size(); i += 2) {
-      String hashedString = Hash.sha3(reportHashList.get(i) + reportHashList.get(i + 1));
-      parentHashes.add(hashedString);
+    for (int i = 0; i < (size / 2); i++) {
+      String hash = Hash.sha3(reportHashList.get(i) + reportHashList.get(i + 1));
+      parentHashes.add(StringUtils.lowerCase(hash));
     }
-    if (reportHashList.size() % 2 == 1) {
-      String lastHash = reportHashList.get(reportHashList.size() - 1);
-      String hashedString = Hash.sha3(lastHash + lastHash);
-      parentHashes.add(hashedString);
+    if (size % 2 == 1) {
+      String lastHash = reportHashList.get(size - 1);
+      String hash = Hash.sha3(lastHash + lastHash);
+      parentHashes.add(StringUtils.lowerCase(hash));
     }
     return merkleTree(parentHashes);
   }
