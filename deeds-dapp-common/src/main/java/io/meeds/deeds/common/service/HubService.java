@@ -64,6 +64,12 @@ import io.meeds.deeds.common.utils.HubMapper;
 @Component
 public class HubService {
 
+  public static final String  HUB_SAVED                 = "uem.hub.saved";
+
+  public static final String  HUB_DISABLED              = "uem.hub.diabled";
+
+  public static final String  HUB_STATUS_CHANGED        = "uem.hub.status.changed";
+
   private static final Random RANDOM                    = new Random();
 
   /**
@@ -82,13 +88,16 @@ public class HubService {
   private TenantService       tenantService;
 
   @Autowired
+  private ListenerService     listenerService;
+
+  @Autowired
   private FileService         fileService;
 
   @Autowired
-  private HubRepository       hubRepository;
+  private UEMRewardRepository rewardRepository;
 
   @Autowired
-  private UEMRewardRepository rewardRepository;
+  private HubRepository       hubRepository;
 
   private Map<String, Long>   tokens                    = new ConcurrentHashMap<>();
 
@@ -101,9 +110,10 @@ public class HubService {
   }
 
   public Page<Hub> getHubs(String rewardId, Pageable pageable) {
-    pageable = PageRequest.of(pageable.getPageNumber(),
-                              pageable.getPageSize(),
-                              pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+    pageable = pageable.isUnpaged() ? pageable
+                                    : PageRequest.of(pageable.getPageNumber(),
+                                                     pageable.getPageSize(),
+                                                     pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
     Page<HubEntity> page;
     if (StringUtils.isBlank(rewardId)) {
       page = hubRepository.findByEnabledIsTrue(pageable);
@@ -216,15 +226,15 @@ public class HubService {
 
   public void disableDeedHubCommunity(String hubAddress) {
     hubRepository.findById(StringUtils.lowerCase(hubAddress))
-                 .ifPresent(deedTenantHub -> {
-                   if (deedTenantHub.isEnabled()) {
-                     String avatarId = deedTenantHub.getAvatarId();
-                     String bannerId = deedTenantHub.getBannerId();
+                 .ifPresent(hubEntity -> {
+                   if (hubEntity.isEnabled()) {
+                     String avatarId = hubEntity.getAvatarId();
+                     String bannerId = hubEntity.getBannerId();
 
-                     deedTenantHub.setEnabled(false);
-                     deedTenantHub.setAvatarId(null);
-                     deedTenantHub.setBannerId(null);
-                     hubRepository.save(deedTenantHub);
+                     hubEntity.setEnabled(false);
+                     hubEntity.setAvatarId(null);
+                     hubEntity.setBannerId(null);
+                     hubEntity = hubRepository.save(hubEntity);
 
                      if (StringUtils.isNotBlank(avatarId)) {
                        fileService.removeFile(avatarId);
@@ -232,17 +242,19 @@ public class HubService {
                      if (StringUtils.isNotBlank(bannerId)) {
                        fileService.removeFile(bannerId);
                      }
+                     listenerService.publishEvent(HUB_DISABLED, hubEntity.getAddress());
                    }
                  });
   }
 
   public void saveHubUEMProperties(String hubAddress, HubReport report) {
     hubRepository.findById(StringUtils.lowerCase(hubAddress))
-                 .ifPresent(hub -> {
-                   hub.setUsersCount(report.getUsersCount());
-                   hub.setRewardsPeriodType(report.getPeriodType());
-                   hub.setRewardsPerPeriod(report.getHubRewardAmountPerPeriod());
-                   hubRepository.save(hub);
+                 .ifPresent(hubEntity -> {
+                   hubEntity.setUsersCount(report.getUsersCount());
+                   hubEntity.setRewardsPeriodType(report.getPeriodType());
+                   hubEntity.setRewardsPerPeriod(report.getHubRewardAmountPerPeriod());
+                   hubEntity = hubRepository.save(hubEntity);
+                   listenerService.publishEvent(HUB_STATUS_CHANGED, hubEntity.getAddress());
                  });
   }
 
@@ -273,21 +285,22 @@ public class HubService {
                                            file.getInputStream(),
                                            Instant.now());
     String savedFileId = fileService.saveFile(fileBinary);
-    HubEntity deedHub = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElseThrow();
+    HubEntity hubEntity = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElseThrow();
     switch (attachmentType) {
     case AVATAR: {
-      deedHub.setAvatarId(savedFileId);
+      hubEntity.setAvatarId(savedFileId);
       break;
     }
     case BANNER: {
-      deedHub.setBannerId(savedFileId);
+      hubEntity.setBannerId(savedFileId);
       break;
     }
     default:
       throw new IllegalArgumentException("wom.attachmentTypeIsUnsupported:" + attachmentType);
     }
-    deedHub.setUpdatedDate(Instant.now());
-    hubRepository.save(deedHub);
+    hubEntity.setUpdatedDate(Instant.now());
+    hubEntity = hubRepository.save(hubEntity);
+    listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
   }
 
   private String getAvatarId(String hubAddress) {
@@ -339,12 +352,13 @@ public class HubService {
     HubEntity existingDeedHub = hubRepository.findById(StringUtils.lowerCase(hub.getAddress()))
                                              .orElseGet(HubEntity::new);
     DeedTenant deedTenant = tenantService.getDeedTenant(hub.getDeedId());
-    HubEntity deedHub = toEntity(hub,
-                                 deedTenant,
-                                 existingDeedHub);
-    deedHub.setUpdatedDate(Instant.now());
-    deedHub.setEnabled(true);
-    hubRepository.save(deedHub);
+    HubEntity hubEntity = toEntity(hub,
+                                   deedTenant,
+                                   existingDeedHub);
+    hubEntity.setUpdatedDate(Instant.now());
+    hubEntity.setEnabled(true);
+    hubEntity = hubRepository.save(hubEntity);
+    listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
   }
 
   private void checkTokenInMessage(String token) throws WomException {
