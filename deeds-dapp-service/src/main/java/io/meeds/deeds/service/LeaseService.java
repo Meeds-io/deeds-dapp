@@ -569,4 +569,16 @@ public class LeaseService {
     return deedTenant;
   }
 
+  public DeedTenantLeaseDTO getCurrentLease(long nftId) {
+    LeaseFilter leaseFilter = new LeaseFilter();
+    leaseFilter.setNftId(nftId);
+    leaseFilter.setExcludeNotConfirmed(true);
+    leaseFilter.setTransactionStatus(Collections.singletonList(TransactionStatus.VALIDATED));
+    return getLeases(leaseFilter, Pageable.unpaged()).stream()
+                                                     .filter(lease -> lease.getStartDate().isAfter(Instant.now())
+                                                         && lease.getEndDate().isBefore(Instant.now()))
+                                                     .findFirst()
+                                                     .orElse(null);
+  }
+
 }
