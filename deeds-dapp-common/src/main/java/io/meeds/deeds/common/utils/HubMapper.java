@@ -19,9 +19,9 @@ package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
 
-import io.meeds.deeds.common.elasticsearch.model.HubEntity;
 import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.HubEntity;
 
 public class HubMapper {
 
@@ -33,51 +33,46 @@ public class HubMapper {
     if (hubEntity == null) {
       return null;
     }
-    Hub hub = new Hub();
-    hub.setDeedId(hubEntity.getNftId());
-    hub.setCity(hubEntity.getCity());
-    hub.setType(hubEntity.getType());
-    hub.setDeedManagerAddress(hubEntity.getDeedManagerAddress());
-    hub.setAddress(hubEntity.getAddress());
-    hub.setName(hubEntity.getName());
-    hub.setDescription(hubEntity.getDescription());
-    hub.setUrl(hubEntity.getUrl());
-    hub.setColor(hubEntity.getColor());
-    hub.setEarnerAddress(hubEntity.getEarnerAddress());
-    hub.setCreatedDate(hubEntity.getCreatedDate());
-    hub.setUpdatedDate(hubEntity.getUpdatedDate());
-    hub.setRewardsPeriodType(hubEntity.getRewardsPeriodType());
-    hub.setRewardsPerPeriod(hubEntity.getRewardsPerPeriod());
-    hub.setUsersCount(hubEntity.getUsersCount());
-    return hub;
+    return new Hub(hubEntity.getNftId(),
+                   hubEntity.getCity(),
+                   hubEntity.getType(),
+                   hubEntity.getAddress(),
+                   hubEntity.getName(),
+                   hubEntity.getDescription(),
+                   hubEntity.getUrl(),
+                   hubEntity.getColor(),
+                   hubEntity.getOwnerAddress(),
+                   hubEntity.getDeedManagerAddress(),
+                   hubEntity.getEarnerAddress(),
+                   hubEntity.getCreatedDate(),
+                   hubEntity.getUpdatedDate(),
+                   hubEntity.getUsersCount(),
+                   hubEntity.getRewardsPeriodType(),
+                   hubEntity.getRewardsPerPeriod());
   }
 
   public static HubEntity toEntity(Hub hub,
                                    DeedTenant deedTenant,
                                    HubEntity existingEntity) {
-    HubEntity hubEntity;
-    if (existingEntity == null) {
-      hubEntity = new HubEntity();
-      hubEntity.setCreatedDate(Instant.now());
-    } else {
-      hubEntity = existingEntity;
-    }
-    hubEntity.setNftId(hub.getDeedId());
-    if (deedTenant != null) {
-      hubEntity.setCity(deedTenant.getCityIndex());
-      hubEntity.setType(deedTenant.getCardType());
-    }
-    hubEntity.setAddress(hub.getAddress());
-    hubEntity.setName(hub.getName());
-    hubEntity.setDescription(hub.getDescription());
-    hubEntity.setUrl(hub.getUrl());
-    hubEntity.setDeedManagerAddress(hub.getDeedManagerAddress());
-    hubEntity.setEarnerAddress(hub.getEarnerAddress());
-    hubEntity.setColor(hub.getColor());
-    hubEntity.setUsersCount(hub.getUsersCount());
-    hubEntity.setRewardsPerPeriod(existingEntity == null ? 0d : existingEntity.getRewardsPerPeriod());
-    hubEntity.setRewardsPeriodType(hub.getRewardsPeriodType());
-    return hubEntity;
+    return new HubEntity(hub.getAddress(),
+                         deedTenant.getNftId(),
+                         deedTenant.getCityIndex(),
+                         deedTenant.getCardType(),
+                         hub.getEarnerAddress(),
+                         deedTenant.getManagerAddress(),
+                         deedTenant.getOwnerAddress(),
+                         hub.getName(),
+                         hub.getDescription(),
+                         hub.getUrl(),
+                         hub.getColor(),
+                         existingEntity == null ? null : existingEntity.getAvatarId(),
+                         existingEntity == null ? null : existingEntity.getBannerId(),
+                         hub.getUsersCount(),
+                         hub.getRewardsPeriodType(),
+                         hub.getRewardsPerPeriod(),
+                         existingEntity == null || existingEntity.isEnabled(),
+                         existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
+                         existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
   }
 
 }
