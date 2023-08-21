@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import io.meeds.deeds.api.constant.HubReportStatusType;
+import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.api.constant.WomAuthorizationException;
 import io.meeds.deeds.api.constant.WomException;
 import io.meeds.deeds.api.constant.WomRequestException;
@@ -57,6 +58,7 @@ import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.api.model.HubReportPayload;
 import io.meeds.deeds.api.model.HubReportVerifiableData;
 import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.model.RewardPeriod;
@@ -65,6 +67,8 @@ import lombok.Getter;
 
 @Component
 public class HubReportService {
+
+  public static final String                     HUB_REPORT_RECEIVED            = "uem.report.received";
 
   public static final String                     HUB_REPORT_SAVED               = "uem.report.saved";
 
@@ -85,6 +89,9 @@ public class HubReportService {
 
   @Autowired
   private HubService                             hubService;
+
+  @Autowired
+  private TenantService                          tenantService;
 
   @Autowired
   private ListenerService                        listenerService;
@@ -217,9 +224,14 @@ public class HubReportService {
     checkRewardDates(hub, reportData);
     checkTokenWhitelisted(reportData);
 
-    HubReportEntity reportEntity = toReportEntity(hub, reportData);
+    HubReportEntity reportEntity;
+    try {
+      reportEntity = toReportEntity(hub, reportData);
+    } catch (ObjectNotFoundException e) {
+      throw new WomException("wom.deedIdNotRecognized", e);
+    }
     reportEntity = reportRepository.save(reportEntity);
-    listenerService.publishEvent(HUB_REPORT_SAVED, reportData.getHash());
+    listenerService.publishEvent(HUB_REPORT_RECEIVED, reportData.getHash());
     return fromEntity(reportEntity);
   }
 
@@ -254,6 +266,7 @@ public class HubReportService {
   public void saveReportLeaseStatus(HubReport report) {
     reportRepository.findById(report.getHash())
                     .ifPresent(reportEntity -> {
+                      reportEntity.setDeedManagerAddress(report.getDeedManagerAddress());
                       reportEntity.setOwnerAddress(report.getOwnerAddress());
                       reportEntity.setOwnerMintingPercentage(report.getOwnerMintingPercentage());
                       reportRepository.save(reportEntity);
@@ -283,9 +296,11 @@ public class HubReportService {
                     });
   }
 
-  private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) {
+  private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) throws ObjectNotFoundException {
     HubReportEntity existingEntity = reportRepository.findById(StringUtils.lowerCase(reportData.getHash()))
                                                      .orElse(null);
+    String managerAddress = getDeedManagerAddress(hub);
+    String ownerAddress = getOwnerAddress(hub);
     HubReport report = new HubReport(reportData.getHash(),
                                      reportData.getSignature(),
                                      reportData.getHubAddress(),
@@ -303,8 +318,8 @@ public class HubReportService {
                                      reportData.getHubRewardAmount(),
                                      reportData.getTransactions(),
                                      StringUtils.lowerCase(hub.getEarnerAddress()),
-                                     StringUtils.lowerCase(hub.getDeedManagerAddress()),
-                                     null,
+                                     StringUtils.lowerCase(managerAddress),
+                                     StringUtils.lowerCase(ownerAddress),
                                      0,
                                      existingEntity == null ? HubReportStatusType.SENT
                                                             : existingEntity.getStatus(),
@@ -372,14 +387,53 @@ public class HubReportService {
     if (hub == null || hub.getDeedId() < 0) {
       throw new WomRequestException("wom.hubNotConnectedToWoM");
     }
-    if (!hubService.isDeedManager(hub.getDeedManagerAddress(), hub.getDeedId())) {
-      throw new WomRequestException("wom.hubManagerChangedNoReportReceived");
-    }
   }
 
   private void checkTokenWhitelisted(HubReportPayload report) throws WomException {
     if (!isWhitelistRewardContract(report.getRewardTokenNetworkId(), report.getRewardTokenAddress())) {
       throw new WomAuthorizationException("wom.unsupporedRewardContract");
+    }
+  }
+
+  private String getDeedManagerAddress(Hub hub) throws ObjectNotFoundException {
+    if (StringUtils.isNotBlank(hub.getDeedManagerAddress())
+        && tenantService.isDeedManager(hub.getDeedManagerAddress(), hub.getDeedId())) {
+      return hub.getDeedManagerAddress();
+    } else {
+      DeedTenant deedTenant = tenantService.getDeedTenantOrImport(hub.getDeedId());
+      String managerAddress;
+      if (StringUtils.isNotBlank(deedTenant.getManagerAddress())
+          && tenantService.isDeedManager(deedTenant.getManagerAddress(), hub.getDeedId())) {
+        managerAddress = deedTenant.getManagerAddress();
+        hub.setDeedManagerAddress(managerAddress);
+        hubService.saveHubManagerAddress(hub.getAddress(), managerAddress);
+        return managerAddress;
+      } else if (StringUtils.isNotBlank(deedTenant.getOwnerAddress())
+          && tenantService.isDeedManager(deedTenant.getOwnerAddress(), hub.getDeedId())) {
+        managerAddress = deedTenant.getOwnerAddress();
+        hub.setDeedManagerAddress(managerAddress);
+        hubService.saveHubManagerAddress(hub.getAddress(), managerAddress);
+        return managerAddress;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  private String getOwnerAddress(Hub hub) throws ObjectNotFoundException {
+    String ownerAddress;
+    if (StringUtils.isNotBlank(hub.getOwnerAddress()) && tenantService.isDeedOwner(hub.getOwnerAddress(), hub.getDeedId())) {
+      return hub.getOwnerAddress();
+    } else {
+      DeedTenant deedTenant = tenantService.getDeedTenantOrImport(hub.getDeedId());
+      if (tenantService.isDeedOwner(deedTenant.getOwnerAddress(), hub.getDeedId())) {
+        ownerAddress = deedTenant.getOwnerAddress();
+        hub.setOwnerAddress(ownerAddress);
+        hubService.saveHubOwnerAddress(hub.getAddress(), ownerAddress);
+        return ownerAddress;
+      } else {
+        return null;
+      }
     }
   }
 
