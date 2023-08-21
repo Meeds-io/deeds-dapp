@@ -258,6 +258,24 @@ public class HubService {
                  });
   }
 
+  public void saveHubManagerAddress(String hubAddress, String managerAddress) {
+    hubRepository.findById(StringUtils.lowerCase(hubAddress))
+                 .ifPresent(hubEntity -> {
+                   hubEntity.setDeedManagerAddress(managerAddress);
+                   hubEntity = hubRepository.save(hubEntity);
+                   listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
+                 });
+  }
+
+  public void saveHubOwnerAddress(String hubAddress, String ownerAddress) {
+    hubRepository.findById(StringUtils.lowerCase(hubAddress))
+                 .ifPresent(hubEntity -> {
+                   hubEntity.setOwnerAddress(ownerAddress);
+                   hubEntity = hubRepository.save(hubEntity);
+                   listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
+                 });
+  }
+
   private void saveHubAttachment(String hubAddress, MultipartFile file, AttachmentType attachmentType) throws IOException,
                                                                                                        WomException {
     if (file == null) {
@@ -331,13 +349,17 @@ public class HubService {
 
   private void validateHubCommunityConnectionRequest(WomConnectionRequest hubConnectionRequest) throws WomException {
     checkTokenInMessage(hubConnectionRequest.getToken());
+    checkDeedManager(hubConnectionRequest.getDeedManagerAddress(),
+                     hubConnectionRequest.getDeedId());
+    checkDeedNotUsed(hubConnectionRequest);
     checkSignedMessage(hubConnectionRequest.getDeedManagerAddress(),
                        hubConnectionRequest.getSignedMessage(),
                        hubConnectionRequest.getRawMessage(),
                        hubConnectionRequest.getToken());
-    checkDeedManager(hubConnectionRequest.getDeedManagerAddress(),
-                     hubConnectionRequest.getDeedId());
-    checkDeedNotUsed(hubConnectionRequest);
+    checkSignedMessage(hubConnectionRequest.getAddress(),
+                       hubConnectionRequest.getHubSignedMessage(),
+                       hubConnectionRequest.getRawMessage(),
+                       hubConnectionRequest.getToken());
   }
 
   private void validateHubCommunityDisonnectionRequest(WomDisconnectionRequest hubConnectionRequest) throws WomException {

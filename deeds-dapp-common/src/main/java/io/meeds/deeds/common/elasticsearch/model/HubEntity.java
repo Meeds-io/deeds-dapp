@@ -65,7 +65,15 @@ public class HubEntity {
 
   @Getter
   @Field(type = FieldType.Keyword)
+  private String              earnerAddress;
+
+  @Getter
+  @Field(type = FieldType.Keyword)
   private String              deedManagerAddress;
+
+  @Getter
+  @Field(type = FieldType.Keyword)
+  private String              ownerAddress;
 
   @Getter
   @Setter
@@ -86,10 +94,6 @@ public class HubEntity {
   @Setter
   @Field(type = FieldType.Keyword)
   private String              color;
-
-  @Getter
-  @Field(type = FieldType.Keyword)
-  private String              earnerAddress;
 
   @Field(type = FieldType.Keyword)
   @Getter
@@ -135,6 +139,10 @@ public class HubEntity {
 
   public void setAddress(String address) {
     this.address = StringUtils.lowerCase(address);
+  }
+
+  public void setOwnerAddress(String ownerAddress) {
+    this.ownerAddress = StringUtils.lowerCase(ownerAddress);
   }
 
   public void setDeedManagerAddress(String deedManagerAddress) {
