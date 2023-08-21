@@ -28,7 +28,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,13 +60,10 @@ public class HubReportComputingService {
 
   protected HubReport computeUEMHubReward(String hash, UEMReward reward) {
     HubReport report = reportService.getReport(hash);
-    if (StringUtils.isBlank(report.getRewardId())) {
-      report.setRewardId(reward.getId());
-    }
+    HubReport previousReport = computeLastPeriodUemRewardAmount(report);
 
-    HubReport lastRewardedReport = computeLastPeriodUemRewardAmount(report);
-    computeLastPeriodUemRewardAmountPerPeriod(report, lastRewardedReport, reward);
-    computeHubRewardAmountPerPeriod(report, lastRewardedReport, reward);
+    computeLastReportUemRewardAmount(report, previousReport, reward);
+    computeHubRewardAmount(report, previousReport, reward);
     computeMintingPower(report);
 
     double ed = report.getEd();
@@ -96,9 +92,9 @@ public class HubReportComputingService {
     return lastRewardedReport;
   }
 
-  private void computeLastPeriodUemRewardAmountPerPeriod(HubReport report,
-                                                         HubReport lastRewardedReport,
-                                                         UEMReward currentReward) {
+  private void computeLastReportUemRewardAmount(HubReport report,
+                                                HubReport lastRewardedReport,
+                                                UEMReward currentReward) {
     if (lastRewardedReport == null) {
       // Number of weeks since last period UEM reward sent to Hub
       report.setLastPeriodUemDiff(0);
@@ -116,15 +112,15 @@ public class HubReportComputingService {
     }
   }
 
-  private void computeHubRewardAmountPerPeriod(HubReport report,
-                                               HubReport lastRewardedReport,
-                                               UEMReward currentReward) {
-    if (lastRewardedReport == null) {
+  private void computeHubRewardAmount(HubReport report,
+                                      HubReport previousReport,
+                                      UEMReward reward) {
+    if (previousReport == null) {
       // Number of weeks since last period, 1 if no hub rewards
       report.setHubRewardLastPeriodDiff(1d);
       report.setHubRewardAmountPerPeriod(getHubRewardAmountPerPeriod(report));
     } else {
-      BigDecimal diffWeeks = getDiffWeeks(currentReward, lastRewardedReport);
+      BigDecimal diffWeeks = getDiffWeeks(reward, previousReport);
       report.setHubRewardLastPeriodDiff(diffWeeks.doubleValue());
 
       double hubRewardAmountPerPeriod = report.getHubRewardLastPeriodDiff() == 0d ? getHubRewardAmountPerPeriod(report)
@@ -148,20 +144,20 @@ public class HubReportComputingService {
                                      .doubleValue();
   }
 
-  private BigDecimal getDiffWeeks(UEMReward currentReward, HubReport lastRewardedReport) {
-    long diffDays = getDiffDays(currentReward, lastRewardedReport);
+  private BigDecimal getDiffWeeks(UEMReward reward, HubReport previousReport) {
+    long diffDays = getDiffDays(reward, previousReport);
     return diffDays == 0 ? BigDecimal.ZERO
                          : BigDecimal.valueOf(diffDays)
                                      .divide(BigDecimal.valueOf(UEM_REWARD_PERIOD_IN_DAYS), MathContext.DECIMAL128);
   }
 
-  private long getDiffDays(UEMReward currentReward, HubReport lastRewardedReport) {
-    UEMReward lastUemRewarded = rewardService.getReward(RewardPeriod.getPeriod(lastRewardedReport.getSentDate()));
-    if (lastUemRewarded == null) {
+  private long getDiffDays(UEMReward reward, HubReport previousReport) {
+    UEMReward previousReward = rewardService.getReward(RewardPeriod.getPeriod(previousReport.getSentDate()));
+    if (previousReward == null) {
       return 0;
     }
-    return Duration.between(lastUemRewarded.getFromDate(),
-                            currentReward.getFromDate())
+    return Duration.between(previousReward.getFromDate(),
+                            reward.getFromDate())
                    .toDays();
   }
 
