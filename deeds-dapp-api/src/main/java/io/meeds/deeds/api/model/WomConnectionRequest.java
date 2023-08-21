@@ -32,6 +32,8 @@ public class WomConnectionRequest extends Hub {
 
   private String signedMessage;
 
+  private String hubSignedMessage;
+
   private String rawMessage;
 
   private String token;
