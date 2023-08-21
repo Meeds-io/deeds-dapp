@@ -15,12 +15,13 @@
  */
 package io.meeds.dapp.listener;
 
+import static io.meeds.deeds.common.service.HubReportService.HUB_REPORT_RECEIVED;
 import static io.meeds.deeds.common.service.HubReportService.HUB_REPORT_SAVED;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,8 @@ public class HubReportSavedListener implements EventListener<String> {
 
   public static final String        LISTENER_NAME    = "HubReportSaved";
 
-  private static final List<String> SUPPORTED_EVENTS = Arrays.asList(HUB_REPORT_SAVED);
+  private static final List<String> SUPPORTED_EVENTS = Arrays.asList(HUB_REPORT_SAVED,
+                                                                     HUB_REPORT_RECEIVED);
 
   @Autowired
   private UEMRewardComputingService rewardComputingService;
@@ -60,7 +62,7 @@ public class HubReportSavedListener implements EventListener<String> {
   @Override
   public void onEvent(String eventName, String hash) {
     HubReport report = reportService.getReport(hash);
-    if (StringUtils.isBlank(report.getOwnerAddress())) {
+    if (StringUtils.equals(HUB_REPORT_RECEIVED, eventName)) {
       computeLeaseProperties(report);
     }
     rewardComputingService.computeUEMReward(report.getSentDate());
@@ -68,7 +70,8 @@ public class HubReportSavedListener implements EventListener<String> {
 
   private void computeLeaseProperties(HubReport report) {
     DeedTenantLeaseDTO lease = leaseService.getCurrentLease(report.getDeedId());
-    if (lease != null) {
+    if (lease != null && lease.isConfirmed()) {
+      report.setDeedManagerAddress(lease.getManagerAddress());
       report.setOwnerAddress(lease.getOwnerAddress());
       report.setOwnerMintingPercentage(lease.getOwnerMintingPercentage());
       reportService.saveReportLeaseStatus(report);
