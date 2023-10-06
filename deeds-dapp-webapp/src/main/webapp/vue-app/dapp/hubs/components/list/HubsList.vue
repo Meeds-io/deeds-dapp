@@ -127,7 +127,7 @@ export default {
         address: '0xfefefefefefefefefefef10',
         name: {
           fr: 'Rainbow Partners',
-          en: 'Partenaires Rainbow'
+          en: 'Rainbow Partners'
         },
         description: {
           fr: 'Hub d\'engagement pour les collaborateurs du groupe Rainbow Partners',
