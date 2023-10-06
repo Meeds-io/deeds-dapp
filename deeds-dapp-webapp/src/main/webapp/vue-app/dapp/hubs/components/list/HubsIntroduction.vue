@@ -17,56 +17,45 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column pt-0 pt-md-6">
-    <v-card-title
-      :class="reduced && 'mt-8' || 'mt-16'"
-      class="justify-center flex-nowrap ps-4 ps-sm-1">
+  <div class="d-flex flex-column pt-0 pt-md-6 mt-16">
+    <v-card-title class="justify-center flex-nowrap mb-16 ps-4 ps-sm-1">
       <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
         <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.hubs.title') }}</span>
-        <span v-show="!reduced" class="headline hidden-sm-and-down">{{ $t('page.hubs.subtitle') }}</span>
+        <span class="headline hidden-sm-and-down">{{ $t('page.hubs.subtitle') }}</span>
       </div>
       <v-spacer />
-      <v-img
+      <v-img 
         :src="`${parentLocation}/static/images/marketplace_banner.webp`"
-        :max-width="reduced && 48 || 300"
+        max-width="300px"
         class="hidden-sm-and-down"
         alt=""
         contain
         eager />
     </v-card-title>
-    <v-scale-transition>
-      <v-text-field
-        v-if="!reduced"
-        v-model="keyword"
-        :placeholder="$t('hubs.search.placeholder')"
-        class="rounded-pill mx-auto col-12 col-sm-6 headline mt-16"
-        height="60px"
-        @keydown="enterEvent"  
-        outlined
-        hide-details
-        clearable
-        clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
-        <template #prepend-inner>
-          <v-icon
-            v-if="!keyword"
-            class="mx-9 my-1"
-            size="24">
-            fa fa-search
-          </v-icon>
-          <div v-else class="ms-9"></div>
-        </template>
-      </v-text-field>
-    </v-scale-transition>
+    <v-text-field
+      v-model="keyword"
+      :placeholder="$t('hubs.search.placeholder')"
+      class="rounded-pill mx-auto col-12 col-sm-6 headline"
+      height="60px"
+      @keydown="enterEvent"  
+      outlined
+      hide-details
+      clearable
+      clear-icon="fa-times fa-1x mt-1 mb-auto me-4"> 
+      <template #prepend-inner>
+        <v-icon
+          v-if="!keyword"
+          class="mx-9 my-1"
+          size="24">
+          fa fa-search
+        </v-icon>
+        <div v-else class="ms-9"></div>
+      </template>
+    </v-text-field>
   </div>
 </template>
 <script>
 export default {
-  props: {
-    reduced: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data: () => ({
     keyword: null
   }),
