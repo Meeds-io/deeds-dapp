@@ -19,6 +19,7 @@
 import DeedsHubs from './components/Hubs.vue';
 
 import HubsIntroduction from './components/list/HubsIntroduction.vue';
+import HubsList from './components/list/HubsList.vue';
 
 import HubCard from './components/card/HubCard.vue';
 import UpcominHubCard from './components/card/UpcominHubCard.vue';
@@ -46,6 +47,7 @@ import MetamaskButton from './components/common/MetamaskButton.vue';
 const components = {
   'deeds-hubs': DeedsHubs,
   'deeds-hubs-introduction': HubsIntroduction,
+  'deeds-hubs-list': HubsList,
 
   'deeds-hub-card': HubCard,
   'deeds-hub-upcoming-card': UpcominHubCard,
