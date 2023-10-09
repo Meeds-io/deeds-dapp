@@ -75,7 +75,7 @@
               width="25px"
               height="25px" />
             <div class="text-light-color d-flex font-weight-normal">
-              {{ hubRewards }}K
+              {{ formattedHubRewards }}
               <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriodicity }}</span>
             </div>
           </div>
@@ -187,6 +187,9 @@ export default {
     },
     hubRewards() {
       return this.hub?.rewardsPerWeek / 1000 || this.hub?.rewardsPerMonth / 1000;
+    },
+    formattedHubRewards() {
+      return this.hubRewards >= 1 ? this.hubRewards.toString().concat('K') : (this.hub?.rewardsPerWeek || this.hub?.rewardsPerMonth);
     },
     hubRewardsPeriodicity() {
       return this.hub?.rewardsPerWeek ? this.$t('week') : (this.hub?.rewardsPerMonth && this.$t('month'));
