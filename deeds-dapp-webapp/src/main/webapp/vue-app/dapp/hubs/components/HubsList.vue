@@ -123,6 +123,21 @@ export default {
         hubUrl: 'https://community.exoplatform.com',
         rewardsPerWeek: 2000,
       },
+      {
+        address: '0xfefefefefefefefefefef10',
+        name: {
+          fr: 'Rainbow Partners',
+          en: 'Rainbow Partners'
+        },
+        description: {
+          fr: 'Hub d\'engagement pour les collaborateurs du groupe Rainbow Partners',
+          en: 'Engagement Hub for Rainbow Partners employees'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1696606342/meedsdao-site/assets/images/Rainbow_q9vimd.png',
+        backgroundColor: '#2c3163',
+        usersCount: 78,
+        hubUrl: 'https://rainbowpartners.meeds.io/',
+      },
     ],
     upcomingHubs: [
       {
