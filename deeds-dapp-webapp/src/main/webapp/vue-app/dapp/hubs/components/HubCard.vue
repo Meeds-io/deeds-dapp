@@ -68,15 +68,15 @@
               {{ hubUsers }}
             </div>
           </div>
-          <div v-if="hubRewardsPerWeek" class="d-flex align-center justify-center ms-10">
+          <div v-if="hubRewards" class="d-flex align-center justify-center ms-10">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
               width="25px"
               height="25px" />
             <div class="text-light-color d-flex font-weight-normal">
-              {{ hubRewardsPerWeek }}K
-              <span class="ms-2 text-no-wrap">Ɱ / {{ $t('week') }}</span>
+              {{ formattedHubRewards }}
+              <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriodicity }}</span>
             </div>
           </div>
         </div>
@@ -185,8 +185,14 @@ export default {
     hubUrl() {
       return this.hub?.hubUrl;
     },
-    hubRewardsPerWeek() {
-      return this.hub?.rewardsPerWeek / 1000;
+    hubRewards() {
+      return this.hub?.rewardsPerWeek / 1000 || this.hub?.rewardsPerMonth / 1000;
+    },
+    formattedHubRewards() {
+      return this.hubRewards >= 1 ? this.hubRewards.toString().concat('K') : (this.hub?.rewardsPerWeek || this.hub?.rewardsPerMonth);
+    },
+    hubRewardsPeriodicity() {
+      return this.hub?.rewardsPerWeek ? this.$t('week') : (this.hub?.rewardsPerMonth && this.$t('month'));
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;

@@ -121,7 +121,7 @@ export default {
         backgroundColor: '#6083B6',
         usersCount: 10000,
         hubUrl: 'https://community.exoplatform.com',
-        rewardsPerWeek: 2000,
+        rewardsPerMonth: 3000,
       },
       {
         address: '0xfefefefefefefefefefef10',
@@ -137,6 +137,7 @@ export default {
         backgroundColor: '#2c3163',
         usersCount: 78,
         hubUrl: 'https://rainbowpartners.meeds.io/',
+        rewardsPerWeek: 800,
       },
     ],
     upcomingHubs: [
