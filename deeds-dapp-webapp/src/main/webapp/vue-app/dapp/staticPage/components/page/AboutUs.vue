@@ -239,13 +239,13 @@
         {{ $t('foundingMembers') }}
       </div> 
       <v-container>
-        <v-row no-gutters>
+        <v-row class="pb-4" no-gutters>
           <v-col
             cols="12"
-            lg="4"
+            lg="6"
             md="12">
-            <div class="my-4 my-md-0 d-flex flex-column fill-height">
-              <div class="my-8">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height mx-0 mx-md-4">
+              <div class="my-8 mx-auto">
                 <v-img
                   :src="`${parentLocation}/static/images/logo_exo.webp`"
                   alt=""
@@ -253,13 +253,13 @@
                   contain
                   eager />
               </div>
-              <div class="py-4">
+              <div class="py-4 text-center">
                 <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('exoPlatform.description') }}
                 </span>
               </div>
               <v-spacer />
-              <div class="mb-10 mb-sm-0">
+              <div class="mb-10 mb-sm-0 mx-auto">
                 <v-btn
                   id="aExo-button"
                   href="https://exoplatform.com"
@@ -275,10 +275,10 @@
           </v-col>
           <v-col
             cols="12"
-            lg="4"
+            lg="6"
             md="12">
-            <div class="my-4 my-md-0 d-flex flex-column fill-height">
-              <div class="my-8">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height mx-0 mx-md-4">
+              <div class="my-8 mx-auto">
                 <v-img
                   :src="`${parentLocation}/static/images/logo_bonitasoft.webp`"
                   alt=""
@@ -286,13 +286,13 @@
                   contain
                   eager />
               </div>
-              <div class="py-4">
+              <div class="py-4 text-center">
                 <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('bonitaSoft.description') }}
                 </span>
               </div>
               <v-spacer />
-              <div class="mb-10 mb-sm-0">
+              <div class="mb-10 mb-sm-0 mx-auto">
                 <v-btn
                   id="aBonita-button"
                   href="https://bonitasoft.com"
@@ -306,12 +306,14 @@
               </div>
             </div>
           </v-col>
+        </v-row>
+        <v-row class="pt-4" no-gutters>
           <v-col
             cols="12"
-            lg="4"
+            lg="6"
             md="12">
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
-              <div class="my-5">
+              <div class="my-5 mx-auto">
                 <v-img
                   :src="`${parentLocation}/static/images/logo_newlogic.webp`"
                   alt=""
@@ -319,16 +321,49 @@
                   contain
                   eager />
               </div>
-              <div class="py-4">
+              <div class="py-4 text-center">
                 <span :class="textColor" class="pb-4 text-h6 font-weight-light">
                   {{ $t('newlogic.description') }}
                 </span>
               </div>
               <v-spacer />
-              <div class="mb-10 mb-sm-0">
+              <div class="mb-10 mb-sm-0 mx-auto">
                 <v-btn
                   id="aBonita-button"
                   href="https://newlogic.com"
+                  target="_blank"
+                  height="54px"
+                  class="px-7"
+                  color="primary"
+                  outlined>
+                  <span class="text-h6 font-weight-bold">{{ $t('visit') }}</span>
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="6"
+            md="12">
+            <div class="my-4 my-md-0 d-flex flex-column fill-height">
+              <div class="my-6 mx-auto">
+                <v-img
+                  src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696606384/meedsdao-site/assets/images/Ceres_Advisory_g103gb.png"
+                  alt=""
+                  width="152px"
+                  contain
+                  eager />
+              </div>
+              <div class="py-4 text-center">
+                <span :class="textColor" class="pb-4 text-h6 font-weight-light">
+                  {{ $t('CeresAdvisory.description') }}
+                </span>
+              </div>
+              <v-spacer />
+              <div class="mb-10 mb-sm-0 mx-auto">
+                <v-btn
+                  id="aCeres-button"
+                  href="https://www.ceres-advisory.io/"
                   target="_blank"
                   height="54px"
                   class="px-7"
