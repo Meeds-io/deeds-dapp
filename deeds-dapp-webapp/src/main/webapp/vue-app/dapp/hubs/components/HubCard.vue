@@ -68,7 +68,7 @@
               {{ hubUsers }}
             </div>
           </div>
-          <div v-if="hubRewards" class="d-flex align-center justify-center ms-10">
+          <div v-if="hubRewards" class="d-flex align-center justify-center ms-auto">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
