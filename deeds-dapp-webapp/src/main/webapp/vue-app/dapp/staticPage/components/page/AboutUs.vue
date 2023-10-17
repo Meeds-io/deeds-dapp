@@ -315,7 +315,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-5 mx-auto">
                 <v-img
-                  :src="`${parentLocation}/static/images/logo_newlogic.webp`"
+                  src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696843735/meedsdao-site/assets/images/newlogic_baybj5.svg"
                   alt=""
                   width="156px"
                   contain
@@ -348,7 +348,7 @@
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-6 mx-auto">
                 <v-img
-                  src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696606384/meedsdao-site/assets/images/Ceres_Advisory_g103gb.png"
+                  src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696854039/meedsdao-site/assets/images/Ceres-Advisory.png"
                   alt=""
                   width="152px"
                   contain
