@@ -312,12 +312,14 @@
             cols="12"
             lg="6"
             md="12">
-            <div class="my-4 my-md-0 d-flex flex-column fill-height">
+            <div
+              :class="dark && 'my-2 pa-2' || 'my-4 my-md-0'"
+              class="d-flex flex-column fill-height">
               <div class="my-5 mx-auto">
                 <v-img
                   src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696843735/meedsdao-site/assets/images/newlogic_baybj5.svg"
                   alt=""
-                  width="156px"
+                  width="116px"
                   contain
                   eager />
               </div>
