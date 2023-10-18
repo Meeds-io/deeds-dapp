@@ -313,11 +313,10 @@
             lg="6"
             md="12">
             <div
-              :class="dark && 'my-2 pa-2' || 'my-4 my-md-0'"
-              class="d-flex flex-column fill-height">
+              class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-5 mx-auto">
                 <v-img
-                  src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696843735/meedsdao-site/assets/images/newlogic_baybj5.svg"
+                  :src="newlogicLogo"
                   alt=""
                   width="116px"
                   contain
@@ -348,7 +347,7 @@
             lg="6"
             md="12">
             <div class="my-4 my-md-0 d-flex flex-column fill-height">
-              <div class="my-6 mx-auto">
+              <div class="my-5 my-sm-7 mx-auto">
                 <v-img
                   src="https://res.cloudinary.com/dcooc6vig/image/upload/v1696854039/meedsdao-site/assets/images/Ceres-Advisory.png"
                   alt=""
@@ -395,6 +394,9 @@ export default {
     textColor() {
       return this.dark && 'white--text' || 'grey--text';
     },
+    newlogicLogo() {
+      return this.dark && 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697620494/meedsdao-site/assets/images/newlogic-dark.png' || 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697620472/meedsdao-site/assets/images/newlogic-light.png';
+    }
   }),
 };
 </script>
