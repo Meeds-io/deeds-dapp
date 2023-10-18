@@ -349,7 +349,7 @@
               class="my-4 my-md-0 d-flex flex-column fill-height">
               <div class="my-5 mx-auto">
                 <v-img
-                  :src="MeedsLabLogo"
+                  :src="meedsLabLogo"
                   alt=""
                   width="122px"
                   contain
@@ -434,7 +434,7 @@ export default {
     newlogicLogo() {
       return this.dark && 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697620494/meedsdao-site/assets/images/newlogic-dark.png' || 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697620472/meedsdao-site/assets/images/newlogic-light.png';
     },
-    MeedsLabLogo() {
+    meedsLabLogo() {
       return this.dark && 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697621445/meedsdao-site/assets/images/meedslab-dark.png' || 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697621474/meedsdao-site/assets/images/meedslab-light.png';
     }
   }),
