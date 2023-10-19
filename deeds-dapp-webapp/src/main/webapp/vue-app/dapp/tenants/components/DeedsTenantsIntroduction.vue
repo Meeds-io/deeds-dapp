@@ -18,15 +18,13 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <deeds-page-title-layout>
-      <template #title>
-        {{ $t('page.tenants.title') }}
-      </template>
-      <template #subtitle>
-        {{ $t('page.tenants.subtitle') }}
-      </template>
-    </deeds-page-title-layout>
-    <div v-if="hasTenants" class="align-self-end pt-4 pt-md-11">
+    <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
+      <div class="d-flex flex-column text-center">
+        <span class="display-1 font-weight-bold">{{ $t('page.tenants.title') }}</span>
+        <span class="headline hidden-sm-and-down">{{ $t('page.tenants.subtitle') }}</span>
+      </div>
+    </v-card-title>
+    <div v-if="hasTenants" class="align-self-end mt-6">
       <v-btn
         height="40px"
         class="px-4 mt-4"

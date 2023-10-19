@@ -18,14 +18,12 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <deeds-page-title-layout>
-      <template #title>
-        {{ $t('page.owners.title') }}
-      </template>
-      <template #subtitle>
-        {{ $t('page.owners.subtitle') }}
-      </template>
-    </deeds-page-title-layout>
+    <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
+      <div class="d-flex flex-column text-center">
+        <span class="display-1 font-weight-bold">{{ $t('page.owners.title') }}</span>
+        <span class="headline hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
+      </div>
+    </v-card-title>
     <v-progress-linear
       v-if="loading"
       class="mt-8"
