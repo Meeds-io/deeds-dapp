@@ -20,18 +20,10 @@
   <div class="d-flex flex-column mt-8 mt-sm-2">
     <v-card flat>
       <v-card-title class="py-0 px-0 px-sm-4 justify-center flew-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.aboutUs.title') }}</span>
+        <div class="d-flex flex-column text-center">
+          <span class="display-1 font-weight-bold">{{ $t('page.aboutUs.title') }}</span>
           <span class="headline hidden-sm-and-down">{{ $t('page.aboutUs.subtitle') }}</span>
         </div>
-        <v-spacer />
-        <v-img 
-          :src="`${parentLocation}/static/images/about_us_banner.webp`"
-          max-width="211px"
-          class="me-0 me-sm-16 hidden-sm-and-down"
-          alt=""
-          contain
-          eager />
       </v-card-title>
     </v-card>
     <div class="d-flex pt-15 ps-0 ps-sm-2">

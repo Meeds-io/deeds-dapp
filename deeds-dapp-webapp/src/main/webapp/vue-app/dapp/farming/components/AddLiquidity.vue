@@ -19,18 +19,10 @@
 <template>
   <v-card flat>
     <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
-      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.farm.title') }}</span>
+      <div class="d-flex flex-column text-center">
+        <span class="display-1 font-weight-bold">{{ $t('page.farm.title') }}</span>
         <span class="headline hidden-sm-and-down">{{ $t('page.farm.subtitle') }}</span>
       </div>
-      <v-spacer />
-      <v-img 
-        :src="`${parentLocation}/static/images/farm_banner.webp`"
-        max-width="330px"
-        class="hidden-sm-and-down"
-        alt=""
-        contain
-        eager />
     </v-card-title>
     <v-card-text class="ps-0 pt-0 pt-md-13 text-h6 font-weight-normal">
       {{ $t('addLiquidityIntroduction') }}
