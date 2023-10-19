@@ -19,18 +19,10 @@
 <template>
   <div class="mb-4 mb-md-8">
     <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
-      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="text-sm-h3 display-1 font-weight-bold text-center text-sm-start">{{ $t('page.portfolio.title') }}</span>
+      <div class="d-flex flex-column text-center">
+        <span class="text-sm-h3 display-1 font-weight-bold">{{ $t('page.portfolio.title') }}</span>
         <span class="display-1 hidden-sm-and-down">{{ $t('page.portfolio.subtitle') }}</span>
       </div>
-      <v-spacer />
-      <v-img 
-        :src="`${parentLocation}/static/images/portfolio_banner.webp`"
-        max-width="360px"
-        class="hidden-sm-and-down"
-        alt=""
-        contain
-        eager />
     </v-card-title>
     <div class="d-flex pt-0 pt-md-12 ms-0 ms-md-4">
       <span class="headline text-sm-h4 font-weight-bold">

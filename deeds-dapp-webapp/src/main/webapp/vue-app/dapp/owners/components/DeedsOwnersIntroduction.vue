@@ -19,18 +19,10 @@
 <template>
   <v-card class="d-flex flex-column" flat>
     <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
-      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.owners.title') }}</span>
+      <div class="d-flex flex-column text-center">
+        <span class="display-1 font-weight-bold">{{ $t('page.owners.title') }}</span>
         <span class="headline hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
       </div>
-      <v-spacer class="hidden-sm-and-down" />
-      <v-img 
-        :src="`${parentLocation}/static/images/owners_banner.webp`"
-        max-width="322px"
-        class="hidden-sm-and-down"
-        alt=""
-        contain
-        eager />
     </v-card-title>
     <v-progress-linear
       v-if="loading"
