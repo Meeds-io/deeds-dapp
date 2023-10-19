@@ -20,18 +20,10 @@
   <div class="d-flex flex-column mt-2 mt-sm-6">
     <v-card flat>
       <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.productTour.title') }}</span>
+        <div class="d-flex flex-column text-center">
+          <span class="display-1 font-weight-bold">{{ $t('page.productTour.title') }}</span>
           <span class="headline hidden-sm-and-down">{{ $t('page.productTour.subtitle') }}</span>
         </div>
-        <v-spacer />
-        <v-img 
-          :src="`${parentLocation}/static/images/tour_banner.webp`"
-          max-width="360px"
-          class="hidden-sm-and-down"
-          alt=""
-          contain
-          eager />
       </v-card-title>
     </v-card>
     <div class="d-flex flex-column pt-4 pb-16 my-16">
