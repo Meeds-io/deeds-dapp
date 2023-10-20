@@ -18,13 +18,15 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
-      <div class="d-flex flex-column text-center">
-        <span class="display-1 font-weight-bold">{{ $t('page.farm.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.farm.subtitle') }}</span>
-      </div>
-    </v-card-title>
-    <v-card-text class="ps-0 pt-0 pt-md-13 text-h6 font-weight-normal">
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.farm.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.farm.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
+    <v-card-text class="ps-0 pt-4 pt-md-11 text-h6 font-weight-normal">
       {{ $t('addLiquidityIntroduction') }}
     </v-card-text>
     <v-bottom-navigation

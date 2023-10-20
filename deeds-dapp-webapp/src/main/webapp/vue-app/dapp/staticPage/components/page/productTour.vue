@@ -19,12 +19,14 @@
 <template>
   <div class="d-flex flex-column mt-8 mt-sm-10">
     <v-card flat>
-      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column text-center">
-          <span class="display-1 font-weight-bold">{{ $t('page.productTour.title') }}</span>
-          <span class="headline hidden-sm-and-down">{{ $t('page.productTour.subtitle') }}</span>
-        </div>
-      </v-card-title>
+      <deeds-page-title-layout>
+        <template #title>
+          {{ $t('page.productTour.title') }}
+        </template>
+        <template #subtitle>
+          {{ $t('page.productTour.subtitle') }}
+        </template>
+      </deeds-page-title-layout>
     </v-card>
     <div class="d-flex flex-column pt-4 pt-md-11 pb-16 mb-16">
       <div :class="textColor" class="ps-0 headline align-center font-weight-light">{{ $t('productTour.description') }}</div>

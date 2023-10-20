@@ -18,13 +18,15 @@
 -->
 <template>
   <div class="d-flex flex-column mt-4 mt-sm-10">
-    <v-card class="mb-9" flat>
-      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column text-center">
-          <span class="display-1 font-weight-bold">{{ $t('page.legals.title') }}</span>
-          <span class="headline hidden-sm-and-down">{{ $t('page.legals.subtitle') }}</span>
-        </div>
-      </v-card-title>
+    <v-card flat>
+      <deeds-page-title-layout>
+        <template #title>
+          {{ $t('page.legals.title') }}
+        </template>
+        <template #subtitle>
+          {{ $t('page.legals.subtitle') }}
+        </template>
+      </deeds-page-title-layout>
     </v-card>
     <div class="d-flex justify-center flex-wrap mb-7 pt-4 pt-md-11">
       <v-btn

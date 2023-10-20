@@ -18,12 +18,14 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
-      <div class="d-flex flex-column text-center">
-        <span class="display-1 font-weight-bold">{{ $t('page.stake.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.stake.subtitle') }}</span>
-      </div>
-    </v-card-title>
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.stake.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.stake.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
     <v-card-text class="ps-0 pt-4 pt-md-11 ms-md-2 text-h6 font-weight-normal">
       {{ $t('becomeHolderDescription') }}
     </v-card-text>
