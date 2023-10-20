@@ -17,17 +17,19 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column mt-8">
-    <v-card class="mb-3" flat>
-      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column text-center">
-          <span class="display-1 font-weight-bold">{{ $t('page.whitepaper.title') }}</span>
-          <span class="headline hidden-sm-and-down">{{ $t('page.whitepaper.subtitle') }}</span>
-        </div>
-      </v-card-title>
+  <div class="d-flex flex-column mt-8 mt-sm-10">
+    <v-card flat>
+      <deeds-page-title-layout>
+        <template #title>
+          {{ $t('page.whitepaper.title') }}
+        </template>
+        <template #subtitle>
+          {{ $t('page.whitepaper.subtitle') }}
+        </template>
+      </deeds-page-title-layout>
     </v-card>
-    <div class="d-flex flex-column my-16 pb-16">
-      <v-card class="pb-5 pt-8 pt-md-10" flat>
+    <div class="d-flex flex-column mb-16 mt-1 pb-16">
+      <v-card class="pb-5 pt-4 pt-md-11" flat>
         <div class="d-flex position-absolute mt-n16">
           <v-img
             :src="`${parentLocation}/static/images/bulle_grey_background.png`"
