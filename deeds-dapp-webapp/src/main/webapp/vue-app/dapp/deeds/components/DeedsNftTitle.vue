@@ -18,21 +18,15 @@
 -->
 <template>
   <v-card flat>
-    <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-2">
-      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.deeds.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.deeds.subtitle') }}</span>
-      </div>      
-      <v-spacer />
-      <v-img 
-        :src="`${parentLocation}/static/images/mint_banner.webp`"
-        max-width="340px"
-        class="hidden-sm-and-down"
-        alt=""
-        contain
-        eager />
-    </v-card-title>
-    <v-card-text class="ps-0 pt-0 pt-md-12 ms-md-2 text-h6 font-weight-normal" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='primary--text embedded-link-text font-weight-bold  v-btn v-btn--text letter-spacing-normal' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.deeds.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.deeds.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
+    <v-card-text class="ps-0 pt-4 pt-md-11 ms-md-2 text-h6 font-weight-normal" v-html="$t('becomeDeedOwnerDescription', {0: `<a target='_blank' href='${whitepaperLink}' class='primary--text embedded-link-text font-weight-bold  v-btn v-btn--text letter-spacing-normal' rel='nofollow noreferrer noopener'>${$t('whitePaper')}</a>`})" />
   </v-card>
 </template>
 <script>

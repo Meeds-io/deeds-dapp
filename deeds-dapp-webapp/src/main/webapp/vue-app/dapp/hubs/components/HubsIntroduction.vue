@@ -17,25 +17,19 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div class="d-flex flex-column pt-0 pt-md-6 mt-16">
-    <v-card-title class="justify-center flex-nowrap mb-16 ps-4 ps-sm-1">
-      <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-        <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.hubs.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.hubs.subtitle') }}</span>
-      </div>
-      <v-spacer />
-      <v-img 
-        :src="`${parentLocation}/static/images/marketplace_banner.webp`"
-        max-width="300px"
-        class="hidden-sm-and-down"
-        alt=""
-        contain
-        eager />
-    </v-card-title>
+  <div class="d-flex flex-column mt-8 mt-sm-10">
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.hubs.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.hubs.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill mx-auto col-12 col-sm-6 headline"
+      class="rounded-pill mx-auto col-12 col-sm-6 headline pt-4 pt-md-11"
       height="60px"
       @keydown="enterEvent"  
       outlined

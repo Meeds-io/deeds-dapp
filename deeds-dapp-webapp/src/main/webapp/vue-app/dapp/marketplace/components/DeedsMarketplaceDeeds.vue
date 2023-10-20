@@ -35,20 +35,14 @@
   <v-card v-else flat>
     <v-scale-transition>
       <div v-show="!selectedStandaloneOfferId">
-        <v-card-title class="justify-center flex-nowrap mb-10 ps-4 ps-sm-1">
-          <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-            <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.marketplace.title') }}</span>
-            <span class="headline hidden-sm-and-down">{{ $t('page.marketplace.subtitle') }}</span>
-          </div>
-          <v-spacer />
-          <v-img 
-            :src="`${parentLocation}/static/images/marketplace_banner.webp`"
-            max-width="300px"
-            class="hidden-sm-and-down"
-            alt=""
-            contain
-            eager />
-        </v-card-title>
+        <deeds-page-title-layout>
+          <template #title>
+            {{ $t('page.marketplace.title') }}
+          </template>
+          <template #subtitle>
+            {{ $t('page.marketplace.subtitle') }}
+          </template>
+        </deeds-page-title-layout>
       </div>
     </v-scale-transition>
     <deeds-marketplace-deeds-list

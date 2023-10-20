@@ -18,27 +18,21 @@
 -->
 <template>
   <div class="d-flex flex-column mt-4 mt-sm-10">
-    <v-card class="mb-9" flat>
-      <v-card-title class="py-0 justify-center flex-nowrap ps-4 ps-sm-2">
-        <div class="d-flex flex-column col-12 col-lg-8 col-md-7 pa-0">
-          <span class="display-1 font-weight-bold text-center text-sm-start">{{ $t('page.legals.title') }}</span>
-          <span class="headline hidden-sm-and-down">{{ $t('page.legals.subtitle') }}</span>
-        </div>
-        <v-spacer />
-        <v-img 
-          :src="`${parentLocation}/static/images/legals_banner.webp`"
-          max-width="211px"
-          class="hidden-sm-and-down"
-          alt=""
-          contain
-          eager />
-      </v-card-title>
+    <v-card flat>
+      <deeds-page-title-layout>
+        <template #title>
+          {{ $t('page.legals.title') }}
+        </template>
+        <template #subtitle>
+          {{ $t('page.legals.subtitle') }}
+        </template>
+      </deeds-page-title-layout>
     </v-card>
-    <div class="d-flex justify-center flex-wrap my-7">
+    <div class="d-flex justify-center flex-wrap mb-7 pt-4 pt-md-11">
       <v-btn
         href="#termsOfUse"
         :class="!dark && 'dark-grey-border-color'"
-        class="mx-5 mt-5 dark-grey--text rounded-xl"
+        class="mx-5 dark-grey--text rounded-xl"
         outlined
         x-large>
         <h4 class="font-weight-normal">{{ $t('termsOfUse.title') }}</h4>
@@ -46,7 +40,7 @@
       <v-btn
         href="#privacyPolicy"
         :class="!dark && 'dark-grey-border-color'"
-        class="mx-5 mt-5 dark-grey--text rounded-xl"
+        class="mx-5 dark-grey--text rounded-xl"
         outlined
         x-large>
         <h4 class="font-weight-normal">{{ $t('privacyPolicy.title') }}</h4>
@@ -54,7 +48,7 @@
       <v-btn
         href="#cookiePolicy"
         :class="!dark && 'dark-grey-border-color'"
-        class="mx-5 mt-5 dark-grey--text rounded-xl"
+        class="mx-5 dark-grey--text rounded-xl"
         outlined
         x-large>
         <h4 class="font-weight-normal">{{ $t('cookiePolicy.title') }}</h4>
@@ -62,7 +56,7 @@
       <v-btn
         href="#risks"
         :class="!dark && 'dark-grey-border-color'"
-        class="mx-5 mt-5 dark-grey--text rounded-xl"
+        class="mx-5 dark-grey--text rounded-xl"
         outlined
         x-large>
         <h4 class="font-weight-normal">{{ $t('risks.title') }}</h4>
@@ -70,7 +64,7 @@
       <v-btn
         href="#legalNotice"
         :class="!dark && 'dark-grey-border-color'"
-        class="mx-5 mt-5 dark-grey--text rounded-xl"
+        class="mx-5 dark-grey--text rounded-xl"
         outlined
         x-large>
         <h4 class="font-weight-normal">{{ $t('legalNotice.title') }}</h4>
