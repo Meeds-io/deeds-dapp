@@ -139,6 +139,20 @@ export default {
         hubUrl: 'https://rainbowpartners.meeds.io/',
         rewardsPerWeek: 800,
       },
+      {
+        address: '0xfefefefefefefefefefef8',
+        name: {
+          fr: 'Communauté Tech Fleet DAO',
+          en: 'Tech Fleet Community DAO'
+        },
+        description: {
+          fr: 'Développement professionnel et renforcement des compétences dans des rôles techniques tels que l\'UX, la gestion de produits et le développement',
+          en: 'Professional development and upskilling in tech roles like UX, product management, and dev'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/tech_fleet_c3smje.webp',
+        backgroundColor: '#01061E',
+        hubUrl: 'https://techfleet.meeds.io/portal/login',
+      },
     ],
     upcomingHubs: [
       {
@@ -223,21 +237,6 @@ export default {
         twitterURL: 'https://twitter.com/ResearchHubF',
         discordUrl: 'https://discord.com/invite/YdNtQfQmEg',
         githubUrl: 'https://github.com/ResearchHub',
-      },
-      {
-        address: '0xfefefefefefefefefefef8',
-        name: {
-          fr: 'Communauté Tech Fleet DAO',
-          en: 'Tech Fleet Community DAO'
-        },
-        description: {
-          fr: 'Développement professionnel et renforcement des compétences dans des rôles techniques tels que l\'UX, la gestion de produits et le développement',
-          en: 'Professional development and upskilling in tech roles like UX, product management, and dev'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/tech_fleet_c3smje.webp',
-        backgroundColor: '#01061E',
-        websiteUrl: 'https://techfleet.org/',
-        twitterURL: 'https://twitter.com/techfleetworks',
       },
       {
         address: '0xfefefefefefefefefefef9',

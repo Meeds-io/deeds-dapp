@@ -58,7 +58,7 @@
         </v-card>
         <v-spacer />
         <div v-if="!upcomingHub" class="d-flex mt-4">
-          <div class="d-flex align-center justify-center">
+          <div v-if="hubUsers" class="d-flex align-center justify-center">
             <v-img 
               :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
               class="me-2"
@@ -78,6 +78,10 @@
               {{ formattedHubRewards }}
               <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriodicity }}</span>
             </div>
+          </div>
+          <div v-if="noUsersDataToDisplay">
+            <v-icon size="21" class="secondary--text me-3">fas fa-bolt</v-icon>
+            <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
           </div>
         </div>
         <div v-else class="d-flex flex-row pt-4">
@@ -208,6 +212,9 @@ export default {
     },
     formLinkWithCommunityName() {
       return this.formLink.concat('#community_name=', this.hubName);
+    },
+    noUsersDataToDisplay() {
+      return !this.hubRewards && !this.hubUsers;
     }
   }),
 };
