@@ -18,21 +18,23 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
-      <div class="d-flex flex-column text-center">
-        <span class="display-1 font-weight-bold">{{ $t('page.owners.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.owners.subtitle') }}</span>
-      </div>
-    </v-card-title>
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.owners.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.owners.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
     <v-progress-linear
       v-if="loading"
       class="mt-8"
       indeterminate />
     <div v-else>
-      <div v-if="hasTenants" class="d-flex justify-end mt-6">
+      <div v-if="hasTenants" class="d-flex justify-end pt-4 pt-md-11">
         <v-btn
           height="40px"
-          class="px-4 mt-4"
+          class="px-4 mt-2"
           :color="collapsed && 'primary'"
           :class="!collapsed && 'primary'"
           :dark="!collapsed"
@@ -43,7 +45,7 @@
         </v-btn>
       </div>
       <div v-if="!collapsed || !hasTenants">
-        <div class="d-flex flex-column flex-md-row pb-6 my-16">
+        <div class="d-flex flex-column flex-md-row pb-6 mb-16 mt-4 mt-md-13">
           <div class="d-flex flex-column me-7 ps-4 ps-sm-2">
             <span class="headline font-weight-bold">{{ $t('dapp.owners.mintOrBuyDeed.title') }}</span>
             <span class="dark-grey--text mt-5 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.owners.mintOrBuyDeed.descriptionPart1') }}</span>

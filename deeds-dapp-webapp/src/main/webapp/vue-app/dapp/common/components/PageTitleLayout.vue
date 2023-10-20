@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,24 +17,14 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card flat>
-    <deeds-page-title-layout>
-      <template #title>
-        {{ $t('page.stake.title') }}
-      </template>
-      <template #subtitle>
-        {{ $t('page.stake.subtitle') }}
-      </template>
-    </deeds-page-title-layout>
-    <v-card-text class="ps-0 pt-4 pt-md-11 ms-md-2 text-h6 font-weight-normal">
-      {{ $t('becomeHolderDescription') }}
-    </v-card-text>
-  </v-card>
+  <v-card-title class="justify-center flex-nowrap mb-10">
+    <div class="d-flex flex-column text-center">
+      <span class="display-1 font-weight-bold">
+        <slot name="title"></slot>
+      </span>
+      <span class="headline hidden-sm-and-down">
+        <slot name="subtitle"></slot>
+      </span>
+    </div>
+  </v-card-title>
 </template>
-<script>
-export default {
-  computed: Vuex.mapState({
-    parentLocation: state => state.parentLocation,
-  }),
-};
-</script>

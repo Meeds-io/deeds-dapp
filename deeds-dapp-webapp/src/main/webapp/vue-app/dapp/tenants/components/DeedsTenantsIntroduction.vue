@@ -18,13 +18,15 @@
 -->
 <template>
   <v-card class="d-flex flex-column" flat>
-    <v-card-title class="justify-center flex-nowrap ps-4 ps-sm-2">
-      <div class="d-flex flex-column text-center">
-        <span class="display-1 font-weight-bold">{{ $t('page.tenants.title') }}</span>
-        <span class="headline hidden-sm-and-down">{{ $t('page.tenants.subtitle') }}</span>
-      </div>
-    </v-card-title>
-    <div v-if="hasTenants" class="align-self-end mt-6">
+    <deeds-page-title-layout>
+      <template #title>
+        {{ $t('page.tenants.title') }}
+      </template>
+      <template #subtitle>
+        {{ $t('page.tenants.subtitle') }}
+      </template>
+    </deeds-page-title-layout>
+    <div v-if="hasTenants" class="align-self-end pt-4 pt-md-11">
       <v-btn
         height="40px"
         class="px-4 mt-4"
@@ -38,7 +40,7 @@
       </v-btn>
     </div>
     <div v-show="!collapsed || !hasTenants">
-      <div class="d-flex flex-column flex-md-row pb-6 my-16">
+      <div class="d-flex flex-column flex-md-row pb-6 mb-16 mt-4 mt-md-13">
         <div class="d-flex flex-column my-auto me-7 ps-4 ps-sm-2">
           <span class="headline font-weight-bold">{{ $t('dapp.tenants.rentFromMarketplace.title') }}</span>
           <span class="dark-grey--text mt-10 mb-5 mb-md-0 text-h6 font-weight-light">{{ $t('dapp.tenants.rentFromMarketplace.description') }}</span>
