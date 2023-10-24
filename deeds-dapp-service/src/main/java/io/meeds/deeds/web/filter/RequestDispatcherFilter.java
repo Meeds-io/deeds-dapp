@@ -120,6 +120,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
+    String requestUri = request.getRequestURI();
     if (StringUtils.contains(servletPath, "api")) { // REST API
       doFilter(chain, request, response);
     } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
@@ -146,8 +147,8 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Location", "/mint");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if(servletPath.startsWith("/dapp")) {
-        String page = servletPath.substring(5, servletPath.length());
+      } else if(requestUri.startsWith("/dapp")) {
+        String page = requestUri.substring(5, requestUri.length());
         if(DAPP_PATHS_EN.contains(page) || STATIC_PATHS_EN.contains(page)) {
           response.setHeader("Location", page);
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
