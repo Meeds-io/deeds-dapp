@@ -147,7 +147,7 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Location", "/mint");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if(requestUri.startsWith("/dapp")) {
+      } else if(requestUri != null && requestUri.startsWith("/dapp")) {
         String page = requestUri.substring(5, requestUri.length());
         if(DAPP_PATHS_EN.contains(page) || STATIC_PATHS_EN.contains(page)) {
           response.setHeader("Location", page);
