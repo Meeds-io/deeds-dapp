@@ -90,7 +90,7 @@
               v-if="hubWebsiteUrl"
               :href="hubWebsiteUrl"
               target="_blank"
-              class="me-2"
+              class="me-4"
               icon>
               <v-icon 
                 size="26" 
@@ -102,7 +102,7 @@
               v-if="hubTwitterUrl"
               :href="hubTwitterUrl"
               target="_blank"
-              class="mx-2"
+              class="me-4"
               icon>
               <v-icon 
                 size="26" 
@@ -114,7 +114,7 @@
               v-if="hubDiscordUrl"
               :href="hubDiscordUrl" 
               target="_blank"
-              class="mx-3"
+              class="me-4"
               icon>
               <v-icon 
                 size="26" 
@@ -126,7 +126,7 @@
               v-if="hubGithubUrl"
               :href="hubGithubUrl"
               target="_blank"
-              class="mx-2"
+              class="me-4"
               icon>
               <v-icon 
                 size="26" 
