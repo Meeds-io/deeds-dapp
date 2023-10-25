@@ -494,6 +494,7 @@ const store = new Vuex.Store({
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
     hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
     formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
+    buyMeedsLink: 'https://app.paraswap.io/#/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE-0x8503a7b00b4b52692cc6c14e5b96f142e30547b7/0/SELL?network=ethereum',
   },
   mutations: {
     echartsLoaded(state) {

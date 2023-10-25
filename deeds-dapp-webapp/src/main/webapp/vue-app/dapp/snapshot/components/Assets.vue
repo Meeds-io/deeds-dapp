@@ -33,12 +33,12 @@
       <v-spacer />
       <v-btn
         id="pBuy-button"
-        href=""
+        :href="buyMeedsLink"
+        target="_blank"
         class="px-8"
         color="secondary"
         height="45px"
-        outlined
-        @click.prevent.stop="$root.$emit('open-buy-meed-drawer', true)">
+        outlined>
         <h4 class="ms-1">{{ $t('buy') }}</h4>
       </v-btn>
     </div>
@@ -54,6 +54,7 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
+    buyMeedsLink: state => state.buyMeedsLink,
   }),
 };
 </script>
