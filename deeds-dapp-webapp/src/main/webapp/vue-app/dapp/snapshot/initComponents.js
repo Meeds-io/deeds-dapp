@@ -35,14 +35,12 @@ import MaxSupply from './components/metrics/MaxSupply.vue';
 import TotalSupply from './components/metrics/TotalSupply.vue';
 import TotalValueLocked from './components/metrics/TotalValueLocked.vue';
 import MeedPrice from './components/metrics/MeedPrice.vue';
-import BuyMeedDrawer from './components/drawer/BuyMeedDrawer.vue';
 import Tokenomics from './components/Tokenomics.vue';
 
 const components = {
   'deeds-overview': Overview,
   'deeds-price-chart': PriceChart,
   'deeds-trade-meeds': TradeMeeds,
-  'deeds-trade-meeds-drawer': BuyMeedDrawer,
   'deeds-assets': Assets,
   'deeds-token-assets': TokenAssets,
   'deeds-empty-assets': EmptyAssets,

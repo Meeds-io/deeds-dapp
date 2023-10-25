@@ -258,8 +258,7 @@
             </div>
             <div
               v-html="buyMeedProposalLabel"
-              class="d-flex mb-2"
-              @click.stop.prevent="openBuyMeeds">
+              class="d-flex mb-2">
             </div>
           </v-card>
         </v-expand-transition>
@@ -353,6 +352,7 @@ export default {
     ZERO_BN: state => state.ZERO_BN,
     MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
     tenantsURL: state => state.tenantsURL,
+    buyMeedsLink: state => state.buyMeedsLink,
     nftId() {
       return this.offer?.nftId;
     },
@@ -483,7 +483,7 @@ export default {
     },
     buyMeedProposalLabel() {
       return this.$t('deedRentingPaymentMeedsBuyProposal', {
-        0: '<a id="buyMeeds" class="mx-1 primary--text font-weight-bold">',
+        0: `<a id="buyMeeds" class="mx-1 primary--text font-weight-bold" href="${this.buyMeedsLink}" target="_blank">`,
         1: this.$t('meeds'),
         2: '</a>',
       });
@@ -643,11 +643,6 @@ export default {
     openTenants(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
         this.$root.$emit('switch-page', 'tenants');
-      }
-    },
-    openBuyMeeds(event) {
-      if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('open-buy-meed-drawer', true);
       }
     },
     scrollDrawerContent() {
