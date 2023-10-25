@@ -23,7 +23,6 @@
       <deeds-site-content />
       <deeds-site-footer />
     </v-card>
-    <deeds-trade-meeds-drawer />
   </v-app>
 </template>
 <script>

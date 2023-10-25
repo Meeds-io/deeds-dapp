@@ -66,10 +66,11 @@
       <div class="ms-4">
         <v-btn
           id="tbBuy-button"
+          :href="buyMeedsLink"
+          target="_blank"
           class="hidden-xs-only"
           elevation="0"
-          color="secondary"
-          @click="$root.$emit('open-buy-meed-drawer')">
+          color="secondary">
           <span class="font-size-normal">{{ $t('buyMeedsButton') }}</span>
         </v-btn>
       </div>
@@ -89,6 +90,7 @@ export default {
     hubsUrl: state => state.hubsUrl,
     homeUrl: state => state.homeUrl,
     isMobile: state => state.isMobile,
+    buyMeedsLink: state => state.buyMeedsLink,
     defaultNavigationBar() {
       return !this.staticPage && !this.isMobile;
     }
