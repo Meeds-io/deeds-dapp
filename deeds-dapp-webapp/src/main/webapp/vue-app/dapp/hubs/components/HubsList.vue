@@ -253,6 +253,21 @@ export default {
         websiteUrl: 'https://www.vigilancedao.org/',
         discordUrl: 'https://discord.gg/xUSf2zdYmD',
       },
+      {
+        address: '0xfefefefefefefefefefef11',
+        name: {
+          fr: 'DAO\'n\'Frens',
+          en: 'DAO\'n\'Frens'
+        },
+        description: {
+          fr: 'Une agence de gestion de communauté et de marketing web3',
+          en: 'A web3 community management and marketing outstaffing agency'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697740685/meedsdao-site/assets/images/upcoming%20hubs/DAO%20N%20FRENS.png',
+        backgroundColor: '#333',
+        discordUrl: 'https://discord.gg/daonfrens',
+        twitterURL: 'https://twitter.com/DAOnFriends',
+      }
     ],
   }),
   computed: Vuex.mapState({
