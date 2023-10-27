@@ -147,28 +147,6 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Location", "/mint");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if(requestUri != null && requestUri.startsWith("/dapp")) {
-        String page = requestUri.substring(5, requestUri.length());
-        if(DAPP_PATHS_EN.contains(page) || STATIC_PATHS_EN.contains(page)) {
-          response.setHeader("Location", page);
-          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-          return;
-        } else if(page.startsWith("/fr")) {
-          String page_FR = page.substring(3);
-          if(DAPP_PATHS_FR.contains(page_FR) || STATIC_PATHS_FR.contains(page_FR)) {
-            response.setHeader("Location", page);
-            response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            return;
-          } else if(page_FR.isEmpty()) {
-          response.setHeader("Location", "/fr");
-          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-          return;
-          } 
-        } else if (page.isEmpty()) {
-          response.setHeader("Location", "/");
-          response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-          return;
-        }
       }
       String eTagHeader = request.getHeader("If-None-Match");
       String eTagValue = getETagValue(request);
