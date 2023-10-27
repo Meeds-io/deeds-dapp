@@ -52,7 +52,7 @@
     <org.exoplatform.wallet.ert-contract.version>1.3.0</org.exoplatform.wallet.ert-contract.version>
 
     <!-- Meeds Server Libraries -->
-    <org.exoplatform.platform-ui.version>6.5.x-SNAPSHOT</org.exoplatform.platform-ui.version>
+    <org.exoplatform.platform-ui.version>6.5.0-M17</org.exoplatform.platform-ui.version>
 
     <!-- Get latest version of Surefire to enable JUnit 5 -->
     <version.surefire.plugin>3.0.0-M7</version.surefire.plugin>
