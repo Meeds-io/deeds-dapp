@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row class="my-15">
+  <v-row class="mb-15 mt-7">
     <v-col cols="12">
       <div class="d-flex flex-row flex-grow-1">
         <div v-if="keyword" class="headline font-weight-bold pb-1">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
