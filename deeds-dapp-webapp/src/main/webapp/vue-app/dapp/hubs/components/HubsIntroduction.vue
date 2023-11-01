@@ -22,14 +22,11 @@
       <template #title>
         {{ $t('page.hubs.title') }}
       </template>
-      <template #subtitle>
-        {{ $t('page.hubs.subtitle') }}
-      </template>
     </deeds-page-title-layout>
     <v-text-field
       v-model="keyword"
       :placeholder="$t('hubs.search.placeholder')"
-      class="rounded-pill mx-auto col-12 col-sm-6 headline pt-4 pt-md-11"
+      class="rounded-pill mx-auto col-12 col-sm-6 headline pt-4 pt-md-6"
       height="60px"
       @keydown="enterEvent"  
       outlined

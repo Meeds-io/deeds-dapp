@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-row class="my-15">
+  <v-row class="mb-15 mt-7">
     <v-col cols="12">
       <div class="d-flex flex-row flex-grow-1">
         <div v-if="keyword" class="headline font-weight-bold pb-1">{{ hubsCount }} {{ $t('hubs.hubsFound') }} </div>
@@ -301,5 +301,12 @@ export default {
       }
     },
   }),
+  created() {
+    if (this.language === 'fr') {
+      this.upcomingHubs = this.upcomingHubs.sort((hub1,hub2) => ((hub1?.name?.fr > hub2?.name?.fr) ? 1 : ((hub2?.name?.fr > hub1?.name?.fr ? -1 : 0))));
+    } else {
+      this.upcomingHubs = this.upcomingHubs.sort((hub1,hub2) => ((hub1?.name?.en > hub2?.name?.en) ? 1 : ((hub2?.name?.en > hub1?.name?.en ? -1 : 0))));
+    }
+  }
 };
 </script>
