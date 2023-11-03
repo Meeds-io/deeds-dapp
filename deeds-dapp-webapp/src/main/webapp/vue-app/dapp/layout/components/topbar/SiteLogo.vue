@@ -21,14 +21,11 @@
     <a 
       id="tbHomedApp-button"
       :href="homeUrl" 
-      class="d-flex align-center black--text text--color no-decoration">
+      class="d-flex align-center">
       <img
         :src="`${parentLocation}/static/images/meeds.png`"
-        height="24px"
-        width="64px"
-        class="mt-1"
+        width="101px"
         alt="">
-      <div class="ps-2 my-1">{{ $t('dao') }}</div>
       <v-chip
         v-if="isTestNetwork"
         :small="!isMobile"
