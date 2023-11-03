@@ -30,6 +30,7 @@ import DateFormat from './components/DateFormat.vue';
 import ExtendedTextarea from './components/ExtendedTextarea.vue';
 import ButtonGroupItem from './components/ButtonGroupItem.vue';
 import PageTitleLayout from './components/PageTitleLayout.vue';
+import BuyHubCard from './components/BuyHubCard.vue';
 
 const components = {
   'deeds-drawer': Drawer,
@@ -45,7 +46,8 @@ const components = {
   'deeds-date-format': DateFormat,
   'deeds-extended-textarea': ExtendedTextarea,
   'deeds-button-group-item': ButtonGroupItem,
-  'deeds-page-title-layout': PageTitleLayout
+  'deeds-page-title-layout': PageTitleLayout,
+  'deeds-buy-hub-card': BuyHubCard
 };
 
 for (const key in components) {
