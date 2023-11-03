@@ -281,7 +281,8 @@ const pageUriPerLanguages = {
       'owners',
       'farm',
       'tenants',
-      'hubs'
+      'hubs',
+      'buy'
     ],
     uriPrefix: '',
   },
@@ -300,7 +301,8 @@ const pageUriPerLanguages = {
       'proprietaires',
       'farm',
       'locataires',
-      'rejoindre-hubs'
+      'rejoindre-hubs',
+      'acheter'
     ],
     uriPrefix: 'fr/',
   },
@@ -505,6 +507,7 @@ const store = new Vuex.Store({
     farmURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
     hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
+    buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[14]}`,
     formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
     buyMeedsLink: 'https://app.paraswap.io/#/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE-0x8503a7b00b4b52692cc6c14e5b96f142e30547b7/0/SELL?network=ethereum',
   },
