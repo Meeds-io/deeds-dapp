@@ -46,7 +46,7 @@
       </v-card>
       <div class="d-flex flex-column pt-2 px-4 pb-4">
         <div class="ms-10 ps-15">
-          <span class="text-h6 font-weight-bold text-wrap">
+          <span class="text-h6 font-weight-bold text-no-wrap">
             {{ hubName }}
           </span>
         </div>
@@ -68,7 +68,7 @@
               {{ hubUsers }}
             </div>
           </div>
-          <div v-if="hubRewards" class="d-flex align-center justify-center ms-10">
+          <div v-if="hubRewards" class="d-flex align-center justify-center ms-auto">
             <v-img 
               :src="`${parentLocation}/static/images/meed_circle.webp`"
               class="me-2"
