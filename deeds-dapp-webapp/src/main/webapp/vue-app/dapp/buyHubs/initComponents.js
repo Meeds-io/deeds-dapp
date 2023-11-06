@@ -16,10 +16,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import buyHubs from './components/buyHubs.vue';
+import BuyHubs from './components/BuyHubs.vue';
 
 const components = {
-  'deeds-buy-hubs': buyHubs,
+  'deeds-buy-hubs': BuyHubs,
 };
 
 for (const key in components) {
