@@ -25,79 +25,104 @@
         </template>
       </deeds-page-title-layout>
     </v-card>
-    <div class="d-flex mt-6 mb-12">
-      <deeds-buy-hub-card
-        :link="formLink"
-        extra-class="secondary-border-color">
-        <template #icon>
-          fa-rocket
-        </template>
-        <template #title>
-          {{ $t('free.hub.card.title') }}
-        </template>
-        <template #button>
-          {{ $t('free.hub.card.button') }}
-        </template>
-      </deeds-buy-hub-card>
-      <deeds-buy-hub-card
-        :link="marketplaceURL"
-        extra-class="mx-10 grey-border-color">
-        <template #icon>
-          fa-file-signature
-        </template>
-        <template #title>
-          {{ $t('rent.hub.card.title') }}
-        </template>
-        <template #button>
-          {{ $t('rent.hub.card.button') }}
-        </template>
-      </deeds-buy-hub-card>
-      <deeds-buy-hub-card
-        :link="mintUrl"
-        extra-class="grey-border-color">
-        <template #icon>
-          fa-landmark
-        </template>
-        <template #title>
-          {{ $t('buy.hub.card.title') }}
-        </template>
-        <template #button>
-          {{ $t('buy.hub.card.button') }}
-        </template>
-      </deeds-buy-hub-card>
-    </div>
+    <v-row>
+      <v-col
+        cols="12"
+        xs="12"
+        md="6"
+        lg="4">
+        <deeds-buy-hub-card
+          :link="formLink"
+          extra-class="secondary-border-color">
+          <template #icon>
+            fa-rocket
+          </template>
+          <template #title>
+            {{ $t('free.hub.card.title') }}
+          </template>
+          <template #button>
+            {{ $t('free.hub.card.button') }}
+          </template>
+        </deeds-buy-hub-card>
+      </v-col>
+      <v-col
+        cols="12"
+        xs="12"
+        md="6"
+        lg="4">
+        <deeds-buy-hub-card
+          :link="marketplaceURL"
+          extra-class="grey-border-color">
+          <template #icon>
+            fa-file-signature
+          </template>
+          <template #title>
+            {{ $t('rent.hub.card.title') }}
+          </template>
+          <template #button>
+            {{ $t('rent.hub.card.button') }}
+          </template>
+        </deeds-buy-hub-card>
+      </v-col>
+      <v-col
+        cols="12"
+        xs="12"
+        md="6"
+        lg="4">
+        <deeds-buy-hub-card
+          :link="mintUrl"
+          extra-class="grey-border-color">
+          <template #icon>
+            fa-landmark
+          </template>
+          <template #title>
+            {{ $t('buy.hub.card.title') }}
+          </template>
+          <template #button>
+            {{ $t('buy.hub.card.button') }}
+          </template>
+        </deeds-buy-hub-card>
+      </v-col>
+    </v-row>
     <div class="d-flex flex-column mt-7">
       <span class="display-1 mt-5 mb-13 font-weight-bold d-flex justify-center">{{ $t('meeds.features.title') }}</span>
       <v-carousel
         active-class="primary"
         :show-arrows="false"
         continuous
+        cycle
         light
         hide-delimiter-background
         delimiter-icon="fa-minus"
         height="300px">
-        <v-carousel-item
-          v-for="(feature, i) in meedsFeatures"
-          :key="i">
-          <div class="d-flex flex-column justify-center">
-            <v-img
-              v-if="feature.imageUrl"
-              :src="feature.imageUrl"
-              class="my-7 mx-auto"
-              :height="feature.height"
-              :width="feature.width" />
-            <v-icon 
-              v-else
-              class="my-7"
-              size="150px"
-              color="secondary">
-              {{ feature.icon }}
-            </v-icon>
-            <div class="headline mx-auto mb-6">
-              {{ feature.title }} 
-            </div>
-          </div>
-        </v-carousel-item>
+        <template v-for="(feature, i) in meedsFeatures"> 
+          <v-carousel-item
+            v-if="(i + 1) % columns === 1 || columns === 1"
+            :key="i">
+            <v-layout row>
+              <v-flex :key="j" v-for="(col,j) in columns">
+                <div class="d-flex flex-column justify-center">
+                  <v-img
+                    v-if="meedsFeatures[i+j].imageUrl"
+                    :src="meedsFeatures[i+j].imageUrl"
+                    class="my-7 mx-auto"
+                    :height="meedsFeatures[i+j].height"
+                    :width="meedsFeatures[i+j].width" />
+                  <v-icon 
+                    v-else
+                    class="my-7"
+                    size="150px"
+                    color="secondary">
+                    {{ meedsFeatures[i+j].icon }}
+                  </v-icon>
+                  <div class="headline mx-auto mb-6">
+                    {{ meedsFeatures[i+j].title }} 
+                  </div>
+                </div>
+              </v-flex>
+            </v-layout>
+          </v-carousel-item>
+        </template> 
       </v-carousel>
       <v-btn
         :href="tourURL"
@@ -152,6 +177,13 @@ export default {
     tourURL: state => state.tourURL,
     formLink: state => state.formLink,
     mintUrl: state => state.mintUrl,
+    columns() {
+      if ( this.$vuetify.breakpoint.lgAndUp) {
+        return 3;
+      } else {
+        return 1;
+      }
+    }
   })
 };
 

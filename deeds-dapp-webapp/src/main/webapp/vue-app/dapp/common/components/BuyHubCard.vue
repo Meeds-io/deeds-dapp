@@ -20,8 +20,8 @@
   <v-card 
     :class="extraClass"
     :href="link"
-    class="pa-5 d-flex flex-column justify-center rounded-lg"
-    min-width="400px"
+    class="pa-5 d-flex flex-column justify-center rounded-lg mx-auto"
+    max-width="400px"
     min-height="325px"
     hover
     outlined>
