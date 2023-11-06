@@ -45,3 +45,11 @@ export function copyToClipboard(text) {
     return false;
   }
 }
+
+export function sortByName(tab, lang) {
+  if (lang === 'fr') {
+    return tab.sort((obj1,obj2) => ((obj1?.name?.fr.toLowerCase() > obj2?.name?.fr.toLowerCase()) ? 1 : ((obj2?.name?.fr.toLowerCase() > obj1?.name?.fr.toLowerCase() ? -1 : 0))));
+  } else {
+    return tab.sort((obj1,obj2) => ((obj1?.name?.en.toLowerCase() > obj2?.name?.en.toLowerCase()) ? 1 : ((obj2?.name?.en.toLowerCase() > obj1?.name?.en.toLowerCase() ? -1 : 0))));
+  }
+}
