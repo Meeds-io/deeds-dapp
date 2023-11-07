@@ -17,7 +17,7 @@
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <deeds-home v-if="homePage" />
+  <deeds-why-meeds v-if="whyMeedsPage" />
   <deeds-about-us v-else-if="aboutUsPage" />
   <deeds-whitepaper v-else-if="whitepaperPage" />
   <deeds-legals v-else-if="legalsPage" />
@@ -28,8 +28,8 @@ export default {
   computed: Vuex.mapState({
     page: state => state.page,
     language: state => state.language,
-    homePage() {
-      return this.page === 'home';
+    whyMeedsPage() {
+      return this.page === 'why-meeds';
     },
     aboutUsPage() {
       return this.page === 'about-us';
@@ -43,6 +43,6 @@ export default {
     tourPage() {
       return this.page === 'tour';
     },
-  }),
+  })
 };
 </script>

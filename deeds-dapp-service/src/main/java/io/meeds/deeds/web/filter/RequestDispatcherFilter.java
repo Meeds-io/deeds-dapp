@@ -60,13 +60,13 @@ public class RequestDispatcherFilter extends HttpFilter {
   protected static final List<String>        SUPPORTED_LANGUAGES            = Arrays.asList("en",
                                                                                             "fr");
 
-  protected static final List<String>        STATIC_PATHS_EN                = Arrays.asList("/home",
+  protected static final List<String>        STATIC_PATHS_EN                = Arrays.asList("/why-meeds",
                                                                                             "/whitepaper",
                                                                                             "/about-us",
                                                                                             "/legals",
                                                                                             "/tour");
 
-  protected static final List<String>        STATIC_PATHS_FR                = Arrays.asList("/accueil",
+  protected static final List<String>        STATIC_PATHS_FR                = Arrays.asList("/pourquoi-meeds",
                                                                                             "/livre-blanc",
                                                                                             "/qui-sommes-nous",
                                                                                             "/mentions-legales",
@@ -80,7 +80,7 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/owners",
                                                                                             "/portfolio",
                                                                                             "/stake",
-                                                                                            "/hubs",
+                                                                                            "/home",
                                                                                             "/mint",
                                                                                             "/farm",
                                                                                             "/tokenomics",
@@ -91,7 +91,7 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/proprietaires",
                                                                                             "/portefeuille",
                                                                                             "/rejoindre-dao",
-                                                                                            "/rejoindre-hubs",
+                                                                                            "/accueil",
                                                                                             "/acheter");
 
   protected static final List<String>        DAPP_PATHS_FR_COMM             = Arrays.asList("/mint",
@@ -122,7 +122,6 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
-    String requestUri = request.getRequestURI();
     if (StringUtils.contains(servletPath, "api")) { // REST API
       doFilter(chain, request, response);
     } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
@@ -137,11 +136,11 @@ public class RequestDispatcherFilter extends HttpFilter {
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           return;
         }
-      } else if (servletPath.equals("/home")) {
+      } else if (servletPath.equals("/home") || servletPath.equals("/hubs")) {
         response.setHeader("Location", "/");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if (servletPath.equals("/fr/accueil")) {
+      } else if (servletPath.equals("/fr/accueil") || servletPath.equals("/fr/rejoindre-hubs")) {
         response.setHeader("Location", "/fr");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
