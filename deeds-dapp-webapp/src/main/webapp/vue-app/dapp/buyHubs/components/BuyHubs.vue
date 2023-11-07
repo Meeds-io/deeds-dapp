@@ -99,8 +99,13 @@
           <v-carousel-item
             v-if="(i + 1) % columns === 1 || columns === 1"
             :key="i">
-            <v-layout row>
-              <v-flex :key="j" v-for="(col,j) in columns">
+            <v-row>
+              <v-col
+                :key="j"
+                cols="12"
+                xs="12"
+                lg="4"
+                v-for="(col,j) in columns">
                 <div class="d-flex flex-column justify-center">
                   <v-img
                     v-if="meedsFeatures[i+j].imageUrl"
@@ -115,12 +120,12 @@
                     color="secondary">
                     {{ meedsFeatures[i+j].icon }}
                   </v-icon>
-                  <div class="headline mx-auto mb-6">
+                  <span class="headline align-center mb-6">
                     {{ meedsFeatures[i+j].title }} 
-                  </div>
+                  </span>
                 </div>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-carousel-item>
         </template> 
       </v-carousel>
