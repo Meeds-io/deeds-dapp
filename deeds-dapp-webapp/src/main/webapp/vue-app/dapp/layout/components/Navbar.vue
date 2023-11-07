@@ -32,7 +32,7 @@
           <v-btn
             ref="hubs"
             id="hubs"
-            :href="hubsUrl"
+            :href="homeUrl"
             value="hubs"
             class="px-0 full-height"
             link
@@ -308,7 +308,7 @@
     no-gutters>
     <v-col cols="auto" class="d-flex justify-center align-center ps-15 ms-16 me-8">
       <a
-        :href="hubsUrl"
+        :href="homeUrl"
         class="no-decoration black--text text--color"
         @click="openPage">
         <span class="font-weight-black title">{{ $t('page.hubs') }}</span>
@@ -609,7 +609,7 @@ export default {
     validNetwork: state => state.validNetwork,
     page: state => state.page,
     pageUriPerLanguages: state => state.pageUriPerLanguages,
-    hubsUrl: state => state.hubsUrl,
+    homeUrl: state => state.homeUrl,
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },

@@ -29,10 +29,18 @@ const Buy = { template: '<deeds-buy-hubs />'};
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 export default {
-  '/': StaticPageContent,
-  '/default': StaticPageContent,
+  '/': Hubs,
+  '/about-us': StaticPageContent,
+  '/why-meeds': StaticPageContent,
+  '/legals': StaticPageContent,
+  '/tour': StaticPageContent,
+  '/whitepaper': StaticPageContent,
+  '/qui-sommes-nous': StaticPageContent,
+  '/pourquoi-meeds': StaticPageContent,
+  '/mentions-legales': StaticPageContent,
+  '/visite-guidee': StaticPageContent,
+  '/livre-blanc': StaticPageContent,
   '/place-de-marche': Marketplace,
-  '/rejoindre-hubs': Hubs,
   '/acheter': Buy,
   '/locataires': Tenants,
   '/proprietaires': Owners,
@@ -46,6 +54,5 @@ export default {
   '/owners': Owners,
   '/portfolio': Overview,
   '/stake': Stake,
-  '/hubs': Hubs,
   '/buy': Buy };
 

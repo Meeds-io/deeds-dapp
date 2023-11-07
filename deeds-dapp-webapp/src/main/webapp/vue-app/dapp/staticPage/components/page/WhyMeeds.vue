@@ -30,7 +30,7 @@
         <div class="d-flex justify-center justify-md-start mb-12 mb-md-0">
           <v-btn
             id="hExplore-button"
-            :href="hubsUrl"
+            :href="homeUrl"
             height="60px"
             class="primary px-8"
             depressed
@@ -206,7 +206,7 @@
               <div class="d-flex justify-center">
                 <v-btn
                   id="hContributor-button"
-                  :href="hubsUrl"
+                  :href="homeUrl"
                   height="60px"
                   class="px-8 my-6 primary"
                   dark
@@ -339,7 +339,7 @@ export default {
     tourURL: state => state.tourURL,
     whitepaperURL: state => state.whitepaperURL,
     tenantsURL: state => state.tenantsURL,
-    hubsUrl: state => state.hubsUrl,
+    homeUrl: state => state.homeUrl,
   }),
 };
 </script>
