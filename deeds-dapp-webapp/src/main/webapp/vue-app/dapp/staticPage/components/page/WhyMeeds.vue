@@ -40,7 +40,7 @@
           </v-btn>
           <v-btn
             id="hCreate-button"
-            :href="tenantsURL"
+            :href="buyUrl"
             height="60px"
             class="px-8 ms-10"
             color="primary"
@@ -244,7 +244,7 @@
               <div class="d-flex justify-center">
                 <v-btn
                   id="hLeader-button"
-                  :href="tenantsURL"
+                  :href="buyUrl"
                   height="60px"
                   class="primary px-8 mt-6 mb-15 mb-md-6"
                   depressed
@@ -338,7 +338,7 @@ export default {
     marketplaceURL: state => state.marketplaceURL,
     tourURL: state => state.tourURL,
     whitepaperURL: state => state.whitepaperURL,
-    tenantsURL: state => state.tenantsURL,
+    buyUrl: state => state.buyUrl,
     homeUrl: state => state.homeUrl,
   }),
 };
