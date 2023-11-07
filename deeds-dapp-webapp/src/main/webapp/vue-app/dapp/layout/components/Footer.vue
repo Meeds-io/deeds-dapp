@@ -81,9 +81,15 @@
               {{ $t('productTour') }}
             </a>
             <a
-              :href="tenantsURL"
+              :href="whyMeedsUrl"
               :class="textColor"
               class="no-decoration">
+              {{ $t('whyMeeds') }}
+            </a>
+            <a
+              :href="tenantsURL"
+              :class="textColor"
+              class="no-decoration my-2">
               {{ $t('yourHub') }}
             </a>
           </div>
@@ -203,7 +209,8 @@ export default {
     tenantsURL: state => state.tenantsURL,
     mintUrl: state => state.mintUrl,
     whitepaperURL: state => state.whitepaperURL,
-    hubsUrl: state => state.hubsUrl,
+    homeUrl: state => state.homeUrl,
+    whyMeedsUrl: state => state.whyMeedsUrl,
     dark: state => state.dark,
     staticPage: state => state.staticPage,
     githubColor() {
