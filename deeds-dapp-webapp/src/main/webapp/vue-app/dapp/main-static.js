@@ -91,7 +91,7 @@ const pageUriPerLanguages = {
       'owners',
       'farm',
       'tenants',
-      'hubs',
+      'why-meeds',
       'buy'
     ],
     uriPrefix: '',
@@ -111,7 +111,7 @@ const pageUriPerLanguages = {
       'proprietaires',
       'farm',
       'locataires',
-      'rejoindre-hubs',
+      'pourquoi-meeds',
       'acheter'
     ],
     uriPrefix: 'fr/',
@@ -153,7 +153,7 @@ const store = new Vuex.Store({
     ownersURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[10]}`,
     farmURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
-    hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
+    whyMeedsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
     buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[14]}`,
   },
   mutations: {
