@@ -169,7 +169,7 @@ export default {
           width: '165px'
         },
         {
-          imageUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1698767424/meedsdao-site/assets/images/meed_token_altpqm.png',
+          imageUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1699349941/meedsdao-site/assets/images/MEED_User_Engagement.png',
           title: this.$t('meeds.features.engagement'),
           height: '150px',
           width: '150px'
