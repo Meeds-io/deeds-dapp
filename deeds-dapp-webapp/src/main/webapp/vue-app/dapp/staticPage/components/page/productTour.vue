@@ -42,24 +42,22 @@
       <div class="d-flex flex-wrap justify-center mt-13">
         <v-btn
           id="tRent-button"
-          :href="marketplaceURL"
+          :href="buyUrl"
           class="primary px-8 mx-5 mt-7"
           height="60px"
           depressed
           dark
           outlined>
-          <span class="headline font-weight-bold">{{ $t('startYourHub') }}</span>
+          <span class="headline font-weight-bold">{{ $t('create') }}</span>
         </v-btn>
         <v-btn
           id="tExplore-button"
-          href="https://builders.meeds.io"
-          target="_blank"
+          :href="homeUrl"
           height="60px"
-          class="d-flex justify-center px-8 mx-5 mt-7"
+          class="px-8 mx-5 mt-7"
           color="primary"
           outlined>
-          <v-icon size="24" class="me-2">fas fa-external-link-alt</v-icon>
-          <span class="headline font-weight-bold">{{ $t('exploreAHub') }}</span>
+          <span class="headline font-weight-bold">{{ $t('explore') }}</span>
         </v-btn>
       </div>
     </div>
@@ -286,7 +284,8 @@ export default {
     overviewVideoLink: state => state.overviewVideoLink,
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
-    marketplaceURL: state => state.marketplaceURL,
+    buyUrl: state => state.buyUrl,
+    homeUrl: state => state.homeUrl,
     dark: state => state.dark,
     isSmallScreen() {
       return this.$vuetify.breakpoint.mdAndDown;
