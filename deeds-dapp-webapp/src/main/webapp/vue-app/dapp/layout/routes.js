@@ -33,6 +33,7 @@ export default {
   '/default': StaticPageContent,
   '/place-de-marche': Marketplace,
   '/rejoindre-hubs': Hubs,
+  '/acheter': Buy,
   '/locataires': Tenants,
   '/proprietaires': Owners,
   '/portefeuille': Overview,

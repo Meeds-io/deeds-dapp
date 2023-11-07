@@ -29,7 +29,7 @@
       <v-icon size="65" color="secondary">
         <slot name="icon"></slot>
       </v-icon>
-      <span class="font-weight-bold ms-8">
+      <span class="font-weight-bold align-center mx-8">
         <slot name="title"></slot>
       </span>
     </v-card-title>
