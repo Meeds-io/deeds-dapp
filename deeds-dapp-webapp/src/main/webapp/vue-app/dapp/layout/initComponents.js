@@ -34,6 +34,8 @@ import Navbar from './components/Navbar.vue';
 // Page selector components
 import Page from './components/Page.vue';
 import Notifications from './components/Notifications.vue';
+// Form components
+import FreeTrialForm from './components/FreeTrialForm.vue';
 
 
 const components = {
@@ -51,6 +53,7 @@ const components = {
   'deeds-page': Page,
   'deeds-notifications': Notifications,
   'deeds-theme-button': ThemeButton,
+  'deeds-free-trial-form': FreeTrialForm
 };
 
 for (const key in components) {
