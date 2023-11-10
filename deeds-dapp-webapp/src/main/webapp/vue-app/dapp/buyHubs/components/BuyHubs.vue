@@ -31,19 +31,20 @@
         xs="12"
         md="6"
         lg="4">
-        <deeds-buy-hub-card
-          :link="formLink"
-          extra-class="secondary-border-color">
-          <template #icon>
-            fa-rocket
-          </template>
-          <template #title>
-            {{ $t('free.hub.card.title') }}
-          </template>
-          <template #button>
-            {{ $t('free.hub.card.button') }}
-          </template>
-        </deeds-buy-hub-card>
+        <v-card @click="openForm" flat>
+          <deeds-buy-hub-card
+            extra-class="secondary-border-color">
+            <template #icon>
+              fa-rocket
+            </template>
+            <template #title>
+              {{ $t('free.hub.card.title') }}
+            </template>
+            <template #button>
+              {{ $t('free.hub.card.button') }}
+            </template>
+          </deeds-buy-hub-card>
+        </v-card>
       </v-col>
       <v-col
         cols="12"
@@ -189,7 +190,12 @@ export default {
         return 1;
       }
     }
-  })
+  }),
+  methods: {
+    openForm() {
+      document.dispatchEvent(new CustomEvent('show-trial-form', {detail: {showForm: true} }));
+    }
+  }
 };
 
 </script>
