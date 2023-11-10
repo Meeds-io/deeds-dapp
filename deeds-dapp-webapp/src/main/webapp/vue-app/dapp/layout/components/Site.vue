@@ -18,7 +18,11 @@
 -->
 <template>
   <v-app>
-    <v-card class="overflow-hidden" flat>
+    <deeds-free-trial-form v-if="showForm" />
+    <v-card
+      v-else
+      class="overflow-hidden"
+      flat>
       <deeds-topbar />
       <deeds-site-content />
       <deeds-site-footer />
@@ -27,6 +31,11 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      showForm: false
+    };
+  },
   computed: Vuex.mapState({
     networkId: state => state.networkId,
     validNetwork: state => state.validNetwork,
@@ -45,6 +54,7 @@ export default {
   created() {
     this.refreshMobileValue();
     this.refreshTheme();
+    document.addEventListener('show-trial-form', this.openForm);
   },
   mounted() {
     window.addEventListener('popstate', this.refreshDocumentHead);
@@ -65,6 +75,9 @@ export default {
         this.$store.commit('setDark', isDark);
       }
     },
+    openForm(event) {
+      this.showForm = event.detail.showForm;
+    }
   },
 };
 </script>
