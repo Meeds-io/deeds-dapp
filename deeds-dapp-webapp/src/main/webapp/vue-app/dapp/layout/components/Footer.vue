@@ -75,16 +75,16 @@
               class="font-size-normal font-weight-black text-uppercase mb-3">
               {{ $t('product') }}</span>
             <a
-              :href="tourURL"
-              :class="textColor"
-              class="no-decoration my-2">
-              {{ $t('productTour') }}
-            </a>
-            <a
               :href="whyMeedsUrl"
               :class="textColor"
-              class="no-decoration">
+              class="no-decoration my-2">
               {{ $t('whyMeeds') }}
+            </a>
+            <a
+              :href="tourURL"
+              :class="textColor"
+              class="no-decoration">
+              {{ $t('productTour') }}
             </a>
             <a
               :href="tenantsURL"
@@ -164,7 +164,7 @@
               :class="textColor"
               href="https://builders.meeds.io/"
               target="_blank"
-              class="no-decoration d-flex">
+              class="no-decoration d-flex mx-auto">
               <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
               {{ $t('buildWithUs') }}
             </a>
@@ -172,7 +172,7 @@
               :class="textColor"
               href="https://medium.com/meeds-dao"
               target="_blank"
-              class="no-decoration d-flex my-2">
+              class="no-decoration d-flex my-2 mx-auto">
               <v-icon size="16" class="me-2">fas fa-external-link-alt</v-icon>
               {{ $t('blog') }}
             </a>
