@@ -75,8 +75,8 @@
             </span>
           </div>
           <v-card
+            :width="isSmallScreen && '80%' || '40%'"
             class="mx-auto"
-            width="40%"
             flat>
             <v-text-field
               :placeholder="$t('meeds.freeTrial.form.firstname.placeholder')"
@@ -160,9 +160,16 @@ export default {
   },
   computed: Vuex.mapState({
     tourURL: state => state.tourURL,
+    validEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(this.email);
+    },
     disabledFormButton() {
-      return !this.name || !this.firstname || !this.job || !this.organization || !this.email;
-    }
+      return !this.name || !this.firstname || !this.job || !this.organization || !this.validEmail;
+    },
+    isSmallScreen() {
+      return this.$vuetify.breakpoint.smAndDown;
+    },
   }),
   created() {
     this.emailRules = [ 
