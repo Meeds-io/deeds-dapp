@@ -117,15 +117,21 @@
               class="body-2"
               dense
               outlined />
-            <v-text-field
-              :rules="emailRules"
-              :placeholder="$t('meeds.freeTrial.form.email.placeholder')"
+            <deeds-email-field
+              ref="email"
               v-model="email"
-              type="email"
-              prepend-inner-icon="fa-envelope fa-1x"
-              class="body-2"
-              dense
-              outlined />
+              :placeholder="$t('meeds.freeTrial.form.email.placeholder')"
+              :readonly="sending"
+              :disabled="disabledEmail"
+              :code="emailCode"
+              extra-class="body-2"
+              email-prepend-icon="fa-envelope fa-1x"
+              code-prepend-icon="fa-lock fa-1x"
+              anonymous
+              @valid-email="validEmail = $event"
+              @email-confirmation-success="emailCode = $event"
+              @email-confirmation-error="emailCodeError = true"
+              @submit="confirmTrial" />
           </v-card>
           <div class="d-flex justify-center">
             <v-btn
@@ -135,8 +141,8 @@
               height="48px"
               text
               outlined
-              @click="submitForm">
-              <span class="font-weight-bold text-h6 white--text">{{ $t('meeds.freeTrial.form.button.submit') }}</span>
+              @click="confirmTrial">
+              <span class="font-weight-bold text-h6 white--text">{{ trialButtonLabel }}</span>
             </v-btn>
           </div>
         </v-form>
@@ -156,21 +162,27 @@ export default {
       job: null,
       organization: null,
       email: null,
+      emailCode: null,
+      emailCodeSent: false,
+      emailCodeError: false,
+      validEmail: false,
       showConfirmationMessage: false
     };
   },
   computed: Vuex.mapState({
     tourURL: state => state.tourURL,
-    validEmail() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(this.email);
-    },
     disabledFormButton() {
       return !this.name || !this.firstname || !this.job || !this.organization || !this.validEmail;
     },
     isSmallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
     },
+    confirmEmailStep() {
+      return !this.emailCode;
+    },
+    trialButtonLabel() {
+      return (this.confirmEmailStep && (this.emailCodeSent && this.$t('resend') || this.$t('meeds.freeTrial.form.button.submit'))) || this.$t('confirm');
+    }
   }),
   created() {
     this.rules = [v => !!v || this.$t('meeds.freeTrial.form.valid.field.message')];
@@ -184,9 +196,22 @@ export default {
         e.preventDefault();
       }
     },
-    submitForm() {
+    sendEmailConfirmation() {
+      this.$refs.email?.sendConfirmation();
+      this.emailCodeSent = true;
+    },
+    confirmTrial() {
+      if (this.confirmEmailStep) {
+        this.sendEmailConfirmation();
+      } else  {
+        this.createTrial();
+      } 
+    },
+    createTrial() {
       //Data to save
       this.showConfirmationMessage = true;
+      this.emailCode = null;
+      this.emailCodeSent = false;
     }
   },
 };
