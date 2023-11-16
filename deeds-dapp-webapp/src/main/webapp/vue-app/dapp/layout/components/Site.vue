@@ -27,6 +27,7 @@
       <deeds-site-content />
       <deeds-site-footer />
     </v-card>
+    <deeds-notifications />
   </v-app>
 </template>
 <script>
