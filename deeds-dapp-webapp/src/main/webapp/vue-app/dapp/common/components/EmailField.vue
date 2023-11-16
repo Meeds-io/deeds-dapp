@@ -26,6 +26,8 @@
       :readonly="readonly"
       :disabled="disabledField"
       :autofocus="!isMobile"
+      :prepend-inner-icon="emailPrependIcon"
+      :class="extraClass"
       name="email"
       type="email"
       pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
@@ -56,6 +58,8 @@
         :readonly="sendingCode"
         :loading="sendingCode"
         :autofocus="!isMobile"
+        :prepend-inner-icon="codePrependIcon"
+        :class="extraClass"
         name="emailCode"
         maxlength="6"
         class="align-center"
@@ -91,6 +95,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    extraClass: {
+      type: String,
+      default: null
+    },
+    emailPrependIcon: {
+      type: String,
+      default: null
+    },
+    codePrependIcon: {
+      type: String,
+      default: null
+    }
   },
   data: () => ({
     email: null,
