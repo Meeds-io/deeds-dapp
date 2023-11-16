@@ -51,7 +51,6 @@
           class="mb-12 mb-sm-0"
           role="main" />
       </div>
-      <deeds-notifications />
     </div>
   </v-sheet>
 </template>
