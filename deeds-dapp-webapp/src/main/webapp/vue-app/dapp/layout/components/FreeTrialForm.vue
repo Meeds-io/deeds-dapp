@@ -134,6 +134,7 @@
           <div class="d-flex justify-center">
             <v-btn
               :disabled="disabledFormButton"
+              :class="disabledFormButton && 'half-opacity'"
               class="primary px-5 my-5"
               height="48px"
               text
