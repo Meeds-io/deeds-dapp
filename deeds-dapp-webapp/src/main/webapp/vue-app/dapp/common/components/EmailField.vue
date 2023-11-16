@@ -58,6 +58,8 @@
         :readonly="sendingCode"
         :loading="sendingCode"
         :autofocus="!isMobile"
+        :prepend-inner-icon="codePrependIcon"
+        :class="extraClass"
         name="emailCode"
         maxlength="6"
         class="align-center"
@@ -108,6 +110,10 @@ export default {
     autofocus: {
       type: Boolean,
       default: false,
+    },
+    anonymous: {
+      type: Boolean,
+      default: false,
     }
   },
   data: () => ({
@@ -146,7 +152,7 @@ export default {
     code() {
       if (this.code && Number.isInteger(Number(this.code)) && Number.isFinite(Number(this.code)) && this.code.length === 6) {
         this.sendingCode = true;
-        this.$authorizationCodeService.isCodeValid(this.code)
+        this.$authorizationCodeService.isCodeValid(this.code, this.email)
           .then(() => this.validCode = true)
           .catch(() => this.validCode = false)
           .finally(() => this.sendingCode = false);
@@ -195,7 +201,9 @@ export default {
       this.sendingCode = false;
       this.validCode = false;
 
-      this.loadWalletEmail();
+      if (!this.anonymous) {
+        this.loadWalletEmail();
+      }
     },
     loadWalletEmail() {
       this.emailLoading = true;
