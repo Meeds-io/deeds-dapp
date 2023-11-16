@@ -173,10 +173,6 @@ export default {
   },
   computed: Vuex.mapState({
     tourURL: state => state.tourURL,
-    validEmail() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(this.email);
-    },
     disabledFormButton() {
       return !this.name || !this.firstname || !this.job || !this.organization || !this.validEmail;
     },
