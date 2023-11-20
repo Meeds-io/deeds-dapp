@@ -298,6 +298,7 @@
                 :readonly="sending"
                 :disabled="disabledEmail"
                 :code="emailCode"
+                :autofocus="!ismobile"
                 @valid-email="validEmail = $event"
                 @email-confirmation-success="emailCode = $event"
                 @email-confirmation-error="emailCodeError = true"
