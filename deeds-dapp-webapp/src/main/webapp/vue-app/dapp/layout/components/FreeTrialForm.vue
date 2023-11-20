@@ -85,6 +85,7 @@
               type="text"
               prepend-inner-icon="fa-user fa-1x"
               class="body-2"
+              autofocus
               dense
               outlined
               @keypress="isLetter($event)" />
@@ -155,7 +156,6 @@ export default {
   data() {
     return {
       rules: [],
-      emailRules: [],
       name: null,
       firstname: null,
       job: null,
@@ -184,9 +184,6 @@ export default {
     }
   }),
   created() {
-    this.emailRules = [ 
-      v => !!v || this.$t('meeds.freeTrial.form.valid.field.message'),
-      v => /.+@.+\..+/.test(v) || this.$t('meeds.freeTrial.form.valid.email.message') ];
     this.rules = [v => !!v || this.$t('meeds.freeTrial.form.valid.field.message')];
   },
   methods: {

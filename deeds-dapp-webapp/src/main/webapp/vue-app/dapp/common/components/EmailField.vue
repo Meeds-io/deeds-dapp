@@ -25,12 +25,12 @@
       :loading="emailLoading"
       :readonly="readonly"
       :disabled="disabledField"
-      :autofocus="!isMobile"
+      :autofocus="autofocus"
       :prepend-inner-icon="emailPrependIcon"
       :class="extraClass"
+      :rules="isValid"
       name="email"
       type="email"
-      pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$"
       autocomplete="off"
       class="align-center"
       hide-details
@@ -106,6 +106,10 @@ export default {
     codePrependIcon: {
       type: String,
       default: null
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     }
   },
   data: () => ({
@@ -216,8 +220,8 @@ export default {
       this.$refs.form?.$el.reportValidity();
     },
     isValid() {
-      return this.email?.trim().length
-        && this.$refs.form?.$el.checkValidity();
+      const pattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/;
+      return this.email?.trim().length && pattern.test(this.email); 
     },
     sendConfirmation() {
       if (!this.email?.length) {
