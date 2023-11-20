@@ -48,6 +48,7 @@
             :readonly="sending"
             :disabled="disabledEmail"
             :reset="drawer"
+            :autofocus="!ismobile"
             @submit="sendRequest"
             @valid-email="validEmail = $event"
             @email-found="knownEmail = $event" />
@@ -121,6 +122,7 @@ export default {
     etherscanBaseLink: state => state.etherscanBaseLink,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
     startTenantGasLimit: state => state.startTenantGasLimit,
+    isMobile: state => state.isMobile,
     nftId() {
       return this.nft?.id;
     },

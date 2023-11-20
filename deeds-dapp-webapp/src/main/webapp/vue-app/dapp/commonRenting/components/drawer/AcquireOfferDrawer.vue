@@ -152,6 +152,7 @@
               :readonly="sending"
               :disabled="disabledEmail"
               :code="emailCode"
+              :autofocus="!ismobile"
               @valid-email="validEmail = $event"
               @email-confirmation-success="emailCode = $event"
               @email-confirmation-error="emailCodeError = true"
@@ -353,6 +354,7 @@ export default {
     MONTH_IN_SECONDS: state => state.MONTH_IN_SECONDS,
     tenantsURL: state => state.tenantsURL,
     buyMeedsLink: state => state.buyMeedsLink,
+    isMobile: state => state.isMobile,
     nftId() {
       return this.offer?.nftId;
     },
