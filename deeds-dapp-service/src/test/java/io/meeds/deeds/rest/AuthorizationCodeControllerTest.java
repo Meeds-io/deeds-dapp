@@ -88,7 +88,7 @@ class AuthorizationCodeControllerTest {
                                                                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                                                                        .param("email", email)
                                                                        .with(csrf()));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().isOk());
   }
 
   @Test
@@ -124,16 +124,18 @@ class AuthorizationCodeControllerTest {
   @Test
   void testCheckValidityWhenNotAuthenticated() throws Exception {
     int code = 56422;
-    ResultActions response = mockMvc.perform(get("/api/authorization").with(csrf())
+    String email = "email";
+    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email).with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
                                                                               String.valueOf(code)));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().isNoContent());
   }
 
   @Test
   void testCheckValidityWhenAuthenticated() throws Exception {
+    String email ="email";
     int code = 56422;
-    ResultActions response = mockMvc.perform(get("/api/authorization")
+    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email)
                                                                       .with(testUser())
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
@@ -144,9 +146,10 @@ class AuthorizationCodeControllerTest {
 
   @Test
   void testCheckValidityWhenMaxVerificationReached() throws Exception {
+    String email ="email";
     int code = 56422;
     doThrow(IllegalAccessException.class).when(authorizationCodeService).checkValidity(TEST_USER.toLowerCase(), code);
-    ResultActions response = mockMvc.perform(get("/api/authorization")
+    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email)
                                                                       .with(testUser())
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,

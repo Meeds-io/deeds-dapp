@@ -49,12 +49,16 @@ public class AuthorizationCodeController {
   public void generateCode(Principal principal,
                            @RequestParam("email")
                            String email) {
-    if (principal == null || StringUtils.isBlank(principal.getName()) || StringUtils.isBlank(email)) {
+    if (principal == null && StringUtils.isBlank(email)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
     try {
-      String walletAddress = principal.getName();
-      authorizationCodeService.generateCode(StringUtils.lowerCase(walletAddress), email, email);
+      if (principal == null && StringUtils.isNotBlank(email)) {
+        authorizationCodeService.generateCode(email, email, email);
+      } else {
+        String walletAddress = principal.getName();
+        authorizationCodeService.generateCode(StringUtils.lowerCase(walletAddress), email, email);
+      }
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Max authorization code usage reached");
     }
@@ -65,13 +69,19 @@ public class AuthorizationCodeController {
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void checkValidity(Principal principal,
                             @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
-                            int code) {
-    if (principal == null || StringUtils.isBlank(principal.getName())) {
+                            int code,
+                            @RequestParam(name = "email")
+                            String email) {
+    if (principal == null && StringUtils.isBlank(email)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
-    String walletAddress = StringUtils.lowerCase(principal.getName());
     try {
-      authorizationCodeService.checkValidity(walletAddress, code);
+      if (principal == null) {
+        authorizationCodeService.checkValidity(email, code);
+      } else {
+        String walletAddress = StringUtils.lowerCase(principal.getName());
+        authorizationCodeService.checkValidity(walletAddress, code);
+      }
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid code");
     }

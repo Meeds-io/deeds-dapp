@@ -37,8 +37,8 @@ export function sendEmailConfirmation(email) {
   });
 }
 
-export function isCodeValid(code) {
-  return fetch(`${window.parentAppLocation}/api/authorization`, {
+export function isCodeValid(code, email) {
+  return fetch(`${window.parentAppLocation}/api/authorization?email=${email}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
