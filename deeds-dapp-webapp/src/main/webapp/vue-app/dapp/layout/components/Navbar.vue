@@ -770,7 +770,6 @@ export default {
             window.history.pushState({}, '', link);
           }
           this.avoidAddToHistory = false;
-          
           this.$root.$emit('location-change', `/${event.target.id}`, link, this.avoidResetTab);
           this.avoidResetTab = false;
         }
