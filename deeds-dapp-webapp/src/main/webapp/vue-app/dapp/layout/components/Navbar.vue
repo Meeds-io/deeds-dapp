@@ -30,14 +30,13 @@
       <v-row class="ma-0 pa-0 flex-nowrap d-flex" no-gutters>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
           <v-btn
-            ref="hubs"
-            id="hubs"
-            :href="homeUrl"
-            value="hubs"
+            ref="why-meeds"
+            id="why-meeds"
+            :href="whyMeedsUrl"
+            value="why-meeds"
             class="px-0 full-height"
-            link
-            @click="openPage">
-            <h3 class="mx-2 font-size-normal" :class="textHubsColor">{{ $t('page.hubs') }}</h3>
+            link>
+            <h3 class="mx-2 font-size-normal" :class="whyMeedsTextColor">{{ $t('whyMeeds') }}</h3>
             <img
               :src="`${parentLocation}/static/images/tenantsMenu.webp`"
               alt=""
@@ -45,7 +44,7 @@
               width="24px"
               min-width="24px"
               class="my-1 object-fit-cover"
-              :class="positionHubsIconTab">
+              :class="positionWhyMeedsIconTab">
           </v-btn>
         </v-col>
         <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
@@ -308,10 +307,9 @@
     no-gutters>
     <v-col cols="auto" class="d-flex justify-center align-center ps-15 ms-16 me-8">
       <a
-        :href="homeUrl"
-        class="no-decoration black--text text--color"
-        @click="openPage">
-        <span class="font-weight-black title">{{ $t('page.hubs') }}</span>
+        :href="whyMeedsUrl"
+        class="no-decoration black--text text--color">
+        <span class="font-weight-black title">{{ $t('whyMeeds') }}</span>
       </a>
     </v-col>
     <v-col cols="auto" class="d-flex justify-center align-center mx-8">
@@ -581,8 +579,8 @@ export default {
     selectedTokensId: null,
     selectedNftId: null,
     updatingMenu: false,
-    dappPages: [
-      'hubs',
+    navTabs: [
+      'why-meeds',
       'marketplace',
       'tenants',
       'owners',
@@ -609,7 +607,7 @@ export default {
     validNetwork: state => state.validNetwork,
     page: state => state.page,
     pageUriPerLanguages: state => state.pageUriPerLanguages,
-    homeUrl: state => state.homeUrl,
+    whyMeedsUrl: state => state.whyMeedsUrl,
     menuColor() {
       return this.dark && 'grey darken-3' || 'grey lighten-3';
     },
@@ -620,8 +618,8 @@ export default {
       const currentPageIndex = this.pageUriPerLanguages['en'].pages.indexOf(this.page);
       return `${this.parentLocation}/${this.pageUriPerLanguages[this.language].uriPrefix}${this.pageUriPerLanguages[this.language].pages[currentPageIndex]}`;
     },
-    selectedHubsTab() {
-      return this.selectedTab && this.selectedTab === 'hubs';
+    selectedWhyMeedsTab() {
+      return this.selectedTab && this.selectedTab === 'why-meeds';
     },
     selectedTokensTab() {
       return this.selectedTab && this.selectedTab === 'tokens';
@@ -632,8 +630,8 @@ export default {
     selectedPortfolioTab() {
       return this.selectedTab && this.selectedTab === 'portfolio';
     },
-    positionHubsIconTab() {
-      return this.selectedHubsTab && this.selectedHubsTab ? 'object-position-left' : 'object-position-right';
+    positionWhyMeedsIconTab() {
+      return this.selectedWhyMeedsTab && this.selectedWhyMeedsTab ? 'object-position-left' : 'object-position-right';
     },
     positionTokensIconTab() {
       return this.selectedTokensTab && this.selectedTokensTab ? 'object-position-left' : 'object-position-right';
@@ -644,8 +642,8 @@ export default {
     positionPortfolioIconTab() {
       return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'object-position-left' : 'object-position-right';
     },
-    textHubsColor() {
-      return this.selectedHubsTab && this.selectedHubsTab ? 'secondary--text' : 'text-sub-title';
+    whyMeedsTextColor() {
+      return this.selectedWhyMeedsTab && this.selectedWhyMeedsTab ? 'secondary--text' : 'text-sub-title';
     },
     textTokensColor() {
       return this.selectedTokensTab && this.selectedTokensTab ? 'secondary--text' : 'text-sub-title';
@@ -714,8 +712,8 @@ export default {
           this.avoidAddToHistory = true;
           this.switchPage(this.page);
         } else {
-          this.selectedTab = (this.dappPages.indexOf(this.page) >= 0) && tabToSelect || `${this.parentLocation}/static`;
-          if (this.isMobile && this.selectedTab !== 'hubs' && this.selectedTab !== 'portfolio') {
+          this.selectedTab = (this.navTabs.indexOf(this.page) >= 0) && tabToSelect || `${this.parentLocation}/static`;
+          if (this.isMobile && this.selectedTab !== 'why-meeds' && this.selectedTab !== 'portfolio') {
             if (this.selectedTab === 'stake' || this.selectedTab === 'farm' || this.selectedTab === 'tokens') {
               this.selectedTokensId = this.page;
               this.selectedTab = 'tokens';
@@ -772,7 +770,6 @@ export default {
             window.history.pushState({}, '', link);
           }
           this.avoidAddToHistory = false;
-
           this.$root.$emit('location-change', `/${event.target.id}`, link, this.avoidResetTab);
           this.avoidResetTab = false;
         }
