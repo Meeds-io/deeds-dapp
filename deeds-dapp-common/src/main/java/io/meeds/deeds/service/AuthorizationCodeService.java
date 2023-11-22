@@ -56,9 +56,16 @@ public class AuthorizationCodeService {
   @Value("${meeds.authorizationCode.maxCodeVerification:20}")
   private int                            maxCodeVerification;
 
+    @Getter
+  @Value("${meeds.generationCode.limit:10}")
+  private int                            generationCodeLimit;
+
   private Duration                       maxCodeValidity;
 
   private Map<String, AuthorizationCode> authorizationCodes = new ConcurrentHashMap<>();
+
+  private Map<String, Integer> codeGenerationCount          = new ConcurrentHashMap<>();
+
 
   @Autowired
   private ListenerService                listenerService;
@@ -101,9 +108,18 @@ public class AuthorizationCodeService {
     if (!hasValidDateCode(key)) {
       authorizationCodes.put(key, newAuthorizationCode());
     }
+    String clientIp = request.getHeader("X-FORWARDED-FOR");  
+    if (clientIp == null) {  
+      clientIp = request.getRemoteAddr();  
+    }
+    int count = codeGenerationCount.get(clientIp);
+    if (count >= generationCodeLimit) {
+      throw new IllegalAccessException("Code generation limit exceeded");
+    }
     AuthorizationCode authorizationCode = authorizationCodes.get(key);
     authorizationCode.incrementSendingCount();
     authorizationCode.setData(data);
+    codeGenerationCount.put(clientIp, count + 1);
     sendEmailWithCode(email, authorizationCode);
   }
 

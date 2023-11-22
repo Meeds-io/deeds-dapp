@@ -127,7 +127,7 @@
               extra-class="body-2"
               email-prepend-icon="fa-envelope fa-1x"
               code-prepend-icon="fa-lock fa-1x"
-              without-load-wallet-email="true"
+              anonymous
               @valid-email="validEmail = $event"
               @email-confirmation-success="emailCode = $event"
               @email-confirmation-error="emailCodeError = true"

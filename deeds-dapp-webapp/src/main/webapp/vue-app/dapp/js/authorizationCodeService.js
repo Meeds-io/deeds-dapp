@@ -38,12 +38,13 @@ export function sendEmailConfirmation(email) {
 }
 
 export function isCodeValid(code, email) {
-  return fetch(`${window.parentAppLocation}/api/authorization?email=${email}`, {
+  return fetch(`${window.parentAppLocation}/api/authorization`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
       'X-AUTHORIZATION': code,
+      'X-User-Email': email
     },
     credentials: 'include',
   }).then(resp => {

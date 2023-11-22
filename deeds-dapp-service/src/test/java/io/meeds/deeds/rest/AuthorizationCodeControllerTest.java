@@ -16,6 +16,7 @@
 package io.meeds.deeds.rest;
 
 import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.constant.CommonConstants.EMAIL_HTTP_HEADER;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -125,9 +126,11 @@ class AuthorizationCodeControllerTest {
   void testCheckValidityWhenNotAuthenticated() throws Exception {
     int code = 56422;
     String email = "email";
-    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email).with(csrf())
+    ResultActions response = mockMvc.perform(get("/api/authorization").with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                              String.valueOf(code))
+                                                                      .header(EMAIL_HTTP_HEADER,
+                                                                              String.valueOf(email)));
     response.andExpect(status().isNoContent());
   }
 
@@ -135,11 +138,13 @@ class AuthorizationCodeControllerTest {
   void testCheckValidityWhenAuthenticated() throws Exception {
     String email ="email";
     int code = 56422;
-    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email)
+    ResultActions response = mockMvc.perform(get("/api/authorization")
                                                                       .with(testUser())
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                              String.valueOf(code))
+                                                                      .header(EMAIL_HTTP_HEADER,
+                                                                              String.valueOf(email)));
     response.andExpect(status().isNoContent());
     verify(authorizationCodeService, times(1)).checkValidity(TEST_USER.toLowerCase(), code);
   }
@@ -149,11 +154,13 @@ class AuthorizationCodeControllerTest {
     String email ="email";
     int code = 56422;
     doThrow(IllegalAccessException.class).when(authorizationCodeService).checkValidity(TEST_USER.toLowerCase(), code);
-    ResultActions response = mockMvc.perform(get("/api/authorization?email=" + email)
+    ResultActions response = mockMvc.perform(get("/api/authorization")
                                                                       .with(testUser())
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                              String.valueOf(code))
+                                                                      .header(EMAIL_HTTP_HEADER,
+                                                                              String.valueOf(email)));
     response.andExpect(status().isUnauthorized());
   }
 

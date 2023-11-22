@@ -16,6 +16,7 @@
 package io.meeds.deeds.web.rest;
 
 import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.constant.CommonConstants.EMAIL_HTTP_HEADER;
 
 import java.security.Principal;
 
@@ -70,7 +71,7 @@ public class AuthorizationCodeController {
   public void checkValidity(Principal principal,
                             @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
                             int code,
-                            @RequestParam(name = "email")
+                            @RequestHeader(name = EMAIL_HTTP_HEADER)
                             String email) {
     if (principal == null && StringUtils.isBlank(email)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);

@@ -111,7 +111,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    withoutLoadWalletEmail: {
+    anonymous: {
       type: Boolean,
       default: false,
     }
@@ -201,7 +201,7 @@ export default {
       this.sendingCode = false;
       this.validCode = false;
 
-      if (!this.withoutLoadWalletEmail) {
+      if (!this.anonymous) {
         this.loadWalletEmail();
       }
     },
