@@ -35,8 +35,7 @@
             :href="whyMeedsUrl"
             value="why-meeds"
             class="px-0 full-height"
-            link
-            @click="openPage">
+            link>
             <h3 class="mx-2 font-size-normal" :class="whyMeedsTextColor">{{ $t('whyMeeds') }}</h3>
             <img
               :src="`${parentLocation}/static/images/tenantsMenu.webp`"
@@ -661,14 +660,12 @@ export default {
       this.initSelectedTab();
     },
     selectedTab(newVal, oldVal) {
-      if (newVal === 'why-meeds') {
-        window.location.reload();
-      } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
-        this.updateSelection(newVal);
-      } else if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
+      if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
         this.$nextTick(() => {
           this.updateSelection(oldVal);
         });
+      } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
+        this.updateSelection(newVal);
       }
     },
     selectedTokensId() {
@@ -773,7 +770,6 @@ export default {
             window.history.pushState({}, '', link);
           }
           this.avoidAddToHistory = false;
-
           this.$root.$emit('location-change', `/${event.target.id}`, link, this.avoidResetTab);
           this.avoidResetTab = false;
         }
