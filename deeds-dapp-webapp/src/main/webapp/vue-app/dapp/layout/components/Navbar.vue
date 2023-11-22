@@ -660,14 +660,12 @@ export default {
       this.initSelectedTab();
     },
     selectedTab(newVal, oldVal) {
-      if (newVal === 'why-meeds') {
-        window.location.reload();
-      } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
-        this.updateSelection(newVal);
-      } else if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
+      if ((newVal === 'tokens' && !this.selectedTokensId) || (newVal === 'nft' && !this.selectedNftId)) {
         this.$nextTick(() => {
           this.updateSelection(oldVal);
         });
+      } else if ((this.selectedTab !== 'tokens' && this.selectedTokensId) || (this.selectedTab !== 'nft' && this.selectedNftId)) {
+        this.updateSelection(newVal);
       }
     },
     selectedTokensId() {
