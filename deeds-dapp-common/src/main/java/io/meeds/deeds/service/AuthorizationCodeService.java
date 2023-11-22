@@ -56,7 +56,7 @@ public class AuthorizationCodeService {
   @Value("${meeds.authorizationCode.maxCodeVerification:20}")
   private int                            maxCodeVerification;
 
-    @Getter
+  @Getter
   @Value("${meeds.generationCode.limit:10}")
   private int                            generationCodeLimit;
 
@@ -65,7 +65,6 @@ public class AuthorizationCodeService {
   private Map<String, AuthorizationCode> authorizationCodes = new ConcurrentHashMap<>();
 
   private Map<String, Integer> codeGenerationCount          = new ConcurrentHashMap<>();
-
 
   @Autowired
   private ListenerService                listenerService;
