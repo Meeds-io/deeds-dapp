@@ -166,6 +166,20 @@ export default {
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1697740685/meedsdao-site/assets/images/upcoming%20hubs/DAO%20N%20FRENS.png',
         backgroundColor: '#333',
         hubUrl: 'https://daonfrens.meeds.io/'
+      },
+      {
+        address: '0xfefefefefefefefefefef12',
+        name: {
+          fr: 'HypeVille',
+          en: 'HypeVille'
+        },
+        description: {
+          fr: 'Regroupement d\'actualités et d\'événements - Tests et lancements de jeux sur la blockchain - Organisation de remises de prix',
+          en: 'News and Events gathering - Game Testing and Launches on the blockchain - Prize giveaways organization'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1700745638/meedsdao-site/assets/images/Featured%20hubs/HypeVille_qeobpl.jpg',
+        backgroundColor: '#f50088',
+        hubUrl: 'https://hypeville.meeds.io/'
       }
     ],
     upcomingHubs: [
