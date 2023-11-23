@@ -47,8 +47,6 @@ public class CommonConstants {
 
   public static final String CODE_REFRESH_HTTP_HEADER                    = "X-REFRESH";
 
-  public static final String EMAIL_HTTP_HEADER                         = "X-USER-EMAIL";
-
   @NoArgsConstructor
   @AllArgsConstructor
   @Data

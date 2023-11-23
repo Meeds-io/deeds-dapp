@@ -24,6 +24,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,6 +67,8 @@ public class AuthorizationCodeService {
 
   private Map<String, Integer> codeGenerationCount          = new ConcurrentHashMap<>();
 
+  private final Map<String, Long> codeGenerationStamp       = new ConcurrentHashMap<>();
+
   @Autowired
   private ListenerService                listenerService;
 
@@ -103,17 +106,27 @@ public class AuthorizationCodeService {
    *                                  reached or maximum code verification has
    *                                  been reached
    */
-  public void generateCode(String key, String email, Object data) throws IllegalAccessException {
+  public void generateCode(String key, String email, Object data, String clientIp) throws IllegalAccessException {
+    long currentTimestamp = System.currentTimeMillis() / 1000;
+    int count = 0;
     if (!hasValidDateCode(key)) {
       authorizationCodes.put(key, newAuthorizationCode());
     }
-    String clientIp = request.getHeader("X-FORWARDED-FOR");  
-    if (clientIp == null) {  
-      clientIp = request.getRemoteAddr();  
-    }
-    int count = codeGenerationCount.get(clientIp);
-    if (count >= generationCodeLimit) {
-      throw new IllegalAccessException("Code generation limit exceeded");
+    Iterator<Map.Entry<String, Long>> iterator = codeGenerationStamp.entrySet().iterator();
+    iterator.forEachRemaining(entry -> {
+            boolean olderThanOneMinute = currentTimestamp - entry.getValue() > 60;
+            if (olderThanOneMinute) {
+                codeGenerationCount.remove(entry.getKey());
+                iterator.remove();
+            }
+        });
+    if (codeGenerationCount.containsKey(clientIp)) {
+      count = codeGenerationCount.get(clientIp);
+      if (count >= generationCodeLimit) {
+        throw new IllegalAccessException("Code generation limit exceeded");
+      }
+    } else {
+      codeGenerationStamp.put(clientIp,currentTimestamp);
     }
     AuthorizationCode authorizationCode = authorizationCodes.get(key);
     authorizationCode.incrementSendingCount();

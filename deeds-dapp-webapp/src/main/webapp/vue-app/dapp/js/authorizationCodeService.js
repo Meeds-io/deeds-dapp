@@ -22,7 +22,7 @@ export function sendEmailConfirmation(email) {
   const formData = new FormData();
   formData.append('email', email);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${window.parentAppLocation}/api/authorization`, {
+  return fetch(`${window.parentAppLocation}/api/authorization/generateCode`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -38,15 +38,18 @@ export function sendEmailConfirmation(email) {
 }
 
 export function isCodeValid(code, email) {
-  return fetch(`${window.parentAppLocation}/api/authorization`, {
-    method: 'GET',
+  const formData = new FormData();
+  formData.append('email', email);
+  const params = new URLSearchParams(formData).toString();
+  return fetch(`${window.parentAppLocation}/api/authorization/checkValidity`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
-      'X-AUTHORIZATION': code,
-      'X-User-Email': email
+      'X-AUTHORIZATION': code
     },
     credentials: 'include',
+    body: params,
   }).then(resp => {
     if (!resp || !resp.ok) {
       throw new Error('email code is wrong');
