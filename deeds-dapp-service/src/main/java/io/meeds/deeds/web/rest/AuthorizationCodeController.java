@@ -21,16 +21,16 @@ import java.security.Principal;
 
 import javax.annotation.security.RolesAllowed;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,34 +44,48 @@ public class AuthorizationCodeController {
   @Autowired
   private AuthorizationCodeService authorizationCodeService;
 
-  @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+  @PostMapping(value="/generateCode", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
   public void generateCode(Principal principal,
                            @RequestParam("email")
-                           String email) {
-    if (principal == null || StringUtils.isBlank(principal.getName()) || StringUtils.isBlank(email)) {
+                           String email,
+                           HttpServletRequest request) {
+    String clientIp = request.getHeader("X-FORWARDED-FOR");  
+    if (clientIp == null) {  
+      clientIp = request.getRemoteAddr();  
+    }
+    if (principal == null && StringUtils.isBlank(clientIp)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
     try {
-      String walletAddress = principal.getName();
-      authorizationCodeService.generateCode(StringUtils.lowerCase(walletAddress), email, email);
+      if (principal == null) {
+        authorizationCodeService.generateCode(email, email, email, clientIp);
+      } else {
+        String walletAddress = principal.getName();
+        authorizationCodeService.generateCode(StringUtils.lowerCase(walletAddress), email, email, clientIp);
+      }
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Max authorization code usage reached");
     }
   }
 
-  @GetMapping
+  @PostMapping(value="/checkValidity", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
   @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
-  @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void checkValidity(Principal principal,
                             @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
-                            int code) {
-    if (principal == null || StringUtils.isBlank(principal.getName())) {
+                            int code,
+                            @RequestParam("email")
+                            String email) {
+    if (principal == null && StringUtils.isBlank(email)) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
-    String walletAddress = StringUtils.lowerCase(principal.getName());
     try {
-      authorizationCodeService.checkValidity(walletAddress, code);
+      if (principal == null) {
+        authorizationCodeService.checkValidity(email, code);
+      } else {
+        String walletAddress = StringUtils.lowerCase(principal.getName());
+        authorizationCodeService.checkValidity(walletAddress, code);
+      }
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid code");
     }

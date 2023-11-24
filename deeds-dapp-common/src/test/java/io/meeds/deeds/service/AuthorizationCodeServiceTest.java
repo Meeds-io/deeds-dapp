@@ -49,12 +49,16 @@ import io.meeds.deeds.listerner.model.EmailSendingCommand;
     "meeds.authorizationCode.maxCodeValidityInMinutes=1",
     "meeds.authorizationCode.maxCodeSending=2",
     "meeds.authorizationCode.maxCodeVerification=3",
+    "meeds.generationCode.limit=16",
+
 })
 class AuthorizationCodeServiceTest {
 
   private static final String      EMAIL = "email";
 
   private static final String      DATA  = "data";
+
+  private static final String      CLIENTIP  = "clientIp";
 
   private static SecureRandom secureRandomCodeGenerator;
 
@@ -92,20 +96,20 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testGenerateNewCode() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     verifyEmailSending();
   }
 
   @Test
   void testGenerateCodeExceptionally() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
-    assertThrows(IllegalAccessException.class, () -> authorizationCodeService.generateCode(key, EMAIL, DATA));
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
+    assertThrows(IllegalAccessException.class, () -> authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP));
   }
 
   @Test
   void testCheckValidity() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     assertThrows(IllegalAccessException.class, () -> authorizationCodeService.checkValidity(key, generatedCode + 1));
@@ -113,7 +117,7 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testCheckValidityExceptionally() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
@@ -123,7 +127,7 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testValidateAndGetData() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     Object data = authorizationCodeService.validateAndGetData(key, generatedCode);
     assertEquals(DATA, data);
@@ -131,7 +135,7 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testValidateAndGetDataWhenVerificationChecksReachedMax() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
@@ -142,7 +146,7 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testValidateAndGetDataWhenVerificationChecksReachedMaxPlusOne() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
@@ -153,21 +157,21 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testValidateAndGetDataWhenVerificationCodeNotValid() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     assertThrows(IllegalAccessException.class, () -> authorizationCodeService.validateAndGetData(key, generatedCode + 1));
   }
 
   @Test
   void testReinitializeCodeVerificationProcessAfterValidCheck() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
     Object data = authorizationCodeService.validateAndGetData(key, generatedCode);
     assertEquals(DATA, data);
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int newlyGeneratedCode = getGeneratedCode(2);
     authorizationCodeService.checkValidity(key, newlyGeneratedCode);
     authorizationCodeService.checkValidity(key, newlyGeneratedCode);
@@ -177,21 +181,21 @@ class AuthorizationCodeServiceTest {
 
   @Test
   void testCantGenerateCodeWhenMaxCheckReached() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
-    assertThrows(IllegalAccessException.class, () -> authorizationCodeService.generateCode(key, EMAIL, DATA));
+    assertThrows(IllegalAccessException.class, () -> authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP));
   }
 
   @Test
   void testCanGenerateCodeWhenNotMaxCheckReached() throws IllegalAccessException {
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int generatedCode = getGeneratedCode();
     authorizationCodeService.checkValidity(key, generatedCode);
     authorizationCodeService.checkValidity(key, generatedCode);
-    authorizationCodeService.generateCode(key, EMAIL, DATA);
+    authorizationCodeService.generateCode(key, EMAIL, DATA, CLIENTIP);
     int newlyGeneratedCode = getGeneratedCode(2);
     assertEquals(generatedCode, newlyGeneratedCode);
   }
