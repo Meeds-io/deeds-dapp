@@ -30,6 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,6 +72,8 @@ public class AuthorizationCodeService {
 
   private final Map<String, Long> codeGenerationStamp       = new ConcurrentHashMap<>();
 
+  public static final Logger LOG                            = LoggerFactory.getLogger(ListenerService.class);
+
   @Autowired
   private ListenerService                listenerService;
 
@@ -107,31 +112,17 @@ public class AuthorizationCodeService {
    *                                  been reached
    */
   public void generateCode(String key, String email, Object data, String clientIp) throws IllegalAccessException {
-    long currentTimestamp = System.currentTimeMillis() / 1000;
-    int count = 0;
     if (!hasValidDateCode(key)) {
       authorizationCodes.put(key, newAuthorizationCode());
     }
-    Iterator<Map.Entry<String, Long>> iterator = codeGenerationStamp.entrySet().iterator();
-    iterator.forEachRemaining(entry -> {
-            boolean olderThanOneMinute = currentTimestamp - entry.getValue() > 60;
-            if (olderThanOneMinute) {
-                codeGenerationCount.remove(entry.getKey());
-                iterator.remove();
-            }
-        });
-    if (codeGenerationCount.containsKey(clientIp)) {
-      count = codeGenerationCount.get(clientIp);
-      if (count >= generationCodeLimit) {
-        throw new IllegalAccessException("Code generation limit exceeded");
-      }
+    if (StringUtils.isNotBlank(clientIp)) {
+      checkClientIpBlackListed(clientIp);
     } else {
-      codeGenerationStamp.put(clientIp,currentTimestamp);
+      LOG.warn("Client IP for email {} is null", email);
     }
     AuthorizationCode authorizationCode = authorizationCodes.get(key);
     authorizationCode.incrementSendingCount();
     authorizationCode.setData(data);
-    codeGenerationCount.put(clientIp, count + 1);
     sendEmailWithCode(email, authorizationCode);
   }
 
@@ -191,6 +182,28 @@ public class AuthorizationCodeService {
                                                                                                       authorizationCode.getCode())));
     listenerService.publishEvent(DEED_EMAIL_SEND_COMMAND_EVENT, emailCommand);
   }
+
+  private void checkClientIpBlackListed(String clientIp) throws IllegalAccessException {
+    long currentTimestamp = System.currentTimeMillis() / 1000;
+    int count = 0;
+    Iterator<Map.Entry<String, Long>> iterator = codeGenerationStamp.entrySet().iterator();
+    iterator.forEachRemaining(entry -> {
+            boolean olderThanOneMinute = currentTimestamp - entry.getValue() > 60;
+            if (olderThanOneMinute) {
+              codeGenerationCount.remove(entry.getKey());
+              iterator.remove();
+            }
+          });
+    if (codeGenerationCount.containsKey(clientIp)) {
+      count = codeGenerationCount.get(clientIp);
+      if (count >= generationCodeLimit) {
+        throw new IllegalAccessException("Code generation limit exceeded for IP: " + clientIp);
+      }
+    } else {
+      codeGenerationStamp.put(clientIp,currentTimestamp);
+    }
+    codeGenerationCount.put(clientIp, count + 1);
+  }  
 
   private synchronized AuthorizationCode newAuthorizationCode() {
     return new AuthorizationCode();
