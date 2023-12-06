@@ -201,6 +201,7 @@ export default {
       this.emailCodeSent = true;
     },
     confirmTrial() {
+      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email);
       if (this.confirmEmailStep) {
         this.sendEmailConfirmation();
       } else  {

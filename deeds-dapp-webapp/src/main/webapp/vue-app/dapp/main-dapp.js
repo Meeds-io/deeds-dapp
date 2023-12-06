@@ -30,6 +30,7 @@ import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
 import * as deedTenantOfferService from './js/deedTenantOfferService.js';
 import * as deedTenantLeaseService from './js/deedTenantLeaseService.js';
+import * as trialService from './js/trialService.js';
 
 window.Object.defineProperty(Vue.prototype, '$utils', {
   value: utils,
@@ -74,6 +75,11 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantOfferService', {
 window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
   value: deedTenantLeaseService,
 });
+
+window.Object.defineProperty(Vue.prototype, '$trialService', {
+  value: trialService,
+});
+
 
 Vue.use(Vuex);
 Vue.use(Vuetify);
