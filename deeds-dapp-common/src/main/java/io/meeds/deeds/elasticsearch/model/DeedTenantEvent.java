@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "deed_tenant_events", createIndex = false)
+@Document(indexName = "deed_tenant_events", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 @JsonInclude(value = Include.NON_EMPTY)
 public class DeedTenantEvent {

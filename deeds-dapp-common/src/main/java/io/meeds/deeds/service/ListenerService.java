@@ -29,9 +29,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,11 +43,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisFuture;
-import io.lettuce.core.api.async.RedisAsyncCommands;
-import io.lettuce.core.pubsub.RedisPubSubAdapter;
-import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.listener.EventListener;
 import io.meeds.deeds.listerner.model.Event;
@@ -58,6 +50,14 @@ import io.meeds.deeds.redis.RedisConfigurationProperties;
 import io.meeds.deeds.scheduling.task.ListenerEventCleanupTask;
 import io.meeds.deeds.scheduling.task.ListenerEventTriggerTask;
 import io.meeds.deeds.storage.DeedTenantEventRepository;
+
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisFuture;
+import io.lettuce.core.api.async.RedisAsyncCommands;
+import io.lettuce.core.pubsub.RedisPubSubAdapter;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Component
 public class ListenerService implements ApplicationContextAware {

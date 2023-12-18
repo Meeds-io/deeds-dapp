@@ -17,11 +17,9 @@ package io.meeds.deeds.web.security;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +30,9 @@ import org.springframework.security.web.csrf.CsrfToken;
 
 import io.meeds.deeds.web.utils.Utils;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
@@ -41,16 +42,13 @@ public class WebSecurityConfig {
   private CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http, DeedAuthenticationProvider authProvider) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http,
+                                         DeedAuthenticationProvider authProvider,
+                                         DeedAccessDeniedHandler deedAccessDeniedHandler) throws Exception {
     http
-        .authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/static/**", "/api/deeds/**").permitAll())
+        .authorizeRequests(authorizeRequests -> authorizeRequests.requestMatchers("/static/**", "/api/deeds/**").permitAll())
         .authenticationProvider(authProvider)
-        .csrf(csrf -> {
-          csrfTokenRepository.setCookiePath("/");
-          csrfTokenRepository.setCookieHttpOnly(false);
-          csrf.csrfTokenRepository(csrfTokenRepository);
-          csrf.ignoringAntMatchers("/static/**", "/api/deeds/**");
-        })
+        .csrf(csrf -> csrf.disable())
         .headers(headers -> {
           headers.frameOptions().disable();
           headers.xssProtection().disable();
@@ -66,7 +64,8 @@ public class WebSecurityConfig {
                                                           authentication) -> response.setStatus(HttpServletResponse.SC_FORBIDDEN)))
         .logout(logout -> logout
                                 .logoutUrl("/logout")
-                                .logoutSuccessHandler((request, response, authentication) -> handleLogout(request, response)));
+                                .logoutSuccessHandler((request, response, authentication) -> handleLogout(request, response)))
+        .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(deedAccessDeniedHandler));
     return http.build();
   }
 

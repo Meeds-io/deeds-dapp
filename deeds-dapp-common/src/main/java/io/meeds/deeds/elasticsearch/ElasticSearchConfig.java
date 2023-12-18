@@ -18,7 +18,6 @@ package io.meeds.deeds.elasticsearch;
 import java.time.Duration;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,9 +26,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration.ClientConfigurationBuilderWithRequiredEndpoint;
 import org.springframework.data.elasticsearch.client.ClientConfiguration.MaybeSecureClientConfigurationBuilder;
-import org.springframework.data.elasticsearch.client.RestClients;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
@@ -40,11 +39,13 @@ import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.elasticsearch.model.UserProfile;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+
 @Configuration
 @EnableElasticsearchRepositories(basePackages = {
-    "io.meeds",
+                                                  "io.meeds",
 })
-public class ElasticSearchConfig {
+public class ElasticSearchConfig extends ElasticsearchConfiguration {
 
   private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchConfig.class);
 
@@ -69,10 +70,10 @@ public class ElasticSearchConfig {
   @Value("${meeds.elasticsearch.autoCreateIndex:true}")
   private boolean             createDeedIndexes;
 
-  @Bean
-  public RestHighLevelClient client() {
-    ClientConfigurationBuilderWithRequiredEndpoint builder = ClientConfiguration.builder();
+  @Override
+  public ClientConfiguration clientConfiguration() {
     String hostAndPort = esUrl.split("//")[1];
+    ClientConfigurationBuilderWithRequiredEndpoint builder = ClientConfiguration.builder();
     MaybeSecureClientConfigurationBuilder connectionBuilder = builder.connectedTo(hostAndPort);
     if (esUrl.contains("https://")) {
       connectionBuilder.usingSsl();
@@ -82,13 +83,12 @@ public class ElasticSearchConfig {
     }
     connectionBuilder.withConnectTimeout(Duration.ofSeconds(connectionTimeout));
     connectionBuilder.withSocketTimeout(Duration.ofSeconds(socketTimeout));
-    ClientConfiguration clientConfiguration = connectionBuilder.build();
-    return RestClients.create(clientConfiguration).rest();// NOSONAR
+    return connectionBuilder.build();
   }
 
   @Bean
-  public ElasticsearchOperations elasticsearchTemplate(RestHighLevelClient client) {
-    ElasticsearchRestTemplate elasticsearchTemplate = new ElasticsearchRestTemplate(client);
+  public ElasticsearchOperations elasticsearchOperations(ElasticsearchClient client) {
+    ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(client);
     tryConnection(elasticsearchTemplate);
     if (createDeedIndexes) {
       createIndex(elasticsearchTemplate, DeedSetting.class);
@@ -100,14 +100,15 @@ public class ElasticSearchConfig {
     return elasticsearchTemplate;
   }
 
-  private void tryConnection(ElasticsearchRestTemplate elasticsearchTemplate) {
+  private void tryConnection(ElasticsearchTemplate elasticsearchTemplate) {
     int i = connectionRetry;
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
         ClusterHealth elasticHealth = elasticsearchTemplate.cluster().health();
         if (elasticHealth.isTimedOut() || elasticHealth.getActiveShardsPercent() < 1 || elasticHealth.getActiveShards() == 0) {
-          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = " + elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
+          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = " +
+              elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
         } else {
           LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
           i = 0;
@@ -127,7 +128,7 @@ public class ElasticSearchConfig {
     }
   }
 
-  private void createIndex(ElasticsearchRestTemplate elasticsearchTemplate, Class<?> esDocumentModelClass) {
+  private void createIndex(ElasticsearchTemplate elasticsearchTemplate, Class<?> esDocumentModelClass) {
     IndexOperations indexOperations = elasticsearchTemplate.indexOps(esDocumentModelClass);
     boolean indexExists = indexOperations.exists();
     if (!indexExists) {

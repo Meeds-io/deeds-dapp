@@ -25,9 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,12 +48,14 @@ import org.springframework.web.context.WebApplicationContext;
 
 import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.web.rest.AuthorizationCodeController;
+import io.meeds.deeds.web.security.DeedAccessDeniedHandler;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(classes = {
     AuthorizationCodeController.class,
-    DeedAuthenticationProvider.class
+    DeedAuthenticationProvider.class,
+    DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
@@ -152,7 +154,7 @@ class AuthorizationCodeControllerTest {
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
                                                                               String.valueOf(code)));
-    response.andExpect(status().isOk());
+    response.andExpect(status().isNoContent());
   }
 
   @Test
@@ -178,7 +180,7 @@ class AuthorizationCodeControllerTest {
                                                                       .with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
                                                                               String.valueOf(code)));
-    response.andExpect(status().isOk());
+    response.andExpect(status().isNoContent());
     verify(authorizationCodeService, times(1)).checkValidity(TEST_USER.toLowerCase(), code);
   }
 

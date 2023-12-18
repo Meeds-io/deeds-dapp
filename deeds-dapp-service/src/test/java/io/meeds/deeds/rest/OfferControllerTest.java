@@ -40,7 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,17 +75,19 @@ import io.meeds.deeds.model.DeedTenantOfferDTO;
 import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.OfferService;
 import io.meeds.deeds.web.rest.OfferController;
+import io.meeds.deeds.web.security.DeedAccessDeniedHandler;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(classes = {
-    OfferController.class,
-    DeedAuthenticationProvider.class
+                            OfferController.class,
+                            DeedAuthenticationProvider.class,
+                            DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {
-    WebSecurityConfig.class
+                                  WebSecurityConfig.class
 })
 class OfferControllerTest {
 
@@ -222,9 +224,11 @@ class OfferControllerTest {
     long nftId = 3l;
     String offerId = "offerId";
     DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
-    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
-                                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                                 .accept(MediaType.APPLICATION_JSON));
+    ResultActions response = mockMvc.perform(post("/api/offers").content(asJsonString(deedTenantOfferDTO))
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .accept(MediaType.APPLICATION_JSON)
+                                                                .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                        String.valueOf(1234l)));
     response.andExpect(status().isForbidden());
     verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
   }
@@ -234,11 +238,11 @@ class OfferControllerTest {
     long nftId = 3l;
     String offerId = "offerId";
     DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
-    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
-                                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                                 .accept(MediaType.APPLICATION_JSON)
-                                                                 .with(testUser())
-                                                                 .with(csrf()));
+    ResultActions response = mockMvc.perform(post("/api/offers").content(asJsonString(deedTenantOfferDTO))
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .accept(MediaType.APPLICATION_JSON)
+                                                                .with(testUser())
+                                                                .with(csrf()));
     response.andExpect(status().isBadRequest());
     verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
   }
@@ -251,13 +255,13 @@ class OfferControllerTest {
     DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
 
     when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenThrow(IllegalAccessException.class);
-    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
-                                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                                 .accept(MediaType.APPLICATION_JSON)
-                                                                 .with(testUser())
-                                                                 .with(csrf())
-                                                                 .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                         String.valueOf(code)));
+    ResultActions response = mockMvc.perform(post("/api/offers").content(asJsonString(deedTenantOfferDTO))
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .accept(MediaType.APPLICATION_JSON)
+                                                                .with(testUser())
+                                                                .with(csrf())
+                                                                .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                        String.valueOf(code)));
     response.andExpect(status().isForbidden());
     verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
   }
@@ -270,13 +274,13 @@ class OfferControllerTest {
     int code = 588865;
     DeedTenantOfferDTO deedTenantOfferDTO = newOffer(offerId, nftId);
     when(authorizationCodeService.validateAndGetData(TEST_USER.toLowerCase(), code)).thenReturn(email);
-    ResultActions response = mockMvc.perform(post("/api/offers/").content(asJsonString(deedTenantOfferDTO))
-                                                                 .contentType(MediaType.APPLICATION_JSON)
-                                                                 .accept(MediaType.APPLICATION_JSON)
-                                                                 .with(testUser())
-                                                                 .with(csrf())
-                                                                 .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                         String.valueOf(code)));
+    ResultActions response = mockMvc.perform(post("/api/offers").content(asJsonString(deedTenantOfferDTO))
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .accept(MediaType.APPLICATION_JSON)
+                                                                .with(testUser())
+                                                                .with(csrf())
+                                                                .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                        String.valueOf(code)));
     response.andExpect(status().isOk());
     verify(deedTenantOfferService, times(1)).createRentingOffer(TEST_USER.toLowerCase(), email, deedTenantOfferDTO);
   }
@@ -320,9 +324,9 @@ class OfferControllerTest {
   void testDeleteOfferWithUser() throws Exception {
     String offerId = "offerId";
     String transactionHash = "transactionHash";
-    ResultActions response = mockMvc.perform(delete("/api/offers/" + offerId + "?transactionHash="
-        + transactionHash).with(testUser())
-                          .with(csrf()));
+    ResultActions response = mockMvc.perform(delete("/api/offers/" + offerId + "?transactionHash=" +
+        transactionHash).with(testUser())
+                        .with(csrf()));
     response.andExpect(status().isOk());
     verify(deedTenantOfferService, times(1)).deleteRentingOffer(TEST_USER, offerId, transactionHash);
   }
