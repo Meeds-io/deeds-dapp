@@ -72,7 +72,7 @@ export function createLease(offerId, transactionHash, code) {
   formData.append('offerId', offerId);
   formData.append('transactionHash', transactionHash);
   const params = new URLSearchParams(formData).toString();
-  return fetch(`${window.parentAppLocation}/api/leases/`, {
+  return fetch(`${window.parentAppLocation}/api/leases`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

@@ -28,20 +28,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,8 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/visite-guidee");
 
   protected static final List<String>        STATIC_PATHS                   =
-                                                          CollectionUtils.concatLists(STATIC_PATHS_EN, STATIC_PATHS_FR);
+                                                          Stream.concat(STATIC_PATHS_EN.stream(), STATIC_PATHS_FR.stream())
+                                                                .toList();
 
   protected static final List<String>        DAPP_PATHS_EN                  = Arrays.asList("/marketplace",
                                                                                             "/tenants",
@@ -99,10 +100,12 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/tokenomics");
 
   protected static final List<String>        DAPP_PATHS_FR                  =
-                                                           CollectionUtils.concatLists(DAPP_PATHS_FR_UNCOM, DAPP_PATHS_FR_COMM);
+                                                           Stream.concat(DAPP_PATHS_FR_UNCOM.stream(),
+                                                                         DAPP_PATHS_FR_COMM.stream())
+                                                                 .toList();
 
   protected static final List<String>        DAPP_PATHS                     =
-                                                        CollectionUtils.concatLists(DAPP_PATHS_EN, DAPP_PATHS_FR);
+                                                        Stream.concat(DAPP_PATHS_EN.stream(), DAPP_PATHS_FR.stream()).toList();
 
   protected static final List<String>        METADATA_LABELS                = Arrays.asList("pageDescription",
                                                                                             "imageAlt",
