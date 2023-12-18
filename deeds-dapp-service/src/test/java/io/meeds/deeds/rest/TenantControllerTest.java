@@ -43,11 +43,15 @@ import io.meeds.deeds.constant.TenantStatus;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
 import io.meeds.deeds.web.rest.TenantController;
+import io.meeds.deeds.web.security.DeedAccessDeniedHandler;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(classes = {
-    TenantController.class, DeedAuthenticationProvider.class, WebSecurityConfig.class
+    TenantController.class,
+    DeedAuthenticationProvider.class,
+    WebSecurityConfig.class,
+    DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)

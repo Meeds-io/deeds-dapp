@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,12 +42,14 @@ import org.springframework.web.context.WebApplicationContext;
 import io.meeds.deeds.model.UserProfileDTO;
 import io.meeds.deeds.service.UserProfileService;
 import io.meeds.deeds.web.rest.UserProfileController;
+import io.meeds.deeds.web.security.DeedAccessDeniedHandler;
 import io.meeds.deeds.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.web.security.WebSecurityConfig;
 
 @SpringBootTest(classes = {
     UserProfileController.class,
-    DeedAuthenticationProvider.class
+    DeedAuthenticationProvider.class,
+    DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
