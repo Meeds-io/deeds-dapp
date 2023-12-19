@@ -140,20 +140,6 @@ export default {
         rewardsPerWeek: 800,
       },
       {
-        address: '0xfefefefefefefefefefef8',
-        name: {
-          fr: 'Communauté Tech Fleet DAO',
-          en: 'Tech Fleet Community DAO'
-        },
-        description: {
-          fr: 'Développement professionnel et renforcement des compétences dans des rôles techniques tels que l\'UX, la gestion de produits et le développement',
-          en: 'Professional development and upskilling in tech roles like UX, product management, and dev'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/tech_fleet_c3smje.webp',
-        backgroundColor: '#01061E',
-        hubUrl: 'https://techfleet.meeds.io/',
-      },
-      {
         address: '0xfefefefefefefefefefef11',
         name: {
           fr: 'DAO\'n\'Frens',
@@ -183,23 +169,6 @@ export default {
       }
     ],
     upcomingHubs: [
-      {
-        address: '0xfefefefefefefefefefef3',
-        name: {
-          fr: 'Cabin',
-          en: 'Cabin'
-        },
-        description: {
-          fr: 'Cabin est une cité réseau qui met les gens en contact avec des expériences de coliving et des résidences de travail/séjour',
-          en: 'Cabin is a network city that connects people to coliving experiences and work/stay residencies'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/cabin_lqm3hf.webp',
-        backgroundColor: '#FEE9CB',
-        websiteUrl: 'https://cabin.city/',
-        twitterURL: 'https://twitter.com/creatorcabins',
-        discordUrl: 'https://discord.com/invite/TUaF464d9e',
-        githubUrl: 'https://github.com/CabinDAO',
-      },
       {
         address: '0xfefefefefefefefefefef4',
         name: {
@@ -280,7 +249,22 @@ export default {
         backgroundColor: '#5400CD',
         websiteUrl: 'https://www.vigilancedao.org/',
         discordUrl: 'https://discord.gg/xUSf2zdYmD',
-      }
+      },
+      {
+        address: '0xfefefefefefefefefefef8',
+        name: {
+          fr: 'Communauté Tech Fleet DAO',
+          en: 'Tech Fleet Community DAO'
+        },
+        description: {
+          fr: 'Développement professionnel et renforcement des compétences dans des rôles techniques tels que l\'UX, la gestion de produits et le développement',
+          en: 'Professional development and upskilling in tech roles like UX, product management, and dev'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1689868155/meedsdao-site/assets/images/upcoming%20hubs/tech_fleet_c3smje.webp',
+        backgroundColor: '#01061E',
+        websiteUrl: 'https://techfleet.org/',
+        twitterURL: 'https://twitter.com/techfleetworks',
+      },
     ],
   }),
   computed: Vuex.mapState({
