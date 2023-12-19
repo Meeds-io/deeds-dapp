@@ -166,6 +166,20 @@ export default {
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1700745638/meedsdao-site/assets/images/Featured%20hubs/HypeVille_qeobpl.jpg',
         backgroundColor: '#f50088',
         hubUrl: 'https://hypeville.meeds.io/'
+      },
+      {
+        address: '0xfefefefefefefefefefef13',
+        name: {
+          fr: 'TheGallery Ambassadors',
+          en: 'TheGallery Ambassadors'
+        },
+        description: {
+          fr: 'TheGallery Ambassadors est un club privé dédié à la promotion des artistes et des activités de TheGallery. Cette communauté exclusive est accessible uniquement par invitation et récompense ses membres en fonction de leurs performances et de leur soutien au projet et à ses artistes.',
+          en: 'TheGallery Ambassadors is a private club dedicated to promoting the artists and activity of TheGallery. This exclusive community is only accessible through invitation and will reward its members depending on their performance and support to the project and its artists.'
+        },
+        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1701768967/meedsdao-site/assets/images/Featured%20hubs/TheGallery_swwey3.png',
+        backgroundColor: '#00263a',
+        hubUrl: 'https://thegallery.meeds.io/'
       }
     ],
     upcomingHubs: [
