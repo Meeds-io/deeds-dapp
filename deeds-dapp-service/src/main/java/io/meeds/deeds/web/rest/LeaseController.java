@@ -21,8 +21,6 @@ import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEA
 import java.security.Principal;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +32,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -120,7 +119,7 @@ public class LeaseController {
   }
 
   @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantLeaseDTO createLease(Principal principal,
                                         @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
                                         int code,
@@ -148,7 +147,7 @@ public class LeaseController {
   }
 
   @PatchMapping(path = "/{leaseId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantLeaseDTO payRent(Principal principal,
                                     @PathVariable(name = "leaseId", required = true)
                                     long leaseId,
@@ -193,7 +192,7 @@ public class LeaseController {
   }
 
   @DeleteMapping(path = "/{leaseId}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public DeedTenantLeaseDTO endLease(Principal principal,
                                      @PathVariable(name = "leaseId", required = true)
                                      long leaseId,

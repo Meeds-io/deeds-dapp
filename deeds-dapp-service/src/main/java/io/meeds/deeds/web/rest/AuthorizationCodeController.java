@@ -19,12 +19,11 @@ import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEA
 
 import java.security.Principal;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -45,7 +44,7 @@ public class AuthorizationCodeController {
   private AuthorizationCodeService authorizationCodeService;
 
   @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public void generateCode(Principal principal,
                            @RequestParam("email")
                            String email) {
@@ -61,7 +60,7 @@ public class AuthorizationCodeController {
   }
 
   @GetMapping
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void checkValidity(Principal principal,
                             @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)

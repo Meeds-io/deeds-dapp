@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 

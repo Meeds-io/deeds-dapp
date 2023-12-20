@@ -68,7 +68,7 @@ export function getOffer(offerId, refreshFromBlockchain) {
 }
 
 export function createOffer(offer, code) {
-  return fetch(`${window.parentAppLocation}/api/offers/`, {
+  return fetch(`${window.parentAppLocation}/api/offers`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

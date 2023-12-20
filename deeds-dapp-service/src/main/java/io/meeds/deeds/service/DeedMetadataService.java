@@ -18,8 +18,6 @@ package io.meeds.deeds.service;
 import java.net.URL;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,8 @@ import io.meeds.deeds.constant.DeedCity;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.storage.DeedMetadataRepository;
+
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class DeedMetadataService {

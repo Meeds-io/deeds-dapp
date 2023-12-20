@@ -17,12 +17,11 @@ package io.meeds.deeds.web.rest;
 
 import java.security.Principal;
 
-import javax.annotation.security.RolesAllowed;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -41,7 +40,7 @@ public class UserProfileController {
   private UserProfileService userProfileService;
 
   @GetMapping(path = "/email", produces = MediaType.TEXT_PLAIN_VALUE)
-  @RolesAllowed(DeedAuthenticationProvider.USER_ROLE_NAME)
+  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   @ResponseStatus(value = HttpStatus.OK)
   public String getEmail(Principal principal) {
     if (principal == null || StringUtils.isBlank(principal.getName())) {
