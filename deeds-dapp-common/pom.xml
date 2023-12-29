@@ -33,49 +33,19 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-contract</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-elasticsearch</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-json</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.json</groupId>
-      <artifactId>jakarta.json-api</artifactId>
-    </dependency>
 
     <!-- Provided artifacts in Server Shared library, used for compilation only -->
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
-    </dependency>
+
     <!-- Test artifacts -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -90,12 +60,5 @@
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
-    <!-- Used to add BuildNumber in application.properties -->
-    <resources>
-      <resource>
-        <directory>src/main/resources/</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
   </build>
 </project>

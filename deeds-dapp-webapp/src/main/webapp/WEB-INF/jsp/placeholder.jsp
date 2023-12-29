@@ -1,4 +1,4 @@
-<%@page import="io.meeds.deeds.web.utils.Utils"%>
+<%@page import="io.meeds.dapp.web.utils.Utils"%>
 <%
   String buildnumber = Utils.getApplicationBuildNumber();
 %>
