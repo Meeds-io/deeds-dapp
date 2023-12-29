@@ -27,17 +27,17 @@
 
   <filter>
     <filter-name>staticResourceFilter</filter-name>
-    <filter-class>io.meeds.deeds.web.filter.StaticResourceFilter</filter-class>
+    <filter-class>io.meeds.dapp.web.filter.StaticResourceFilter</filter-class>
   </filter>
 
   <filter>
     <filter-name>requestDispatcherFilter</filter-name>
-    <filter-class>io.meeds.deeds.web.filter.RequestDispatcherFilter</filter-class>
+    <filter-class>io.meeds.dapp.web.filter.RequestDispatcherFilter</filter-class>
   </filter>
 
   <filter>
     <filter-name>tenantPlaceholderRequestDispatcherFilter</filter-name>
-    <filter-class>io.meeds.deeds.web.filter.TenantPlaceholderRequestDispatcherFilter</filter-class>
+    <filter-class>io.meeds.dapp.web.filter.TenantPlaceholderRequestDispatcherFilter</filter-class>
   </filter>
 
   <filter-mapping>
@@ -59,7 +59,7 @@
 
   <servlet>
     <servlet-name>RobotsServlet</servlet-name>
-    <servlet-class>io.meeds.deeds.web.servlet.RobotsServlet</servlet-class>
+    <servlet-class>io.meeds.dapp.web.servlet.RobotsServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>

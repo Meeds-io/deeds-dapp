@@ -29,9 +29,45 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/</outputDirectory>
       <includes>
+        <include>*:accessors-smart:jar</include>
+        <include>*:json-path:jar</include>
+        <include>*:json-smart:jar</include>
+        <include>*:lettuce-core:jar</include>
+        <include>*:log4j-api:jar</include>
+        <include>*:log4j-to-slf4j:jar</include>
+        <include>*:netty-buffer:jar</include>
+        <include>*:netty-codec:jar</include>
+        <include>*:netty-common:jar</include>
+        <include>*:netty-handler:jar</include>
+        <include>*:netty-resolver:jar</include>
+        <include>*:netty-transport:jar</include>
+        <include>*:netty-transport-native-unix-common:jar</include>
+        <include>*:reactor-core:jar</include>
+        <include>*:spring-boot-starter-data-redis:jar</include>
+        <include>*:spring-boot-starter-hateoas:jar</include>
+        <include>*:spring-boot-starter-logging:jar</include>
+        <include>*:spring-context-support:jar</include>
+        <include>*:spring-data-keyvalue:jar</include>
+        <include>*:spring-data-redis:jar</include>
+        <include>*:spring-hateoas:jar</include>
+        <include>*:spring-oxm:jar</include>
+        <include>*:spring-plugin-core:jar</include>
+        <include>${project.groupId}:*:jar</include>
+      </includes>
+      <excludes>
+        <exclude>${project.groupId}:deeds-dapp-common</exclude>
+      </excludes>
+      <scope>runtime</scope>
+      <outputFileNameMapping>${artifact.artifactId}.jar</outputFileNameMapping>
+    </dependencySet>
+    <!-- Web Archive -->
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>/</outputDirectory>
+      <includes>
         <include>${project.groupId}:*:war</include>
       </includes>
-      <scope>provided</scope>
+      <scope>runtime</scope>
       <outputFileNameMapping>${artifact.build.finalName}.war</outputFileNameMapping>
     </dependencySet>
   </dependencySets>
