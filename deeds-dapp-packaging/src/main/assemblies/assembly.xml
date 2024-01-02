@@ -55,7 +55,7 @@
         <include>${project.groupId}:*:jar</include>
       </includes>
       <excludes>
-        <exclude>${project.groupId}:deeds-dapp-common</exclude>
+        <exclude>${project.groupId}:deeds-dapp-contract</exclude>
       </excludes>
       <scope>runtime</scope>
       <outputFileNameMapping>${artifact.artifactId}.jar</outputFileNameMapping>
