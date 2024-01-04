@@ -34,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -50,11 +51,13 @@ import io.meeds.deeds.service.TenantService;
 @SpringBootTest(classes = {
     TenantController.class,
     DeedAuthenticationProvider.class,
-    WebSecurityConfig.class,
     DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = {
+    WebSecurityConfig.class
+})
 class TenantControllerTest {
 
   private static final long     NFT_ID   = 3;
@@ -77,11 +80,11 @@ class TenantControllerTest {
   @Test
   @WithAnonymousUser
   void whenAnonymousGetDeedTenant_thenNOk() throws Exception {
-    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isUnauthorized());
+    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().is3xxRedirection());
   }
 
   @Test
-  @WithMockUser(username = USERNAME, roles = DeedAuthenticationProvider.USER_ROLE_NAME)
+  @WithMockUser(username = USERNAME, authorities = DeedAuthenticationProvider.USER_ROLE_NAME)
   void whenAuthenticatedGetDeedTenant_thenNOk() throws Exception {
     when(tenantService.getDeedTenantOrImport(USERNAME, NFT_ID, false)).thenReturn(new DeedTenant());
     mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isOk());
