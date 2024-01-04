@@ -80,7 +80,6 @@ window.Object.defineProperty(Vue.prototype, '$trialService', {
   value: trialService,
 });
 
-
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
