@@ -34,7 +34,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.service.MeedAssetsMetricsService;
 import io.meeds.deeds.elasticsearch.model.DeedCity;
 import io.meeds.deeds.model.FundInfo;
 import io.meeds.deeds.service.BlockchainService;
