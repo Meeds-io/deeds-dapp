@@ -35,6 +35,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebM
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -90,7 +91,7 @@ class AuthorizationCodeControllerTest {
                                                                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                                                                        .param("email", email)
                                                                        .with(csrf()));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
   }
 
   @Test
@@ -129,7 +130,7 @@ class AuthorizationCodeControllerTest {
     ResultActions response = mockMvc.perform(get("/api/authorization").with(csrf())
                                                                       .header(CODE_VERIFICATION_HTTP_HEADER,
                                                                               String.valueOf(code)));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
   }
 
   @Test
@@ -157,7 +158,7 @@ class AuthorizationCodeControllerTest {
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).roles(DeedAuthenticationProvider.USER_ROLE_NAME);
+    return user(TEST_USER).password(TEST_PASSWORD).authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
 }

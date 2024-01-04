@@ -31,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -85,7 +86,7 @@ class UserProfileControllerTest {
   @Test
   void testGetProfileEmailWhenNotAuthenticated() throws Exception {
     ResultActions response = mockMvc.perform(get("/api/profile/email").with(csrf()));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
   }
 
   @Test
@@ -98,7 +99,7 @@ class UserProfileControllerTest {
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).roles(DeedAuthenticationProvider.USER_ROLE_NAME);
+    return user(TEST_USER).password(TEST_PASSWORD).authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
 }

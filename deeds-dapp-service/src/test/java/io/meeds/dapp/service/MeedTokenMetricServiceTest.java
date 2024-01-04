@@ -35,8 +35,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.dapp.constant.Currency;
 import io.meeds.dapp.model.MeedTokenMetric;
-import io.meeds.dapp.service.ExchangeService;
-import io.meeds.dapp.service.MeedTokenMetricService;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.service.BlockchainService;

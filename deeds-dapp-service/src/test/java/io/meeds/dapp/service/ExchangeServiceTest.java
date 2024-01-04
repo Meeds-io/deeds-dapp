@@ -52,7 +52,6 @@ import io.meeds.dapp.constant.Currency;
 import io.meeds.dapp.model.CurrencyExchangeRate;
 import io.meeds.dapp.model.MeedExchangeRate;
 import io.meeds.dapp.model.MeedPrice;
-import io.meeds.dapp.service.ExchangeService;
 import io.meeds.dapp.service.ExchangeServiceTest.ExchangeServiceNoInit;
 import io.meeds.dapp.storage.CurrencyExchangeRateRepository;
 import io.meeds.dapp.storage.MeedExchangeRateRepository;
