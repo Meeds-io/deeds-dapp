@@ -16,43 +16,79 @@
 package io.meeds.dapp.web.security;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.ContentTypeOptionsConfig;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.XXssConfig;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.context.ServletContextAware;
 
 import io.meeds.dapp.web.utils.Utils;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Setter;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+@EnableMethodSecurity(prePostEnabled = true,
+    securedEnabled = true,
+    jsr250Enabled = true)
+public class WebSecurityConfig implements ServletContextAware {
 
-  private static final Logger       LOG                 = LoggerFactory.getLogger(WebSecurityConfig.class);
+  private static final Logger LOG = LoggerFactory.getLogger(WebSecurityConfig.class);
 
-  private CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+  @Setter
+  private ServletContext      servletContext;
 
+  @Bean
+  public static GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    // Reset prefix to be empty. By default it adds "ROLE_" prefix
+    return new GrantedAuthorityDefaults();
+  }
+
+  @SuppressWarnings("removal")
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http,
                                          DeedAuthenticationProvider authProvider,
                                          DeedAccessDeniedHandler deedAccessDeniedHandler) throws Exception {
     http
-        .authorizeRequests(authorizeRequests -> authorizeRequests.requestMatchers("/static/**", "/api/deeds/**").permitAll())
         .authenticationProvider(authProvider)
-        .csrf(csrf -> csrf.disable())
+        .jee(JeeConfigurer::and) // NOSONAR no method replacement
+        .csrf(CsrfConfigurer::disable)
         .headers(headers -> {
-          headers.frameOptions().disable();
-          headers.xssProtection().disable();
-          headers.contentTypeOptions().disable();
+          headers.frameOptions(FrameOptionsConfig::disable);
+          headers.xssProtection(XXssConfig::disable);
+          headers.contentTypeOptions(ContentTypeOptionsConfig::disable);
+        })
+        .authorizeHttpRequests(customizer -> {
+          try {
+            customizer.requestMatchers(staticResourcesRequestMatcher())
+                      .permitAll()
+                      .requestMatchers(apiRequestMatcher())
+                      .access(requestAuthorizationManager())
+                      .anyRequest()
+                      .permitAll();
+          } catch (Exception e) {
+            LOG.error("Error configuring REST endpoints security manager", e);
+          }
         })
         .formLogin(formLogin -> formLogin
                                          .loginProcessingUrl("/login")
@@ -69,11 +105,26 @@ public class WebSecurityConfig {
     return http.build();
   }
 
+  private AuthorizationManager<RequestAuthorizationContext> requestAuthorizationManager() {
+    return (Supplier<Authentication> authentication, RequestAuthorizationContext context) -> {
+      Authentication userAuthentication = authentication.get();
+      // Permit anonymous and authentication users to access
+      // the REST endpoints and rely on jee & secured permission
+      // management
+      return userAuthentication.isAuthenticated() ? new AuthorizationDecision(true) : new AuthorizationDecision(false);
+    };
+  }
+
+  private RequestMatcher apiRequestMatcher() {
+    return request -> StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/");
+  }
+
+  private RequestMatcher staticResourcesRequestMatcher() {
+    return request -> !StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/")
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/");
+  }
+
   private void handleLogout(HttpServletRequest request, HttpServletResponse response) {
-    // Regenerate CSRF Token for anonymous user to
-    // allow login again using a valid CSRF Token
-    CsrfToken csrfToken = csrfTokenRepository.generateToken(request);
-    csrfTokenRepository.saveToken(csrfToken, request, response);
     // Disable logout redirection
     String loginMessage = Utils.generateLoginMessage(request.getSession(true));
     try {

@@ -15,7 +15,9 @@
  */
 package io.meeds.dapp.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.dapp.service.DeedMetadataService;
 import io.meeds.deeds.constant.DisplayType;
 import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.elasticsearch.model.DeedMetadata;
