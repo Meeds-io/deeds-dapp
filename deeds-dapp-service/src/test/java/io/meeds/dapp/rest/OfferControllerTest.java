@@ -40,8 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.Filter;
-
 import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +51,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -78,6 +77,8 @@ import io.meeds.deeds.constant.ObjectNotFoundException;
 import io.meeds.deeds.constant.TransactionStatus;
 import io.meeds.deeds.constant.UnauthorizedOperationException;
 import io.meeds.deeds.service.AuthorizationCodeService;
+
+import jakarta.servlet.Filter;
 
 @SpringBootTest(classes = {
                             OfferController.class,
@@ -229,7 +230,7 @@ class OfferControllerTest {
                                                                 .accept(MediaType.APPLICATION_JSON)
                                                                 .header(CODE_VERIFICATION_HTTP_HEADER,
                                                                         String.valueOf(1234l)));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
     verify(deedTenantOfferService, never()).createRentingOffer(any(), any(), any());
   }
 
@@ -293,7 +294,7 @@ class OfferControllerTest {
     ResultActions response = mockMvc.perform(put("/api/offers/" + offerId).content(asJsonString(deedTenantOfferDTO))
                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                           .accept(MediaType.APPLICATION_JSON));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
     verify(deedTenantOfferService, never()).updateRentingOffer(any(), any());
   }
 
@@ -316,7 +317,7 @@ class OfferControllerTest {
   void testDeleteOfferWithAnonymousUser() throws Exception {
     String offerId = "offerId";
     ResultActions response = mockMvc.perform(delete("/api/offers/" + offerId));
-    response.andExpect(status().isForbidden());
+    response.andExpect(status().is3xxRedirection());
     verify(deedTenantOfferService, never()).deleteRentingOffer(any(), any(), any());
   }
 
@@ -374,7 +375,8 @@ class OfferControllerTest {
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).roles(DeedAuthenticationProvider.USER_ROLE_NAME);
+    return user(TEST_USER).password(TEST_PASSWORD)
+                          .authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
 }
