@@ -1,12 +1,9 @@
-package io.meeds.deeds.web.rest;
-
-import javax.annotation.security.RolesAllowed;
+package io.meeds.dapp.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.service.TrialService;
-import io.meeds.deeds.web.security.DeedAuthenticationProvider;
+import io.meeds.dapp.web.security.DeedAuthenticationProvider;
+
+import jakarta.annotation.security.RolesAllowed;
 
 @RestController
 @RequestMapping("/api/trials")
