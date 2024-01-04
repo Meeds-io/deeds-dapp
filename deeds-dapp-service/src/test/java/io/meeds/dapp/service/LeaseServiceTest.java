@@ -66,8 +66,6 @@ import io.meeds.dapp.model.DeedTenantLease;
 import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.service.LeaseService;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.dapp.storage.LeaseRepository;
 import io.meeds.dapp.utils.DeedTenantLeaseMapper;
 import io.meeds.deeds.constant.BlockchainLeaseStatus;

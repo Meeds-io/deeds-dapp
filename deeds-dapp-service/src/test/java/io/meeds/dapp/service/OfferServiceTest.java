@@ -66,7 +66,6 @@ import io.meeds.dapp.constant.RentalPaymentPeriodicity;
 import io.meeds.dapp.model.DeedTenantOffer;
 import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.OfferFilter;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.dapp.storage.OfferRepository;
 import io.meeds.dapp.utils.DeedTenantOfferMapper;
 import io.meeds.deeds.constant.BlockchainOfferStatus;

@@ -15,7 +15,8 @@
  */
 package io.meeds.dapp.web.filter;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,21 +24,20 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.meeds.dapp.web.filter.TenantPlaceholderRequestDispatcherFilter;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.service.TenantService;
+
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootTest(classes = { TenantPlaceholderRequestDispatcherFilter.class })
 class TenantPlaceholderRequestDispatcherFilterTest {
