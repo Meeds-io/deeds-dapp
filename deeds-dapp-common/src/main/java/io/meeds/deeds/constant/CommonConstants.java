@@ -47,6 +47,8 @@ public class CommonConstants {
 
   public static final String CODE_REFRESH_HTTP_HEADER                    = "X-REFRESH";
 
+  public static final String TRIAL_CREATE_COMMAND_EVENT                  = "deed.event.trialCreate";
+
   @NoArgsConstructor
   @AllArgsConstructor
   @Data

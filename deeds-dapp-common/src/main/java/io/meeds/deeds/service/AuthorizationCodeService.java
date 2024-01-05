@@ -45,6 +45,8 @@ import lombok.Setter;
 @Component
 public class AuthorizationCodeService {
 
+  private static final Logger            LOG                 = LoggerFactory.getLogger(AuthorizationCodeService.class);
+
   private SecureRandom                   secureRandomCodeGenerator;
 
   @Getter
@@ -70,8 +72,6 @@ public class AuthorizationCodeService {
   private Map<String, Integer> codeGenerationCount          = new ConcurrentHashMap<>();
 
   private final Map<String, Long> codeGenerationStamp       = new ConcurrentHashMap<>();
-
-  public static final Logger LOG                            = LoggerFactory.getLogger(ListenerService.class);
 
   @Autowired
   private ListenerService                listenerService;
