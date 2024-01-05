@@ -107,7 +107,8 @@
               prepend-inner-icon="fa-user-graduate fa-1x"
               class="body-2"
               dense
-              outlined />
+              outlined
+              @keypress="isLetter($event)"  />
             <v-text-field
               :rules="rules"
               :placeholder="$t('meeds.freeTrial.form.organization.placeholder')"
@@ -116,7 +117,8 @@
               prepend-inner-icon="fa-city fa-1x"
               class="body-2"
               dense
-              outlined />
+              outlined
+              @keypress="isLetter($event)"  />
             <deeds-email-field
               ref="email"
               v-model="email"
@@ -190,7 +192,7 @@ export default {
   methods: {
     isLetter(e) {
       const char = String.fromCharCode(e.keyCode);
-      if (/^[A-Za-z]+$/.test(char)) {
+      if (/^[A-Za-z\s\W]+$/.test(char)) {
         return true;
       } else {
         e.preventDefault();
@@ -208,8 +210,13 @@ export default {
       } 
     },
     createTrial() {
-      //Data to save
-      this.showConfirmationMessage = true;
+      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email, this.emailCode)
+        .then(() => {
+          this.showConfirmationMessage = true;
+        })
+        .catch(() => {
+          this.$root.$emit('alert-message', this.$t('meeds.freeTrial.savingForm.error'), 'error');
+        });
       this.emailCode = null;
       this.emailCodeSent = false;
     }
