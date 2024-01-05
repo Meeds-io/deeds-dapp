@@ -18,7 +18,6 @@ package io.meeds.deeds.service;
 import static io.meeds.deeds.constant.CommonConstants.TRIAL_CREATE_COMMAND_EVENT;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,10 +36,16 @@ public class TrialService {
   @Autowired
   private ListenerService listenerService;
 
-  public TrialContactInformation saveTrial(String firstname, String lastname, String position, String organization, String email) throws ObjectAlreadyExistsException {
-    
-    boolean isEmailKnown = isTrialEmailDuplicated(email);
-    if (isEmailKnown) {
+  public TrialContactInformation getTrialByEmail(String email) {
+    return trialRepository.findByEmail(email);
+  }
+
+  public TrialContactInformation saveTrial(String firstname,
+                                           String lastname,
+                                           String position,
+                                           String organization,
+                                           String email) throws ObjectAlreadyExistsException {
+    if (isTrialEmailDuplicated(email)) {
       throw new ObjectAlreadyExistsException("Trial with same email " + email + " already exists");
     }
 
@@ -50,8 +55,9 @@ public class TrialService {
     trial.setPosition(position);
     trial.setOrganization(organization);
     trial.setEmail(email);
-    trial.setSubmittedDate(LocalDateTime.now(ZoneOffset.UTC));
-    trial.setStatus(TrialStatus.IN_PROGRESS);
+    trial.setCreatedDate(LocalDateTime.now());
+    trial.setLastModifiedDate(trial.getCreatedDate());
+    trial.setStatus(TrialStatus.OPEN);
     TrialContactInformation savedTrail = trialRepository.save(trial);
 
     listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrail);
@@ -60,12 +66,7 @@ public class TrialService {
   }
 
   private boolean isTrialEmailDuplicated(String email) {
-    TrialContactInformation trial = getTrialByEmail(email);
-    return trial != null;
+    return trialRepository.existsByEmail(email);
   }
 
-  private TrialContactInformation getTrialByEmail(String email) {
-    return trialRepository.findByEmail(email);
-  }
-    
 }

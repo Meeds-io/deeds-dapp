@@ -59,14 +59,13 @@ public class TrialController {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
     try {
-      email = (String) authorizationCodeService.validateAndGetData(email, code);
+      authorizationCodeService.validateAndGetData(email, code);
       return trialService.saveTrial(firstname, lastname, position, organization, email);
     } catch (ObjectAlreadyExistsException e) {
       throw new ResponseStatusException(HttpStatus.CONFLICT);
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
-    
   }
-   
+
 }

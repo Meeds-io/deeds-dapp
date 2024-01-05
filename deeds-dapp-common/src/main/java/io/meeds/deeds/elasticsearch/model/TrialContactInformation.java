@@ -18,7 +18,9 @@ package io.meeds.deeds.elasticsearch.model;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -36,7 +38,7 @@ import lombok.NoArgsConstructor;
 @Document(indexName = "trial_contacts", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class TrialContactInformation {
-    
+
   @Id
   private Long                id;
 
@@ -46,26 +48,28 @@ public class TrialContactInformation {
   @Field(type = FieldType.Text)
   private String              lastName;
 
-  @Field(type = FieldType.Text)
+  @Field(type = FieldType.Keyword)
   private String              position;
 
-  @Field(type = FieldType.Text)
+  @Field(type = FieldType.Keyword)
   private String              organization;
 
-  @Field(type = FieldType.Text)
+  @Field(type = FieldType.Keyword)
   private String              email;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       submittedDate;
+  @CreatedDate
+  private LocalDateTime       createdDate;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       rejectedDate;
+  @LastModifiedDate
+  private LocalDateTime       lastModifiedDate;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       acceptedDate;
+  private LocalDateTime       provisionedDate;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       endDate;
+  private LocalDateTime       deprovisionedDate;
 
   @Field(type = FieldType.Auto)
   private TrialStatus         status;
