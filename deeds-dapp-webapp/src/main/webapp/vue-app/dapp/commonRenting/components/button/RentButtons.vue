@@ -50,8 +50,7 @@
                 :min-width="minButtonsWidth"
                 color="primary"
                 outlined
-                depressed
-                @click="openRentDetails">
+                depressed>
                 <span class="text-truncate position-absolute full-width text-center">
                   {{ $t('deedRentSeeRentButton') }}
                 </span>
