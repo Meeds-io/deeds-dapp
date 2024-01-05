@@ -208,8 +208,13 @@ export default {
       } 
     },
     createTrial() {
-      //Data to save
-      this.showConfirmationMessage = true;
+      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email, this.emailCode)
+        .then(() => {
+          this.showConfirmationMessage = true;
+        })
+        .catch(() => {
+          this.$root.$emit('alert-message', this.$t('meeds.freeTrial.savingForm.error'), 'error');
+        });
       this.emailCode = null;
       this.emailCodeSent = false;
     }
