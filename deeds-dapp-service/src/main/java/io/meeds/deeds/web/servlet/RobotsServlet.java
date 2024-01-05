@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,7 +40,8 @@ public class RobotsServlet extends HttpServlet {
 
   private static String       robotsContent;
 
-  public RobotsServlet() {
+  @Override
+  public void init() throws ServletException {
     retrieveRobotsFileContent();
   }
 
@@ -58,9 +60,9 @@ public class RobotsServlet extends HttpServlet {
   private static void retrieveRobotsFileContent() {
     String filePath;
     if (Utils.isProductionEnvironment()) {
-      filePath = "/robots_prod_env.txt"; // NOSONAR
+      filePath = "robots_prod_env.txt";
     } else {
-      filePath = "/robots_test_env.txt"; // NOSONAR
+      filePath = "robots_test_env.txt";
     }
     try {
       try (InputStream fileIs = RobotsServlet.class.getClassLoader().getResourceAsStream(filePath)) {
