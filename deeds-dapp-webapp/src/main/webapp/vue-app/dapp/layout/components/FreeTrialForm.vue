@@ -208,7 +208,7 @@ export default {
       } 
     },
     createTrial() {
-      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email);
+      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email, this.emailCode);
       this.showConfirmationMessage = true;
       this.emailCode = null;
       this.emailCodeSent = false;

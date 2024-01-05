@@ -38,7 +38,6 @@ import io.meeds.deeds.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.elasticsearch.model.DeedSetting;
 import io.meeds.deeds.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.elasticsearch.model.DeedTenantEvent;
-import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.elasticsearch.model.UserProfile;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -100,7 +99,6 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
       createIndex(elasticsearchTemplate, DeedMetadata.class);
       createIndex(elasticsearchTemplate, DeedTenantEvent.class);
       createIndex(elasticsearchTemplate, UserProfile.class);
-      createIndex(elasticsearchTemplate, TrialContactInformation.class);
     }
     return elasticsearchTemplate;
   }

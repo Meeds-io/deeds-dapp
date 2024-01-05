@@ -23,6 +23,7 @@ import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import io.meeds.deeds.constant.TrialStatus;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "trial_contacts")
+@Document(indexName = "trial_contacts", createIndex = true)
+@Setting(replicas = 0, shards = 1)
 public class TrialContactInformation {
     
   @Id
@@ -54,7 +56,16 @@ public class TrialContactInformation {
   private String              email;
 
   @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
-  private LocalDateTime       date;
+  private LocalDateTime       submittedDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+  private LocalDateTime       rejectedDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+  private LocalDateTime       acceptedDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
+  private LocalDateTime       endDate;
 
   @Field(type = FieldType.Auto)
   private TrialStatus         status;

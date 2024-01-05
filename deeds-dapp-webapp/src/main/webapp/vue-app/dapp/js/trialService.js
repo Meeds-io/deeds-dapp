@@ -16,9 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { getCookie } from './authentication';
-
-export function saveTrial(firstname, lastname, position, organization, email) {
+export function saveTrial(firstname, lastname, position, organization, email, code) {
   const formData = new FormData();
   formData.append('firstname', firstname);
   formData.append('lastname', lastname);
@@ -31,7 +29,7 @@ export function saveTrial(firstname, lastname, position, organization, email) {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'X-XSRF-TOKEN': getCookie('XSRF-TOKEN'),
+      'X-AUTHORIZATION': code,
     },
     body: params,
   }).then((resp) => {

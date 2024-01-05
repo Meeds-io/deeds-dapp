@@ -19,6 +19,8 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 
-public interface TrialRepository extends ElasticsearchRepository<TrialContactInformation, Long> {
+public interface TrialRepository extends ElasticsearchRepository<TrialContactInformation, String> {
+
+  TrialContactInformation findByEmail(String email);
 
 }

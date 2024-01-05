@@ -21,35 +21,51 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.TrialStatus;
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.storage.TrialRepository;
 
-@Component
+@Service
 public class TrialService {
 
   @Autowired
   private TrialRepository trialRepository;
 
   @Autowired
-  private ListenerService             listenerService;
+  private ListenerService listenerService;
 
-  public TrialContactInformation saveTrial(String firstname, String lastname, String position, String organization, String email) {
+  public TrialContactInformation saveTrial(String firstname, String lastname, String position, String organization, String email) throws ObjectAlreadyExistsException {
+    
+    boolean isEmailKnown = isTrialEmailDuplicated(email);
+    if (isEmailKnown) {
+      throw new ObjectAlreadyExistsException("Trial with same email " + email + " already exists");
+    }
+
     TrialContactInformation trial = new TrialContactInformation();
     trial.setFirstName(firstname);
     trial.setLastName(lastname);
     trial.setPosition(position);
     trial.setOrganization(organization);
     trial.setEmail(email);
-    trial.setDate(LocalDateTime.now(ZoneOffset.UTC));
+    trial.setSubmittedDate(LocalDateTime.now(ZoneOffset.UTC));
     trial.setStatus(TrialStatus.IN_PROGRESS);
     TrialContactInformation savedTrail = trialRepository.save(trial);
 
     listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrail);
 
     return savedTrail;
+  }
+
+  private boolean isTrialEmailDuplicated(String email) {
+    TrialContactInformation trial = getTrialByEmail(email);
+    return trial != null;
+  }
+
+  private TrialContactInformation getTrialByEmail(String email) {
+    return trialRepository.findByEmail(email);
   }
     
 }

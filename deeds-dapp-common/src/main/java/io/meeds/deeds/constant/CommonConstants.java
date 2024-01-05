@@ -49,6 +49,8 @@ public class CommonConstants {
 
   public static final String TRIAL_CREATE_COMMAND_EVENT                  = "deed.event.trialCreate";
 
+  public static final String TRIAL_TASK_TITLE                            = "[FREE TRIAL] Request for a free trial";
+
   @NoArgsConstructor
   @AllArgsConstructor
   @Data

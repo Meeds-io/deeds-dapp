@@ -16,5 +16,5 @@
 package io.meeds.deeds.constant;
 
 public enum TrialStatus {
-  IN_PROGRESS, TREATED;
+  IN_PROGRESS, PROVISIONED, CANCELED, REJECTED;
 }
