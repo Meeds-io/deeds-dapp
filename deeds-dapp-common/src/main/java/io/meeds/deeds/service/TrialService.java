@@ -44,11 +44,8 @@ public class TrialService {
                                            String lastname,
                                            String position,
                                            String organization,
-                                           String email) throws ObjectAlreadyExistsException {
-    if (isTrialEmailDuplicated(email)) {
-      throw new ObjectAlreadyExistsException("Trial with same email " + email + " already exists");
-    }
-
+                                           String email) {
+   
     TrialContactInformation trial = new TrialContactInformation();
     trial.setFirstName(firstname);
     trial.setLastName(lastname);
