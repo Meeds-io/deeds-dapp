@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.service.AuthorizationCodeService;
 import io.meeds.deeds.service.TrialService;
@@ -61,8 +60,6 @@ public class TrialController {
     try {
       authorizationCodeService.validateAndGetData(email, code);
       return trialService.saveTrial(firstname, lastname, position, organization, email);
-    } catch (ObjectAlreadyExistsException e) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT);
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }

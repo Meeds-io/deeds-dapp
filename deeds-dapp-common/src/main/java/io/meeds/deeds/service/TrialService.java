@@ -19,10 +19,10 @@ import static io.meeds.deeds.constant.CommonConstants.TRIAL_CREATE_COMMAND_EVENT
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.TrialStatus;
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.storage.TrialRepository;
@@ -44,11 +44,17 @@ public class TrialService {
                                            String lastname,
                                            String position,
                                            String organization,
-                                           String email) throws ObjectAlreadyExistsException {
-    if (isTrialEmailDuplicated(email)) {
-      throw new ObjectAlreadyExistsException("Trial with same email " + email + " already exists");
-    }
+                                           String email) {
 
+    if (StringUtils.isBlank(firstname)) {
+      throw new IllegalArgumentException("firstname is mandatory");
+    }
+    if (StringUtils.isBlank(lastname)) {
+      throw new IllegalArgumentException("lastname is mandatory");
+    }
+    if (StringUtils.isBlank(email)) {
+      throw new IllegalArgumentException("email is mandatory");
+    }
     TrialContactInformation trial = new TrialContactInformation();
     trial.setFirstName(firstname);
     trial.setLastName(lastname);
@@ -58,15 +64,11 @@ public class TrialService {
     trial.setCreatedDate(LocalDateTime.now());
     trial.setLastModifiedDate(trial.getCreatedDate());
     trial.setStatus(TrialStatus.OPEN);
-    TrialContactInformation savedTrail = trialRepository.save(trial);
+    TrialContactInformation savedTrial = trialRepository.save(trial);
 
-    listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrail);
+    listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrial);
 
-    return savedTrail;
-  }
-
-  private boolean isTrialEmailDuplicated(String email) {
-    return trialRepository.existsByEmail(email);
+    return savedTrial;
   }
 
 }
