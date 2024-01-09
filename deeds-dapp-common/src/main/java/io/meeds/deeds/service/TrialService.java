@@ -19,10 +19,10 @@ import static io.meeds.deeds.constant.CommonConstants.TRIAL_CREATE_COMMAND_EVENT
 
 import java.time.LocalDateTime;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.constant.TrialStatus;
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.storage.TrialRepository;
@@ -45,7 +45,16 @@ public class TrialService {
                                            String position,
                                            String organization,
                                            String email) {
-   
+
+    if (StringUtils.isBlank(firstname)) {
+      throw new IllegalArgumentException("firstname is mandatory");
+    }
+    if (StringUtils.isBlank(lastname)) {
+      throw new IllegalArgumentException("lastname is mandatory");
+    }
+    if (StringUtils.isBlank(email)) {
+      throw new IllegalArgumentException("email is mandatory");
+    }
     TrialContactInformation trial = new TrialContactInformation();
     trial.setFirstName(firstname);
     trial.setLastName(lastname);
@@ -60,10 +69,6 @@ public class TrialService {
     listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrail);
 
     return savedTrail;
-  }
-
-  private boolean isTrialEmailDuplicated(String email) {
-    return trialRepository.existsByEmail(email);
   }
 
 }

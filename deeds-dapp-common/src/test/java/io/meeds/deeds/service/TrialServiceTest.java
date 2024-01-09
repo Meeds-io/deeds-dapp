@@ -15,75 +15,85 @@
  */
 package io.meeds.deeds.service;
 
+import static io.meeds.deeds.constant.CommonConstants.TRIAL_CREATE_COMMAND_EVENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.meeds.deeds.constant.TrialStatus;
 import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.storage.TrialRepository;
 
 @SpringBootTest(classes = {
-  TrialService.class
+                            TrialService.class,
 })
 class TrialServiceTest {
 
-  private static final Long   id           = 1L; 
+  private static final Long   ID           = 1L;
 
-  private static final String firstname    = "firstname";
+  private static final String FIRSTNAME    = "firstname";
 
-  private static final String lastname     = "lastname";
+  private static final String LASTNAME     = "lastname";
 
-  private static final String position     = "position";
+  private static final String POSITION     = "position";
 
-  private static final String organization = "organization";
+  private static final String ORGANIZATION = "organization";
 
-  private static final String email        = "email";
+  private static final String EMAIL        = "email";
 
   @Autowired
   private TrialService        trialService;
 
   @MockBean
   private TrialRepository     trialRepository;
-    
+
+  @MockBean
+  private ListenerService     listenerService;
+
   @Test
   void testSaveWithEmailTrial() {
-    trialService.saveTrial(firstname, lastname, position, organization, email);
-    verify(trialRepository, times(1)).save(argThat(new ArgumentMatcher<TrialContactInformation>() {
-      @Override
-      public boolean matches(TrialContactInformation trial) {
-        assertNotNull(trial);
-        assertNotNull(trial.getEmail());
-        assertEquals(trial.getStatus(), TrialStatus.OPEN);
-        assertEquals(trial.getCreatedDate(), trial.getLastModifiedDate());
-        return true;
-      }
-    }));
+    when(trialRepository.save(any())).thenAnswer(arg -> {
+      TrialContactInformation trial = arg.getArgument(0);
+      trial.setId(ID);
+      return trial;
+    });
+
+    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(null, LASTNAME, POSITION, ORGANIZATION, EMAIL));
+    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(FIRSTNAME, null, POSITION, ORGANIZATION, EMAIL));
+    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(FIRSTNAME, LASTNAME, POSITION, ORGANIZATION, null));
+
+    TrialContactInformation savedTrial = trialService.saveTrial(FIRSTNAME, LASTNAME, POSITION, ORGANIZATION, EMAIL);
+    assertNotNull(savedTrial);
+    assertEquals(ID, savedTrial.getId());
+    verify(listenerService, times(1)).publishEvent(eq(TRIAL_CREATE_COMMAND_EVENT), eq(savedTrial));
   }
 
   @Test
   void testGetTrialByEmail() {
-    assertNull(trialService.getTrialByEmail(email));
-    TrialContactInformation trial = new TrialContactInformation();
-    trial.setId(id);
-    trial.setFirstName(firstname);
-    trial.setLastName(lastname);
-    trial.setPosition(position);
-    trial.setOrganization(organization);
-    trial.setEmail(email);
-    trial.setCreatedDate(LocalDateTime.now());
-    when(trialService.getTrialByEmail(email)).thenReturn(trial);
+    TrialContactInformation trialContactInformation = new TrialContactInformation(ID,
+                                                                                  FIRSTNAME,
+                                                                                  LASTNAME,
+                                                                                  POSITION,
+                                                                                  ORGANIZATION,
+                                                                                  EMAIL,
+                                                                                  null,
+                                                                                  null,
+                                                                                  null,
+                                                                                  null,
+                                                                                  null,
+                                                                                  null);
+    when(trialRepository.findByEmail(EMAIL)).thenReturn(trialContactInformation);
+    TrialContactInformation trialByEmail = trialService.getTrialByEmail(EMAIL);
+    assertEquals(trialContactInformation, trialByEmail);
   }
+
 }

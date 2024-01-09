@@ -23,6 +23,4 @@ public interface TrialRepository extends ElasticsearchRepository<TrialContactInf
 
   TrialContactInformation findByEmail(String email);
 
-  boolean existsByEmail(String email);
-
 }
