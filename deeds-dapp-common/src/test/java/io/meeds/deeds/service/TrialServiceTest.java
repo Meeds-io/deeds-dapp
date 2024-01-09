@@ -48,7 +48,7 @@ class TrialServiceTest {
 
   private static final String ORGANIZATION = "organization";
 
-  private static final String EMAIL        = "email";
+  private static final String EMAIL        = "email@test.com";
 
   @Autowired
   private TrialService        trialService;

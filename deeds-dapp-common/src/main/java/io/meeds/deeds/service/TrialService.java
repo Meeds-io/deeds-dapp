@@ -64,11 +64,11 @@ public class TrialService {
     trial.setCreatedDate(LocalDateTime.now());
     trial.setLastModifiedDate(trial.getCreatedDate());
     trial.setStatus(TrialStatus.OPEN);
-    TrialContactInformation savedTrail = trialRepository.save(trial);
+    TrialContactInformation savedTrial = trialRepository.save(trial);
 
-    listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrail);
+    listenerService.publishEvent(TRIAL_CREATE_COMMAND_EVENT, savedTrial);
 
-    return savedTrail;
+    return savedTrial;
   }
 
 }
