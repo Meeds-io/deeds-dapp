@@ -56,6 +56,7 @@ export default {
     this.refreshMobileValue();
     this.refreshTheme();
     document.addEventListener('show-trial-form', this.openForm);
+    this.showForm = window.location.hash === `#${this.$t('meeds.freeTrial.url.hash')}`;
   },
   mounted() {
     window.addEventListener('popstate', this.refreshDocumentHead);
@@ -78,7 +79,8 @@ export default {
     },
     openForm(event) {
       this.showForm = event.detail.showForm;
-    }
+      window.location.hash = this.$t('meeds.freeTrial.url.hash');
+    },
   },
 };
 </script>
