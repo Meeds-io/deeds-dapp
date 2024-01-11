@@ -42,7 +42,7 @@
         v-else
         :value="xMeedsBalance"
         :fractions="2">
-        Ɱ
+        xⱮ
       </deeds-number-format>
     </template>
     <template #col2>
@@ -56,7 +56,7 @@
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
               :fractions="2" />
-            <span class="mx-1">Ɱ / {{ $t('week') }}</span>
+            <span class="mx-1">xⱮ / {{ $t('week') }}</span>
           </div>
         </template>
         <span v-if="maxMeedSupplyReached">
@@ -84,7 +84,7 @@
         v-if="!smallScreen"
         :value="xMeedsBalance"
         :fractions="2">
-        Ɱ
+        xⱮ
       </deeds-number-format>
     </template>
   </deeds-token-asset-template>
