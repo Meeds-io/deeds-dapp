@@ -108,7 +108,7 @@
               class="body-2"
               dense
               outlined
-              @keypress="isLetter($event)"  />
+              @keypress="isLetter($event)" />
             <v-text-field
               :rules="rules"
               :placeholder="$t('meeds.freeTrial.form.organization.placeholder')"
@@ -118,7 +118,7 @@
               class="body-2"
               dense
               outlined
-              @keypress="isLetter($event)"  />
+              @keypress="isLetter($event)" />
             <deeds-email-field
               ref="email"
               v-model="email"
