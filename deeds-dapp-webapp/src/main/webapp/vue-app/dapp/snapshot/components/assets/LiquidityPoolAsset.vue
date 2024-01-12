@@ -30,7 +30,7 @@
     <template #col1>
       <deeds-tab-link
         :label="poolName"
-        tab-link="farm"
+        :tab-link="farmURL"
         class="ms-n4" />
     </template>
     <template #col3>
@@ -159,6 +159,7 @@ export default {
     sushiswapPairAddress: state => state.sushiswapPairAddress,
     univ2PairAddress: state => state.univ2PairAddress,
     comethPairAddress: state => state.comethPairAddress,
+    farmURL: state => state.farmURL,
     smallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
     },

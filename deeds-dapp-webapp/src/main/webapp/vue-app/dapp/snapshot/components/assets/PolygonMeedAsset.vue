@@ -29,8 +29,8 @@
     </template>
     <template #col1>
       <deeds-tab-link
+        :tab-link="farmURL"
         label="Meeds"
-        tab-link="farm"
         class="ms-n4" />
     </template>
     <template #col2>
@@ -74,6 +74,7 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     polygonMeedsBalance: state => state.polygonMeedsBalance,
+    farmURL: state => state.farmURL,
     smallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
     },

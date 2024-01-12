@@ -30,7 +30,7 @@
     <template #col1>
       <deeds-tab-link
         :label="cardTypeI18N"
-        tab-link="owners"
+        :tab-link="ownersURL"
         class="ms-n4"
         @click="selectDeed" />
     </template>
