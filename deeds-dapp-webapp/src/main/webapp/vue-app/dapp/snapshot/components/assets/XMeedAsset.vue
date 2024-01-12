@@ -28,8 +28,8 @@
     </template>
     <template #col1>
       <deeds-tab-link
+        :tab-link="stakeURL"
         label="xMeeds"
-        tab-link="stake"
         class="ms-n4" />
     </template>
     <template #col3>
@@ -104,6 +104,7 @@ export default {
     rewardedTotalFixedPercentage: state => state.rewardedTotalFixedPercentage,
     meedsPendingBalanceOfXMeeds: state => state.meedsPendingBalanceOfXMeeds,
     maxMeedSupplyReached: state => state.maxMeedSupplyReached,
+    stakeURL: state => state.stakeURL,
     smallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
     },

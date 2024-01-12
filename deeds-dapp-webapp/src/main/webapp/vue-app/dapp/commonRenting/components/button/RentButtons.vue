@@ -291,16 +291,6 @@ export default {
         })
         .finally(() => this.loadingRentalOffers = false);
     },
-    openRentDetails(event) {
-      if (!event?.ctrlKey) {
-        if (event) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        this.$store.commit('setStandaloneOfferId', this.offers[0].id);
-        this.$root.$emit('switch-page', 'marketplace', true);
-      }
-    },
     refreshOfferFromblockchain(event) {
       const offerId = event?.detail?.offerId?.toNumber() || event?.detail?.leaseId?.toNumber();
       const deedId = event?.detail?.nftId?.toNumber();

@@ -743,11 +743,12 @@ export default {
       }
       this.$nextTick(() => this.updatingMenu = false);
     },
-    switchPage(tab, avoidResetTab) {
-      if (tab && this.$refs[tab]) {
+    switchPage(link, avoidResetTab) {
+      if (link) {
         this.avoidResetTab = avoidResetTab;
         this.$root.$emit('close-drawer');
-        this.$nextTick().then(() => this.$refs[tab].$el.click());
+        window.history.pushState({}, '', link);
+        this.$root.$emit('location-change', link);
       }
     },
     closeBottomMenu(_drawer, level) {

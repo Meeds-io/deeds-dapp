@@ -644,7 +644,7 @@ export default {
     },
     openTenants(event) {
       if (!event || event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', 'tenants');
+        this.$root.$emit('switch-page', this.tenantsURL);
       }
     },
     scrollDrawerContent() {
