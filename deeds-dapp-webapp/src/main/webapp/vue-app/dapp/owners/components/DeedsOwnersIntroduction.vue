@@ -150,11 +150,6 @@ export default {
       this.showIntroduction = true;
       window.setTimeout(() => this.loading = false, 500);
     },
-    openDeeds(event) {
-      if (event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$root.$emit('switch-page', 'mint');
-      }
-    },
     changeCollapsedTextVisibility() {
       this.collapsed= !this.collapsed;
     }

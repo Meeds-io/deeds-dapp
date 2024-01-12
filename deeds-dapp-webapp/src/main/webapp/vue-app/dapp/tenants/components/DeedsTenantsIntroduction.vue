@@ -119,13 +119,6 @@ export default {
     computeLeasesLength(_leases, totalSize) {
       this.hasTenants = totalSize > 0;
     },
-    openMarketplace(event) {
-      if (event?.target?.tagName?.toLowerCase() === 'a') {
-        this.$store.commit('setStandaloneOfferId', null);
-        this.$store.commit('setOfferId', null);
-        this.$root.$emit('switch-page', 'marketplace');
-      }
-    },
     changeCollapsedTextVisibility() {
       this.collapsed= !this.collapsed;
     }
