@@ -40,26 +40,23 @@ public class TrialService {
     return trialRepository.findByEmail(email);
   }
 
-  public TrialContactInformation saveTrial(String firstname,
-                                           String lastname,
+  public TrialContactInformation saveTrial(String fullname,
                                            String position,
                                            String organization,
+                                           String motivation,
                                            String email) {
 
-    if (StringUtils.isBlank(firstname)) {
-      throw new IllegalArgumentException("firstname is mandatory");
-    }
-    if (StringUtils.isBlank(lastname)) {
-      throw new IllegalArgumentException("lastname is mandatory");
+    if (StringUtils.isBlank(fullname)) {
+      throw new IllegalArgumentException("fullname is mandatory");
     }
     if (StringUtils.isBlank(email)) {
       throw new IllegalArgumentException("email is mandatory");
     }
     TrialContactInformation trial = new TrialContactInformation();
-    trial.setFirstName(firstname);
-    trial.setLastName(lastname);
+    trial.setFullName(fullname);
     trial.setPosition(position);
     trial.setOrganization(organization);
+    trial.setMotivation(motivation);
     trial.setEmail(email);
     trial.setCreatedDate(LocalDateTime.now());
     trial.setLastModifiedDate(trial.getCreatedDate());
