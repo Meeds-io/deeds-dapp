@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function saveTrial(firstname, lastname, position, organization, email, code) {
+export function saveTrial(fullname, position, organization, motivation, email, code) {
   const formData = new FormData();
-  formData.append('firstname', firstname);
-  formData.append('lastname', lastname);
+  formData.append('fullname', fullname);
   formData.append('position', position);
   formData.append('organization', organization);
+  formData.append('motivation', motivation);
   formData.append('email', email);
   const params = new URLSearchParams(formData).toString();
   return fetch(`${window.parentAppLocation}/api/trials/contact`, {
