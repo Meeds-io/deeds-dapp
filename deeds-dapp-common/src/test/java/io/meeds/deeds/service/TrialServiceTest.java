@@ -40,9 +40,9 @@ class TrialServiceTest {
 
   private static final Long   ID           = 1L;
 
-  private static final String FIRSTNAME    = "firstname";
+  private static final String FULLNAME     = "fullname";
 
-  private static final String LASTNAME     = "lastname";
+  private static final String MOTIVATION   = "motivation";
 
   private static final String POSITION     = "position";
 
@@ -67,11 +67,10 @@ class TrialServiceTest {
       return trial;
     });
 
-    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(null, LASTNAME, POSITION, ORGANIZATION, EMAIL));
-    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(FIRSTNAME, null, POSITION, ORGANIZATION, EMAIL));
-    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(FIRSTNAME, LASTNAME, POSITION, ORGANIZATION, null));
+    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(null, POSITION, ORGANIZATION, MOTIVATION, EMAIL));
+    assertThrows(IllegalArgumentException.class, () -> trialService.saveTrial(FULLNAME, POSITION, ORGANIZATION, MOTIVATION, null));
 
-    TrialContactInformation savedTrial = trialService.saveTrial(FIRSTNAME, LASTNAME, POSITION, ORGANIZATION, EMAIL);
+    TrialContactInformation savedTrial = trialService.saveTrial(FULLNAME, POSITION, ORGANIZATION, MOTIVATION, EMAIL);
     assertNotNull(savedTrial);
     assertEquals(ID, savedTrial.getId());
     verify(listenerService, times(1)).publishEvent(eq(TRIAL_CREATE_COMMAND_EVENT), eq(savedTrial));
@@ -80,10 +79,10 @@ class TrialServiceTest {
   @Test
   void testGetTrialByEmail() {
     TrialContactInformation trialContactInformation = new TrialContactInformation(ID,
-                                                                                  FIRSTNAME,
-                                                                                  LASTNAME,
+                                                                                  FULLNAME,
                                                                                   POSITION,
                                                                                   ORGANIZATION,
+                                                                                  MOTIVATION,
                                                                                   EMAIL,
                                                                                   null,
                                                                                   null,
