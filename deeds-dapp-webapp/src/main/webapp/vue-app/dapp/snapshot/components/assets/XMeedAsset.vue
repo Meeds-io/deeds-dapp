@@ -56,7 +56,7 @@
             <deeds-number-format 
               :value="weeklyRewardedInMeed" 
               :fractions="2" />
-            <span class="mx-1">xⱮ / {{ $t('week') }}</span>
+            <span class="mx-1">Ɱ / {{ $t('week') }}</span>
           </div>
         </template>
         <span v-if="maxMeedSupplyReached">
