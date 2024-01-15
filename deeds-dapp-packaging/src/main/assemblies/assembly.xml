@@ -33,8 +33,6 @@
         <include>*:json-path:jar</include>
         <include>*:json-smart:jar</include>
         <include>*:lettuce-core:jar</include>
-        <include>*:log4j-api:jar</include>
-        <include>*:log4j-to-slf4j:jar</include>
         <include>*:netty-buffer:jar</include>
         <include>*:netty-codec:jar</include>
         <include>*:netty-common:jar</include>
