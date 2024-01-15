@@ -42,14 +42,14 @@ public class TrialController {
   private AuthorizationCodeService authorizationCodeService;
 
   @PostMapping(value="/contact", consumes =MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public TrialContactInformation saveTrial(@RequestParam(name = "firstname")
-                                           String firstname,
-                                           @RequestParam(name = "lastname")
-                                           String lastname,
+  public TrialContactInformation saveTrial(@RequestParam(name = "fullname")
+                                           String fullname,
                                            @RequestParam(name = "position")
                                            String position,
                                            @RequestParam(name = "organization")
                                            String organization,
+                                           @RequestParam(name = "motivation")
+                                           String motivation,
                                            @RequestParam(name = "email")
                                            String email,
                                            @RequestHeader(name = CODE_VERIFICATION_HTTP_HEADER, required = true)
@@ -59,7 +59,7 @@ public class TrialController {
     }
     try {
       authorizationCodeService.validateAndGetData(email, code);
-      return trialService.saveTrial(firstname, lastname, position, organization, email);
+      return trialService.saveTrial(fullname, position, organization, motivation, email);
     } catch (IllegalAccessException e) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
