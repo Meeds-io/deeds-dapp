@@ -48,9 +48,8 @@
       lg="4"
       md="12">
       <v-slide-x-transition>
-        <deeds-hub-card 
-          :hub="hub"
-          upcoming-hub />
+        <deeds-hub-upcoming-card 
+          :hub="hub" />
       </v-slide-x-transition>
     </v-col>
     <v-col cols="12">
@@ -91,7 +90,9 @@ export default {
   },
   data: () => ({
     loading: false,
-    limit: 10,
+    pageSize: 10,
+    page: 0,
+    hasMore: false,
     hubs: [
       {
         address: '0xfefefefefefefefefefef1',
@@ -107,7 +108,8 @@ export default {
         backgroundColor: '#3F8487',
         usersCount: 248,
         hubUrl: 'https://builders.meeds.io',
-        rewardsPerWeek: 1000,
+        rewardsPerPeriod: 1000,
+        rewardsPeriodType: 'week',
       },
       {
         address: '0xfefefefefefefefefefef2',
@@ -123,7 +125,8 @@ export default {
         backgroundColor: '#6083B6',
         usersCount: 10000,
         hubUrl: 'https://community.exoplatform.com',
-        rewardsPerMonth: 3000,
+        rewardsPerPeriod: 3000,
+        rewardsPeriodType: 'month',
       },
       {
         address: '0xfefefefefefefefefefef10',
@@ -139,7 +142,8 @@ export default {
         backgroundColor: '#2c3163',
         usersCount: 78,
         hubUrl: 'https://rainbowpartners.meeds.io/',
-        rewardsPerWeek: 800,
+        rewardsPerPeriod: 800,
+        rewardsPeriodType: 'week',
       },
       {
         address: '0xfefefefefefefefefefef13',
@@ -295,12 +299,17 @@ export default {
     retrieveHubs() {
       this.loading = true;
       this.$hubService.getHubs({
-        page: 0,
-        size: this.limit,
+        page: this.page,
+        size: this.pageSize,
       })
         .then(data => {
-          const hubs = data?._embedded?.hubs || [];
-          hubs.forEach(hub => this.hubs.push(hub));
+          const hubs = data?._embedded?.hubs;
+          if (hubs?.length) {
+            this.hubs.push(...hubs);
+            this.hasMore = data.page.totalPages > (this.page + 1);
+          } else {
+            this.hasMore = false;
+          }
         })
         .finally(() => this.loading = false);
     },

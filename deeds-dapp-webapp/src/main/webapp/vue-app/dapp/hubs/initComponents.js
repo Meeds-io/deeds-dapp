@@ -17,6 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import DeedsHubs from './components/Hubs.vue';
+import HubsList from './components/HubsList.vue';
 
 import HubsIntroduction from './components/list/HubsIntroduction.vue';
 
@@ -45,6 +46,7 @@ import MetamaskButton from './components/common/MetamaskButton.vue';
 
 const components = {
   'deeds-hubs': DeedsHubs,
+  'deeds-hubs-list': HubsList,
   'deeds-hubs-introduction': HubsIntroduction,
 
   'deeds-hub-card': HubCard,

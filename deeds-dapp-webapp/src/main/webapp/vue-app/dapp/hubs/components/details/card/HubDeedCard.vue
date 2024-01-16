@@ -165,7 +165,7 @@ export default {
       return this.hub?.updatedDate && new Date(this.hub?.updatedDate).getTime();
     },
     hubLogoUrl() {
-      return `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
+      return this.hub?.logoUrl || `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
     },
     hubUrl() {
       return this.hub?.url;
