@@ -23,15 +23,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.service.TenantService;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -47,13 +45,8 @@ public class TenantPlaceholderRequestDispatcherFilter extends HttpFilter {
   private static final Pattern SERVER_HOST_PATTERN =
                                                    Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.wom\\.meeds\\.io");
 
+  @Autowired
   protected TenantService      tenantService;                                                                                                          // NOSONAR
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(filterConfig.getServletContext());
-    this.tenantService = ctx.getBean(TenantService.class);
-  }
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

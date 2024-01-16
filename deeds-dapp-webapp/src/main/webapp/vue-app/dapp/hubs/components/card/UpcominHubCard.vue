@@ -57,34 +57,7 @@
           {{ hubDescription }}
         </v-card>
         <v-spacer />
-        <div v-if="!upcomingHub" class="d-flex mt-4">
-          <div v-if="hubUsers" class="d-flex align-center justify-center">
-            <v-img 
-              :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color font-weight-normal">
-              {{ hubUsers }}
-            </div>
-          </div>
-          <div v-if="hubRewards" class="d-flex align-center justify-center ms-auto">
-            <v-img 
-              :src="`${parentLocation}/static/images/meed_circle.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color d-flex font-weight-normal">
-              {{ formattedHubRewards }}
-              <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriodicity }}</span>
-            </div>
-          </div>
-          <div v-if="noUsersDataToDisplay">
-            <v-icon size="21" class="secondary--text me-3">fas fa-bolt</v-icon>
-            <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
-          </div>
-        </div>
-        <div v-else class="d-flex flex-row pt-4">
+        <div class="d-flex flex-row pt-4">
           <div class="d-flex flex-row">
             <v-btn
               v-if="hubWebsiteUrl"
@@ -159,10 +132,6 @@ export default {
       type: Object,
       default: null,
     },
-    upcomingHub: {
-      type: Boolean,
-      default: false,
-    }
   },
   computed: Vuex.mapState({
     language: state => state.language,
@@ -175,22 +144,28 @@ export default {
       return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
     hubBackgroundColor() {
-      return this.hub?.backgroundColor || this.hub?.color;
+      return this.hub?.backgroundColor;
     },
     hubLogoUrl() {
       return this.hub?.logoUrl;
     },
     hubUsersCount() {
-      return this.hub?.usersCount || 0;
+      return (this.hub?.usersCount > 999 ? this.hub?.usersCount / 1000 : this.hub?.usersCount) || 0;
     },
     hubUsers() {
-      return this.hubUsersCount > 999 ? `${parseInt(this.hubUsersCount / 1000)}K` : this.hubUsersCount;
+      return this.hub?.usersCount > 999 ? this.hubUsersCount.toString().concat('K') : this.hub?.usersCount;
     },
     hubUrl() {
-      return this.hub?.hubUrl || this.hub?.url;
+      return this.hub?.hubUrl;
     },
-    hubRewardsPerWeek() {
-      return (this.hub?.rewardsPerWeek || 0) / 1000;
+    hubRewards() {
+      return this.hub?.rewardsPerWeek / 1000 || this.hub?.rewardsPerMonth / 1000;
+    },
+    formattedHubRewards() {
+      return this.hubRewards >= 1 ? this.hubRewards.toString().concat('K') : (this.hub?.rewardsPerWeek || this.hub?.rewardsPerMonth);
+    },
+    hubRewardsPeriodicity() {
+      return this.hub?.rewardsPerWeek ? this.$t('week') : (this.hub?.rewardsPerMonth && this.$t('month'));
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;

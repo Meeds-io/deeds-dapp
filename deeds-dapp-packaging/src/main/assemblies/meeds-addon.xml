@@ -41,12 +41,10 @@
         <include>*:netty-transport:jar</include>
         <include>*:netty-transport-native-unix-common:jar</include>
         <include>*:reactor-core:jar</include>
-        <include>*:spring-boot-starter-data-redis:jar</include>
         <include>*:spring-boot-starter-hateoas:jar</include>
         <include>*:spring-boot-starter-logging:jar</include>
         <include>*:spring-context-support:jar</include>
         <include>*:spring-data-keyvalue:jar</include>
-        <include>*:spring-data-redis:jar</include>
         <include>*:spring-hateoas:jar</include>
         <include>*:spring-oxm:jar</include>
         <include>*:spring-plugin-core:jar</include>
