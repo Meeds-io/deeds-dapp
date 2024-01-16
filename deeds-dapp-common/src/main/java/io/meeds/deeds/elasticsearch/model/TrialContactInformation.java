@@ -43,16 +43,16 @@ public class TrialContactInformation {
   private Long                id;
 
   @Field(type = FieldType.Text)
-  private String              firstName;
-
-  @Field(type = FieldType.Text)
-  private String              lastName;
+  private String              fullName;
 
   @Field(type = FieldType.Keyword)
   private String              position;
 
   @Field(type = FieldType.Keyword)
   private String              organization;
+
+  @Field(type = FieldType.Text)
+  private String              motivation;
 
   @Field(type = FieldType.Keyword)
   private String              email;

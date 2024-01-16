@@ -79,9 +79,9 @@
             class="mx-auto"
             flat>
             <v-text-field
-              :placeholder="$t('meeds.freeTrial.form.firstname.placeholder')"
+              :placeholder="$t('meeds.freeTrial.form.fullname.placeholder')"
               :rules="rules"
-              v-model="firstname"
+              v-model="fullname"
               type="text"
               prepend-inner-icon="fa-user fa-1x"
               class="body-2"
@@ -90,19 +90,9 @@
               outlined
               @keypress="isLetter($event)" />
             <v-text-field
-              :placeholder="$t('meeds.freeTrial.form.name.placeholder')"
               :rules="rules"
-              v-model="name"
-              type="text"
-              prepend-inner-icon="fa-user-tie fa-1x"
-              class="body-2"
-              dense
-              outlined
-              @keypress="isLetter($event)" />
-            <v-text-field
-              :rules="rules"
-              :placeholder="$t('meeds.freeTrial.form.job.placeholder')"
-              v-model="job"
+              :placeholder="$t('meeds.freeTrial.form.position.placeholder')"
+              v-model="position"
               type="text"
               prepend-inner-icon="fa-user-graduate fa-1x"
               class="body-2"
@@ -119,6 +109,17 @@
               dense
               outlined
               @keypress="isLetter($event)" />
+            <v-textarea
+              v-model="motivation"
+              :rules="motivationRules"
+              :placeholder="$t('meeds.freeTrial.form.motivation.placeholder')"
+              class="body-2"
+              outlined
+              @keypress="isLetter($event)">
+              <template #prepend-inner>
+                <v-icon class="fa-1x px-1">fa-circle-question</v-icon>
+              </template>
+            </v-textarea>
             <deeds-email-field
               ref="email"
               v-model="email"
@@ -159,10 +160,11 @@ export default {
   data() {
     return {
       rules: [],
-      name: null,
-      firstname: null,
-      job: null,
+      motivationRules: [],
+      fullname: null,
+      position: null,
       organization: null,
+      motivation: null,
       email: null,
       emailCode: null,
       emailCodeSent: false,
@@ -174,7 +176,7 @@ export default {
   computed: Vuex.mapState({
     tourURL: state => state.tourURL,
     disabledFormButton() {
-      return !this.name || !this.firstname || !this.job || !this.organization || !this.validEmail;
+      return !this.fullname || !this.position || !this.organization || !this.motivation || !this.validEmail || this.motivation.length > 250;
     },
     isSmallScreen() {
       return this.$vuetify.breakpoint.smAndDown;
@@ -188,6 +190,7 @@ export default {
   }),
   created() {
     this.rules = [v => !!v || this.$t('meeds.freeTrial.form.valid.field.message')];
+    this.motivationRules = [v => !v || v.length <= 250 || this.$t('meeds.freeTrial.form.valid.motivation.message')];
   },
   methods: {
     isLetter(e) {
@@ -210,7 +213,7 @@ export default {
       } 
     },
     createTrial() {
-      this.$trialService.saveTrial(this.firstname, this.name, this.job, this.organization, this.email, this.emailCode)
+      this.$trialService.saveTrial(this.fullname, this.position, this.organization, this.motivation, this.email, this.emailCode)
         .then(() => {
           this.showConfirmationMessage = true;
         })
