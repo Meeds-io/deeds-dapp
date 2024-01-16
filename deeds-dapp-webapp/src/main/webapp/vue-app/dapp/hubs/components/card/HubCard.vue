@@ -123,27 +123,33 @@
             </template>
             <span>{{ $t('wom.openHubWebsite') }}</span>
           </v-tooltip>
-          <div class="d-flex align-center justify-center ms-auto">
-            <v-img 
-              :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color font-weight-normal">
-              {{ hubUsers }}
-            </div>
+          <div v-if="!hubUsers" class="d-flex align-center justify-center ms-auto">
+            <v-icon size="21" class="secondary--text me-3">fas fa-bolt</v-icon>
+            <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
           </div>
-          <div class="d-flex align-center justify-center ms-2">
-            <v-img 
-              :src="`${parentLocation}/static/images/meed_circle.webp`"
-              class="me-2"
-              width="25px"
-              height="25px" />
-            <div class="text-light-color d-flex font-weight-normal">
-              {{ hubRewardsAmount }}
-              <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
+          <template v-else>
+            <div class="d-flex align-center justify-center ms-auto">
+              <v-img 
+                :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
+                class="me-2"
+                width="25px"
+                height="25px" />
+              <div class="text-light-color font-weight-normal">
+                {{ hubUsers }}
+              </div>
             </div>
-          </div>
+            <div class="d-flex align-center justify-center ms-2">
+              <v-img 
+                :src="`${parentLocation}/static/images/meed_circle.webp`"
+                class="me-2"
+                width="25px"
+                height="25px" />
+              <div v-if="hubRewardsPeriod && hubRewardsAmount" class="text-light-color d-flex font-weight-normal">
+                {{ hubRewardsAmount }}
+                <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </v-card>
@@ -180,7 +186,7 @@ export default {
       return this.hub?.updatedDate && new Date(this.hub?.updatedDate).getTime();
     },
     hubLogoUrl() {
-      return `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
+      return this.hub?.logoUrl || `${this.parentLocation}/api/hubs/${this.hubAddress}/avatar?v=${this.hubUpdateTime || 0}`;
     },
     hubUsersCount() {
       return this.hub?.usersCount || 0;
@@ -192,10 +198,10 @@ export default {
       return this.hub?.hubUrl || this.hub?.url;
     },
     hubRewardsPeriodType() {
-      return this.hub?.rewardsPeriodType?.toLowerCase();
+      return this.hub?.rewardsPeriodType?.toLowerCase?.();
     },
     hubRewardsPeriod() {
-      return this.$t(`wom.${this.hubRewardsPeriodType}`);
+      return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsAmount() {
       return new Intl.NumberFormat(this.language, {
