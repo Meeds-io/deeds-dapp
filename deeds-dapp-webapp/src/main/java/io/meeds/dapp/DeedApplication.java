@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 import jakarta.servlet.ServletContext;
@@ -39,6 +40,10 @@ import jakarta.servlet.ServletException;
 })
 @EnableCaching
 @EnableSpringDataWebSupport
+@EnableElasticsearchRepositories(basePackages = {
+  "io.meeds.deeds.common",
+  "io.meeds.dapp",
+})
 @PropertySource("classpath:application.properties")
 @PropertySource("classpath:dApp.properties")
 public class DeedApplication extends SpringBootServletInitializer {
