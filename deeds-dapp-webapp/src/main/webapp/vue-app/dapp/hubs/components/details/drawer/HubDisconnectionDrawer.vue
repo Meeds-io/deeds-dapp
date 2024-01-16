@@ -139,7 +139,7 @@ export default {
           this.disconnecting = false;
           this.close();
           this.$root.$emit('alert-message', this.$t('wom.disconnectedFromWoMSuccessfully'), 'success');
-          this.$root.$emit('hub-disconnection-success');
+          this.$root.$emit('close-hub-details');
         })
         .catch(e => {
           this.disconnecting = false;

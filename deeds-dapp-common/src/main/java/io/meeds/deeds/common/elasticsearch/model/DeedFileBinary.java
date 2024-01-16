@@ -52,7 +52,7 @@ public class DeedFileBinary {
   @Field(type = FieldType.Keyword)
   private String          mimeType;
 
-  @Field(type = FieldType.Binary, index = false)
+  @Field(type = FieldType.Binary)
   private String          binary;
 
   @Field(type = FieldType.Date, format = DateFormat.epoch_millis)

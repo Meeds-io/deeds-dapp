@@ -37,7 +37,8 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = {
-                                                  "io.meeds",
+  "io.meeds.deeds.common",
+  "io.meeds.dapp",
 })
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
 
@@ -58,7 +59,7 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
   @Value("${meeds.elasticsearch.connectTimeout:20}")
   private int                 connectionTimeout;
 
-  @Value("${meeds.elasticsearch.connectionRetry:30}")
+  @Value("${meeds.elasticsearch.connectionRetry:60}")
   private int                 connectionRetry;
 
   @Override
@@ -86,15 +87,20 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     return elasticsearchTemplate;
   }
 
-  private void tryConnection(ElasticsearchTemplate elasticsearchTemplate) {
+  private void tryConnection(ElasticsearchOperations elasticsearchOperations) {
     int i = connectionRetry;
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
-        ClusterHealth elasticHealth = elasticsearchTemplate.cluster().health();
-        if (elasticHealth.isTimedOut() || elasticHealth.getActiveShardsPercent() < 1 || elasticHealth.getActiveShards() == 0) {
-          throw new IllegalStateException("Elasticsearch Cluster Health Check TimedOut. Active shard = " +
-              elasticHealth.getActiveShards() + ". Percentage = " + elasticHealth.getActiveShardsPercent());
+        ClusterHealth elasticHealth = elasticsearchOperations.cluster().health();
+        if (elasticHealth.isTimedOut()
+            || elasticHealth.getActiveShardsPercent() < 1
+            || elasticHealth.getActiveShards() == 0
+            || !StringUtils.equalsIgnoreCase(elasticHealth.getStatus(), "green")) {
+          throw new IllegalStateException(String.format("Elasticsearch Cluster Health Check TimedOut. Active shard = '%s', Percentage = '%s', Status = '%s'",
+                                                        elasticHealth.getActiveShards(),
+                                                        elasticHealth.getActiveShardsPercent(),
+                                                        elasticHealth.getStatus()));
         } else {
           LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
           i = 0;
