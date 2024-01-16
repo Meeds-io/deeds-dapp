@@ -31,15 +31,10 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.RefreshPolicy;
 import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = {
-  "io.meeds.deeds.common",
-  "io.meeds.dapp",
-})
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
 
   private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchConfig.class);
