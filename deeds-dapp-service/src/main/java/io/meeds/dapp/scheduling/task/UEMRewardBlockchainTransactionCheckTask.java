@@ -23,9 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.service.UEMRewardService;
 import io.meeds.deeds.common.service.UEMRewardStatusService;
+import io.meeds.wom.api.model.UEMReward;
 
 @Component
 public class UEMRewardBlockchainTransactionCheckTask {

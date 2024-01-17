@@ -30,12 +30,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DisplayType;
 import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.common.elasticsearch.storage.DeedMetadataRepository;
 import io.meeds.deeds.common.model.DeedMetadataAttribute;
 import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(
     classes = {

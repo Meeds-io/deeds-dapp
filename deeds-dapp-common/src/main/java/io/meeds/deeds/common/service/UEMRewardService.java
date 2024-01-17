@@ -17,9 +17,9 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.api.constant.UEMRewardStatusType.NONE;
-import static io.meeds.deeds.api.constant.UEMRewardStatusType.PENDING_REWARD;
 import static io.meeds.deeds.common.utils.UEMRewardMapper.toEntity;
+import static io.meeds.wom.api.constant.UEMRewardStatusType.NONE;
+import static io.meeds.wom.api.constant.UEMRewardStatusType.PENDING_REWARD;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,13 +34,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
 import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.UEMRewardMapper;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.UEMReward;
 
 @Component
 public class UEMRewardService {

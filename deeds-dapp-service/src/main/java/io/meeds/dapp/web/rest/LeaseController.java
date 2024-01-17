@@ -48,10 +48,10 @@ import io.meeds.dapp.model.DeedTenantLeaseDTO;
 import io.meeds.dapp.model.LeaseFilter;
 import io.meeds.dapp.service.LeaseService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("/api/leases")

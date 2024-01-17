@@ -17,10 +17,10 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.api.constant.HubReportStatusType.NONE;
-import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.SENT;
+import static io.meeds.wom.api.constant.HubReportStatusType.NONE;
+import static io.meeds.wom.api.constant.HubReportStatusType.PENDING_REWARD;
+import static io.meeds.wom.api.constant.HubReportStatusType.REWARDED;
+import static io.meeds.wom.api.constant.HubReportStatusType.SENT;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -31,12 +31,12 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.constant.HubReportStatusType;
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.model.RewardPeriod;
+import io.meeds.wom.api.constant.HubReportStatusType;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.UEMReward;
 
 @Component
 public class HubReportComputingService {
