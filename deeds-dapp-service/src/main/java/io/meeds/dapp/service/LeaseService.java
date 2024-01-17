@@ -47,7 +47,6 @@ import io.meeds.dapp.model.LeaseFilter;
 import io.meeds.dapp.storage.LeaseRepository;
 import io.meeds.dapp.utils.DeedTenantLeaseMapper;
 import io.meeds.dapp.utils.DeedTenantOfferMapper;
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
@@ -56,6 +55,7 @@ import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.common.service.TenantService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @Component
 public class LeaseService {

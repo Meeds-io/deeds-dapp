@@ -17,15 +17,15 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.api.constant.HubReportStatusType.ERROR_SENDING;
-import static io.meeds.deeds.api.constant.HubReportStatusType.INVALID;
-import static io.meeds.deeds.api.constant.HubReportStatusType.NONE;
-import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REJECTED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.SENT;
 import static io.meeds.deeds.common.utils.HubReportMapper.fromEntity;
 import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
+import static io.meeds.wom.api.constant.HubReportStatusType.ERROR_SENDING;
+import static io.meeds.wom.api.constant.HubReportStatusType.INVALID;
+import static io.meeds.wom.api.constant.HubReportStatusType.NONE;
+import static io.meeds.wom.api.constant.HubReportStatusType.PENDING_REWARD;
+import static io.meeds.wom.api.constant.HubReportStatusType.REJECTED;
+import static io.meeds.wom.api.constant.HubReportStatusType.REWARDED;
+import static io.meeds.wom.api.constant.HubReportStatusType.SENT;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -47,22 +47,22 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.api.constant.HubReportStatusType;
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
-import io.meeds.deeds.api.constant.WomAuthorizationException;
-import io.meeds.deeds.api.constant.WomException;
-import io.meeds.deeds.api.constant.WomRequestException;
-import io.meeds.deeds.api.model.Hub;
-import io.meeds.deeds.api.model.HubContract;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.HubReportPayload;
-import io.meeds.deeds.api.model.HubReportVerifiableData;
 import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.HubReportMapper;
+import io.meeds.wom.api.constant.HubReportStatusType;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
+import io.meeds.wom.api.constant.WomAuthorizationException;
+import io.meeds.wom.api.constant.WomException;
+import io.meeds.wom.api.constant.WomRequestException;
+import io.meeds.wom.api.model.Hub;
+import io.meeds.wom.api.model.HubContract;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.HubReportPayload;
+import io.meeds.wom.api.model.HubReportVerifiableData;
 
 import lombok.Getter;
 

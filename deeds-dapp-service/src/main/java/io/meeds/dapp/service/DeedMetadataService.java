@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.service;
 
-import static io.meeds.deeds.api.utils.JsonUtils.OBJECT_MAPPER;
+import static io.meeds.wom.api.utils.JsonUtils.OBJECT_MAPPER;
 
 import java.net.URL;
 import java.util.Map;
@@ -27,12 +27,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.common.elasticsearch.storage.DeedMetadataRepository;
 import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 import jakarta.annotation.PostConstruct;
 

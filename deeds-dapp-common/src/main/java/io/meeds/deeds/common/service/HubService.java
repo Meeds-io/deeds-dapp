@@ -43,14 +43,6 @@ import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
-import io.meeds.deeds.api.constant.WomAuthorizationException;
-import io.meeds.deeds.api.constant.WomException;
-import io.meeds.deeds.api.constant.WomRequestException;
-import io.meeds.deeds.api.model.Hub;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.WomConnectionRequest;
-import io.meeds.deeds.api.model.WomDisconnectionRequest;
 import io.meeds.deeds.common.constant.AttachmentType;
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
@@ -60,6 +52,14 @@ import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.utils.HubMapper;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
+import io.meeds.wom.api.constant.WomAuthorizationException;
+import io.meeds.wom.api.constant.WomException;
+import io.meeds.wom.api.constant.WomRequestException;
+import io.meeds.wom.api.model.Hub;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.WomConnectionRequest;
+import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @Component
 public class HubService {
