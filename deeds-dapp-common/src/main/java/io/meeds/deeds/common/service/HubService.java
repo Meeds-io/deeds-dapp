@@ -21,10 +21,11 @@ import static io.meeds.deeds.common.utils.HubMapper.toEntity;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -61,28 +62,33 @@ import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
+import jakarta.annotation.PostConstruct;
+import lombok.SneakyThrows;
+
 @Component
 public class HubService {
 
-  public static final String  HUB_SAVED                 = "uem.hub.saved";
+  public static final String  HUB_SAVED                  = "uem.hub.saved";
 
-  public static final String  HUB_DISABLED              = "uem.hub.diabled";
+  public static final String  HUB_DISABLED               = "uem.hub.diabled";
 
-  public static final String  HUB_STATUS_CHANGED        = "uem.hub.status.changed";
+  public static final String  HUB_STATUS_CHANGED         = "uem.hub.status.changed";
 
-  private static final Random RANDOM                    = new Random();
+  private static final String WOM_INVALID_SIGNED_MESSAGE = "wom.invalidSignedMessage";
+
+  private SecureRandom        secureRandomCodeGenerator;
 
   /**
    * Maximum Tokens to generate to avoid having an out of memory
    */
-  private static final int    MAX_GENERATED_TOKENS_SIZE = Integer.parseInt(System.getProperty("meeds.hub.maxTokens", "1000"));
+  private static final int    MAX_GENERATED_TOKENS_SIZE  = Integer.parseInt(System.getProperty("meeds.hub.maxTokens", "1000"));
 
   /**
    * 10 minutes by default for Token validity
    */
-  private static final long   MAX_GENERATED_TOKENS_LT   = 1000l
-      * Integer.parseInt(System.getProperty("meeds.hub.maxTokenLiveTimeSeconds",
-                                            "600"));
+  private static final long   MAX_GENERATED_TOKENS_LT    = 1000l *
+      Integer.parseInt(System.getProperty("meeds.hub.maxTokenLiveTimeSeconds",
+                                          "600"));
 
   @Autowired
   private TenantService       tenantService;
@@ -99,7 +105,17 @@ public class HubService {
   @Autowired
   private HubRepository       hubRepository;
 
-  private Map<String, Long>   tokens                    = new ConcurrentHashMap<>();
+  private Map<String, Long>   tokens                     = new ConcurrentHashMap<>();
+
+  @PostConstruct
+  @SneakyThrows
+  public void init() {
+    try {
+      secureRandomCodeGenerator = SecureRandom.getInstance("SHA1PRNG");
+    } catch (NoSuchAlgorithmException e) {
+      secureRandomCodeGenerator = SecureRandom.getInstanceStrong();
+    }
+  }
 
   public boolean isDeedManager(String address, Long nftId) {
     return tenantService.isDeedManager(address, nftId);
@@ -110,10 +126,10 @@ public class HubService {
   }
 
   public Page<Hub> getHubs(String rewardId, Pageable pageable) {
-    pageable = pageable.isUnpaged() ? pageable
-                                    : PageRequest.of(pageable.getPageNumber(),
-                                                     pageable.getPageSize(),
-                                                     pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
+    pageable = pageable.isUnpaged() ? pageable :
+                                    PageRequest.of(pageable.getPageNumber(),
+                                                   pageable.getPageSize(),
+                                                   pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
     Page<HubEntity> page;
     if (StringUtils.isBlank(rewardId)) {
       page = hubRepository.findByEnabledIsTrue(pageable);
@@ -156,7 +172,7 @@ public class HubService {
     if (tokens.size() >= MAX_GENERATED_TOKENS_SIZE) {
       return tokens.keySet().stream().max((k1, k2) -> (int) (tokens.get(k1) - tokens.get(k2))).orElse(null);
     }
-    String token = RANDOM.nextLong() + "-" + RANDOM.nextLong() + "-" + RANDOM.nextLong();
+    String token = secureRandomCodeGenerator.nextLong() + "-" + secureRandomCodeGenerator.nextLong() + "-" + secureRandomCodeGenerator.nextLong();
     tokens.put(token, System.currentTimeMillis());
     return token;
   }
@@ -221,7 +237,7 @@ public class HubService {
   public boolean isHubManagerValid(Hub hub) {
     // checks whether current manager of hub is still always the same
     return StringUtils.isBlank(hub.getDeedManagerAddress())
-        || isDeedManager(hub.getDeedManagerAddress(), hub.getDeedId());
+           || isDeedManager(hub.getDeedManagerAddress(), hub.getDeedId());
   }
 
   public void disableDeedHubCommunity(String hubAddress) {
@@ -295,8 +311,8 @@ public class HubService {
     default:
       throw new IllegalArgumentException("wom.attachmentTypeIsUnsupported:" + attachmentType);
     };
-    String contentType = StringUtils.contains(file.getContentType(), "image/") ? file.getContentType()
-                                                                               : MediaType.IMAGE_PNG_VALUE;
+    String contentType =
+                       StringUtils.contains(file.getContentType(), "image/") ? file.getContentType() : MediaType.IMAGE_PNG_VALUE;
     FileBinary fileBinary = new FileBinary(fileId,
                                            file.getName(),
                                            contentType,
@@ -331,7 +347,9 @@ public class HubService {
     return deedHub.getBannerId();
   }
 
-  private void validateSignedHubManagerMessage(String hubAddress, String signedMessage, String rawMessage,
+  private void validateSignedHubManagerMessage(String hubAddress,
+                                               String signedMessage,
+                                               String rawMessage,
                                                String token) throws ObjectNotFoundException, WomException {
     Hub hub = getHub(hubAddress);
     if (hub == null) {
@@ -402,13 +420,13 @@ public class HubService {
     } else if (StringUtils.isBlank(signedMessage) || StringUtils.isBlank(rawMessage)) {
       throw new WomAuthorizationException("wom.emptySignedMessage");
     } else if (!StringUtils.contains(rawMessage, token)) {
-      throw new WomAuthorizationException("wom.invalidSignedMessage");
+      throw new WomAuthorizationException(WOM_INVALID_SIGNED_MESSAGE);
     }
 
     try {
       byte[] signatureBytes = Numeric.hexStringToByteArray(signedMessage);
       if (signatureBytes.length < 64) {
-        throw new WomAuthorizationException("wom.invalidSignedMessage");
+        throw new WomAuthorizationException(WOM_INVALID_SIGNED_MESSAGE);
       }
       byte[] r = Arrays.copyOfRange(signatureBytes, 0, 32);
       byte[] s = Arrays.copyOfRange(signatureBytes, 32, 64);
@@ -420,12 +438,12 @@ public class HubService {
       BigInteger publicKey = Sign.signedPrefixedMessageToKey(rawMessage.getBytes(), new SignatureData(v, r, s));
       String recoveredAddress = "0x" + Keys.getAddress(publicKey);
       if (!recoveredAddress.equalsIgnoreCase(deedManagerAddress)) {
-        throw new WomAuthorizationException("wom.invalidSignedMessage");
+        throw new WomAuthorizationException(WOM_INVALID_SIGNED_MESSAGE);
       }
     } catch (WomException e) {
       throw e;
     } catch (Exception e) {
-      throw new WomAuthorizationException("wom.invalidSignedMessage", e);
+      throw new WomAuthorizationException(WOM_INVALID_SIGNED_MESSAGE, e);
     }
   }
 
