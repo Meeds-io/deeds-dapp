@@ -29,18 +29,8 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>*:netty-buffer:jar</include>
-        <include>*:netty-codec:jar</include>
-        <include>*:netty-common:jar</include>
-        <include>*:netty-handler:jar</include>
-        <include>*:netty-resolver:jar</include>
-        <include>*:netty-transport:jar</include>
-        <include>*:netty-transport-native-unix-common:jar</include>
-        <include>*:reactor-core:jar</include>
         <include>*:spring-boot-starter-logging:jar</include>
         <include>*:spring-context-support:jar</include>
-        <include>*:spring-data-keyvalue:jar</include>
-        <include>*:spring-oxm:jar</include>
         <include>${project.groupId}:*:jar</include>
       </includes>
       <scope>runtime</scope>
