@@ -22,8 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.common.service.HubService;
+import io.meeds.wom.api.model.Hub;
 
 @Component
 public class HubStatusCheckTask {

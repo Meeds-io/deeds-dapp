@@ -54,7 +54,6 @@ import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tuples.generated.Tuple8;
 import org.web3j.utils.Numeric;
 
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
@@ -76,6 +75,7 @@ import io.meeds.deeds.contract.DeedRenting.TenantEvictedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStartedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;

@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import io.meeds.deeds.api.model.HubReport;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
+import io.meeds.wom.api.model.HubReport;
 
 public class HubReportMapper {
 

@@ -31,7 +31,6 @@
   <name>Meeds:: Deeds Dapp</name>
   <description>Meeds:: Deeds Decentralized Web Application - Parent POM</description>
   <modules>
-    <module>deeds-dapp-api</module>
     <module>deeds-dapp-contract</module>
     <module>deeds-dapp-common</module>
     <module>deeds-dapp-service</module>
