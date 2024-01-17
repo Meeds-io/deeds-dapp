@@ -32,13 +32,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-service</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <!-- Exclude it from dapp packaging since deed-tenant addon is defining it as well -->
-        <exclusion>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>deeds-dapp-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

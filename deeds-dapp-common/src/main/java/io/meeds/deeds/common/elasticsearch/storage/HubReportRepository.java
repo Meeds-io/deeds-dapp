@@ -26,8 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.util.Streamable;
 
-import io.meeds.deeds.api.constant.HubReportStatusType;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
+import io.meeds.wom.api.constant.HubReportStatusType;
 
 public interface HubReportRepository extends ElasticsearchRepository<HubReportEntity, String> {
 

@@ -26,8 +26,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
 
 public interface UEMRewardRepository extends ElasticsearchRepository<UEMRewardEntity, String> {
 

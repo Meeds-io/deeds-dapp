@@ -17,10 +17,10 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.api.constant.HubReportStatusType.PENDING_REWARD;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARDED;
-import static io.meeds.deeds.api.constant.HubReportStatusType.REWARD_TRANSACTION_ERROR;
-import static io.meeds.deeds.api.constant.HubReportStatusType.SENT;
+import static io.meeds.wom.api.constant.HubReportStatusType.PENDING_REWARD;
+import static io.meeds.wom.api.constant.HubReportStatusType.REWARDED;
+import static io.meeds.wom.api.constant.HubReportStatusType.REWARD_TRANSACTION_ERROR;
+import static io.meeds.wom.api.constant.HubReportStatusType.SENT;
 
 import java.util.List;
 import java.util.Map;
@@ -34,9 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.constant.HubReportStatusType;
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
-import io.meeds.deeds.api.model.HubReport;
+import io.meeds.wom.api.constant.HubReportStatusType;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
+import io.meeds.wom.api.model.HubReport;
 
 @Component
 public class UEMRewardStatusService {

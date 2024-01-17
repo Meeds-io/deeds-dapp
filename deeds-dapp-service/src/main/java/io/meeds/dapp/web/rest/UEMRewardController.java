@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.service.UEMRewardService;
+import io.meeds.wom.api.model.UEMReward;
 
 @RestController
 @RequestMapping("/api/uem/rewards")

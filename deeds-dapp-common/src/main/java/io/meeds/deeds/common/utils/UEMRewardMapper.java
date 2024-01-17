@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.UEMReward;
 
 public class UEMRewardMapper {
 
