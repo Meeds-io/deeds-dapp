@@ -34,13 +34,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.api.constant.WomAuthorizationException;
-import io.meeds.deeds.api.constant.WomException;
-import io.meeds.deeds.api.constant.WomParsingException;
-import io.meeds.deeds.api.constant.WomRequestException;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.HubReportVerifiableData;
 import io.meeds.deeds.common.service.HubReportService;
+import io.meeds.wom.api.constant.WomAuthorizationException;
+import io.meeds.wom.api.constant.WomException;
+import io.meeds.wom.api.constant.WomParsingException;
+import io.meeds.wom.api.constant.WomRequestException;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.HubReportVerifiableData;
 
 @RestController
 @RequestMapping("/api/hub/reports")

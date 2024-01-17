@@ -31,7 +31,8 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -32,10 +32,10 @@ import org.springframework.util.CollectionUtils;
 
 import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.api.constant.ObjectAlreadyExistsException;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.model.UserProfileDTO;
 import io.meeds.deeds.common.service.UserProfileService;
+import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 
 @Service
 public class OfferAcquisitionInProgressListener implements EventListener<DeedTenantLease> {

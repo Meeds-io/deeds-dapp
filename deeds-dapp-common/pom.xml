@@ -35,8 +35,8 @@
       <artifactId>deeds-dapp-contract</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>deeds-dapp-api</artifactId>
+      <groupId>io.meeds.deeds-tenant</groupId>
+      <artifactId>deeds-tenant-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

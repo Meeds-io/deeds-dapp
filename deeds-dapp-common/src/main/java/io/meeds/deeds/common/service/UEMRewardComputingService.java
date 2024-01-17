@@ -17,8 +17,8 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.api.constant.HubReportStatusType.REJECTED;
 import static io.meeds.deeds.common.service.UEMRewardService.UEM_REWARD_COMPUTED;
+import static io.meeds.wom.api.constant.HubReportStatusType.REJECTED;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,10 +38,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.web3j.crypto.Hash;
 
-import io.meeds.deeds.api.constant.UEMRewardStatusType;
-import io.meeds.deeds.api.model.HubReport;
-import io.meeds.deeds.api.model.UEMReward;
 import io.meeds.deeds.common.model.RewardPeriod;
+import io.meeds.wom.api.constant.UEMRewardStatusType;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.UEMReward;
 
 @Component
 public class UEMRewardComputingService {

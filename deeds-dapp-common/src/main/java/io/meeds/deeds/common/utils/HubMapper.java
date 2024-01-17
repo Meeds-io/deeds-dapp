@@ -19,9 +19,9 @@ package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
 
-import io.meeds.deeds.api.model.Hub;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
+import io.meeds.wom.api.model.Hub;
 
 public class HubMapper {
 

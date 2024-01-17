@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.storage.DeedTenantManagerRepository;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @Component
 public class TenantService {

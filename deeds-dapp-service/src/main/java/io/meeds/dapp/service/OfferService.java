@@ -52,8 +52,6 @@ import io.meeds.dapp.model.DeedTenantOfferDTO;
 import io.meeds.dapp.model.OfferFilter;
 import io.meeds.dapp.storage.OfferRepository;
 import io.meeds.dapp.utils.DeedTenantOfferMapper;
-import io.meeds.deeds.api.constant.ObjectAlreadyExistsException;
-import io.meeds.deeds.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
@@ -64,6 +62,8 @@ import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.common.service.ListenerService;
 import io.meeds.deeds.common.service.TenantService;
+import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @Component
 public class OfferService {
