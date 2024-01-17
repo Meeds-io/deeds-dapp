@@ -43,6 +43,7 @@ export default {
     systemThemeDark: state => state.systemThemeDark,
     themePreference: state => state.themePreference,
     dark: state => state.dark,
+    language: state => state.language,
     isMobile() {
       return this.$vuetify.breakpoint.xsOnly;
     },
@@ -56,7 +57,7 @@ export default {
     this.refreshMobileValue();
     this.refreshTheme();
     document.addEventListener('show-trial-form', this.openForm);
-    this.showForm = window.location.hash === `#${this.$t('meeds.freeTrial.url.hash')}`;
+    this.showForm = window.location.hash === '#trial-request' || window.location.hash === '#demande-essai' ;
   },
   mounted() {
     window.addEventListener('popstate', this.refreshDocumentHead);
@@ -79,7 +80,7 @@ export default {
     },
     openForm(event) {
       this.showForm = event.detail.showForm;
-      window.location.hash = this.$t('meeds.freeTrial.url.hash');
+      window.history.replaceState('', '', this.language === 'en' ? '#trial-request' : '#demande-essai');
     },
   },
 };
