@@ -51,4 +51,6 @@ public class BlockchainConfigurationProperties {
 
   private String uemAddress                = null;
 
+  private String womAddress                = null;
+
 }
