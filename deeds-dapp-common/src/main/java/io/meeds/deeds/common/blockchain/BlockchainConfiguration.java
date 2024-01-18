@@ -35,6 +35,7 @@ import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.UserEngagementMinting;
+import io.meeds.deeds.contract.WoM;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 
 @Configuration
@@ -150,6 +151,20 @@ public class BlockchainConfiguration {
                                         web3j,
                                         getTransactionManager(web3j),
                                         CONTRACT_GAS_PROVIDER);
+    }
+  }
+
+  @Bean
+  public WoM getWoM(
+                    @Qualifier("polygonNetwork")
+                    Web3j web3j) {
+    if (StringUtils.isBlank(properties.getWomAddress())) {
+      return null;
+    } else {
+      return WoM.load(properties.getWomAddress(),
+                      web3j,
+                      getTransactionManager(web3j),
+                      CONTRACT_GAS_PROVIDER);
     }
   }
 
