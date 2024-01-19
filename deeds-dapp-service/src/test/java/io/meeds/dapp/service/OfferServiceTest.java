@@ -159,13 +159,7 @@ class OfferServiceTest {
 
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setNftId(nftId);
-    offerFilter.setNetworkId(5l);
     Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
-    assertNotNull(result);
-    assertEquals(0, result.getSize());
-
-    offerFilter.setNetworkId(2l);
-    result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());

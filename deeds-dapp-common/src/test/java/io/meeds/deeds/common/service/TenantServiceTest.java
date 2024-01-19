@@ -222,23 +222,6 @@ class TenantServiceTest {
   }
 
   @Test
-  void testGetDeedTenantOrImportBySimpleUserWhenNotExists() throws Exception {
-    long nftId = 1l;
-    String address = "address";
-    short cardType = 2;
-    short cityIndex = 3;
-    when(blockchainService.getDeedCardType(nftId)).thenReturn(cardType);
-    when(blockchainService.getDeedCityIndex(nftId)).thenReturn(cityIndex);
-    DeedTenant deedTenantMock = new DeedTenant();
-    deedTenantMock.setNftId(nftId);
-
-    when(deedTenantManagerRepository.findById(nftId)).thenReturn(Optional.of(deedTenantMock));
-
-    assertThrows(UnauthorizedOperationException.class, () -> tenantService.getDeedTenantOrImport(address, nftId));
-    verify(deedTenantManagerRepository, never()).save(any());
-  }
-
-  @Test
   void testGetDeedTenantOrImportByChangedOwner() throws Exception {
     long nftId = 1l;
     String address = "address";

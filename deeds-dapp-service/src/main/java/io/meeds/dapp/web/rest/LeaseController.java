@@ -77,16 +77,13 @@ public class LeaseController {
                                                                @RequestParam(name = "address", required = true)
                                                                String address,
                                                                @RequestParam(name = "owner", required = true)
-                                                               boolean owner,
-                                                               @RequestParam(name = "networkId", required = true)
-                                                               long networkId) {
+                                                               boolean owner) {
     LeaseFilter leaseFilter = new LeaseFilter();
     if (nftId != null && nftId > 0) {
       leaseFilter.setNftId(nftId);
     }
     leaseFilter.setExcludeNotConfirmed(onlyConfirmed);
     leaseFilter.setCardTypes(cardTypes);
-    leaseFilter.setNetworkId(networkId);
     leaseFilter.setCurrentAddress(StringUtils.lowerCase(address));
     leaseFilter.setOwner(owner);
     Page<DeedTenantLeaseDTO> leases = leaseService.getLeases(leaseFilter, pageable);

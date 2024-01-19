@@ -110,9 +110,6 @@ public class OfferService {
   private Map<String, Long>        blockchainRefreshStamp                = new ConcurrentHashMap<>();
 
   public Page<DeedTenantOfferDTO> getOffers(OfferFilter offerFilter, Pageable pageable) {
-    if (offerFilter.getNetworkId() > 0 && !tenantService.isBlockchainNetworkValid(offerFilter.getNetworkId())) {
-      return Page.empty(pageable);
-    }
     Criteria criteria = new Criteria("parentId").not().exists();
     criteria.and(criteria, new Criteria("acquired").is(false));
 
@@ -996,15 +993,12 @@ public class OfferService {
   }
 
   private DeedTenant getDeedTenant(long nftId, String managerAddress) {
-    DeedTenant deedTenant;
     try {
-      deedTenant = tenantService.getDeedTenantOrImport(managerAddress, nftId);
-    } catch (UnauthorizedOperationException e) {
-      deedTenant = tenantService.getDeedTenant(nftId);
+      // Check if deed owner or manager
+      return tenantService.getDeedTenantOrImport(managerAddress, nftId);
     } catch (ObjectNotFoundException e) {
       throw new IllegalStateException("Unable to locate nft with id " + nftId, e);
     }
-    return deedTenant;
   }
 
   private DeedTenantOffer getOfferByBlockchainOfferId(long blockchainOfferId, boolean updateIfNotFound) throws Exception {

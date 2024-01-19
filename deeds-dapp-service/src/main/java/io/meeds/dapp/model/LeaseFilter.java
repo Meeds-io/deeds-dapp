@@ -34,9 +34,6 @@ public class LeaseFilter {
   private long                    nftId = -1;
 
   @With
-  private long                    networkId;
-
-  @With
   private String                  currentAddress;
 
   @With

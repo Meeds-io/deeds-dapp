@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -138,15 +139,9 @@ class LeaseServiceTest {
     leaseFilter.setNftId(nftId);
     leaseFilter.setExcludeNotConfirmed(true);
     leaseFilter.setCardTypes(Collections.singletonList(DeedCard.COMMON));
-    leaseFilter.setNetworkId(6l);
     leaseFilter.setTransactionStatus(Collections.singletonList(TransactionStatus.VALIDATED));
     leaseFilter.setOwner(true);
     Page<DeedTenantLeaseDTO> result = leaseService.getLeases(leaseFilter, pageable);
-    assertNotNull(result);
-    assertEquals(0, result.getSize());
-
-    leaseFilter.setNetworkId(2l);
-    result = leaseService.getLeases(leaseFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -201,13 +196,7 @@ class LeaseServiceTest {
 
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
-    when(tenantService.getDeedTenantOrImport(tenant, nftId)).thenReturn(deedTenant);
-    when(tenantService.getDeedTenantOrImport(argThat(new ArgumentMatcher<String>() {
-      @Override
-      public boolean matches(String argument) {
-        return !StringUtils.equalsIgnoreCase(tenant, argument);
-      }
-    }), eq(nftId))).thenThrow(UnauthorizedOperationException.class);
+    when(tenantService.getDeedTenantOrImport(anyString(), eq(nftId))).thenReturn(deedTenant);
 
     assertThrows(ObjectNotFoundException.class, () -> leaseService.getLease(leaseId, null, false));
 
@@ -216,12 +205,7 @@ class LeaseServiceTest {
     DeedTenantLeaseDTO leaseDTO = leaseService.getLease(leaseId, null, true);
     assertNotNull(leaseDTO);
 
-    verify(tenantService, times(1)).saveDeedTenant(argThat(new ArgumentMatcher<DeedTenant>() {
-      @Override
-      public boolean matches(DeedTenant deedTenant) {
-        return StringUtils.isNotBlank(deedTenant.getOwnerAddress());
-      }
-    }));
+    verify(tenantService, times(1)).saveDeedTenant(argThat(dt -> StringUtils.isNotBlank(dt.getOwnerAddress())));
   }
 
   @Test
@@ -247,13 +231,7 @@ class LeaseServiceTest {
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
     when(tenantService.saveDeedTenant(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(tenantService.getDeedTenantOrImport(tenant, nftId)).thenReturn(deedTenant);
-    when(tenantService.getDeedTenantOrImport(argThat(new ArgumentMatcher<String>() {
-      @Override
-      public boolean matches(String argument) {
-        return !StringUtils.equalsIgnoreCase(tenant, argument);
-      }
-    }), eq(nftId))).thenThrow(UnauthorizedOperationException.class);
+    when(tenantService.getDeedTenantOrImport(anyString(), eq(nftId))).thenReturn(deedTenant);
     when(leaseRepository.save(any())).thenAnswer(invocation -> {
       DeedTenantLease lease = invocation.getArgument(0, DeedTenantLease.class);
       when(leaseRepository.findById(lease.getId())).thenReturn(Optional.of(lease));
@@ -263,12 +241,7 @@ class LeaseServiceTest {
     DeedTenantLeaseDTO createdLease = leaseService.createLease(tenant, null, offer.getId(), transactionHash);
     assertNotNull(createdLease);
 
-    verify(tenantService, times(1)).saveDeedTenant(argThat(new ArgumentMatcher<DeedTenant>() {
-      @Override
-      public boolean matches(DeedTenant deedTenant) {
-        return StringUtils.isNotBlank(deedTenant.getOwnerAddress());
-      }
-    }));
+    verify(tenantService, times(1)).saveDeedTenant(argThat(dt -> StringUtils.isNotBlank(dt.getOwnerAddress())));
 
     verify(listenerService, times(1)).publishEvent(eq(LEASE_ACQUIRED_EVENT), any());
   }

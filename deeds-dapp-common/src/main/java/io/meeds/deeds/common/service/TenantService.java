@@ -134,8 +134,7 @@ public class TenantService {
 
   public DeedTenant getDeedTenantOrImport(String managerAddress, // NOSONAR
                                           Long nftId,
-                                          boolean refreshFromBlockchain) throws ObjectNotFoundException,
-                                                                         UnauthorizedOperationException {
+                                          boolean refreshFromBlockchain) throws ObjectNotFoundException {
     DeedTenant deedTenant = getDeedTenantOrImport(managerAddress, nftId);
     if (refreshFromBlockchain && deedTenant != null) {
       boolean isPending = deedTenant.getTenantProvisioningStatus() != null
@@ -175,8 +174,7 @@ public class TenantService {
     return deedTenant;
   }
 
-  public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId) throws ObjectNotFoundException, // NOSONAR
-                                                                             UnauthorizedOperationException {
+  public DeedTenant getDeedTenantOrImport(String managerAddress, Long nftId) throws ObjectNotFoundException { // NOSONAR
     DeedTenant deedTenant = deedTenantManagerRepository.findById(nftId).orElse(null);
     if (deedTenant == null) {
       deedTenant = buildDeedTenantFromBlockchain(nftId);
@@ -189,7 +187,8 @@ public class TenantService {
       deedTenant = saveDeedTenant(deedTenant);
     } else {
       boolean changed = false;
-      if (!canAccessProvisioningInformation(managerAddress, deedTenant)) {
+      if (StringUtils.isNotBlank(managerAddress)
+          && !isProvisioningManager(managerAddress, deedTenant)) {
         if (isDeedOwner(managerAddress, nftId)) {
           deedTenant.setOwnerAddress(managerAddress.toLowerCase());
           changed = true;
@@ -202,9 +201,6 @@ public class TenantService {
       if (changed) {
         deedTenant = saveDeedTenant(deedTenant);
       }
-    }
-    if (!canAccessProvisioningInformation(managerAddress, deedTenant)) {
-      throw new UnauthorizedOperationException(getUnauthorizedMessage(managerAddress, nftId));
     }
     return deedTenant;
   }
@@ -413,7 +409,7 @@ public class TenantService {
     return "User with address " + managerAddress + " isn't the manager of deed " + nftId;
   }
 
-  private boolean canAccessProvisioningInformation(String managerAddress, DeedTenant deedTenant) {
+  private boolean isProvisioningManager(String managerAddress, DeedTenant deedTenant) {
     return StringUtils.equalsIgnoreCase(deedTenant.getManagerAddress(), managerAddress)
         || StringUtils.equalsIgnoreCase(deedTenant.getOwnerAddress(), managerAddress);
   }

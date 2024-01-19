@@ -79,8 +79,8 @@ class TenantControllerTest {
 
   @Test
   @WithAnonymousUser
-  void whenAnonymousGetDeedTenant_thenNOk() throws Exception {
-    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().is3xxRedirection());
+  void whenAnonymousGetDeedTenant_thenOk() throws Exception {
+    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isBadRequest());
   }
 
   @Test

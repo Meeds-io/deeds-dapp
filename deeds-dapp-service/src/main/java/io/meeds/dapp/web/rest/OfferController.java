@@ -89,9 +89,7 @@ public class OfferController {
                                                                @RequestParam(name = "excludeExpired", required = false)
                                                                boolean excludeExpired,
                                                                @RequestParam(name = "excludeNotStarted", required = false)
-                                                               boolean excludeNotStarted,
-                                                               @RequestParam(name = "networkId", required = false)
-                                                               long networkId) {
+                                                               boolean excludeNotStarted) {
     if (onlyOwned && StringUtils.isBlank(address)) {
       return assembler.toModel(Page.empty(pageable));
     } else {
@@ -110,7 +108,6 @@ public class OfferController {
       offerFilter.setExcludeDisabled(true);
       offerFilter.setCardTypes(cardTypes);
       offerFilter.setOfferTypes(offerTypes);
-      offerFilter.setNetworkId(networkId);
       offerFilter.setCurrentAddress(StringUtils.lowerCase(address));
       Page<DeedTenantOfferDTO> offers = offerService.getOffers(offerFilter, pageable);
       return assembler.toModel(offers);

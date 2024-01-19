@@ -99,9 +99,6 @@ public class LeaseService {
   private ListenerService         listenerService;
 
   public Page<DeedTenantLeaseDTO> getLeases(LeaseFilter leaseFilter, Pageable pageable) {
-    if (leaseFilter.getNetworkId() > 0 && !tenantService.isBlockchainNetworkValid(leaseFilter.getNetworkId())) {
-      return Page.empty(pageable);
-    }
     Criteria criteria = new Criteria("enabled").is(true);
 
     if (!leaseFilter.isIncludeOutdated()) {
@@ -554,19 +551,14 @@ public class LeaseService {
   }
 
   private DeedTenant getDeedTenant(long nftId, String managerAddress, String ownerAddress) {
-    DeedTenant deedTenant;
     try {
-      try { // NOSONAR
-        deedTenant = tenantService.getDeedTenantOrImport(ownerAddress, nftId);
-      } catch (UnauthorizedOperationException e) {
-        deedTenant = tenantService.getDeedTenantOrImport(managerAddress, nftId);
-      }
-    } catch (UnauthorizedOperationException e) {
-      deedTenant = tenantService.getDeedTenant(nftId);
+      // Check if deed owner or manager
+      tenantService.getDeedTenantOrImport(ownerAddress, nftId);
+      // Check if deed owner or manager
+      return tenantService.getDeedTenantOrImport(managerAddress, nftId);
     } catch (ObjectNotFoundException e) {
       throw new IllegalStateException("Unable to locate nft with id " + nftId, e);
     }
-    return deedTenant;
   }
 
   public DeedTenantLeaseDTO getCurrentLease(long nftId) {
