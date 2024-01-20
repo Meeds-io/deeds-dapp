@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.constant;
 
 import java.time.Period;
 
@@ -21,30 +21,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum NoticePeriod {
+public enum ExpirationDuration {
 
-  NO_PERIOD(Period.ZERO, 0),
-  ONE_MONTH(Period.ofMonths(1), 1),
-  TWO_MONTHS(Period.ofMonths(2), 2),
-  THREE_MONTHS(Period.ofMonths(3), 3),
+  ONE_DAY(Period.ofDays(1), 1),
+  THREE_DAYS(Period.ofDays(3), 3),
+  ONE_WEEK(Period.ofWeeks(1), 7),
+  ONE_MONTH(Period.ofMonths(1), 30),
   OTHER(null, 0);
 
   @Getter
   private Period period;
 
   @Getter
-  private int    months;
+  private int    days;
 
-  public static NoticePeriod fromMonths(int months) {
-    switch (months) {
-    case 0:
-      return NO_PERIOD;
+  public static ExpirationDuration fromDays(int expirationDays) {
+    switch (expirationDays) {
     case 1:
-      return ONE_MONTH;
-    case 2:
-      return TWO_MONTHS;
+      return ONE_DAY;
     case 3:
-      return THREE_MONTHS;
+      return THREE_DAYS;
+    case 7:
+      return ONE_WEEK;
+    case 30:
+      return ONE_MONTH;
     default:
       return OTHER;
     }

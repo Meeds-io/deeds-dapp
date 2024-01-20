@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -37,6 +39,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.datatypes.Address;
+import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -49,6 +52,7 @@ import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple12;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tuples.generated.Tuple8;
@@ -62,6 +66,7 @@ import io.meeds.deeds.common.model.DeedCity;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.model.WoMHub;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
@@ -75,12 +80,16 @@ import io.meeds.deeds.contract.DeedRenting.TenantEvictedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStartedEventResponse;
 import io.meeds.deeds.contract.DeedTenantProvisioning.TenantStoppedEventResponse;
-import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.UserEngagementMinting;
+import io.meeds.deeds.contract.WoM;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
+import io.meeds.wom.api.constant.WomException;
+
+import lombok.SneakyThrows;
 
 @Component
 public class BlockchainService {
@@ -113,6 +122,14 @@ public class BlockchainService {
   @Autowired(required = false)
   private UserEngagementMinting  uemContract;
 
+  @Autowired(required = false)
+  @Qualifier("womContractReadOnly")
+  private WoM                    womContract;
+
+  @Autowired(required = false)
+  @Qualifier("womContractReadWrite")
+  private WoM                    womContractWithManager;
+
   @Autowired
   @Qualifier("ethereumMeedToken")
   private MeedsToken             ethereumToken;
@@ -132,8 +149,8 @@ public class BlockchainService {
   /**
    * Return DEED Tenant Status from Blockchain Contract
    *
-   * @param  nftId Deed NFT identifier
-   * @return       if marked as started else false
+   * @param nftId Deed NFT identifier
+   * @return if marked as started else false
    */
   public boolean isDeedStarted(long nftId) {
     try {
@@ -146,8 +163,8 @@ public class BlockchainService {
   /**
    * Checks if transaction has been mined or not
    * 
-   * @param  transactionHash Blockchain Transaction Hash
-   * @return                 true if Transaction is Mined
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Mined
    */
   public boolean isTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
@@ -160,8 +177,8 @@ public class BlockchainService {
   }
 
   /**
-   * @param  transactionHash Blockchain Transaction Hash
-   * @return                 true if Transaction is Successful
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Successful
    */
   public boolean isPolygonTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
@@ -169,8 +186,8 @@ public class BlockchainService {
   }
 
   /**
-   * @param  transactionHash Blockchain Transaction Hash
-   * @return                 true if Transaction is Successful
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Successful
    */
   public boolean isTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
@@ -192,9 +209,9 @@ public class BlockchainService {
    * Retrieves the list of mined provisioning transactions starting from a block
    * to another
    * 
-   * @param  fromBlock Start block
-   * @param  toBlock   End Block to filter
-   * @return           {@link List} of {@link DeedTenant}
+   * @param fromBlock Start block
+   * @param toBlock End Block to filter
+   * @return {@link List} of {@link DeedTenant}
    */
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -224,9 +241,9 @@ public class BlockchainService {
   /**
    * Retrieves Lease and Offer Events occurred on Renting Contract
    * 
-   * @param  fromBlock Start block
-   * @param  toBlock   End Block to filter
-   * @return           {@link List} of {@link Map} of events
+   * @param fromBlock Start block
+   * @param toBlock End Block to filter
+   * @return {@link List} of {@link Map} of events
    */
   public List<Map<?, ?>> getMinedRentingTransactions(long fromBlock, // NOSONAR
                                                      long toBlock) {
@@ -248,9 +265,9 @@ public class BlockchainService {
                     .flatMap(transactionHash -> {
                       Map<?, ?> offerEvents = getOfferTransactionEvents(transactionHash);
                       Map<?, ?> leaseEvents = getLeaseTransactionEvents(transactionHash);
-                      return MapUtils.isEmpty(offerEvents) ? Stream.of(leaseEvents)
-                                                           : MapUtils.isEmpty(leaseEvents) ? Stream.of(offerEvents)// NOSONAR
-                                                                                           : Stream.of(offerEvents, leaseEvents);
+                      return MapUtils.isEmpty(offerEvents) ? Stream.of(leaseEvents) :
+                                     MapUtils.isEmpty(leaseEvents) ? Stream.of(offerEvents)// NOSONAR
+                                     : Stream.of(offerEvents, leaseEvents);
                     })
                     .filter(MapUtils::isNotEmpty)
                     .toList();
@@ -263,10 +280,9 @@ public class BlockchainService {
    * Retrieves the list of mined ownership transfer of a Deed transactions
    * starting from a block to another
    * 
-   * @param  fromBlock Start block
-   * @param  toBlock   End Block to filter
-   * @return           {@link Set} of NFT ID of type
-   *                   {@link DeedOwnershipTransferEvent}
+   * @param fromBlock Start block
+   * @param toBlock End Block to filter
+   * @return {@link Set} of NFT ID of type {@link DeedOwnershipTransferEvent}
    */
   public Set<DeedOwnershipTransferEvent> getMinedTransferOwnershipDeedTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -443,7 +459,8 @@ public class BlockchainService {
                                         StringUtils.lowerCase(transactionHash));
   }
 
-  public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId, BigInteger blockNumber,
+  public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId,
+                                               BigInteger blockNumber,
                                                String transactionHash) throws Exception {
     Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String> leaseTuple =
                                                                                                                   deedRenting.deedLeases(leaseId)
@@ -464,35 +481,35 @@ public class BlockchainService {
    * Retrieves from blockchain whether an address is the provisioning manager of
    * the deed or not
    *
-   * @param  address Ethereum address to check
-   * @param  nftId   Deed NFT identifier
-   * @return         true if is manager else false
+   * @param address Ethereum address to check
+   * @param nftId Deed NFT identifier
+   * @return true if is manager else false
    */
   public boolean isDeedProvisioningManager(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
-        && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
+           && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
   /**
    * Retrieves from blockchain whether an address is the owner of the deed
    *
-   * @param  address Ethereum address to check
-   * @param  nftId   Deed NFT identifier
-   * @return         true if is owner else false
+   * @param address Ethereum address to check
+   * @param nftId Deed NFT identifier
+   * @return true if is owner else false
    */
   public boolean isDeedOwner(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
-        && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
+           && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
   }
 
   /**
    * Retrieves from Blockchain DEED card type: - 0 : Common - 1 : Uncommon - 2 :
    * Rare - 3 : Legendary
    *
-   * @param  nftId                   Deed NFT identifier
-   * @return                         card type index
+   * @param nftId Deed NFT identifier
+   * @return card type index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
-   *                                   exists
+   *           exists
    */
   public short getDeedCardType(long nftId) throws ObjectNotFoundException {
     try {
@@ -519,10 +536,10 @@ public class BlockchainService {
    * Retrieves from Blockchain DEED city index: - 0 : Tanit - 1 : Reshef - 2 :
    * Ashtarte - 3 : Melqart - 4 : Eshmun - 5 : Kushor - 6 : Hammon
    *
-   * @param  nftId                   Deed NFT identifier
-   * @return                         card city index
+   * @param nftId Deed NFT identifier
+   * @return card city index
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
-   *                                   exists
+   *           exists
    */
   public short getDeedCityIndex(long nftId) throws ObjectNotFoundException {
     try {
@@ -571,19 +588,19 @@ public class BlockchainService {
   }
 
   /**
-   * @param  address Fund Address to get its rewarding information
-   * @return         {@link FundInfo} with rewarding parameters retrieved from
-   *                 Token Factory
+   * @param address Fund Address to get its rewarding information
+   * @return {@link FundInfo} with rewarding parameters retrieved from Token
+   *         Factory
    */
   public FundInfo getFundInfo(String address) {
     Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, Boolean> fundInfo = blockchainCall(tokenFactory.fundInfos(address));
-    return fundInfo == null ? null
-                            : new FundInfo(address,
-                                           fundInfo.component1(),
-                                           fundInfo.component2(),
-                                           fundInfo.component3(),
-                                           fundInfo.component4(),
-                                           fundInfo.component5());
+    return fundInfo == null ? null :
+                            new FundInfo(address,
+                                         fundInfo.component1(),
+                                         fundInfo.component2(),
+                                         fundInfo.component3(),
+                                         fundInfo.component4(),
+                                         fundInfo.component5());
   }
 
   /**
@@ -592,12 +609,12 @@ public class BlockchainService {
   public DeedCity getCurrentCity() {
     BigInteger currentCityIndex = blockchainCall(xMeedsToken.currentCityIndex());
     Tuple4<String, BigInteger, BigInteger, BigInteger> cityInfo = blockchainCall(xMeedsToken.cityInfo(currentCityIndex));
-    return cityInfo == null ? null
-                            : new DeedCity(currentCityIndex,
-                                           cityInfo.component1(),
-                                           cityInfo.component2(),
-                                           cityInfo.component3(),
-                                           cityInfo.component4());
+    return cityInfo == null ? null :
+                            new DeedCity(currentCityIndex,
+                                         cityInfo.component1(),
+                                         cityInfo.component2(),
+                                         cityInfo.component3(),
+                                         cityInfo.component4());
   }
 
   /**
@@ -625,6 +642,100 @@ public class BlockchainService {
     return fundInfo;
   }
 
+  public String getHubOwner(String address) {
+    WoMHub hub = getHub(address);
+    return hub == null ? null : hub.getOwner();
+  }
+
+  public String getHubByDeedId(long nftId) {
+    io.meeds.deeds.contract.WoM.Deed womDeed = getWoMDeed(nftId);
+    return womDeed == null ? null : womDeed.hub;
+  }
+
+  @SneakyThrows
+  public io.meeds.deeds.contract.WoM.Deed getWoMDeed(long nftId) {
+    if (womContract == null) {
+      return null;
+    }
+    Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger> deedTuple =
+                                                                                                         womContract.nfts(BigInteger.valueOf(nftId))
+                                                                                                                    .send();
+    if (deedTuple == null) {
+      return null;
+    } else {
+      return new io.meeds.deeds.contract.WoM.Deed(deedTuple.component1(),
+                                                  deedTuple.component2(),
+                                                  deedTuple.component3(),
+                                                  deedTuple.component4(),
+                                                  deedTuple.component5(),
+                                                  deedTuple.component6(),
+                                                  deedTuple.component7(),
+                                                  deedTuple.component8());
+    }
+  }
+
+  public void updateWoMDeed(long deedId, // NOSONAR
+                            short city,
+                            short cardType,
+                            short mintingPower,
+                            long maxUsers,
+                            String ownerAddress,
+                            String managerAddress,
+                            short ownerMintingPercentage) throws WomException {
+    try {
+      TransactionReceipt transactionReceipt = womContractWithManager.updateDeed(BigInteger.valueOf(deedId),
+                                                                                new io.meeds.deeds.contract.WoM.Deed(BigInteger.valueOf(city),
+                                                                                                                     BigInteger.valueOf(cardType),
+                                                                                                                     BigInteger.valueOf(mintingPower),
+                                                                                                                     BigInteger.valueOf(maxUsers),
+                                                                                                                     ownerAddress,
+                                                                                                                     managerAddress,
+                                                                                                                     Keys.getAddress(BigInteger.ZERO), // Will
+                                                                                                                                                       // not
+                                                                                                                                                       // be
+                                                                                                                                                       // updated
+                                                                                                                     BigInteger.valueOf(ownerMintingPercentage)))
+                                                                    .send();
+      if (transactionReceipt == null) {
+        throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");
+      } else if (!transactionReceipt.isStatusOK()) {
+        String message = getWoMContractMessage(transactionReceipt.getRevertReason());
+        if (StringUtils.isNotBlank(message)) {
+          throw new WomException(message);
+        } else {
+          message = getWoMContractMessage(transactionReceipt.getStatus());
+          if (StringUtils.isNotBlank(message)) {
+            throw new WomException(message);
+          } else {
+            throw new WomException("wom.updateDeedTransactionFailed");
+          }
+        }
+      }
+    } catch (Exception e) {
+      String message = getWoMContractExceptionMessage(e);
+      if (StringUtils.isNotBlank(message)) {
+        throw new WomException(message);
+      } else {
+        throw new IllegalStateException("Error While processing Deed Update transaction", e);
+      }
+    }
+  }
+
+  @SneakyThrows
+  public WoMHub getHub(String address) {
+    if (womContract == null) {
+      return null;
+    }
+    Tuple3<BigInteger, String, Boolean> hubTuple = womContract.hubs(address).send();
+    if (hubTuple == null) {
+      return null;
+    } else {
+      return new WoMHub(hubTuple.component1().longValue(),
+                        hubTuple.component2(),
+                        hubTuple.component3().booleanValue());
+    }
+  }
+
   public String getEthereumMeedTokenAddress() {
     return ethereumToken.getContractAddress();
   }
@@ -637,9 +748,13 @@ public class BlockchainService {
     return uemContract == null ? null : uemContract.getContractAddress();
   }
 
+  public String getWoMAddress() {
+    return womContract == null ? null : womContract.getContractAddress();
+  }
+
   /**
-   * @param  address Address to get its pending rewardings not minted yet
-   * @return         {@link BigInteger} for Meed Token value with decimals
+   * @param address Address to get its pending rewardings not minted yet
+   * @return {@link BigInteger} for Meed Token value with decimals
    */
   public BigInteger pendingRewardBalanceOf(String address) {
     return blockchainCall(tokenFactory.pendingRewardBalanceOf(address));
@@ -662,10 +777,10 @@ public class BlockchainService {
   }
 
   /**
-   * @param  address Ethereum address
-   * @return         {@link BigDecimal} representing the balance of address
-   *                 which is retrieved from ethereum blockchain. The retrieved
-   *                 value is divided by number of decimals of the token (10^18)
+   * @param address Ethereum address
+   * @return {@link BigDecimal} representing the balance of address which is
+   *         retrieved from ethereum blockchain. The retrieved value is divided
+   *         by number of decimals of the token (10^18)
    */
   public BigDecimal meedBalanceOfNoDecimals(String address) {
     BigInteger balance = meedBalanceOf(address);
@@ -673,9 +788,9 @@ public class BlockchainService {
   }
 
   /**
-   * @param  address Ethereum address
-   * @return         {@link BigInteger} representing the balance of address
-   *                 which is retrieved from ethereum blockchain.
+   * @param address Ethereum address
+   * @return {@link BigInteger} representing the balance of address which is
+   *         retrieved from ethereum blockchain.
    */
   public BigInteger meedBalanceOf(String address) {
     return blockchainCall(ethereumToken.balanceOf(address));
@@ -696,10 +811,10 @@ public class BlockchainService {
   }
 
   /**
-   * @param  address Ethereum address
-   * @return         {@link BigDecimal} representing the balance of address
-   *                 which is retrieved from polygon blockchain. The retrieved
-   *                 value is divided by number of decimals of the token (10^18)
+   * @param address Ethereum address
+   * @return {@link BigDecimal} representing the balance of address which is
+   *         retrieved from polygon blockchain. The retrieved value is divided
+   *         by number of decimals of the token (10^18)
    */
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
@@ -813,6 +928,29 @@ public class BlockchainService {
     } catch (Exception e) {
       throw new IllegalStateException("Error calling blockchain", e);
     }
+  }
+
+  private String getWoMContractExceptionMessage(Throwable e) {
+    if (e != null) {
+      if (StringUtils.contains(e.getMessage(), "wom.")) {
+        String message = getWoMContractMessage(e.getMessage());
+        if (StringUtils.isNotBlank(message)) {
+          return message;
+        }
+      }
+      if (e.getCause() != null) {
+        return getWoMContractExceptionMessage(e.getCause());
+      }
+    }
+    return null;
+  }
+
+  private String getWoMContractMessage(String message) {
+    Matcher matcher = Pattern.compile("wom\\.[a-zA-Z0-9]+").matcher(message);
+    if (matcher.find()) {
+      return matcher.group();
+    }
+    return null;
   }
 
 }

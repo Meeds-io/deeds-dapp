@@ -13,31 +13,41 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.storage;
+package io.meeds.deeds.common.constant;
 
-import java.util.List;
+import java.time.Period;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.deeds.common.constant.TransactionStatus;
+@AllArgsConstructor
+public enum RentalDuration {
 
-public interface OfferRepository extends ElasticsearchRepository<DeedTenantOffer, String> {
+  ONE_MONTH(Period.ofMonths(1), 1),
+  THREE_MONTHS(Period.ofMonths(3), 3),
+  SIX_MONTHS(Period.ofMonths(6), 6),
+  ONE_YEAR(Period.ofYears(1), 12),
+  OTHER(null, 0);
 
-  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
+  @Getter
+  private Period period;
 
-  List<DeedTenantOffer> findByNftId(long nftId);
+  @Getter
+  private int    months;
 
-  List<DeedTenantOffer> findByOfferTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> transactionStatus);
-
-  List<DeedTenantOffer> findByOfferId(long offerId);
-
-  List<DeedTenantOffer> findByOfferIdAndParentIdIsNull(long offerId);
-
-  void deleteByNftId(long nftId);
-
-  void deleteByParentId(String id);
-
-  DeedTenantOffer findByOfferTransactionHash(String lowerCase);
+  public static RentalDuration fromMonths(int months) {
+    switch (months) {
+    case 1:
+      return ONE_MONTH;
+    case 3:
+      return THREE_MONTHS;
+    case 6:
+      return SIX_MONTHS;
+    case 12:
+      return ONE_YEAR;
+    default:
+      return OTHER;
+    }
+  }
 
 }

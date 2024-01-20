@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.ReadonlyTransactionManager;
 import org.web3j.tx.gas.StaticGasProvider;
 
@@ -41,14 +42,17 @@ import io.meeds.deeds.contract.XMeedsNFTRewarding;
 @Configuration
 public class BlockchainConfiguration {
 
-  private static final BigInteger           GAS_PRICE             = BigInteger.valueOf(20000000000l);
+  private static final BigInteger            GAS_PRICE             = BigInteger.valueOf(20000000000l);
 
-  private static final BigInteger           GAS_LIMIT             = BigInteger.valueOf(300000l);
+  private static final BigInteger            GAS_LIMIT             = BigInteger.valueOf(300000l);
 
-  private static final StaticGasProvider    CONTRACT_GAS_PROVIDER = new StaticGasProvider(GAS_PRICE, GAS_LIMIT);
+  private static final StaticGasProvider     CONTRACT_GAS_PROVIDER = new StaticGasProvider(GAS_PRICE, GAS_LIMIT);
 
   @Autowired
-  private BlockchainConfigurationProperties properties;
+  private PolygonTransactionSignServiceProxy polygonTransactionSignServiceProxy;
+
+  @Autowired
+  private BlockchainConfigurationProperties  properties;
 
   @Bean("ethereumNetwork")
   public Web3j getMainnetNetworkWeb3j() {
@@ -154,10 +158,10 @@ public class BlockchainConfiguration {
     }
   }
 
-  @Bean
-  public WoM getWoM(
-                    @Qualifier("polygonNetwork")
-                    Web3j web3j) {
+  @Bean("womContractReadOnly")
+  public WoM getWoMReadOnly(
+                            @Qualifier("polygonNetwork")
+                            Web3j web3j) {
     if (StringUtils.isBlank(properties.getWomAddress())) {
       return null;
     } else {
@@ -168,8 +172,34 @@ public class BlockchainConfiguration {
     }
   }
 
+  @Bean("womContractReadWrite")
+  public WoM getWoMReadWrite(
+                             @Qualifier("polygonNetwork")
+                             Web3j web3j) {
+    if (StringUtils.isBlank(properties.getWomAddress())) {
+      return null;
+    } else {
+      return WoM.load(properties.getWomAddress(),
+                      web3j,
+                      getWriteTransactionManager(web3j),
+                      CONTRACT_GAS_PROVIDER);
+    }
+  }
+
   private ReadonlyTransactionManager getTransactionManager(Web3j web3j) {
     return new ReadonlyTransactionManager(web3j, Address.DEFAULT.toString());
+  }
+
+  private RawTransactionManager getWriteTransactionManager(Web3j web3j) {
+    long chainId;
+    try {
+      chainId = web3j.ethChainId().getId();
+    } catch (Exception e) {
+      chainId = -1; // NONE
+    }
+    return new RawTransactionManager(web3j,
+                                     polygonTransactionSignServiceProxy,
+                                     chainId);
   }
 
 }

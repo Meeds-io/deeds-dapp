@@ -41,14 +41,16 @@ public class HubMapper {
                    hubEntity.getDescription(),
                    hubEntity.getUrl(),
                    hubEntity.getColor(),
-                   hubEntity.getOwnerAddress(),
+                   hubEntity.getHubOwnerAddress(),
+                   hubEntity.getDeedOwnerAddress(),
                    hubEntity.getDeedManagerAddress(),
                    hubEntity.getEarnerAddress(),
                    hubEntity.getCreatedDate(),
                    hubEntity.getUpdatedDate(),
                    hubEntity.getUsersCount(),
                    hubEntity.getRewardsPeriodType(),
-                   hubEntity.getRewardsPerPeriod());
+                   hubEntity.getRewardsPerPeriod(),
+                   hubEntity.isEnabled());
   }
 
   public static HubEntity toEntity(Hub hub,
@@ -59,8 +61,9 @@ public class HubMapper {
                          deedTenant.getCityIndex(),
                          deedTenant.getCardType(),
                          hub.getEarnerAddress(),
-                         deedTenant.getManagerAddress(),
+                         hub.getHubOwnerAddress(),
                          deedTenant.getOwnerAddress(),
+                         deedTenant.getManagerAddress(),
                          hub.getName(),
                          hub.getDescription(),
                          hub.getUrl(),
@@ -70,7 +73,7 @@ public class HubMapper {
                          hub.getUsersCount(),
                          hub.getRewardsPeriodType(),
                          hub.getRewardsPerPeriod(),
-                         existingEntity == null || existingEntity.isEnabled(),
+                         hub.isEnabled(),
                          existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
   }

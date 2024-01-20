@@ -22,10 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.dapp.service.OfferService;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.OfferService;
 import io.meeds.deeds.common.service.UserProfileService;
 
 @Service

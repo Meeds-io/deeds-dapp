@@ -13,13 +13,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUIRED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_END_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_RENT_PAYED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_RENT_PAYMENT_CONFIRMED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_TENANT_EVICT_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUIRED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_END_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_RENT_PAYED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_RENT_PAYMENT_CONFIRMED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_TENANT_EVICT_EVENT;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -58,27 +58,24 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 
-import io.meeds.dapp.constant.ExpirationDuration;
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalDuration;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.storage.LeaseRepository;
-import io.meeds.dapp.utils.DeedTenantLeaseMapper;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.ExpirationDuration;
+import io.meeds.deeds.common.constant.NoticePeriod;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalDuration;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.common.elasticsearch.storage.LeaseRepository;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.LeaseFilter;
+import io.meeds.deeds.common.utils.DeedTenantLeaseMapper;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(classes = {

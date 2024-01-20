@@ -13,19 +13,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.elasticsearch.storage;
 
-import java.time.Period;
+import java.time.Instant;
+import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@AllArgsConstructor
-public enum RentalPaymentPeriodicity {
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
 
-  ONE_MONTH(Period.ofMonths(1)), ONE_YEAR(Period.ofYears(1));
+public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
 
-  @Getter
-  private Period period;
+  List<DeedTenantLease> findByTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> asList);
+
+  List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
 
 }

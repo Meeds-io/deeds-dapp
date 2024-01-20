@@ -59,6 +59,12 @@ public class HubController {
 
   private static final Logger LOG = LoggerFactory.getLogger(HubController.class);
 
+  private static final String WOM_CONNECTION_LOG_MESSAGE =
+                                                         "WOM-CONNECTION-FAIL: {}: An error happened when trying to connect to the WoM";
+
+  private static final String WOM_DISCONNECTION_LOG_MESSAGE =
+                                                            "WOM-DISCONNECTION-FAIL: {}: An error happened when trying to disconnect from the WoM";
+
   @Autowired
   private HubService          hubService;
 
@@ -163,13 +169,16 @@ public class HubController {
                                              @RequestBody
                                              WomConnectionRequest hubConnectionRequest) {
     try {
-      hubService.connectToWoM(hubConnectionRequest);
-      return ResponseEntity.noContent().build();
+      String womAddress = hubService.connectToWoM(hubConnectionRequest);
+      return ResponseEntity.ok(womAddress);
     } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
       LOG.warn("An unkown error happened when trying to process the request", e);
@@ -182,13 +191,16 @@ public class HubController {
                                                   @RequestBody
                                                   WomDisconnectionRequest disconnectionRequest) {
     try {
-      hubService.disconnectFromWoM(disconnectionRequest);
-      return ResponseEntity.noContent().build();
+      String womAddress = hubService.disconnectFromWoM(disconnectionRequest);
+      return ResponseEntity.ok(womAddress);
     } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
       LOG.warn("An unkown error happened when trying to process the request", e);
@@ -205,16 +217,6 @@ public class HubController {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(hub);
-  }
-
-  @GetMapping("/manager")
-  public String isDeedTenantManager(
-                                    @RequestParam(name = "nftId")
-                                    Long nftId,
-                                    @RequestParam(name = "address")
-                                    String address) {
-    boolean isManager = hubService.isDeedManager(address, nftId);
-    return String.valueOf(isManager);
   }
 
   @GetMapping("/token")

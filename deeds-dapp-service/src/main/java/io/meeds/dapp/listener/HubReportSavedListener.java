@@ -25,10 +25,10 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.service.LeaseService;
 import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.common.service.HubReportService;
+import io.meeds.deeds.common.service.LeaseService;
 import io.meeds.deeds.common.service.UEMRewardComputingService;
 import io.meeds.wom.api.model.HubReport;
 

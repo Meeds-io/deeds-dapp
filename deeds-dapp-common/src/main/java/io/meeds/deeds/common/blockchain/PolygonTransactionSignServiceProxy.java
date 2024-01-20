@@ -1,6 +1,8 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
+ *
  * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -9,12 +11,37 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.blockchain;
 
-public enum OfferType {
-  RENTING, SALE;
+import org.springframework.stereotype.Component;
+import org.web3j.crypto.RawTransaction;
+import org.web3j.service.TxSignService;
+
+import lombok.Setter;
+
+@Component
+public class PolygonTransactionSignServiceProxy implements TxSignService {
+
+  /**
+   * This will allow other addons to inject Transaction
+   * Signer for WoM Manager
+   */
+  @Setter
+  private static TxSignService txSignService;
+
+  @Override
+  public byte[] sign(RawTransaction rawTransaction, long chainId) {
+    return txSignService.sign(rawTransaction, chainId);
+  }
+
+  @Override
+  public String getAddress() {
+    return txSignService.getAddress();
+  }
+
 }

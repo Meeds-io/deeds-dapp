@@ -15,17 +15,39 @@
  */
 package io.meeds.deeds.common.constant;
 
+import java.time.Period;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum DeedCard {
-  COMMON(1.0d, 100l), UNCOMMON(1.1d, 1000l), RARE(1.3d, 10000l), LEGENDARY(2.0d, Long.MAX_VALUE);
+public enum NoticePeriod {
+
+  NO_PERIOD(Period.ZERO, 0),
+  ONE_MONTH(Period.ofMonths(1), 1),
+  TWO_MONTHS(Period.ofMonths(2), 2),
+  THREE_MONTHS(Period.ofMonths(3), 3),
+  OTHER(null, 0);
 
   @Getter
-  private double mintingPower;
+  private Period period;
 
   @Getter
-  private long maxUsers;
+  private int    months;
+
+  public static NoticePeriod fromMonths(int months) {
+    switch (months) {
+    case 0:
+      return NO_PERIOD;
+    case 1:
+      return ONE_MONTH;
+    case 2:
+      return TWO_MONTHS;
+    case 3:
+      return THREE_MONTHS;
+    default:
+      return OTHER;
+    }
+  }
 
 }

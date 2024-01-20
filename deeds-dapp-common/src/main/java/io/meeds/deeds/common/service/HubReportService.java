@@ -385,7 +385,7 @@ public class HubReportService {
   }
 
   private void checkHubValidity(Hub hub) throws WomRequestException {
-    if (hub == null || hub.getDeedId() < 0) {
+    if (hub == null || !hub.isEnabled() || hub.getDeedId() < 0) {
       throw new WomRequestException("wom.hubNotConnectedToWoM");
     }
   }
@@ -423,13 +423,13 @@ public class HubReportService {
 
   private String getOwnerAddress(Hub hub) throws ObjectNotFoundException {
     String ownerAddress;
-    if (StringUtils.isNotBlank(hub.getOwnerAddress()) && tenantService.isDeedOwner(hub.getOwnerAddress(), hub.getDeedId())) {
-      return hub.getOwnerAddress();
+    if (StringUtils.isNotBlank(hub.getDeedOwnerAddress()) && tenantService.isDeedOwner(hub.getDeedOwnerAddress(), hub.getDeedId())) {
+      return hub.getDeedOwnerAddress();
     } else {
       DeedTenant deedTenant = tenantService.getDeedTenantOrImport(hub.getDeedId());
       if (tenantService.isDeedOwner(deedTenant.getOwnerAddress(), hub.getDeedId())) {
         ownerAddress = deedTenant.getOwnerAddress();
-        hub.setOwnerAddress(ownerAddress);
+        hub.setDeedOwnerAddress(ownerAddress);
         hubService.saveHubOwnerAddress(hub.getAddress(), ownerAddress);
         return ownerAddress;
       } else {
