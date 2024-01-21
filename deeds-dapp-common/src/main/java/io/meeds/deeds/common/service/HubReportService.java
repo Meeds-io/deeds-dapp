@@ -27,7 +27,6 @@ import static io.meeds.wom.api.constant.HubReportStatusType.REJECTED;
 import static io.meeds.wom.api.constant.HubReportStatusType.REWARDED;
 import static io.meeds.wom.api.constant.HubReportStatusType.SENT;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public class HubReportService {
   private BlockchainService                      blockchainService;
 
   @Autowired
-  private HubService                             hubService;
+  private WomService                             hubService;
 
   @Autowired
   private TenantService                          tenantService;
@@ -457,7 +456,7 @@ public class HubReportService {
         whitelistRewardContracts = new ArrayList<>();
         whitelistRewardContracts.add(ethereumMeedToken);
         whitelistRewardContracts.add(polygonMeedToken);
-      } catch (IOException e) {
+      } catch (Exception e) {
         throw new WomRequestException("wom.blockchainConnectionError", e);
       }
       if (!CollectionUtils.isEmpty(whitelistRewardContractsValues)) {

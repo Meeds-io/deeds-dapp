@@ -5,7 +5,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class WoMHub {
+public class WomHub {
 
   private long    deedId;
 

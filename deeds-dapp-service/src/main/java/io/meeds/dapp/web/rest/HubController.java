@@ -17,6 +17,7 @@ package io.meeds.dapp.web.rest;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.common.model.FileBinary;
-import io.meeds.deeds.common.service.HubService;
+import io.meeds.deeds.common.model.ManagedDeed;
+import io.meeds.deeds.common.service.WomService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
@@ -51,22 +53,23 @@ import io.meeds.wom.api.constant.WomParsingException;
 import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
 import io.meeds.wom.api.model.WomConnectionRequest;
+import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @RestController
 @RequestMapping("/api/hubs")
 public class HubController {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HubController.class);
+  private static final Logger LOG                           = LoggerFactory.getLogger(HubController.class);
 
-  private static final String WOM_CONNECTION_LOG_MESSAGE =
+  private static final String WOM_CONNECTION_LOG_MESSAGE    =
                                                          "WOM-CONNECTION-FAIL: {}: An error happened when trying to connect to the WoM";
 
   private static final String WOM_DISCONNECTION_LOG_MESSAGE =
                                                             "WOM-DISCONNECTION-FAIL: {}: An error happened when trying to disconnect from the WoM";
 
   @Autowired
-  private HubService          hubService;
+  private WomService          hubService;
 
   @GetMapping
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
@@ -82,14 +85,26 @@ public class HubController {
   @GetMapping("/{hubAddress}")
   public ResponseEntity<Hub> getHub(
                                     @PathVariable(name = "hubAddress")
-                                    String hubAddress) {
-    Hub hub = hubService.getHub(hubAddress);
+                                    String hubAddress,
+                                    @RequestParam(name = "forceRefresh", required = false)
+                                    boolean forceRefresh) {
+    Hub hub = hubService.getHub(hubAddress, forceRefresh);
     if (hub == null) {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
                          .body(hub);
+  }
+
+  @GetMapping("/managed-deeds/{managerAddress}")
+  public ResponseEntity<Object> getManagedDeeds(
+                                                @PathVariable(name = "managerAddress")
+                                                String managerAddress) {
+    List<ManagedDeed> deeds = hubService.getManagedDeeds(managerAddress);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.noStore())
+                         .body(deeds);
   }
 
   @PostMapping("/{hubAddress}/avatar")
@@ -165,12 +180,12 @@ public class HubController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> connectToWoM(
+  public ResponseEntity<Object> connectToWom(
                                              @RequestBody
                                              WomConnectionRequest hubConnectionRequest) {
     try {
-      String womAddress = hubService.connectToWoM(hubConnectionRequest);
-      return ResponseEntity.ok(womAddress);
+      WomConnectionResponse connectionResponse = hubService.connectToWom(hubConnectionRequest);
+      return ResponseEntity.ok(connectionResponse);
     } catch (WomRequestException | WomParsingException e) {
       LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
@@ -187,11 +202,11 @@ public class HubController {
   }
 
   @DeleteMapping
-  public ResponseEntity<Object> disconnectFromWoM(
+  public ResponseEntity<Object> disconnectFromWom(
                                                   @RequestBody
                                                   WomDisconnectionRequest disconnectionRequest) {
     try {
-      String womAddress = hubService.disconnectFromWoM(disconnectionRequest);
+      String womAddress = hubService.disconnectFromWom(disconnectionRequest);
       return ResponseEntity.ok(womAddress);
     } catch (WomRequestException | WomParsingException e) {
       LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());

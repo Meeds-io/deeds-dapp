@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.datatypes.Address;
-import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -56,7 +57,11 @@ import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tuples.generated.Tuple8;
+import org.web3j.utils.EnsUtils;
 import org.web3j.utils.Numeric;
+
+import org.exoplatform.wallet.statistic.ExoWalletStatistic;
+import org.exoplatform.wallet.statistic.ExoWalletStatisticService;
 
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
@@ -66,7 +71,7 @@ import io.meeds.deeds.common.model.DeedCity;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.model.FundInfo;
-import io.meeds.deeds.common.model.WoMHub;
+import io.meeds.deeds.common.model.WomHub;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
 import io.meeds.deeds.contract.Deed.TransferSingleEventResponse;
@@ -92,7 +97,7 @@ import io.meeds.wom.api.constant.WomException;
 import lombok.SneakyThrows;
 
 @Component
-public class BlockchainService {
+public class BlockchainService implements ExoWalletStatisticService {
 
   private static final Logger    LOG = LoggerFactory.getLogger(BlockchainService.class);
 
@@ -152,6 +157,7 @@ public class BlockchainService {
    * @param nftId Deed NFT identifier
    * @return if marked as started else false
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.tenantStatus")
   public boolean isDeedStarted(long nftId) {
     try {
       return deedTenantProvisioning.tenantStatus(BigInteger.valueOf(nftId)).send().booleanValue();
@@ -166,11 +172,23 @@ public class BlockchainService {
    * @param transactionHash Blockchain Transaction Hash
    * @return true if Transaction is Mined
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isTransactionMined")
   public boolean isTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
     return receipt != null;
   }
 
+  /**
+   * @param transactionHash Blockchain Transaction Hash
+   * @return true if Transaction is Successful
+   */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isTransactionConfirmed")
+  public boolean isTransactionConfirmed(String transactionHash) {
+    TransactionReceipt receipt = getTransactionReceipt(transactionHash);
+    return receipt != null && receipt.isStatusOK();
+  }
+
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isPolygonTransactionMined")
   public boolean isPolygonTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
     return receipt != null;
@@ -180,23 +198,16 @@ public class BlockchainService {
    * @param transactionHash Blockchain Transaction Hash
    * @return true if Transaction is Successful
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isPolygonTransactionConfirmed")
   public boolean isPolygonTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
     return receipt != null && receipt.isStatusOK();
   }
 
   /**
-   * @param transactionHash Blockchain Transaction Hash
-   * @return true if Transaction is Successful
-   */
-  public boolean isTransactionConfirmed(String transactionHash) {
-    TransactionReceipt receipt = getTransactionReceipt(transactionHash);
-    return receipt != null && receipt.isStatusOK();
-  }
-
-  /**
    * @return last mined block number
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLastBlock")
   public long getLastBlock() {
     try {
       return web3j.ethBlockNumber().send().getBlockNumber().longValue();
@@ -213,6 +224,7 @@ public class BlockchainService {
    * @param toBlock End Block to filter
    * @return {@link List} of {@link DeedTenant}
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.getMinedProvisioningTransactions")
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
                                         new DefaultBlockParameterNumber(toBlock),
@@ -245,6 +257,7 @@ public class BlockchainService {
    * @param toBlock End Block to filter
    * @return {@link List} of {@link Map} of events
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedRenting.getMinedRentingTransactions")
   public List<Map<?, ?>> getMinedRentingTransactions(long fromBlock, // NOSONAR
                                                      long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -284,6 +297,7 @@ public class BlockchainService {
    * @param toBlock End Block to filter
    * @return {@link Set} of NFT ID of type {@link DeedOwnershipTransferEvent}
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.getMinedTransferOwnershipDeedTransactions")
   public Set<DeedOwnershipTransferEvent> getMinedTransferOwnershipDeedTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
                                         new DefaultBlockParameterNumber(toBlock),
@@ -310,6 +324,7 @@ public class BlockchainService {
     }
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferTransactionEvents")
   public Map<BlockchainOfferStatus, DeedOfferBlockchainState> getOfferTransactionEvents(String transactionHash) {// NOSONAR
     try {
       TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
@@ -382,6 +397,7 @@ public class BlockchainService {
     }
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLeaseTransactionEvents")
   public Map<BlockchainLeaseStatus, DeedLeaseBlockchainState> getLeaseTransactionEvents(String transactionHash) { // NOSONAR
     try {
       TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
@@ -433,6 +449,7 @@ public class BlockchainService {
     }
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferById")
   public DeedOfferBlockchainState getOfferById(BigInteger offerId,
                                                BigInteger blockNumber,
                                                String transactionHash) throws Exception {
@@ -459,6 +476,7 @@ public class BlockchainService {
                                         StringUtils.lowerCase(transactionHash));
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLeaseById")
   public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId,
                                                BigInteger blockNumber,
                                                String transactionHash) throws Exception {
@@ -485,6 +503,7 @@ public class BlockchainService {
    * @param nftId Deed NFT identifier
    * @return true if is manager else false
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isDeedProvisioningManager")
   public boolean isDeedProvisioningManager(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
            && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
@@ -497,6 +516,7 @@ public class BlockchainService {
    * @param nftId Deed NFT identifier
    * @return true if is owner else false
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isDeedOwner")
   public boolean isDeedOwner(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
            && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
@@ -511,6 +531,7 @@ public class BlockchainService {
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
    *           exists
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getDeedCardType")
   public short getDeedCardType(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cardType(BigInteger.valueOf(nftId)).send().shortValue();
@@ -523,6 +544,14 @@ public class BlockchainService {
     }
   }
 
+  @SneakyThrows
+  @SuppressWarnings("unchecked")
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.nftsOf")
+  public List<BigInteger> getDeedsOwnedBy(String managerAddress) {
+    return deed.nftsOf(managerAddress).send();
+  }
+
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isOfferEnabled")
   public boolean isOfferEnabled(long offerId) throws Exception {
     DeedOfferBlockchainState offer = getOfferById(BigInteger.valueOf(offerId), null, "0x");
     if (offer != null && offer.getId().longValue() == offerId) {
@@ -541,6 +570,7 @@ public class BlockchainService {
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
    *           exists
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getDeedCityIndex")
   public short getDeedCityIndex(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cityIndex(BigInteger.valueOf(nftId)).send().shortValue();
@@ -558,6 +588,7 @@ public class BlockchainService {
    *         which is retrieved from ethereum blockchain. The retrieved value is
    *         divided by number of decimals of the token (10^18)
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedsTotalSupplyNoDecimals")
   public BigDecimal meedsTotalSupplyNoDecimals() {
     BigInteger totalSupply = meedsTotalSupply();
     return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18));
@@ -567,6 +598,7 @@ public class BlockchainService {
    * @return {@link BigInteger} representing the total supply of Meeds Token
    *         which is retrieved from ethereum blockchain.
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedsTotalSupply")
   public BigInteger meedsTotalSupply() {
     return blockchainCall(ethereumToken.totalSupply());
   }
@@ -575,6 +607,7 @@ public class BlockchainService {
    * @return {@link BigInteger} representing the total supply of xMeeds Token
    *         which is retrieved from ethereum blockchain.
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#xMeedsTotalSupply")
   public BigInteger xMeedsTotalSupply() {
     return blockchainCall(xMeedsToken.totalSupply());
   }
@@ -583,6 +616,7 @@ public class BlockchainService {
    * @return {@link BigInteger} representing the total supply of xMeeds Token
    *         which is retrieved from ethereum blockchain.
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#sushiPairTotalSupply")
   public BigInteger sushiPairTotalSupply() {
     return blockchainCall(sushiPairToken.totalSupply());
   }
@@ -592,6 +626,7 @@ public class BlockchainService {
    * @return {@link FundInfo} with rewarding parameters retrieved from Token
    *         Factory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getFundInfo")
   public FundInfo getFundInfo(String address) {
     Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, Boolean> fundInfo = blockchainCall(tokenFactory.fundInfos(address));
     return fundInfo == null ? null :
@@ -606,6 +641,7 @@ public class BlockchainService {
   /**
    * @return {@link DeedCity} representing current minting city
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getCurrentCity")
   public DeedCity getCurrentCity() {
     BigInteger currentCityIndex = blockchainCall(xMeedsToken.currentCityIndex());
     Tuple4<String, BigInteger, BigInteger, BigInteger> cityInfo = blockchainCall(xMeedsToken.cityInfo(currentCityIndex));
@@ -621,6 +657,7 @@ public class BlockchainService {
    * @return {@link FundInfo} of xMeed Token with rewarding parameters retrieved
    *         from Token Factory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getXMeedFundInfo")
   public FundInfo getXMeedFundInfo() {
     FundInfo fundInfo = getFundInfo(xMeedsToken.getContractAddress());
     fundInfo.setTotalSupply(xMeedsTotalSupply());
@@ -633,6 +670,7 @@ public class BlockchainService {
    * @return {@link FundInfo} of Sushi Pair Token with rewarding parameters
    *         retrieved from Token Factory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getSushiPairFundInfo")
   public FundInfo getSushiPairFundInfo() {
     FundInfo fundInfo = getFundInfo(sushiPairToken.getContractAddress());
     fundInfo.setSymbol(sushiPairSymbol());
@@ -642,18 +680,21 @@ public class BlockchainService {
     return fundInfo;
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubOwner")
   public String getHubOwner(String address) {
-    WoMHub hub = getHub(address);
+    WomHub hub = getHub(address);
     return hub == null ? null : hub.getOwner();
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubByDeedId")
   public String getHubByDeedId(long nftId) {
-    io.meeds.deeds.contract.WoM.Deed womDeed = getWoMDeed(nftId);
+    io.meeds.deeds.contract.WoM.Deed womDeed = getWomDeed(nftId);
     return womDeed == null ? null : womDeed.hub;
   }
 
   @SneakyThrows
-  public io.meeds.deeds.contract.WoM.Deed getWoMDeed(long nftId) {
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getWomDeed")
+  public io.meeds.deeds.contract.WoM.Deed getWomDeed(long nftId) {
     if (womContract == null) {
       return null;
     }
@@ -674,7 +715,8 @@ public class BlockchainService {
     }
   }
 
-  public void updateWoMDeed(long deedId, // NOSONAR
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#updateWomDeed")
+  public void updateWomDeed(long deedId, // NOSONAR
                             short city,
                             short cardType,
                             short mintingPower,
@@ -690,20 +732,20 @@ public class BlockchainService {
                                                                                                                      BigInteger.valueOf(maxUsers),
                                                                                                                      ownerAddress,
                                                                                                                      managerAddress,
-                                                                                                                     Keys.getAddress(BigInteger.ZERO), // Will
-                                                                                                                                                       // not
-                                                                                                                                                       // be
-                                                                                                                                                       // updated
+                                                                                                                     EnsUtils.EMPTY_ADDRESS, // Will
+                                                                                                                                             // not
+                                                                                                                                             // be
+                                                                                                                                             // updated
                                                                                                                      BigInteger.valueOf(ownerMintingPercentage)))
                                                                     .send();
       if (transactionReceipt == null) {
         throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");
       } else if (!transactionReceipt.isStatusOK()) {
-        String message = getWoMContractMessage(transactionReceipt.getRevertReason());
+        String message = getWomContractMessage(transactionReceipt.getRevertReason());
         if (StringUtils.isNotBlank(message)) {
           throw new WomException(message);
         } else {
-          message = getWoMContractMessage(transactionReceipt.getStatus());
+          message = getWomContractMessage(transactionReceipt.getStatus());
           if (StringUtils.isNotBlank(message)) {
             throw new WomException(message);
           } else {
@@ -712,7 +754,7 @@ public class BlockchainService {
         }
       }
     } catch (Exception e) {
-      String message = getWoMContractExceptionMessage(e);
+      String message = getWomContractExceptionMessage(e);
       if (StringUtils.isNotBlank(message)) {
         throw new WomException(message);
       } else {
@@ -722,7 +764,8 @@ public class BlockchainService {
   }
 
   @SneakyThrows
-  public WoMHub getHub(String address) {
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHub")
+  public WomHub getHub(String address) {
     if (womContract == null) {
       return null;
     }
@@ -730,7 +773,7 @@ public class BlockchainService {
     if (hubTuple == null) {
       return null;
     } else {
-      return new WoMHub(hubTuple.component1().longValue(),
+      return new WomHub(hubTuple.component1().longValue(),
                         hubTuple.component2(),
                         hubTuple.component3().booleanValue());
     }
@@ -748,7 +791,7 @@ public class BlockchainService {
     return uemContract == null ? null : uemContract.getContractAddress();
   }
 
-  public String getWoMAddress() {
+  public String getWomAddress() {
     return womContract == null ? null : womContract.getContractAddress();
   }
 
@@ -756,6 +799,7 @@ public class BlockchainService {
    * @param address Address to get its pending rewardings not minted yet
    * @return {@link BigInteger} for Meed Token value with decimals
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#pendingRewardBalanceOf")
   public BigInteger pendingRewardBalanceOf(String address) {
     return blockchainCall(tokenFactory.pendingRewardBalanceOf(address));
   }
@@ -764,6 +808,7 @@ public class BlockchainService {
    * @return {@link BigInteger} for total allocation points configured in token
    *         Factory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#totalAllocationPoints")
   public BigInteger totalAllocationPoints() {
     return blockchainCall(tokenFactory.totalAllocationPoints());
   }
@@ -772,6 +817,7 @@ public class BlockchainService {
    * @return {@link BigInteger} for total fixed percentages configured in token
    *         Factory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#totalFixedPercentage")
   public BigInteger totalFixedPercentage() {
     return blockchainCall(tokenFactory.totalFixedPercentage());
   }
@@ -782,6 +828,7 @@ public class BlockchainService {
    *         retrieved from ethereum blockchain. The retrieved value is divided
    *         by number of decimals of the token (10^18)
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfNoDecimals")
   public BigDecimal meedBalanceOfNoDecimals(String address) {
     BigInteger balance = meedBalanceOf(address);
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
@@ -792,6 +839,7 @@ public class BlockchainService {
    * @return {@link BigInteger} representing the balance of address which is
    *         retrieved from ethereum blockchain.
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOf")
   public BigInteger meedBalanceOf(String address) {
     return blockchainCall(ethereumToken.balanceOf(address));
   }
@@ -799,6 +847,7 @@ public class BlockchainService {
   /**
    * @return Sushi Swap Pair token symbol
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#sushiPairSymbol")
   public String sushiPairSymbol() {
     return blockchainCall(sushiPairToken.symbol());
   }
@@ -806,6 +855,7 @@ public class BlockchainService {
   /**
    * @return total staked SLP amount in TokenFactory
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#stakedSushiPair")
   public BigInteger stakedSushiPair() {
     return blockchainCall(sushiPairToken.balanceOf(tokenFactory.getContractAddress()));
   }
@@ -816,19 +866,24 @@ public class BlockchainService {
    *         retrieved from polygon blockchain. The retrieved value is divided
    *         by number of decimals of the token (10^18)
    */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfOnPolygon")
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
   }
 
-  public long getNetworkId() throws IOException {
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getNetworkId")
+  public long getNetworkId() {
     if (ethereumNetworkId == 0) {
       ethereumNetworkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
     }
     return ethereumNetworkId;
   }
 
-  public long getPolygonNetworkId() throws IOException {
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getPolygonNetworkId")
+  public long getPolygonNetworkId() {
     if (polygonNetworkId == 0) {
       polygonNetworkId = new BigInteger(polygonWeb3j.netVersion().send().getNetVersion()).longValue();
     }
@@ -836,6 +891,7 @@ public class BlockchainService {
   }
 
   @SuppressWarnings("rawtypes")
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferCreationTransactionHash")
   public String getOfferCreationTransactionHash(BigInteger offerId) throws IOException {
     try {
       EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
@@ -930,27 +986,39 @@ public class BlockchainService {
     }
   }
 
-  private String getWoMContractExceptionMessage(Throwable e) {
+  private String getWomContractExceptionMessage(Throwable e) {
     if (e != null) {
       if (StringUtils.contains(e.getMessage(), "wom.")) {
-        String message = getWoMContractMessage(e.getMessage());
+        String message = getWomContractMessage(e.getMessage());
         if (StringUtils.isNotBlank(message)) {
           return message;
         }
       }
       if (e.getCause() != null) {
-        return getWoMContractExceptionMessage(e.getCause());
+        return getWomContractExceptionMessage(e.getCause());
       }
     }
     return null;
   }
 
-  private String getWoMContractMessage(String message) {
+  private String getWomContractMessage(String message) {
     Matcher matcher = Pattern.compile("wom\\.[a-zA-Z0-9]+").matcher(message);
     if (matcher.find()) {
       return matcher.group();
     }
     return null;
+  }
+
+  @Override
+  public Map<String, Object> getStatisticParameters(String operation, Object result, Object... methodArgs) {
+    Map<String, Object> parameters = new HashMap<>();
+    if (ArrayUtils.isNotEmpty(methodArgs)) {
+      for (int i = 0; i < methodArgs.length; i++) {
+        Object arg = methodArgs[i];
+        parameters.put("methodParam1", arg == null ? "null" : arg);
+      }
+    }
+    return parameters;
   }
 
 }

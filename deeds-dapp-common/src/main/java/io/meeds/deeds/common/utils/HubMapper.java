@@ -73,7 +73,7 @@ public class HubMapper {
                          hub.getUsersCount(),
                          hub.getRewardsPeriodType(),
                          hub.getRewardsPerPeriod(),
-                         hub.isEnabled(),
+                         existingEntity == null ? false : existingEntity.isEnabled(),
                          existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
   }

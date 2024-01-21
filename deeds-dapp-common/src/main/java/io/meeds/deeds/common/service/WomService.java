@@ -24,8 +24,11 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -44,10 +47,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.crypto.Sign.SignatureData;
+import org.web3j.utils.EnsUtils;
 import org.web3j.utils.Numeric;
 
 import io.meeds.deeds.common.constant.AttachmentType;
 import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
@@ -56,6 +61,9 @@ import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.common.model.FileBinary;
+import io.meeds.deeds.common.model.LeaseFilter;
+import io.meeds.deeds.common.model.ManagedDeed;
+import io.meeds.deeds.common.model.WomHub;
 import io.meeds.deeds.common.utils.HubMapper;
 import io.meeds.deeds.contract.WoM.Deed;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
@@ -65,15 +73,16 @@ import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
 import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.WomConnectionRequest;
+import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 
 @Component
-public class HubService {
+public class WomService {
 
-  private static final Logger LOG                        = LoggerFactory.getLogger(HubService.class);
+  private static final Logger LOG                        = LoggerFactory.getLogger(WomService.class);
 
   public static final String  HUB_SAVED                  = "uem.hub.saved";
 
@@ -179,9 +188,55 @@ public class HubService {
   }
 
   public Hub getHub(String hubAddress) {
-    return hubRepository.findById(StringUtils.lowerCase(hubAddress))
-                        .map(HubMapper::fromEntity)
-                        .orElse(null);
+    return getHub(hubAddress, false);
+  }
+
+  @SneakyThrows
+  public Hub getHub(String hubAddress, boolean forceRefresh) { // NOSONAR
+    if (forceRefresh) {
+      return refreshHubFromWom(hubAddress);
+    } else {
+      HubEntity hubEntity = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElse(null);
+      return HubMapper.fromEntity(hubEntity);
+    }
+  }
+
+  public Hub refreshHubFromWom(String hubAddress) {
+    HubEntity hubEntity = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElse(null);
+    WomHub hubFromWom = blockchainService.getHub(hubAddress);
+    boolean hubExistsInWom = hubFromWom != null && !StringUtils.equals(hubFromWom.getOwner(), EnsUtils.EMPTY_ADDRESS);
+    if (hubExistsInWom) {
+      long deedId = hubFromWom.getDeedId();
+      DeedTenant deedTenant = getDeedTenant(hubFromWom.getOwner(), deedId);
+
+      if (hubEntity == null) {
+        hubEntity = new HubEntity();
+        hubEntity.setAddress(StringUtils.lowerCase(hubAddress));
+        hubEntity.setCreatedDate(Instant.now());
+        hubEntity.setUpdatedDate(hubEntity.getCreatedDate());
+      } else {
+        hubEntity.setUpdatedDate(Instant.now());
+      }
+      hubEntity.setNftId(deedId);
+      hubEntity.setEnabled(hubFromWom.isEnabled());
+      hubEntity.setHubOwnerAddress(hubFromWom.getOwner());
+      hubEntity.setCity(deedTenant.getCityIndex()); // NOSONAR
+      hubEntity.setType(deedTenant.getCardType());
+      if (!StringUtils.equalsIgnoreCase(deedTenant.getOwnerAddress(), hubEntity.getDeedOwnerAddress())
+          && blockchainService.isDeedOwner(deedTenant.getOwnerAddress(), deedId)) {
+        hubEntity.setDeedOwnerAddress(deedTenant.getOwnerAddress());
+      }
+      if (!StringUtils.equalsIgnoreCase(deedTenant.getManagerAddress(), hubEntity.getDeedManagerAddress())
+          && blockchainService.isDeedProvisioningManager(deedTenant.getManagerAddress(), deedId)) {
+        hubEntity.setDeedManagerAddress(deedTenant.getManagerAddress());
+      }
+      hubEntity = hubRepository.save(hubEntity);
+      listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
+    } else if (hubEntity != null) {
+      hubRepository.deleteById(hubAddress);
+      hubEntity = null;
+    }
+    return HubMapper.fromEntity(hubEntity);
   }
 
   public String generateToken() {
@@ -195,24 +250,27 @@ public class HubService {
     return token;
   }
 
-  public String connectToWoM(WomConnectionRequest hubConnectionRequest) throws WomException {
+  public WomConnectionResponse connectToWom(WomConnectionRequest hubConnectionRequest) throws WomException {
     validateHubCommunityConnectionRequest(hubConnectionRequest);
     sendDeedUpdateTransaction(hubConnectionRequest.getDeedId(),
                               hubConnectionRequest.getDeedOwnerAddress(),
                               hubConnectionRequest.getDeedManagerAddress());
     saveHub(hubConnectionRequest);
-    return blockchainService.getWoMAddress();
+    return new WomConnectionResponse(hubConnectionRequest.getDeedId(),
+                                     hubConnectionRequest.getAddress(),
+                                     blockchainService.getWomAddress(),
+                                     blockchainService.getPolygonNetworkId());
   }
 
   @SneakyThrows
-  public String disconnectFromWoM(WomDisconnectionRequest hubConnectionRequest) throws WomException {
+  public String disconnectFromWom(WomDisconnectionRequest hubConnectionRequest) throws WomException {
     validateHubCommunityDisonnectionRequest(hubConnectionRequest);
     Hub hub = getHub(hubConnectionRequest.getHubAddress());
     if (hub == null || !hub.isEnabled()) {
       throw new WomException("wom.alreadyDisconnected");
     }
     sendDeedUpdateTransaction(hub.getDeedId());
-    return blockchainService.getWoMAddress();
+    return blockchainService.getWomAddress();
   }
 
   public void sendDeedUpdateTransaction(long deedId) throws ObjectNotFoundException, WomException {
@@ -258,29 +316,6 @@ public class HubService {
     return fileService.getFile(getBannerId(hubAddress));
   }
 
-  public void disableDeedHubCommunity(String hubAddress) {
-    hubRepository.findById(StringUtils.lowerCase(hubAddress))
-                 .ifPresent(hubEntity -> {
-                   if (hubEntity.isEnabled()) {
-                     String avatarId = hubEntity.getAvatarId();
-                     String bannerId = hubEntity.getBannerId();
-
-                     hubEntity.setEnabled(false);
-                     hubEntity.setAvatarId(null);
-                     hubEntity.setBannerId(null);
-                     hubEntity = hubRepository.save(hubEntity);
-
-                     if (StringUtils.isNotBlank(avatarId)) {
-                       fileService.removeFile(avatarId);
-                     }
-                     if (StringUtils.isNotBlank(bannerId)) {
-                       fileService.removeFile(bannerId);
-                     }
-                     listenerService.publishEvent(HUB_DISABLED, hubEntity.getAddress());
-                   }
-                 });
-  }
-
   public void saveHubUEMProperties(String hubAddress, HubReport report) {
     hubRepository.findById(StringUtils.lowerCase(hubAddress))
                  .ifPresent(hubEntity -> {
@@ -308,6 +343,13 @@ public class HubService {
                    hubEntity = hubRepository.save(hubEntity);
                    listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
                  });
+  }
+
+  public List<ManagedDeed> getManagedDeeds(String address) {
+    List<ManagedDeed> result = new ArrayList<>();
+    addOwnedDeeds(address, result);
+    addLeasedDeeds(address, result);
+    return result;
   }
 
   private void saveHubAttachment(String hubAddress, MultipartFile file, AttachmentType attachmentType) throws IOException,
@@ -410,7 +452,8 @@ public class HubService {
 
   private void checkHubOwner(String hubOwnerAddress, String deedManagerAddress) throws WomException {
     if (StringUtils.isNotBlank(hubOwnerAddress)
-        && !StringUtils.equalsIgnoreCase(hubOwnerAddress, deedManagerAddress)) {
+        && !StringUtils.equalsIgnoreCase(hubOwnerAddress, deedManagerAddress)
+        && !StringUtils.equalsIgnoreCase(hubOwnerAddress, EnsUtils.EMPTY_ADDRESS)) {
       throw new WomException("wom.onlyHubOwnerCanManageWoMConnection");
     }
   }
@@ -424,6 +467,7 @@ public class HubService {
   }
 
   private void saveHub(Hub hub) {
+    refreshHubFromWom(hub.getAddress());
     HubEntity existingDeedHub = hubRepository.findById(StringUtils.lowerCase(hub.getAddress()))
                                              .orElseGet(HubEntity::new);
     DeedTenant deedTenant = tenantService.getDeedTenant(hub.getDeedId());
@@ -431,7 +475,6 @@ public class HubService {
                                    deedTenant,
                                    existingDeedHub);
     hubEntity.setUpdatedDate(Instant.now());
-    hubEntity.setEnabled(false);
     hubEntity = hubRepository.save(hubEntity);
     listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
   }
@@ -500,7 +543,7 @@ public class HubService {
 
     validateDeedCharacteristics(deedId, ownerAddress, managerAddress);
 
-    Deed woMDeed = blockchainService.getWoMDeed(deedId);
+    Deed woMDeed = blockchainService.getWomDeed(deedId);
     if (woMDeed == null
         || !StringUtils.equals(woMDeed.owner, ownerAddress)
         || !StringUtils.equals(woMDeed.tenant, managerAddress)
@@ -517,7 +560,7 @@ public class HubService {
         short mintingPower = (short) (deedCard.getMintingPower() * 10);
         long maxUsers = deedCard.getMaxUsers();
 
-        blockchainService.updateWoMDeed(deedId,
+        blockchainService.updateWomDeed(deedId,
                                         city,
                                         cardType,
                                         mintingPower,
@@ -558,13 +601,80 @@ public class HubService {
   private void checkDeedNotUsed(String hubAddress, long deedId) throws WomException {
     String previousHubAddress = blockchainService.getHubByDeedId(deedId);
     if (StringUtils.isNotBlank(previousHubAddress)
-        && !StringUtils.equalsIgnoreCase(previousHubAddress, hubAddress)) {
+        && !StringUtils.equalsIgnoreCase(previousHubAddress, hubAddress)
+        && !StringUtils.equalsIgnoreCase(previousHubAddress, EnsUtils.EMPTY_ADDRESS)) {
       throw new WomRequestException("wom.deedAlreadyUsedByAHub");
     }
   }
 
   private void cleanInvalidTokens() {
     tokens.entrySet().removeIf(entry -> (entry.getValue() - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
+  }
+
+  private void addOwnedDeeds(String address, List<ManagedDeed> result) { // NOSONAR
+    List<BigInteger> deeds = blockchainService.getDeedsOwnedBy(address);
+    if (CollectionUtils.isNotEmpty(deeds)) {
+      deeds.stream()
+           .map(deedIdBN -> {
+             long deedId = deedIdBN.longValue();
+             DeedTenant deedTenant = getDeedTenant(address, deedId);
+             if (deedTenant == null || leaseService.getCurrentLease(deedId) != null) {
+               return null;
+             }
+             return new ManagedDeed(deedTenant.getNftId(),
+                                    DeedCity.values()[deedTenant.getCityIndex()],
+                                    DeedCard.values()[deedTenant.getCardType()],
+                                    deedTenant.getTenantProvisioningStatus(),
+                                    address,
+                                    address,
+                                    null,
+                                    null,
+                                    isConnected(deedId));
+           })
+           .filter(Objects::nonNull)
+           .forEach(result::add);
+    }
+  }
+
+  private void addLeasedDeeds(String address, List<ManagedDeed> result) {
+    LeaseFilter leaseFilter = new LeaseFilter();
+    leaseFilter.setCurrentAddress(address);
+    leaseFilter.setOwner(false);
+    Page<DeedTenantLeaseDTO> leasePage = leaseService.getLeases(leaseFilter, Pageable.unpaged());
+    leasePage.get().map(lease -> {
+      long deedId = lease.getNftId();
+      DeedTenant deedTenant = getDeedTenant(address, deedId);
+      if (deedTenant == null) {
+        return null;
+      }
+      return new ManagedDeed(deedTenant.getNftId(),
+                             DeedCity.values()[deedTenant.getCityIndex()],
+                             DeedCard.values()[deedTenant.getCardType()],
+                             deedTenant.getTenantProvisioningStatus(),
+                             lease.getOwnerAddress(),
+                             lease.getManagerAddress(),
+                             lease.getStartDate(),
+                             lease.getEndDate(),
+                             isConnected(deedId));
+    })
+             .filter(Objects::nonNull)
+             .forEach(result::add);
+  }
+
+  private DeedTenant getDeedTenant(String address, long deedId) {
+    DeedTenant deedTenant;
+    try {
+      deedTenant = tenantService.getDeedTenantOrImport(address, deedId);
+    } catch (ObjectNotFoundException e) {
+      LOG.warn("Error retieving Deed NFT with id {}", deedId, e);
+      return null;
+    }
+    return deedTenant;
+  }
+
+  private boolean isConnected(long deedId) {
+    Hub hub = getHub(deedId);
+    return hub != null && hub.isEnabled();
   }
 
 }
