@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.elasticsearch.model;
+package io.meeds.deeds.common.elasticsearch.model;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,8 +25,8 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 
 import lombok.AllArgsConstructor;

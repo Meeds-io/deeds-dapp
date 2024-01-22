@@ -13,19 +13,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.constant;
 
-import java.time.Period;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-public enum RentalPaymentPeriodicity {
-
-  ONE_MONTH(Period.ofMonths(1)), ONE_YEAR(Period.ofYears(1));
-
-  @Getter
-  private Period period;
-
+public enum OfferType {
+  RENTING, SALE;
 }

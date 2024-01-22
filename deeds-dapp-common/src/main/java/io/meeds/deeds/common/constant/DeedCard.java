@@ -20,9 +20,12 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum DeedCard {
-  COMMON(1.0d), UNCOMMON(1.1d), RARE(1.3d), LEGENDARY(2.0d);
+  COMMON(1.0d, 100l), UNCOMMON(1.1d, 1000l), RARE(1.3d, 10000l), LEGENDARY(2.0d, Long.MAX_VALUE);
 
   @Getter
   private double mintingPower;
+
+  @Getter
+  private long maxUsers;
 
 }

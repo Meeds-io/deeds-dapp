@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.utils;
+package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -22,14 +22,14 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.constant.NoticePeriod;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.TenantStatus;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
 
 public class DeedTenantLeaseMapper {
 

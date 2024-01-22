@@ -32,6 +32,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-service</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.exoplatform.addons.wallet</groupId>
+          <artifactId>wallet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.service.HubReportService;
-import io.meeds.deeds.common.service.HubService;
+import io.meeds.deeds.common.service.WomService;
 import io.meeds.wom.api.model.HubReport;
 
 @Service
@@ -41,7 +41,7 @@ public class HubRewardComptedListener implements EventListener<String> {
   private HubReportService          reportService;
 
   @Autowired
-  private HubService                hubService;
+  private WomService                hubService;
 
   @Override
   public String getName() {

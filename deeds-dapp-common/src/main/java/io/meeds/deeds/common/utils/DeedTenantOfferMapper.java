@@ -13,21 +13,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.utils;
+package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 
-import io.meeds.dapp.constant.ExpirationDuration;
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalDuration;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.constant.ExpirationDuration;
+import io.meeds.deeds.common.constant.NoticePeriod;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalDuration;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
 
 public class DeedTenantOfferMapper {
 

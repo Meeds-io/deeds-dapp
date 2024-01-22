@@ -13,48 +13,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.model;
+package io.meeds.deeds.common.constant;
 
-import java.util.List;
-
-import io.meeds.deeds.common.constant.DeedCard;
-import io.meeds.deeds.common.constant.TransactionStatus;
+import java.time.Period;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LeaseFilter {
+public enum RentalPaymentPeriodicity {
 
-  @With
-  private long                    nftId = -1;
+  ONE_MONTH(Period.ofMonths(1)), ONE_YEAR(Period.ofYears(1));
 
-  @With
-  private long                    networkId;
+  @Getter
+  private Period period;
 
-  @With
-  private String                  currentAddress;
-
-  @With
-  private Boolean                 owner;
-
-  @With
-  private List<DeedCard>          cardTypes;
-
-  @With
-  private boolean                 excludeNotConfirmed;
-
-  @With
-  private boolean                 includeOutdated;
-
-  @With
-  private List<TransactionStatus> transactionStatus;
-
-  public static LeaseFilter ofNftId(long nftId) {
-    return new LeaseFilter().withNftId(nftId);
-  }
 }

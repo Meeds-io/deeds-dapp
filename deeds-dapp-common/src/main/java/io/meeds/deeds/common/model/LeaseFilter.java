@@ -13,11 +13,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.model;
+package io.meeds.deeds.common.model;
 
 import java.util.List;
 
-import io.meeds.dapp.constant.OfferType;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.TransactionStatus;
 
@@ -29,39 +28,30 @@ import lombok.With;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OfferFilter {
+public class LeaseFilter {
 
   @With
   private long                    nftId = -1;
 
   @With
-  private long                    networkId;
-
-  @With
-  private String                  ownerAddress;
-
-  @With
   private String                  currentAddress;
+
+  @With
+  private Boolean                 owner;
 
   @With
   private List<DeedCard>          cardTypes;
 
   @With
-  private List<OfferType>         offerTypes;
+  private boolean                 excludeNotConfirmed;
 
   @With
-  private boolean                 excludeExpired;
-
-  @With
-  private boolean                 excludeNotStarted;
-
-  @With
-  private boolean                 excludeDisabled;
+  private boolean                 includeOutdated;
 
   @With
   private List<TransactionStatus> transactionStatus;
 
-  public static OfferFilter ofNftId(long nftId) {
-    return new OfferFilter().withNftId(nftId);
+  public static LeaseFilter ofNftId(long nftId) {
+    return new LeaseFilter().withNftId(nftId);
   }
 }

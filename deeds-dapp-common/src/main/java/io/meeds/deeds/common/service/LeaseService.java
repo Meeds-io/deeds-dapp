@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -40,21 +40,18 @@ import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.storage.LeaseRepository;
-import io.meeds.dapp.utils.DeedTenantLeaseMapper;
-import io.meeds.dapp.utils.DeedTenantOfferMapper;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.common.elasticsearch.storage.LeaseRepository;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.LeaseFilter;
+import io.meeds.deeds.common.utils.DeedTenantLeaseMapper;
+import io.meeds.deeds.common.utils.DeedTenantOfferMapper;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @Component
@@ -99,9 +96,6 @@ public class LeaseService {
   private ListenerService         listenerService;
 
   public Page<DeedTenantLeaseDTO> getLeases(LeaseFilter leaseFilter, Pageable pageable) {
-    if (leaseFilter.getNetworkId() > 0 && !tenantService.isBlockchainNetworkValid(leaseFilter.getNetworkId())) {
-      return Page.empty(pageable);
-    }
     Criteria criteria = new Criteria("enabled").is(true);
 
     if (!leaseFilter.isIncludeOutdated()) {
@@ -554,19 +548,14 @@ public class LeaseService {
   }
 
   private DeedTenant getDeedTenant(long nftId, String managerAddress, String ownerAddress) {
-    DeedTenant deedTenant;
     try {
-      try { // NOSONAR
-        deedTenant = tenantService.getDeedTenantOrImport(ownerAddress, nftId);
-      } catch (UnauthorizedOperationException e) {
-        deedTenant = tenantService.getDeedTenantOrImport(managerAddress, nftId);
-      }
-    } catch (UnauthorizedOperationException e) {
-      deedTenant = tenantService.getDeedTenant(nftId);
+      // Check if deed owner or manager
+      tenantService.getDeedTenantOrImport(ownerAddress, nftId);
+      // Check if deed owner or manager
+      return tenantService.getDeedTenantOrImport(managerAddress, nftId);
     } catch (ObjectNotFoundException e) {
       throw new IllegalStateException("Unable to locate nft with id " + nftId, e);
     }
-    return deedTenant;
   }
 
   public DeedTenantLeaseDTO getCurrentLease(long nftId) {

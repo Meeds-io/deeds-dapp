@@ -13,41 +13,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.elasticsearch.storage;
 
-import java.time.Period;
+import java.time.Instant;
+import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-@AllArgsConstructor
-public enum ExpirationDuration {
+import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
 
-  ONE_DAY(Period.ofDays(1), 1),
-  THREE_DAYS(Period.ofDays(3), 3),
-  ONE_WEEK(Period.ofWeeks(1), 7),
-  ONE_MONTH(Period.ofMonths(1), 30),
-  OTHER(null, 0);
+public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
 
-  @Getter
-  private Period period;
+  List<DeedTenantLease> findByTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> asList);
 
-  @Getter
-  private int    days;
-
-  public static ExpirationDuration fromDays(int expirationDays) {
-    switch (expirationDays) {
-    case 1:
-      return ONE_DAY;
-    case 3:
-      return THREE_DAYS;
-    case 7:
-      return ONE_WEEK;
-    case 30:
-      return ONE_MONTH;
-    default:
-      return OTHER;
-    }
-  }
+  List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
 
 }
