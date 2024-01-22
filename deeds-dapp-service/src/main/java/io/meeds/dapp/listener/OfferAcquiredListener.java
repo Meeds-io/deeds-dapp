@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUISITION_CONFIRMED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUISITION_CONFIRMED_EVENT;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -27,10 +27,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.service.OfferService;
 import io.meeds.deeds.common.service.TenantService;
 
 @Service

@@ -13,48 +13,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.model;
+package io.meeds.deeds.common.elasticsearch.storage;
 
+import java.time.Instant;
 import java.util.List;
 
-import io.meeds.deeds.common.constant.DeedCard;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
 import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
+public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LeaseFilter {
+  List<DeedTenantLease> findByTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> asList);
 
-  @With
-  private long                    nftId = -1;
+  List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
 
-  @With
-  private long                    networkId;
+  List<DeedTenantLease> getByEnabledTrueAndConfirmedTrueAndEndDateBetween(Instant from, Instant to);
 
-  @With
-  private String                  currentAddress;
-
-  @With
-  private Boolean                 owner;
-
-  @With
-  private List<DeedCard>          cardTypes;
-
-  @With
-  private boolean                 excludeNotConfirmed;
-
-  @With
-  private boolean                 includeOutdated;
-
-  @With
-  private List<TransactionStatus> transactionStatus;
-
-  public static LeaseFilter ofNftId(long nftId) {
-    return new LeaseFilter().withNftId(nftId);
-  }
 }

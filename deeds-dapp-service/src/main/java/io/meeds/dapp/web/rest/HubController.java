@@ -17,6 +17,7 @@ package io.meeds.dapp.web.rest;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,24 +45,35 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.common.model.FileBinary;
-import io.meeds.deeds.common.service.HubService;
+import io.meeds.deeds.common.model.ManagedDeed;
+import io.meeds.deeds.common.service.WomService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.constant.WomParsingException;
 import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
+import io.meeds.wom.api.model.HubUpdateRequest;
 import io.meeds.wom.api.model.WomConnectionRequest;
+import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @RestController
 @RequestMapping("/api/hubs")
 public class HubController {
 
-  private static final Logger LOG = LoggerFactory.getLogger(HubController.class);
+  private static final String WOM_UNKNOWN_ERROR_MESSAGE = "wom.unknownError:";
+
+  private static final Logger LOG                           = LoggerFactory.getLogger(HubController.class);
+
+  private static final String WOM_CONNECTION_LOG_MESSAGE    =
+                                                         "WOM-CONNECTION-FAIL: {}: An error happened when trying to connect to the WoM";
+
+  private static final String WOM_DISCONNECTION_LOG_MESSAGE =
+                                                            "WOM-DISCONNECTION-FAIL: {}: An error happened when trying to disconnect from the WoM";
 
   @Autowired
-  private HubService          hubService;
+  private WomService          hubService;
 
   @GetMapping
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
@@ -76,14 +89,26 @@ public class HubController {
   @GetMapping("/{hubAddress}")
   public ResponseEntity<Hub> getHub(
                                     @PathVariable(name = "hubAddress")
-                                    String hubAddress) {
-    Hub hub = hubService.getHub(hubAddress);
+                                    String hubAddress,
+                                    @RequestParam(name = "forceRefresh", required = false)
+                                    boolean forceRefresh) {
+    Hub hub = hubService.getHub(hubAddress, forceRefresh);
     if (hub == null) {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
                          .body(hub);
+  }
+
+  @GetMapping("/managed-deeds/{managerAddress}")
+  public ResponseEntity<Object> getManagedDeeds(
+                                                @PathVariable(name = "managerAddress")
+                                                String managerAddress) {
+    List<ManagedDeed> deeds = hubService.getManagedDeeds(managerAddress);
+    return ResponseEntity.ok()
+                         .cacheControl(CacheControl.noStore())
+                         .body(deeds);
   }
 
   @PostMapping("/{hubAddress}/avatar")
@@ -159,40 +184,68 @@ public class HubController {
   }
 
   @PostMapping
-  public ResponseEntity<Object> connectToWoM(
+  public ResponseEntity<Object> connectToWom(
                                              @RequestBody
                                              WomConnectionRequest hubConnectionRequest) {
     try {
-      hubService.connectToWoM(hubConnectionRequest);
-      return ResponseEntity.noContent().build();
+      WomConnectionResponse connectionResponse = hubService.connectToWom(hubConnectionRequest);
+      return ResponseEntity.ok(connectionResponse);
     } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the request", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+      LOG.warn("An unkown error happened when trying to process the connection request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
+    }
+  }
+
+  @PutMapping
+  public ResponseEntity<Object> updateHub(
+                                          @RequestBody
+                                          HubUpdateRequest hubUpdateRequest) {
+    try {
+      hubService.updateHub(hubUpdateRequest);
+      return ResponseEntity.noContent().build();
+    } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
+    } catch (WomAuthorizationException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
+    } catch (WomException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
+    } catch (Exception e) {
+      LOG.warn("An unkown error happened when trying to process the refresh Hub request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
 
   @DeleteMapping
-  public ResponseEntity<Object> disconnectFromWoM(
+  public ResponseEntity<Object> disconnectFromWom(
                                                   @RequestBody
                                                   WomDisconnectionRequest disconnectionRequest) {
     try {
-      hubService.disconnectFromWoM(disconnectionRequest);
-      return ResponseEntity.noContent().build();
+      String womAddress = hubService.disconnectFromWom(disconnectionRequest);
+      return ResponseEntity.ok(womAddress);
     } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
     } catch (WomAuthorizationException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
     } catch (WomException e) {
+      LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the request", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+      LOG.warn("An unkown error happened when trying to process the disconnection request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
 
@@ -205,16 +258,6 @@ public class HubController {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok(hub);
-  }
-
-  @GetMapping("/manager")
-  public String isDeedTenantManager(
-                                    @RequestParam(name = "nftId")
-                                    Long nftId,
-                                    @RequestParam(name = "address")
-                                    String address) {
-    boolean isManager = hubService.isDeedManager(address, nftId);
-    return String.valueOf(isManager);
   }
 
   @GetMapping("/token")

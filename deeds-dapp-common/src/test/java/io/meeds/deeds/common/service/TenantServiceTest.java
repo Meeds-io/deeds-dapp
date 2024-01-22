@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -219,23 +218,6 @@ class TenantServiceTest {
     assertNotNull(deedTenant);
     assertEquals(address, deedTenant.getOwnerAddress());
     assertNull(deedTenant.getManagerAddress());
-  }
-
-  @Test
-  void testGetDeedTenantOrImportBySimpleUserWhenNotExists() throws Exception {
-    long nftId = 1l;
-    String address = "address";
-    short cardType = 2;
-    short cityIndex = 3;
-    when(blockchainService.getDeedCardType(nftId)).thenReturn(cardType);
-    when(blockchainService.getDeedCityIndex(nftId)).thenReturn(cityIndex);
-    DeedTenant deedTenantMock = new DeedTenant();
-    deedTenantMock.setNftId(nftId);
-
-    when(deedTenantManagerRepository.findById(nftId)).thenReturn(Optional.of(deedTenantMock));
-
-    assertThrows(UnauthorizedOperationException.class, () -> tenantService.getDeedTenantOrImport(address, nftId));
-    verify(deedTenantManagerRepository, never()).save(any());
   }
 
   @Test

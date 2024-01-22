@@ -13,13 +13,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUIRED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_END_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_RENT_PAYED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_RENT_PAYMENT_CONFIRMED_EVENT;
-import static io.meeds.dapp.service.LeaseService.LEASE_TENANT_EVICT_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUIRED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_END_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_RENT_PAYED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_RENT_PAYMENT_CONFIRMED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_TENANT_EVICT_EVENT;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -57,27 +58,24 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 
-import io.meeds.dapp.constant.ExpirationDuration;
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalDuration;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.storage.LeaseRepository;
-import io.meeds.dapp.utils.DeedTenantLeaseMapper;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.ExpirationDuration;
+import io.meeds.deeds.common.constant.NoticePeriod;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalDuration;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.common.elasticsearch.storage.LeaseRepository;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.LeaseFilter;
+import io.meeds.deeds.common.utils.DeedTenantLeaseMapper;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(classes = {
@@ -138,15 +136,9 @@ class LeaseServiceTest {
     leaseFilter.setNftId(nftId);
     leaseFilter.setExcludeNotConfirmed(true);
     leaseFilter.setCardTypes(Collections.singletonList(DeedCard.COMMON));
-    leaseFilter.setNetworkId(6l);
     leaseFilter.setTransactionStatus(Collections.singletonList(TransactionStatus.VALIDATED));
     leaseFilter.setOwner(true);
     Page<DeedTenantLeaseDTO> result = leaseService.getLeases(leaseFilter, pageable);
-    assertNotNull(result);
-    assertEquals(0, result.getSize());
-
-    leaseFilter.setNetworkId(2l);
-    result = leaseService.getLeases(leaseFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
@@ -201,13 +193,7 @@ class LeaseServiceTest {
 
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
-    when(tenantService.getDeedTenantOrImport(tenant, nftId)).thenReturn(deedTenant);
-    when(tenantService.getDeedTenantOrImport(argThat(new ArgumentMatcher<String>() {
-      @Override
-      public boolean matches(String argument) {
-        return !StringUtils.equalsIgnoreCase(tenant, argument);
-      }
-    }), eq(nftId))).thenThrow(UnauthorizedOperationException.class);
+    when(tenantService.getDeedTenantOrImport(anyString(), eq(nftId))).thenReturn(deedTenant);
 
     assertThrows(ObjectNotFoundException.class, () -> leaseService.getLease(leaseId, null, false));
 
@@ -216,12 +202,7 @@ class LeaseServiceTest {
     DeedTenantLeaseDTO leaseDTO = leaseService.getLease(leaseId, null, true);
     assertNotNull(leaseDTO);
 
-    verify(tenantService, times(1)).saveDeedTenant(argThat(new ArgumentMatcher<DeedTenant>() {
-      @Override
-      public boolean matches(DeedTenant deedTenant) {
-        return StringUtils.isNotBlank(deedTenant.getOwnerAddress());
-      }
-    }));
+    verify(tenantService, times(1)).saveDeedTenant(argThat(dt -> StringUtils.isNotBlank(dt.getOwnerAddress())));
   }
 
   @Test
@@ -247,13 +228,7 @@ class LeaseServiceTest {
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setNftId(nftId);
     when(tenantService.saveDeedTenant(any())).thenAnswer(invocation -> invocation.getArgument(0));
-    when(tenantService.getDeedTenantOrImport(tenant, nftId)).thenReturn(deedTenant);
-    when(tenantService.getDeedTenantOrImport(argThat(new ArgumentMatcher<String>() {
-      @Override
-      public boolean matches(String argument) {
-        return !StringUtils.equalsIgnoreCase(tenant, argument);
-      }
-    }), eq(nftId))).thenThrow(UnauthorizedOperationException.class);
+    when(tenantService.getDeedTenantOrImport(anyString(), eq(nftId))).thenReturn(deedTenant);
     when(leaseRepository.save(any())).thenAnswer(invocation -> {
       DeedTenantLease lease = invocation.getArgument(0, DeedTenantLease.class);
       when(leaseRepository.findById(lease.getId())).thenReturn(Optional.of(lease));
@@ -263,12 +238,7 @@ class LeaseServiceTest {
     DeedTenantLeaseDTO createdLease = leaseService.createLease(tenant, null, offer.getId(), transactionHash);
     assertNotNull(createdLease);
 
-    verify(tenantService, times(1)).saveDeedTenant(argThat(new ArgumentMatcher<DeedTenant>() {
-      @Override
-      public boolean matches(DeedTenant deedTenant) {
-        return StringUtils.isNotBlank(deedTenant.getOwnerAddress());
-      }
-    }));
+    verify(tenantService, times(1)).saveDeedTenant(argThat(dt -> StringUtils.isNotBlank(dt.getOwnerAddress())));
 
     verify(listenerService, times(1)).publishEvent(eq(LEASE_ACQUIRED_EVENT), any());
   }

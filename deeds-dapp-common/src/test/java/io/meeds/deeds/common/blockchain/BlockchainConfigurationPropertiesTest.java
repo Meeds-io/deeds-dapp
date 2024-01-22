@@ -83,6 +83,7 @@ class BlockchainConfigurationPropertiesTest {
                                                                                          X_MEED_ADDRESS_VALUE,
                                                                                          TOKEN_FACTORY_ADDRESS_VALUE,
                                                                                          SUSHI_PAIR_ADDRESS_VALUE,
+                                                                                         null,
                                                                                          null);
     assertEquals(properties, blockchainConfigurationProperties);
     assertEquals(properties.hashCode(), blockchainConfigurationProperties.hashCode());

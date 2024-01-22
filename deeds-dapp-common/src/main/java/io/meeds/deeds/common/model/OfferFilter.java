@@ -13,31 +13,52 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.storage;
+package io.meeds.deeds.common.model;
 
 import java.util.List;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.OfferType;
 import io.meeds.deeds.common.constant.TransactionStatus;
 
-public interface OfferRepository extends ElasticsearchRepository<DeedTenantOffer, String> {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.With;
 
-  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class OfferFilter {
 
-  List<DeedTenantOffer> findByNftId(long nftId);
+  @With
+  private long                    nftId = -1;
 
-  List<DeedTenantOffer> findByOfferTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> transactionStatus);
+  @With
+  private String                  ownerAddress;
 
-  List<DeedTenantOffer> findByOfferId(long offerId);
+  @With
+  private String                  currentAddress;
 
-  List<DeedTenantOffer> findByOfferIdAndParentIdIsNull(long offerId);
+  @With
+  private List<DeedCard>          cardTypes;
 
-  void deleteByNftId(long nftId);
+  @With
+  private List<OfferType>         offerTypes;
 
-  void deleteByParentId(String id);
+  @With
+  private boolean                 excludeExpired;
 
-  DeedTenantOffer findByOfferTransactionHash(String lowerCase);
+  @With
+  private boolean                 excludeNotStarted;
 
+  @With
+  private boolean                 excludeDisabled;
+
+  @With
+  private List<TransactionStatus> transactionStatus;
+
+  public static OfferFilter ofNftId(long nftId) {
+    return new OfferFilter().withNftId(nftId);
+  }
 }

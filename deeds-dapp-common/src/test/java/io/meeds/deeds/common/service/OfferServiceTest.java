@@ -13,10 +13,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
-import static io.meeds.dapp.service.OfferService.OFFER_ACQUISITION_PROGRESS_EVENT;
-import static io.meeds.dapp.service.OfferService.OFFER_CANCELED_EVENT;
+import static io.meeds.deeds.common.service.OfferService.OFFER_ACQUISITION_PROGRESS_EVENT;
+import static io.meeds.deeds.common.service.OfferService.OFFER_CANCELED_EVENT;
 import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -58,27 +58,24 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
 
-import io.meeds.dapp.constant.ExpirationDuration;
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalDuration;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.OfferFilter;
-import io.meeds.dapp.storage.OfferRepository;
-import io.meeds.dapp.utils.DeedTenantOfferMapper;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.ExpirationDuration;
+import io.meeds.deeds.common.constant.NoticePeriod;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalDuration;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
+import io.meeds.deeds.common.elasticsearch.storage.OfferRepository;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.OfferFilter;
+import io.meeds.deeds.common.utils.DeedTenantOfferMapper;
 import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
@@ -159,13 +156,7 @@ class OfferServiceTest {
 
     OfferFilter offerFilter = new OfferFilter();
     offerFilter.setNftId(nftId);
-    offerFilter.setNetworkId(5l);
     Page<DeedTenantOfferDTO> result = offerService.getOffers(offerFilter, pageable);
-    assertNotNull(result);
-    assertEquals(0, result.getSize());
-
-    offerFilter.setNetworkId(2l);
-    result = offerService.getOffers(offerFilter, pageable);
     assertNotNull(result);
     assertEquals(1, result.getSize());
     assertEquals(1, result.getTotalElements());
