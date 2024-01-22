@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,6 +53,7 @@ import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.constant.WomParsingException;
 import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
+import io.meeds.wom.api.model.HubUpdateRequest;
 import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
@@ -186,6 +188,28 @@ public class HubController {
     try {
       WomConnectionResponse connectionResponse = hubService.connectToWom(hubConnectionRequest);
       return ResponseEntity.ok(connectionResponse);
+    } catch (WomRequestException | WomParsingException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());
+    } catch (WomAuthorizationException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getErrorCode());
+    } catch (WomException e) {
+      LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
+    } catch (Exception e) {
+      LOG.warn("An unkown error happened when trying to process the request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+    }
+  }
+
+  @PutMapping
+  public ResponseEntity<Object> updateHub(
+                                          @RequestBody
+                                          HubUpdateRequest hubUpdateRequest) {
+    try {
+      hubService.updateHub(hubUpdateRequest);
+      return ResponseEntity.noContent().build();
     } catch (WomRequestException | WomParsingException e) {
       LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());

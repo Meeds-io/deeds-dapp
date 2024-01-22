@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.9;
+pragma solidity 0.8.20;
 
 import "./abstract/Initializable.sol";
 import "./abstract/ManagerRole.sol";
@@ -89,6 +89,58 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
+     * @dev returns the connected Hub address to the given Deed
+     */
+    function getConnectedHub(uint256 _deedId)
+        public
+        view
+        returns (address) {
+        return isDeedConnected(_deedId) ? nfts[_deedId].hub : address(0);
+    }
+
+    /**
+     * @dev returns the connected Deed NFT to the given Hub address
+     */
+    function getConnectedDeed(address _hubAddress)
+        public
+        view
+        returns (uint256) {
+        return isHubConnected(_hubAddress) ? hubs[_hubAddress].deedId : 0;
+    }
+
+    /**
+     * @dev returns true if the hub is connected to the WoM
+     */
+    function isHubConnected(address _hubAddress)
+        public
+        view
+        returns (bool) {
+        Hub memory hub = hubs[_hubAddress];
+        Deed memory deed = nfts[hub.deedId];
+        return hub.enabled
+          && deed.hub == _hubAddress // Check whether the Deed is always assigned to the Hub
+          && (hub.owner == deed.owner
+              || hub.owner == deed.tenant); // If the Hub was firstly created by Tenant,
+                                            // disconnect automatically when changed
+    }
+
+    /**
+     * @dev returns true if the Deed is connected to the WoM
+     */
+    function isDeedConnected(uint256 _deedId)
+        public
+        view
+        returns (bool) {
+        Deed memory deed = nfts[_deedId];
+        Hub memory hub = hubs[deed.hub];
+        return hub.enabled
+          && hub.deedId == _deedId // Check whether the Deed is always assigned to the Hub
+          && (hub.owner == deed.owner
+              || hub.owner == deed.tenant); // If the Hub was firstly created by Tenant,
+                                            // disconnect automatically when changed
+    }
+
+    /**
      * @dev Connect a Hub to the WoM.
      *      Can be called only by Hub owner.
      */
@@ -98,7 +150,7 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     {
 
         require(_hubAddress != address(0), "wom.hubAddressIsMandatory");
-        require(_deedId >= 0, "wom.deedIdIsMandatory");
+        require(_deedId > 0, "wom.deedIdIsMandatory");
 
         _connect(_hubAddress, _deedId);
         emit HubConnected(_hubAddress, _deedId, _msgSender());
@@ -114,14 +166,13 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
       onlyHubOwner(_hubAddress) // Only Hub Owner is allowed
     {
         require(_hubAddress != address(0), "wom.hubAddressIsMandatory");
-        require(hubs[_hubAddress].owner != address(0), "wom.hubNotFound");
         require(hubs[_hubAddress].enabled, "wom.alreadyDisconnected");
 
         Hub memory hub = hubs[_hubAddress];
         require(hub.enabled, "wom.hubAlreadyDisconnected");
 
         uint256 deedId = hub.deedId;
-        require(deedId >= 0, "wom.alreadyDisconnected");
+        require(deedId > 0, "wom.deedIdDisconnected");
 
         Deed memory deed = nfts[deedId];
         require(deed.tenant != address(0), "wom.deedNotFound");
@@ -146,7 +197,8 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
 
         address _previousOwner = hubs[_hubAddress].owner;
         // Transfer ownership
-        hubs[_hubAddress].owner = _owner;
+        Hub storage hub = hubs[_hubAddress];
+        hub.owner = _owner;
 
         emit HubOwnershipTransferred(_previousOwner, _owner);
     }
@@ -159,11 +211,7 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
       public
       onlyManager // Only WoM Manager can bridge Deed from Ethereum
     {
-        require(_deedId >= 0, "wom.deedIdMustBePositive");
-        require(_deed.city >= 0, "wom.deedCityMustBePositive");
-        require(_deed.cardType >= 0, "wom.deedTypeMustBePositive");
-        require(_deed.mintingPower >= 0, "wom.deedMintingPowerMustBePositive");
-        require(_deed.maxUsers >= 0, "wom.deedMaxUsersMustBePositive");
+        require(_deedId > 0, "wom.deedIdMustBePositive");
         require(_deed.owner != address(0), "wom.deedOwnerIsMandatory");
         require(_deed.tenant != address(0), "wom.deedTenantIsMandatory");
 
@@ -189,13 +237,10 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     function _connect(address _hubAddress, uint256 _deedId)
         internal
     {
-
-        Hub storage hub = hubs[_hubAddress];
-        require(!hub.enabled || hub.deedId != _deedId, "wom.hubAlreadyConnected");
-
         Deed storage deed = nfts[_deedId];
         require(deed.tenant != address(0), "wom.deedNotFound");
 
+        Hub storage hub = hubs[_hubAddress];
         Hub memory previousHub = hubs[deed.hub];
         if (previousHub.enabled // Previous Hub always connected
             && deed.hub != _hubAddress // And not about current Hub
@@ -227,8 +272,10 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     function _disconnect(address _hubAddress, uint256 _deedId) internal {
-        nfts[_deedId].hub = address(0);
-        hubs[_hubAddress].enabled = false;
+        Deed storage deed = nfts[_deedId];
+        deed.hub = address(0);
+        Hub storage hub = hubs[_hubAddress];
+        hub.enabled = false;
     }
 
     function _authorizeUpgrade(

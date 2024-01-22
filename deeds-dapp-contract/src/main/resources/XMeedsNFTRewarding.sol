@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.9;
+pragma solidity 0.8.20;
 
 import './abstract/MeedsPointsRewarding.sol';
 import './abstract/ERC1155Tradable.sol';

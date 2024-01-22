@@ -71,6 +71,7 @@ import io.meeds.deeds.common.model.DeedCity;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.model.WomDeed;
 import io.meeds.deeds.common.model.WomHub;
 import io.meeds.deeds.contract.Deed;
 import io.meeds.deeds.contract.Deed.TransferBatchEventResponse;
@@ -216,6 +217,38 @@ public class BlockchainService implements ExoWalletStatisticService {
     }
   }
 
+  @ExoWalletStatistic(service = "blockchain", local = false,
+                      operation = "dapp#deedTenantProvisioning.getDeedManager")
+  public String getDeedManager(long deedId) {
+    EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
+                                        DefaultBlockParameterName.LATEST,
+                                        deedTenantProvisioning.getContractAddress()).addSingleTopic(EventEncoder.encode(DeedTenantProvisioning.DELEGATEEADDED_EVENT));
+    try {
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      @SuppressWarnings("rawtypes")
+      List<LogResult> ethLogs = ethLog.getLogs();
+      if (CollectionUtils.isEmpty(ethLogs)) {
+        return getDeedOwner(deedId);
+      }
+      return ethLogs.stream()
+                    .map(logResult -> (LogObject) logResult.get())
+                    .filter(logObject -> !logObject.isRemoved())
+                    .map(LogObject::getTransactionHash)
+                    .map(this::getTransactionReceipt)
+                    .filter(TransactionReceipt::isStatusOK)
+                    .map(this::getMinedDeedTenant)
+                    .filter(Objects::nonNull)
+                    .filter(tenant -> tenant.getNftId() == deedId
+                                      && !StringUtils.equalsIgnoreCase(tenant.getManagerAddress(), EnsUtils.EMPTY_ADDRESS)
+                                      && isDeedProvisioningManager(tenant.getManagerAddress(), deedId))
+                    .findFirst()
+                    .map(DeedTenant::getManagerAddress)
+                    .orElseGet(() -> this.getDeedOwner(deedId));
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving event logs for deedTenantProvisioning.getDeedManager", e);
+    }
+  }
+
   /**
    * Retrieves the list of mined provisioning transactions starting from a block
    * to another
@@ -224,7 +257,8 @@ public class BlockchainService implements ExoWalletStatisticService {
    * @param toBlock End Block to filter
    * @return {@link List} of {@link DeedTenant}
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.getMinedProvisioningTransactions")
+  @ExoWalletStatistic(service = "blockchain", local = false,
+                      operation = "dapp#deedTenantProvisioning.getMinedProvisioningTransactions")
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
                                         new DefaultBlockParameterNumber(toBlock),
@@ -286,6 +320,36 @@ public class BlockchainService implements ExoWalletStatisticService {
                     .toList();
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs of mined transactions", e);
+    }
+  }
+
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.getDeedOwner")
+  public String getDeedOwner(long deedId) {
+    EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
+                                        DefaultBlockParameterName.LATEST,
+                                        deed.getContractAddress()).addOptionalTopics(EventEncoder.encode(Deed.TRANSFERSINGLE_EVENT),
+                                                                                     EventEncoder.encode(Deed.TRANSFERBATCH_EVENT));
+    try {
+      EthLog ethLog = web3j.ethGetLogs(ethFilter).send();
+      @SuppressWarnings("rawtypes")
+      List<LogResult> ethLogs = ethLog.getLogs();
+      if (CollectionUtils.isEmpty(ethLogs)) {
+        throw new IllegalStateException("Should never happen: can't find owner by Blockchain Logs of the Deed " + deedId);
+      }
+      return ethLogs.stream()
+                    .map(logResult -> (LogObject) logResult.get())
+                    .filter(logObject -> !logObject.isRemoved())
+                    .map(LogObject::getTransactionHash)
+                    .map(this::getTransactionReceipt)
+                    .filter(TransactionReceipt::isStatusOK)
+                    .flatMap(this::getTransferOwnershipEvents)
+                    .filter(Objects::nonNull)
+                    .map(DeedOwnershipTransferEvent::getTo)
+                    .filter(address -> isDeedOwner(address, deedId))
+                    .findFirst()
+                    .orElseThrow();
+    } catch (IOException e) {
+      throw new IllegalStateException("Error retrieving event logs of deed ownership : " + deedId, e);
     }
   }
 
@@ -680,21 +744,29 @@ public class BlockchainService implements ExoWalletStatisticService {
     return fundInfo;
   }
 
+  @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubOwner")
   public String getHubOwner(String address) {
-    WomHub hub = getHub(address);
-    return hub == null ? null : hub.getOwner();
+    if (womContract == null) {
+      return null;
+    }
+    Tuple3<BigInteger, String, Boolean> hubTuple = womContract.hubs(address).send();
+    String owner = hubTuple == null ? null : hubTuple.component2();
+    return StringUtils.equals(address, EnsUtils.EMPTY_ADDRESS) ? null : owner;
   }
 
+  @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubByDeedId")
   public String getHubByDeedId(long nftId) {
-    io.meeds.deeds.contract.WoM.Deed womDeed = getWomDeed(nftId);
-    return womDeed == null ? null : womDeed.hub;
+    Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger> deedTuple =
+                                                                                                         womContract.nfts(BigInteger.valueOf(nftId))
+                                                                                                                    .send();
+    return getHubAddressIfConnected(deedTuple == null ? null : deedTuple.component7());
   }
 
   @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getWomDeed")
-  public io.meeds.deeds.contract.WoM.Deed getWomDeed(long nftId) {
+  public WomDeed getWomDeed(long nftId) {
     if (womContract == null) {
       return null;
     }
@@ -704,15 +776,36 @@ public class BlockchainService implements ExoWalletStatisticService {
     if (deedTuple == null) {
       return null;
     } else {
-      return new io.meeds.deeds.contract.WoM.Deed(deedTuple.component1(),
-                                                  deedTuple.component2(),
-                                                  deedTuple.component3(),
-                                                  deedTuple.component4(),
-                                                  deedTuple.component5(),
-                                                  deedTuple.component6(),
-                                                  deedTuple.component7(),
-                                                  deedTuple.component8());
+      return new WomDeed(deedTuple.component1().shortValue(),
+                         deedTuple.component2().shortValue(),
+                         deedTuple.component3().shortValue() / 10d,
+                         deedTuple.component4().longValue(),
+                         deedTuple.component5(),
+                         deedTuple.component6(),
+                         getHubAddressIfConnected(deedTuple.component7()),
+                         deedTuple.component8().shortValue());
     }
+  }
+
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#autoConnectToWom")
+  public void autoConnectToWom(long deedId, // NOSONAR
+                               short city,
+                               short cardType,
+                               short mintingPower,
+                               long maxUsers,
+                               String ownerAddress,
+                               String managerAddress,
+                               String hubAddress,
+                               short ownerMintingPercentage) throws WomException {
+    updateDeedStatusOnWom(deedId,
+                          city,
+                          cardType,
+                          mintingPower,
+                          maxUsers,
+                          ownerAddress,
+                          managerAddress,
+                          hubAddress,
+                          ownerMintingPercentage);
   }
 
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#updateWomDeed")
@@ -724,47 +817,19 @@ public class BlockchainService implements ExoWalletStatisticService {
                             String ownerAddress,
                             String managerAddress,
                             short ownerMintingPercentage) throws WomException {
-    try {
-      TransactionReceipt transactionReceipt = womContractWithManager.updateDeed(BigInteger.valueOf(deedId),
-                                                                                new io.meeds.deeds.contract.WoM.Deed(BigInteger.valueOf(city),
-                                                                                                                     BigInteger.valueOf(cardType),
-                                                                                                                     BigInteger.valueOf(mintingPower),
-                                                                                                                     BigInteger.valueOf(maxUsers),
-                                                                                                                     ownerAddress,
-                                                                                                                     managerAddress,
-                                                                                                                     EnsUtils.EMPTY_ADDRESS, // Will
-                                                                                                                                             // not
-                                                                                                                                             // be
-                                                                                                                                             // updated
-                                                                                                                     BigInteger.valueOf(ownerMintingPercentage)))
-                                                                    .send();
-      if (transactionReceipt == null) {
-        throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");
-      } else if (!transactionReceipt.isStatusOK()) {
-        String message = getWomContractMessage(transactionReceipt.getRevertReason());
-        if (StringUtils.isNotBlank(message)) {
-          throw new WomException(message);
-        } else {
-          message = getWomContractMessage(transactionReceipt.getStatus());
-          if (StringUtils.isNotBlank(message)) {
-            throw new WomException(message);
-          } else {
-            throw new WomException("wom.updateDeedTransactionFailed");
-          }
-        }
-      }
-    } catch (Exception e) {
-      String message = getWomContractExceptionMessage(e);
-      if (StringUtils.isNotBlank(message)) {
-        throw new WomException(message);
-      } else {
-        throw new IllegalStateException("Error While processing Deed Update transaction", e);
-      }
-    }
+    updateDeedStatusOnWom(deedId,
+                          city,
+                          cardType,
+                          mintingPower,
+                          maxUsers,
+                          ownerAddress,
+                          managerAddress,
+                          EnsUtils.EMPTY_ADDRESS,
+                          ownerMintingPercentage);
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHub")
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.getHub")
   public WomHub getHub(String address) {
     if (womContract == null) {
       return null;
@@ -775,8 +840,14 @@ public class BlockchainService implements ExoWalletStatisticService {
     } else {
       return new WomHub(hubTuple.component1().longValue(),
                         hubTuple.component2(),
-                        hubTuple.component3().booleanValue());
+                        isHubConnected(address));
     }
+  }
+
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.isHubConnected")
+  public boolean isHubConnected(String address) {
+    return womContract.isHubConnected(address).send().booleanValue();
   }
 
   public String getEthereumMeedTokenAddress() {
@@ -1007,6 +1078,56 @@ public class BlockchainService implements ExoWalletStatisticService {
       return matcher.group();
     }
     return null;
+  }
+
+  private String getHubAddressIfConnected(String hubAddress) throws Exception {
+    hubAddress = StringUtils.equalsIgnoreCase(hubAddress, EnsUtils.EMPTY_ADDRESS) ? null : hubAddress;
+    return hubAddress != null && womContract.isHubConnected(hubAddress).send() ? hubAddress : null;
+  }
+
+  private void updateDeedStatusOnWom(long deedId, // NOSONAR
+                                     short city,
+                                     short cardType,
+                                     short mintingPower,
+                                     long maxUsers,
+                                     String ownerAddress,
+                                     String managerAddress,
+                                     String hubAddress,
+                                     short ownerMintingPercentage) throws WomException {
+    try {
+      TransactionReceipt transactionReceipt = womContractWithManager.updateDeed(BigInteger.valueOf(deedId),
+                                                                                new io.meeds.deeds.contract.WoM.Deed(BigInteger.valueOf(city),
+                                                                                                                     BigInteger.valueOf(cardType),
+                                                                                                                     BigInteger.valueOf(mintingPower),
+                                                                                                                     BigInteger.valueOf(maxUsers),
+                                                                                                                     ownerAddress,
+                                                                                                                     managerAddress,
+                                                                                                                     hubAddress,
+                                                                                                                     BigInteger.valueOf(ownerMintingPercentage)))
+                                                                    .send();
+      if (transactionReceipt == null) {
+        throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");
+      } else if (!transactionReceipt.isStatusOK()) {
+        String message = getWomContractMessage(transactionReceipt.getRevertReason());
+        if (StringUtils.isNotBlank(message)) {
+          throw new WomException(message);
+        } else {
+          message = getWomContractMessage(transactionReceipt.getStatus());
+          if (StringUtils.isNotBlank(message)) {
+            throw new WomException(message);
+          } else {
+            throw new WomException("wom.updateDeedTransactionFailed");
+          }
+        }
+      }
+    } catch (Exception e) {
+      String message = getWomContractExceptionMessage(e);
+      if (StringUtils.isNotBlank(message)) {
+        throw new WomException(message);
+      } else {
+        throw new IllegalStateException("Error While processing Deed Update transaction", e);
+      }
+    }
   }
 
   @Override

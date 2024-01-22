@@ -138,6 +138,12 @@ public class HubEntity {
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @Getter
   @Setter
+  @CreatedDate
+  private Instant             untilDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  @Getter
+  @Setter
   @LastModifiedDate
   private Instant             updatedDate = Instant.now();
 
