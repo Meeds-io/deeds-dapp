@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.service;
+package io.meeds.deeds.common.service;
 
 import java.math.BigInteger;
 import java.time.Instant;
@@ -45,23 +45,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.web3j.abi.datatypes.Address;
 
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
-import io.meeds.dapp.elasticsearch.model.DeedTenantOffer;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.OfferFilter;
-import io.meeds.dapp.storage.OfferRepository;
-import io.meeds.dapp.utils.DeedTenantOfferMapper;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
+import io.meeds.deeds.common.elasticsearch.storage.OfferRepository;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
-import io.meeds.deeds.common.service.BlockchainService;
-import io.meeds.deeds.common.service.ListenerService;
-import io.meeds.deeds.common.service.TenantService;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.OfferFilter;
+import io.meeds.deeds.common.utils.DeedTenantOfferMapper;
 import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
@@ -110,9 +107,6 @@ public class OfferService {
   private Map<String, Long>        blockchainRefreshStamp                = new ConcurrentHashMap<>();
 
   public Page<DeedTenantOfferDTO> getOffers(OfferFilter offerFilter, Pageable pageable) {
-    if (offerFilter.getNetworkId() > 0 && !tenantService.isBlockchainNetworkValid(offerFilter.getNetworkId())) {
-      return Page.empty(pageable);
-    }
     Criteria criteria = new Criteria("parentId").not().exists();
     criteria.and(criteria, new Criteria("acquired").is(false));
 
@@ -996,15 +990,12 @@ public class OfferService {
   }
 
   private DeedTenant getDeedTenant(long nftId, String managerAddress) {
-    DeedTenant deedTenant;
     try {
-      deedTenant = tenantService.getDeedTenantOrImport(managerAddress, nftId);
-    } catch (UnauthorizedOperationException e) {
-      deedTenant = tenantService.getDeedTenant(nftId);
+      // Check if deed owner or manager
+      return tenantService.getDeedTenantOrImport(managerAddress, nftId);
     } catch (ObjectNotFoundException e) {
       throw new IllegalStateException("Unable to locate nft with id " + nftId, e);
     }
-    return deedTenant;
   }
 
   private DeedTenantOffer getOfferByBlockchainOfferId(long blockchainOfferId, boolean updateIfNotFound) throws Exception {

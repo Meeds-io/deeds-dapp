@@ -145,7 +145,6 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
-    networkId: state => state.networkId,
     language: state => state.language,
     authenticated: state => state.authenticated,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
@@ -282,7 +281,7 @@ export default {
         onlyOwned: true,
         excludeExpired: true,
         excludeNotStarted: false,
-      }, this.networkId)
+      })
         .then(offers => {
           const rentalOffers = offers?._embedded?.offers && [offers?._embedded?.offers[0]] || [];
           if (broadcast) {

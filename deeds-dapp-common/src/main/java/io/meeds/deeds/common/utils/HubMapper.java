@@ -19,8 +19,11 @@ package io.meeds.deeds.common.utils;
 
 import java.time.Instant;
 
+import org.apache.commons.lang3.StringUtils;
+
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.wom.api.model.Hub;
 
 public class HubMapper {
@@ -41,26 +44,50 @@ public class HubMapper {
                    hubEntity.getDescription(),
                    hubEntity.getUrl(),
                    hubEntity.getColor(),
-                   hubEntity.getOwnerAddress(),
+                   hubEntity.getHubOwnerAddress(),
+                   hubEntity.getDeedOwnerAddress(),
                    hubEntity.getDeedManagerAddress(),
                    hubEntity.getEarnerAddress(),
                    hubEntity.getCreatedDate(),
+                   hubEntity.getUntilDate(),
                    hubEntity.getUpdatedDate(),
                    hubEntity.getUsersCount(),
                    hubEntity.getRewardsPeriodType(),
-                   hubEntity.getRewardsPerPeriod());
+                   hubEntity.getRewardsPerPeriod(),
+                   hubEntity.isEnabled() && (hubEntity.getUntilDate() == null
+                                             || hubEntity.getUntilDate().isAfter(Instant.now())));
   }
 
-  public static HubEntity toEntity(Hub hub,
+  public static HubEntity toEntity(Hub hub, // NOSONAR
                                    DeedTenant deedTenant,
+                                   DeedTenantLeaseDTO lease,
                                    HubEntity existingEntity) {
+    boolean connected = existingEntity != null && existingEntity.isEnabled();
+    Instant untilDate = existingEntity == null ? lease.getEndDate() : existingEntity.getUntilDate();
+
+    String ownerAddress = deedTenant.getOwnerAddress();
+    String managerAddress = deedTenant.getManagerAddress();
+    if (StringUtils.equalsIgnoreCase(ownerAddress, managerAddress)) {
+      untilDate = null;
+    } else if (connected
+               && lease != null
+               && StringUtils.equalsIgnoreCase(hub.getHubOwnerAddress(), lease.getManagerAddress())) {
+      untilDate = lease.getEndDate();
+    }
+
+    if (connected
+        && untilDate != null
+        && untilDate.isBefore(Instant.now())) {
+      connected = false;
+    }
     return new HubEntity(hub.getAddress(),
                          deedTenant.getNftId(),
                          deedTenant.getCityIndex(),
                          deedTenant.getCardType(),
                          hub.getEarnerAddress(),
-                         deedTenant.getManagerAddress(),
-                         deedTenant.getOwnerAddress(),
+                         hub.getHubOwnerAddress(),
+                         ownerAddress,
+                         managerAddress,
                          hub.getName(),
                          hub.getDescription(),
                          hub.getUrl(),
@@ -70,8 +97,9 @@ public class HubMapper {
                          hub.getUsersCount(),
                          hub.getRewardsPeriodType(),
                          hub.getRewardsPerPeriod(),
-                         existingEntity == null || existingEntity.isEnabled(),
+                         connected,
                          existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
+                         untilDate,
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
   }
 

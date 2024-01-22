@@ -20,9 +20,11 @@
 -->
 <template>
   <v-card
+    :disabled="unkownHub"
+    :href="hubUrl"
+    target="_blank"
     class="full-width"
-    flat
-    @click="$root.$emit('open-hub-details', hub)">
+    flat>
     <v-card
       class="rounded-lg"
       height="270px"
@@ -30,24 +32,31 @@
       hover
       outlined>
       <v-card-actions class="position-absolute z-index-two r-0">
-        <v-tooltip bottom>
+        <v-tooltip v-if="deedId" bottom>
           <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              small
-              dense
-              class="mx-0 px-0 elevation-1 white"
+            <v-chip
+              :href="`${openSeaBaseLink}/${deedId}`"
+              :color="unkownHub && 'grey' || 'white'"
+              :dark="unkownHub"
+              target="_blank"
+              rel="nofollow noreferrer noopener"
+              class="overflow-hidden d-block"
+              height="36"
+              outlined
               v-bind="attrs"
               v-on="on"
-              @click.prevent.stop="$root.$emit('open-hub-details', hub)">
-              <v-icon
-                size="14"
-                color="info">
-                fa-info
-              </v-icon>
-            </v-btn>
+              @click="nop">
+              <v-img
+                :src="cardImage"
+                max-height="36"
+                max-width="34"
+                class="rounded-circle ms-n3 pe-1" />
+              <div class="font-weight-normal body-1 ms-2">
+                #{{ deedId }}
+              </div>
+            </v-chip>
           </template>
-          <span>{{ $t('wom.openHubDetails') }}</span>
+          <span>{{ $t('wom.openDeedInOpenSea') }}</span>
         </v-tooltip>
       </v-card-actions>
       <v-card
@@ -58,7 +67,7 @@
       <v-card
         height="75px"
         width="75px"
-        class="ms-5 mt-n10 rounded-lg position-absolute"
+        class="ms-5 mt-n10 rounded-lg position-absolute z-index-two"
         outlined>
         <v-img
           v-if="hubLogoUrl"
@@ -68,67 +77,25 @@
           width="90%"
           contain />
       </v-card>
-      <div class="d-flex flex-column pt-2 px-4 pb-4">
-        <div class="ms-10 ps-15">
-          <span class="text-h6 font-weight-bold text-no-wrap">
-            {{ hubName }}
+      <div class="d-flex flex-column pt-2 px-4 pb-4 overflow-hidden">
+        <div class="ms-10 ps-15 text-truncate">
+          <span class="text-h6 font-weight-bold text-truncate">
+            {{ hubName || $t('wom.unknownHub', {0: deedId}) }}
           </span>
         </div>
         <v-card
-          v-sanitized-html="hubDescription"
+          v-sanitized-html="hubDescriptionText"
           height="50px"
           class="text-light-color font-weight-normal mt-3 text-truncate-2 pa-0"
           flat />
         <v-spacer />
         <div class="d-flex mt-4">
-          <v-tooltip v-if="deedId" bottom>
-            <template #activator="{ on, attrs }">
-              <v-chip
-                :href="`${openSeaBaseLink}/${deedId}`"
-                target="_blank"
-                rel="nofollow noreferrer noopener"
-                class="overflow-hidden d-block me-2"
-                outlined
-                v-bind="attrs"
-                v-on="on"
-                @click="nop">
-                <v-img
-                  :src="cardImage"
-                  max-height="36"
-                  max-width="36"
-                  class="rounded-circle ms-n3" />
-                <div class="text-light-color font-weight-normal body-1">
-                  #{{ deedId }}
-                </div>
-              </v-chip>
-            </template>
-            <span>{{ $t('wom.openDeedInOpenSea') }}</span>
-          </v-tooltip>
-          <v-tooltip v-if="hubUrl" bottom>
-            <template #activator="{ on, attrs }">
-              <v-btn
-                :href="hubUrl"
-                target="_blank"
-                class="me-2"
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click="nop">
-                <v-icon
-                  size="26"
-                  class="dark-grey-color">
-                  fa-globe
-                </v-icon>
-              </v-btn>
-            </template>
-            <span>{{ $t('wom.openHubWebsite') }}</span>
-          </v-tooltip>
-          <div v-if="!hubUsers" class="d-flex align-center justify-center ms-auto">
+          <div v-if="!hubUsers" class="d-flex align-center justify-center me-auto">
             <v-icon size="21" class="secondary--text me-3">fas fa-bolt</v-icon>
             <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
           </div>
           <template v-else>
-            <div class="d-flex align-center justify-center ms-auto">
+            <div class="d-flex align-center justify-center me-auto">
               <v-img 
                 :src="`${parentLocation}/static/images/teamwork_icon_red.webp`"
                 class="me-2"
@@ -138,13 +105,17 @@
                 {{ hubUsers }}
               </div>
             </div>
-            <div class="d-flex align-center justify-center ms-2">
+            <div v-if="!hubRewardsPeriod || !hubRewardsAmount" class="d-flex align-center justify-center ms-auto">
+              <v-icon size="21" class="secondary--text me-3">fas fa-bolt</v-icon>
+              <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
+            </div>
+            <div v-else class="d-flex align-center justify-center ms-auto">
               <v-img 
                 :src="`${parentLocation}/static/images/meed_circle.webp`"
                 class="me-2"
                 width="25px"
                 height="25px" />
-              <div v-if="hubRewardsPeriod && hubRewardsAmount" class="text-light-color d-flex font-weight-normal">
+              <div class="text-light-color d-flex font-weight-normal">
                 {{ hubRewardsAmount }}
                 <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
               </div>
@@ -176,6 +147,9 @@ export default {
     hubDescription() {
       return this.language === 'fr' && this.hub?.description?.fr || this.hub?.description?.en;
     },
+    hubDescriptionText() {
+      return this.hubDescription && this.$utils.htmlToText(this.hubDescription) || '';
+    },
     hubBackgroundColor() {
       return this.hub?.backgroundColor || this.hub?.color;
     },
@@ -196,6 +170,9 @@ export default {
     },
     hubUrl() {
       return this.hub?.hubUrl || this.hub?.url;
+    },
+    unkownHub() {
+      return !this.hubUrl || !this.hubName;
     },
     hubRewardsPeriodType() {
       return this.hub?.rewardsPeriodType?.toLowerCase?.();

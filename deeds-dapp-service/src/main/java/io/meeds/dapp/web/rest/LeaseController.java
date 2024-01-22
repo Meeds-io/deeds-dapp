@@ -44,13 +44,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.service.LeaseService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.common.constant.DeedCard;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.LeaseFilter;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.LeaseService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @RestController
@@ -77,16 +77,13 @@ public class LeaseController {
                                                                @RequestParam(name = "address", required = true)
                                                                String address,
                                                                @RequestParam(name = "owner", required = true)
-                                                               boolean owner,
-                                                               @RequestParam(name = "networkId", required = true)
-                                                               long networkId) {
+                                                               boolean owner) {
     LeaseFilter leaseFilter = new LeaseFilter();
     if (nftId != null && nftId > 0) {
       leaseFilter.setNftId(nftId);
     }
     leaseFilter.setExcludeNotConfirmed(onlyConfirmed);
     leaseFilter.setCardTypes(cardTypes);
-    leaseFilter.setNetworkId(networkId);
     leaseFilter.setCurrentAddress(StringUtils.lowerCase(address));
     leaseFilter.setOwner(owner);
     Page<DeedTenantLeaseDTO> leases = leaseService.getLeases(leaseFilter, pageable);
