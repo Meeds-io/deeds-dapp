@@ -26,11 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
 import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.OfferService;
 
 @Component
 public class OfferBlockchainTransactionCheckTask {

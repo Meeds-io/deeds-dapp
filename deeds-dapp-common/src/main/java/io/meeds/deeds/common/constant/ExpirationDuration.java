@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.constant;
+package io.meeds.deeds.common.constant;
 
 import java.time.Period;
 
@@ -21,30 +21,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum RentalDuration {
+public enum ExpirationDuration {
 
-  ONE_MONTH(Period.ofMonths(1), 1),
-  THREE_MONTHS(Period.ofMonths(3), 3),
-  SIX_MONTHS(Period.ofMonths(6), 6),
-  ONE_YEAR(Period.ofYears(1), 12),
+  ONE_DAY(Period.ofDays(1), 1),
+  THREE_DAYS(Period.ofDays(3), 3),
+  ONE_WEEK(Period.ofWeeks(1), 7),
+  ONE_MONTH(Period.ofMonths(1), 30),
   OTHER(null, 0);
 
   @Getter
   private Period period;
 
   @Getter
-  private int    months;
+  private int    days;
 
-  public static RentalDuration fromMonths(int months) {
-    switch (months) {
+  public static ExpirationDuration fromDays(int expirationDays) {
+    switch (expirationDays) {
     case 1:
-      return ONE_MONTH;
+      return ONE_DAY;
     case 3:
-      return THREE_MONTHS;
-    case 6:
-      return SIX_MONTHS;
-    case 12:
-      return ONE_YEAR;
+      return THREE_DAYS;
+    case 7:
+      return ONE_WEEK;
+    case 30:
+      return ONE_MONTH;
     default:
       return OTHER;
     }

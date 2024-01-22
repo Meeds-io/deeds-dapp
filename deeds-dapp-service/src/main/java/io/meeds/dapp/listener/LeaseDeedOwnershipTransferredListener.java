@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.service.LeaseService;
 import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
 import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.service.LeaseService;
 
 @Service
 public class LeaseDeedOwnershipTransferredListener implements EventListener<DeedOwnershipTransferEvent> {

@@ -64,7 +64,6 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
-    networkId: state => state.networkId,
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },
@@ -141,7 +140,7 @@ export default {
         address: this.address,
         onlyConfirmed: false,
         owner: false,
-      }, this.networkId)
+      })
         .then(leases => {
           this.leases = leases?._embedded?.leases || [];
           this.totalSize = leases?.page?.totalElements || this.leases.length;

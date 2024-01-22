@@ -66,7 +66,7 @@ public class BlockchainConfiguration {
                                                           Web3j web3j) {
     return DeedTenantProvisioning.load(properties.getTenantProvisioningAddress(),
                                        web3j,
-                                       getTransactionManager(web3j),
+                                       getReadOnlyTransactionManager(web3j),
                                        CONTRACT_GAS_PROVIDER);
   }
 
@@ -76,7 +76,7 @@ public class BlockchainConfiguration {
                                     Web3j web3j) {
     return DeedRenting.load(properties.getTenantRentingAddress(),
                             web3j,
-                            getTransactionManager(web3j),
+                            getReadOnlyTransactionManager(web3j),
                             CONTRACT_GAS_PROVIDER);
   }
 
@@ -86,7 +86,7 @@ public class BlockchainConfiguration {
                       Web3j web3j) {
     return Deed.load(properties.getDeedAddress(),
                      web3j,
-                     getTransactionManager(web3j),
+                     getReadOnlyTransactionManager(web3j),
                      CONTRACT_GAS_PROVIDER);
   }
 
@@ -96,7 +96,7 @@ public class BlockchainConfiguration {
                                       Web3j web3j) {
     return TokenFactory.load(properties.getTokenFactoryAddress(),
                              web3j,
-                             getTransactionManager(web3j),
+                             getReadOnlyTransactionManager(web3j),
                              CONTRACT_GAS_PROVIDER);
   }
 
@@ -106,7 +106,7 @@ public class BlockchainConfiguration {
                                                   Web3j web3j) {
     return XMeedsNFTRewarding.load(properties.getXMeedAddress(),
                                    web3j,
-                                   getTransactionManager(web3j),
+                                   getReadOnlyTransactionManager(web3j),
                                    CONTRACT_GAS_PROVIDER);
   }
 
@@ -116,7 +116,7 @@ public class BlockchainConfiguration {
                                  Web3j web3j) {
     return ERC20.load(properties.getSushiPairAddress(),
                       web3j,
-                      getTransactionManager(web3j),
+                      getReadOnlyTransactionManager(web3j),
                       CONTRACT_GAS_PROVIDER);
   }
 
@@ -126,7 +126,7 @@ public class BlockchainConfiguration {
                                         Web3j web3j) {
     return MeedsToken.load(properties.getMeedAddress(),
                            web3j,
-                           getTransactionManager(web3j),
+                           getReadOnlyTransactionManager(web3j),
                            CONTRACT_GAS_PROVIDER);
   }
 
@@ -136,7 +136,7 @@ public class BlockchainConfiguration {
                                         Web3j web3j) {
     return MeedsToken.load(properties.getPolygonMeedAddress(),
                            web3j,
-                           getTransactionManager(web3j),
+                           getReadOnlyTransactionManager(web3j),
                            CONTRACT_GAS_PROVIDER);
   }
 
@@ -149,26 +149,41 @@ public class BlockchainConfiguration {
     } else {
       return UserEngagementMinting.load(properties.getUemAddress(),
                                         web3j,
-                                        getTransactionManager(web3j),
+                                        getReadOnlyTransactionManager(web3j),
                                         CONTRACT_GAS_PROVIDER);
     }
   }
 
-  @Bean
-  public WoM getWoM(
-                    @Qualifier("polygonNetwork")
-                    Web3j web3j) {
+  @Bean("womContractReadOnly")
+  public WoM getWomReadOnly(
+                            @Qualifier("polygonNetwork")
+                            Web3j web3j) {
     if (StringUtils.isBlank(properties.getWomAddress())) {
       return null;
     } else {
       return WoM.load(properties.getWomAddress(),
                       web3j,
-                      getTransactionManager(web3j),
+                      getReadOnlyTransactionManager(web3j),
                       CONTRACT_GAS_PROVIDER);
     }
   }
 
-  private ReadonlyTransactionManager getTransactionManager(Web3j web3j) {
+  @Bean("womContractReadWrite")
+  public WoM getWomReadWrite(
+                             @Qualifier("polygonNetwork")
+                             Web3j web3j) {
+    if (StringUtils.isBlank(properties.getWomAddress())) {
+      return null;
+    } else {
+      PolygonTransactionManagerProxy.setWeb3j(web3j);
+      return WoM.load(properties.getWomAddress(),
+                      web3j,
+                      new PolygonTransactionManagerProxy(),
+                      new PolygonWomContractGasProvider(web3j));
+    }
+  }
+
+  private ReadonlyTransactionManager getReadOnlyTransactionManager(Web3j web3j) {
     return new ReadonlyTransactionManager(web3j, Address.DEFAULT.toString());
   }
 

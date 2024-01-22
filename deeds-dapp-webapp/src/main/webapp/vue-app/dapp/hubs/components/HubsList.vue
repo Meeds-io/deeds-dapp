@@ -1,20 +1,23 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
- 
+
  Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
- 
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
  version 3 of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <v-row class="mb-15 mt-7">
@@ -110,6 +113,7 @@ export default {
         hubUrl: 'https://builders.meeds.io',
         rewardsPerPeriod: 1000,
         rewardsPeriodType: 'week',
+        upcomingDeedId: 0,
       },
       {
         address: '0xfefefefefefefefefefef2',
@@ -127,6 +131,7 @@ export default {
         hubUrl: 'https://community.exoplatform.com',
         rewardsPerPeriod: 3000,
         rewardsPeriodType: 'month',
+        upcomingDeedId: 0,
       },
       {
         address: '0xfefefefefefefefefefef10',
@@ -144,6 +149,7 @@ export default {
         hubUrl: 'https://rainbowpartners.meeds.io/',
         rewardsPerPeriod: 800,
         rewardsPeriodType: 'week',
+        upcomingDeedId: 0,
       },
       {
         address: '0xfefefefefefefefefefef13',
@@ -157,7 +163,8 @@ export default {
         },
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1701768967/meedsdao-site/assets/images/Featured%20hubs/TheGallery_swwey3.png',
         backgroundColor: '#00263a',
-        hubUrl: 'https://thegallery.meeds.io/'
+        hubUrl: 'https://thegallery.meeds.io/',
+        upcomingDeedId: 0,
       }
     ],
     upcomingHubs: [
@@ -305,6 +312,7 @@ export default {
         .then(data => {
           const hubs = data?._embedded?.hubs;
           if (hubs?.length) {
+            this.hubs = this.hubs.filter(h => !hubs.find(hub => hub.deedId === h.upcomingDeedId));
             this.hubs.push(...hubs);
             this.hasMore = data.page.totalPages > (this.page + 1);
           } else {

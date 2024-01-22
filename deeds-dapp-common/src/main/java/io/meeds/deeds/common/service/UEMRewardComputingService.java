@@ -20,7 +20,6 @@ package io.meeds.deeds.common.service;
 import static io.meeds.deeds.common.service.UEMRewardService.UEM_REWARD_COMPUTED;
 import static io.meeds.wom.api.constant.HubReportStatusType.REJECTED;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.Instant;
@@ -214,11 +213,7 @@ public class UEMRewardComputingService {
   }
 
   private long getTokenNetworkId() {
-    try {
-      return blockchainService.getPolygonNetworkId();
-    } catch (IOException e) {
-      throw new IllegalStateException("Error retrieving Blockchain network identifier", e);
-    }
+    return blockchainService.getPolygonNetworkId();
   }
 
   private String getTokenAddress() {
