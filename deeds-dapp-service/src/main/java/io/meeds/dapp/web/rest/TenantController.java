@@ -60,32 +60,40 @@ public class TenantController {
   private TenantService       tenantService;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<DeedTenantPresentation> getTenants(Principal principal) {
-    if (principal == null || StringUtils.isBlank(principal.getName())) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+  public List<DeedTenantPresentation> getTenants(
+                                                 Principal principal,
+                                                 @RequestParam(name = "address", required = false)
+                                                 String walletAddress) {
+    if (StringUtils.isBlank(walletAddress)) {
+      if (principal == null || StringUtils.isBlank(principal.getName())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      } else {
+        walletAddress = principal.getName();
+      }
     }
-    String walletAddress = principal.getName();
     List<DeedTenant> deedTenants = tenantService.getDeedTenants(walletAddress);
     return deedTenants.stream().map(EntityMapper::build).toList();
   }
 
   @GetMapping("/{nftId}")
-  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public ResponseEntity<DeedTenantPresentation> getDeedTenant(
                                                               Principal principal,
                                                               @RequestHeader(name = CODE_REFRESH_HTTP_HEADER, required = false)
                                                               boolean refreshFromBlockchain,
                                                               @PathVariable(name = "nftId")
-                                                              Long nftId) {
-    if (principal == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                                                              Long nftId,
+                                                              @RequestParam(name = "address", required = false)
+                                                              String walletAddress) {
+    if (StringUtils.isBlank(walletAddress)) {
+      if (principal == null || StringUtils.isBlank(principal.getName())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      } else {
+        walletAddress = principal.getName();
+      }
     }
-    String walletAddress = principal.getName();
     try {
       DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId, refreshFromBlockchain);
       return getDeedTenantResponse(deedTenant);
-    } catch (UnauthorizedOperationException e) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 export function getScrollbarWidth() {
   const outer = document.createElement('div');
   outer.style.visibility = 'hidden';
@@ -62,4 +63,16 @@ export function refreshHubUrl(hubAddress, reportHash) {
     const fullLink = `${origin}${link}`;
     window.setTimeout(() => window.history.pushState({}, '', fullLink), 50);
   }
+}
+
+const TEXTAREA = document.createElement('textarea');
+
+export function htmlToText(htmlContent) {
+  if (!htmlContent) {
+    return '';
+  }
+  let content = htmlContent.replace(/<[^>]+>/g, ' ').trim();
+  TEXTAREA.innerHTML = content;
+  content = TEXTAREA.value;
+  return content.replace(/[\r|\n|\t]/g, ' ').replace(/ +(?= )/g,' ').trim();
 }

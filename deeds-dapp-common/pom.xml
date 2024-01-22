@@ -27,7 +27,7 @@
   <name>Meeds:: Deeds Dapp - Common </name>
   <properties>
     <!-- TODO Fix coverage, was 0.65 -->
-    <exo.test.coverage.ratio>0.28</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.36</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>
@@ -54,9 +54,8 @@
 
     <!-- Provided artifacts in Server Shared library, used for compilation only -->
     <dependency>
-      <groupId>org.exoplatform.gatein.portal</groupId>
-      <artifactId>exo.portal.component.api</artifactId>
-      <scope>provided</scope>
+      <groupId>org.exoplatform.addons.wallet</groupId>
+      <artifactId>wallet-api</artifactId>
     </dependency>
 
     <!-- Test artifacts -->

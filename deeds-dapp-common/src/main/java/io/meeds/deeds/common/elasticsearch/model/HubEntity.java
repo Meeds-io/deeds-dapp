@@ -69,11 +69,15 @@ public class HubEntity {
 
   @Getter
   @Field(type = FieldType.Keyword)
-  private String              deedManagerAddress;
+  private String              hubOwnerAddress;
 
   @Getter
   @Field(type = FieldType.Keyword)
-  private String              ownerAddress;
+  private String              deedOwnerAddress;
+
+  @Getter
+  @Field(type = FieldType.Keyword)
+  private String              deedManagerAddress;
 
   @Getter
   @Setter
@@ -134,6 +138,12 @@ public class HubEntity {
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @Getter
   @Setter
+  @CreatedDate
+  private Instant             untilDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  @Getter
+  @Setter
   @LastModifiedDate
   private Instant             updatedDate = Instant.now();
 
@@ -141,8 +151,12 @@ public class HubEntity {
     this.address = StringUtils.lowerCase(address);
   }
 
-  public void setOwnerAddress(String ownerAddress) {
-    this.ownerAddress = StringUtils.lowerCase(ownerAddress);
+  public void setHubOwnerAddress(String hubOwnerAddress) {
+    this.hubOwnerAddress = StringUtils.lowerCase(hubOwnerAddress);
+  }
+
+  public void setDeedOwnerAddress(String deedOwnerAddress) {
+    this.deedOwnerAddress = StringUtils.lowerCase(deedOwnerAddress);
   }
 
   public void setDeedManagerAddress(String deedManagerAddress) {

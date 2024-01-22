@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUIRED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUIRED_EVENT;
 
 import java.time.Period;
 import java.time.ZoneId;
@@ -30,10 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
-import io.meeds.dapp.service.OfferService;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.OfferService;
 import io.meeds.deeds.common.service.UserProfileService;
 import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 

@@ -46,15 +46,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.model.DeedTenantOfferDTO;
-import io.meeds.dapp.model.OfferFilter;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.OfferType;
 import io.meeds.deeds.common.constant.TransactionStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.model.DeedTenantOfferDTO;
+import io.meeds.deeds.common.model.OfferFilter;
 import io.meeds.deeds.common.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.OfferService;
 import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
@@ -89,9 +89,7 @@ public class OfferController {
                                                                @RequestParam(name = "excludeExpired", required = false)
                                                                boolean excludeExpired,
                                                                @RequestParam(name = "excludeNotStarted", required = false)
-                                                               boolean excludeNotStarted,
-                                                               @RequestParam(name = "networkId", required = false)
-                                                               long networkId) {
+                                                               boolean excludeNotStarted) {
     if (onlyOwned && StringUtils.isBlank(address)) {
       return assembler.toModel(Page.empty(pageable));
     } else {
@@ -110,7 +108,6 @@ public class OfferController {
       offerFilter.setExcludeDisabled(true);
       offerFilter.setCardTypes(cardTypes);
       offerFilter.setOfferTypes(offerTypes);
-      offerFilter.setNetworkId(networkId);
       offerFilter.setCurrentAddress(StringUtils.lowerCase(address));
       Page<DeedTenantOfferDTO> offers = offerService.getOffers(offerFilter, pageable);
       return assembler.toModel(offers);
