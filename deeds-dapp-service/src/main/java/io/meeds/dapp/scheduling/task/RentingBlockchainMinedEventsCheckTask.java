@@ -26,13 +26,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.service.LeaseService;
-import io.meeds.dapp.service.OfferService;
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.model.DeedLeaseBlockchainState;
 import io.meeds.deeds.common.model.DeedOfferBlockchainState;
 import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.deeds.common.service.LeaseService;
+import io.meeds.deeds.common.service.OfferService;
 import io.meeds.deeds.common.service.SettingService;
 
 @Component

@@ -17,8 +17,6 @@
  */
 package io.meeds.deeds.common.service;
 
-import java.io.IOException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,17 +51,13 @@ public class UEMConfigurationService {
 
   public UEMConfiguration getConfiguration(boolean compute) {
     if (compute || uemConfiguration == null) {
-      try {
-        uemConfiguration = new UEMConfiguration(blockchainService.getNetworkId(),
-                                                blockchainService.getPolygonNetworkId(),
-                                                blockchainService.getEthereumMeedTokenAddress(),
-                                                blockchainService.getPolygonMeedTokenAddress(),
-                                                blockchainService.getUemAddress(),
-                                                womUrl,
-                                                getStoredUemRewardAmount());
-      } catch (IOException e) {
-        throw new IllegalStateException("Can't get Blockchain network identifier", e);
-      }
+      uemConfiguration = new UEMConfiguration(blockchainService.getNetworkId(),
+                                              blockchainService.getPolygonNetworkId(),
+                                              blockchainService.getEthereumMeedTokenAddress(),
+                                              blockchainService.getPolygonMeedTokenAddress(),
+                                              blockchainService.getUemAddress(),
+                                              womUrl,
+                                              getStoredUemRewardAmount());
     }
     return uemConfiguration;
   }

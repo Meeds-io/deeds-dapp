@@ -18,7 +18,7 @@
  */
 import {getCookie} from './authentication';
 
-export function getLeases(paramsObj, networkId) {
+export function getLeases(paramsObj) {
   const formData = new FormData();
   if (paramsObj) {
     Object.keys(paramsObj).forEach(key => {
@@ -30,7 +30,6 @@ export function getLeases(paramsObj, networkId) {
       }
     });
   }
-  formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
   return fetch(`${window.parentAppLocation}/api/leases?${params}`, {
     method: 'GET',

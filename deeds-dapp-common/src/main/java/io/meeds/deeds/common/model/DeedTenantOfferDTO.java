@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.model;
+package io.meeds.deeds.common.model;
 
 import java.time.Instant;
 import java.util.Set;
@@ -23,12 +23,12 @@ import org.springframework.hateoas.server.core.Relation;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.meeds.dapp.constant.ExpirationDuration;
-import io.meeds.dapp.constant.NoticePeriod;
-import io.meeds.dapp.constant.OfferType;
-import io.meeds.dapp.constant.RentalDuration;
-import io.meeds.dapp.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.ExpirationDuration;
+import io.meeds.deeds.common.constant.NoticePeriod;
+import io.meeds.deeds.common.constant.OfferType;
+import io.meeds.deeds.common.constant.RentalDuration;
+import io.meeds.deeds.common.constant.RentalPaymentPeriodicity;
 import io.meeds.deeds.common.constant.TransactionStatus;
 
 import lombok.AllArgsConstructor;

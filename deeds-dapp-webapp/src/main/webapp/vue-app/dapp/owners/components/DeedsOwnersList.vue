@@ -59,7 +59,6 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
-    networkId: state => state.networkId,
     ownedNfts: state => state.ownedNfts,
     cities: state => state.cities,
     cardTypes: state => state.cardTypes,
@@ -106,7 +105,7 @@ export default {
         address: this.address,
         onlyConfirmed: false,
         owner: true,
-      }, this.networkId)
+      })
         .then(data => {
           const leases = data?._embedded?.leases || [];
           leases.forEach(lease => {
@@ -124,7 +123,7 @@ export default {
         onlyOwned: true,
         excludeExpired: true,
         excludeNotStarted: false,
-      }, this.networkId)
+      })
         .then(offers => {
           this.rentedOffers = {};
           const rentalOffers = offers?._embedded?.offers || [];

@@ -13,20 +13,31 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.dapp.storage;
+package io.meeds.deeds.common.elasticsearch.storage;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.dapp.elasticsearch.model.DeedTenantLease;
 import io.meeds.deeds.common.constant.TransactionStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
 
-public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease, Long> {
+public interface OfferRepository extends ElasticsearchRepository<DeedTenantOffer, String> {
 
-  List<DeedTenantLease> findByTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> asList);
+  List<DeedTenantOffer> findByOwnerNotAndNftIdAndEnabledTrue(String owner, long nftId);
 
-  List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
+  List<DeedTenantOffer> findByNftId(long nftId);
+
+  List<DeedTenantOffer> findByOfferTransactionStatusInOrderByCreatedDateAsc(List<TransactionStatus> transactionStatus);
+
+  List<DeedTenantOffer> findByOfferId(long offerId);
+
+  List<DeedTenantOffer> findByOfferIdAndParentIdIsNull(long offerId);
+
+  void deleteByNftId(long nftId);
+
+  void deleteByParentId(String id);
+
+  DeedTenantOffer findByOfferTransactionHash(String lowerCase);
 
 }
