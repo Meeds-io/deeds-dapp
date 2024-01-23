@@ -20,6 +20,7 @@
 -->
 <template>
   <v-card
+    :disabled="unkownHub"
     :href="hubUrl"
     target="_blank"
     class="full-width"
@@ -35,10 +36,11 @@
           <template #activator="{ on, attrs }">
             <v-chip
               :href="`${openSeaBaseLink}/${deedId}`"
+              :color="unkownHub && 'grey' || 'white'"
+              :dark="unkownHub"
               target="_blank"
               rel="nofollow noreferrer noopener"
               class="overflow-hidden d-block"
-              color="white"
               height="36"
               outlined
               v-bind="attrs"
@@ -49,7 +51,7 @@
                 max-height="36"
                 max-width="34"
                 class="rounded-circle ms-n3 pe-1" />
-              <div class="white--text font-weight-normal body-1 ms-2">
+              <div class="font-weight-normal body-1 ms-2">
                 #{{ deedId }}
               </div>
             </v-chip>
@@ -65,7 +67,7 @@
       <v-card
         height="75px"
         width="75px"
-        class="ms-5 mt-n10 rounded-lg position-absolute"
+        class="ms-5 mt-n10 rounded-lg position-absolute z-index-two"
         outlined>
         <v-img
           v-if="hubLogoUrl"
@@ -78,7 +80,7 @@
       <div class="d-flex flex-column pt-2 px-4 pb-4">
         <div class="ms-10 ps-15">
           <span class="text-h6 font-weight-bold text-no-wrap">
-            {{ hubName }}
+            {{ hubName || $t('wom.unknownHub', {0: deedId}) }}
           </span>
         </div>
         <v-card
@@ -168,6 +170,9 @@ export default {
     },
     hubUrl() {
       return this.hub?.hubUrl || this.hub?.url;
+    },
+    unkownHub() {
+      return !this.hubUrl || !this.hubName;
     },
     hubRewardsPeriodType() {
       return this.hub?.rewardsPeriodType?.toLowerCase?.();
