@@ -18,6 +18,7 @@ package io.meeds.deeds.common.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -91,6 +93,8 @@ import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.UserEngagementMinting;
 import io.meeds.deeds.contract.WoM;
+import io.meeds.deeds.contract.WoM.HubConnectedEventResponse;
+import io.meeds.deeds.contract.WoM.HubDisconnectedEventResponse;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomException;
@@ -217,6 +221,18 @@ public class BlockchainService implements ExoWalletStatisticService {
     }
   }
 
+  /**
+   * @return last mined block number on Polygon Blockchain
+   */
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getPolygonLastBlock")
+  public long getPolygonLastBlock() {
+    try {
+      return polygonWeb3j.ethBlockNumber().send().getBlockNumber().longValue();
+    } catch (IOException e) {
+      throw new IllegalStateException("Error getting last block number", e);
+    }
+  }
+
   @ExoWalletStatistic(service = "blockchain", local = false,
                       operation = "dapp#deedTenantProvisioning.getDeedManager")
   public String getDeedManager(long deedId) {
@@ -282,6 +298,32 @@ public class BlockchainService implements ExoWalletStatisticService {
     } catch (IOException e) {
       throw new IllegalStateException("Error retrieving event logs", e);
     }
+  }
+
+  @SneakyThrows
+  public Set<String> getMinedHubConnectionTransactions(long fromBlock, long toBlock) {
+    EthFilter ethFilter = new EthFilter(fromBlock == 0 ? DefaultBlockParameterName.EARLIEST :
+                                                       new DefaultBlockParameterNumber(fromBlock),
+                                        new DefaultBlockParameterNumber(toBlock),
+                                        womContract.getContractAddress()).addOptionalTopics(EventEncoder.encode(WoM.HUBCONNECTED_EVENT),
+                                                                                            EventEncoder.encode(WoM.HUBDISCONNECTED_EVENT));
+    EthLog ethLog = polygonWeb3j.ethGetLogs(ethFilter).send();
+    @SuppressWarnings("rawtypes")
+    List<LogResult> ethLogs = ethLog.getLogs();
+    if (CollectionUtils.isEmpty(ethLogs)) {
+      return Collections.emptySet();
+    }
+    return ethLogs.stream()
+                  .map(logResult -> (LogObject) logResult.get())
+                  .filter(logObject -> !logObject.isRemoved())
+                  .map(LogObject::getTransactionHash)
+                  .map(this::getPolygonTransactionReceipt)
+                  .filter(TransactionReceipt::isStatusOK)
+                  .map(this::getHubAddresses)
+                  .filter(CollectionUtils::isNotEmpty)
+                  .flatMap(List::stream)
+                  .filter(StringUtils::isNotBlank)
+                  .collect(Collectors.toSet());
   }
 
   /**
@@ -1029,6 +1071,21 @@ public class BlockchainService implements ExoWalletStatisticService {
     return null;
   }
 
+  private List<String> getHubAddresses(TransactionReceipt transactionReceipt) {
+    List<String> result = new ArrayList<>();
+    List<HubConnectedEventResponse> hubConnectedEvents = WoM.getHubConnectedEvents(transactionReceipt);
+    if (CollectionUtils.isNotEmpty(hubConnectedEvents)) {
+      HubConnectedEventResponse hubConnectedEventResponse = hubConnectedEvents.get(0);
+      result.add(hubConnectedEventResponse.hub);
+    }
+    List<HubDisconnectedEventResponse> hubDisconnectedEvents = WoM.getHubDisconnectedEvents(transactionReceipt);
+    if (CollectionUtils.isNotEmpty(hubDisconnectedEvents)) {
+      HubDisconnectedEventResponse hubDisconnectedEventResponse = hubDisconnectedEvents.get(0);
+      result.add(hubDisconnectedEventResponse.hub);
+    }
+    return result;
+  }
+
   private TransactionReceipt getPolygonTransactionReceipt(String transactionHash) {
     return getTransactionReceipt(transactionHash, polygonWeb3j);
   }
@@ -1136,7 +1193,8 @@ public class BlockchainService implements ExoWalletStatisticService {
     if (ArrayUtils.isNotEmpty(methodArgs)) {
       for (int i = 0; i < methodArgs.length; i++) {
         Object arg = methodArgs[i];
-        parameters.put("methodParam1", arg == null ? "null" : arg);
+        // Keep the space to not parse to long
+        parameters.put("blockchain-" + operation + "-param" + i, arg == null ? "null" : " " + arg);
       }
     }
     return parameters;
