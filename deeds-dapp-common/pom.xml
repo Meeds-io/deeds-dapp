@@ -57,6 +57,10 @@
       <groupId>org.exoplatform.addons.wallet</groupId>
       <artifactId>wallet-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.exoplatform.addons.analytics</groupId>
+      <artifactId>analytics-api</artifactId>
+    </dependency>
 
     <!-- Test artifacts -->
     <dependency>
