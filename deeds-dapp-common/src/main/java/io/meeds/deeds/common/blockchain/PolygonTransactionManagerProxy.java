@@ -21,6 +21,8 @@ package io.meeds.deeds.common.blockchain;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
@@ -35,6 +37,8 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 public class PolygonTransactionManagerProxy extends TransactionManager {
+
+  private static final Logger       LOG = LoggerFactory.getLogger(PolygonTransactionManagerProxy.class);
 
   @Setter
   private static TransactionManager transactionManager;
@@ -53,7 +57,7 @@ public class PolygonTransactionManagerProxy extends TransactionManager {
   public static void initTransactionManager(ECKeyPair ecKeyPair) {
     transactionManager = new RawTransactionManager(web3j,
                                                    Credentials.create(ecKeyPair),
-                                                   web3j.ethChainId().send().getChainId().longValue());
+                                                   getPolygonNetworkId());
   }
 
   @Override
@@ -121,6 +125,15 @@ public class PolygonTransactionManagerProxy extends TransactionManager {
   @Override
   public String getFromAddress() {
     return transactionManager.getFromAddress();
+  }
+
+  private static long getPolygonNetworkId() {
+    try {
+      return web3j.ethChainId().send().getChainId().longValue();
+    } catch (IOException e) {
+      LOG.warn("Error retrieving Network Identifier", e);
+      return 137l; // Polygon Mainnet in case it fails on production
+    }
   }
 
 }
