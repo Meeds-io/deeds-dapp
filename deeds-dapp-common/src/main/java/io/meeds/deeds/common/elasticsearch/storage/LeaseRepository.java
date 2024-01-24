@@ -29,4 +29,6 @@ public interface LeaseRepository extends ElasticsearchRepository<DeedTenantLease
 
   List<DeedTenantLease> findByEnabledTrueAndNftIdAndEndDateGreaterThan(long nftId, Instant now);
 
+  List<DeedTenantLease> getByEnabledTrueAndConfirmedTrueAndEndDateBetween(Instant from, Instant to);
+
 }

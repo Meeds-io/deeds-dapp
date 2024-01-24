@@ -254,6 +254,7 @@ public class BlockchainService implements ExoWalletStatisticService {
                     .filter(TransactionReceipt::isStatusOK)
                     .map(this::getMinedDeedTenant)
                     .filter(Objects::nonNull)
+                    .distinct()
                     .filter(tenant -> tenant.getNftId() == deedId
                                       && !StringUtils.equalsIgnoreCase(tenant.getManagerAddress(), EnsUtils.EMPTY_ADDRESS)
                                       && isDeedProvisioningManager(tenant.getManagerAddress(), deedId))
@@ -387,6 +388,7 @@ public class BlockchainService implements ExoWalletStatisticService {
                     .flatMap(this::getTransferOwnershipEvents)
                     .filter(Objects::nonNull)
                     .map(DeedOwnershipTransferEvent::getTo)
+                    .distinct()
                     .filter(address -> isDeedOwner(address, deedId))
                     .findFirst()
                     .orElseThrow();

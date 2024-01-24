@@ -239,6 +239,12 @@ public class WomService {
                  && blockchainService.isDeedProvisioningManager(deedTenant.getManagerAddress(), deedId)) {
         hubEntity.setDeedManagerAddress(deedTenant.getManagerAddress());
       }
+      if (!StringUtils.equalsIgnoreCase(hubEntity.getDeedManagerAddress(), hubEntity.getDeedOwnerAddress())) {
+        DeedTenantLeaseDTO lease = leaseService.getCurrentLease(deedId);
+        if (lease != null) {
+          hubEntity.setUntilDate(lease.getEndDate());
+        }
+      }
       hubEntity = hubRepository.save(hubEntity);
       listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
     } else if (hubEntity != null) {
@@ -301,7 +307,7 @@ public class WomService {
   }
 
   public void updateHub(HubUpdateRequest hubUpdateRequest) throws WomException, ObjectNotFoundException {
-    Hub hub = hubUpdateRequest.getHub();
+    Hub hub = getHub(hubUpdateRequest.getAddress());
     if (hub == null) {
       throw new IllegalArgumentException("wom.hubIsMandatory");
     }
@@ -315,14 +321,11 @@ public class WomService {
                              hubUpdateRequest.getToken(),
                              hubUpdateRequest.getToken());
 
-    Hub savedHub = getHub(hubAddress);
-    if (!savedHub.isConnected()) {
-      savedHub = refreshHubFromWom(hubAddress);
-      if (!savedHub.isConnected()) {
-        throw new WomException("wom.hubNotConnectedToWoM");
-      }
+    Hub savedHub = getHub(hubAddress, true);
+    if (savedHub == null || !savedHub.isConnected()) {
+      throw new WomException("wom.hubNotConnectedToWoM");
     }
-    saveHubProperties(hub);
+    saveHubProperties(hubUpdateRequest);
   }
 
   public void saveHubAvatar(String hubAddress,
@@ -507,7 +510,9 @@ public class WomService {
           tenantService.saveDeedTenant(deedTenant);
         }
         if (!StringUtils.equalsIgnoreCase(managerAddress, hub.getDeedManagerAddress())) {
-          saveHub(hub);
+          if (StringUtils.isNotBlank(hub.getAddress())) {
+            saveHub(hub);
+          }
           if (updateTransaction) {
             updateDeedOnWom(deedId, managerAddress, null);
           }
@@ -628,19 +633,38 @@ public class WomService {
                        hubConnectionRequest.getToken());
   }
 
-  private void saveHubProperties(Hub hub) {
-    refreshHubFromWom(hub.getAddress());
-    HubEntity existingHubEntity = hubRepository.findById(StringUtils.lowerCase(hub.getAddress()))
+  private void saveHubProperties(WomConnectionRequest hubConnectionRequest) {
+    saveHubProperties(hubConnectionRequest.getAddress(),
+                      hubConnectionRequest.getUrl(),
+                      hubConnectionRequest.getColor(),
+                      hubConnectionRequest.getName(),
+                      hubConnectionRequest.getDescription());
+  }
+
+  private void saveHubProperties(HubUpdateRequest hubUpdateRequest) {
+    saveHubProperties(hubUpdateRequest.getAddress(),
+                      hubUpdateRequest.getUrl(),
+                      hubUpdateRequest.getColor(),
+                      hubUpdateRequest.getName(),
+                      hubUpdateRequest.getDescription());
+  }
+
+  private void saveHubProperties(String address,
+                                 String url,
+                                 String color,
+                                 Map<String, String> name,
+                                 Map<String, String> description) {
+    refreshHubFromWom(address);
+    HubEntity existingHubEntity = hubRepository.findById(StringUtils.lowerCase(address))
                                                .orElseGet(() -> {
                                                  HubEntity hubEntity = new HubEntity();
-                                                 hubEntity.setAddress(hub.getAddress());
-                                                 hubEntity.setUsersCount(hub.getUsersCount());
+                                                 hubEntity.setAddress(address);
                                                  return hubEntity;
                                                });
-    existingHubEntity.setUrl(hub.getUrl());
-    existingHubEntity.setColor(hub.getColor());
-    existingHubEntity.setName(hub.getName());
-    existingHubEntity.setDescription(hub.getDescription());
+    existingHubEntity.setUrl(url);
+    existingHubEntity.setColor(color);
+    existingHubEntity.setName(name);
+    existingHubEntity.setDescription(description);
     hubRepository.save(existingHubEntity);
   }
 

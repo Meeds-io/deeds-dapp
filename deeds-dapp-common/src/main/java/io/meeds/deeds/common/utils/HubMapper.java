@@ -20,8 +20,6 @@ package io.meeds.deeds.common.utils;
 import java.time.Instant;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
@@ -29,8 +27,6 @@ import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.wom.api.model.Hub;
 
 public class HubMapper {
-
-  private static final Logger LOG = LoggerFactory.getLogger(HubMapper.class);
 
   private HubMapper() {
     // Utils class
@@ -66,37 +62,32 @@ public class HubMapper {
                                    DeedTenant deedTenant,
                                    DeedTenantLeaseDTO lease,
                                    HubEntity existingEntity) {
-    boolean enabled = existingEntity != null && existingEntity.isEnabled();
+    boolean connected = existingEntity != null && existingEntity.isEnabled();
     Instant untilDate = existingEntity == null ? lease.getEndDate() : existingEntity.getUntilDate();
-    if (enabled) {
-      if (lease != null && StringUtils.equalsIgnoreCase(hub.getHubOwnerAddress(), lease.getManagerAddress())) {
-        untilDate = lease.getEndDate();// The Deed tenant owns the hub, thus the
-                                       // connection becomes outdated when the
-                                       // lease ends
-      } else if ((lease != null && StringUtils.equalsIgnoreCase(hub.getHubOwnerAddress(), lease.getOwnerAddress()))
-                 || StringUtils.equalsIgnoreCase(hub.getHubOwnerAddress(), deedTenant.getOwnerAddress())) {
-        untilDate = null; // The Deed owner owns the hub, thus no end date for
-                          // WoM connection
-      } else {
-        LOG.warn("Can't know whether the Hub {} is owned by the Deed '#{}' owner '{}' or tenant '{}'",
-                 hub.getAddress(),
-                 hub.getDeedId(),
-                 deedTenant.getOwnerAddress(),
-                 deedTenant.getManagerAddress());
-      }
-      if (untilDate != null && untilDate.isBefore(Instant.now())) {
-        enabled = false; // Change to disabled if outdated
-      }
+
+    String ownerAddress = deedTenant.getOwnerAddress();
+    String managerAddress = deedTenant.getManagerAddress();
+    if (StringUtils.equalsIgnoreCase(ownerAddress, managerAddress)) {
+      untilDate = null;
+    } else if (connected
+               && lease != null
+               && StringUtils.equalsIgnoreCase(hub.getHubOwnerAddress(), lease.getManagerAddress())) {
+      untilDate = lease.getEndDate();
     }
 
+    if (connected
+        && untilDate != null
+        && untilDate.isBefore(Instant.now())) {
+      connected = false;
+    }
     return new HubEntity(hub.getAddress(),
                          deedTenant.getNftId(),
                          deedTenant.getCityIndex(),
                          deedTenant.getCardType(),
                          hub.getEarnerAddress(),
                          hub.getHubOwnerAddress(),
-                         deedTenant.getOwnerAddress(),
-                         deedTenant.getManagerAddress(),
+                         ownerAddress,
+                         managerAddress,
                          hub.getName(),
                          hub.getDescription(),
                          hub.getUrl(),
@@ -106,7 +97,7 @@ public class HubMapper {
                          hub.getUsersCount(),
                          hub.getRewardsPeriodType(),
                          hub.getRewardsPerPeriod(),
-                         enabled,
+                         connected,
                          existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
                          untilDate,
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());

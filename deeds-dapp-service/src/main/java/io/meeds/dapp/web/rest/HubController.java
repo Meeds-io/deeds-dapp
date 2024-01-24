@@ -62,6 +62,8 @@ import io.meeds.wom.api.model.WomDisconnectionRequest;
 @RequestMapping("/api/hubs")
 public class HubController {
 
+  private static final String WOM_UNKNOWN_ERROR_MESSAGE = "wom.unknownError:";
+
   private static final Logger LOG                           = LoggerFactory.getLogger(HubController.class);
 
   private static final String WOM_CONNECTION_LOG_MESSAGE    =
@@ -198,8 +200,8 @@ public class HubController {
       LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the request", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+      LOG.warn("An unkown error happened when trying to process the connection request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
 
@@ -220,8 +222,8 @@ public class HubController {
       LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the request", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+      LOG.warn("An unkown error happened when trying to process the refresh Hub request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
 
@@ -242,8 +244,8 @@ public class HubController {
       LOG.info(WOM_DISCONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the request", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("wom.unknownError:" + e.getMessage());
+      LOG.warn("An unkown error happened when trying to process the disconnection request", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -568,6 +569,11 @@ public class LeaseService {
                                                          && lease.getEndDate().isBefore(Instant.now()))
                                                      .findFirst()
                                                      .orElse(null);
+  }
+
+  public Stream<DeedTenantLeaseDTO> getLeasesEndDateBetween(Instant from, Instant to) {
+    List<DeedTenantLease> leases = leaseRepository.getByEnabledTrueAndConfirmedTrueAndEndDateBetween(from, to);
+    return leases.stream().map(this::buildLeaseDTO);
   }
 
 }
