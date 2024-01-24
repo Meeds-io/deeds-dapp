@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -62,6 +63,9 @@ import org.web3j.tuples.generated.Tuple8;
 import org.web3j.utils.EnsUtils;
 import org.web3j.utils.Numeric;
 
+import org.exoplatform.analytics.api.processor.StatisticDataProcessorPlugin;
+import org.exoplatform.analytics.model.StatisticData;
+import org.exoplatform.analytics.model.StatisticDataQueueEntry;
 import org.exoplatform.wallet.statistic.ExoWalletStatistic;
 import org.exoplatform.wallet.statistic.ExoWalletStatisticService;
 
@@ -102,7 +106,7 @@ import io.meeds.wom.api.constant.WomException;
 import lombok.SneakyThrows;
 
 @Component
-public class BlockchainService implements ExoWalletStatisticService {
+public class BlockchainService extends StatisticDataProcessorPlugin implements ExoWalletStatisticService {
 
   private static final Logger    LOG = LoggerFactory.getLogger(BlockchainService.class);
 
@@ -155,6 +159,36 @@ public class BlockchainService implements ExoWalletStatisticService {
   private long                   ethereumNetworkId;
 
   private long                   polygonNetworkId;
+
+  @Override
+  public String getId() {
+    return "dAppLogging";
+  }
+
+  @Override
+  public boolean isInitialized() {
+    return true;
+  }
+
+  @Override
+  public void process(List<StatisticDataQueueEntry> processorQueueEntries) {
+    if (CollectionUtils.isNotEmpty(processorQueueEntries)) {
+      processorQueueEntries.forEach(stat -> {
+
+        StatisticData statisticData = stat.getStatisticData();
+        if (statisticData != null && statisticData.getOperation().startsWith("dapp#")) {
+          if (MapUtils.isEmpty(statisticData.getParameters())) {
+            LOG.info("BlockchainService#{}", statisticData.getOperation());
+          } else {
+            Collection<String> values = statisticData.getParameters().values();
+            LOG.info("BlockchainService#" + statisticData.getOperation() + " ('" + // NOSONAR
+                StringUtils.join(values.stream().map(v -> "{}").toList(), "', '") + "')",
+                     values.toArray());
+          }
+        }
+      });
+    }
+  }
 
   /**
    * Return DEED Tenant Status from Blockchain Contract

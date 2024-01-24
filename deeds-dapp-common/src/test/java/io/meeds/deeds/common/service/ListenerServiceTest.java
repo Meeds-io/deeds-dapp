@@ -42,6 +42,7 @@ import io.meeds.deeds.common.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.common.elasticsearch.storage.DeedTenantEventRepository;
 import io.meeds.deeds.common.listener.EventListener;
 import io.meeds.deeds.common.listerner.model.Event;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
