@@ -62,12 +62,12 @@ import io.meeds.deeds.contract.DeedRenting;
 import io.meeds.deeds.contract.DeedRenting.OfferCreatedEventResponse;
 import io.meeds.deeds.contract.DeedRenting.OfferDeletedEventResponse;
 import io.meeds.deeds.contract.DeedRenting.RentPaidEventResponse;
-import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(classes = {
     BlockchainService.class

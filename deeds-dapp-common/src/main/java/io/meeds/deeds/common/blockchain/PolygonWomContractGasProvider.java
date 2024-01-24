@@ -18,14 +18,19 @@
  */
 package io.meeds.deeds.common.blockchain;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.protocol.Web3j;
 import org.web3j.tx.gas.ContractEIP1559GasProvider;
 
 import lombok.SneakyThrows;
 
 public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider {
+
+  private static final Logger     LOG       = LoggerFactory.getLogger(PolygonWomContractGasProvider.class);
 
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(300000);
 
@@ -38,10 +43,14 @@ public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider
   }
 
   @Override
-  @SneakyThrows
   public long getChainId() {
     if (chainId == 0) {
-      chainId = web3j.ethChainId().send().getChainId().longValue();
+      try {
+        chainId = web3j.ethChainId().send().getChainId().longValue();
+      } catch (IOException e) {
+        LOG.warn("Error retrieving Network Identifier", e);
+        return 137l; // Polygon Mainnet in case it fails on production
+      }
     }
     return chainId;
   }
