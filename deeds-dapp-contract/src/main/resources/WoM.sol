@@ -4,6 +4,8 @@ pragma solidity 0.8.9;
 import "./abstract/Initializable.sol";
 import "./abstract/ManagerRole.sol";
 import "./abstract/UUPSUpgradeable.sol";
+import "./struct/Deed.sol";
+import "./struct/Hub.sol";
 
 /**
  * @title User Engagement Minting Contract to rewards Meeds DAO Deed Hub communities switch their engagement score
@@ -29,40 +31,6 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
      * @dev An event that will be triggered when the Hub ownership is transferred
      */
     event HubOwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    /**
-     * @dev The Deed NFT Structure as defined in 0x0143b71443650aa8efa76bd82f35c22ebd558090 on ethereum
-     */
-    struct Deed {
-        // Deed city: Tanit, Reshef, Ashtarte, Melqart, Eshmun, Kushor or Hammon
-        uint8 city;
-        // Deed type: COMMON, UNCOMMON, RARE or LEGENDARY
-        uint8 cardType;
-        // Deed Minting Power: COMMON = 1.0 = 10, UNCOMMON = 1.1 = 11, RARE = 1.3 = 13 or LEGENDARY = 2.0 = 20
-        uint8 mintingPower;
-        // Deed Hub Max users = COMMON = 100, UNCOMMON = 1000, RARE = 10000 or LEGENDARY = unlimited
-        uint256 maxUsers;
-        // Deed NFT owner
-        address owner;
-        // Deed NFT tenant, can be the same as the Deed NFT owner when no lease
-        address tenant;
-        // Hub using the Deed
-        address hub;
-        // UEM rewarding share percentage for the Deed Owner comparing to the Deed Tenant
-        uint8 ownerPercentage;
-    }
-
-    /**
-     * @dev The Hub properties
-     */
-    struct Hub {
-        // Connected or last previously connected Deed NFT identifier
-        uint256 deedId;
-        // Hub owner
-        address owner;
-        // Hub is connected or disconnected
-        bool enabled;
-    }
 
     /**
      * @dev a mapping of deeds identified by its NFT Id
@@ -97,6 +65,28 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         initializer {
         _transferOwnership(_msgSender());
         _addManager(_msgSender());
+    }
+
+    /**
+     * @dev returns a Hub switch its address
+     */
+    function getHub(address _hubAddress)
+        external
+        virtual
+        view
+        returns (Hub memory) {
+        return hubs[_hubAddress];
+    }
+
+    /**
+     * @dev returns a Deed switch its id
+     */
+    function getDeed(uint256 _deedId)
+        external
+        virtual
+        view
+        returns (Deed memory) {
+        return nfts[_deedId];
     }
 
     /**
@@ -164,7 +154,6 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         virtual
         onlyHubOwnerOrNewHubDeedManager(_hubAddress, _deedId) // Only Hub Owner or Deed Tenant/Owner making th connection the first time
     {
-
         require(_hubAddress != address(0), "wom.hubAddressIsMandatory");
         require(_deedId > 0, "wom.deedIdIsMandatory");
 
@@ -182,22 +171,18 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
       virtual
       onlyHubOwner(_hubAddress) // Only Hub Owner is allowed
     {
-        require(_hubAddress != address(0), "wom.hubAddressIsMandatory");
-        require(hubs[_hubAddress].enabled, "wom.alreadyDisconnected");
-
         Hub memory hub = hubs[_hubAddress];
+        Deed memory deed = nfts[hub.deedId];
+        require(_hubAddress != address(0), "wom.hubAddressIsMandatory");
         require(hub.enabled, "wom.hubAlreadyDisconnected");
-
-        uint256 deedId = hub.deedId;
-        require(deedId > 0, "wom.deedIdDisconnected");
-
-        Deed memory deed = nfts[deedId];
+        require(hub.deedId > 0, "wom.deedIdDisconnected");
+        require(deed.hub == _hubAddress, "wom.deedNotConnectedToHub");
         require(deed.tenant != address(0), "wom.deedNotFound");
 
         // Disconnect
-        _disconnect(_hubAddress, deedId);
+        _disconnect(_hubAddress, hub.deedId);
 
-        emit HubDisconnected(_hubAddress, deedId);
+        emit HubDisconnected(_hubAddress, hub.deedId);
     }
 
     /**
@@ -242,6 +227,7 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         deed.owner = _deed.owner;
         deed.tenant = _deed.tenant;
         deed.ownerPercentage = _deed.ownerPercentage;
+        deed.tenantPercentage = 100 - _deed.ownerPercentage;
 
         // In case WoM Manager hosts some Hubs, it should automatically connect to the WoM
         // once Deed Manager/Owner moved in on **Ethereum Blockchain** Deed Provisioning Management Contract
@@ -283,7 +269,10 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         // Connect
         if (hub.owner == address(0)) {
             // First time the Hub is connected to the WoM
+            // Hub owner id the current Deed Provisioning
+            // Manager Address
             hub.owner = deed.tenant;
+            hub.joinDate = block.timestamp;
         }
         deed.hub = _hubAddress;
         hub.deedId = _deedId;
