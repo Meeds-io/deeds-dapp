@@ -35,7 +35,7 @@ public class HubReportMapper {
   }
 
   public static HubReportEntity toEntity(HubReport report) {
-    return new HubReportEntity(StringUtils.lowerCase(report.getHash()),
+    return new HubReportEntity(report.getReportId(),
                                StringUtils.lowerCase(report.getHubAddress()),
                                StringUtils.lowerCase(report.getEarnerAddress()),
                                StringUtils.lowerCase(report.getDeedManagerAddress()),
@@ -57,8 +57,6 @@ public class HubReportMapper {
                                report.getStatus(),
                                report.getError(),
                                report.getRewardId(),
-                               StringUtils.lowerCase(report.getRewardHash()),
-                               StringUtils.lowerCase(report.getRewardTransactionHash()),
                                report.getHubRewardAmount(),
                                report.getUemRewardIndex(),
                                report.getUemRewardAmount(),
@@ -73,8 +71,9 @@ public class HubReportMapper {
   }
 
   public static HubReport fromEntity(HubReportEntity entity) {
-    return new HubReport(entity.getHash(),
-                         entity.getSignature(),
+    return new HubReport(entity.getReportId(),
+                         null,
+                         null,
                          entity.getHubAddress(),
                          entity.getDeedId(),
                          entity.getFromDate(),
@@ -103,9 +102,7 @@ public class HubReportMapper {
                          entity.getHubRewardLastPeriodDiff(),
                          entity.getLastPeriodUemRewardAmountPerPeriod(),
                          entity.getMp(),
-                         entity.getRewardId(),
-                         entity.getRewardHash(),
-                         entity.getRewardTransactionHash());
+                         entity.getRewardId());
   }
 
   public static SortedSet<String> lowerCase(SortedSet<String> hashes) {

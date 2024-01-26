@@ -21,7 +21,6 @@ import java.time.Instant;
 import java.util.SortedSet;
 
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -42,13 +41,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Document(indexName = "deed_hub_report", createIndex = true)
+@Document(indexName = "hub_report", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class HubReportEntity {
 
-  @Id
-  @Field(type = FieldType.Keyword)
-  private String              hash;
+  @Field(type = FieldType.Long)
+  private long                reportId;
 
   @Field(type = FieldType.Keyword)
   private String              hubAddress;
@@ -112,16 +110,8 @@ public class HubReportEntity {
   @Field(type = FieldType.Keyword)
   private String              error;
 
-  // UEM computed field
   @Field(type = FieldType.Keyword)
-  private String              rewardId;
-
-  // UEM computed field
-  @Field(type = FieldType.Keyword)
-  private String              rewardHash;
-
-  @Field(type = FieldType.Keyword)
-  private String              rewardTransactionHash;
+  private long                rewardId;
 
   @Field(type = FieldType.Double)
   private double              hubRewardAmount;

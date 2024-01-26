@@ -18,23 +18,18 @@
 package io.meeds.deeds.common.elasticsearch.storage;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
-import io.meeds.wom.api.constant.UEMRewardStatusType;
 
 public interface UEMRewardRepository extends ElasticsearchRepository<UEMRewardEntity, String> {
 
   Page<UEMRewardEntity> findByHubAddresses(String hubAddress, Pageable pageable);
 
   Optional<UEMRewardEntity> findByFromDateIsAndToDateIs(Instant from, Instant to);
-
-  Stream<UEMRewardEntity> findByStatusIn(List<UEMRewardStatusType> notSentStatuses);
 
 }

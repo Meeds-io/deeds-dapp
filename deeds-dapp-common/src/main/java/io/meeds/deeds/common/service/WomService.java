@@ -287,6 +287,7 @@ public class WomService {
     return new WomConnectionResponse(hubConnectionRequest.getDeedId(),
                                      hubConnectionRequest.getAddress(),
                                      blockchainService.getWomAddress(),
+                                     blockchainService.getUemAddress(),
                                      blockchainService.getPolygonNetworkId());
   }
 

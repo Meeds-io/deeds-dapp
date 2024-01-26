@@ -58,8 +58,8 @@ public class HubReportComputingService {
   @Autowired
   private TenantService                          tenantService;
 
-  protected HubReport computeUEMHubReward(String hash, UEMReward reward) {
-    HubReport report = reportService.getReport(hash);
+  protected HubReport computeUEMHubReward(long reportId, UEMReward reward) {
+    HubReport report = reportService.getReport(reportId);
     HubReport previousReport = computeLastPeriodUemRewardAmount(report);
 
     computeLastReportUemRewardAmount(report, previousReport, reward);

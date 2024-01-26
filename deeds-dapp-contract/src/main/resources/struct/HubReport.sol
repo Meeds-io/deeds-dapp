@@ -20,5 +20,9 @@ struct HubReport {
     // Used Token address used by Hub to send its rewards
     address tokenAddress;
     // Used Token chain Id used by Hub to send its rewards
-    uint256 tockenChainId;
+    uint256 tokenChainId;
+    // Sent rewards by Hub Manager to its users
+    uint256 fromDate;
+    // Sent rewards by Hub Manager to its users
+    uint256 toDate;
 }

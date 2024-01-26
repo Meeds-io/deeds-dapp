@@ -146,6 +146,17 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
+     * @dev returns the first time the hub joined the WoM
+     */
+    function getHubJoinDate(address _hubAddress)
+        external
+        virtual
+        view
+        returns (uint256) {
+        return hubs[_hubAddress].joinDate;
+    }
+
+    /**
      * @dev Connect a Hub to the WoM.
      *      Can be called only by Hub owner.
      */
