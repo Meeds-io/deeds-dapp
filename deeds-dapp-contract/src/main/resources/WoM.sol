@@ -146,6 +146,17 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
+     * @dev returns the first time the hub joined the WoM
+     */
+    function getHubJoinDate(address _hubAddress)
+        external
+        virtual
+        view
+        returns (uint256) {
+        return hubs[_hubAddress].joinDate;
+    }
+
+    /**
      * @dev Connect a Hub to the WoM.
      *      Can be called only by Hub owner.
      */
@@ -230,10 +241,17 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         deed.tenantPercentage = 100 - _deed.ownerPercentage;
 
         // In case WoM Manager hosts some Hubs, it should automatically connect to the WoM
-        // once Deed Manager/Owner moved in on **Ethereum Blockchain** Deed Provisioning Management Contract
-        if (deed.hub != address(0)) {
-            _connect(deed.hub, _deedId);
-            emit HubConnected(deed.hub, _deedId, deed.tenant);
+        // once Deed Manager/Owner movedIn (requested to Start a Hub) on **Ethereum Blockchain**
+        // using Deed Provisioning Management Contract
+        if (_deed.hub != address(0)
+            // && Hub Owner is compatible with Deed Owner or Tenant
+            // Else Hub Ownership has to be explicitely transferred from original Hub Owner
+            && (hubs[_deed.hub].owner == address(0) // First connection
+              || hubs[_deed.hub].owner == _deed.owner // Hub Owner == Deed Owner
+              || hubs[_deed.hub].owner == _deed.tenant) // Hub Owner == Deed Tenant
+        ) {
+            _connect(_deed.hub, _deedId);
+            emit HubConnected(_deed.hub, _deedId, _deed.tenant);
         }
 
         emit DeedUpdated(_deedId);
@@ -245,25 +263,27 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         Deed storage deed = nfts[_deedId];
         require(deed.tenant != address(0), "wom.deedNotFound");
 
+        address previousHubAddress = deed.hub;
         Hub storage hub = hubs[_hubAddress];
-        Hub memory previousHub = hubs[deed.hub];
+        Hub memory previousHub = hubs[previousHubAddress];
         if (previousHub.enabled // Previous Hub always connected
-            && deed.hub != _hubAddress // And not about current Hub
+            && previousHubAddress != _hubAddress // And not about current Hub
             && previousHub.deedId == _deedId // And the previous Hub was connected to the current Deed
         ) {
             // Auto disconnect previously connected Hub to the Deed
-            _disconnect(deed.hub, _deedId);
-            emit HubDisconnected(deed.hub, _deedId);
+            _disconnect(previousHubAddress, _deedId);
+            emit HubDisconnected(previousHubAddress, _deedId);
         }
 
-        Deed memory previousDeed = nfts[hub.deedId];
+        uint256 previousDeedId = hub.deedId;
+        Deed memory previousDeed = nfts[previousDeedId];
         if (hub.enabled // Current Hub already connected
-            && hub.deedId != _deedId // And a new Deed NFT will be associated
+            && previousDeedId != _deedId // And a new Deed NFT will be associated
             && previousDeed.hub == _hubAddress // And the previous Deed was connected to the current Hub
         ) {
             // Auto disconnect previously connected Deed to the Hub
-            _disconnect(_hubAddress, hub.deedId);
-            emit HubDisconnected(_hubAddress, hub.deedId);
+            _disconnect(_hubAddress, previousDeedId);
+            emit HubDisconnected(_hubAddress, previousDeedId);
         }
 
         // Connect

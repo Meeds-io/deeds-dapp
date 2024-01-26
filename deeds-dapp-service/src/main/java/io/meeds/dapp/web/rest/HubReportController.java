@@ -62,11 +62,11 @@ public class HubReportController {
                          .body(assembler.toModel(reports));
   }
 
-  @GetMapping("/{hash}")
+  @GetMapping("/{reportId}")
   public ResponseEntity<Object> getReport(
-                                          @PathVariable(name = "hash")
-                                          String hash) {
-    HubReport hubReport = reportService.getReport(hash);
+                                          @PathVariable(name = "reportId")
+                                          long reportId) {
+    HubReport hubReport = reportService.getReport(reportId);
     if (hubReport == null) {
       return ResponseEntity.notFound()
                            .cacheControl(CacheControl.noStore())
@@ -81,10 +81,10 @@ public class HubReportController {
   @GetMapping("/{rewardId}/{hubAddress}")
   public ResponseEntity<Object> getReport(
                                           @PathVariable(name = "rewardId")
-                                          String rewardId,
+                                          long reportId,
                                           @PathVariable(name = "hubAddress")
                                           String hubAddress) {
-    HubReport hubReport = reportService.getValidReport(rewardId, hubAddress);
+    HubReport hubReport = reportService.getValidReport(reportId, hubAddress);
     if (hubReport == null) {
       return ResponseEntity.notFound()
                            .cacheControl(CacheControl.noStore())
@@ -101,7 +101,7 @@ public class HubReportController {
                                            @RequestBody
                                            HubReportVerifiableData reportRequest) {
     try {
-      HubReport report = reportService.sendReport(reportRequest);
+      HubReport report = reportService.saveReport(reportRequest);
       return ResponseEntity.ok(report);
     } catch (WomRequestException | WomParsingException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorCode());

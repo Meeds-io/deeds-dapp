@@ -133,22 +133,22 @@ public class HubReportService {
   public Page<HubReport> getReports(String hubAddress, String rewardId, Pageable pageable) {
     Page<HubReportEntity> page;
     if (StringUtils.isBlank(hubAddress) && StringUtils.isBlank(rewardId)) {
-      pageable = pageable.isUnpaged() ? pageable
-                                      : PageRequest.of(pageable.getPageNumber(),
-                                                       pageable.getPageSize(),
-                                                       pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
+      pageable = pageable.isUnpaged() ? pageable :
+                                      PageRequest.of(pageable.getPageNumber(),
+                                                     pageable.getPageSize(),
+                                                     pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
       page = reportRepository.findAll(pageable);
     } else if (StringUtils.isBlank(rewardId)) {
-      pageable = pageable.isUnpaged() ? pageable
-                                      : PageRequest.of(pageable.getPageNumber(),
-                                                       pageable.getPageSize(),
-                                                       pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
+      pageable = pageable.isUnpaged() ? pageable :
+                                      PageRequest.of(pageable.getPageNumber(),
+                                                     pageable.getPageSize(),
+                                                     pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
       page = reportRepository.findByHubAddress(StringUtils.lowerCase(hubAddress), pageable);
     } else if (StringUtils.isBlank(hubAddress)) {
-      pageable = pageable.isUnpaged() ? pageable
-                                      : PageRequest.of(pageable.getPageNumber(),
-                                                       pageable.getPageSize(),
-                                                       pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
+      pageable = pageable.isUnpaged() ? pageable :
+                                      PageRequest.of(pageable.getPageNumber(),
+                                                     pageable.getPageSize(),
+                                                     pageable.getSortOr(Sort.by(Direction.DESC, "sentDate")));
       page = reportRepository.findByRewardId(rewardId, pageable);
     } else {
       page = reportRepository.findByRewardIdAndHubAddress(rewardId, StringUtils.lowerCase(hubAddress), pageable);
@@ -156,8 +156,8 @@ public class HubReportService {
     return page.map(HubReportMapper::fromEntity);
   }
 
-  public HubReport getReport(String hash) {
-    return reportRepository.findById(StringUtils.lowerCase(hash))
+  public HubReport getReport(long reportId) {
+    return reportRepository.findById(reportId)
                            .map(HubReportMapper::fromEntity)
                            .orElse(null);
   }
@@ -170,7 +170,7 @@ public class HubReportService {
                            .toList();
   }
 
-  public HubReport getValidReport(String rewardId, String hubAddress) {
+  public HubReport getValidReport(long rewardId, String hubAddress) {
     return reportRepository.findByRewardIdAndHubAddressAndStatusNotIn(rewardId,
                                                                       StringUtils.lowerCase(hubAddress),
                                                                       INVALID_STATUSES)
@@ -204,7 +204,7 @@ public class HubReportService {
                .orElse(null);
   }
 
-  public HubReport sendReport(HubReportVerifiableData reportData) throws WomException {
+  public HubReport saveReport(HubReportVerifiableData reportData) throws WomException {
     try {
       if (!reportData.isValid()) {
         throw new WomAuthorizationException("wom.invalidSignedMessage");
@@ -225,12 +225,11 @@ public class HubReportService {
     return fromEntity(reportEntity);
   }
 
-  public void saveReportStatus(String hash, HubReportStatusType status) {
-    reportRepository.findById(StringUtils.lowerCase(hash))
+  public void saveReportStatus(long reportId, HubReportStatusType status) {
+    reportRepository.findById(reportId)
                     .ifPresent(report -> {
                       if (INVALID_STATUSES.contains(status)) {
-                        report.setRewardId(null);
-                        report.setRewardHash(null);
+                        report.setRewardId(0l);
                         report.setUemRewardIndex(0d);
                         report.setUemRewardAmount(0d);
                         report.setHubRewardAmountPerPeriod(0d);
@@ -239,22 +238,12 @@ public class HubReportService {
                       }
                       report.setStatus(status);
                       reportRepository.save(report);
-                      listenerService.publishEvent(HUB_REPORT_STATUS_CHANGED, hash);
-                    });
-  }
-
-  public void saveReportTransactionHash(String hash, String transactionHash) {
-    reportRepository.findById(StringUtils.lowerCase(hash))
-                    .ifPresent(report -> {
-                      report.setStatus(PENDING_REWARD);
-                      report.setRewardTransactionHash(transactionHash);
-                      reportRepository.save(report);
-                      listenerService.publishEvent(HUB_REPORT_TRANSACTION_SENT, hash);
+                      listenerService.publishEvent(HUB_REPORT_STATUS_CHANGED, reportId);
                     });
   }
 
   public void saveReportLeaseStatus(HubReport report) {
-    reportRepository.findById(report.getHash())
+    reportRepository.findById(report.getReportId())
                     .ifPresent(reportEntity -> {
                       reportEntity.setDeedManagerAddress(report.getDeedManagerAddress());
                       reportEntity.setOwnerAddress(report.getOwnerAddress());
@@ -264,10 +253,10 @@ public class HubReportService {
   }
 
   public void saveReportUEMProperties(HubReport report) {
-    reportRepository.findById(StringUtils.lowerCase(report.getHash()))
+    reportRepository.findById(report.getReportId())
                     .ifPresent(r -> {
+                      r.setReportId(report.getReportId());
                       r.setRewardId(report.getRewardId());
-                      r.setRewardHash(report.getRewardHash());
 
                       r.setUemRewardIndex(report.getUemRewardIndex());
                       r.setUemRewardAmount(report.getUemRewardAmount());
@@ -282,16 +271,17 @@ public class HubReportService {
                       r.setMp(report.getMp());
                       r.setStatus(report.getStatus());
                       reportRepository.save(r);
-                      listenerService.publishEvent(HUB_REPORT_UEM_REWARD_COMPUTED, r.getHash());
+                      listenerService.publishEvent(HUB_REPORT_UEM_REWARD_COMPUTED, r.getReportId());
                     });
   }
 
   private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) {
-    HubReportEntity existingEntity = reportRepository.findById(StringUtils.lowerCase(reportData.getHash()))
+    HubReportEntity existingEntity = reportRepository.findById(reportData.getReportId())
                                                      .orElse(null);
     String managerAddress = hubService.getDeedManagerAddress(hub.getDeedId());
     String ownerAddress = hubService.getDeedOwnerAddress(hub.getDeedId());
-    HubReport report = new HubReport(reportData.getHash(),
+    HubReport report = new HubReport(reportData.getReportId(),
+                                     reportData.getHash(),
                                      reportData.getSignature(),
                                      reportData.getHubAddress(),
                                      reportData.getDeedId(),
@@ -311,31 +301,17 @@ public class HubReportService {
                                      StringUtils.lowerCase(managerAddress),
                                      StringUtils.lowerCase(ownerAddress),
                                      0,
-                                     existingEntity == null ? HubReportStatusType.SENT
-                                                            : existingEntity.getStatus(),
+                                     existingEntity == null ? HubReportStatusType.SENT : existingEntity.getStatus(),
                                      null,
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getUemRewardIndex(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getUemRewardAmount(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getLastPeriodUemRewardAmount(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getLastPeriodUemDiff(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getHubRewardAmountPerPeriod(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getHubRewardLastPeriodDiff(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
-                                     existingEntity == null ? 0d
-                                                            : existingEntity.getMp(),
-                                     existingEntity == null ? null
-                                                            : existingEntity.getRewardId(),
-                                     existingEntity == null ? null
-                                                            : existingEntity.getRewardHash(),
-                                     existingEntity == null ? null
-                                                            : existingEntity.getRewardTransactionHash());
+                                     existingEntity == null ? 0d : existingEntity.getUemRewardIndex(),
+                                     existingEntity == null ? 0d : existingEntity.getUemRewardAmount(),
+                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmount(),
+                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemDiff(),
+                                     existingEntity == null ? 0d : existingEntity.getHubRewardAmountPerPeriod(),
+                                     existingEntity == null ? 0d : existingEntity.getHubRewardLastPeriodDiff(),
+                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
+                                     existingEntity == null ? 0d : existingEntity.getMp(),
+                                     existingEntity == null ? null : existingEntity.getRewardId());
     return toEntity(report);
   }
 
