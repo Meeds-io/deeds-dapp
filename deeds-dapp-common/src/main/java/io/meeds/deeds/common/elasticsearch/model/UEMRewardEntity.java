@@ -20,7 +20,6 @@ package io.meeds.deeds.common.elasticsearch.model;
 import java.time.Instant;
 import java.util.Set;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -31,8 +30,6 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.meeds.wom.api.constant.UEMRewardStatusType;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,75 +38,54 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(value = Include.NON_EMPTY)
-@Document(indexName = "deed_uem_reward", createIndex = true)
+@Document(indexName = "uem_reward", createIndex = true)
 @Setting(replicas = 0, shards = 1)
 public class UEMRewardEntity {
 
   @Id
-  private String              id;
-
-  @Field(type = FieldType.Keyword)
-  private String              hash;
-
-  @Field(type = FieldType.Keyword)
-  private String              reportsMerkleRoot;
+  @Field(type = FieldType.Long)
+  private Long        rewardId;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             fromDate;
+  private Instant     fromDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             toDate;
+  private Instant     toDate;
 
   @Field(type = FieldType.Keyword)
-  private String              periodType;
+  private Set<String> hubAddresses;
 
-  @Field(type = FieldType.Keyword)
-  private Set<String>         hubAddresses;
-
-  @Field(type = FieldType.Keyword)
-  private Set<String>         reportHashes;
-
-  @Field(type = FieldType.Keyword)
-  private Set<String>         transactionHashes;
+  @Field(type = FieldType.Long)
+  private Set<Long>   reportIds;
 
   /**
    * Total internal hub achievements
    */
   @Field(type = FieldType.Long)
-  private long                hubAchievementsCount;
+  private long        hubAchievementsCount;
 
   /**
    * Total internal hub rewards sent to hub users
    */
   @Field(type = FieldType.Double)
-  private double              hubRewardsAmount;
+  private double      hubRewardsAmount;
 
   /**
    * Total hubs computed reward index
    */
   @Field(type = FieldType.Double)
-  private double              uemRewardIndex;
+  private double      uemRewardIndex;
 
   /**
    * Total UEM reward budget
    */
   @Field(type = FieldType.Double)
-  private double              uemRewardAmount;
-
-  @Field(type = FieldType.Long)
-  private long                tokenNetworkId;
-
-  @Field(type = FieldType.Keyword)
-  private String              tokenAddress;
+  private double      uemRewardAmount;
 
   @Field(type = FieldType.Double)
-  private double              globalEngagementRate;
+  private double      globalEngagementRate;
 
   @Field(type = FieldType.Keyword)
-  private UEMRewardStatusType status;
-
-  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  @CreatedDate
-  private Instant             createdDate = Instant.now();
+  private String      periodType;
 
 }

@@ -287,6 +287,7 @@ public class WomService {
     return new WomConnectionResponse(hubConnectionRequest.getDeedId(),
                                      hubConnectionRequest.getAddress(),
                                      blockchainService.getWomAddress(),
+                                     blockchainService.getUemAddress(),
                                      blockchainService.getPolygonNetworkId());
   }
 
@@ -357,11 +358,21 @@ public class WomService {
   }
 
   public FileBinary getHubAvatar(String hubAddress) {
-    return fileService.getFile(getAvatarId(hubAddress));
+    String avatarId = getAvatarId(hubAddress);
+    if (StringUtils.isNotBlank(avatarId)) {
+      return fileService.getFile(avatarId);
+    } else {
+      return null;
+    }
   }
 
   public FileBinary getHubBanner(String hubAddress) {
-    return fileService.getFile(getBannerId(hubAddress));
+    String bannerId = getBannerId(hubAddress);
+    if (StringUtils.isNotBlank(bannerId)) {
+      return fileService.getFile(bannerId);
+    } else {
+      return null;
+    }
   }
 
   public void saveHubUEMProperties(String hubAddress, HubReport report) {
