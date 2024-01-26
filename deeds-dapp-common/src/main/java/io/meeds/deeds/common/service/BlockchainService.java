@@ -56,10 +56,10 @@ import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.tuples.generated.Tuple12;
-import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tuples.generated.Tuple8;
+import org.web3j.tuples.generated.Tuple9;
 import org.web3j.utils.EnsUtils;
 import org.web3j.utils.Numeric;
 
@@ -828,7 +828,7 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     if (womContract == null) {
       return null;
     }
-    Tuple3<BigInteger, String, Boolean> hubTuple = womContract.hubs(address).send();
+    Tuple4<BigInteger, String, Boolean, BigInteger> hubTuple = womContract.hubs(address).send();
     String owner = hubTuple == null ? null : hubTuple.component2();
     return StringUtils.equals(address, EnsUtils.EMPTY_ADDRESS) ? null : owner;
   }
@@ -836,9 +836,9 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubByDeedId")
   public String getHubByDeedId(long nftId) {
-    Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger> deedTuple =
-                                                                                                         womContract.nfts(BigInteger.valueOf(nftId))
-                                                                                                                    .send();
+    Tuple9<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger, BigInteger> deedTuple =
+                                                                                                                     womContract.nfts(BigInteger.valueOf(nftId))
+                                                                                                                                .send();
     return getHubAddressIfConnected(deedTuple == null ? null : deedTuple.component7());
   }
 
@@ -848,9 +848,9 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     if (womContract == null) {
       return null;
     }
-    Tuple8<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger> deedTuple =
-                                                                                                         womContract.nfts(BigInteger.valueOf(nftId))
-                                                                                                                    .send();
+    Tuple9<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger, BigInteger> deedTuple =
+                                                                                                                     womContract.nfts(BigInteger.valueOf(nftId))
+                                                                                                                                .send();
     if (deedTuple == null) {
       return null;
     } else {
@@ -912,7 +912,7 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     if (womContract == null) {
       return null;
     }
-    Tuple3<BigInteger, String, Boolean> hubTuple = womContract.hubs(address).send();
+    Tuple4<BigInteger, String, Boolean, BigInteger> hubTuple = womContract.hubs(address).send();
     if (hubTuple == null) {
       return null;
     } else {
@@ -1196,7 +1196,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
                                                                                                                      ownerAddress,
                                                                                                                      managerAddress,
                                                                                                                      hubAddress,
-                                                                                                                     BigInteger.valueOf(ownerMintingPercentage)))
+                                                                                                                     BigInteger.valueOf(ownerMintingPercentage),
+                                                                                                                     BigInteger.valueOf(100l - ownerMintingPercentage)))
                                                                     .send();
       if (transactionReceipt == null) {
         throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");

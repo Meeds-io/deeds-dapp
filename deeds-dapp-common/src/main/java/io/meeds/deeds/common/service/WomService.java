@@ -749,7 +749,7 @@ public class WomService {
       short city = blockchainService.getDeedCityIndex(deedId);
       short cardType = blockchainService.getDeedCardType(deedId);
       DeedCard deedCard = DeedCard.values()[cardType];
-      short mintingPower = (short) (deedCard.getMintingPower() * 10);
+      short mintingPower = (short) (deedCard.getMintingPower() * 100);
       long maxUsers = deedCard.getMaxUsers();
 
       if (StringUtils.isBlank(hubAddress)) {
