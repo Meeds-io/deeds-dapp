@@ -113,7 +113,7 @@ export default {
         hubUrl: 'https://builders.meeds.io',
         rewardsPerPeriod: 1000,
         rewardsPeriodType: 'week',
-        upcomingDeedId: 0,
+        upcomingDeedId: 50,
       },
       {
         address: '0xfefefefefefefefefefef2',
@@ -131,7 +131,7 @@ export default {
         hubUrl: 'https://community.exoplatform.com',
         rewardsPerPeriod: 3000,
         rewardsPeriodType: 'month',
-        upcomingDeedId: 0,
+        upcomingDeedId: 99,
       },
       {
         address: '0xfefefefefefefefefefef10',
@@ -149,7 +149,7 @@ export default {
         hubUrl: 'https://rainbowpartners.meeds.io/',
         rewardsPerPeriod: 800,
         rewardsPeriodType: 'week',
-        upcomingDeedId: 0,
+        upcomingDeedId: 38,
       },
       {
         address: '0xfefefefefefefefefefef13',
@@ -164,7 +164,7 @@ export default {
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1701768967/meedsdao-site/assets/images/Featured%20hubs/TheGallery_swwey3.png',
         backgroundColor: '#00263a',
         hubUrl: 'https://thegallery.meeds.io/',
-        upcomingDeedId: 0,
+        upcomingDeedId: 3,
       }
     ],
     upcomingHubs: [
