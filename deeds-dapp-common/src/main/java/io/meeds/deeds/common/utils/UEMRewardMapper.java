@@ -27,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
-import io.meeds.wom.api.constant.UEMRewardStatusType;
 import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.UEMReward;
 
@@ -38,17 +37,13 @@ public class UEMRewardMapper {
   }
 
   public static UEMReward fromEntity(UEMRewardEntity entity, List<HubReport> reports) {
-    return new UEMReward(entity.getId(),
-                         StringUtils.lowerCase(entity.getHash()),
-                         StringUtils.lowerCase(entity.getReportsMerkleRoot()),
+    return new UEMReward(entity.getRewardId(),
                          entity.getFromDate(),
                          entity.getToDate(),
-                         entity.getPeriodType(),
-                         lowerCase(entity.getHubAddresses()),
-                         lowerCase(entity.getReportHashes()),
-                         lowerCase(entity.getTransactionHashes()),
+                         entity.getUemRewardAmount(),
+                         entity.getReportIds(),
                          reports.stream()
-                                .collect(Collectors.toMap(HubReport::getHash,
+                                .collect(Collectors.toMap(HubReport::getReportId,
                                                           HubReport::getUemRewardAmount,
                                                           (v1, v2) -> {
                                                             throw new IllegalStateException(String.format("Duplicate key for values %s and %s",
@@ -56,36 +51,26 @@ public class UEMRewardMapper {
                                                                                                           v2));
                                                           },
                                                           TreeMap::new)),
+                         lowerCase(entity.getHubAddresses()),
                          entity.getHubAchievementsCount(),
                          entity.getHubRewardsAmount(),
                          entity.getUemRewardIndex(),
-                         entity.getUemRewardAmount(),
-                         entity.getTokenNetworkId(),
-                         StringUtils.lowerCase(entity.getTokenAddress()),
                          entity.getGlobalEngagementRate(),
-                         entity.getStatus(),
-                         entity.getCreatedDate());
+                         entity.getPeriodType());
   }
 
   public static UEMRewardEntity toEntity(UEMReward reward) {
-    return new UEMRewardEntity(reward.getId(),
-                               StringUtils.lowerCase(reward.getHash()),
-                               StringUtils.lowerCase(reward.getReportsMerkleRoot()),
+    return new UEMRewardEntity(reward.getRewardId(),
                                reward.getFromDate(),
                                reward.getToDate(),
-                               reward.getPeriodType(),
                                lowerCase(reward.getHubAddresses()),
-                               lowerCase(reward.getReportHashes()),
-                               lowerCase(reward.getTransactionHashes()),
+                               reward.getReportIds(),
                                reward.getHubAchievementsCount(),
                                reward.getHubRewardsAmount(),
                                reward.getUemRewardIndex(),
                                reward.getUemRewardAmount(),
-                               reward.getTokenNetworkId(),
-                               StringUtils.lowerCase(reward.getTokenAddress()),
                                reward.getGlobalEngagementRate(),
-                               reward.getStatus() == null ? UEMRewardStatusType.NONE : reward.getStatus(),
-                               reward.getCreatedDate());
+                               reward.getPeriodType());
   }
 
   public static Set<String> lowerCase(Set<String> hubAddresses) {
@@ -97,4 +82,5 @@ public class UEMRewardMapper {
                          .collect(Collectors.toSet());
     }
   }
+
 }

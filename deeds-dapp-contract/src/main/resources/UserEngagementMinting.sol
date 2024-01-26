@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.20;
+pragma solidity 0.8.9;
 
 import "./abstract/Initializable.sol";
 import "./abstract/SafeMath.sol";
@@ -146,6 +146,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     function addReport(HubReport memory _report, address _hubAddress, uint256 _deedId)
         external
         virtual
+        returns (uint256)
     {
         require(_hubAddress == _msgSender(), "uem.onlyHubCanSendUEMReport");
 
@@ -159,6 +160,11 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         require(_report.participantsCount > 0, "wom.hubParticipantsCountIsMandatory");
         require(_report.achievementsCount > 0, "wom.hubAchievementsCountIsMandatory");
         require(_report.amount > 0, "wom.hubUsedRewardAmountAmountIsMandatory");
+
+        // Avoid reports of old periods before the UEM is live
+        require(_report.fromDate.add(REWARD_PERIOD_IN_SECONDS) >= startRewardsTime, "wom.hubReportHasNotEligibleFromDate");
+        // Avoid very old reports comparing to the whole first connection date to the WoM (even after disconnection in the meanwhile)
+        require(_report.toDate.add(REWARD_PERIOD_IN_SECONDS) >= wom.getHubJoinDate(_hubAddress), "wom.hubReportHasNotEligibleToDate");
 
         // In deterministic way, compute Reward Identifier
         uint256 _rewardPeriodId = block.timestamp.sub(startRewardsTime).div(REWARD_PERIOD_IN_SECONDS);
@@ -180,7 +186,9 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
                 _report.achievementsCount,
                 _report.amount,
                 _report.tokenAddress,
-                _report.tockenChainId
+                _report.tokenChainId,
+                _report.fromDate,
+                _report.toDate
             );
         }
 
@@ -214,7 +222,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           }
         }
 
-        {
+        {// Compute Period Reward Fixed Reward indices
           Reward storage reward = rewards[_rewardPeriodId];
           if (reward.fromReport == 0) { // First time the reward of current period is initialized
               reward.fromReport = lastReportId;
@@ -236,6 +244,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         reportsByPeriodByDeed[_rewardPeriodId][_deedId] = lastReportId;
 
         emit ReportSent(_hubAddress, lastReportId);
+        return lastReportId;
     }
 
     /**
@@ -274,8 +283,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         if (_receiver == address(0)) {
             _receiver = _msgSender();
         }
-        meed.transfer(_receiver, _amount);
-
+        require(meed.transfer(_receiver, _amount), "uem.claimMeedsTransferFailed");
         emit Claimed(_msgSender(), _receiver, _amount);
     }
 
@@ -363,6 +371,10 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
       uint256[] memory ids = hubReportIds[hubReports[_reportId].hub];
       if (ids.length > 0) {
         uint256 lastRewardedReportId = ids[ids.length - 1];
+
+        // Make a late requirement instead at first addReport method call for gas optimization
+        require(hubReports[_reportId].fromDate > hubReports[lastRewardedReportId].fromDate, "uem.lastReportFromDateMustBeLessThanCurrentReportFromDate");
+
         Reward memory lastReward = rewards[hubRewards[lastRewardedReportId].rewardPeriodId];
         if (lastReward.sumEd > 0) {
           // reportReward.fraud will not be considered here
