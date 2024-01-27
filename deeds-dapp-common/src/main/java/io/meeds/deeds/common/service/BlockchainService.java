@@ -651,6 +651,11 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
            && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
   }
 
+  public double getPendingRewards(String address) {
+    return WalletUtils.isValidAddress(address) ? org.exoplatform.wallet.utils.WalletUtils.convertFromDecimals(blockchainCall(uemContract.pendingRewardBalanceOf(address)), 18)
+                                               : 0d;
+  }
+
   /**
    * Retrieves from blockchain whether an address is the owner of the deed
    *
@@ -918,7 +923,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     } else {
       return new WomHub(hubTuple.component1().longValue(),
                         hubTuple.component2(),
-                        isHubConnected(address));
+                        isHubConnected(address),
+                        hubTuple.component4().longValue());
     }
   }
 
@@ -1197,7 +1203,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
                                                                                                                      managerAddress,
                                                                                                                      hubAddress,
                                                                                                                      BigInteger.valueOf(ownerMintingPercentage),
-                                                                                                                     BigInteger.valueOf(100l - ownerMintingPercentage)))
+                                                                                                                     BigInteger.valueOf(100l -
+                                                                                                                         ownerMintingPercentage)))
                                                                     .send();
       if (transactionReceipt == null) {
         throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");

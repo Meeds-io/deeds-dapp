@@ -180,11 +180,11 @@ public class HubReportService {
 
   public HubReport getLastReport(String hubAddress,
                                  Instant beforeDate,
-                                 String hash,
+                                 long reportId,
                                  List<HubReportStatusType> statuses) {
     Pageable pageable = Pageable.ofSize(1);
     Page<HubReportEntity> page;
-    if (StringUtils.isBlank(hash)) {
+    if (reportId == 0) {
       page =
            reportRepository.findByHubAddressAndSentDateBeforeAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
                                                                                             beforeDate,
@@ -192,11 +192,11 @@ public class HubReportService {
                                                                                             pageable);
     } else {
       page =
-           reportRepository.findByHubAddressAndSentDateBeforeAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                                      beforeDate,
-                                                                                                      StringUtils.lowerCase(hash),
-                                                                                                      statuses,
-                                                                                                      pageable);
+           reportRepository.findByHubAddressAndSentDateBeforeAndReportIdNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                                          beforeDate,
+                                                                                                          reportId,
+                                                                                                          statuses,
+                                                                                                          pageable);
     }
     return page.get()
                .findFirst()
@@ -281,8 +281,6 @@ public class HubReportService {
     String managerAddress = hubService.getDeedManagerAddress(hub.getDeedId());
     String ownerAddress = hubService.getDeedOwnerAddress(hub.getDeedId());
     HubReport report = new HubReport(reportData.getReportId(),
-                                     reportData.getHash(),
-                                     reportData.getSignature(),
                                      reportData.getHubAddress(),
                                      reportData.getDeedId(),
                                      reportData.getFromDate(),
@@ -311,7 +309,7 @@ public class HubReportService {
                                      existingEntity == null ? 0d : existingEntity.getHubRewardLastPeriodDiff(),
                                      existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
                                      existingEntity == null ? 0d : existingEntity.getMp(),
-                                     existingEntity == null ? null : existingEntity.getRewardId());
+                                     existingEntity == null ? 0l : existingEntity.getRewardId());
     return toEntity(report);
   }
 
@@ -326,23 +324,23 @@ public class HubReportService {
     if (!isReportPeriodValid(report)) {
       throw new WomRequestException("wom.sentReportIsBeforeUEM");
     }
-    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), report.getHash());
+    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), report.getReportId());
     if (lastRewardedReport != null
         && Duration.between(lastRewardedReport.getToDate(), report.getFromDate()).toDays() < 0) {
       throw new WomRequestException("wom.sentReportIsBeforeLastRewardedReport");
     }
   }
 
-  private HubReport getLastHubReport(String hubAddress, String hash) {
+  private HubReport getLastHubReport(String hubAddress, long reportId) {
     Pageable pageable = Pageable.ofSize(1);
-    return reportRepository.findByHubAddressAndHashNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                     StringUtils.lowerCase(hash),
-                                                                                     Stream.of(NONE,
-                                                                                               SENT,
-                                                                                               PENDING_REWARD,
-                                                                                               REWARDED)
-                                                                                           .toList(),
-                                                                                     pageable)
+    return reportRepository.findByHubAddressAndReportIdNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
+                                                                                         reportId,
+                                                                                         Stream.of(NONE,
+                                                                                                   SENT,
+                                                                                                   PENDING_REWARD,
+                                                                                                   REWARDED)
+                                                                                               .toList(),
+                                                                                         pageable)
                            .get()
                            .findFirst()
                            .map(HubReportMapper::fromEntity)

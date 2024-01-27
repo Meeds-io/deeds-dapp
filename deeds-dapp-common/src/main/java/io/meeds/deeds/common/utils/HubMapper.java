@@ -50,12 +50,16 @@ public class HubMapper {
                    hubEntity.getEarnerAddress(),
                    hubEntity.getCreatedDate(),
                    hubEntity.getUntilDate(),
+                   hubEntity.getJoinDate(),
                    hubEntity.getUpdatedDate(),
                    hubEntity.getUsersCount(),
                    hubEntity.getRewardsPeriodType(),
                    hubEntity.getRewardsPerPeriod(),
-                   hubEntity.isEnabled() && (hubEntity.getUntilDate() == null
-                                             || hubEntity.getUntilDate().isAfter(Instant.now())));
+                   hubEntity.isEnabled() && hubEntity.getJoinDate() != null
+                                                    && (hubEntity.getUntilDate() == null
+                                                        || hubEntity.getUntilDate().isAfter(Instant.now())),
+                   hubEntity.getOwnerClaimableAmount(),
+                   hubEntity.getManagerClaimableAmount());
   }
 
   public static HubEntity toEntity(Hub hub, // NOSONAR
@@ -98,8 +102,11 @@ public class HubMapper {
                          hub.getRewardsPeriodType(),
                          hub.getRewardsPerPeriod(),
                          connected,
+                         existingEntity == null ? 0d : existingEntity.getOwnerClaimableAmount(),
+                         existingEntity == null ? 0d : existingEntity.getManagerClaimableAmount(),
                          existingEntity == null ? Instant.now() : existingEntity.getCreatedDate(),
                          untilDate,
+                         existingEntity == null ? null : existingEntity.getJoinDate(),
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
   }
 
