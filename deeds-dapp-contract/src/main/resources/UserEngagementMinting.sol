@@ -161,8 +161,6 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         require(_report.achievementsCount > 0, "wom.hubAchievementsCountIsMandatory");
         require(_report.amount > 0, "wom.hubUsedRewardAmountAmountIsMandatory");
 
-        // Avoid reports of old periods before the UEM is live
-        require(_report.fromDate.add(REWARD_PERIOD_IN_SECONDS) >= startRewardsTime, "wom.hubReportHasNotEligibleFromDate");
         // Avoid very old reports comparing to the whole first connection date to the WoM (even after disconnection in the meanwhile)
         require(_report.toDate.add(REWARD_PERIOD_IN_SECONDS) >= wom.getHubJoinDate(_hubAddress), "wom.hubReportHasNotEligibleToDate");
 

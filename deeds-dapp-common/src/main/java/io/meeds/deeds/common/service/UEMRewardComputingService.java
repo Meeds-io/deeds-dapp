@@ -250,9 +250,9 @@ public class UEMRewardComputingService {
                                         .orElse(null);
       // Invalidate all other reports
       hubReports.stream()
-                .filter(r -> !StringUtils.equalsIgnoreCase(r.getHash(), validReport.getHash()))
+                .filter(r -> r.getReportId() != validReport.getReportId())
                 .map(HubReport::getReportId)
-                .forEach(hash -> reportService.saveReportStatus(hash, REJECTED));
+                .forEach(reportId -> reportService.saveReportStatus(reportId, REJECTED));
       return validReport;
     }
   }
