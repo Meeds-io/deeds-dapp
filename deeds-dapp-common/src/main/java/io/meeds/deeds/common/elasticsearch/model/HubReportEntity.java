@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.SortedSet;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -45,6 +46,7 @@ import lombok.NoArgsConstructor;
 @Setting(replicas = 0, shards = 1)
 public class HubReportEntity {
 
+  @Id
   @Field(type = FieldType.Long)
   private long                reportId;
 
@@ -98,9 +100,6 @@ public class HubReportEntity {
 
   @Field(type = FieldType.Text)
   private SortedSet<String>   transactions;
-
-  @Field(type = FieldType.Keyword)
-  private String              signature;
 
   // UEM computed field
   @Field(type = FieldType.Keyword)

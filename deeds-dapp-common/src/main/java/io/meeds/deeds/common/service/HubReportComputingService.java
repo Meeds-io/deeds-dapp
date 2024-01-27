@@ -86,7 +86,7 @@ public class HubReportComputingService {
   private HubReport computeLastPeriodUemRewardAmount(HubReport report) {
     HubReport lastRewardedReport = reportService.getLastReport(report.getHubAddress(),
                                                                report.getSentDate(),
-                                                               report.getHash(),
+                                                               report.getReportId(),
                                                                VALID_STATUSES);
     report.setLastPeriodUemRewardAmount(lastRewardedReport == null ? 0d : lastRewardedReport.getUemRewardAmount());
     return lastRewardedReport;
