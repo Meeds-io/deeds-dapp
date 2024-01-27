@@ -118,7 +118,7 @@ public class HubEntity {
   @Getter
   @Setter
   private String              rewardsPeriodType;
-
+  
   @Field(type = FieldType.Double)
   @Getter
   @Setter
@@ -128,6 +128,16 @@ public class HubEntity {
   @Setter
   @Field(type = FieldType.Boolean)
   private boolean             enabled;
+
+  @Field(type = FieldType.Double)
+  @Getter
+  @Setter
+  private double              ownerClaimableAmount;
+
+  @Field(type = FieldType.Double)
+  @Getter
+  @Setter
+  private double              managerClaimableAmount;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @Getter
@@ -140,6 +150,12 @@ public class HubEntity {
   @Setter
   @CreatedDate
   private Instant             untilDate;
+
+  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
+  @Getter
+  @Setter
+  @CreatedDate
+  private Instant             joinDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @Getter

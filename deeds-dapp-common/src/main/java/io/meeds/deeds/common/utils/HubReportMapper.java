@@ -53,7 +53,6 @@ public class HubReportMapper {
                                StringUtils.lowerCase(report.getRewardTokenAddress()),
                                report.getRewardTokenNetworkId(),
                                lowerCase(report.getTransactions()),
-                               report.getSignature(),
                                report.getStatus(),
                                report.getError(),
                                report.getRewardId(),
@@ -72,8 +71,6 @@ public class HubReportMapper {
 
   public static HubReport fromEntity(HubReportEntity entity) {
     return new HubReport(entity.getReportId(),
-                         null,
-                         null,
                          entity.getHubAddress(),
                          entity.getDeedId(),
                          entity.getFromDate(),
@@ -105,11 +102,11 @@ public class HubReportMapper {
                          entity.getRewardId());
   }
 
-  public static SortedSet<String> lowerCase(SortedSet<String> hashes) {
-    if (CollectionUtils.isEmpty(hashes)) {
+  public static SortedSet<String> lowerCase(SortedSet<String> transactions) {
+    if (CollectionUtils.isEmpty(transactions)) {
       return new TreeSet<>();
     } else {
-      return hashes.stream()
+      return transactions.stream()
                    .map(StringUtils::lowerCase)
                    .collect(Collectors.toCollection(TreeSet::new));
     }
