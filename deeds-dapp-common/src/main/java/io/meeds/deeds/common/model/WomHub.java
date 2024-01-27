@@ -13,4 +13,6 @@ public class WomHub {
 
   private boolean enabled;
 
+  private long    joinDate;
+
 }

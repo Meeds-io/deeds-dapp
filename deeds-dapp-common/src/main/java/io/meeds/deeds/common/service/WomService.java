@@ -246,6 +246,18 @@ public class WomService {
           hubEntity.setUntilDate(lease.getEndDate());
         }
       }
+      if (StringUtils.isNotBlank(hubEntity.getDeedOwnerAddress())
+          && !StringUtils.equals(hubEntity.getDeedOwnerAddress(), EnsUtils.EMPTY_ADDRESS)) {
+        double ownerClaimableAmount = blockchainService.getPendingRewards(hubEntity.getDeedOwnerAddress());
+        hubEntity.setOwnerClaimableAmount(ownerClaimableAmount);
+      }
+      if (StringUtils.isNotBlank(hubEntity.getDeedManagerAddress())
+          && !StringUtils.equals(hubEntity.getDeedManagerAddress(), EnsUtils.EMPTY_ADDRESS)
+          && !StringUtils.equalsIgnoreCase(hubEntity.getDeedOwnerAddress(), hubEntity.getDeedManagerAddress())) {
+        double managerClaimableAmount = blockchainService.getPendingRewards(hubEntity.getDeedManagerAddress());
+        hubEntity.setManagerClaimableAmount(managerClaimableAmount);
+      }
+      hubEntity.setJoinDate(Instant.ofEpochSecond(hubFromWom.getJoinDate()));
       hubEntity = hubRepository.save(hubEntity);
       listenerService.publishEvent(HUB_SAVED, hubEntity.getAddress());
     } else if (hubEntity != null) {
