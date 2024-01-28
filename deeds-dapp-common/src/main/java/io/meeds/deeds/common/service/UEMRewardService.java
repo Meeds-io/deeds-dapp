@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
-import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.UEMRewardMapper;
 import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.UEMReward;
@@ -79,13 +78,7 @@ public class UEMRewardService {
     return fromEntity(rewardEntity);
   }
 
-  public UEMReward getReward(RewardPeriod period) {
-    return rewardRepository.findByFromDateIsAndToDateIs(period.getFrom(), period.getTo())
-                           .map(this::fromEntity)
-                           .orElse(null);
-  }
-
-  public UEMReward getRewardById(String rewardId) {
+  public UEMReward getRewardById(long rewardId) {
     return rewardRepository.findById(rewardId)
                            .map(this::fromEntity)
                            .orElse(null);

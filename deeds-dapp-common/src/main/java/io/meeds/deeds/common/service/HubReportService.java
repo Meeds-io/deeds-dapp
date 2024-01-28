@@ -49,7 +49,6 @@ import org.springframework.util.CollectionUtils;
 import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
-import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.deeds.common.utils.HubReportMapper;
 import io.meeds.wom.api.constant.HubReportStatusType;
 import io.meeds.wom.api.constant.WomAuthorizationException;
@@ -162,14 +161,6 @@ public class HubReportService {
                            .orElse(null);
   }
 
-  public List<HubReport> getValidReports(RewardPeriod rewardPeriod) {
-    return reportRepository.findBySentDateBetweenAndStatusNotIn(rewardPeriod.getFrom(),
-                                                                rewardPeriod.getTo(),
-                                                                INVALID_STATUSES)
-                           .map(HubReportMapper::fromEntity)
-                           .toList();
-  }
-
   public HubReport getValidReport(long rewardId, String hubAddress) {
     return reportRepository.findByRewardIdAndHubAddressAndStatusNotIn(rewardId,
                                                                       StringUtils.lowerCase(hubAddress),
@@ -275,12 +266,17 @@ public class HubReportService {
                     });
   }
 
+  public List<HubReport> getReportsByRewardId(long rewardId) {
+    return reportRepository.findByRewardId(rewardId);
+  }
+
   private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) {
     HubReportEntity existingEntity = reportRepository.findById(reportData.getReportId())
                                                      .orElse(null);
     String managerAddress = hubService.getDeedManagerAddress(hub.getDeedId());
     String ownerAddress = hubService.getDeedOwnerAddress(hub.getDeedId());
     HubReport report = new HubReport(reportData.getReportId(),
+                                     existingEntity == null ? 0l : existingEntity.getRewardId(),
                                      reportData.getHubAddress(),
                                      reportData.getDeedId(),
                                      reportData.getFromDate(),
@@ -295,7 +291,6 @@ public class HubReportService {
                                      reportData.getRewardTokenNetworkId(),
                                      reportData.getHubRewardAmount(),
                                      reportData.getTransactions(),
-                                     StringUtils.lowerCase(hub.getEarnerAddress()),
                                      StringUtils.lowerCase(managerAddress),
                                      StringUtils.lowerCase(ownerAddress),
                                      0,
@@ -308,8 +303,7 @@ public class HubReportService {
                                      existingEntity == null ? 0d : existingEntity.getHubRewardAmountPerPeriod(),
                                      existingEntity == null ? 0d : existingEntity.getHubRewardLastPeriodDiff(),
                                      existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
-                                     existingEntity == null ? 0d : existingEntity.getMp(),
-                                     existingEntity == null ? 0l : existingEntity.getRewardId());
+                                     existingEntity == null ? 0d : existingEntity.getMp());
     return toEntity(report);
   }
 

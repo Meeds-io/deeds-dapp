@@ -79,7 +79,7 @@ public class HubController {
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
                                                               PagedResourcesAssembler<Hub> assembler,
                                                               @RequestParam(name = "rewardId", required = false)
-                                                              String rewardId) {
+                                                              long rewardId) {
     Page<Hub> hubs = hubService.getHubs(rewardId, pageable);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())

@@ -27,7 +27,7 @@
       :address="hub.address" />
     <deeds-hub-report-not-found
       v-else-if="hub.reportNotFound"
-      :hash="hub.reportHash" />
+      :report-id="hub.reportId" />
     <template v-else>
       <deeds-hub-details-deed-card
         :hub="hub"
@@ -80,18 +80,18 @@ export default {
   methods: {
     init() {
       const hubAddress = this.$utils.getQueryParam('address');
-      const hubReportHash = this.$utils.getQueryParam('report');
-      if (hubReportHash) {
-        return this.$hubReportService.getReport(hubReportHash)
+      const hubReportId = this.$utils.getQueryParam('report');
+      if (hubReportId) {
+        return this.$hubReportService.getReport(hubReportId)
           .then(report => {
             if (report?.hubAddress) {
               this.selectedReport = report;
-              return this.refresh(report?.hubAddress, hubReportHash);
+              return this.refresh(report?.hubAddress, hubReportId);
             } else {
-              this.$root.$emit('report-not-found', hubReportHash);
+              this.$root.$emit('report-not-found', hubReportId);
             }
           })
-          .catch(() => this.$root.$emit('report-not-found', hubReportHash))
+          .catch(() => this.$root.$emit('report-not-found', hubReportId))
           .finally(() => this.loading = false);
       } else {
         if (hubAddress) {
@@ -107,21 +107,21 @@ export default {
           .then(provisioningManager => this.isManager = provisioningManager);
       }
     },
-    refresh(hubAddress, hubReportHash) {
+    refresh(hubAddress, hubReportId) {
       this.loading = true;
       return this.$hubService.getHub(hubAddress)
         .then(hub => {
           if (hub) {
             this.$root.$emit('open-hub-details', hub);
-          } else if (hubReportHash) {
-            this.$root.$emit('report-not-found', hubReportHash);
+          } else if (hubReportId) {
+            this.$root.$emit('report-not-found', hubReportId);
           } else {
             this.$root.$emit('hub-not-found', hubAddress);
           }
         })
         .catch(() => {
-          if (hubReportHash) {
-            this.$root.$emit('report-not-found', hubReportHash);
+          if (hubReportId) {
+            this.$root.$emit('report-not-found', hubReportId);
           } else {
             this.$root.$emit('hub-not-found', hubAddress);
           }

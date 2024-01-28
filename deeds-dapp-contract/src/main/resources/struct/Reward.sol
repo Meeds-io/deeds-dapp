@@ -13,9 +13,8 @@ struct Reward {
     uint256 fromReport;
     // Last report index included in this Reward period
     uint256 toReport;
-    // Sum of all Ed of all reports
-    // (doesn't correspond to Ew because it's not divided by reports count yet)
-    uint256 sumEd;
+    // Sum of all reports ( 𝐸𝑑 ∗ 𝐷𝑟 ∗ 𝐷𝑠 ∗ 𝑀) : without 𝐸𝑤 = Fixed Indice
+    uint256 fixedGlobalIndex;
     // Start date of reward period
     uint256 fromDate;
     // End date of reward period

@@ -50,9 +50,9 @@ export default {
         notFound: true,
       };
     },
-    openHubReportNotFound(reportHash) {
+    openHubReportNotFound(reportId) {
       this.selectedHub = {
-        reportHash: reportHash,
+        reportId: reportId,
         reportNotFound: true,
       };
     },

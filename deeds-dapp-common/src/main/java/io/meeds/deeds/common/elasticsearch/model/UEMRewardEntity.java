@@ -46,6 +46,21 @@ public class UEMRewardEntity {
   @Field(type = FieldType.Long)
   private Long        rewardId;
 
+  /**
+   * Total UEM reward budget
+   */
+  @Field(type = FieldType.Double)
+  private double      amount;
+
+  @Field(type = FieldType.Long)
+  private Long        fromReport;
+
+  @Field(type = FieldType.Long)
+  private Long        toReport;
+
+  @Field(type = FieldType.Double)
+  private double      fixedGlobalIndex;
+
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant     fromDate;
 
@@ -54,38 +69,5 @@ public class UEMRewardEntity {
 
   @Field(type = FieldType.Keyword)
   private Set<String> hubAddresses;
-
-  @Field(type = FieldType.Long)
-  private Set<Long>   reportIds;
-
-  /**
-   * Total internal hub achievements
-   */
-  @Field(type = FieldType.Long)
-  private long        hubAchievementsCount;
-
-  /**
-   * Total internal hub rewards sent to hub users
-   */
-  @Field(type = FieldType.Double)
-  private double      hubRewardsAmount;
-
-  /**
-   * Total hubs computed reward index
-   */
-  @Field(type = FieldType.Double)
-  private double      uemRewardIndex;
-
-  /**
-   * Total UEM reward budget
-   */
-  @Field(type = FieldType.Double)
-  private double      uemRewardAmount;
-
-  @Field(type = FieldType.Double)
-  private double      globalEngagementRate;
-
-  @Field(type = FieldType.Keyword)
-  private String      periodType;
 
 }

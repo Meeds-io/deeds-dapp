@@ -929,6 +929,16 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.periodicRewardAmount")
+  public double getUemPeriodicRewardAmount() {
+    if (uemContract == null) {
+      return 0d;
+    }
+    BigInteger periodicRewardAmount = uemContract.periodicRewardAmount().send();
+    return BigDecimal.valueOf(periodicRewardAmount.doubleValue()).divide(BigDecimal.valueOf(10l).pow(18)).doubleValue();
+  }
+
+  @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.isHubConnected")
   public boolean isHubConnected(String address) {
     return womContract.isHubConnected(address).send().booleanValue();
