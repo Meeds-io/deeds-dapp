@@ -51,6 +51,10 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         uint256 indexed amount
     );
 
+    // Fixed Index computing multiplier,
+    // knowning that no floating numbers are supported
+    uint256 public constant MULTIPLIER = 1000000000000000000;
+
     // Since, the minting privilege is exclusively hold
     // by the current contract and it's not transferable,
     // this will be the absolute Maximum Supply of all MEED Token.
@@ -154,13 +158,6 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         require(_deedId > 0, "wom.deedIdIsMandatory");
         require(wom.getConnectedDeed(_hubAddress) == _deedId, "wom.hubIsNotConnectedToWoMUsingDeed");
 
-        // Check Hub Report is eligible
-        require(_report.usersCount > 0, "wom.hubUsersIsMandatory");
-        require(_report.recipientsCount > 0, "wom.hubRecipientsCountIsMandatory");
-        require(_report.participantsCount > 0, "wom.hubParticipantsCountIsMandatory");
-        require(_report.achievementsCount > 0, "wom.hubAchievementsCountIsMandatory");
-        require(_report.amount > 0, "wom.hubUsedRewardAmountAmountIsMandatory");
-
         // Avoid very old reports comparing to the whole first connection date to the WoM (even after disconnection in the meanwhile)
         require(_report.toDate.add(REWARD_PERIOD_IN_SECONDS) >= wom.getHubJoinDate(_hubAddress), "wom.hubReportHasNotEligibleToDate");
 
@@ -209,12 +206,11 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           reportReward.tenant = deed.tenant;
 
           reportReward.fixedRewardIndex = _getReportFixedIndice(lastReportId);
-          reportReward.ownerFixedIndex = reportReward.fixedRewardIndex.mul(deed.ownerPercentage);
-
+          reportReward.ownerFixedIndex = reportReward.fixedRewardIndex.mul(deed.ownerPercentage).div(100);
           if (reportReward.ownerFixedIndex > 0) {
             recipients[reportReward.owner].reportIds.push(lastReportId);
           }
-          reportReward.tenantFixedIndex = reportReward.fixedRewardIndex.mul(deed.tenantPercentage);
+          reportReward.tenantFixedIndex = reportReward.fixedRewardIndex.mul(deed.tenantPercentage).div(100);
           if (reportReward.tenantFixedIndex > 0) {
             recipients[reportReward.tenant].reportIds.push(lastReportId);
           }
@@ -234,7 +230,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           }
           reward.toReport = lastReportId;
           reward.reportsCount = reward.reportsCount.add(1);
-          reward.sumEd = reward.sumEd.add(hubReports[lastReportId].achievementsCount.div(hubReports[lastReportId].participantsCount));
+          reward.fixedGlobalIndex = reward.fixedGlobalIndex.add(hubRewards[lastReportId].fixedRewardIndex);
         }
 
         hubReportIds[_hubAddress].push(lastReportId);
@@ -259,11 +255,11 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           HubReportReward memory reportReward = hubRewards[recipient.reportIds[i]];
           if (!reportReward.fraud) {
             Reward memory reward = rewards[reportReward.rewardPeriodId];
-            if (block.timestamp > reward.toDate && reward.sumEd > 0) { // Only past rewards
-              if (reportReward.owner == msg.sender) {
-                recipient.accRewards += reportReward.ownerFixedIndex.mul(reward.amount).div(reward.sumEd);
-              } else if (reportReward.tenant == msg.sender) {
-                recipient.accRewards += reportReward.tenantFixedIndex.mul(reward.amount).div(reward.sumEd);
+            if (block.timestamp > reward.toDate && reward.fixedGlobalIndex > 0) { // Only past rewards
+              if (reportReward.owner == _msgSender()) {
+                recipient.accRewards += reward.amount.mul(reportReward.ownerFixedIndex).div(reward.fixedGlobalIndex);
+              } else if (reportReward.tenant == _msgSender()) {
+                recipient.accRewards += reward.amount.mul(reportReward.tenantFixedIndex).div(reward.fixedGlobalIndex);
               } else {
                 revert("uem.notDeedManager"); // Should never happen
               }
@@ -275,9 +271,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
             _amount = recipient.accRewards.sub(recipient.claimedRewards);
         }
         recipient.claimedRewards = recipient.claimedRewards.add(_amount);
-        if (recipient.claimedRewards > recipient.accRewards) {
-          revert("uem.exceedsRewardsAmount");
-        }
+        require(recipient.accRewards >= recipient.claimedRewards, "uem.exceedsRewardsAmount");
         if (_receiver == address(0)) {
             _receiver = _msgSender();
         }
@@ -299,11 +293,11 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           HubReportReward memory reportReward = hubRewards[recipient.reportIds[i]];
           if (!reportReward.fraud) {
             Reward memory reward = rewards[reportReward.rewardPeriodId];
-            if (block.timestamp > reward.toDate && reward.sumEd > 0) { // Only past rewards
-              if (reportReward.owner == msg.sender) {
-                accRewards = recipient.accRewards + reportReward.ownerFixedIndex.mul(reward.amount).div(reward.sumEd);
-              } else if (reportReward.tenant == msg.sender) {
-                accRewards = recipient.accRewards + reportReward.tenantFixedIndex.mul(reward.amount).div(reward.sumEd);
+            if (block.timestamp > reward.toDate && reward.fixedGlobalIndex > 0) { // Only past rewards
+              if (reportReward.owner == _msgSender()) {
+                accRewards = recipient.accRewards + reward.amount.mul(reportReward.ownerFixedIndex).div(reward.fixedGlobalIndex);
+              } else if (reportReward.tenant == _msgSender()) {
+                accRewards = recipient.accRewards + reward.amount.mul(reportReward.tenantFixedIndex).div(reward.fixedGlobalIndex);
               }
             }
           }
@@ -328,22 +322,33 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         HubReportDeed memory hubReportDeed = hubDeeds[_reportId];
         maxUsers = hubReportDeed.maxUsers;
         mintingPower = hubReportDeed.mintingPower;
+        require(mintingPower > 0, "wom.wrongDeedMintingPower");
       }
       {
         HubReport memory hubReport = hubReports[_reportId];
+
         usersCount = hubReport.usersCount;
+        require(usersCount > 0, "wom.hubUsersIsMandatory");
+
         participantsCount = hubReport.participantsCount;
-        recipientsCount = hubReport.recipientsCount;
+        require(participantsCount > 0, "wom.hubParticipantsCountIsMandatory");
+
         achievementsCount = hubReport.achievementsCount;
+        require(achievementsCount > 0, "wom.hubAchievementsCountIsMandatory");
+
+        recipientsCount = hubReport.recipientsCount;
         recipientsCount = maxUsers > 0 && hubReport.recipientsCount > maxUsers
           ? maxUsers
           : hubReport.recipientsCount;
+        require(recipientsCount > 0, "wom.hubRecipientsCountIsMandatory");
+
         if (lastRewardedAmount == 0) {
           amount = 1;
           lastRewardedAmount = 1;  
         } else {
           amount = hubReport.amount;
         }
+        require(amount > 0, "wom.hubUsedRewardAmountIsMandatory");
       }
 
       // ( 𝐸𝑑 ∗ 𝐷𝑟 ∗ 𝐷𝑠 ∗ 𝑀) : without 𝐸𝑤 = Fixed Indice
@@ -351,14 +356,25 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
       // uint256 dr = report.amount / lastRewardedAmount
       // uint256 ds = report.recipientsCount / report.usersCount
       // uint256 m =  report.mintingPower / 100 (No fractions)
-      return achievementsCount
-        .mul(amount)
-        .mul(recipientsCount)
-        .mul(mintingPower) // Percentage ..
-        .div(100) // .. to divide by 100
-        .div(participantsCount)
-        .div(lastRewardedAmount)
-        .div(usersCount);
+      uint256 result;
+      {
+        result = achievementsCount
+          .mul(amount)
+          .mul(MULTIPLIER); // No floats, thus use multiplier
+      }
+      {
+        result = result
+          .mul(recipientsCount)
+          .mul(mintingPower)
+          .div(100); //  100 for Minting power percentage
+      }
+      {
+        result = result
+          .div(participantsCount)
+          .div(lastRewardedAmount)
+          .div(usersCount);
+      }
+      return result;
     }
 
     function _getLastRewardedAmount(uint256 _reportId)
@@ -374,11 +390,11 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
         require(hubReports[_reportId].fromDate > hubReports[lastRewardedReportId].fromDate, "uem.lastReportFromDateMustBeLessThanCurrentReportFromDate");
 
         Reward memory lastReward = rewards[hubRewards[lastRewardedReportId].rewardPeriodId];
-        if (lastReward.sumEd > 0) {
+        if (lastReward.fixedGlobalIndex > 0) {
           // reportReward.fraud will not be considered here
           // even if fraud = true, the previous report
-          // is considered as it was rewarded (kind of penality)
-          return hubRewards[lastRewardedReportId].fixedRewardIndex.mul(lastReward.amount).div(lastReward.sumEd);
+          // is considered as it was rewarded (kind of penalty)
+          return hubRewards[lastRewardedReportId].fixedRewardIndex.mul(lastReward.amount).div(lastReward.fixedGlobalIndex);
         }
       }
       return 0;
