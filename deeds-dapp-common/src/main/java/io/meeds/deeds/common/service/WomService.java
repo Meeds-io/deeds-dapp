@@ -144,16 +144,16 @@ public class WomService {
   }
 
   public Page<Hub> getHubs(Pageable pageable) {
-    return getHubs(null, pageable);
+    return getHubs(0, pageable);
   }
 
-  public Page<Hub> getHubs(String rewardId, Pageable pageable) {
+  public Page<Hub> getHubs(long rewardId, Pageable pageable) {
     pageable = pageable.isUnpaged() ? pageable :
                                     PageRequest.of(pageable.getPageNumber(),
                                                    pageable.getPageSize(),
                                                    pageable.getSortOr(Sort.by(Direction.DESC, "createdDate")));
     Page<HubEntity> page;
-    if (StringUtils.isBlank(rewardId)) {
+    if (rewardId == 0) {
       page = hubRepository.findByEnabledIsTrue(pageable);
     } else {
       UEMRewardEntity rewardEntity = rewardRepository.findById(rewardId).orElse(null);

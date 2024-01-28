@@ -28,6 +28,7 @@ import org.springframework.data.util.Streamable;
 
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.wom.api.constant.HubReportStatusType;
+import io.meeds.wom.api.model.HubReport;
 
 public interface HubReportRepository extends ElasticsearchRepository<HubReportEntity, Long> {
 
@@ -64,5 +65,7 @@ public interface HubReportRepository extends ElasticsearchRepository<HubReportEn
   Optional<HubReportEntity> findByRewardIdAndHubAddressAndStatusNotIn(long rewardId,
                                                                       String hubAddress,
                                                                       List<HubReportStatusType> statuses);
+
+  List<HubReport> findByRewardId(long byRewardId);
 
 }

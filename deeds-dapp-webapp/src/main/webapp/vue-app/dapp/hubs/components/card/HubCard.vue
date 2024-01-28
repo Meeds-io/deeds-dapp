@@ -31,8 +31,27 @@
       max-height="270px"
       hover
       outlined>
-      <v-card-actions class="position-absolute z-index-two r-0">
-        <v-tooltip v-if="deedId" bottom>
+      <v-card-actions v-if="deedId" class="position-absolute z-index-two r-0">
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              small
+              dense
+              class="mx-2 px-0 elevation-1 white"
+              v-bind="attrs"
+              v-on="on"
+              @click.prevent.stop="$root.$emit('open-hub-details', hub)">
+              <v-icon
+                size="14"
+                color="info">
+                fa-info
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t('wom.openHubDetails') }}</span>
+        </v-tooltip>
+        <v-tooltip bottom>
           <template #activator="{ on, attrs }">
             <v-chip
               :href="`${openSeaBaseLink}/${deedId}`"
@@ -40,17 +59,32 @@
               :dark="unkownHub"
               target="_blank"
               rel="nofollow noreferrer noopener"
-              class="overflow-hidden d-block"
+              class="overflow-hidden position-relative d-block"
               height="36"
               outlined
               v-bind="attrs"
               v-on="on"
               @click="nop">
-              <v-img
-                :src="cardImage"
-                max-height="36"
-                max-width="34"
-                class="rounded-circle ms-n3 pe-1" />
+              <v-card
+                height="100%"
+                class="position-static transparent"
+                style="aspect-ratio: 0.5"
+                flat>
+                <v-card
+                  aspect-ratio="1"
+                  max-height="32"
+                  height="32"
+                  class="d-flex overflow-hidden transparent rounded-circle absolute-vertical-center"
+                  style="left: -1px"
+                  flat>
+                  <img
+                    :src="cardImage"
+                    class="ma-n1"
+                    height="auto"
+                    width="40"
+                    alt="Deed">
+                </v-card>
+              </v-card>
               <div class="font-weight-normal body-1 ms-2">
                 #{{ deedId }}
               </div>

@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.constant.DeedCard;
-import io.meeds.deeds.common.model.RewardPeriod;
 import io.meeds.wom.api.constant.HubReportStatusType;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.model.HubReport;
@@ -152,7 +151,7 @@ public class HubReportComputingService {
   }
 
   private long getDiffDays(UEMReward reward, HubReport previousReport) {
-    UEMReward previousReward = rewardService.getReward(RewardPeriod.getPeriod(previousReport.getSentDate()));
+    UEMReward previousReward = rewardService.getRewardById(previousReport.getRewardId());
     if (previousReward == null) {
       return 0;
     }

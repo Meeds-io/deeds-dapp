@@ -32,8 +32,6 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.meeds.wom.api.constant.HubReportStatusType;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,111 +46,92 @@ public class HubReportEntity {
 
   @Id
   @Field(type = FieldType.Long)
-  private long                reportId;
+  private long              reportId;
 
   @Field(type = FieldType.Keyword)
-  private String              hubAddress;
+  private long              rewardId;
 
   @Field(type = FieldType.Keyword)
-  private String              earnerAddress;
+  private String            hubAddress;
 
   @Field(type = FieldType.Keyword)
-  private String              deedManagerAddress;
+  private String            deedManagerAddress;
 
   @Field(type = FieldType.Keyword)
-  private String              ownerAddress;
+  private String            ownerAddress;
 
   @Field(type = FieldType.Integer)
-  private int                 ownerMintingPercentage;
+  private int               ownerMintingPercentage;
 
   @Field(type = FieldType.Long)
-  private long                deedId;
+  private long              deedId;
+
+  @Field(type = FieldType.Short)
+  private short             city;
+
+  @Field(type = FieldType.Short)
+  private short             cardType;
+
+  @Field(type = FieldType.Short)
+  private short             mintingPower;
+
+  @Field(type = FieldType.Long)
+  private long              maxUsers;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             fromDate;
+  private Instant           fromDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             toDate;
+  private Instant           toDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             sentDate;
+  private Instant           sentDate;
 
   @Field(type = FieldType.Keyword)
-  private String              periodType;
+  private String            periodType;
 
   @Field(type = FieldType.Long)
-  private long                usersCount;
+  private long              usersCount;
 
   @Field(type = FieldType.Long)
-  private long                participantsCount;
+  private long              participantsCount;
 
   @Field(type = FieldType.Long)
-  private long                recipientsCount;
+  private long              recipientsCount;
 
   @Field(type = FieldType.Long)
-  private long                achievementsCount;
+  private long              achievementsCount;
 
   @Field(type = FieldType.Text)
-  private String              rewardTokenAddress;
+  private String            rewardTokenAddress;
 
   @Field(type = FieldType.Long)
-  private long                rewardTokenNetworkId;
+  private long              rewardTokenNetworkId;
 
   @Field(type = FieldType.Text)
-  private SortedSet<String>   transactions;
-
-  // UEM computed field
-  @Field(type = FieldType.Keyword)
-  private HubReportStatusType status;
-
-  // Report validation error code
-  @Field(type = FieldType.Keyword)
-  private String              error;
-
-  @Field(type = FieldType.Keyword)
-  private long                rewardId;
+  private SortedSet<String> transactions;
 
   @Field(type = FieldType.Double)
-  private double              hubRewardAmount;
+  private double            hubRewardAmount;
 
-  // UEM computed field
   @Field(type = FieldType.Double)
-  private double              uemRewardIndex;
+  private double            fixedRewardIndex;
 
-  // UEM computed field
   @Field(type = FieldType.Double)
-  private double              uemRewardAmount;
+  private double            ownerFixedIndex;
 
-  // UEM computed field
   @Field(type = FieldType.Double)
-  private double              lastPeriodUemRewardAmount;
+  private double            tenantFixedIndex;
 
-  // UEM computed field
-  @Field(type = FieldType.Double)
-  private double              lastPeriodUemDiff;
-
-  // UEM computed field
-  @Field(type = FieldType.Double)
-  private double              hubRewardAmountPerPeriod;
-
-  // UEM computed field
-  @Field(type = FieldType.Double)
-  private double              hubRewardLastPeriodDiff;
-
-  // UEM computed field
-  @Field(type = FieldType.Double)
-  private double              lastPeriodUemRewardAmountPerPeriod;
-
-  // UEM computed field
-  @Field(type = FieldType.Double)
-  private double              mp;
+  @Field(type = FieldType.Boolean)
+  private boolean           fraud;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @CreatedDate
-  private Instant             createdDate = Instant.now();
+  private Instant           createdDate = Instant.now();
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @LastModifiedDate
-  private Instant             updatedDate = Instant.now();
+  private Instant           updatedDate = Instant.now();
 
 }
