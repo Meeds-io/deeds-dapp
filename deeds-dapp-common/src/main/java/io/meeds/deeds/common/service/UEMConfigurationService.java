@@ -17,7 +17,6 @@
  */
 package io.meeds.deeds.common.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,58 +26,29 @@ import io.meeds.deeds.common.model.UEMConfiguration;
 @Component
 public class UEMConfigurationService {
 
-  public static final String  UEM_CONFIGURATION_SAVED = "uem.configuration.saved";
-
-  private static final String UEM_REWARD_AMOUNT_KEY   = "uem.rewardAmount";
-
   @Autowired
-  private SettingService      settingService;
-
-  @Autowired
-  private BlockchainService   blockchainService;
-
-  @Autowired
-  private ListenerService     listenerService;
+  private BlockchainService blockchainService;
 
   @Value("${meeds.wom.url:https://wom.meeds.io}")
-  private String              womUrl;
+  private String            womUrl;
 
-  private UEMConfiguration    uemConfiguration;
+  private UEMConfiguration  uemConfiguration;
 
   public UEMConfiguration getConfiguration() {
-    return getConfiguration(false);
-  }
-
-  public UEMConfiguration getConfiguration(boolean compute) {
-    if (compute || uemConfiguration == null) {
+    if (uemConfiguration == null) {
       uemConfiguration = new UEMConfiguration(blockchainService.getNetworkId(),
                                               blockchainService.getPolygonNetworkId(),
                                               blockchainService.getEthereumMeedTokenAddress(),
                                               blockchainService.getPolygonMeedTokenAddress(),
                                               blockchainService.getUemAddress(),
                                               womUrl,
-                                              getStoredUemRewardAmount());
+                                              blockchainService.getUemPeriodicRewardAmount());
     }
     return uemConfiguration;
   }
 
-  public void saveUemRewardAmount(double uemRewardAmount) {
-    settingService.save(UEM_REWARD_AMOUNT_KEY, String.valueOf(uemRewardAmount));
+  public void resetUemRewardAmount() {
     this.uemConfiguration = null;
-    listenerService.publishEvent(UEM_CONFIGURATION_SAVED, getUemRewardAmount());
-  }
-
-  public double getUemRewardAmount() {
-    return getConfiguration(true).getUemRewardAmount();
-  }
-
-  private double getStoredUemRewardAmount() {
-    String value = settingService.get(UEM_REWARD_AMOUNT_KEY);
-    if (StringUtils.isNotBlank(value)) {
-      return Double.parseDouble(value);
-    } else {
-      return 0d;
-    }
   }
 
 }

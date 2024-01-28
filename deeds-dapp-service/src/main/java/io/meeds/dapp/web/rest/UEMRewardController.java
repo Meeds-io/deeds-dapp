@@ -55,7 +55,7 @@ public class UEMRewardController {
   @GetMapping("{rewardId}")
   public ResponseEntity<UEMReward> getReward(
                                              @PathVariable(name = "rewardId")
-                                             String rewardId) {
+                                             long rewardId) {
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
                          .body(rewardService.getRewardById(rewardId));

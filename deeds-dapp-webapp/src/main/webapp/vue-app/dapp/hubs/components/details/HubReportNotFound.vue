@@ -32,7 +32,7 @@
       max-width="80%"
       min-width="50vw"
       flat>
-      {{ $t('wom.hubReportNotFoundMessage', {0: hash}) }}
+      {{ $t('wom.hubReportNotFoundMessage', {0: reportId}) }}
     </v-card>
     <v-btn
       class="primary mt-6"
@@ -48,7 +48,7 @@
 <script>
 export default {
   props: {
-    hash: {
+    reportId: {
       type: String,
       default: null,
     },

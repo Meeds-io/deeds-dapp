@@ -38,6 +38,6 @@ public class UEMConfiguration {
 
   private String womServerUrl;
 
-  private Double uemRewardAmount;
+  private double uemRewardAmount;
 
 }
