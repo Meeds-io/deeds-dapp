@@ -9,7 +9,7 @@
     <v-data-iterator
       :items="reports"
       :loading="loading"
-      item-key="hash"
+      item-key="rewardId"
       disable-pagination
       disable-filtering
       disable-sort
@@ -29,18 +29,18 @@
         <v-row class="mx-0 border-box-sizing">
           <template v-for="report in props.items">
             <v-col
-              v-if="report.hash && (!report.hidden || report.hash === expandedHash)"
-              :key="report.hash"
+              v-if="report.reportId && (!report.hidden || report.reportId === expandedReportId)"
+              :key="report.reportId"
               cols="12"
               sm="12"
               md="6"
               lg="4">
               <deeds-hub-details-reward-item
-                :key="`report-${report.hash}`"
+                :key="`report-${report.reportId}`"
                 :report="report"
-                :expand="expandedHash === report.hash"
+                :expand="expandedReportId === report.reportId"
                 @refresh="refreshReport"
-                @expand="expandReport(report.hash)"
+                @expand="expandReport(report.reportId)"
                 @collapse="expandReport(null)" />
             </v-col>
           </template>
@@ -76,22 +76,22 @@ export default {
     pageSize: 10,
     page: -1,
     hasMore: false,
-    expandedHash: null,
+    expandedReportId: null,
   }),
   computed: Vuex.mapState({
     hubAddress() {
       return this.hub?.address;
     },
     expandedReportIndex() {
-      return this.expandedHash && this.reports.findIndex(r => r.hash === this.expandedHash) || -1;
+      return this.expandedReportId && this.reports.findIndex(r => r.reportId === this.expandedReportId) || -1;
     },
   }),
   watch: {
-    expandedHash() {
-      if (this.expandedHash && this.expandedReportIndex < 0) {
-        this.refreshReportByHash(this.expandedHash);
+    expandedReportId() {
+      if (this.expandedReportId && this.expandedReportIndex < 0) {
+        this.refreshReportById(this.expandedReportId);
       }
-      this.$utils.refreshHubUrl(this.hub?.address, this.expandedHash || null);
+      this.$utils.refreshHubUrl(this.hub?.address, this.expandedReportId || null);
     },
   },
   created() {
@@ -100,7 +100,7 @@ export default {
   methods: {
     init() {
       return this.loadMore()
-        .then(() => this.expandReport(this.selectedReport?.hash));
+        .then(() => this.expandReport(this.selectedReport?.reportId));
     },
     loadMore() {
       this.page++;
@@ -120,17 +120,17 @@ export default {
         })
         .finally(() => this.loading = false);
     },
-    expandReport(reportHash) {
-      this.expandedHash = reportHash;
-      this.$emit('report-expanded', reportHash);
+    expandReport(reportId) {
+      this.expandedReportId = reportId;
+      this.$emit('report-expanded', reportId);
     },
-    refreshReportByHash(reportHash) {
-      return this.$hubReportService.getReport(reportHash)
+    refreshReportById(reportId) {
+      return this.$hubReportService.getReport(reportId)
         .then(report => {
           if (this.hub?.address === report?.hubAddress) {
             this.refreshReport(report);
           } else {
-            this.$root.$emit('report-not-found', reportHash);
+            this.$root.$emit('report-not-found', reportId);
           }
         })
         .finally(() => this.loading = false);
@@ -139,7 +139,7 @@ export default {
       if (!report) {
         return;
       }
-      const index = this.reports.findIndex(r => report.hash === r.hash);
+      const index = this.reports.findIndex(r => report.reportId === r.reportId);
       if (index >= 0) {
         this.reports.splice(index, 1, report);
       } else {

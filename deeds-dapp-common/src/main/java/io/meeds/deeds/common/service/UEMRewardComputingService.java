@@ -42,8 +42,6 @@ import io.meeds.wom.api.model.UEMReward;
 @Component
 public class UEMRewardComputingService {
 
-  public static final String        UEM_REWARD_PERIOD_TYPE = "WEEK";
-
   @Autowired
   private UEMConfigurationService   uemConfigurationService;
 
@@ -54,49 +52,28 @@ public class UEMRewardComputingService {
   private HubReportService          reportService;
 
   @Autowired
+  private BlockchainService         blockchainService;
+
+  @Autowired
   private HubReportComputingService hubRewardComputingService;
 
   @Autowired
   private ListenerService           listenerService;
 
-  public UEMReward computeUEMReward(String rewardId) {
-    UEMReward existingReward = rewardService.getRewardById(rewardId);
-    return computeUEMReward(new RewardPeriod(existingReward.getFromDate(),
-                                             existingReward.getToDate()),
-                            existingReward);
-  }
-
-  public UEMReward computeUEMReward(Instant instant) {
-    LocalDate date = RewardPeriod.getLocalDate(instant);
-    RewardPeriod period = RewardPeriod.getPeriod(date);
-    return computeUEMReward(period);
-  }
-
-  public UEMReward computeUEMReward(RewardPeriod period) {
-    UEMReward existingReward = rewardService.getReward(period);
-    return computeUEMReward(period, existingReward);
-  }
-
-  private UEMReward computeUEMReward(RewardPeriod period, UEMReward rewardToRefresh) {
-    List<HubReport> reports = filterHubReports(period);
+  public UEMReward computeUEMReward(long rewardId) {
+    List<HubReport> reports = reportService.getReportsByRewardId(rewardId);
     if (CollectionUtils.isEmpty(reports)) {
       // When no reports, no need to generate an UEM reward for period
       return null;
     }
-
-    UEMReward reward;
-    if (rewardToRefresh == null) {
-      reward = new UEMReward();
-      reward.setPeriodType(UEM_REWARD_PERIOD_TYPE);
-      reward.setFromDate(period.getFrom());
-      reward.setToDate(period.getTo());
-    } else {
-      reward = rewardToRefresh;
+    UEMReward reward = rewardService.getRewardById(rewardId);
+    if (reward == null) {
+      reward = blockchainService.getUEMReward();
     }
 
     Set<String> hubAddresses = hubAddresses(reports);
     double hubRewardsAmount = hubRewardsAmount(reports);
-    Set<Long> reportIds = reportHashes(reports);
+    Set<Long> reportIds = reportIds(reports);
     Long hubAchievementsCount = hubAchievementsCount(reports);
     double globalEngagementRate = globalEngagementRate(reports);
     double uemRewardAmount = getUemRewardAmount();
@@ -131,8 +108,7 @@ public class UEMRewardComputingService {
                                         hubAchievementsCount,
                                         hubRewardsAmount,
                                         uemRewardIndex,
-                                        globalEngagementRate,
-                                        UEM_REWARD_PERIOD_TYPE);
+                                        globalEngagementRate);
     UEMReward savedReward = rewardService.saveReward(uemReward);
 
     // 4. Update each report prorata reward amount
@@ -174,7 +150,7 @@ public class UEMRewardComputingService {
   }
 
   private double getUemRewardAmount() {
-    return uemConfigurationService.getUemRewardAmount();
+    return uemConfigurationService.getConfiguration().getUemRewardAmount();
   }
 
   private double globalEngagementRate(List<HubReport> reports) {
@@ -191,7 +167,7 @@ public class UEMRewardComputingService {
                   .reduce(0l, Long::sum);
   }
 
-  private Set<Long> reportHashes(List<HubReport> reports) {
+  private Set<Long> reportIds(List<HubReport> reports) {
     return reports.stream()
                   .map(HubReport::getReportId)
                   .collect(Collectors.toSet());
@@ -221,39 +197,6 @@ public class UEMRewardComputingService {
                                           .doubleValue());
     } else {
       report.setUemRewardAmount(0d);
-    }
-  }
-
-  private List<HubReport> filterHubReports(RewardPeriod rewardPeriod) {
-    List<HubReport> reports = reportService.getValidReports(rewardPeriod);
-    return reports.stream()
-                  .map(HubReport::getHubAddress)
-                  .map(StringUtils::lowerCase)
-                  .distinct()
-                  .map(hubAddress -> computeHubReport(hubAddress, reports))
-                  .filter(Objects::nonNull)
-                  .toList();
-  }
-
-  private HubReport computeHubReport(String hubAddress, List<HubReport> reports) {
-    List<HubReport> hubReports = reports.stream()
-                                        .filter(r -> StringUtils.equalsIgnoreCase(r.getHubAddress(), hubAddress))
-                                        .toList();
-
-    if (hubReports.size() == 1) {
-      return hubReports.get(0);
-    } else {
-      // Get last created report
-      HubReport validReport = hubReports.stream()
-                                        .sorted((r1, r2) -> r2.getSentDate().compareTo(r1.getSentDate()))
-                                        .findFirst()
-                                        .orElse(null);
-      // Invalidate all other reports
-      hubReports.stream()
-                .filter(r -> r.getReportId() != validReport.getReportId())
-                .map(HubReport::getReportId)
-                .forEach(reportId -> reportService.saveReportStatus(reportId, REJECTED));
-      return validReport;
     }
   }
 

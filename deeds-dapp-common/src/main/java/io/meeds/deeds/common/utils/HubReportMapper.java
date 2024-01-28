@@ -36,8 +36,8 @@ public class HubReportMapper {
 
   public static HubReportEntity toEntity(HubReport report) {
     return new HubReportEntity(report.getReportId(),
+                               report.getRewardId(),
                                StringUtils.lowerCase(report.getHubAddress()),
-                               StringUtils.lowerCase(report.getEarnerAddress()),
                                StringUtils.lowerCase(report.getDeedManagerAddress()),
                                StringUtils.lowerCase(report.getOwnerAddress()),
                                report.getOwnerMintingPercentage(),
@@ -55,7 +55,6 @@ public class HubReportMapper {
                                lowerCase(report.getTransactions()),
                                report.getStatus(),
                                report.getError(),
-                               report.getRewardId(),
                                report.getHubRewardAmount(),
                                report.getUemRewardIndex(),
                                report.getUemRewardAmount(),
@@ -85,7 +84,6 @@ public class HubReportMapper {
                          entity.getRewardTokenNetworkId(),
                          entity.getHubRewardAmount(),
                          entity.getTransactions(),
-                         entity.getEarnerAddress(),
                          entity.getDeedManagerAddress(),
                          StringUtils.lowerCase(entity.getOwnerAddress()),
                          entity.getOwnerMintingPercentage(),
