@@ -18,6 +18,8 @@
 package io.meeds.deeds.common.elasticsearch.model;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -40,34 +42,43 @@ import lombok.NoArgsConstructor;
 @JsonInclude(value = Include.NON_EMPTY)
 @Document(indexName = "uem_reward", createIndex = true)
 @Setting(replicas = 0, shards = 1)
-public class UEMRewardEntity {
+public class UemRewardEntity {
 
   @Id
   @Field(type = FieldType.Long)
-  private Long        rewardId;
+  private Long                rewardId;
 
   /**
    * Total UEM reward budget
    */
   @Field(type = FieldType.Double)
-  private double      amount;
-
-  @Field(type = FieldType.Long)
-  private Long        fromReport;
-
-  @Field(type = FieldType.Long)
-  private Long        toReport;
+  private double              amount;
 
   @Field(type = FieldType.Double)
-  private double      fixedGlobalIndex;
+  private double              fixedGlobalIndex;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     fromDate;
+  private Instant             fromDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant     toDate;
+  private Instant             toDate;
+
+  @Field(type = FieldType.Long)
+  private List<Long>          reportIds;
 
   @Field(type = FieldType.Keyword)
-  private Set<String> hubAddresses;
+  private Set<String>         hubAddresses;
+
+  @Field(type = FieldType.Auto)
+  private Map<String, Double> reportRewards;
+
+  @Field(type = FieldType.Long)
+  private long                hubAchievementsCount;
+
+  @Field(type = FieldType.Long)
+  private long                hubParticipantsCount;
+
+  @Field(type = FieldType.Double)
+  private double              hubRewardsAmount;
 
 }

@@ -7,13 +7,13 @@ pragma solidity 0.8.9;
 struct Reward {
     // Total configured Reward amount at this time
     uint256 amount;
-    // Eligible reports count
+    // Total reports count = toReport - fromReport + 1
     uint256 reportsCount;
     // First report index included in this Reward period
     uint256 fromReport;
     // Last report index included in this Reward period
     uint256 toReport;
-    // Sum of all reports ( 𝐸𝑑 ∗ 𝐷𝑟 ∗ 𝐷𝑠 ∗ 𝑀) : without 𝐸𝑤 = Fixed Indice
+    // Sum of all reports ( 𝐸𝑑 ∗ 𝐷𝑟 ∗ 𝐷𝑠 ∗ 𝑀) : without 𝐸𝑤 = Fixed Index
     uint256 fixedGlobalIndex;
     // Start date of reward period
     uint256 fromDate;

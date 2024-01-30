@@ -292,7 +292,7 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
             // Hub owner id the current Deed Provisioning
             // Manager Address
             hub.owner = deed.tenant;
-            hub.joinDate = block.timestamp;
+            hub.joinDate = _blocktimeInSeconds();
         }
         deed.hub = _hubAddress;
         hub.deedId = _deedId;
@@ -304,6 +304,14 @@ contract WoM is UUPSUpgradeable, Initializable, ManagerRole {
         deed.hub = address(0);
         Hub storage hub = hubs[_hubAddress];
         hub.enabled = false;
+    }
+
+    function _blocktimeInSeconds()
+        internal
+        view
+        virtual
+        returns(uint256) {
+        return block.timestamp;
     }
 
     function _authorizeUpgrade(

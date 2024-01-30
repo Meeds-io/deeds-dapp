@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +58,7 @@ import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
-import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
+import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
@@ -120,9 +121,6 @@ public class WomService {
   private FileService         fileService;
 
   @Autowired
-  private UEMRewardRepository rewardRepository;
-
-  @Autowired
   private BlockchainService   blockchainService;
 
   @Autowired
@@ -130,6 +128,9 @@ public class WomService {
 
   @Autowired
   private HubRepository       hubRepository;
+
+  @Autowired
+  private UEMRewardRepository rewardRepository;
 
   private Map<String, Long>   tokens                     = new ConcurrentHashMap<>();
 
@@ -156,7 +157,7 @@ public class WomService {
     if (rewardId == 0) {
       page = hubRepository.findByEnabledIsTrue(pageable);
     } else {
-      UEMRewardEntity rewardEntity = rewardRepository.findById(rewardId).orElse(null);
+      UemRewardEntity rewardEntity = rewardRepository.findById(rewardId).orElse(null);
       if (rewardEntity == null || CollectionUtils.isEmpty(rewardEntity.getHubAddresses())) {
         return Page.empty(pageable);
       } else {
@@ -276,6 +277,29 @@ public class WomService {
     return HubMapper.fromEntity(hubEntity);
   }
 
+  public void refreshClaimableAmount(String address) {
+    Stream.of(hubRepository.findByDeedOwnerAddress(address),
+              hubRepository.findByDeedManagerAddress(address))
+          .flatMap(s -> s)
+          .map(HubEntity::getAddress)
+          .distinct()
+          .forEach(hubAddress -> {
+            HubEntity hubEntity = hubRepository.findById(hubAddress).orElse(null);
+            if (StringUtils.isNotBlank(hubEntity.getDeedOwnerAddress())
+                && !StringUtils.equals(hubEntity.getDeedOwnerAddress(), EnsUtils.EMPTY_ADDRESS)) {
+              double ownerClaimableAmount = blockchainService.getPendingRewards(hubEntity.getDeedOwnerAddress());
+              hubEntity.setOwnerClaimableAmount(ownerClaimableAmount);
+            }
+            if (StringUtils.isNotBlank(hubEntity.getDeedManagerAddress())
+                && !StringUtils.equals(hubEntity.getDeedManagerAddress(), EnsUtils.EMPTY_ADDRESS)
+                && !StringUtils.equalsIgnoreCase(hubEntity.getDeedOwnerAddress(), hubEntity.getDeedManagerAddress())) {
+              double managerClaimableAmount = blockchainService.getPendingRewards(hubEntity.getDeedManagerAddress());
+              hubEntity.setManagerClaimableAmount(managerClaimableAmount);
+            }
+            hubRepository.save(hubEntity);
+          });
+  }
+
   public String generateToken() {
     cleanInvalidTokens();
     if (tokens.size() >= MAX_GENERATED_TOKENS_SIZE) {
@@ -387,12 +411,12 @@ public class WomService {
     }
   }
 
-  public void saveHubUEMProperties(String hubAddress, HubReport report) {
-    hubRepository.findById(StringUtils.lowerCase(hubAddress))
+  public void saveHubUEMProperties(HubReport report) {
+    hubRepository.findById(StringUtils.lowerCase(report.getHubAddress()))
                  .ifPresent(hubEntity -> {
                    hubEntity.setUsersCount(report.getUsersCount());
                    hubEntity.setRewardsPeriodType(report.getPeriodType());
-                   hubEntity.setRewardsPerPeriod(report.getHubRewardAmountPerPeriod());
+                   hubEntity.setRewardsPerPeriod(report.getHubRewardAmount());
                    hubEntity = hubRepository.save(hubEntity);
                    listenerService.publishEvent(HUB_STATUS_CHANGED, hubEntity.getAddress());
                  });

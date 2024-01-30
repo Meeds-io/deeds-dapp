@@ -126,7 +126,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
     if (StringUtils.contains(servletPath, "api")) { // REST API
-      doFilter(chain, request, response);
+      chain.doFilter(request, response);
     } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
                                                                                                                     // URI
       response.setHeader("Location", servletPath.substring(servletPath.indexOf("/static/")));
@@ -198,7 +198,6 @@ public class RequestDispatcherFilter extends HttpFilter {
       chain.doFilter(request, response);
     } catch (Exception e) {
       if (LOG.isDebugEnabled()) {
-        LOG.warn("Error while requesting resource", e);
       } else {
         LOG.warn(e.getMessage());
       }
