@@ -24,12 +24,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.deeds.common.elasticsearch.model.UEMRewardEntity;
+import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 
-public interface UEMRewardRepository extends ElasticsearchRepository<UEMRewardEntity, Long> {
+public interface UEMRewardRepository extends ElasticsearchRepository<UemRewardEntity, Long> {
 
-  Page<UEMRewardEntity> findByHubAddresses(String hubAddress, Pageable pageable);
+  Page<UemRewardEntity> findByHubAddresses(String hubAddress, Pageable pageable);
 
-  Optional<UEMRewardEntity> findByFromDateIsAndToDateIs(Instant from, Instant to);
+  Optional<UemRewardEntity> findByFromDateIsAndToDateIs(Instant from, Instant to);
 
 }

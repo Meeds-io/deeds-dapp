@@ -14,7 +14,7 @@
             class="d-none d-sm-block mt-n1 me-2">
             fa-calendar
           </v-icon>
-          <div class="d-flex flex-column flex-sm-row flex-grow-1 flex-shrink-1 ms-0 ms-sm-2 justify-start align-center">
+          <div class="d-flex flex-column flex-sm-row flex-grow-1 flex-shrink-1 text-subtitle-1 font-weight-bold ms-0 ms-sm-2 justify-start align-center">
             <deeds-date-format
               :value="fromDate"
               :format="dateFormat"
@@ -90,7 +90,7 @@
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-title :title="$t('wom.usersRewardAmount')">{{ $t('wom.usersRewardAmount') }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ rewardAmount }} Ɱ</v-list-item-subtitle>
+                  <v-list-item-subtitle>{{ hubRewardAmount }} Ɱ</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-col>
@@ -173,12 +173,12 @@ export default {
         maximumFractionDigits: 0,
       }).format(this.report?.achievementsCount || 0);
     },
-    rewardAmount() {
+    hubRewardAmount() {
       return new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(this.report?.rewardAmount || 0);
+      }).format(this.report?.hubRewardAmount || 0);
     },
     blockchainNetworkId() {
       return this.report?.rewardTokenNetworkId || 0;

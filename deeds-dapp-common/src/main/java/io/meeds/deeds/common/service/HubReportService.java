@@ -17,23 +17,10 @@
  */
 package io.meeds.deeds.common.service;
 
-import static io.meeds.deeds.common.utils.HubReportMapper.fromEntity;
 import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
-import static io.meeds.wom.api.constant.HubReportStatusType.ERROR_SENDING;
-import static io.meeds.wom.api.constant.HubReportStatusType.INVALID;
-import static io.meeds.wom.api.constant.HubReportStatusType.NONE;
-import static io.meeds.wom.api.constant.HubReportStatusType.PENDING_REWARD;
-import static io.meeds.wom.api.constant.HubReportStatusType.REJECTED;
-import static io.meeds.wom.api.constant.HubReportStatusType.REWARDED;
-import static io.meeds.wom.api.constant.HubReportStatusType.SENT;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Stream;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,100 +31,49 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.common.blockchain.BlockchainConfigurationProperties;
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.utils.HubReportMapper;
-import io.meeds.wom.api.constant.HubReportStatusType;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
-import io.meeds.wom.api.constant.WomRequestException;
-import io.meeds.wom.api.model.Hub;
-import io.meeds.wom.api.model.HubContract;
 import io.meeds.wom.api.model.HubReport;
-import io.meeds.wom.api.model.HubReportPayload;
 import io.meeds.wom.api.model.HubReportVerifiableData;
-
-import lombok.Getter;
 
 @Component
 public class HubReportService {
 
-  public static final String                     HUB_REPORT_RECEIVED            = "uem.report.received";
-
-  public static final String                     HUB_REPORT_SAVED               = "uem.report.saved";
-
-  public static final String                     HUB_REPORT_STATUS_CHANGED      = "uem.report.status.changed";
-
-  public static final String                     HUB_REPORT_TRANSACTION_SENT    = "uem.report.status.transactionSent";
-
-  public static final String                     HUB_REPORT_UEM_REWARD_COMPUTED = "uem.report.computed";
-
-  private static final List<HubReportStatusType> INVALID_STATUSES               = Stream.of(NONE,
-                                                                                            INVALID,
-                                                                                            REJECTED,
-                                                                                            ERROR_SENDING)
-                                                                                        .toList();
+  public static final String  HUB_REPORT_SAVED = "uem.report.saved";
 
   @Autowired
-  private BlockchainService                      blockchainService;
+  private BlockchainService   blockchainService;
 
   @Autowired
-  private WomService                             hubService;
+  private ListenerService     listenerService;
 
   @Autowired
-  private ListenerService                        listenerService;
-
-  @Autowired
-  private HubReportRepository                    reportRepository;
-
-  @Autowired
-  private SettingService                         settingService;
-
-  @Autowired
-  private BlockchainConfigurationProperties      blockchainProperties;
-
-  @Value("${io.meeds.whitelistRewardContracts:}")
-  private List<String>                           whitelistRewardContractsValues;
+  private HubReportRepository reportRepository;
 
   @Value("${io.meeds.test.acceptOudatedReport:false}")
-  private boolean                                acceptOudatedReport;
-
-  @Getter
-  private Instant                                uemStartDate;
-
-  private List<HubContract>                      whitelistRewardContracts;
-
-  @PostConstruct
-  public void init() {
-    String value = settingService.get("uemStartDate");
-    if (StringUtils.isNotBlank(value)) {
-      uemStartDate = Instant.ofEpochMilli(Long.parseLong(value));
-    } else if (StringUtils.isNotBlank(blockchainProperties.getUemAddress())) {
-      uemStartDate = Instant.now();
-      settingService.save("uemStartDate", String.valueOf(uemStartDate.toEpochMilli()));
-    }
-  }
+  private boolean             acceptOudatedReport;
 
   public Page<HubReport> getReportsByHub(String hubAddress, Pageable pageable) {
-    return getReports(hubAddress, null, pageable);
+    return getReports(hubAddress, 0, pageable);
   }
 
-  public Page<HubReport> getReportsByReward(String rewardId, Pageable pageable) {
+  public Page<HubReport> getReportsByReward(long rewardId, Pageable pageable) {
     return getReports(null, rewardId, pageable);
   }
 
-  public Page<HubReport> getReports(String hubAddress, String rewardId, Pageable pageable) {
+  public Page<HubReport> getReports(String hubAddress, long rewardId, Pageable pageable) {
     Page<HubReportEntity> page;
-    if (StringUtils.isBlank(hubAddress) && StringUtils.isBlank(rewardId)) {
+    if (StringUtils.isBlank(hubAddress) && rewardId == 0) {
       pageable = pageable.isUnpaged() ? pageable :
                                       PageRequest.of(pageable.getPageNumber(),
                                                      pageable.getPageSize(),
                                                      pageable.getSortOr(Sort.by(Direction.DESC, "fromDate")));
       page = reportRepository.findAll(pageable);
-    } else if (StringUtils.isBlank(rewardId)) {
+    } else if (rewardId == 0) {
       pageable = pageable.isUnpaged() ? pageable :
                                       PageRequest.of(pageable.getPageNumber(),
                                                      pageable.getPageSize(),
@@ -158,41 +94,13 @@ public class HubReportService {
   public HubReport getReport(long reportId) {
     return reportRepository.findById(reportId)
                            .map(HubReportMapper::fromEntity)
-                           .orElse(null);
+                           .orElseGet(() -> refreshReport(reportId));
   }
 
-  public HubReport getValidReport(long rewardId, String hubAddress) {
-    return reportRepository.findByRewardIdAndHubAddressAndStatusNotIn(rewardId,
-                                                                      StringUtils.lowerCase(hubAddress),
-                                                                      INVALID_STATUSES)
+  public HubReport getReports(long rewardId, String hubAddress) {
+    return reportRepository.findByRewardIdAndHubAddress(rewardId, StringUtils.lowerCase(hubAddress))
                            .map(HubReportMapper::fromEntity)
                            .orElse(null);
-  }
-
-  public HubReport getLastReport(String hubAddress,
-                                 Instant beforeDate,
-                                 long reportId,
-                                 List<HubReportStatusType> statuses) {
-    Pageable pageable = Pageable.ofSize(1);
-    Page<HubReportEntity> page;
-    if (reportId == 0) {
-      page =
-           reportRepository.findByHubAddressAndSentDateBeforeAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                            beforeDate,
-                                                                                            statuses,
-                                                                                            pageable);
-    } else {
-      page =
-           reportRepository.findByHubAddressAndSentDateBeforeAndReportIdNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                                          beforeDate,
-                                                                                                          reportId,
-                                                                                                          statuses,
-                                                                                                          pageable);
-    }
-    return page.get()
-               .findFirst()
-               .map(HubReportMapper::fromEntity)
-               .orElse(null);
   }
 
   public HubReport saveReport(HubReportVerifiableData reportData) throws WomException {
@@ -204,193 +112,56 @@ public class HubReportService {
       throw new WomAuthorizationException("wom.invalidSignedMessage", e);
     }
 
-    Hub hub = hubService.getHub(reportData.getHubAddress());
-
-    checkHubValidity(hub);
-    checkRewardDates(hub, reportData);
-    checkTokenWhitelisted(reportData);
-
-    HubReportEntity reportEntity = toReportEntity(hub, reportData);
-    reportEntity = reportRepository.save(reportEntity);
-    listenerService.publishEvent(HUB_REPORT_RECEIVED, reportData.getHash());
-    return fromEntity(reportEntity);
+    HubReport report = new HubReport(reportData);
+    blockchainService.retrieveReportProperties(report);
+    reportRepository.save(toEntity(report));
+    listenerService.publishEvent(HUB_REPORT_SAVED, report.getReportId());
+    return report;
   }
 
-  public void saveReportStatus(long reportId, HubReportStatusType status) {
-    reportRepository.findById(reportId)
-                    .ifPresent(report -> {
-                      if (INVALID_STATUSES.contains(status)) {
-                        report.setRewardId(0l);
-                        report.setUemRewardIndex(0d);
-                        report.setUemRewardAmount(0d);
-                        report.setHubRewardAmountPerPeriod(0d);
-                        report.setLastPeriodUemRewardAmount(0d);
-                        report.setLastPeriodUemRewardAmountPerPeriod(0d);
-                      }
-                      report.setStatus(status);
-                      reportRepository.save(report);
-                      listenerService.publishEvent(HUB_REPORT_STATUS_CHANGED, reportId);
-                    });
+  public HubReport refreshReport(long reportId) {
+    HubReportEntity hubReportEntity = reportRepository.findById(reportId).orElse(null);
+    if (hubReportEntity != null) {
+      return HubReportMapper.fromEntity(hubReportEntity);
+    }
+    HubReport report = blockchainService.retrieveReportProperties(reportId);
+    reportRepository.save(toEntity(report));
+    listenerService.publishEvent(HUB_REPORT_SAVED, report.getReportId());
+    return report;
   }
 
-  public void saveReportLeaseStatus(HubReport report) {
-    reportRepository.findById(report.getReportId())
-                    .ifPresent(reportEntity -> {
-                      reportEntity.setDeedManagerAddress(report.getDeedManagerAddress());
-                      reportEntity.setOwnerAddress(report.getOwnerAddress());
-                      reportEntity.setOwnerMintingPercentage(report.getOwnerMintingPercentage());
-                      reportRepository.save(reportEntity);
-                    });
-  }
-
-  public void saveReportUEMProperties(HubReport report) {
-    reportRepository.findById(report.getReportId())
-                    .ifPresent(r -> {
-                      r.setReportId(report.getReportId());
-                      r.setRewardId(report.getRewardId());
-
-                      r.setUemRewardIndex(report.getUemRewardIndex());
-                      r.setUemRewardAmount(report.getUemRewardAmount());
-
-                      r.setHubRewardLastPeriodDiff(report.getHubRewardLastPeriodDiff());
-                      r.setHubRewardAmountPerPeriod(report.getHubRewardAmountPerPeriod());
-
-                      r.setLastPeriodUemRewardAmount(report.getLastPeriodUemRewardAmount());
-                      r.setLastPeriodUemDiff(report.getLastPeriodUemDiff());
-                      r.setLastPeriodUemRewardAmountPerPeriod(report.getLastPeriodUemRewardAmountPerPeriod());
-
-                      r.setMp(report.getMp());
-                      r.setStatus(report.getStatus());
-                      reportRepository.save(r);
-                      listenerService.publishEvent(HUB_REPORT_UEM_REWARD_COMPUTED, r.getReportId());
-                    });
+  public HubReport refreshReportFraud(long reportId) {
+    HubReportEntity hubReportEntity = reportRepository.findById(reportId).orElse(null);
+    if (hubReportEntity == null) {
+      return null;
+    }
+    boolean reportFraud = blockchainService.isReportFraud(reportId);
+    hubReportEntity.setFraud(reportFraud);
+    reportRepository.save(hubReportEntity);
+    listenerService.publishEvent(HUB_REPORT_SAVED, hubReportEntity.getReportId());
+    return HubReportMapper.fromEntity(hubReportEntity);
   }
 
   public List<HubReport> getReportsByRewardId(long rewardId) {
-    return reportRepository.findByRewardId(rewardId);
-  }
-
-  private HubReportEntity toReportEntity(Hub hub, HubReportVerifiableData reportData) {
-    HubReportEntity existingEntity = reportRepository.findById(reportData.getReportId())
-                                                     .orElse(null);
-    String managerAddress = hubService.getDeedManagerAddress(hub.getDeedId());
-    String ownerAddress = hubService.getDeedOwnerAddress(hub.getDeedId());
-    HubReport report = new HubReport(reportData.getReportId(),
-                                     existingEntity == null ? 0l : existingEntity.getRewardId(),
-                                     reportData.getHubAddress(),
-                                     reportData.getDeedId(),
-                                     reportData.getFromDate(),
-                                     reportData.getToDate(),
-                                     reportData.getSentDate(),
-                                     reportData.getPeriodType(),
-                                     reportData.getUsersCount(),
-                                     reportData.getParticipantsCount(),
-                                     reportData.getRecipientsCount(),
-                                     reportData.getAchievementsCount(),
-                                     reportData.getRewardTokenAddress(),
-                                     reportData.getRewardTokenNetworkId(),
-                                     reportData.getHubRewardAmount(),
-                                     reportData.getTransactions(),
-                                     StringUtils.lowerCase(managerAddress),
-                                     StringUtils.lowerCase(ownerAddress),
-                                     0,
-                                     existingEntity == null ? HubReportStatusType.SENT : existingEntity.getStatus(),
-                                     null,
-                                     existingEntity == null ? 0d : existingEntity.getUemRewardIndex(),
-                                     existingEntity == null ? 0d : existingEntity.getUemRewardAmount(),
-                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmount(),
-                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemDiff(),
-                                     existingEntity == null ? 0d : existingEntity.getHubRewardAmountPerPeriod(),
-                                     existingEntity == null ? 0d : existingEntity.getHubRewardLastPeriodDiff(),
-                                     existingEntity == null ? 0d : existingEntity.getLastPeriodUemRewardAmountPerPeriod(),
-                                     existingEntity == null ? 0d : existingEntity.getMp());
-    return toEntity(report);
-  }
-
-  private void checkRewardDates(Hub hub, HubReportVerifiableData report) throws WomRequestException {
-    if (acceptOudatedReport) {
-      // Testing environment
-      return;
-    }
-    if (report.getToDate().isBefore(hub.getCreatedDate())) {
-      throw new WomRequestException("wom.sentReportIsBeforeWoMConnection");
-    }
-    if (!isReportPeriodValid(report)) {
-      throw new WomRequestException("wom.sentReportIsBeforeUEM");
-    }
-    HubReport lastRewardedReport = getLastHubReport(hub.getAddress(), report.getReportId());
-    if (lastRewardedReport != null
-        && Duration.between(lastRewardedReport.getToDate(), report.getFromDate()).toDays() < 0) {
-      throw new WomRequestException("wom.sentReportIsBeforeLastRewardedReport");
-    }
-  }
-
-  private HubReport getLastHubReport(String hubAddress, long reportId) {
-    Pageable pageable = Pageable.ofSize(1);
-    return reportRepository.findByHubAddressAndReportIdNotAndStatusInOrderByFromDateDesc(StringUtils.lowerCase(hubAddress),
-                                                                                         reportId,
-                                                                                         Stream.of(NONE,
-                                                                                                   SENT,
-                                                                                                   PENDING_REWARD,
-                                                                                                   REWARDED)
-                                                                                               .toList(),
-                                                                                         pageable)
-                           .get()
-                           .findFirst()
+    return reportRepository.findByRewardId(rewardId)
                            .map(HubReportMapper::fromEntity)
-                           .orElse(null);
+                           .toList();
   }
 
-  private void checkHubValidity(Hub hub) throws WomRequestException {
-    if (hub == null || !hub.isConnected() || isBeforeNow(hub.getUntilDate()) || hub.getDeedId() <= 0) {
-      throw new WomRequestException("wom.hubNotConnectedToWoM");
+  public void computeUemReward(HubReport report, double periodFixedGlobalIndex, double periodRewardAmount) {
+    double uemRewardAmount = BigDecimal.valueOf(report.getFixedRewardIndex())
+                                       .multiply(BigDecimal.valueOf(periodRewardAmount))
+                                       .divide(BigDecimal.valueOf(periodFixedGlobalIndex))
+                                       .doubleValue();
+    boolean changed = uemRewardAmount != report.getUemRewardAmount();
+    report.setUemRewardAmount(uemRewardAmount);
+    if (changed) {
+      reportRepository.findById(report.getReportId())
+                      .ifPresent(hubReportEntity -> {
+                        hubReportEntity.setUemRewardAmount(uemRewardAmount);
+                        reportRepository.save(hubReportEntity);
+                      });
     }
-  }
-
-  private void checkTokenWhitelisted(HubReportPayload report) throws WomException {
-    if (!isWhitelistRewardContract(report.getRewardTokenNetworkId(), report.getRewardTokenAddress())) {
-      throw new WomAuthorizationException("wom.unsupporedRewardContract");
-    }
-  }
-
-  private boolean isBeforeNow(Instant untilDate) {
-    return untilDate != null && untilDate.isBefore(Instant.now());
-  }
-
-  private boolean isReportPeriodValid(HubReportPayload reportData) {
-    if (uemStartDate == null) {
-      return true;
-    } else {
-      return uemStartDate.isBefore(reportData.getToDate());
-    }
-  }
-
-  private boolean isWhitelistRewardContract(long networkId, String contractAddress) throws WomRequestException {
-    if (CollectionUtils.isEmpty(whitelistRewardContracts)) {
-      try {
-        HubContract ethereumMeedToken = new HubContract(blockchainService.getNetworkId(),
-                                                        StringUtils.lowerCase(blockchainService.getEthereumMeedTokenAddress()));
-        HubContract polygonMeedToken = new HubContract(blockchainService.getPolygonNetworkId(),
-                                                       StringUtils.lowerCase(blockchainService.getPolygonMeedTokenAddress()));
-
-        whitelistRewardContracts = new ArrayList<>();
-        whitelistRewardContracts.add(ethereumMeedToken);
-        whitelistRewardContracts.add(polygonMeedToken);
-      } catch (Exception e) {
-        throw new WomRequestException("wom.blockchainConnectionError", e);
-      }
-      if (!CollectionUtils.isEmpty(whitelistRewardContractsValues)) {
-        whitelistRewardContractsValues.stream()
-                                      .filter(StringUtils::isNotBlank)
-                                      .filter(s -> s.contains(":"))
-                                      .map(s -> {
-                                        String[] parts = s.split(":");
-                                        return new HubContract(Long.parseLong(parts[0]), StringUtils.lowerCase(parts[1]));
-                                      })
-                                      .forEach(whitelistRewardContracts::add);
-      }
-    }
-    return whitelistRewardContracts.contains(new HubContract(networkId, StringUtils.lowerCase(contractAddress)));
   }
 
 }

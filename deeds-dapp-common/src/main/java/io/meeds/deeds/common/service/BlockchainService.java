@@ -18,6 +18,8 @@ package io.meeds.deeds.common.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,14 +52,17 @@ import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.DefaultBlockParameterNumber;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.request.EthFilter;
+import org.web3j.protocol.core.methods.response.BaseEventResponse;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tuples.generated.Tuple10;
 import org.web3j.tuples.generated.Tuple12;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tuples.generated.Tuple7;
 import org.web3j.tuples.generated.Tuple8;
 import org.web3j.tuples.generated.Tuple9;
 import org.web3j.utils.EnsUtils;
@@ -102,6 +107,8 @@ import io.meeds.deeds.contract.WoM.HubDisconnectedEventResponse;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomException;
+import io.meeds.wom.api.model.HubReport;
+import io.meeds.wom.api.model.UemReward;
 
 import lombok.SneakyThrows;
 
@@ -336,6 +343,33 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.getMinedUemLogs")
+  public List<? extends BaseEventResponse> getMinedUemLogs(long fromBlock, long toBlock) { // NOSONAR
+    EthFilter ethFilter = new EthFilter(fromBlock == 0 ? DefaultBlockParameterName.EARLIEST :
+                                                       new DefaultBlockParameterNumber(fromBlock),
+                                        new DefaultBlockParameterNumber(toBlock),
+                                        womContract.getContractAddress()).addOptionalTopics(EventEncoder.encode(WoM.HUBCONNECTED_EVENT),
+                                                                                            EventEncoder.encode(WoM.HUBDISCONNECTED_EVENT));
+    EthLog ethLog = polygonWeb3j.ethGetLogs(ethFilter).send();
+    @SuppressWarnings("rawtypes")
+    List<LogResult> ethLogs = ethLog.getLogs();
+    if (CollectionUtils.isEmpty(ethLogs)) {
+      return Collections.emptyList();
+    }
+    return ethLogs.stream()
+                  .map(logResult -> (LogObject) logResult.get())
+                  .filter(logObject -> !logObject.isRemoved())
+                  .map(LogObject::getTransactionHash)
+                  .map(this::getPolygonTransactionReceipt)
+                  .filter(Objects::nonNull)
+                  .filter(TransactionReceipt::isStatusOK)
+                  .map(this::getUemLogs)
+                  .flatMap(List::stream)
+                  .filter(Objects::nonNull)
+                  .toList();
+  }
+
+  @SneakyThrows
   public Set<String> getMinedHubConnectionTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(fromBlock == 0 ? DefaultBlockParameterName.EARLIEST :
                                                        new DefaultBlockParameterNumber(fromBlock),
@@ -353,6 +387,7 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
                   .filter(logObject -> !logObject.isRemoved())
                   .map(LogObject::getTransactionHash)
                   .map(this::getPolygonTransactionReceipt)
+                  .filter(Objects::nonNull)
                   .filter(TransactionReceipt::isStatusOK)
                   .map(this::getHubAddresses)
                   .filter(CollectionUtils::isNotEmpty)
@@ -652,8 +687,10 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   public double getPendingRewards(String address) {
-    return WalletUtils.isValidAddress(address) ? org.exoplatform.wallet.utils.WalletUtils.convertFromDecimals(blockchainCall(uemContract.pendingRewardBalanceOf(address)), 18)
-                                               : 0d;
+    return WalletUtils.isValidAddress(address) ?
+                                               org.exoplatform.wallet.utils.WalletUtils.convertFromDecimals(blockchainCall(uemContract.pendingRewardBalanceOf(address)),
+                                                                                                            18) :
+                                               0d;
   }
 
   /**
@@ -738,7 +775,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedsTotalSupplyNoDecimals")
   public BigDecimal meedsTotalSupplyNoDecimals() {
     BigInteger totalSupply = meedsTotalSupply();
-    return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18));
+    return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18),
+                                              MathContext.DECIMAL128);
   }
 
   /**
@@ -939,6 +977,108 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveRewardProperties")
+  public void retrieveRewardProperties(UemReward reward) {
+    if (uemContract == null) {
+      return;
+    }
+    BigInteger rewardId = BigInteger.valueOf(reward.getRewardId());
+    Tuple7<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger> uemReward =
+                                                                                                         uemContract.rewards(rewardId)
+                                                                                                                    .send();
+    reward.setAmount(new BigDecimal(uemReward.component1()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                   MathContext.DECIMAL128)
+                                                           .doubleValue());
+    long fromReport = uemReward.component3().longValue();
+    long toReport = uemReward.component4().longValue();
+    List<Long> reportIds = new ArrayList<>();
+    if (fromReport > 0) {
+      for (long i = fromReport; i <= toReport; i++) {
+        reportIds.add(i);
+      }
+    }
+    reward.setReportIds(reportIds);
+    reward.setFixedGlobalIndex(new BigDecimal(uemReward.component5()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                             MathContext.DECIMAL128)
+                                                                     .doubleValue());
+    reward.setFromDate(Instant.ofEpochSecond(uemReward.component6().longValue()));
+    reward.setToDate(Instant.ofEpochSecond(uemReward.component7().longValue()));
+  }
+
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveReportFullProperties")
+  public HubReport retrieveReportProperties(long reportId) {
+    if (uemContract == null) {
+      return null;
+    }
+    HubReport report = new HubReport();
+    report.setReportId(reportId);
+    retrieveReportProperties(report);
+    return report;
+  }
+
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveReportProperties")
+  public void retrieveReportProperties(HubReport report) {
+    if (uemContract == null) {
+      return;
+    }
+    BigInteger reportId = BigInteger.valueOf(report.getReportId());
+    Tuple10<String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger> hubReport =
+                                                                                                                                      uemContract.hubReports(reportId)
+                                                                                                                                                 .send();
+    report.setHubAddress(StringUtils.lowerCase(hubReport.component1()));
+    report.setUsersCount(hubReport.component2().longValue());
+    report.setRecipientsCount(hubReport.component3().longValue());
+    report.setParticipantsCount(hubReport.component4().longValue());
+    report.setAchievementsCount(hubReport.component5().longValue());
+    report.setHubRewardAmount(new BigDecimal(hubReport.component6()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                            MathContext.DECIMAL128)
+                                                                    .doubleValue());
+    report.setRewardTokenAddress(StringUtils.lowerCase(hubReport.component7()));
+    report.setRewardTokenNetworkId(hubReport.component8().longValue());
+    report.setFromDate(Instant.ofEpochSecond(hubReport.component9().longValue()));
+    report.setToDate(Instant.ofEpochSecond(hubReport.component10().longValue()));
+
+    Tuple9<BigInteger, String, String, BigInteger, BigInteger, BigInteger, BigInteger, Boolean, BigInteger> hubReportReward =
+                                                                                                                            uemContract.hubRewards(reportId)
+                                                                                                                                       .send();
+    report.setRewardId(hubReportReward.component1().longValue());
+    report.setOwnerAddress(StringUtils.lowerCase(hubReportReward.component2()));
+    report.setDeedManagerAddress(StringUtils.lowerCase(hubReportReward.component3()));
+    report.setFixedRewardIndex(new BigDecimal(hubReportReward.component4()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                                   MathContext.DECIMAL128)
+                                                                           .doubleValue());
+    report.setOwnerFixedIndex(new BigDecimal(hubReportReward.component5()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                                  MathContext.DECIMAL128)
+                                                                          .doubleValue());
+    report.setTenantFixedIndex(new BigDecimal(hubReportReward.component6()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                                   MathContext.DECIMAL128)
+                                                                           .doubleValue());
+    report.setSentDate(Instant.ofEpochSecond(hubReportReward.component7().longValue()));
+    report.setFraud(hubReportReward.component8());
+    report.setLastPeriodUemRewardAmount(new BigDecimal(hubReportReward.component9()).divide(BigDecimal.valueOf(10).pow(18),
+                                                                                            MathContext.DECIMAL128)
+                                                                                    .doubleValue());
+
+    Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger> reportDeed = uemContract.hubDeeds(reportId)
+                                                                                               .send();
+    report.setDeedId(reportDeed.component1().longValue());
+    report.setCity(reportDeed.component2().shortValue());
+    report.setCardType(reportDeed.component3().shortValue());
+    report.setMintingPower(reportDeed.component4().shortValue());
+    report.setMaxUsers(reportDeed.component5().longValue());
+  }
+
+  @SneakyThrows
+  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.isReportFraud")
+  public boolean isReportFraud(long reportId) {
+    return uemContract.hubRewards(BigInteger.valueOf(reportId))
+                      .send()
+                      .component8();
+  }
+
+  @SneakyThrows
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.isHubConnected")
   public boolean isHubConnected(String address) {
     return womContract.isHubConnected(address).send().booleanValue();
@@ -996,7 +1136,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfNoDecimals")
   public BigDecimal meedBalanceOfNoDecimals(String address) {
     BigInteger balance = meedBalanceOf(address);
-    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
+    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18),
+                                          MathContext.DECIMAL128);
   }
 
   /**
@@ -1034,7 +1175,8 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfOnPolygon")
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
-    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18));
+    return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18),
+                                          MathContext.DECIMAL128);
   }
 
   @SneakyThrows
@@ -1252,6 +1394,15 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
       }
     }
     return parameters;
+  }
+
+  private List<? extends BaseEventResponse> getUemLogs(TransactionReceipt transactionReceipt) {
+    return Stream.of(UserEngagementMinting.getReportSentEvents(transactionReceipt),
+                     UserEngagementMinting.getReportFraudEvents(transactionReceipt),
+                     UserEngagementMinting.getClaimedEvents(transactionReceipt))
+                 .flatMap(List::stream)
+                 .filter(Objects::nonNull)
+                 .toList();
   }
 
 }

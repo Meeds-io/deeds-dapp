@@ -24,19 +24,22 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     using Address for address;
 
     /**
-     * @dev An event that will be triggered when a Hub is connected to the WoM
+     * @dev An event that will be triggered when a Report is sent to the UEM
      */
     event ReportSent(
         address indexed hub,
         uint256 indexed reportId
     );
 
+    /**
+     * @dev An event that will be triggered when a Report is considered as fraud
+     */
     event ReportFraud(
         uint256 indexed reportId
     );
 
     /**
-     * @dev An event that will be triggered when a Hub is connected to the WoM
+     * @dev An event that will be triggered when recipient claimed rewards
      */
     event Claimed(
         address indexed recipient, // Rewards Recipient, could be a Deed Tenant or Owner
@@ -45,7 +48,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     );
 
     /**
-     * @dev An event that will be triggered when a Hub is connected to the WoM
+     * @dev An event that will be triggered when the UEM periodic rewards amount changes
      */
     event RewardAmountChanged(
         uint256 indexed amount
@@ -55,23 +58,26 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     // knowning that no floating numbers are supported
     uint256 public constant MULTIPLIER = 1000000000000000000;
 
-    // Since, the minting privilege is exclusively hold
-    // by the current contract and it's not transferable,
-    // this will be the absolute Maximum Supply of all MEED Token.
+    // The UEM period duration
     uint256 public constant REWARD_PERIOD_IN_SECONDS = 7 days;
 
+    // Meeds.io Token
     IERC20 public meed;
 
+    // WoM Contract
     WoM public wom;
 
+    // The UEM start date
     uint256 public startRewardsTime = 0;
 
+    // The weekly UEM reward amount
     uint256 public periodicRewardAmount = 0;
 
+    // Last received report identifier
     uint256 public lastReportId = 0;
 
-    // Associated Hub report Ids by period Id: Hub Addr => Period Id => Report Id
-    // (will ensure unicity of reports for a given hub by period)
+    // Associated reports Ids to a Hub Addr. This will be used to compute
+    // the previous report received rewards
     mapping(address => uint256[]) public hubReportIds;
 
     // Report Id (Auto Incremented) => Hub Report
@@ -89,12 +95,12 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     // Deed Owner/Tenant address => Recipient structure holding the rewards information data
     mapping(address => Recipient) public recipients;
 
-    // Associated Hub report Ids by period Id: Hub Addr => Period Id => Report Id
+    // Associated Hub report Ids by period Id: Period Id => Hub Addr => Report Id
     // (will ensure unicity of reports for a given hub by period)
     // reportsByPeriodByHub[rewardPeriodId][hubAddress] = reportId
     mapping(uint256 => mapping(address => uint256)) public reportsByPeriodByHub;
 
-    // Associated Deed report Ids by period Id: Deed Id => Period Id => Report Id
+    // Associated Deed report Ids by period Id: Period Id => Deed Id => Report Id
     // (will ensure unicity of reports for a given Deed by period)
     // reportsByPeriodByDeed[rewardPeriodId][deedId] = reportId
     mapping(uint256 => mapping(uint256 => uint256)) public reportsByPeriodByDeed;
@@ -117,8 +123,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
-     * @dev Used when a Hub sends its internal Users Rewarding Report to the WoM.
-     *      Can be called by the Hub only.
+     * @dev Used to change the UEM weekly rewards amount
      */
     function setPeriodicRewardAmount(uint256 _periodicRewardAmount)
         external
@@ -144,8 +149,10 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     }
 
     /**
-     * @dev Used when a Hub sends its internal Users Rewarding Report to the WoM.
-     *      Can be called by the Hub only.
+     * @dev Used after a Hub sends its internal Users Rewarding Report.
+     *      This will add the Hub Rewarding Report in this contract
+     *      to be elligible to weekly rewards.
+     *      Can be called by the Hub itself only.
      */
     function addReport(HubReport memory _report, address _hubAddress, uint256 _deedId)
         external
@@ -205,7 +212,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           reportReward.owner = deed.owner;
           reportReward.tenant = deed.tenant;
 
-          reportReward.fixedRewardIndex = _getReportFixedIndice(lastReportId);
+          reportReward.fixedRewardIndex = _computeReportFixedIndice(lastReportId);
           reportReward.ownerFixedIndex = reportReward.fixedRewardIndex.mul(deed.ownerPercentage).div(100);
           if (reportReward.ownerFixedIndex > 0) {
             recipients[reportReward.owner].reportIds.push(lastReportId);
@@ -243,74 +250,83 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
 
     /**
      * @dev Used claim rewards by a recipient as Deed Owner or Deed Tenant
-     *      having previously sent reward reports in a previous UEM Reward period.
+     *      having previously managed a Hub which have sent a Reward Report.
      */
     function claim(address _receiver, uint256 _amount)
         external
         virtual
     {
+        uint256 pendingBalance = pendingRewardBalanceOf(_msgSender());
+
         Recipient storage recipient = recipients[_msgSender()];
-        require(recipient.reportIds.length > 0, "uem.noUemReports");
-        for (uint i = recipient.index; i < recipient.reportIds.length; i++) {
-          HubReportReward memory reportReward = hubRewards[recipient.reportIds[i]];
-          if (!reportReward.fraud) {
-            Reward memory reward = rewards[reportReward.rewardPeriodId];
-            if (block.timestamp > reward.toDate && reward.fixedGlobalIndex > 0) { // Only past rewards
-              if (reportReward.owner == _msgSender()) {
-                recipient.accRewards += reward.amount.mul(reportReward.ownerFixedIndex).div(reward.fixedGlobalIndex);
-              } else if (reportReward.tenant == _msgSender()) {
-                recipient.accRewards += reward.amount.mul(reportReward.tenantFixedIndex).div(reward.fixedGlobalIndex);
-              } else {
-                revert("uem.notDeedManager"); // Should never happen
-              }
-            }
-          }
-        }
+        recipient.accRewards = pendingBalance.add(recipient.claimedRewards);
         recipient.index = recipient.reportIds.length;
-        if (_amount == 0) { // Claim all
-            _amount = recipient.accRewards.sub(recipient.claimedRewards);
+
+        uint256 amount = _amount;
+        if (amount == 0) { // Claim all remaining
+            amount = pendingBalance;
         }
-        recipient.claimedRewards = recipient.claimedRewards.add(_amount);
-        require(recipient.accRewards >= recipient.claimedRewards, "uem.exceedsRewardsAmount");
-        if (_receiver == address(0)) {
-            _receiver = _msgSender();
+        address receiver = _receiver;
+        if (_receiver == address(0)) { // Claim to current address
+            receiver = _msgSender();
         }
-        require(meed.transfer(_receiver, _amount), "uem.claimMeedsTransferFailed");
-        emit Claimed(_msgSender(), _receiver, _amount);
+
+        recipient.claimedRewards = recipient.claimedRewards.add(amount);
+        require(meed.transfer(receiver, amount), "uem.claimMeedsTransferFailed");
+        emit Claimed(_msgSender(), receiver, amount);
     }
 
     /**
-     * @dev Used to estimate claimable rewards for a given address.
+     * @dev Used to estimate claimable UEM rewards for a given address.
      */
     function pendingRewardBalanceOf(address _address)
-        external
+        public
         view
         returns (uint256)
     {
-        Recipient storage recipient = recipients[_address];
-        uint256 accRewards = 0;
+        Recipient memory recipient = recipients[_address];
+        uint256 accRewards = recipient.accRewards;
         for (uint i = recipient.index; i < recipient.reportIds.length; i++) {
           HubReportReward memory reportReward = hubRewards[recipient.reportIds[i]];
           if (!reportReward.fraud) {
             Reward memory reward = rewards[reportReward.rewardPeriodId];
             if (block.timestamp > reward.toDate && reward.fixedGlobalIndex > 0) { // Only past rewards
-              if (reportReward.owner == _msgSender()) {
-                accRewards = recipient.accRewards + reward.amount.mul(reportReward.ownerFixedIndex).div(reward.fixedGlobalIndex);
-              } else if (reportReward.tenant == _msgSender()) {
-                accRewards = recipient.accRewards + reward.amount.mul(reportReward.tenantFixedIndex).div(reward.fixedGlobalIndex);
+              if (reportReward.owner == _address) {
+                accRewards = accRewards.add(reward.amount.mul(reportReward.ownerFixedIndex).div(reward.fixedGlobalIndex));
+              }
+              if (reportReward.tenant == _address) {
+                accRewards = accRewards.add(reward.amount.mul(reportReward.tenantFixedIndex).div(reward.fixedGlobalIndex));
               }
             }
           }
         }
-        return recipient.accRewards.sub(recipient.claimedRewards);
+        return accRewards.sub(recipient.claimedRewards);
     }
 
-    function _getReportFixedIndice(uint256 _reportId)
+    /**
+     * @dev Returns the list of Report Ids where the recipient
+     *      is either Deed Owner or Deed Tenant
+     */
+    function reportsByRecipient(address _address)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return recipients[_address].reportIds;
+    }
+
+    /**
+     * @dev Returns the fixed indice of a report computed switch the described formula
+     *      in the whitepaper. This will return only this fixed index:
+     *      ( 𝐸𝑑 ∗ 𝐷𝑟 ∗ 𝐷𝑠 ∗ 𝑀) : without 𝐸𝑤 = Fixed Indice
+     *      In additon, we will use a MULTIPLIER (10^18) knowing
+     *      that EVM doesn't manage floats
+     */
+    function _computeReportFixedIndice(uint256 _reportId)
       internal
-      view
       returns (uint256)
     {
-      uint256 lastRewardedAmount = _getLastRewardedAmount(_reportId);
+      uint256 lastRewardedAmount = _computeLastRewardedAmount(_reportId);
       uint256 maxUsers;
       uint256 mintingPower;
       uint256 usersCount;
@@ -377,9 +393,13 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
       return result;
     }
 
-    function _getLastRewardedAmount(uint256 _reportId)
+    /**
+     * @dev Returns the previous report rewards which will be used in UEM formula
+     *      to compute Hub Report Rewards.
+     *      This will at the same time persist the computed information for tracability.
+     */
+    function _computeLastRewardedAmount(uint256 _reportId)
       internal
-      view
       returns (uint256)
     {
       uint256[] memory ids = hubReportIds[hubReports[_reportId].hub];
@@ -394,7 +414,8 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
           // reportReward.fraud will not be considered here
           // even if fraud = true, the previous report
           // is considered as it was rewarded (kind of penalty)
-          return hubRewards[lastRewardedReportId].fixedRewardIndex.mul(lastReward.amount).div(lastReward.fixedGlobalIndex);
+          hubRewards[lastReportId].lastRewardedAmount = hubRewards[lastRewardedReportId].fixedRewardIndex.mul(lastReward.amount).div(lastReward.fixedGlobalIndex);
+          return hubRewards[lastReportId].lastRewardedAmount;
         }
       }
       return 0;
