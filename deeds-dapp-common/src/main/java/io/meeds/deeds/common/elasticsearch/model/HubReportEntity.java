@@ -20,7 +20,6 @@ package io.meeds.deeds.common.elasticsearch.model;
 import java.time.Instant;
 import java.util.SortedSet;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -126,9 +125,11 @@ public class HubReportEntity {
   @Field(type = FieldType.Boolean)
   private boolean           fraud;
 
-  @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  @CreatedDate
-  private Instant           createdDate = Instant.now();
+  @Field(type = FieldType.Double)
+  private double            lastPeriodUemRewardAmount;
+
+  @Field(type = FieldType.Double)
+  private double            uemRewardAmount;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @LastModifiedDate
