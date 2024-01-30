@@ -17,55 +17,27 @@
  */
 package io.meeds.deeds.common.elasticsearch.storage;
 
-import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.data.util.Streamable;
 
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
-import io.meeds.wom.api.constant.HubReportStatusType;
-import io.meeds.wom.api.model.HubReport;
 
 public interface HubReportRepository extends ElasticsearchRepository<HubReportEntity, Long> {
 
   Page<HubReportEntity> findByHubAddress(String hubAddress, Pageable pageable);
 
-  Page<HubReportEntity> findByRewardId(String rewardId, Pageable pageable);
+  Page<HubReportEntity> findByRewardId(long rewardId, Pageable pageable);
 
-  Page<HubReportEntity> findByRewardIdAndHubAddress(String rewardId, String hubAddress, Pageable pageable);
+  Page<HubReportEntity> findByRewardIdAndHubAddress(long rewardId, String hubAddress, Pageable pageable);
 
-  Streamable<HubReportEntity> findBySentDateBetweenAndStatusNotIn(Instant from,
-                                                                  Instant to,
-                                                                  List<HubReportStatusType> statuses);
+  Page<HubReportEntity> findByHubAddressOrderByFromDateDesc(String address, Pageable pageable);
 
-  Page<HubReportEntity> findByHubAddressAndStatusInOrderByFromDateDesc(String address,
-                                                                       List<HubReportStatusType> statuses,
-                                                                       Pageable pageable);
+  Optional<HubReportEntity> findByRewardIdAndHubAddress(long rewardId, String hubAddress);
 
-  Page<HubReportEntity> findByHubAddressAndReportIdNotAndStatusInOrderByFromDateDesc(String hubAddress,
-                                                                                     long reportId,
-                                                                                     List<HubReportStatusType> statuses,
-                                                                                     Pageable pageable);
-
-  Page<HubReportEntity> findByHubAddressAndSentDateBeforeAndStatusInOrderByFromDateDesc(String address,
-                                                                                        Instant beforeDate,
-                                                                                        List<HubReportStatusType> statuses,
-                                                                                        Pageable pageable);
-
-  Page<HubReportEntity> findByHubAddressAndSentDateBeforeAndReportIdNotAndStatusInOrderByFromDateDesc(String hubAddress,
-                                                                                                      Instant beforeDate,
-                                                                                                      long reportId,
-                                                                                                      List<HubReportStatusType> statuses,
-                                                                                                      Pageable pageable);
-
-  Optional<HubReportEntity> findByRewardIdAndHubAddressAndStatusNotIn(long rewardId,
-                                                                      String hubAddress,
-                                                                      List<HubReportStatusType> statuses);
-
-  List<HubReport> findByRewardId(long byRewardId);
+  Stream<HubReportEntity> findByRewardId(long rewardId);
 
 }
