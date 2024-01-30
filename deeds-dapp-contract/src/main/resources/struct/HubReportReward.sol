@@ -21,4 +21,6 @@ struct HubReportReward {
     uint256 sentDate;
     // Whether the Hub Report is fraud or not
     bool fraud;
+    // Last UEM Period rewarded Amount
+    uint256 lastRewardedAmount;
 }

@@ -78,7 +78,7 @@ public class HubController {
   @GetMapping
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
                                                               PagedResourcesAssembler<Hub> assembler,
-                                                              @RequestParam(name = "rewardId", required = false)
+                                                              @RequestParam(name = "rewardId", required = false, defaultValue = "0")
                                                               long rewardId) {
     Page<Hub> hubs = hubService.getHubs(rewardId, pageable);
     return ResponseEntity.ok()
