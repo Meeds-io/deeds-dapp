@@ -15,7 +15,9 @@
  */
 package io.meeds.deeds.common.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -808,8 +810,8 @@ public class OfferService {
     offer.setOfferId(blockchainOfferId);
     offer.setNftId(nftId);
     offer.setOwner(StringUtils.lowerCase(blockchainOffer.getCreator()));
-    offer.setAmount(blockchainOffer.getPrice().divide(BigInteger.valueOf(10).pow(18)).doubleValue());
-    offer.setAllDurationAmount(blockchainOffer.getAllDurationPrice().divide(BigInteger.valueOf(10).pow(18)).doubleValue());
+    offer.setAmount(new BigDecimal(blockchainOffer.getPrice()).divide(BigDecimal.valueOf(10).pow(18), MathContext.DECIMAL128).doubleValue());
+    offer.setAllDurationAmount(new BigDecimal(blockchainOffer.getAllDurationPrice()).divide(BigDecimal.valueOf(10).pow(18), MathContext.DECIMAL128).doubleValue());
     offer.setStartDate(Instant.ofEpochSecond(blockchainOffer.getOfferStartDate().longValue()));
     offer.setEnabled(blockchainService.isOfferEnabled(offer.getOfferId()));
     long expirationTimeInSeconds = blockchainOffer.getOfferExpirationDate().longValue();

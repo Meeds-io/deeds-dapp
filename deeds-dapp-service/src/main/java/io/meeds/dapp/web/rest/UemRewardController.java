@@ -31,34 +31,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.meeds.deeds.common.service.UEMRewardService;
-import io.meeds.wom.api.model.UEMReward;
+import io.meeds.deeds.common.service.UemRewardService;
+import io.meeds.wom.api.model.UemReward;
 
 @RestController
 @RequestMapping("/api/uem/rewards")
-public class UEMRewardController {
+public class UemRewardController {
 
   @Autowired
-  private UEMRewardService rewardService;
+  private UemRewardService rewardService;
 
   @GetMapping
-  public ResponseEntity<PagedModel<EntityModel<UEMReward>>> getRewards(Pageable pageable,
-                                                                       PagedResourcesAssembler<UEMReward> assembler,
+  public ResponseEntity<PagedModel<EntityModel<UemReward>>> getRewards(Pageable pageable,
+                                                                       PagedResourcesAssembler<UemReward> assembler,
                                                                        @RequestParam(name = "hubAddress", required = false)
                                                                        String hubAddress) {
-    Page<UEMReward> rewards = rewardService.getRewards(hubAddress, pageable);
+    Page<UemReward> rewards = rewardService.getRewards(hubAddress, pageable);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
                          .body(assembler.toModel(rewards));
   }
 
   @GetMapping("{rewardId}")
-  public ResponseEntity<UEMReward> getReward(
+  public ResponseEntity<UemReward> getReward(
                                              @PathVariable(name = "rewardId")
-                                             long rewardId) {
+                                             long rewardId,
+                                             @RequestParam(name = "forceRefresh", required = false)
+                                             boolean forceRefresh) {
+    UemReward reward = forceRefresh ? rewardService.refreshRewardProperties(rewardId) : rewardService.getRewardById(rewardId);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
-                         .body(rewardService.getRewardById(rewardId));
+                         .body(reward);
   }
 
 }

@@ -17,6 +17,7 @@ package io.meeds.deeds.common.elasticsearch.storage;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +36,9 @@ public interface HubRepository extends ElasticsearchRepository<HubEntity, String
   Optional<HubEntity> findByAddressAndEnabledIsTrue(String address);
 
   Page<HubEntity> findByAddressInAndEnabledIsTrue(Set<String> hubAddresses, Pageable pageable);
+
+  Stream<HubEntity> findByDeedOwnerAddress(String address);
+
+  Stream<HubEntity> findByDeedManagerAddress(String address);
 
 }

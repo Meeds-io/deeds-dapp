@@ -54,8 +54,8 @@ public class HubReportController {
                                                                        PagedResourcesAssembler<HubReport> assembler,
                                                                        @RequestParam(name = "hubAddress", required = false)
                                                                        String hubAddress,
-                                                                       @RequestParam(name = "rewardId", required = false)
-                                                                       String rewardId) {
+                                                                       @RequestParam(name = "rewardId", required = false, defaultValue = "0")
+                                                                       long rewardId) {
     Page<HubReport> reports = reportService.getReports(hubAddress, rewardId, pageable);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
@@ -65,8 +65,10 @@ public class HubReportController {
   @GetMapping("/{reportId}")
   public ResponseEntity<Object> getReport(
                                           @PathVariable(name = "reportId")
-                                          long reportId) {
-    HubReport hubReport = reportService.getReport(reportId);
+                                          long reportId,
+                                          @RequestParam(name = "forceRefresh", required = false)
+                                          boolean forceRefresh) {
+    HubReport hubReport = forceRefresh ? reportService.refreshReport(reportId) : reportService.getReport(reportId);
     if (hubReport == null) {
       return ResponseEntity.notFound()
                            .cacheControl(CacheControl.noStore())
@@ -81,10 +83,10 @@ public class HubReportController {
   @GetMapping("/{rewardId}/{hubAddress}")
   public ResponseEntity<Object> getReport(
                                           @PathVariable(name = "rewardId")
-                                          long reportId,
+                                          long rewardId,
                                           @PathVariable(name = "hubAddress")
                                           String hubAddress) {
-    HubReport hubReport = reportService.getValidReport(reportId, hubAddress);
+    HubReport hubReport = reportService.getReports(rewardId, hubAddress);
     if (hubReport == null) {
       return ResponseEntity.notFound()
                            .cacheControl(CacheControl.noStore())

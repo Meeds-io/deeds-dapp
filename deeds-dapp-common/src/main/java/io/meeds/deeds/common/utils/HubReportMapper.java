@@ -17,7 +17,6 @@
  */
 package io.meeds.deeds.common.utils;
 
-import java.time.Instant;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -42,6 +41,10 @@ public class HubReportMapper {
                                StringUtils.lowerCase(report.getOwnerAddress()),
                                report.getOwnerMintingPercentage(),
                                report.getDeedId(),
+                               report.getCity(),
+                               report.getCardType(),
+                               report.getMintingPower(),
+                               report.getMaxUsers(),
                                report.getFromDate(),
                                report.getToDate(),
                                report.getSentDate(),
@@ -53,19 +56,14 @@ public class HubReportMapper {
                                StringUtils.lowerCase(report.getRewardTokenAddress()),
                                report.getRewardTokenNetworkId(),
                                lowerCase(report.getTransactions()),
-                               report.getStatus(),
-                               report.getError(),
                                report.getHubRewardAmount(),
-                               report.getUemRewardIndex(),
-                               report.getUemRewardAmount(),
+                               report.getFixedRewardIndex(),
+                               report.getOwnerFixedIndex(),
+                               report.getTenantFixedIndex(),
+                               report.isFraud(),
                                report.getLastPeriodUemRewardAmount(),
-                               report.getLastPeriodUemDiff(),
-                               report.getHubRewardAmountPerPeriod(),
-                               report.getHubRewardLastPeriodDiff(),
-                               report.getLastPeriodUemRewardAmountPerPeriod(),
-                               report.getMp(),
-                               Instant.now(),
-                               Instant.now());
+                               report.getUemRewardAmount(),
+                               report.getUpdatedDate());
   }
 
   public static HubReport fromEntity(HubReportEntity entity) {
@@ -84,20 +82,21 @@ public class HubReportMapper {
                          entity.getRewardTokenNetworkId(),
                          entity.getHubRewardAmount(),
                          entity.getTransactions(),
+                         entity.getRewardId(),
+                         entity.getCity(),
+                         entity.getCardType(),
+                         entity.getMintingPower(),
+                         entity.getMaxUsers(),
                          entity.getDeedManagerAddress(),
-                         StringUtils.lowerCase(entity.getOwnerAddress()),
+                         entity.getOwnerAddress(),
                          entity.getOwnerMintingPercentage(),
-                         entity.getStatus(),
-                         entity.getError(),
-                         entity.getUemRewardIndex(),
-                         entity.getUemRewardAmount(),
+                         entity.getFixedRewardIndex(),
+                         entity.getOwnerFixedIndex(),
+                         entity.getTenantFixedIndex(),
+                         entity.isFraud(),
                          entity.getLastPeriodUemRewardAmount(),
-                         entity.getLastPeriodUemDiff(),
-                         entity.getHubRewardAmountPerPeriod(),
-                         entity.getHubRewardLastPeriodDiff(),
-                         entity.getLastPeriodUemRewardAmountPerPeriod(),
-                         entity.getMp(),
-                         entity.getRewardId());
+                         entity.getUemRewardAmount(),
+                         entity.getUpdatedDate());
   }
 
   public static SortedSet<String> lowerCase(SortedSet<String> transactions) {
@@ -105,8 +104,8 @@ public class HubReportMapper {
       return new TreeSet<>();
     } else {
       return transactions.stream()
-                   .map(StringUtils::lowerCase)
-                   .collect(Collectors.toCollection(TreeSet::new));
+                         .map(StringUtils::lowerCase)
+                         .collect(Collectors.toCollection(TreeSet::new));
     }
   }
 
