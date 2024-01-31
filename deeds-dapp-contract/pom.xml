@@ -30,9 +30,36 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.web3j</groupId>
       <artifactId>core</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>web3j-unit</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>tech.pegasys.discovery</groupId>
+          <artifactId>discovery</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.consensys.services</groupId>
+          <artifactId>quorum-mainnet-launcher</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.splunk.logging</groupId>
+          <artifactId>splunk-library-javalogging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.consensys.services</groupId>
+          <artifactId>quorum-mainnet-launcher</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
@@ -41,6 +68,12 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/test/resources</directory>
         <excludes>
           <exclude>**/*</exclude>
         </excludes>
@@ -60,17 +93,39 @@
             </goals>
             <configuration>
               <packageName>io.meeds.deeds.contract</packageName>
-              <sourceDestination>deeds-dapp-contract/target/generated-sources</sourceDestination>
+              <sourceDestination>${project.basedir}/target/generated-sources</sourceDestination>
               <nativeJavaType>true</nativeJavaType>
               <outputFormat>java</outputFormat>
               <soliditySourceFiles>
-                <directory>deeds-dapp-contract/src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
                 <includes>
                   <include>**/*.sol</include>
                 </includes>
               </soliditySourceFiles>
               <outputDirectory>
-                <java>deeds-dapp-contract/target/generated-sources</java>
+                <java>${project.basedir}/target/generated-sources</java>
+              </outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-test-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-sources</goal>
+            </goals>
+            <configuration>
+              <packageName>io.meeds.deeds.contract</packageName>
+              <sourceDestination>${project.basedir}/target/generated-sources</sourceDestination>
+              <nativeJavaType>true</nativeJavaType>
+              <outputFormat>java</outputFormat>
+              <soliditySourceFiles>
+                <directory>${project.basedir}/src/test/resources</directory>
+                <includes>
+                  <include>**/*.sol</include>
+                </includes>
+              </soliditySourceFiles>
+              <outputDirectory>
+                <java>${project.basedir}/target/generated-sources</java>
               </outputDirectory>
             </configuration>
           </execution>
@@ -95,4 +150,18 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>hyperledger</id>
+      <url>https://hyperledger.jfrog.io/artifactory/besu-maven/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
 </project>
