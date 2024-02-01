@@ -21,10 +21,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +35,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +64,6 @@ import org.web3j.tuples.generated.Tuple8;
 import org.web3j.tuples.generated.Tuple9;
 import org.web3j.utils.EnsUtils;
 import org.web3j.utils.Numeric;
-
-import org.exoplatform.analytics.api.processor.StatisticDataProcessorPlugin;
-import org.exoplatform.analytics.model.StatisticData;
-import org.exoplatform.analytics.model.StatisticDataQueueEntry;
-import org.exoplatform.wallet.statistic.ExoWalletStatistic;
-import org.exoplatform.wallet.statistic.ExoWalletStatisticService;
 
 import io.meeds.deeds.common.constant.BlockchainLeaseStatus;
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
@@ -113,7 +104,7 @@ import io.meeds.wom.api.model.UemReward;
 import lombok.SneakyThrows;
 
 @Component
-public class BlockchainService extends StatisticDataProcessorPlugin implements ExoWalletStatisticService {
+public class BlockchainService {
 
   private static final Logger    LOG = LoggerFactory.getLogger(BlockchainService.class);
 
@@ -167,43 +158,12 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
 
   private long                   polygonNetworkId;
 
-  @Override
-  public String getId() {
-    return "dAppLogging";
-  }
-
-  @Override
-  public boolean isInitialized() {
-    return true;
-  }
-
-  @Override
-  public void process(List<StatisticDataQueueEntry> processorQueueEntries) {
-    if (CollectionUtils.isNotEmpty(processorQueueEntries)) {
-      processorQueueEntries.forEach(stat -> {
-
-        StatisticData statisticData = stat.getStatisticData();
-        if (statisticData != null && statisticData.getOperation().startsWith("dapp#")) {
-          if (MapUtils.isEmpty(statisticData.getParameters())) {
-            LOG.info("BlockchainService#{}", statisticData.getOperation());
-          } else {
-            Collection<String> values = statisticData.getParameters().values();
-            LOG.info("BlockchainService#" + statisticData.getOperation() + " ('" + // NOSONAR
-                StringUtils.join(values.stream().map(v -> "{}").toList(), "', '") + "')",
-                     values.toArray());
-          }
-        }
-      });
-    }
-  }
-
   /**
    * Return DEED Tenant Status from Blockchain Contract
    *
    * @param nftId Deed NFT identifier
    * @return if marked as started else false
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.tenantStatus")
   public boolean isDeedStarted(long nftId) {
     try {
       return deedTenantProvisioning.tenantStatus(BigInteger.valueOf(nftId)).send().booleanValue();
@@ -218,7 +178,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param transactionHash Blockchain Transaction Hash
    * @return true if Transaction is Mined
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isTransactionMined")
   public boolean isTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
     return receipt != null;
@@ -228,13 +187,11 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param transactionHash Blockchain Transaction Hash
    * @return true if Transaction is Successful
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isTransactionConfirmed")
   public boolean isTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getTransactionReceipt(transactionHash);
     return receipt != null && receipt.isStatusOK();
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isPolygonTransactionMined")
   public boolean isPolygonTransactionMined(String transactionHash) {
     TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
     return receipt != null;
@@ -244,7 +201,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param transactionHash Blockchain Transaction Hash
    * @return true if Transaction is Successful
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isPolygonTransactionConfirmed")
   public boolean isPolygonTransactionConfirmed(String transactionHash) {
     TransactionReceipt receipt = getPolygonTransactionReceipt(transactionHash);
     return receipt != null && receipt.isStatusOK();
@@ -253,7 +209,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   /**
    * @return last mined block number
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLastBlock")
   public long getLastBlock() {
     try {
       return web3j.ethBlockNumber().send().getBlockNumber().longValue();
@@ -265,7 +220,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   /**
    * @return last mined block number on Polygon Blockchain
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getPolygonLastBlock")
   public long getPolygonLastBlock() {
     try {
       return polygonWeb3j.ethBlockNumber().send().getBlockNumber().longValue();
@@ -274,8 +228,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false,
-                      operation = "dapp#deedTenantProvisioning.getDeedManager")
   public String getDeedManager(long deedId) {
     EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
                                         DefaultBlockParameterName.LATEST,
@@ -315,8 +267,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param toBlock End Block to filter
    * @return {@link List} of {@link DeedTenant}
    */
-  @ExoWalletStatistic(service = "blockchain", local = false,
-                      operation = "dapp#deedTenantProvisioning.getMinedProvisioningTransactions")
   public List<DeedTenant> getMinedProvisioningTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
                                         new DefaultBlockParameterNumber(toBlock),
@@ -343,7 +293,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedTenantProvisioning.getMinedUemLogs")
   public List<? extends BaseEventResponse> getMinedUemLogs(long fromBlock, long toBlock) { // NOSONAR
     EthFilter ethFilter = new EthFilter(fromBlock == 0 ? DefaultBlockParameterName.EARLIEST :
                                                        new DefaultBlockParameterNumber(fromBlock),
@@ -403,7 +352,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param toBlock End Block to filter
    * @return {@link List} of {@link Map} of events
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deedRenting.getMinedRentingTransactions")
   public List<Map<?, ?>> getMinedRentingTransactions(long fromBlock, // NOSONAR
                                                      long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
@@ -435,7 +383,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.getDeedOwner")
   public String getDeedOwner(long deedId) {
     EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
                                         DefaultBlockParameterName.LATEST,
@@ -474,7 +421,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param toBlock End Block to filter
    * @return {@link Set} of NFT ID of type {@link DeedOwnershipTransferEvent}
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.getMinedTransferOwnershipDeedTransactions")
   public Set<DeedOwnershipTransferEvent> getMinedTransferOwnershipDeedTransactions(long fromBlock, long toBlock) {
     EthFilter ethFilter = new EthFilter(new DefaultBlockParameterNumber(fromBlock),
                                         new DefaultBlockParameterNumber(toBlock),
@@ -501,7 +447,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferTransactionEvents")
   public Map<BlockchainOfferStatus, DeedOfferBlockchainState> getOfferTransactionEvents(String transactionHash) {// NOSONAR
     try {
       TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
@@ -574,7 +519,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLeaseTransactionEvents")
   public Map<BlockchainLeaseStatus, DeedLeaseBlockchainState> getLeaseTransactionEvents(String transactionHash) { // NOSONAR
     try {
       TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash)
@@ -626,7 +570,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferById")
   public DeedOfferBlockchainState getOfferById(BigInteger offerId,
                                                BigInteger blockNumber,
                                                String transactionHash) throws Exception {
@@ -653,7 +596,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
                                         StringUtils.lowerCase(transactionHash));
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getLeaseById")
   public DeedLeaseBlockchainState getLeaseById(BigInteger leaseId,
                                                BigInteger blockNumber,
                                                String transactionHash) throws Exception {
@@ -680,7 +622,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param nftId Deed NFT identifier
    * @return true if is manager else false
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isDeedProvisioningManager")
   public boolean isDeedProvisioningManager(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
            && blockchainCall(deedTenantProvisioning.isProvisioningManager(address, BigInteger.valueOf(nftId)));
@@ -700,7 +641,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param nftId Deed NFT identifier
    * @return true if is owner else false
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isDeedOwner")
   public boolean isDeedOwner(String address, long nftId) {
     return WalletUtils.isValidAddress(address)
            && blockchainCall(deed.balanceOf(address, BigInteger.valueOf(nftId))).longValue() > 0;
@@ -715,7 +655,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
    *           exists
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getDeedCardType")
   public short getDeedCardType(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cardType(BigInteger.valueOf(nftId)).send().shortValue();
@@ -730,12 +669,10 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
 
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#deed.nftsOf")
   public List<BigInteger> getDeedsOwnedBy(String managerAddress) {
     return deed.nftsOf(managerAddress).send();
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#isOfferEnabled")
   public boolean isOfferEnabled(long offerId) throws Exception {
     DeedOfferBlockchainState offer = getOfferById(BigInteger.valueOf(offerId), null, "0x");
     if (offer != null && offer.getId().longValue() == offerId) {
@@ -754,7 +691,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @throws ObjectNotFoundException when NFT with selected identifier doesn't
    *           exists
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getDeedCityIndex")
   public short getDeedCityIndex(long nftId) throws ObjectNotFoundException {
     try {
       return deed.cityIndex(BigInteger.valueOf(nftId)).send().shortValue();
@@ -772,7 +708,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    *         which is retrieved from ethereum blockchain. The retrieved value is
    *         divided by number of decimals of the token (10^18)
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedsTotalSupplyNoDecimals")
   public BigDecimal meedsTotalSupplyNoDecimals() {
     BigInteger totalSupply = meedsTotalSupply();
     return new BigDecimal(totalSupply).divide(BigDecimal.valueOf(10).pow(18),
@@ -783,7 +718,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} representing the total supply of Meeds Token
    *         which is retrieved from ethereum blockchain.
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedsTotalSupply")
   public BigInteger meedsTotalSupply() {
     return blockchainCall(ethereumToken.totalSupply());
   }
@@ -792,7 +726,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} representing the total supply of xMeeds Token
    *         which is retrieved from ethereum blockchain.
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#xMeedsTotalSupply")
   public BigInteger xMeedsTotalSupply() {
     return blockchainCall(xMeedsToken.totalSupply());
   }
@@ -801,7 +734,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} representing the total supply of xMeeds Token
    *         which is retrieved from ethereum blockchain.
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#sushiPairTotalSupply")
   public BigInteger sushiPairTotalSupply() {
     return blockchainCall(sushiPairToken.totalSupply());
   }
@@ -811,7 +743,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link FundInfo} with rewarding parameters retrieved from Token
    *         Factory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getFundInfo")
   public FundInfo getFundInfo(String address) {
     Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, Boolean> fundInfo = blockchainCall(tokenFactory.fundInfos(address));
     return fundInfo == null ? null :
@@ -826,7 +757,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   /**
    * @return {@link DeedCity} representing current minting city
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getCurrentCity")
   public DeedCity getCurrentCity() {
     BigInteger currentCityIndex = blockchainCall(xMeedsToken.currentCityIndex());
     Tuple4<String, BigInteger, BigInteger, BigInteger> cityInfo = blockchainCall(xMeedsToken.cityInfo(currentCityIndex));
@@ -842,7 +772,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link FundInfo} of xMeed Token with rewarding parameters retrieved
    *         from Token Factory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getXMeedFundInfo")
   public FundInfo getXMeedFundInfo() {
     FundInfo fundInfo = getFundInfo(xMeedsToken.getContractAddress());
     fundInfo.setTotalSupply(xMeedsTotalSupply());
@@ -855,7 +784,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link FundInfo} of Sushi Pair Token with rewarding parameters
    *         retrieved from Token Factory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getSushiPairFundInfo")
   public FundInfo getSushiPairFundInfo() {
     FundInfo fundInfo = getFundInfo(sushiPairToken.getContractAddress());
     fundInfo.setSymbol(sushiPairSymbol());
@@ -866,7 +794,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubOwner")
   public String getHubOwner(String address) {
     if (womContract == null) {
       return null;
@@ -877,7 +804,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getHubByDeedId")
   public String getHubByDeedId(long nftId) {
     Tuple9<BigInteger, BigInteger, BigInteger, BigInteger, String, String, String, BigInteger, BigInteger> deedTuple =
                                                                                                                      womContract.nfts(BigInteger.valueOf(nftId))
@@ -886,7 +812,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getWomDeed")
   public WomDeed getWomDeed(long nftId) {
     if (womContract == null) {
       return null;
@@ -908,7 +833,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
     }
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#autoConnectToWom")
   public void autoConnectToWom(long deedId, // NOSONAR
                                short city,
                                short cardType,
@@ -929,7 +853,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
                           ownerMintingPercentage);
   }
 
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#updateWomDeed")
   public void updateWomDeed(long deedId, // NOSONAR
                             short city,
                             short cardType,
@@ -950,7 +873,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.getHub")
   public WomHub getHub(String address) {
     if (womContract == null) {
       return null;
@@ -967,7 +889,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.periodicRewardAmount")
   public double getUemPeriodicRewardAmount() {
     if (uemContract == null) {
       return 0d;
@@ -978,7 +899,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveRewardProperties")
   public void retrieveRewardProperties(UemReward reward) {
     if (uemContract == null) {
       return;
@@ -1007,7 +927,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveReportFullProperties")
   public HubReport retrieveReportProperties(long reportId) {
     if (uemContract == null) {
       return null;
@@ -1019,7 +938,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.retrieveReportProperties")
   public void retrieveReportProperties(HubReport report) {
     if (uemContract == null) {
       return;
@@ -1072,7 +990,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#uem.isReportFraud")
   public boolean isReportFraud(long reportId) {
     return uemContract.hubRewards(BigInteger.valueOf(reportId))
                       .send()
@@ -1080,7 +997,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#wom.isHubConnected")
   public boolean isHubConnected(String address) {
     return womContract.isHubConnected(address).send().booleanValue();
   }
@@ -1105,7 +1021,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @param address Address to get its pending rewardings not minted yet
    * @return {@link BigInteger} for Meed Token value with decimals
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#pendingRewardBalanceOf")
   public BigInteger pendingRewardBalanceOf(String address) {
     return blockchainCall(tokenFactory.pendingRewardBalanceOf(address));
   }
@@ -1114,7 +1029,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} for total allocation points configured in token
    *         Factory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#totalAllocationPoints")
   public BigInteger totalAllocationPoints() {
     return blockchainCall(tokenFactory.totalAllocationPoints());
   }
@@ -1123,7 +1037,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} for total fixed percentages configured in token
    *         Factory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#totalFixedPercentage")
   public BigInteger totalFixedPercentage() {
     return blockchainCall(tokenFactory.totalFixedPercentage());
   }
@@ -1134,7 +1047,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    *         retrieved from ethereum blockchain. The retrieved value is divided
    *         by number of decimals of the token (10^18)
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfNoDecimals")
   public BigDecimal meedBalanceOfNoDecimals(String address) {
     BigInteger balance = meedBalanceOf(address);
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18),
@@ -1146,7 +1058,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    * @return {@link BigInteger} representing the balance of address which is
    *         retrieved from ethereum blockchain.
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOf")
   public BigInteger meedBalanceOf(String address) {
     return blockchainCall(ethereumToken.balanceOf(address));
   }
@@ -1154,7 +1065,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   /**
    * @return Sushi Swap Pair token symbol
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#sushiPairSymbol")
   public String sushiPairSymbol() {
     return blockchainCall(sushiPairToken.symbol());
   }
@@ -1162,7 +1072,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   /**
    * @return total staked SLP amount in TokenFactory
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#stakedSushiPair")
   public BigInteger stakedSushiPair() {
     return blockchainCall(sushiPairToken.balanceOf(tokenFactory.getContractAddress()));
   }
@@ -1173,7 +1082,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
    *         retrieved from polygon blockchain. The retrieved value is divided
    *         by number of decimals of the token (10^18)
    */
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#meedBalanceOfOnPolygon")
   public BigDecimal meedBalanceOfOnPolygon(String address) {
     BigInteger balance = blockchainCall(polygonToken.balanceOf(address));
     return new BigDecimal(balance).divide(BigDecimal.valueOf(10).pow(18),
@@ -1181,7 +1089,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getNetworkId")
   public long getNetworkId() {
     if (ethereumNetworkId == 0) {
       ethereumNetworkId = new BigInteger(web3j.netVersion().send().getNetVersion()).longValue();
@@ -1190,7 +1097,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SneakyThrows
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getPolygonNetworkId")
   public long getPolygonNetworkId() {
     if (polygonNetworkId == 0) {
       polygonNetworkId = new BigInteger(polygonWeb3j.netVersion().send().getNetVersion()).longValue();
@@ -1199,7 +1105,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
   }
 
   @SuppressWarnings("rawtypes")
-  @ExoWalletStatistic(service = "blockchain", local = false, operation = "dapp#getOfferCreationTransactionHash")
   public String getOfferCreationTransactionHash(BigInteger offerId) throws IOException {
     try {
       EthFilter ethFilter = new EthFilter(DefaultBlockParameterName.EARLIEST,
@@ -1382,19 +1287,6 @@ public class BlockchainService extends StatisticDataProcessorPlugin implements E
         throw new IllegalStateException("Error While processing Deed Update transaction", e);
       }
     }
-  }
-
-  @Override
-  public Map<String, Object> getStatisticParameters(String operation, Object result, Object... methodArgs) {
-    Map<String, Object> parameters = new HashMap<>();
-    if (ArrayUtils.isNotEmpty(methodArgs)) {
-      for (int i = 0; i < methodArgs.length; i++) {
-        Object arg = methodArgs[i];
-        // Keep the space to not parse to long
-        parameters.put("blockchain-" + operation + "-param" + i, arg == null ? "null" : " " + arg);
-      }
-    }
-    return parameters;
   }
 
   private List<? extends BaseEventResponse> getUemLogs(TransactionReceipt transactionReceipt) {

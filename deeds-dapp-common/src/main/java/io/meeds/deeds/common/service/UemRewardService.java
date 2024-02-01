@@ -92,6 +92,7 @@ public class UemRewardService {
       rewardEntity.setHubAchievementsCount(0);
       rewardEntity.setHubParticipantsCount(0);
       rewardEntity.setHubRewardsAmount(0);
+      rewardEntity.setSumEd(0);
       rewardEntity.setReportRewards(Collections.emptyMap());
       rewardEntity.setHubAddresses(Collections.emptySet());
     } else {
@@ -101,6 +102,7 @@ public class UemRewardService {
       rewardEntity.setHubAchievementsCount(reports.stream().mapToLong(HubReport::getAchievementsCount).sum());
       rewardEntity.setHubParticipantsCount(reports.stream().mapToLong(HubReport::getParticipantsCount).sum());
       rewardEntity.setHubRewardsAmount(reports.stream().mapToDouble(HubReport::getUemRewardAmount).sum());
+      rewardEntity.setSumEd(reports.stream().mapToDouble(HubReport::getEd).sum());
       rewardEntity.setReportRewards(reports.stream()
                                            .collect(Collectors.toMap(r -> String.valueOf(r.getReportId()),
                                                                      HubReport::getUemRewardAmount)));

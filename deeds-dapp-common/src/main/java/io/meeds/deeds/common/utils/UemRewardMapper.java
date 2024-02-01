@@ -50,7 +50,8 @@ public class UemRewardMapper {
                                                                                                  Entry::getValue)),
                                reward.getHubAchievementsCount(),
                                reward.getHubParticipantsCount(),
-                               reward.getHubRewardsAmount());
+                               reward.getHubRewardsAmount(),
+                               reward.getSumEd());
   }
 
   public static UemReward fromEntity(UemRewardEntity entity) {
@@ -69,7 +70,8 @@ public class UemRewardMapper {
                                                                                            Entry::getValue)),
                          entity.getHubAchievementsCount(),
                          entity.getHubParticipantsCount(),
-                         entity.getHubRewardsAmount());
+                         entity.getHubRewardsAmount(),
+                         entity.getSumEd());
   }
 
   public static Set<String> lowerCase(Set<String> hubAddresses) {

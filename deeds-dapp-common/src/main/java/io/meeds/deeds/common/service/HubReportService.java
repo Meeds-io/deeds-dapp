@@ -21,7 +21,6 @@ import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
