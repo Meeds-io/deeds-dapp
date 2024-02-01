@@ -81,4 +81,7 @@ public class UemRewardEntity {
   @Field(type = FieldType.Double)
   private double              hubRewardsAmount;
 
+  @Field(type = FieldType.Double)
+  private double              sumEd;
+
 }
