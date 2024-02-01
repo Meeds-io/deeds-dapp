@@ -38,7 +38,8 @@
       <artifactId>core</artifactId>
       <scope>compile</scope>
     </dependency>
-    <dependency>
+    <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus -->
+    <!-- dependency>
       <groupId>org.web3j</groupId>
       <artifactId>web3j-unit</artifactId>
       <scope>test</scope>
@@ -60,11 +61,13 @@
           <artifactId>quorum-mainnet-launcher</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
+    </dependency -->
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
     <sourceDirectory>target/generated-sources</sourceDirectory>
+    <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus -->
+    <testSourceDirectory>disabled</testSourceDirectory>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
