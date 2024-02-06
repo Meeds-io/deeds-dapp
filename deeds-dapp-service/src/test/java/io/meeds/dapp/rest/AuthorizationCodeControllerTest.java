@@ -51,14 +51,14 @@ import io.meeds.deeds.common.service.AuthorizationCodeService;
 import jakarta.servlet.Filter;
 
 @SpringBootTest(classes = {
-    AuthorizationCodeController.class,
-    DeedAuthenticationProvider.class,
-    DeedAccessDeniedHandler.class,
+                            AuthorizationCodeController.class,
+                            DeedAuthenticationProvider.class,
+                            DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {
-    WebSecurityConfig.class
+                                  WebSecurityConfig.class
 })
 class AuthorizationCodeControllerTest {
 
@@ -66,7 +66,7 @@ class AuthorizationCodeControllerTest {
 
   private static final String      TEST_USER     = "testUser";
 
-  private static final String      EMAIL     = "email";
+  private static final String      EMAIL         = "email";
 
   @MockBean
   private AuthorizationCodeService authorizationCodeService;
@@ -90,20 +90,20 @@ class AuthorizationCodeControllerTest {
   void testGenerateCodeWhenNotAuthenticated() throws Exception {
     String clientIp = "clientIp";
     ResultActions response = mockMvc.perform(post("/api/authorization/generateCode")
-                                                                       .with(remoteAddr(clientIp))
-                                                                       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                       .param("email", EMAIL)
-                                                                       .with(csrf()));
+                                                                                    .with(remoteAddr(clientIp))
+                                                                                    .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                    .param("email", EMAIL)
+                                                                                    .with(csrf()));
     response.andExpect(status().isOk());
   }
 
   @Test
   void testGenerateCodeWhenNotAuthenticatedAndRemoteAddrNotValid() throws Exception {
     ResultActions response = mockMvc.perform(post("/api/authorization/generateCode")
-                                                                       .with(remoteAddr(""))
-                                                                       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                       .param("email", EMAIL)
-                                                                       .with(csrf()));
+                                                                                    .with(remoteAddr(""))
+                                                                                    .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                    .param("email", EMAIL)
+                                                                                    .with(csrf()));
     response.andExpect(status().isForbidden());
   }
 
@@ -111,12 +111,11 @@ class AuthorizationCodeControllerTest {
   void testGenerateCodeWhenAuthenticated() throws Exception {
     String clientIp = "clientIp";
     ResultActions response = mockMvc.perform(post("/api/authorization/generateCode")
-                                                                       .with(remoteAddr(clientIp))
-                                                                       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                       .param("email", EMAIL)
-                                                                       .with(testUser())
-                                                                       .with(csrf())
-                                                                       );
+                                                                                    .with(remoteAddr(clientIp))
+                                                                                    .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                    .param("email", EMAIL)
+                                                                                    .with(testUser())
+                                                                                    .with(csrf()));
     response.andExpect(status().isOk());
     verify(authorizationCodeService, times(1)).generateCode(TEST_USER.toLowerCase(), EMAIL, EMAIL, clientIp);
   }
@@ -124,22 +123,23 @@ class AuthorizationCodeControllerTest {
   @Test
   void testGenerateCodeWhenMaxMailSendingReached() throws Exception {
     String clientIp = "clientIp";
-    doThrow(IllegalAccessException.class).when(authorizationCodeService).generateCode(TEST_USER.toLowerCase(), EMAIL, EMAIL, clientIp);
+    doThrow(IllegalAccessException.class).when(authorizationCodeService)
+                                         .generateCode(TEST_USER.toLowerCase(), EMAIL, EMAIL, clientIp);
     ResultActions response = mockMvc.perform(post("/api/authorization/generateCode")
-                                                                       .with(remoteAddr(clientIp))
-                                                                       .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                       .param("email", EMAIL)
-                                                                       .with(testUser())
-                                                                       .with(csrf()));
+                                                                                    .with(remoteAddr(clientIp))
+                                                                                    .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                    .param("email", EMAIL)
+                                                                                    .with(testUser())
+                                                                                    .with(csrf()));
     response.andExpect(status().isUnauthorized());
   }
 
   @Test
   void testCheckValidityWhenNotAuthenticatedAndNoCode() throws Exception {
     ResultActions response = mockMvc.perform(post("/api/authorization/checkValidity")
-                                                                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                        .param("email", EMAIL)
-                                                                        .with(csrf()));
+                                                                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                     .param("email", EMAIL)
+                                                                                     .with(csrf()));
     response.andExpect(status().isBadRequest());
   }
 
@@ -147,11 +147,11 @@ class AuthorizationCodeControllerTest {
   void testCheckValidityWhenNotAuthenticated() throws Exception {
     int code = 56422;
     ResultActions response = mockMvc.perform(post("/api/authorization/checkValidity")
-                                                                      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                      .param("email", EMAIL)
-                                                                      .with(csrf())
-                                                                      .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                     .param("email", EMAIL)
+                                                                                     .with(csrf())
+                                                                                     .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                                             String.valueOf(code)));
     response.andExpect(status().isOk());
   }
 
@@ -159,49 +159,56 @@ class AuthorizationCodeControllerTest {
   void testCheckValidityWhenNotAuthenticatedAndNoEmail() throws Exception {
     int code = 56422;
     ResultActions response = mockMvc.perform(post("/api/authorization/checkValidity")
-                                                                      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                      .param("email", "")
-                                                                      .with(csrf())
-                                                                      .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                     .param("email", "")
+                                                                                     .with(csrf())
+                                                                                     .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                                             String.valueOf(code)));
     response.andExpect(status().isForbidden());
   }
 
   @Test
   void testCheckValidityWhenAuthenticated() throws Exception {
-    String email ="email";
+    String email = "email";
     int code = 56422;
     ResultActions response = mockMvc.perform(post("/api/authorization/checkValidity")
-                                                                      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                      .param("email", email)
-                                                                      .with(testUser())
-                                                                      .with(csrf())
-                                                                      .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                     .param("email", email)
+                                                                                     .with(testUser())
+                                                                                     .with(csrf())
+                                                                                     .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                                             String.valueOf(code)));
     response.andExpect(status().isOk());
     verify(authorizationCodeService, times(1)).checkValidity(TEST_USER.toLowerCase(), code);
   }
 
   @Test
   void testCheckValidityWhenMaxVerificationReached() throws Exception {
-    String email ="email";
+    String email = "email";
     int code = 56422;
     doThrow(IllegalAccessException.class).when(authorizationCodeService).checkValidity(TEST_USER.toLowerCase(), code);
     ResultActions response = mockMvc.perform(post("/api/authorization/checkValidity")
-                                                                      .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                                                                      .param("email", email)
-                                                                      .with(testUser())
-                                                                      .with(csrf())
-                                                                      .header(CODE_VERIFICATION_HTTP_HEADER,
-                                                                              String.valueOf(code)));
+                                                                                     .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                                                                     .param("email", email)
+                                                                                     .with(testUser())
+                                                                                     .with(csrf())
+                                                                                     .header(CODE_VERIFICATION_HTTP_HEADER,
+                                                                                             String.valueOf(code)));
     response.andExpect(status().isUnauthorized());
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
+    return user(TEST_USER).password(TEST_PASSWORD)
+                          .authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
-  private static RequestPostProcessor remoteAddr(final String remoteAddr) { // it's nice to extract into a helper
+  private static RequestPostProcessor remoteAddr(final String remoteAddr) { // it's
+                                                                            // nice
+                                                                            // to
+                                                                            // extract
+                                                                            // into
+                                                                            // a
+                                                                            // helper
     return new RequestPostProcessor() {
       @Override
       public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {

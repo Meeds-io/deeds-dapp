@@ -19,7 +19,6 @@ package io.meeds.deeds.common.elasticsearch.model;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
@@ -68,18 +67,6 @@ public class UemRewardEntity {
 
   @Field(type = FieldType.Keyword)
   private Set<String>         hubAddresses;
-
-  @Field(type = FieldType.Auto)
-  private Map<String, Double> reportRewards;
-
-  @Field(type = FieldType.Long)
-  private long                hubAchievementsCount;
-
-  @Field(type = FieldType.Long)
-  private long                hubParticipantsCount;
-
-  @Field(type = FieldType.Double)
-  private double              hubRewardsAmount;
 
   @Field(type = FieldType.Double)
   private double              sumEd;

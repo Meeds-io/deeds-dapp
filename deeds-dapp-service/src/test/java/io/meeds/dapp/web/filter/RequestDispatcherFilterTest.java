@@ -31,11 +31,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootTest(classes = {
-    RequestDispatcherFilter.class,
-    EnvironmentService.class,
+                            RequestDispatcherFilter.class,
+                            EnvironmentService.class,
 })
 @TestPropertySource(properties = {
-    "meeds.deed.hostEnvironment=production",
+                                   "meeds.deed.hostEnvironment=production",
 })
 class RequestDispatcherFilterTest {
 
@@ -89,10 +89,10 @@ class RequestDispatcherFilterTest {
     when(request.getParameter("lang")).thenReturn(lang);
     ServletContext servletContext = mock(ServletContext.class);
     when(request.getServletContext()).thenReturn(servletContext);
-    when(servletContext.getResourceAsStream("/static/i18n/messages_" + lang
-        + ".properties")).thenReturn(new ByteArrayInputStream(i18NContent.getBytes()));
-    when(servletContext.getResourceAsStream("/WEB-INF/metadata" + servletPath
-        + ".html")).thenReturn(new ByteArrayInputStream(metadataContent.getBytes()));
+    when(servletContext.getResourceAsStream("/static/i18n/messages_" + lang +
+        ".properties")).thenReturn(new ByteArrayInputStream(i18NContent.getBytes()));
+    when(servletContext.getResourceAsStream("/WEB-INF/metadata" + servletPath +
+        ".html")).thenReturn(new ByteArrayInputStream(metadataContent.getBytes()));
 
     dispatcherFilter.doFilter(request, response, chain);
 

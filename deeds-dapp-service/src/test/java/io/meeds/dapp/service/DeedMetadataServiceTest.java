@@ -38,17 +38,15 @@ import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(
-    classes = {
-        DeedMetadataService.class,
-    }
-)
+                classes = {
+                            DeedMetadataService.class,
+                })
 @TestPropertySource(
-    properties = {
-        "meeds.deed.metadatas.path=metadatas-test.json",
-        "meeds.deed.contract.metadatas.path=deedCollection-test.json",
-        "meeds.deed.metadata.serverBase=https://wom.meeds.io/dapp",
-    }
-)
+                    properties = {
+                                   "meeds.deed.metadatas.path=metadatas-test.json",
+                                   "meeds.deed.contract.metadatas.path=deedCollection-test.json",
+                                   "meeds.deed.metadata.serverBase=https://wom.meeds.io/dapp",
+                    })
 class DeedMetadataServiceTest {
 
   @MockBean
