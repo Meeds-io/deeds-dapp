@@ -48,14 +48,14 @@ import io.meeds.deeds.common.service.UserProfileService;
 import jakarta.servlet.Filter;
 
 @SpringBootTest(classes = {
-    UserProfileController.class,
-    DeedAuthenticationProvider.class,
-    DeedAccessDeniedHandler.class,
+                            UserProfileController.class,
+                            DeedAuthenticationProvider.class,
+                            DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {
-    WebSecurityConfig.class
+                                  WebSecurityConfig.class
 })
 class UserProfileControllerTest {
 
@@ -99,7 +99,8 @@ class UserProfileControllerTest {
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
+    return user(TEST_USER).password(TEST_PASSWORD)
+                          .authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,7 +48,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.model.ManagedDeed;
-import io.meeds.deeds.common.service.WomService;
+import io.meeds.deeds.common.service.HubService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
@@ -62,7 +64,7 @@ import io.meeds.wom.api.model.WomDisconnectionRequest;
 @RequestMapping("/api/hubs")
 public class HubController {
 
-  private static final String WOM_UNKNOWN_ERROR_MESSAGE = "wom.unknownError:";
+  private static final String WOM_UNKNOWN_ERROR_MESSAGE     = "wom.unknownError:";
 
   private static final Logger LOG                           = LoggerFactory.getLogger(HubController.class);
 
@@ -73,12 +75,13 @@ public class HubController {
                                                             "WOM-DISCONNECTION-FAIL: {}: An error happened when trying to disconnect from the WoM";
 
   @Autowired
-  private WomService          hubService;
+  private HubService          hubService;
 
   @GetMapping
   public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
                                                               PagedResourcesAssembler<Hub> assembler,
-                                                              @RequestParam(name = "rewardId", required = false, defaultValue = "0")
+                                                              @RequestParam(name = "rewardId", required = false,
+                                                                            defaultValue = "0")
                                                               long rewardId) {
     Page<Hub> hubs = hubService.getHubs(rewardId, pageable);
     return ResponseEntity.ok()
@@ -138,49 +141,13 @@ public class HubController {
     }
   }
 
-  @PostMapping("/{hubAddress}/banner")
-  public void saveHubBanner(
-                            @PathVariable(name = "hubAddress")
-                            String hubAddress,
-                            @RequestParam("signedMessage")
-                            String signedMessage,
-                            @RequestParam("rawMessage")
-                            String rawMessage,
-                            @RequestParam("token")
-                            String token,
-                            @RequestParam("file")
-                            MultipartFile file) {
-    try {
-      hubService.saveHubBanner(hubAddress,
-                               signedMessage,
-                               rawMessage,
-                               token,
-                               file);
-    } catch (ObjectNotFoundException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-    } catch (WomException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-    } catch (IOException e) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "wom.errorReadingFile:" + e.getMessage());
-    }
-  }
-
   @GetMapping("/{hubAddress}/avatar")
   public ResponseEntity<InputStreamResource> getHubAvatar(
                                                           @PathVariable(name = "hubAddress")
                                                           String hubAddress,
-                                                          @RequestParam(name = "v")
+                                                          @RequestParam(name = "v", required = false)
                                                           String lastUpdated) {
-    return getFileResponse(hubService.getHubAvatar(hubAddress));
-  }
-
-  @GetMapping("/{hubAddress}/banner")
-  public ResponseEntity<InputStreamResource> getHubBanner(
-                                                          @PathVariable(name = "hubAddress")
-                                                          String hubAddress,
-                                                          @RequestParam(name = "v")
-                                                          String lastUpdated) {
-    return getFileResponse(hubService.getHubBanner(hubAddress));
+    return getFileResponse(hubService.getHubAvatar(hubAddress), lastUpdated);
   }
 
   @PostMapping
@@ -265,17 +232,19 @@ public class HubController {
     return hubService.generateToken();
   }
 
-  private ResponseEntity<InputStreamResource> getFileResponse(FileBinary file) {
+  private ResponseEntity<InputStreamResource> getFileResponse(FileBinary file, String lastUpdated) {
     if (file == null) {
-      return ResponseEntity.notFound()
-                           .build();
+      return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok()
-                         .cacheControl(CacheControl.maxAge(Duration.ofDays(365))
-                                                   .cachePublic())
-                         .lastModified(file.getUpdatedDate())
-                         .contentType(MediaType.valueOf(file.getMimeType()))
-                         .body(new InputStreamResource(file.getBinary()));
+    BodyBuilder builder = ResponseEntity.ok();
+    if (StringUtils.isBlank(lastUpdated)) {
+      builder.cacheControl(CacheControl.noStore());
+    } else {
+      builder.cacheControl(CacheControl.maxAge(Duration.ofDays(365)).cachePublic());
+    }
+    return builder.lastModified(file.getUpdatedDate())
+                  .contentType(MediaType.valueOf(file.getMimeType()))
+                  .body(new InputStreamResource(file.getBinary()));
   }
 
 }

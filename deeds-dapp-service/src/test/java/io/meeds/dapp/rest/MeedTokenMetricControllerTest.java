@@ -48,13 +48,12 @@ import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
 
 @SpringBootTest(
-    classes = {
-        MeedTokenMetricController.class,
-        DeedAuthenticationProvider.class,
-        WebSecurityConfig.class,
-        DeedAccessDeniedHandler.class,
-    }
-)
+                classes = {
+                            MeedTokenMetricController.class,
+                            DeedAuthenticationProvider.class,
+                            WebSecurityConfig.class,
+                            DeedAccessDeniedHandler.class,
+                })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 class MeedTokenMetricControllerTest {
@@ -63,15 +62,15 @@ class MeedTokenMetricControllerTest {
   private MeedTokenMetricService meedTokenMetricService;
 
   @Autowired
-  private WebApplicationContext context;
+  private WebApplicationContext  context;
 
   private MockMvc                mockMvc;
 
   @BeforeEach
   public void setup() {
     mockMvc = MockMvcBuilders.webAppContextSetup(context)
-        .apply(springSecurity())
-        .build();
+                             .apply(springSecurity())
+                             .build();
   }
 
   @Test
@@ -93,14 +92,14 @@ class MeedTokenMetricControllerTest {
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/"));
     response.andExpect(status().isOk())
-            .andExpect(jsonPath("$.date",is(today.toString())))
-            .andExpect(jsonPath("$.totalSupply",is(1)))
-            .andExpect(jsonPath("$.lockedBalances",aMapWithSize(1)))
-            .andExpect(jsonPath("$.reserveBalances",aMapWithSize(1)))
-            .andExpect(jsonPath("$.circulatingSupply",is(4)))
-            .andExpect(jsonPath("$.marketCapitalization",is(5)))
-            .andExpect(jsonPath("$.totalValuelocked",is(6)))
-            .andExpect(jsonPath("$.meedUsdPrice",is(7)));
+            .andExpect(jsonPath("$.date", is(today.toString())))
+            .andExpect(jsonPath("$.totalSupply", is(1)))
+            .andExpect(jsonPath("$.lockedBalances", aMapWithSize(1)))
+            .andExpect(jsonPath("$.reserveBalances", aMapWithSize(1)))
+            .andExpect(jsonPath("$.circulatingSupply", is(4)))
+            .andExpect(jsonPath("$.marketCapitalization", is(5)))
+            .andExpect(jsonPath("$.totalValuelocked", is(6)))
+            .andExpect(jsonPath("$.meedUsdPrice", is(7)));
   }
 
   @Test

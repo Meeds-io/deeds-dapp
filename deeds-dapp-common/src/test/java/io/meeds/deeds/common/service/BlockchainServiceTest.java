@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -47,9 +48,11 @@ import org.web3j.protocol.core.methods.response.EthLog;
 import org.web3j.protocol.core.methods.response.EthLog.LogObject;
 import org.web3j.protocol.core.methods.response.EthLog.LogResult;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.tuples.generated.Tuple10;
 import org.web3j.tuples.generated.Tuple12;
 import org.web3j.tuples.generated.Tuple4;
 import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tuples.generated.Tuple9;
 
 import io.meeds.deeds.common.constant.BlockchainOfferStatus;
 import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
@@ -66,11 +69,13 @@ import io.meeds.deeds.contract.DeedTenantProvisioning;
 import io.meeds.deeds.contract.ERC20;
 import io.meeds.deeds.contract.MeedsToken;
 import io.meeds.deeds.contract.TokenFactory;
+import io.meeds.deeds.contract.UserEngagementMinting;
 import io.meeds.deeds.contract.XMeedsNFTRewarding;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
+import io.meeds.wom.api.model.HubReport;
 
 @SpringBootTest(classes = {
-    BlockchainService.class
+                            BlockchainService.class
 })
 class BlockchainServiceTest {
 
@@ -100,6 +105,9 @@ class BlockchainServiceTest {
 
   @MockBean
   private TokenFactory                     tokenFactory;
+
+  @MockBean
+  private UserEngagementMinting            uemContract;
 
   @MockBean(name = "sushiPairToken")
   private ERC20                            sushiPairToken;
@@ -482,7 +490,7 @@ class BlockchainServiceTest {
   }
 
   @SuppressWarnings({
-      "unchecked", "rawtypes"
+                      "unchecked", "rawtypes"
   })
   @Test
   void testGetMinedTransferOwnershipDeedTransactions() throws Exception {
@@ -544,7 +552,7 @@ class BlockchainServiceTest {
 
   @Test
   @SuppressWarnings({
-      "unchecked", "rawtypes"
+                      "unchecked", "rawtypes"
   })
   void testGetCreatedOfferTransactionEvents() throws Exception {
     String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
@@ -580,7 +588,7 @@ class BlockchainServiceTest {
 
   @Test
   @SuppressWarnings({
-      "unchecked", "rawtypes"
+                      "unchecked", "rawtypes"
   })
   void testGetDeletedOfferTransactionEvents() throws Exception {
     String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
@@ -614,7 +622,7 @@ class BlockchainServiceTest {
 
   @Test
   @SuppressWarnings({
-      "unchecked", "rawtypes"
+                      "unchecked", "rawtypes"
   })
   void testGetPaidOfferTransactionEvents() throws Exception {
     String transactionHash = "0xab5bc0ece5ef0995fac33c53f4b92d68da952552a73932e51b4c02933237e84f";
@@ -647,8 +655,120 @@ class BlockchainServiceTest {
     assertEquals(1, offerTransactionEvents.size());
   }
 
+  @Test
+  @SuppressWarnings("unchecked")
+  void retrieveReportProperties() throws Exception {
+    long reportId = 2256889l;
+    HubReport report = new HubReport();
+    report.setReportId(reportId);
+
+    RemoteFunctionCall<Tuple10<String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger>> remoteCallHubReport =
+                                                                                                                                                                    mock(RemoteFunctionCall.class);
+    when(uemContract.hubReports(BigInteger.valueOf(reportId))).thenReturn(remoteCallHubReport);
+
+    String hubAddress = "hubAddress";
+    BigInteger usersCount = BigInteger.valueOf(5l);
+    BigInteger recipientsCount = BigInteger.valueOf(6l);
+    BigInteger participantsCount = BigInteger.valueOf(7l);
+    BigInteger achievementsCount = BigInteger.valueOf(8l);
+    BigInteger amount = BigInteger.valueOf(9l);
+    String tokenAddress = "tokenAddress";
+    BigInteger tokenChainId = BigInteger.valueOf(10l);
+    BigInteger fromDate = BigInteger.valueOf(11l);
+    BigInteger toDate = BigInteger.valueOf(12l);
+    when(remoteCallHubReport.send()).thenReturn(new Tuple10<>(hubAddress,
+                                                              usersCount,
+                                                              recipientsCount,
+                                                              participantsCount,
+                                                              achievementsCount,
+                                                              amount,
+                                                              tokenAddress,
+                                                              tokenChainId,
+                                                              fromDate,
+                                                              toDate));
+
+    RemoteFunctionCall<Tuple9<BigInteger, String, String, BigInteger, BigInteger, BigInteger, BigInteger, Boolean, BigInteger>> remoteCallhubRewards =
+                                                                                                                                                     mock(RemoteFunctionCall.class);
+    when(uemContract.hubRewards(BigInteger.valueOf(reportId))).thenReturn(remoteCallhubRewards);
+    BigInteger rewardId = BigInteger.valueOf(13l);
+    String owner = "Owner";
+    String tenant = "Tenant";
+    BigInteger fixedRewardIndex = BigInteger.valueOf(14l);
+    BigInteger ownerFixedIndex = BigInteger.valueOf(15l);
+    BigInteger tenantFixedIndex = BigInteger.valueOf(16l);
+    BigInteger sentDate = BigInteger.valueOf(17l);
+    BigInteger lastRewardedAmount = BigInteger.valueOf(18l);
+
+    when(remoteCallhubRewards.send()).thenReturn(new Tuple9<>(rewardId,
+                                                              owner,
+                                                              tenant,
+                                                              fixedRewardIndex,
+                                                              ownerFixedIndex,
+                                                              tenantFixedIndex,
+                                                              sentDate,
+                                                              true,
+                                                              lastRewardedAmount));
+
+    RemoteFunctionCall<Tuple5<BigInteger, BigInteger, BigInteger, BigInteger, BigInteger>> remoteCallReportDeed =
+                                                                                                                mock(RemoteFunctionCall.class);
+    when(uemContract.hubDeeds(BigInteger.valueOf(reportId))).thenReturn(remoteCallReportDeed);
+
+    BigInteger deedId = BigInteger.valueOf(19l);
+    BigInteger city = BigInteger.valueOf(20l);
+    BigInteger cardType = BigInteger.valueOf(21l);
+    BigInteger mintingPower = BigInteger.valueOf(22l);
+    BigInteger maxUsers = BigInteger.valueOf(23l);
+    when(remoteCallReportDeed.send()).thenReturn(new Tuple5<>(deedId,
+                                                              city,
+                                                              cardType,
+                                                              mintingPower,
+                                                              maxUsers));
+
+    blockchainService.retrieveReportProperties(report);
+    assertEquals(hubAddress.toLowerCase(), report.getHubAddress());
+    assertEquals(usersCount.longValue(), report.getUsersCount());
+    assertEquals(recipientsCount.longValue(), report.getRecipientsCount());
+    assertEquals(participantsCount.longValue(), report.getParticipantsCount());
+    assertEquals(achievementsCount.longValue(), report.getAchievementsCount());
+    assertEquals(new BigDecimal(amount).divide(BigDecimal.valueOf(10).pow(18),
+                                               MathContext.DECIMAL128)
+                                       .doubleValue(),
+                 report.getHubRewardAmount());
+    assertEquals(tokenAddress.toLowerCase(), report.getRewardTokenAddress());
+    assertEquals(tokenChainId.longValue(), report.getRewardTokenNetworkId());
+    assertEquals(fromDate.longValue(), report.getFromDate().getEpochSecond());
+    assertEquals(toDate.longValue(), report.getToDate().getEpochSecond());
+
+    assertEquals(rewardId.longValue(), report.getRewardId());
+    assertEquals(owner.toLowerCase(), report.getOwnerAddress());
+    assertEquals(tenant.toLowerCase(), report.getDeedManagerAddress());
+    assertEquals(new BigDecimal(fixedRewardIndex).divide(BigDecimal.valueOf(10).pow(18),
+                                                         MathContext.DECIMAL128)
+                                                 .doubleValue(),
+                 report.getFixedRewardIndex());
+    assertEquals(new BigDecimal(ownerFixedIndex).divide(BigDecimal.valueOf(10).pow(18),
+                                                        MathContext.DECIMAL128)
+                                                .doubleValue(),
+                 report.getOwnerFixedIndex());
+    assertEquals(new BigDecimal(tenantFixedIndex).divide(BigDecimal.valueOf(10).pow(18),
+                                                         MathContext.DECIMAL128)
+                                                 .doubleValue(),
+                 report.getTenantFixedIndex());
+    assertEquals(sentDate.longValue(), report.getSentDate().getEpochSecond());
+    assertEquals(new BigDecimal(lastRewardedAmount).divide(BigDecimal.valueOf(10).pow(18),
+                                                           MathContext.DECIMAL128)
+                                                   .doubleValue(),
+                 report.getLastPeriodUemRewardAmount());
+
+    assertEquals(deedId.longValue(), report.getDeedId());
+    assertEquals(city.shortValue(), report.getCity());
+    assertEquals(cardType.shortValue(), report.getCardType());
+    assertEquals(mintingPower.shortValue(), report.getMintingPower());
+    assertEquals(maxUsers.longValue(), report.getMaxUsers());
+  }
+
   @SuppressWarnings({
-      "unchecked"
+                      "unchecked"
   })
   private void mockOffer(BigInteger offerId) throws Exception {
     Tuple12<BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger> tuple12;

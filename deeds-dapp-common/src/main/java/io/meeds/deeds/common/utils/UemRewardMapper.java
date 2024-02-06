@@ -18,7 +18,6 @@
 package io.meeds.deeds.common.utils;
 
 import java.util.Collections;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,15 +41,6 @@ public class UemRewardMapper {
                                reward.getToDate(),
                                reward.getReportIds(),
                                lowerCase(reward.getHubAddresses()),
-                               reward.getReportRewards() == null ? null :
-                                                                 reward.getReportRewards()
-                                                                       .entrySet()
-                                                                       .stream()
-                                                                       .collect(Collectors.toMap(e -> String.valueOf(e.getKey()),
-                                                                                                 Entry::getValue)),
-                               reward.getHubAchievementsCount(),
-                               reward.getHubParticipantsCount(),
-                               reward.getHubRewardsAmount(),
                                reward.getSumEd());
   }
 
@@ -62,15 +52,6 @@ public class UemRewardMapper {
                          entity.getToDate(),
                          entity.getReportIds(),
                          entity.getHubAddresses(),
-                         entity.getReportRewards() == null ? null :
-                                                           entity.getReportRewards()
-                                                                 .entrySet()
-                                                                 .stream()
-                                                                 .collect(Collectors.toMap(e -> Long.parseLong(e.getKey()),
-                                                                                           Entry::getValue)),
-                         entity.getHubAchievementsCount(),
-                         entity.getHubParticipantsCount(),
-                         entity.getHubRewardsAmount(),
                          entity.getSumEd());
   }
 

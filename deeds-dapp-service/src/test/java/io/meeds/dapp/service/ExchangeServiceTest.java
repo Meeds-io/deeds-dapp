@@ -57,19 +57,17 @@ import io.meeds.dapp.storage.CurrencyExchangeRateRepository;
 import io.meeds.dapp.storage.MeedExchangeRateRepository;
 
 @SpringBootTest(
-    classes = {
-        ExchangeServiceNoInit.class,
-    }
-)
+                classes = {
+                            ExchangeServiceNoInit.class,
+                })
 @TestPropertySource(
-    properties = {
-        "meeds.exchange.currencyApiUrl=CurrencyApiUrl",
-        "meeds.exchange.currencyApiKey=CurrencyApiKey",
-        "meeds.exchange.blockchainApiUrl=BlockchainApiUrl",
-        "meeds.exchange.lpTokenApiUrl=LpTokenApiUrl",
-        "meeds.exchange.lpTokenAddress=LpTokenAddress",
-    }
-)
+                    properties = {
+                                   "meeds.exchange.currencyApiUrl=CurrencyApiUrl",
+                                   "meeds.exchange.currencyApiKey=CurrencyApiKey",
+                                   "meeds.exchange.blockchainApiUrl=BlockchainApiUrl",
+                                   "meeds.exchange.lpTokenApiUrl=LpTokenApiUrl",
+                                   "meeds.exchange.lpTokenAddress=LpTokenAddress",
+                    })
 class ExchangeServiceTest {
 
   @MockBean
@@ -122,10 +120,11 @@ class ExchangeServiceTest {
     verify(meedExchangeRateRepository, times((int) between.toDays() + 1)).save(argThat(new ArgumentMatcher<MeedExchangeRate>() {
       @Override
       public boolean matches(MeedExchangeRate argument) {
-        return argument != null && argument.getDate() != null && BigDecimal.valueOf(300).equals(argument.getEthReserve())
-            && BigDecimal.valueOf(200).equals(argument.getMeedReserve())
-            && BigDecimal.valueOf(2).equals(argument.getMeedEthPrice())
-            && BigDecimal.valueOf(3).equals(argument.getEthUsdPrice());
+        return argument != null && argument.getDate() != null
+               && BigDecimal.valueOf(300).equals(argument.getEthReserve())
+               && BigDecimal.valueOf(200).equals(argument.getMeedReserve())
+               && BigDecimal.valueOf(2).equals(argument.getMeedEthPrice())
+               && BigDecimal.valueOf(3).equals(argument.getEthUsdPrice());
       }
     }));
 
@@ -169,7 +168,8 @@ class ExchangeServiceTest {
     assertEquals(3, exchangeRates.size());
     meedPrice = exchangeRates.get(0);
     assertEquals(new MeedPrice(LocalDate.now().minusDays(2), BigDecimal.valueOf(2), BigDecimal.valueOf(10.8)), meedPrice);
-    assertEquals(new MeedPrice(LocalDate.now().minusDays(2), BigDecimal.valueOf(2), BigDecimal.valueOf(10.8)).hashCode(), meedPrice.hashCode());
+    assertEquals(new MeedPrice(LocalDate.now().minusDays(2), BigDecimal.valueOf(2), BigDecimal.valueOf(10.8)).hashCode(),
+                 meedPrice.hashCode());
   }
 
   @Test
@@ -210,8 +210,9 @@ class ExchangeServiceTest {
       LocalDate toDate = invocation.getArgument(1, LocalDate.class);
       return meedExchangeRates.stream()
                               .filter(meedExchangeRate -> (meedExchangeRate.getDate().isAfter(fromDate)
-                                  || meedExchangeRate.getDate().isEqual(fromDate))
-                                  && (meedExchangeRate.getDate().isBefore(toDate) || meedExchangeRate.getDate().isEqual(toDate)))
+                                                           || meedExchangeRate.getDate().isEqual(fromDate))
+                                                          && (meedExchangeRate.getDate().isBefore(toDate)
+                                                              || meedExchangeRate.getDate().isEqual(toDate)))
                               .collect(Collectors.toList());
     });
 
@@ -242,9 +243,9 @@ class ExchangeServiceTest {
       LocalDate toDate = invocation.getArgument(2, LocalDate.class);
       return currencyExchangeRates.stream()
                                   .filter(currencyExchangeRate -> (currencyExchangeRate.getDate().isAfter(fromDate)
-                                      || currencyExchangeRate.getDate().isEqual(fromDate))
-                                      && (currencyExchangeRate.getDate().isBefore(toDate)
-                                          || currencyExchangeRate.getDate().isEqual(toDate)))
+                                                                   || currencyExchangeRate.getDate().isEqual(fromDate))
+                                                                  && (currencyExchangeRate.getDate().isBefore(toDate)
+                                                                      || currencyExchangeRate.getDate().isEqual(toDate)))
                                   .collect(Collectors.toList());
     });
 
@@ -253,8 +254,9 @@ class ExchangeServiceTest {
       LocalDate toDate = invocation.getArgument(1, LocalDate.class);
       return meedExchangeRates.stream()
                               .filter(meedExchangeRate -> (meedExchangeRate.getDate().isAfter(fromDate)
-                                  || meedExchangeRate.getDate().isEqual(fromDate))
-                                  && (meedExchangeRate.getDate().isBefore(toDate) || meedExchangeRate.getDate().isEqual(toDate)))
+                                                           || meedExchangeRate.getDate().isEqual(fromDate))
+                                                          && (meedExchangeRate.getDate().isBefore(toDate)
+                                                              || meedExchangeRate.getDate().isEqual(toDate)))
                               .collect(Collectors.toList());
     });
   }
