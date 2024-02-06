@@ -39,7 +39,7 @@ import io.meeds.deeds.common.model.FundInfo;
 import io.meeds.deeds.common.service.BlockchainService;
 
 @SpringBootTest(classes = {
-    MeedAssetsMetricsService.class
+                            MeedAssetsMetricsService.class
 })
 class MeedAssetsMetricsServiceTest {
 

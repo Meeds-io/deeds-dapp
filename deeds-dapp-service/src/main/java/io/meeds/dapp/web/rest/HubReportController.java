@@ -86,7 +86,7 @@ public class HubReportController {
                                           long rewardId,
                                           @PathVariable(name = "hubAddress")
                                           String hubAddress) {
-    HubReport hubReport = reportService.getReports(rewardId, hubAddress);
+    HubReport hubReport = reportService.getReport(rewardId, hubAddress);
     if (hubReport == null) {
       return ResponseEntity.notFound()
                            .cacheControl(CacheControl.noStore())

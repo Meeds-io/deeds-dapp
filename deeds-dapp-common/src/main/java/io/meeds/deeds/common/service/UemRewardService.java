@@ -89,23 +89,13 @@ public class UemRewardService {
   private void computeUemReward(UemRewardEntity rewardEntity) {
     List<HubReport> reports = hubReportService.getReportsByRewardId(rewardEntity.getRewardId());
     if (CollectionUtils.isEmpty(reports)) {
-      rewardEntity.setHubAchievementsCount(0);
-      rewardEntity.setHubParticipantsCount(0);
-      rewardEntity.setHubRewardsAmount(0);
       rewardEntity.setSumEd(0);
-      rewardEntity.setReportRewards(Collections.emptyMap());
       rewardEntity.setHubAddresses(Collections.emptySet());
     } else {
       reports.forEach(report -> hubReportService.computeUemReward(report,
                                                                   rewardEntity.getFixedGlobalIndex(),
                                                                   rewardEntity.getAmount()));
-      rewardEntity.setHubAchievementsCount(reports.stream().mapToLong(HubReport::getAchievementsCount).sum());
-      rewardEntity.setHubParticipantsCount(reports.stream().mapToLong(HubReport::getParticipantsCount).sum());
-      rewardEntity.setHubRewardsAmount(reports.stream().mapToDouble(HubReport::getUemRewardAmount).sum());
       rewardEntity.setSumEd(reports.stream().mapToDouble(HubReport::getEd).sum());
-      rewardEntity.setReportRewards(reports.stream()
-                                           .collect(Collectors.toMap(r -> String.valueOf(r.getReportId()),
-                                                                     HubReport::getUemRewardAmount)));
       rewardEntity.setHubAddresses(reports.stream()
                                           .map(HubReport::getHubAddress)
                                           .map(StringUtils::lowerCase)

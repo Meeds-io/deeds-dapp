@@ -41,21 +41,21 @@ import lombok.NoArgsConstructor;
 @Setting(replicas = 0, shards = 1)
 public class DeedFileBinary {
 
-  public static final int MAX_FILE_LENGTH = 524288000;
+  public static final long MAX_FILE_LENGTH = 524288000l;
 
   @Id
-  private String          id;
+  private String           id;
 
   @Field(type = FieldType.Text)
-  private String          name;
+  private String           name;
 
   @Field(type = FieldType.Keyword)
-  private String          mimeType;
+  private String           mimeType;
 
   @Field(type = FieldType.Binary)
-  private String          binary;
+  private String           binary;
 
   @Field(type = FieldType.Date, format = DateFormat.epoch_millis)
-  private Instant         updatedDate;
+  private Instant          updatedDate;
 
 }
