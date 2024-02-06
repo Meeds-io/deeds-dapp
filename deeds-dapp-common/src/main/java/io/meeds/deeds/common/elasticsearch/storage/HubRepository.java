@@ -27,13 +27,9 @@ import io.meeds.deeds.common.elasticsearch.model.HubEntity;
 
 public interface HubRepository extends ElasticsearchRepository<HubEntity, String> {
 
-  boolean existsByNftIdAndAddressNotAndEnabledIsTrue(long nftId, String address);
-
-  Optional<HubEntity> findByNftIdAndEnabledIsTrue(long nftId);
+  Optional<HubEntity> findByNftId(long nftId);
 
   Page<HubEntity> findByEnabledIsTrue(Pageable pageable);
-
-  Optional<HubEntity> findByAddressAndEnabledIsTrue(String address);
 
   Page<HubEntity> findByAddressInAndEnabledIsTrue(Set<String> hubAddresses, Pageable pageable);
 

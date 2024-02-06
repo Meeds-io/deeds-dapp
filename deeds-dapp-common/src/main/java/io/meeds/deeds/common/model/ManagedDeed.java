@@ -58,11 +58,11 @@ public class ManagedDeed {
   private boolean                                 connected;
 
   public long getMaxUsers() {
-    return cardType.getMaxUsers();
+    return cardType == null ? 0l : cardType.getMaxUsers();
   }
 
   public double getMintingPower() {
-    return cardType.getMintingPower();
+    return cardType == null ? 0d : cardType.getMintingPower();
   }
 
 }

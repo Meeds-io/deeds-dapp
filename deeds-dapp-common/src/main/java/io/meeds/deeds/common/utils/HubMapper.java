@@ -54,9 +54,7 @@ public class HubMapper {
                    hubEntity.getUsersCount(),
                    hubEntity.getRewardsPeriodType(),
                    hubEntity.getRewardsPerPeriod(),
-                   hubEntity.isEnabled() && hubEntity.getJoinDate() != null
-                                                    && (hubEntity.getUntilDate() == null
-                                                        || hubEntity.getUntilDate().isAfter(Instant.now())),
+                   isConnected(hubEntity),
                    hubEntity.getOwnerClaimableAmount(),
                    hubEntity.getManagerClaimableAmount());
   }
@@ -106,6 +104,14 @@ public class HubMapper {
                          untilDate,
                          existingEntity == null ? null : existingEntity.getJoinDate(),
                          existingEntity == null ? Instant.now() : existingEntity.getUpdatedDate());
+  }
+
+  public static boolean isConnected(HubEntity hubEntity) {
+    return hubEntity != null
+           && hubEntity.isEnabled()
+           && (hubEntity.getUntilDate() == null || hubEntity.getUntilDate().isAfter(Instant.now()))
+           && (StringUtils.equalsIgnoreCase(hubEntity.getHubOwnerAddress(), hubEntity.getDeedManagerAddress())
+               || StringUtils.equalsIgnoreCase(hubEntity.getHubOwnerAddress(), hubEntity.getDeedOwnerAddress()));
   }
 
 }

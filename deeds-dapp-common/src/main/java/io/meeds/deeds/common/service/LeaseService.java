@@ -565,8 +565,8 @@ public class LeaseService {
     leaseFilter.setExcludeNotConfirmed(true);
     leaseFilter.setTransactionStatus(Collections.singletonList(TransactionStatus.VALIDATED));
     return getLeases(leaseFilter, Pageable.unpaged()).stream()
-                                                     .filter(lease -> lease.getStartDate().isAfter(Instant.now())
-                                                         && lease.getEndDate().isBefore(Instant.now()))
+                                                     .filter(lease -> lease.getStartDate().isBefore(Instant.now())
+                                                         && lease.getEndDate().isAfter(Instant.now()))
                                                      .findFirst()
                                                      .orElse(null);
   }
