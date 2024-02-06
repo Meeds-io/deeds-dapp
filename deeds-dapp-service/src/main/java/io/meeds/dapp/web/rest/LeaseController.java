@@ -106,6 +106,8 @@ public class LeaseController {
       return lease;
     } catch (ObjectNotFoundException | UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    } catch (ResponseStatusException e) {
+      throw e;
     } catch (Exception e) {
       LOG.warn("Error retrieving lease by id {} and blockchainStateRefresh = {}",
                leaseId,
@@ -159,12 +161,6 @@ public class LeaseController {
     }
     if (leaseId <= 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lease id is mandatory");
-    }
-    if (StringUtils.isBlank(ownerAddress)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Owner Address is mandatory");
-    }
-    if (StringUtils.isBlank(transactionHash)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction hash is mandatory");
     }
     if (paidMonths == 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paid months is mandatory");

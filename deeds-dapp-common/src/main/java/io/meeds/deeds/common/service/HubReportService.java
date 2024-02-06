@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +40,8 @@ import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.HubReportVerifiableData;
 
+import lombok.SneakyThrows;
+
 @Component
 public class HubReportService {
 
@@ -55,15 +56,18 @@ public class HubReportService {
   @Autowired
   private HubReportRepository reportRepository;
 
-  @Value("${io.meeds.test.acceptOudatedReport:false}")
-  private boolean             acceptOudatedReport;
-
   public Page<HubReport> getReportsByHub(String hubAddress, Pageable pageable) {
     return getReports(hubAddress, 0, pageable);
   }
 
-  public Page<HubReport> getReportsByReward(long rewardId, Pageable pageable) {
+  public Page<HubReport> getReportsByRewardId(long rewardId, Pageable pageable) {
     return getReports(null, rewardId, pageable);
+  }
+
+  public List<HubReport> getReportsByRewardId(long rewardId) {
+    return reportRepository.findByRewardId(rewardId)
+                           .map(HubReportMapper::fromEntity)
+                           .toList();
   }
 
   public Page<HubReport> getReports(String hubAddress, long rewardId, Pageable pageable) {
@@ -98,21 +102,17 @@ public class HubReportService {
                            .orElseGet(() -> refreshReport(reportId));
   }
 
-  public HubReport getReports(long rewardId, String hubAddress) {
+  public HubReport getReport(long rewardId, String hubAddress) {
     return reportRepository.findByRewardIdAndHubAddress(rewardId, StringUtils.lowerCase(hubAddress))
                            .map(HubReportMapper::fromEntity)
                            .orElse(null);
   }
 
+  @SneakyThrows
   public HubReport saveReport(HubReportVerifiableData reportData) throws WomException {
-    try {
-      if (!reportData.isValid()) {
-        throw new WomAuthorizationException("wom.invalidSignedMessage");
-      }
-    } catch (Exception e) {
-      throw new WomAuthorizationException("wom.invalidSignedMessage", e);
+    if (!reportData.isValid()) {
+      throw new WomAuthorizationException("wom.invalidSignedMessage");
     }
-
     HubReport report = new HubReport(reportData);
     blockchainService.retrieveReportProperties(report);
     reportRepository.save(toEntity(report));
@@ -122,12 +122,15 @@ public class HubReportService {
 
   public HubReport refreshReport(long reportId) {
     HubReportEntity hubReportEntity = reportRepository.findById(reportId).orElse(null);
+    HubReport report = null;
     if (hubReportEntity != null) {
-      return HubReportMapper.fromEntity(hubReportEntity);
+      report = HubReportMapper.fromEntity(hubReportEntity);
+      blockchainService.retrieveReportProperties(report);
+    } else {
+      report = blockchainService.retrieveReportProperties(reportId);
     }
-    HubReport report = blockchainService.retrieveReportProperties(reportId);
     reportRepository.save(toEntity(report));
-    listenerService.publishEvent(HUB_REPORT_SAVED, report.getReportId());
+    listenerService.publishEvent(HUB_REPORT_SAVED, reportId);
     return report;
   }
 
@@ -139,28 +142,25 @@ public class HubReportService {
     boolean reportFraud = blockchainService.isReportFraud(reportId);
     hubReportEntity.setFraud(reportFraud);
     reportRepository.save(hubReportEntity);
-    listenerService.publishEvent(HUB_REPORT_SAVED, hubReportEntity.getReportId());
+    listenerService.publishEvent(HUB_REPORT_SAVED, reportId);
     return HubReportMapper.fromEntity(hubReportEntity);
   }
 
-  public List<HubReport> getReportsByRewardId(long rewardId) {
-    return reportRepository.findByRewardId(rewardId)
-                           .map(HubReportMapper::fromEntity)
-                           .toList();
-  }
-
   public void computeUemReward(HubReport report, double periodFixedGlobalIndex, double periodRewardAmount) {
-    double uemRewardAmount = BigDecimal.valueOf(report.getFixedRewardIndex())
-                                       .multiply(BigDecimal.valueOf(periodRewardAmount))
-                                       .divide(BigDecimal.valueOf(periodFixedGlobalIndex),
-                                               MathContext.DECIMAL128)
-                                       .doubleValue();
+    double uemRewardAmount = 0;
+    if (!report.isFraud()) {
+      uemRewardAmount = BigDecimal.valueOf(report.getFixedRewardIndex())
+                                  .multiply(BigDecimal.valueOf(periodRewardAmount))
+                                  .divide(BigDecimal.valueOf(periodFixedGlobalIndex),
+                                          MathContext.DECIMAL128)
+                                  .doubleValue();
+    }
     boolean changed = uemRewardAmount != report.getUemRewardAmount();
     report.setUemRewardAmount(uemRewardAmount);
     if (changed) {
       reportRepository.findById(report.getReportId())
                       .ifPresent(hubReportEntity -> {
-                        hubReportEntity.setUemRewardAmount(uemRewardAmount);
+                        hubReportEntity.setUemRewardAmount(report.getUemRewardAmount());
                         reportRepository.save(hubReportEntity);
                       });
     }
