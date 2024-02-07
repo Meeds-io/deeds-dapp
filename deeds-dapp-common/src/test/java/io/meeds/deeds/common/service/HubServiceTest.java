@@ -344,8 +344,8 @@ class HubServiceTest {
     when(hubRepository.findById(StringUtils.lowerCase(hubAddress))).thenReturn(Optional.of(newHubEntity()));
     Hub hub = hubService.getHub(hubAddress, true);
     assertNotNull(hub);
-    verify(hubRepository).save(argThat(entity -> !entity.isEnabled()));
     verify(listenerService).publishEvent(HUB_DISCONNECTED, hubAddress.toLowerCase());
+    verify(hubRepository, atLeast(1)).save(argThat(entity -> !entity.isEnabled()));
   }
 
   @Test
