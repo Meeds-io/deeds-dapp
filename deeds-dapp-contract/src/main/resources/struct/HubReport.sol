@@ -21,8 +21,8 @@ struct HubReport {
     address tokenAddress;
     // Used Token chain Id used by Hub to send its rewards
     uint256 tokenChainId;
-    // Sent rewards by Hub Manager to its users
+    // Hub rewards period start date
     uint256 fromDate;
-    // Sent rewards by Hub Manager to its users
+    // Hub rewards period end date
     uint256 toDate;
 }
