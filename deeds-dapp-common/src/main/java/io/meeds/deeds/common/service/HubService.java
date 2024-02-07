@@ -193,8 +193,10 @@ public class HubService {
   @SneakyThrows
   public Hub getHub(String hubAddress, boolean forceRefresh) {
     if (forceRefresh) {
-      refreshHubFromWom(hubAddress);
-      refreshClaimableAmount(hubAddress);
+      Hub hub = refreshHubFromWom(hubAddress);
+      if (hub != null) {
+        refreshHubClaimableAmount(hubAddress);
+      }
     }
     HubEntity hubEntity = hubRepository.findById(StringUtils.lowerCase(hubAddress)).orElse(null);
     return HubMapper.fromEntity(hubEntity);
@@ -407,7 +409,7 @@ public class HubService {
           && StringUtils.isNotBlank(hub.getAddress())
           && !StringUtils.equals(hub.getAddress(), EnsUtils.EMPTY_ADDRESS)) {
         refreshHubFromWom(hub.getAddress());
-        refreshClaimableAmount(hub.getAddress());
+        refreshHubClaimableAmount(hub.getAddress());
       }
     }
   }
@@ -420,7 +422,7 @@ public class HubService {
           && StringUtils.isNotBlank(hub.getAddress())
           && !StringUtils.equals(hub.getAddress(), EnsUtils.EMPTY_ADDRESS)) {
         refreshHubFromWom(hub.getAddress());
-        refreshClaimableAmount(hub.getAddress());
+        refreshHubClaimableAmount(hub.getAddress());
       }
     }
   }

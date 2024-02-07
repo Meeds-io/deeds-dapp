@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -974,6 +975,12 @@ public class BlockchainService {
     report.setTenantFixedIndex(new BigDecimal(hubReportReward.component6()).divide(BigDecimal.valueOf(10).pow(18),
                                                                                    MathContext.DECIMAL128)
                                                                            .doubleValue());
+    report.setOwnerMintingPercentage(new BigDecimal(hubReportReward.component5()).multiply(BigDecimal.valueOf(100))
+                                                                                 .divide(new BigDecimal(hubReportReward.component4()),
+                                                                                         MathContext.DECIMAL128)
+                                                                                 .setScale(0, RoundingMode.HALF_EVEN)
+                                                                                 .toBigInteger()
+                                                                                 .intValue());
     report.setSentDate(Instant.ofEpochSecond(hubReportReward.component7().longValue()));
     report.setFraud(hubReportReward.component8());
     report.setLastPeriodUemRewardAmount(new BigDecimal(hubReportReward.component9()).divide(BigDecimal.valueOf(10).pow(18),
