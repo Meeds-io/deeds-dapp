@@ -287,6 +287,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     function pendingRewardBalanceOf(address _address)
         public
         view
+        virtual
         returns (uint256)
     {
         Recipient memory recipient = recipients[_address];
@@ -315,6 +316,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
     function reportsByRecipient(address _address)
         external
         view
+        virtual
         returns (uint256[] memory)
     {
         return recipients[_address].reportIds;
@@ -329,6 +331,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
      */
     function _computeReportFixedIndice(uint256 _reportId)
       internal
+      virtual
       returns (uint256)
     {
       uint256 lastRewardedAmount = _computeLastRewardedAmount(_reportId);
@@ -406,6 +409,7 @@ contract UserEngagementMinting is UUPSUpgradeable, Initializable, ManagerRole {
      */
     function _computeLastRewardedAmount(uint256 _reportId)
       internal
+      virtual
       returns (uint256)
     {
       uint256[] memory ids = hubReportIds[hubReports[_reportId].hub];
