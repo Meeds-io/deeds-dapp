@@ -93,7 +93,7 @@ export default {
   },
   data: () => ({
     loading: false,
-    pageSize: 10,
+    pageSize: 100,
     page: 0,
     hasMore: false,
     hubs: [
@@ -273,14 +273,15 @@ export default {
       return this.filteredHubs.length + this.filteredUpcomingHubs.length;
     },
     filteredHubs() {
-      if (this.keyword) {
+      if (this.loading) {
+        return [];
+      } else if (this.keyword) {
         if (this.language === 'fr') {
           return this.hubs.filter(hub => hub?.name?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         } else {
           return this.hubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
-      } 
-      else {
+      } else {
         return this.hubs; 
       }
     },
@@ -291,8 +292,7 @@ export default {
         } else {
           return this.upcomingHubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
-      } 
-      else {
+      } else {
         return this.upcomingHubs; 
       }
     },
@@ -313,7 +313,8 @@ export default {
           const hubs = data?._embedded?.hubs;
           if (hubs?.length) {
             this.hubs = this.hubs.filter(h => !hubs.find(hub => hub.deedId === h.upcomingDeedId));
-            this.hubs.push(...hubs);
+            this.hubs.unshift(...hubs);
+            this.hubs = this.$utils.sortByName(this.hubs, this.language);
             this.hasMore = data.page.totalPages > (this.page + 1);
           } else {
             this.hasMore = false;

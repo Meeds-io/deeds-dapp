@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,7 +60,9 @@ import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
+import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
+import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.model.HubReport;
@@ -82,6 +85,9 @@ public class HubReportServiceTest {
 
   @MockBean
   private HubReportRepository   reportRepository;
+
+  @MockBean
+  private UemRewardRepository   rewardRepository;
 
   @Autowired
   private HubReportService      hubReportService;
@@ -127,11 +133,15 @@ public class HubReportServiceTest {
 
   private double                tenantFixedIndex          = 0.0021784d;
 
+  private double                engagementScore           = 1.23d;
+
   private double                lastPeriodUemRewardAmount = 84d;
 
   private double                uemRewardAmount           = 90d;
 
   private double                hubRewardAmount           = 150d;
+
+  private double                hubTopRewardedAmount      = 12.365d;
 
   private Instant               updatedDate               = Instant.now();
 
@@ -144,6 +154,8 @@ public class HubReportServiceTest {
   private long                  recipientsCount           = 65l;
 
   private int                   achievementsCount         = 55698;
+
+  private int                   actionsCount              = 55698;
 
   private String                rewardTokenAddress        = "0x334d85047da64738c065d36e10b2adeb965000d0";
 
@@ -187,10 +199,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -227,10 +241,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -267,10 +283,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -307,10 +325,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -347,10 +367,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -388,10 +410,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -425,10 +449,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -462,10 +488,12 @@ public class HubReportServiceTest {
     assertEquals(report.getParticipantsCount(), participantsCount);
     assertEquals(report.getRecipientsCount(), recipientsCount);
     assertEquals(report.getAchievementsCount(), achievementsCount);
+    assertEquals(report.getActionsCount(), actionsCount);
     assertEquals(report.getRewardTokenAddress(), rewardTokenAddress);
     assertEquals(report.getRewardTokenNetworkId(), rewardTokenNetworkId);
     assertEquals(report.getTransactions(), transactions());
     assertEquals(report.getHubRewardAmount(), hubRewardAmount);
+    assertEquals(report.getHubTopRewardedAmount(), hubTopRewardedAmount);
     assertEquals(report.getFixedRewardIndex(), fixedRewardIndex);
     assertEquals(report.getOwnerFixedIndex(), ownerFixedIndex);
     assertEquals(report.getTenantFixedIndex(), tenantFixedIndex);
@@ -540,6 +568,29 @@ public class HubReportServiceTest {
     verify(reportRepository).save(any());
   }
 
+  @Test
+  void computeEngagementScore() {
+    assertThrows(RuntimeException.class, () -> hubReportService.computeEngagementScore(reportId));
+    HubReportEntity hubReportEntity = newHubReportEntity();
+    when(reportRepository.findById(reportId)).thenReturn(Optional.of(hubReportEntity));
+    assertEquals(0d, hubReportService.computeEngagementScore(reportId));
+    hubReportEntity.setSentDate(sentDate.minusSeconds(604800l));
+    assertEquals(engagementScore, hubReportService.computeEngagementScore(reportId));
+
+    hubReportEntity.setEngagementScore(0d);
+    assertThrows(RuntimeException.class, () -> hubReportService.computeEngagementScore(reportId));
+
+    UemRewardEntity rewardEntity = mock(UemRewardEntity.class);
+    int multiplier = 4;
+    when(rewardEntity.getFixedGlobalIndex()).thenReturn(fixedRewardIndex * multiplier);
+    List<Long> reportIds = Arrays.asList(1l, 2l, 3l);
+    when(rewardEntity.getReportIds()).thenReturn(reportIds);
+    when(rewardRepository.findById(rewardId)).thenReturn(Optional.of(rewardEntity));
+    when(reportRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+    assertEquals(10d * reportIds.size() / multiplier, hubReportService.computeEngagementScore(reportId));
+    verify(reportRepository).save(any());
+  }
+
   private HubReportVerifiableData newHubReportVerifiableData() {
     HubReportPayload reportPayload = new HubReportPayload(reportId,
                                                           hubAddress,
@@ -552,9 +603,11 @@ public class HubReportServiceTest {
                                                           participantsCount,
                                                           recipientsCount,
                                                           achievementsCount,
+                                                          actionsCount,
                                                           rewardTokenAddress,
                                                           rewardTokenNetworkId,
                                                           hubRewardAmount,
+                                                          hubTopRewardedAmount,
                                                           transactions());
     String signature = signHubMessage(reportPayload.generateRawMessage(), hubCredentials.getEcKeyPair());
     String hash = Hash.sha3(signature);
@@ -581,17 +634,20 @@ public class HubReportServiceTest {
                                participantsCount,
                                recipientsCount,
                                achievementsCount,
+                               actionsCount,
                                rewardTokenAddress,
                                rewardTokenNetworkId,
                                transactions(),
                                hubRewardAmount,
+                               hubTopRewardedAmount,
                                fixedRewardIndex,
                                ownerFixedIndex,
                                tenantFixedIndex,
                                fraud,
                                lastPeriodUemRewardAmount,
                                uemRewardAmount,
-                               updatedDate);
+                               updatedDate,
+                               engagementScore);
   }
 
   private HubReport newHubReport() {
@@ -606,9 +662,11 @@ public class HubReportServiceTest {
                          participantsCount,
                          recipientsCount,
                          achievementsCount,
+                         actionsCount,
                          rewardTokenAddress,
                          rewardTokenNetworkId,
                          hubRewardAmount,
+                         hubTopRewardedAmount,
                          transactions(),
                          rewardId,
                          city,
