@@ -26,7 +26,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 
-public interface UEMRewardRepository extends ElasticsearchRepository<UemRewardEntity, Long> {
+public interface UemRewardRepository extends ElasticsearchRepository<UemRewardEntity, Long> {
 
   Page<UemRewardEntity> findByHubAddresses(String hubAddress, Pageable pageable);
 

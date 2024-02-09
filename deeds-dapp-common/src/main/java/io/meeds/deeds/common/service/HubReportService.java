@@ -21,10 +21,15 @@ import static io.meeds.deeds.common.utils.HubReportMapper.toEntity;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +38,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
+import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
+import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.utils.HubReportMapper;
 import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
@@ -45,7 +52,7 @@ import lombok.SneakyThrows;
 @Component
 public class HubReportService {
 
-  public static final String  HUB_REPORT_SAVED = "uem.report.saved";
+  public static final String  HUB_REPORT_SAVED          = "uem.report.saved";
 
   @Autowired
   private BlockchainService   blockchainService;
@@ -55,6 +62,17 @@ public class HubReportService {
 
   @Autowired
   private HubReportRepository reportRepository;
+
+  @Autowired
+  private UemRewardRepository rewardRepository;
+
+  /**
+   * Used to force compute Engagement Score of last sent report
+   * else it will compute the engagement score of the last rewarded
+   * report only (ignoring current period reports)
+   */
+  @Value("${meeds.uem.lastReportEngagementScore:false}")
+  private boolean             lastReportEngagementScore = false;
 
   public Page<HubReport> getReportsByHub(String hubAddress, Pageable pageable) {
     return getReports(hubAddress, 0, pageable);
@@ -163,6 +181,30 @@ public class HubReportService {
                         hubReportEntity.setUemRewardAmount(report.getUemRewardAmount());
                         reportRepository.save(hubReportEntity);
                       });
+    }
+  }
+
+  public double computeEngagementScore(long reportId) {
+    HubReportEntity hubReportEntity = reportRepository.findById(reportId).orElseThrow();
+    boolean isRewardedPeriod = lastReportEngagementScore || hubReportEntity.getSentDate()
+                                                                           .atZone(ZoneOffset.UTC)
+                                                                           .toLocalDate()
+                                                                           .isBefore(LocalDate.now().with(DayOfWeek.MONDAY));
+    if (!isRewardedPeriod) {
+      return 0d;
+    } else if (hubReportEntity.getEngagementScore() > 0) {
+      return hubReportEntity.getEngagementScore();
+    } else {
+      UemRewardEntity rewardEntity = rewardRepository.findById(hubReportEntity.getRewardId()).orElseThrow();
+      BigDecimal averageIndex = BigDecimal.valueOf(rewardEntity.getFixedGlobalIndex())
+                                          .divide(BigDecimal.valueOf(rewardEntity.getReportIds().size()), MathContext.DECIMAL128);
+      hubReportEntity.setEngagementScore(BigDecimal.valueOf(hubReportEntity.getFixedRewardIndex())
+                                                   .multiply(BigDecimal.TEN)
+                                                   .divide(averageIndex, MathContext.DECIMAL128)
+                                                   .setScale(3, RoundingMode.HALF_EVEN)
+                                                   .doubleValue());
+      hubReportEntity = reportRepository.save(hubReportEntity);
+      return hubReportEntity.getEngagementScore();
     }
   }
 

@@ -81,7 +81,7 @@ import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
-import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
+import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.model.LeaseFilter;
@@ -99,7 +99,7 @@ import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @SpringBootTest(classes = {
-                            HubService.class,
+  HubService.class,
 })
 @ExtendWith(MockitoExtension.class)
 class HubServiceTest {
@@ -125,7 +125,7 @@ class HubServiceTest {
   private HubRepository       hubRepository;
 
   @MockBean
-  private UEMRewardRepository rewardRepository;
+  private UemRewardRepository rewardRepository;
 
   @Autowired
   private HubService          hubService;
