@@ -55,47 +55,6 @@
             </template>
             <span>{{ $t('wom.openHubReports') }}</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template #activator="{ on, attrs }">
-              <v-chip
-                :href="`${openSeaBaseLink}/${deedId}`"
-                :color="unkownHub && 'grey' || 'white'"
-                :dark="unkownHub"
-                target="_blank"
-                rel="nofollow noreferrer noopener"
-                class="overflow-hidden position-relative d-block"
-                height="36"
-                outlined
-                v-bind="attrs"
-                v-on="on"
-                @click="nop">
-                <v-card
-                  height="100%"
-                  class="position-static transparent"
-                  style="aspect-ratio: 0.5"
-                  flat>
-                  <v-card
-                    aspect-ratio="1"
-                    max-height="32"
-                    height="32"
-                    class="d-flex overflow-hidden transparent rounded-circle absolute-vertical-center"
-                    style="left: -1px"
-                    flat>
-                    <img
-                      :src="cardImage"
-                      class="ma-n1"
-                      height="auto"
-                      width="40"
-                      alt="Deed">
-                  </v-card>
-                </v-card>
-                <div class="font-weight-normal body-1 ms-2">
-                  #{{ deedId }}
-                </div>
-              </v-chip>
-            </template>
-            <span>{{ $t('wom.openDeedInOpenSea') }}</span>
-          </v-tooltip>
         </v-card-actions>
         <v-card
           :color="hubBackgroundColor" 
