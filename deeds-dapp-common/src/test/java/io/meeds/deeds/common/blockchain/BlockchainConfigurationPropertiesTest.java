@@ -37,6 +37,8 @@ import org.springframework.test.context.TestPropertySource;
     "meeds.blockchain.xMeedAddress=" + BlockchainConfigurationPropertiesTest.X_MEED_ADDRESS_VALUE,
     "meeds.blockchain.tokenFactoryAddress=" + BlockchainConfigurationPropertiesTest.TOKEN_FACTORY_ADDRESS_VALUE,
     "meeds.blockchain.sushiPairAddress=" + BlockchainConfigurationPropertiesTest.SUSHI_PAIR_ADDRESS_VALUE,
+    "meeds.blockchain.womAddress=" + BlockchainConfigurationPropertiesTest.WOM_ADDRESS_VALUE,
+    "meeds.blockchain.uemAddress=" + BlockchainConfigurationPropertiesTest.UEM_ADDRESS_VALUE,
 })
 class BlockchainConfigurationPropertiesTest {
 
@@ -59,6 +61,10 @@ class BlockchainConfigurationPropertiesTest {
   public static final String                TOKEN_FACTORY_ADDRESS_VALUE       = "TOKEN_FACTORY_ADDRESS_VALUE";
 
   public static final String                SUSHI_PAIR_ADDRESS_VALUE          = "SUSHI_PAIR_ADDRESS_VALUE";
+
+  public static final String                WOM_ADDRESS_VALUE                 = "WOM_ADDRESS_VALUE";
+
+  public static final String                UEM_ADDRESS_VALUE                 = "UEM_ADDRESS_VALUE";
 
   @Autowired
   private BlockchainConfigurationProperties blockchainConfigurationProperties;
@@ -83,8 +89,8 @@ class BlockchainConfigurationPropertiesTest {
                                                                                          X_MEED_ADDRESS_VALUE,
                                                                                          TOKEN_FACTORY_ADDRESS_VALUE,
                                                                                          SUSHI_PAIR_ADDRESS_VALUE,
-                                                                                         null,
-                                                                                         null);
+                                                                                         WOM_ADDRESS_VALUE,
+                                                                                         UEM_ADDRESS_VALUE);
     assertEquals(properties, blockchainConfigurationProperties);
     assertEquals(properties.hashCode(), blockchainConfigurationProperties.hashCode());
     assertEquals(properties.toString(), blockchainConfigurationProperties.toString());

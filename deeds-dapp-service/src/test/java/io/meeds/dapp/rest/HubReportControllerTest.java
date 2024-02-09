@@ -131,7 +131,11 @@ public class HubReportControllerTest {
 
   private double                uemRewardAmount           = 90d;
 
+  private double                engagementScore           = 1.3d;
+
   private double                hubRewardAmount           = 150d;
+
+  private double                hubTopRewardedAmount      = 39d;
 
   private Instant               updatedDate               = Instant.now();
 
@@ -144,6 +148,8 @@ public class HubReportControllerTest {
   private long                  recipientsCount           = 65l;
 
   private int                   achievementsCount         = 55698;
+
+  private int                   actionsCount              = 569;
 
   private String                rewardTokenAddress        = "0x334d85047da64738c065d36e10b2adeb965000d0";
 
@@ -211,6 +217,7 @@ public class HubReportControllerTest {
     .andExpect(jsonPath("$.participantsCount",is((int) participantsCount)))
     .andExpect(jsonPath("$.recipientsCount",is((int) recipientsCount)))
     .andExpect(jsonPath("$.achievementsCount",is(achievementsCount)))
+    .andExpect(jsonPath("$.actionsCount",is(actionsCount)))
     .andExpect(jsonPath("$.rewardTokenNetworkId",is((int) rewardTokenNetworkId)))
     .andExpect(jsonPath("$.hubRewardAmount",is(hubRewardAmount)))
     .andExpect(jsonPath("$.rewardTokenAddress",is(rewardTokenAddress)));
@@ -251,6 +258,7 @@ public class HubReportControllerTest {
             .andExpect(jsonPath("$.achievementsCount",is(achievementsCount)))
             .andExpect(jsonPath("$.rewardTokenNetworkId",is((int) rewardTokenNetworkId)))
             .andExpect(jsonPath("$.hubRewardAmount",is(hubRewardAmount)))
+            .andExpect(jsonPath("$.engagementScore",is(engagementScore)))
             .andExpect(jsonPath("$.rewardTokenAddress",is(rewardTokenAddress)));
   }
 
@@ -259,7 +267,7 @@ public class HubReportControllerTest {
   void saveReportWhenWomRequestException() throws Exception {
     doThrow(WomRequestException.class).when(reportService).saveReport(any());
     ResultActions response = mockMvc.perform(post(API_HUB_REPORTS).contentType(MediaType.APPLICATION_JSON)
-                                                                 .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
+                                                                  .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
     response.andExpect(status().isBadRequest());
   }
 
@@ -268,7 +276,7 @@ public class HubReportControllerTest {
   void saveReportWhenWomParsingException() throws Exception {
     doThrow(WomParsingException.class).when(reportService).saveReport(any());
     ResultActions response = mockMvc.perform(post(API_HUB_REPORTS).contentType(MediaType.APPLICATION_JSON)
-                                                                 .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
+                                                                  .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
     response.andExpect(status().isBadRequest());
   }
 
@@ -277,7 +285,7 @@ public class HubReportControllerTest {
   void saveReportWhenWomAuthorizationException() throws Exception {
     doThrow(WomAuthorizationException.class).when(reportService).saveReport(any());
     ResultActions response = mockMvc.perform(post(API_HUB_REPORTS).contentType(MediaType.APPLICATION_JSON)
-                                                                 .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
+                                                                  .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
     response.andExpect(status().isUnauthorized());
   }
 
@@ -286,7 +294,7 @@ public class HubReportControllerTest {
   void saveReportWhenWomException() throws Exception {
     doThrow(WomException.class).when(reportService).saveReport(any());
     ResultActions response = mockMvc.perform(post(API_HUB_REPORTS).contentType(MediaType.APPLICATION_JSON)
-                                                                 .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
+                                                                  .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
     response.andExpect(status().isInternalServerError());
   }
 
@@ -294,7 +302,7 @@ public class HubReportControllerTest {
   @WithAnonymousUser
   void saveReport() throws Exception {
     ResultActions response = mockMvc.perform(post(API_HUB_REPORTS).contentType(MediaType.APPLICATION_JSON)
-                                                                 .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
+                                                                  .content(toJsonStringNoCheckedEx(new HubReportVerifiableData())));
     response.andExpect(status().isOk());
   }
 
@@ -310,9 +318,11 @@ public class HubReportControllerTest {
                          participantsCount,
                          recipientsCount,
                          achievementsCount,
+                         actionsCount,
                          rewardTokenAddress,
                          rewardTokenNetworkId,
                          hubRewardAmount,
+                         hubTopRewardedAmount,
                          transactions(),
                          rewardId,
                          city,
@@ -328,7 +338,8 @@ public class HubReportControllerTest {
                          fraud,
                          lastPeriodUemRewardAmount,
                          uemRewardAmount,
-                         updatedDate);
+                         updatedDate,
+                         engagementScore);
   }
 
   private Instant toDate() {

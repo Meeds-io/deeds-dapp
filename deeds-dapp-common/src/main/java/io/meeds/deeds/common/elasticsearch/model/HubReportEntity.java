@@ -101,6 +101,9 @@ public class HubReportEntity {
   @Field(type = FieldType.Long)
   private long              achievementsCount;
 
+  @Field(type = FieldType.Long)
+  private long              actionsCount;
+
   @Field(type = FieldType.Text)
   private String            rewardTokenAddress;
 
@@ -112,6 +115,9 @@ public class HubReportEntity {
 
   @Field(type = FieldType.Double)
   private double            hubRewardAmount;
+
+  @Field(type = FieldType.Double)
+  private double            hubTopRewardedAmount;
 
   @Field(type = FieldType.Double)
   private double            fixedRewardIndex;
@@ -134,5 +140,8 @@ public class HubReportEntity {
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   @LastModifiedDate
   private Instant           updatedDate = Instant.now();
+
+  @Field(type = FieldType.Double)
+  private double            engagementScore;
 
 }

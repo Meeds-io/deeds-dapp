@@ -46,8 +46,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.meeds.dapp.web.rest.model.HubWithReward;
+import io.meeds.dapp.web.rest.utils.EntityBuilder;
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.model.ManagedDeed;
+import io.meeds.deeds.common.service.HubReportService;
 import io.meeds.deeds.common.service.HubService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomAuthorizationException;
@@ -77,16 +80,19 @@ public class HubController {
   @Autowired
   private HubService          hubService;
 
+  @Autowired
+  private HubReportService    hubReportService;
+
   @GetMapping
-  public ResponseEntity<PagedModel<EntityModel<Hub>>> getHubs(Pageable pageable,
-                                                              PagedResourcesAssembler<Hub> assembler,
-                                                              @RequestParam(name = "rewardId", required = false,
-                                                                            defaultValue = "0")
-                                                              long rewardId) {
+  public ResponseEntity<PagedModel<EntityModel<HubWithReward>>> getHubs(Pageable pageable,
+                                                                        PagedResourcesAssembler<HubWithReward> assembler,
+                                                                        @RequestParam(name = "rewardId", required = false,
+                                                                                      defaultValue = "0")
+                                                                        long rewardId) {
     Page<Hub> hubs = hubService.getHubs(rewardId, pageable);
     return ResponseEntity.ok()
                          .cacheControl(CacheControl.noStore())
-                         .body(assembler.toModel(hubs));
+                         .body(assembler.toModel(hubs.map(hub -> EntityBuilder.decorateHubWithReward(hub, hubReportService))));
   }
 
   @GetMapping("/{hubAddress}")
@@ -98,10 +104,11 @@ public class HubController {
     Hub hub = hubService.getHub(hubAddress, forceRefresh);
     if (hub == null) {
       return ResponseEntity.notFound().build();
+    } else {
+      return ResponseEntity.ok()
+                           .cacheControl(CacheControl.noStore())
+                           .body(EntityBuilder.decorateHubWithReward(hub, hubReportService));
     }
-    return ResponseEntity.ok()
-                         .cacheControl(CacheControl.noStore())
-                         .body(hub);
   }
 
   @GetMapping("/managed-deeds/{managerAddress}")

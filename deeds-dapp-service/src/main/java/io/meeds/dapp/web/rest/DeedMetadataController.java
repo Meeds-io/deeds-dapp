@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.dapp.web.rest.utils.EntityMapper.getDeedMetadataResponse;
+import static io.meeds.dapp.web.rest.utils.EntityBuilder.getDeedMetadataResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
