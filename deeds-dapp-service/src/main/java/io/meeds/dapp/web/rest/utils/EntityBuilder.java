@@ -24,6 +24,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +35,19 @@ import org.springframework.http.ResponseEntity.BodyBuilder;
 
 import io.meeds.dapp.web.rest.model.DeedMetadataPresentation;
 import io.meeds.dapp.web.rest.model.DeedTenantPresentation;
+import io.meeds.dapp.web.rest.model.HubWithReward;
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.TenantStatus;
 import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.service.HubReportService;
+import io.meeds.wom.api.model.Hub;
+import io.meeds.wom.api.model.HubReport;
 
-public class EntityMapper {
+public class EntityBuilder {
 
-  private EntityMapper() {
+  private EntityBuilder() {
     // Static util methods only
   }
 
@@ -64,8 +72,8 @@ public class EntityMapper {
     if (deedMetadata == null) {
       return null;
     }
-    Set<DeedMetadataAttribute> attributes = deedMetadata.getAttributes() == null ? new HashSet<>()
-                                                                                 : new HashSet<>(deedMetadata.getAttributes());
+    Set<DeedMetadataAttribute> attributes = deedMetadata.getAttributes() == null ? new HashSet<>() :
+                                                                                 new HashSet<>(deedMetadata.getAttributes());
     return new DeedMetadataPresentation(deedMetadata.getName(),
                                         deedMetadata.getDescription(),
                                         deedMetadata.getImageUrl(),
@@ -86,6 +94,22 @@ public class EntityMapper {
                                                                  TenantProvisioningStatus.STOP_CONFIRMED),
                                       Objects.requireNonNullElse(deedTenant.getTenantStatus(), TenantStatus.UNDEPLOYED),
                                       epochSecond);
+  }
+
+  public static HubWithReward decorateHubWithReward(Hub hub, HubReportService hubReportService) {
+    Page<HubReport> reports = hubReportService.getReportsByHub(hub.getAddress(),
+                                                               PageRequest.of(0, 2, Sort.by(Direction.DESC, "sentDate")));
+    HubReport lastSentReport = reports.stream()
+                                      .findFirst()
+                                      .orElse(null);
+    HubReport lastRewardedReport = reports.stream()
+                                          .filter(r -> hubReportService.computeEngagementScore(r.getReportId()) > 0)
+                                          .findFirst()
+                                          .orElse(null);
+    return new HubWithReward(hub,
+                             lastSentReport == null ? 0l : lastSentReport.getActionsCount(),
+                             lastSentReport == null ? 0d : lastSentReport.getHubTopRewardedAmount(),
+                             lastRewardedReport == null ? 0d : lastRewardedReport.getEngagementScore());
   }
 
   private static void applyCache(BodyBuilder response) {

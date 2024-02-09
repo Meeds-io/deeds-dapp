@@ -32,7 +32,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
-import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
+import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.utils.UemRewardMapper;
 import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.UemReward;
@@ -52,7 +52,7 @@ public class UemRewardService {
   private ListenerService     listenerService;
 
   @Autowired
-  private UEMRewardRepository rewardRepository;
+  private UemRewardRepository rewardRepository;
 
   public Page<UemReward> getRewards(String hubAddress, Pageable pageable) {
     pageable = pageable.isUnpaged() ? pageable :

@@ -58,7 +58,7 @@ import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
-import io.meeds.deeds.common.elasticsearch.storage.UEMRewardRepository;
+import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.model.LeaseFilter;
@@ -128,7 +128,7 @@ public class HubService {
   private HubRepository       hubRepository;
 
   @Autowired
-  private UEMRewardRepository rewardRepository;
+  private UemRewardRepository rewardRepository;
 
   private Map<String, Long>   tokens                     = new ConcurrentHashMap<>();
 
