@@ -51,6 +51,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
@@ -66,6 +67,7 @@ import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
 import io.meeds.deeds.common.model.FileBinary;
 import io.meeds.deeds.common.model.ManagedDeed;
+import io.meeds.deeds.common.service.HubReportService;
 import io.meeds.deeds.common.service.HubService;
 import io.meeds.wom.api.constant.ObjectNotFoundException;
 import io.meeds.wom.api.constant.WomAuthorizationException;
@@ -102,6 +104,9 @@ public class HubControllerTest {
 
   @MockBean
   private HubService            hubService;
+
+  @MockBean
+  private HubReportService      reportService;
 
   @Autowired
   private WebApplicationContext context;
@@ -173,6 +178,7 @@ public class HubControllerTest {
   @WithAnonymousUser
   void getHubs() throws Exception {
     when(hubService.getHubs(eq(0l), any())).thenReturn(new PageImpl<>(Arrays.asList(newHub())));
+    when(reportService.getReportsByHub(eq(hubAddress), any())).thenReturn(Page.empty());
     ResultActions response = mockMvc.perform(get(API_HUBS));
     response.andExpect(status().isOk())
             .andExpect(jsonPath("$.page.totalPages",is(1)));
@@ -189,6 +195,7 @@ public class HubControllerTest {
   @WithAnonymousUser
   void getHub() throws Exception {
     when(hubService.getHub(hubAddress, false)).thenReturn(newHub());
+    when(reportService.getReportsByHub(eq(hubAddress), any())).thenReturn(Page.empty());
     ResultActions response = mockMvc.perform(get(API_HUBS + "/" + hubAddress));
     response.andExpect(status().isOk())
             .andExpect(jsonPath("$.deedId",is((int) deedId))) // NOSONAR

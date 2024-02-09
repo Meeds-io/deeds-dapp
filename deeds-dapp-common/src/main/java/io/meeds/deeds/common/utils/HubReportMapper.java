@@ -53,17 +53,20 @@ public class HubReportMapper {
                                report.getParticipantsCount(),
                                report.getRecipientsCount(),
                                report.getAchievementsCount(),
+                               report.getActionsCount(),
                                StringUtils.lowerCase(report.getRewardTokenAddress()),
                                report.getRewardTokenNetworkId(),
                                lowerCase(report.getTransactions()),
                                report.getHubRewardAmount(),
+                               report.getHubTopRewardedAmount(),
                                report.getFixedRewardIndex(),
                                report.getOwnerFixedIndex(),
                                report.getTenantFixedIndex(),
                                report.isFraud(),
                                report.getLastPeriodUemRewardAmount(),
                                report.getUemRewardAmount(),
-                               report.getUpdatedDate());
+                               report.getUpdatedDate(),
+                               report.getEngagementScore());
   }
 
   public static HubReport fromEntity(HubReportEntity entity) {
@@ -78,9 +81,11 @@ public class HubReportMapper {
                          entity.getParticipantsCount(),
                          entity.getRecipientsCount(),
                          entity.getAchievementsCount(),
+                         entity.getActionsCount(),
                          entity.getRewardTokenAddress(),
                          entity.getRewardTokenNetworkId(),
                          entity.getHubRewardAmount(),
+                         entity.getHubTopRewardedAmount(),
                          entity.getTransactions(),
                          entity.getRewardId(),
                          entity.getCity(),
@@ -96,7 +101,8 @@ public class HubReportMapper {
                          entity.isFraud(),
                          entity.getLastPeriodUemRewardAmount(),
                          entity.getUemRewardAmount(),
-                         entity.getUpdatedDate());
+                         entity.getUpdatedDate(),
+                         entity.getEngagementScore());
   }
 
   public static SortedSet<String> lowerCase(SortedSet<String> transactions) {

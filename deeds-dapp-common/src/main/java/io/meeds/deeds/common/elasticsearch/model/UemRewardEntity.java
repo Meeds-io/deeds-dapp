@@ -45,30 +45,30 @@ public class UemRewardEntity {
 
   @Id
   @Field(type = FieldType.Long)
-  private Long                rewardId;
+  private Long        rewardId;
 
   /**
    * Total UEM reward budget
    */
   @Field(type = FieldType.Double)
-  private double              amount;
+  private double      amount;
 
   @Field(type = FieldType.Double)
-  private double              fixedGlobalIndex;
+  private double      fixedGlobalIndex;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             fromDate;
+  private Instant     fromDate;
 
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
-  private Instant             toDate;
+  private Instant     toDate;
 
   @Field(type = FieldType.Long)
-  private List<Long>          reportIds;
+  private List<Long>  reportIds;
 
   @Field(type = FieldType.Keyword)
-  private Set<String>         hubAddresses;
+  private Set<String> hubAddresses;
 
   @Field(type = FieldType.Double)
-  private double              sumEd;
+  private double      sumEd;
 
 }
