@@ -154,6 +154,7 @@
     </plugins>
   </build>
 
+  <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus
   <repositories>
     <repository>
       <id>hyperledger</id>
@@ -166,5 +167,6 @@
       </snapshots>
     </repository>
   </repositories>
+  -->
 
 </project>
