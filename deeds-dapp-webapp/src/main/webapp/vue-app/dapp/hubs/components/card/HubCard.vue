@@ -136,24 +136,40 @@
               <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
             </div>
             <div class="d-flex flex-column align-center">
-              <div v-if="hubActionsCount" class="d-flex align-center justify-center mb-auto me-auto">
-                <v-icon size="22" class="secondary--text me-2">fas fa-trophy</v-icon>
-                <div class="text-light-color font-weight-normal">
-                  {{ hubActionsCountFormatted }}
-                </div>
-              </div>
-              <div v-if="topHubReceiverAmount" class="d-flex align-center justify-center mt-1 ms-auto">
-                <img
-                  :src="`${parentLocation}/static/images/meed_circle.webp`"
-                  :alt="$t('page.token')"
-                  width="25"
-                  height="25"
-                  class="me-2">
-                <div class="text-light-color d-flex font-weight-normal">
-                  {{ topHubReceiverAmountFormatted }}
-                  <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
-                </div>
-              </div>
+              <v-tooltip v-if="hubActionsCount" bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    v-on="on"
+                    v-bind="attrs"
+                    class="d-flex align-center justify-center mb-auto me-auto">
+                    <v-icon size="22" class="secondary--text me-2">fas fa-trophy</v-icon>
+                    <div class="text-light-color font-weight-normal">
+                      {{ hubActionsCountFormatted }}
+                    </div>
+                  </div>
+                </template>
+                <span>{{ $t('wom.availableActionsForContributors', {0: hubActionsCountFormatted}) }}</span>
+              </v-tooltip>
+              <v-tooltip v-if="topHubReceiverAmount" bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    v-on="on"
+                    v-bind="attrs"
+                    class="d-flex align-center justify-center mt-1 ms-auto">
+                    <img
+                      :src="`${parentLocation}/static/images/meed_circle.webp`"
+                      :alt="$t('page.token')"
+                      width="25"
+                      height="25"
+                      class="me-2">
+                    <div class="text-light-color d-flex font-weight-normal">
+                      {{ topHubReceiverAmountFormatted }}
+                      <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
+                    </div>
+                  </div>
+                </template>
+                <span>{{ $t('wom.maxRewardAmountEarned') }}</span>
+              </v-tooltip>
             </div>
           </div>
         </v-card>
