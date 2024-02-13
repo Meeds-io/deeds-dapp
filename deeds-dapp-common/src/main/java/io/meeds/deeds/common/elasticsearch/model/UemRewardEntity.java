@@ -56,6 +56,9 @@ public class UemRewardEntity {
   @Field(type = FieldType.Double)
   private double      fixedGlobalIndex;
 
+  @Field(type = FieldType.Double)
+  private double      averageEngagementScore;
+
   @Field(type = FieldType.Date, format = DateFormat.basic_date_time, storeNullValue = true)
   private Instant     fromDate;
 

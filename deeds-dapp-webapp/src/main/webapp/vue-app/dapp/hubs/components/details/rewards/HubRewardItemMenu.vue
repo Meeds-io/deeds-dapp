@@ -1,7 +1,8 @@
 <template>
   <div>
     <v-btn
-      :title="expanded && $t('wom.close') || $t('wom.details')"
+      v-if="expanded"
+      :title="$t('wom.close')"
       :loading="loading"
       icon
       small
