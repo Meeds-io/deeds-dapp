@@ -75,7 +75,7 @@
             contain />
         </v-card>
         <v-card
-          class="d-flex flex-column pt-2 px-4 pb-4 overflow-hidden"
+          class="d-flex flex-column pt-2 px-4 pb-4 overflow-hidden text-start"
           height="170px"
           flat>
           <div class="ms-10 ps-15 text-truncate">

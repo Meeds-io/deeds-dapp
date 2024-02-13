@@ -29,14 +29,20 @@
       v-else-if="hub.reportNotFound"
       :report-id="hub.reportId" />
     <template v-else>
-      <deeds-hub-card
-        :hub="hub"
-        class="col-4 pa-0"
-        standalone />
+      <div class="d-flex flex-wrap align-center justify-center">
+        <deeds-hub-card
+          :hub="hub"
+          class="col-12 col-md-4 pa-0 ma-2"
+          standalone />
+        <deeds-hub-card-chart
+          :hub="hub"
+          class="col-12 col-md-4 pa-0 ma-2" />
+      </div>
       <deeds-hub-details-rewards
         :hub="hub"
         :selected-report="selectedReport"
-        class="mt-4" />
+        class="mt-4"
+        @report-expanded="selectReport" />
     </template>
   </v-card>
 </template>
@@ -54,15 +60,13 @@ export default {
     selectedReport: null,
   }),
   computed: Vuex.mapState({
-    address: state => state.address,
-    tenantProvisioningContract: state => state.tenantProvisioningContract,
+    isMobile: state => state.isMobile,
     deedId() {
       return this.hub?.deedId;
     },
   }),
   watch: {
     hub() {
-      this.checkManager();
       if (this.initialized) {
         this.refreshUrl();      
       }
@@ -99,12 +103,6 @@ export default {
         }
       }
     },
-    checkManager() {
-      if (this.address && this.deedId) {
-        return this.tenantProvisioningContract.isProvisioningManager(this.address, this.deedId)
-          .then(provisioningManager => this.isManager = provisioningManager);
-      }
-    },
     refresh(hubAddress, hubReportId) {
       this.loading = true;
       return this.$hubService.getHub(hubAddress)
@@ -125,6 +123,11 @@ export default {
           }
         })
         .finally(() => this.loading = false);
+    },
+    selectReport(reportId) {
+      if (reportId !== this.selectedReport?.reportId) {
+        this.selectedReport = null;
+      }
     },
     refreshUrl() {
       if (!this.hub || (!this.hub.notFound && !this.hub.reportNotFound)) {
