@@ -6,7 +6,8 @@
     <v-scale-transition>
       <v-card
         :loading="loading"
-        class="overflow-y-auto fill-height"
+        :class="expand && 'overflow-y-auto' || 'overflow-hidden'"
+        class="fill-height"
         flat>
         <v-card-title class="title d-flex flex-sm-nowrap">
           <v-icon
@@ -35,9 +36,6 @@
         <v-card-text
           :class="expand && 'mt-4 pb-6' || 'mt-n2 pb-2'"
           class="d-flex flex-wrap">
-          <deeds-hub-details-reward-status
-            :report="report"
-            class="me-2 mt-2" />
           <deeds-hub-blockchain-chip
             :network-id="blockchainNetworkId"
             class="mt-2 me-2" />
@@ -48,51 +46,156 @@
             class="mt-2 me-2"
             small
             token />
+          <v-spacer />
+          <deeds-hub-deed-chip
+            :deed="report"
+            :height="24"
+            color="grey lighten-2"
+            font-color="text-color"
+            class="ms-2 mt-2"
+            small />
         </v-card-text>
-        <v-list :class="expand && 'py-0 px-2' || 'pa-0'">
+        <v-list
+          v-if="!expand"
+          class="pa-0 mt-2">
           <v-row
-            class="mx-0 border-box-sizing"
-            no-gutters
+            class="mx-4 mb-4 border-box-sizing"
             dense>
             <v-col
               cols="12"
               sm="6">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title :title="$t('wom.participantsCount')">{{ $t('wom.participantsCount') }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ participantsCount }} {{ $t('wom.users') }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+              <div class="d-flex align-center fill-height flex-grow-1">
+                <v-icon size="45" class="secondary--text me-3">fa-rocket</v-icon>
+                <div class="d-flex justify-center text-start flex-grow-1">
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <div
+                        v-on="on"
+                        v-bind="attrs"
+                        :class="engagementScoreClass"
+                        class="title font-weight-bold my-auto">
+                        {{ engagementScoreFormatted }}
+                      </div>
+                    </template>
+                    <span>{{ $t('hubs.engagementScore') }}</span>
+                  </v-tooltip>
+                  <v-spacer />
+                  <div class="text-light-color caption font-weight-bold my-auto me-2">
+                    <v-tooltip
+                      v-if="reward"
+                      bottom>
+                      <template #activator="{ on, attrs }">
+                        <v-chip
+                          v-on="on"
+                          v-bind="attrs"
+                          :color="engagementRateColor"
+                          class="px-1"
+                          outlined
+                          x-small>
+                          <span class="font-weight-bold">
+                            {{ engagementRatePercentage }}
+                          </span>
+                        </v-chip>
+                      </template>
+                      <span>{{ $t('uem.engagementRatePercentage') }}</span>
+                    </v-tooltip>
+                  </div>
+                </div>
+              </div>
             </v-col>
             <v-col
               cols="12"
               sm="6">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title :title="$t('wom.recipientsCount')">{{ $t('wom.recipientsCount') }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ recipientsCount }} {{ $t('wom.users') }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+              <div class="d-flex align-center me-auto fill-height">
+                <v-icon size="45" class="secondary--text me-3">fa-coins</v-icon>
+                <v-tooltip bottom>
+                  <template #activator="{ on, attrs }">
+                    <div
+                      v-on="on"
+                      v-bind="attrs"
+                      class="title font-weight-bold my-auto">
+                      {{ uemRewardAmountFormatted }} {{ $t('meedsSymbol') }}
+                    </div>
+                  </template>
+                  <span>{{ $t('uem.mintiumRewards') }}</span>
+                </v-tooltip>
+              </div>
             </v-col>
             <v-col
               cols="12"
               sm="6">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title :title="$t('wom.achievementsCount')">{{ $t('wom.achievementsCount') }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ achievementsCount }} {{ $t('wom.achievements') }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+              <div class="d-flex align-center mb-2">
+                <v-card
+                  width="28"
+                  min-width="28"
+                  class="me-2 d-flex align-center justify-center"
+                  flat>
+                  <v-icon size="22" class="secondary--text">fa-user-check</v-icon>
+                </v-card>
+                <div class="text-truncate">
+                  {{ recipientsCount }} {{ $t('wom.recipientsCount') }}
+                </div>
+              </div>
             </v-col>
             <v-col
               cols="12"
               sm="6">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title :title="$t('wom.usersRewardAmount')">{{ $t('wom.usersRewardAmount') }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ hubRewardAmount }} Ɱ</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
+              <div class="d-flex align-center mb-2">
+                <v-card
+                  width="28"
+                  min-width="28"
+                  class="me-2 d-flex align-center justify-center"
+                  flat>
+                  <v-icon size="22" class="secondary--text">fa-users</v-icon>
+                </v-card>
+                <div class="text-truncate">
+                  {{ usersCount }} {{ $t('wom.usersCount') }}
+                </div>
+              </div>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6">
+              <div class="d-flex align-center">
+                <v-card
+                  width="28"
+                  min-width="28"
+                  class="me-2 d-flex align-center justify-center"
+                  flat>
+                  <v-icon size="22" class="secondary--text">fa-trophy</v-icon>
+                </v-card>
+                <div class="text-truncate">
+                  {{ achievementsCount }} {{ $t('wom.achievementsCount') }}
+                </div>
+              </div>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6">
+              <v-tooltip bottom>
+                <template #activator="{ on, attrs }">
+                  <div
+                    v-on="on"
+                    v-bind="attrs"
+                    class="d-flex align-center">
+                    <v-card
+                      width="28"
+                      min-width="28"
+                      class="me-2 d-flex align-center justify-center"
+                      flat>
+                      <img
+                        :src="`${parentLocation}/static/images/meed_circle.webp`"
+                        :alt="$t('page.token')"
+                        width="25"
+                        height="25">
+                    </v-card>
+                    <div class="text-truncate">
+                      {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }} / {{ hubRewardsPeriod }}
+                    </div>
+                  </div>
+                </template>
+                <span>{{ $t('wom.maxRewardAmountEarned') }}</span>
+              </v-tooltip>
             </v-col>
           </v-row>
         </v-list>
@@ -114,6 +217,7 @@ export default {
   },
   data: () => ({
     loading: false,
+    reward: null,
     dateFormat: {
       year: 'numeric',
       month: 'short',
@@ -122,15 +226,16 @@ export default {
   }),
   computed: Vuex.mapState({
     language: state => state.language,
+    parentLocation: state => state.parentLocation,
     componentProps() {
       return this.expand && {
         value: true,
         eager: true,
         fullscreen: true,
       } || {
-        elevation: 0,
+        outlined: true,
         hover: true,
-        class: 'border-color',
+        class: 'rounded-lg',
       };
     },
     componentEvents() {
@@ -152,33 +257,14 @@ export default {
     toDate() {
       return this.report?.toDate;
     },
-    participantsCount() {
-      return new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.report?.participantsCount || 0);
+    usersCount() {
+      return this.formatNumber(this.report?.usersCount || 0);
     },
     recipientsCount() {
-      return new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.report?.recipientsCount || 0);
+      return this.formatNumber(this.report?.recipientsCount || 0);
     },
     achievementsCount() {
-      return new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.report?.achievementsCount || 0);
-    },
-    hubRewardAmount() {
-      return new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.report?.hubRewardAmount || 0);
+      return this.formatNumber(this.report?.achievementsCount || 0);
     },
     blockchainNetworkId() {
       return this.report?.rewardTokenNetworkId || 0;
@@ -186,6 +272,79 @@ export default {
     tokenAddress() {
       return this.report?.rewardTokenAddress || 0;
     },
+    uemRewardAmount() {
+      return this.report?.uemRewardAmount || 0;
+    },
+    uemRewardAmountFormatted() {
+      return this.formatNumber(this.uemRewardAmount);
+    },
+    engagementScore() {
+      return this.report?.engagementScore || 0;
+    },
+    engagementScoreFormatted() {
+      return this.engagementScore && new Intl.NumberFormat(this.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }).format(this.engagementScore);
+    },
+    engagementScoreClass() {
+      if (!this.engagementScore) {
+        return 'text-light-color';
+      } else if (this.engagementScore > 11) {
+        return 'success--text';
+      } else if (this.engagementScore < 9) {
+        return 'error--text';
+      } else {
+        return 'text-light-color';
+      }
+    },
+    rewardId() {
+      return this.report?.rewardId;
+    },
+    fixedGlobalIndex() {
+      return this.reward?.fixedGlobalIndex;
+    },
+    fixedRewardIndex() {
+      return this.report?.fixedRewardIndex;
+    },
+    engagementRate() {
+      return this.fixedRewardIndex / this.fixedGlobalIndex;
+    },
+    engagementRateColor() {
+      return this.engagementRate >= 1 && 'success' || 'error';
+    },
+    engagementRatePercentage() {
+      return this.$utils.percentage(this.engagementRate - 1, true, '0');
+    },
+    hubRewardsPeriodType() {
+      return this.report?.periodType?.toLowerCase();
+    },
+    hubRewardsPeriod() {
+      return this.$t(`wom.${this.hubRewardsPeriodType}`);
+    },
+    hubTopRewardedAmount() {
+      return this.report?.hubTopRewardedAmount || 0;
+    },
+    hubTopRewardedAmountFormatted() {
+      return this.formatNumber(this.hubTopRewardedAmount);
+    },
   }),
+  created() {
+    this.$hubReportService.getReward(this.rewardId)
+      .then(data => this.reward = data);
+  },
+  methods: {
+    formatNumber(num) {
+      const useKilo = num >= 1000;
+      const value = useKilo ? num / 1000 : num;
+      const formatted = new Intl.NumberFormat(this.language, {
+        style: 'decimal',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: useKilo && 1 || (value < 1 && 2 || 0),
+      }).format(value);
+      return useKilo ? this.$t('kilo', {0: formatted}) : formatted;
+    },
+  },
 };
 </script>
