@@ -32,41 +32,34 @@ export function getReports(paramsObj) {
   return fetch(`${window.parentAppLocation}/api/hub/reports?${params}`, {
     method: 'GET',
   }).then((resp) => {
-    if (resp?.status === 200) {
+    if (resp?.ok) {
       return resp.json();
-    } else if (resp?.status === 404) {
-      return null;
     } else {
-      return handleResponseError(resp);
+      throw new Error(`Error getting hub reports with params ${params}`);
     }
   });
 }
 
-export function getReport(hash) {
-  return fetch(`${window.parentAppLocation}/api/hub/reports/${hash}`, {
+export function getReport(id) {
+  return fetch(`${window.parentAppLocation}/api/hub/reports/${id}`, {
     method: 'GET',
   }).then((resp) => {
-    if (resp?.status === 200) {
+    if (resp?.ok) {
       return resp.json();
-    } else if (resp?.status === 404) {
-      return null;
     } else {
-      return handleResponseError(resp);
+      throw new Error(`Error getting hub report with id ${id}`);
     }
   });
 }
 
-export function getErrorKey(error) {
-  try {
-    return JSON.parse(error).messageKey.split(':')[0];
-  } catch (e) {
-    return String(error).split(':')[0];
-  }
-}
-
-function handleResponseError(resp) {
-  return resp.text()
-    .then(error => {
-      throw new Error(getErrorKey(error));
-    });
+export function getReward(id) {
+  return fetch(`${window.parentAppLocation}/api/uem/rewards/${id}`, {
+    method: 'GET',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.json();
+    } else {
+      throw new Error(`Error getting UEM reward with id ${id}`);
+    }
+  });
 }

@@ -28,19 +28,16 @@ import HubDetails from './components/details/HubDetails.vue';
 import HubNotFound from './components/details/HubNotFound.vue';
 import HubReportNotFound from './components/details/HubReportNotFound.vue';
 
-import HubDeedCard from './components/details/card/HubDeedCard.vue';
 import HubDeedCardTopbar from './components/details/header/HubDeedCardTopbar.vue';
-
-import HubDisconnectionDrawer from './components/details/drawer/HubDisconnectionDrawer.vue';
 
 import HubRewards from './components/details/rewards/HubRewards.vue';
 import HubRewardItem from './components/details/rewards/HubRewardItem.vue';
 import HubRewardItemMenu from './components/details/rewards/HubRewardItemMenu.vue';
-import HubRewardStatus from './components/details/rewards/HubRewardStatus.vue';
 
 import Address from './components/common/Address.vue';
 import AddressIcon from './components/common/AddressIcon.vue';
 import BlockchainChip from './components/common/BlockchainChip.vue';
+import DeedChip from './components/common/DeedChip.vue';
 import DeedManagerSelector from './components/common/DeedManagerSelector.vue';
 import MetamaskButton from './components/common/MetamaskButton.vue';
 
@@ -55,19 +52,16 @@ const components = {
   'deeds-hub-details': HubDetails,
   'deeds-hub-not-found': HubNotFound,
   'deeds-hub-report-not-found': HubReportNotFound,
-  'deeds-hub-details-deed-card': HubDeedCard,
   'deeds-hub-details-deed-card-topbar': HubDeedCardTopbar,
   'deeds-hub-details-rewards': HubRewards,
   'deeds-hub-details-reward-item': HubRewardItem,
   'deeds-hub-details-reward-item-menu': HubRewardItemMenu,
-  'deeds-hub-details-reward-status': HubRewardStatus,
-
-  'deeds-hub-disconnection-drawer': HubDisconnectionDrawer,
 
   'deeds-hub-address': Address,
   'deeds-hub-address-icon': AddressIcon,
   'deeds-hub-blockchain-chip': BlockchainChip,
   'deeds-hub-deed-manager-selector': DeedManagerSelector,
+  'deeds-hub-deed-chip': DeedChip,
   'deeds-hub-metamask-button': MetamaskButton,
 };
 

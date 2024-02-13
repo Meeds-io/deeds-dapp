@@ -20,10 +20,9 @@
 -->
 <template>
   <v-card
-    :disabled="unkownHub || disconnected"
     :href="hubUrl"
     target="_blank"
-    class="full-width no-border"
+    class="no-border"
     flat>
     <v-hover v-slot="{hover}">
       <v-card
@@ -32,12 +31,12 @@
         max-height="270px"
         hover
         outlined>
-        <v-card-actions v-if="deedId" class="position-absolute z-index-two r-0">
+        <v-card-actions v-if="!standalone" class="position-absolute z-index-two r-0">
           <v-tooltip bottom>
             <template #activator="{ on, attrs }">
               <v-slide-y-transition>
                 <v-btn
-                  v-show="hover"
+                  v-show="hover || isMobile"
                   icon
                   small
                   dense
@@ -184,6 +183,10 @@ export default {
       type: Object,
       default: null,
     },
+    standalone: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: Vuex.mapState({
     language: state => state.language,
@@ -191,6 +194,7 @@ export default {
     cardTypes: state => state.cardTypes,
     cities: state => state.cities,
     formLink: state => state.formLink,
+    isMobile: state => state.isMobile,
     openSeaBaseLink: state => state.openSeaBaseLink,
     hubName() {
       return this.language === 'fr' && this.hub?.name?.fr || this.hub?.name?.en;
