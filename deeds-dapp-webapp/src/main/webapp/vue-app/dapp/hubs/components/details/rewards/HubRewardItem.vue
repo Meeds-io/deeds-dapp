@@ -305,11 +305,17 @@ export default {
     fixedGlobalIndex() {
       return this.reward?.fixedGlobalIndex;
     },
+    hubsCount() {
+      return this.reward?.reportIds?.length;
+    },
     fixedRewardIndex() {
       return this.report?.fixedRewardIndex;
     },
+    averageFixedRewardIndex() {
+      return this.hubsCount && this.fixedGlobalIndex / this.hubsCount || this.fixedRewardIndex;
+    },
     engagementRate() {
-      return this.fixedRewardIndex / this.fixedGlobalIndex;
+      return this.fixedRewardIndex / this.averageFixedRewardIndex;
     },
     engagementRateColor() {
       return this.engagementRate >= 1 && 'success' || 'error';

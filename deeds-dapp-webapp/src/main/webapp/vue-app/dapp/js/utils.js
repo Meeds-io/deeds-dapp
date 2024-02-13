@@ -55,8 +55,8 @@ export function sortByName(tab, lang) {
   }
 }
 
-export function refreshHubUrl(hubAddress, reportHash) {
-  const link = hubAddress && reportHash && `${window.location.pathname}?address=${hubAddress}&report=${reportHash}`
+export function refreshHubUrl(hubAddress, reportId) {
+  const link = hubAddress && reportId && `${window.location.pathname}?address=${hubAddress}&report=${reportId}`
       || (hubAddress && `${window.location.pathname}?address=${hubAddress}`)
       || window.location.pathname;
   if (!window.location.href !== link) {

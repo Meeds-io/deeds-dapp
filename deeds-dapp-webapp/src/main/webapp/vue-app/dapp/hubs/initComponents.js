@@ -22,6 +22,7 @@ import HubsList from './components/HubsList.vue';
 import HubsIntroduction from './components/list/HubsIntroduction.vue';
 
 import HubCard from './components/card/HubCard.vue';
+import HubReportChart from './components/card/HubReportChart.vue';
 import UpcominHubCard from './components/card/UpcominHubCard.vue';
 
 import HubDetails from './components/details/HubDetails.vue';
@@ -47,6 +48,7 @@ const components = {
   'deeds-hubs-introduction': HubsIntroduction,
 
   'deeds-hub-card': HubCard,
+  'deeds-hub-card-chart': HubReportChart,
   'deeds-hub-upcoming-card': UpcominHubCard,
 
   'deeds-hub-details': HubDetails,

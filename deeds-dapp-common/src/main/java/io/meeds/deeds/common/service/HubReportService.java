@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +51,7 @@ import lombok.SneakyThrows;
 @Component
 public class HubReportService {
 
-  public static final String  HUB_REPORT_SAVED          = "uem.report.saved";
+  public static final String  HUB_REPORT_SAVED = "uem.report.saved";
 
   @Autowired
   private BlockchainService   blockchainService;
@@ -65,14 +64,6 @@ public class HubReportService {
 
   @Autowired
   private UemRewardRepository rewardRepository;
-
-  /**
-   * Used to force compute Engagement Score of last sent report
-   * else it will compute the engagement score of the last rewarded
-   * report only (ignoring current period reports)
-   */
-  @Value("${meeds.uem.lastReportEngagementScore:false}")
-  private boolean             lastReportEngagementScore = false;
 
   public Page<HubReport> getReportsByHub(String hubAddress, Pageable pageable) {
     return getReports(hubAddress, 0, pageable);
@@ -187,10 +178,10 @@ public class HubReportService {
 
   public double computeEngagementScore(long reportId) {
     HubReportEntity hubReportEntity = reportRepository.findById(reportId).orElseThrow();
-    boolean isRewardedPeriod = lastReportEngagementScore || hubReportEntity.getSentDate()
-                                                                           .atZone(ZoneOffset.UTC)
-                                                                           .toLocalDate()
-                                                                           .isBefore(LocalDate.now().with(DayOfWeek.MONDAY));
+    boolean isRewardedPeriod = hubReportEntity.getSentDate()
+                                              .atZone(ZoneOffset.UTC)
+                                              .toLocalDate()
+                                              .isBefore(LocalDate.now().with(DayOfWeek.MONDAY));
     if (!isRewardedPeriod) {
       return 0d;
     } else if (hubReportEntity.getEngagementScore() > 0) {

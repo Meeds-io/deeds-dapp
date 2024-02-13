@@ -73,7 +73,7 @@ export default {
   data: () => ({
     reports: [],
     loading: false,
-    pageSize: 10,
+    pageSize: 12,
     page: -1,
     hasMore: false,
     expandedReportId: null,
