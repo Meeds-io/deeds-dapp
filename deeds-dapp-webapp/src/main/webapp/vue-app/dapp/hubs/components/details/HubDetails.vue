@@ -29,10 +29,15 @@
       v-else-if="hub.reportNotFound"
       :report-id="hub.reportId" />
     <template v-else>
-      <deeds-hub-card
-        :hub="hub"
-        class="col-4 pa-0"
-        standalone />
+      <div class="d-flex flex-wrap align-center justify-center">
+        <deeds-hub-card
+          :hub="hub"
+          class="col-4 pa-0 mx-2"
+          standalone />
+        <deeds-hub-card-chart
+          :hub="hub"
+          class="col-4 pa-0 mx-2" />
+      </div>
       <deeds-hub-details-rewards
         :hub="hub"
         :selected-report="selectedReport"
