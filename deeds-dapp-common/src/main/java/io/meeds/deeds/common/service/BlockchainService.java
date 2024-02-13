@@ -895,8 +895,10 @@ public class BlockchainService {
       return 0d;
     }
     BigInteger periodicRewardAmount = uemContract.periodicRewardAmount().send();
-    return BigDecimal.valueOf(periodicRewardAmount.doubleValue()).divide(BigDecimal.valueOf(10l).pow(18),
-                                                                         MathContext.DECIMAL128).doubleValue();
+    return BigDecimal.valueOf(periodicRewardAmount.doubleValue())
+                     .divide(BigDecimal.valueOf(10l).pow(18),
+                             MathContext.DECIMAL128)
+                     .doubleValue();
   }
 
   @SneakyThrows
@@ -947,6 +949,9 @@ public class BlockchainService {
     Tuple10<String, BigInteger, BigInteger, BigInteger, BigInteger, BigInteger, String, BigInteger, BigInteger, BigInteger> hubReport =
                                                                                                                                       uemContract.hubReports(reportId)
                                                                                                                                                  .send();
+    if (StringUtils.equals(hubReport.component1(), EnsUtils.EMPTY_ADDRESS)) {
+      throw new IllegalStateException("Report with id " + report.getReportId() + " doesn't exist in Blockchain");
+    }
     report.setHubAddress(StringUtils.lowerCase(hubReport.component1()));
     report.setUsersCount(hubReport.component2().longValue());
     report.setRecipientsCount(hubReport.component3().longValue());

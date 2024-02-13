@@ -29,16 +29,14 @@
       v-else-if="hub.reportNotFound"
       :report-id="hub.reportId" />
     <template v-else>
-      <deeds-hub-details-deed-card
+      <deeds-hub-card
         :hub="hub"
-        :is-manager="isManager" />
+        class="col-4 pa-0"
+        standalone />
       <deeds-hub-details-rewards
         :hub="hub"
         :selected-report="selectedReport"
         class="mt-4" />
-      <deeds-hub-disconnection-drawer
-        ref="disconnectionDrawer"
-        :hub="hub" />
     </template>
   </v-card>
 </template>
