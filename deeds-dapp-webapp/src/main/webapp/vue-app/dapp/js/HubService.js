@@ -32,10 +32,10 @@ export function getHubs(paramsObj) {
   return fetch(`${window.parentAppLocation}/api/hubs?${params}`, {
     method: 'GET',
   }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error(`Error getting hubs with params ${JSON.stringify(paramsObj)}`);
-    } else {
+    if (resp?.ok) {
       return resp.json();
+    } else {
+      throw new Error(`Error getting hubs with params ${JSON.stringify(paramsObj)}`);
     }
   });
 }
@@ -44,52 +44,10 @@ export function getHub(address) {
   return fetch(`${window.parentAppLocation}/api/hubs/${address}`, {
     method: 'GET',
   }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error(`Error getting hub with address ${address}`);
-    } else {
+    if (resp?.ok) {
       return resp.json();
-    }
-  });
-}
-
-export function getToken() {
-  return fetch(`${window.parentAppLocation}/api/hubs/token`, {
-    method: 'GET',
-  }).then(resp => {
-    if (!resp || !resp.ok) {
-      throw new Error('Error getting hub Token');
     } else {
-      return resp.text();
+      throw new Error(`Error getting hub with address ${address}`);
     }
   });
-}
-
-export function disconnectFromWoM(request) {
-  return fetch(`${window.parentAppLocation}/api/hubs`, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(request),
-  }).then((resp) => {
-    if (!resp?.ok) {
-      return handleResponseError(resp);
-    }
-  });
-}
-
-export function getErrorKey(error) {
-  try {
-    return JSON.parse(error).messageKey.split(':')[0];
-  } catch (e) {
-    return String(error).split(':')[0];
-  }
-}
-
-function handleResponseError(resp) {
-  return resp.text()
-    .then(error => {
-      throw new Error(getErrorKey(error));
-    });
 }

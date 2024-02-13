@@ -182,6 +182,7 @@ public class HubReportService {
                         reportRepository.save(hubReportEntity);
                       });
     }
+    computeEngagementScore(report.getReportId());
   }
 
   public double computeEngagementScore(long reportId) {

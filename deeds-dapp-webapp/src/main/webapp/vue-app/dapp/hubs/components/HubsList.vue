@@ -35,7 +35,7 @@
       lg="4"
       md="12">
       <v-slide-x-transition>
-        <deeds-hub-card :hub="hub" />
+        <deeds-hub-card :hub="hub" class="full-width" />
       </v-slide-x-transition>
     </v-col>
     <v-col cols="12">
@@ -310,10 +310,10 @@ export default {
         size: this.pageSize,
       })
         .then(data => {
-          const hubs = data?._embedded?.hubs;
+          const hubs = data?._embedded?.hubs || [];
           if (hubs?.length) {
             this.hubs = this.hubs.filter(h => !hubs.find(hub => hub.deedId === h.upcomingDeedId));
-            this.hubs.unshift(...hubs);
+            this.hubs.unshift(...hubs.filter(h => h.connected));
             this.hubs = this.$utils.sortByName(this.hubs, this.language);
             this.hasMore = data.page.totalPages > (this.page + 1);
           } else {

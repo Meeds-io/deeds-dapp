@@ -65,6 +65,16 @@ export function refreshHubUrl(hubAddress, reportHash) {
   }
 }
 
+export function percentage(value, displaySign, fractions) {
+  return new Intl.NumberFormat(this.language, {
+    style: 'percent',
+    signDisplay: displaySign && 'always' || 'never',
+    roundingMode: 'halfCeil',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: !fractions && 2 || Number(fractions),
+  }).format(value || 0);
+}
+
 const TEXTAREA = document.createElement('textarea');
 
 export function htmlToText(htmlContent) {
