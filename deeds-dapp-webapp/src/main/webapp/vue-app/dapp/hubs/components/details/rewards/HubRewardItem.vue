@@ -26,6 +26,14 @@
               :format="dateFormat"
               class="text-break" />
           </div>
+          <v-spacer />
+          <deeds-hub-deed-chip
+            :deed="report"
+            :height="24"
+            color="grey lighten-2"
+            font-color="text-color"
+            class="ms-2"
+            small />
           <deeds-hub-details-reward-item-menu
             :report="report"
             :loading="loading"
@@ -33,38 +41,16 @@
             @expand="$emit('expand')"
             @collapse="$emit('collapse')" />
         </v-card-title>
-        <v-card-text
-          :class="expand && 'mt-4 pb-6' || 'mt-n2 pb-2'"
-          class="d-flex flex-wrap">
-          <deeds-hub-blockchain-chip
-            :network-id="blockchainNetworkId"
-            class="mt-2 me-2" />
-          <deeds-hub-address
-            :title="$t('wom.tokenAddress')"
-            :address="tokenAddress"
-            :network-id="blockchainNetworkId"
-            class="mt-2 me-2"
-            small
-            token />
-          <v-spacer />
-          <deeds-hub-deed-chip
-            :deed="report"
-            :height="24"
-            color="grey lighten-2"
-            font-color="text-color"
-            class="ms-2 mt-2"
-            small />
-        </v-card-text>
         <v-list
           v-if="!expand"
-          class="pa-0 mt-2">
+          class="pa-0">
           <v-row
             class="mx-4 mb-4 border-box-sizing"
             dense>
             <v-col
               cols="12"
               sm="6">
-              <div class="d-flex align-center fill-height flex-grow-1">
+              <div class="d-flex align-center fill-height flex-grow-1 mb-4">
                 <v-icon size="45" class="secondary--text me-3">fa-rocket</v-icon>
                 <div class="d-flex justify-center text-start flex-grow-1">
                   <v-tooltip bottom>
@@ -91,8 +77,8 @@
                           :color="engagementRateColor"
                           class="px-1"
                           outlined
-                          x-small>
-                          <span class="font-weight-bold">
+                          small>
+                          <span class="font-weight-bold text-subtitle-2 pt-1">
                             {{ engagementRatePercentage }}
                           </span>
                         </v-chip>
@@ -106,14 +92,14 @@
             <v-col
               cols="12"
               sm="6">
-              <div class="d-flex align-center me-auto fill-height">
+              <div class="d-flex align-center me-auto fill-height mb-4">
                 <v-icon size="45" class="secondary--text me-3">fa-coins</v-icon>
                 <v-tooltip bottom>
                   <template #activator="{ on, attrs }">
                     <div
                       v-on="on"
                       v-bind="attrs"
-                      class="title font-weight-bold my-auto">
+                      class="title font-weight-bold my-auto text-light-color">
                       {{ uemRewardAmountFormatted }} {{ $t('meedsSymbol') }}
                     </div>
                   </template>
@@ -130,7 +116,7 @@
                   min-width="28"
                   class="me-2 d-flex align-center justify-center"
                   flat>
-                  <v-icon size="22" class="secondary--text">fa-user-check</v-icon>
+                  <v-icon size="22" class="primary--text">fa-user-check</v-icon>
                 </v-card>
                 <div class="text-truncate">
                   {{ recipientsCount }} {{ $t('wom.recipientsCount') }}
@@ -146,7 +132,7 @@
                   min-width="28"
                   class="me-2 d-flex align-center justify-center"
                   flat>
-                  <v-icon size="22" class="secondary--text">fa-users</v-icon>
+                  <v-icon size="22" class="primary--text">fa-users</v-icon>
                 </v-card>
                 <div class="text-truncate">
                   {{ usersCount }} {{ $t('wom.usersCount') }}
@@ -162,7 +148,7 @@
                   min-width="28"
                   class="me-2 d-flex align-center justify-center"
                   flat>
-                  <v-icon size="22" class="secondary--text">fa-trophy</v-icon>
+                  <v-icon size="22" class="primary--text">fa-trophy</v-icon>
                 </v-card>
                 <div class="text-truncate">
                   {{ achievementsCount }} {{ $t('wom.achievementsCount') }}
@@ -184,7 +170,7 @@
                       class="me-2 d-flex align-center justify-center"
                       flat>
                       <img
-                        :src="`${parentLocation}/static/images/meed_circle.webp`"
+                        :src="`${parentLocation}/static/images/meed_circle-green.png`"
                         :alt="$t('page.token')"
                         width="25"
                         height="25">
