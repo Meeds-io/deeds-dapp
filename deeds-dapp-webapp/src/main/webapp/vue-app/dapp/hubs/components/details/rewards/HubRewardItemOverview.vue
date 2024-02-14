@@ -120,7 +120,7 @@
                   height="25">
               </v-card>
               <div class="text-truncate d-flex">
-                {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }}<span class="hidden-xs-only ms-1"> / {{ hubRewardsPeriod }}</span>
+                {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }}<span v-if="hubRewardsPeriodType" class="hidden-xs-only ms-1"> / {{ hubRewardsPeriod }}</span>
               </div>
             </div>
           </template>
@@ -205,7 +205,7 @@ export default {
       return this.report?.periodType?.toLowerCase();
     },
     hubRewardsPeriod() {
-      return this.$t(`wom.${this.hubRewardsPeriodType}`);
+      return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`) || '';
     },
     hubTopRewardedAmount() {
       return this.report?.hubTopRewardedAmount || 0;
