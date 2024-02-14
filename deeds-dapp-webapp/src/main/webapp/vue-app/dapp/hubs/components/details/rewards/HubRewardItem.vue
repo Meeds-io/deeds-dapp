@@ -51,7 +51,7 @@
             <deeds-hub-report-formula
               :report="report"
               :reward="reward"
-              class="mx-6 mb-8" />
+              class="mx-6 mb-8 hidden-xs-only" />
           </template>
           <deeds-hub-details-reward-item-overview
             v-else

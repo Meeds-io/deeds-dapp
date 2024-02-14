@@ -19,7 +19,7 @@
 <template>
   <v-card
     v-if="hub"
-    class="pa-4"
+    class="pa-0 pa-sm-4"
     flat>
     <deeds-hub-details-deed-card-topbar />
     <deeds-hub-not-found
@@ -32,19 +32,18 @@
       <div class="d-flex flex-wrap align-center justify-center">
         <deeds-hub-card
           :hub="hub"
-          class="col-12 col-md-4 pa-0 ma-2"
+          class="col-sm-12 col-md-4 pa-0 ma-2 hidden-xs-only"
           standalone />
         <deeds-hub-card-chart
           :hub="hub"
           :reports="reports"
-          class="col-12 col-md-4 pa-0 ma-2" />
+          class="col-sm-12 col-md-4 pa-0 ma-2" />
       </div>
       <deeds-hub-details-rewards
         :hub="hub"
         :reports="reports"
         :selected-report="selectedReport"
         :loading="loading"
-        class="mt-4"
         @report-expanded="selectReport" />
     </template>
   </v-card>
@@ -72,11 +71,14 @@ export default {
   }),
   watch: {
     hub() {
+      if (this.hub) {
+        this.retrieveReports();
+      }
       if (this.initialized) {
         document.body.parentElement.scrollTo({
           top: 0
         });
-        this.refreshUrl();      
+        this.refreshUrl();
       }
     },
   },
@@ -84,8 +86,7 @@ export default {
     if (!this.hub) {
       Promise.resolve(this.init())
         .then(() => this.$nextTick())
-        .finally(() => this.initialized = true)
-        .then(() => this.retrieveReports());
+        .finally(() => this.initialized = true);
     }
   },
   methods: {
