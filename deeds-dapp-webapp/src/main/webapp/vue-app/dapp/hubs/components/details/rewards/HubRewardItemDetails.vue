@@ -86,10 +86,10 @@ export default {
       return this.report?.periodType?.toLowerCase();
     },
     hubRewardsPeriod() {
-      return this.$t(`wom.${this.hubRewardsPeriodType}`);
+      return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsPerPeriod() {
-      return this.$t('wom.rewardsPer', {0: this.hubRewardsPeriod});
+      return this.hubRewardsPeriodType && this.$t('wom.rewardsPer', {0: this.hubRewardsPeriod}) || 'wom.rewards';
     },
   }),
 };
