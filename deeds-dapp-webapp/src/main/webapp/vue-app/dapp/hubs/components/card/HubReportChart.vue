@@ -22,9 +22,10 @@
 <template>
   <v-card
     v-if="hasReports"
-    class="d-flex flex-column rounded-lg reportChartParent"
+    class="d-flex flex-column rounded-lg"
     height="270"
     max-height="270"
+    max-width="395px"
     outlined>
     <div class="absolute-horizontal-center z-index-two mt-4">
       {{ $t('uem.engagementScore') }}

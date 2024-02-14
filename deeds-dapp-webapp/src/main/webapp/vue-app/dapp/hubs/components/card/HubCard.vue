@@ -23,6 +23,7 @@
     :href="hubUrl"
     target="_blank"
     class="no-border"
+    max-width="395px"
     flat>
     <v-hover v-slot="{hover}">
       <v-card
@@ -123,18 +124,18 @@
             </template>
           </div>
           <div v-else class="d-flex my-auto">
-            <div v-if="engagementScore" class="d-flex align-center justify-center me-auto">
+            <div v-if="engagementScore" class="d-flex align-center me-auto pa-0">
               <v-icon size="45" class="secondary--text me-3">fa-rocket</v-icon>
               <div class="d-flex flex-column justify-center text-start">
                 <div :class="engagementScoreClass" class="title font-weight-bold my-auto"> {{ engagementScoreFormatted }} </div>
-                <div class="text-light-color text-subtitle-2 my-auto"> {{ $t('hubs.engagementScore') }} </div>
+                <div class="text-light-color text-subtitle-2 my-auto hidden-xs-only"> {{ $t('hubs.engagementScore') }} </div>
               </div>
             </div>
-            <div v-else class="d-flex align-center justify-center me-auto">
+            <div v-else class="d-flex align-center me-auto pa-0">
               <v-icon size="45" class="secondary--text me-3">fas fa-bolt</v-icon>
               <span class="text-light-color"> {{ $t('hubs.gettingStarted') }} </span>
             </div>
-            <div class="d-flex flex-column align-center">
+            <div class="d-flex flex-column align-center me-auto pa-0">
               <v-tooltip v-if="hubActionsCount" bottom>
                 <template #activator="{ on, attrs }">
                   <div
@@ -154,7 +155,7 @@
                   <div
                     v-on="on"
                     v-bind="attrs"
-                    class="d-flex align-center justify-center mt-1 ms-auto">
+                    class="d-flex align-center justify-center mt-1 me-auto">
                     <img
                       :src="`${parentLocation}/static/images/meed_circle.webp`"
                       :alt="$t('page.token')"
