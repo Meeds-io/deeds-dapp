@@ -8,7 +8,6 @@
     </v-list-item>
     <v-data-iterator
       :items="reports"
-      :loading="loading"
       item-key="rewardId"
       disable-pagination
       disable-filtering
@@ -38,24 +37,15 @@
               <deeds-hub-details-reward-item
                 :key="`report-${report.reportId}`"
                 :report="report"
+                :reports="reports"
                 :expand="expandedReportId === report.reportId"
-                @refresh="refreshReport"
-                @expand="expandReport(report.reportId)"
-                @collapse="expandReport(null)" />
+                @expand="expandedReportId = report.reportId"
+                @collapse="expandedReportId = null" />
             </v-col>
           </template>
         </v-row>
       </template>
     </v-data-iterator>
-    <v-btn
-      v-if="hasMore"
-      class="mx-3 my-4 btn"
-      elevation="0"
-      outlined
-      block
-      @click="loadMore">
-      {{ $t('wom.loadMore') }}
-    </v-btn>
   </v-card>
 </template>
 <script>
@@ -65,88 +55,48 @@ export default {
       type: Object,
       default: null,
     },
+    reports: {
+      type: Object,
+      default: null,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
     selectedReport: {
       type: Object,
       default: null,
     },
   },
   data: () => ({
-    reports: [],
-    loading: false,
-    pageSize: 12,
-    page: -1,
-    hasMore: false,
     expandedReportId: null,
   }),
   computed: Vuex.mapState({
     hubAddress() {
       return this.hub?.address;
     },
-    expandedReportIndex() {
-      return this.expandedReportId && this.reports.findIndex(r => r.reportId === this.expandedReportId) || -1;
-    },
   }),
   watch: {
-    expandedReportId() {
-      if (this.expandedReportId && this.expandedReportIndex < 0) {
-        this.refreshReportById(this.expandedReportId);
+    reports() {
+      if (this.selectedReport) {
+        this.expandedReportId = this.selectedReport.reportId;
       }
-      this.$utils.refreshHubUrl(this.hub?.address, this.expandedReportId || null);
     },
-  },
-  created() {
-    this.init();
-  },
-  methods: {
-    init() {
-      return this.loadMore()
-        .then(() => this.expandReport(this.selectedReport?.reportId));
-    },
-    loadMore() {
-      this.page++;
-      this.loading = true;
-      return this.$hubReportService.getReports({
-        hubAddress: this.hubAddress,
-        page: this.page,
-        size: this.pageSize,
-      })
-        .then(data => {
-          if (data?._embedded?.reports?.length) {
-            this.reports.push(...data._embedded.reports);
-            this.hasMore = data.page.totalPages > (this.page + 1);
-          } else {
-            this.hasMore = false;
-          }
-        })
-        .finally(() => this.loading = false);
-    },
-    expandReport(reportId) {
-      this.expandedReportId = reportId;
-      this.$emit('report-expanded', reportId);
-    },
-    refreshReportById(reportId) {
-      return this.$hubReportService.getReport(reportId)
-        .then(report => {
-          if (this.hub?.address === report?.hubAddress) {
-            this.refreshReport(report);
-          } else {
-            this.$root.$emit('report-not-found', reportId);
-          }
-        })
-        .finally(() => this.loading = false);
-    },
-    refreshReport(report) {
-      if (!report) {
-        return;
-      }
-      const index = this.reports.findIndex(r => report.reportId === r.reportId);
-      if (index >= 0) {
-        this.reports.splice(index, 1, report);
+    selectedReport() {
+      if (this.selectedReport) {
+        this.expandedReportId = this.selectedReport.reportId;
       } else {
-        report.hidden = true;
-        this.reports.push(report);
+        this.expandedReportId = null;
       }
-      this.reports = this.reports.slice();
+    },
+    expandedReportId() {
+      this.$emit('report-expanded', this.expandedReportId);
+      this.$utils.refreshHubUrl(this.hub?.address, this.expandedReportId || null);
+      if (this.expandedReportId) {
+        document.body.parentElement.style.overflow = 'hidden';
+      } else {
+        document.body.parentElement.style.overflow = '';
+      }
     },
   },
 };
