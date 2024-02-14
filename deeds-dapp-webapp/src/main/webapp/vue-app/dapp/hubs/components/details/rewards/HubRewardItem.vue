@@ -66,7 +66,7 @@
                     <span>{{ $t('hubs.engagementScore') }}</span>
                   </v-tooltip>
                   <v-spacer />
-                  <div class="text-light-color caption font-weight-bold my-auto me-2">
+                  <div class="text-light-color caption font-weight-bold my-auto me-1">
                     <v-tooltip
                       v-if="reward"
                       bottom>
@@ -75,7 +75,7 @@
                           v-on="on"
                           v-bind="attrs"
                           :color="engagementRateColor"
-                          class="px-1"
+                          class="px-1 mt-n1"
                           outlined
                           small>
                           <span class="font-weight-bold text-subtitle-2 pt-1">
@@ -271,7 +271,7 @@ export default {
       return this.engagementScore && new Intl.NumberFormat(this.language, {
         style: 'decimal',
         minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 1,
       }).format(this.engagementScore);
     },
     engagementScoreClass() {
