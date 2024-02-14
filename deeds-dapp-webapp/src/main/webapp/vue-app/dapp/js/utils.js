@@ -65,13 +65,32 @@ export function refreshHubUrl(hubAddress, reportId) {
   }
 }
 
-export function percentage(value, displaySign, fractions) {
-  return new Intl.NumberFormat(this.language, {
+export function percentage(value, language, displaySign, fractions) {
+  return new Intl.NumberFormat(language, {
     style: 'percent',
     signDisplay: displaySign && 'always' || 'never',
     roundingMode: 'halfCeil',
     minimumFractionDigits: 0,
-    maximumFractionDigits: !fractions && 2 || Number(fractions),
+    maximumFractionDigits: fractions === 0 ? 0 : (!fractions && 2 || Number(fractions)),
+  }).format(value || 0);
+}
+
+export function numberFormatWithDigits(value, language, minimumFractionDigits, maximumFractionDigits) {
+  return new Intl.NumberFormat(language, {
+    style: 'decimal',
+    roundingMode: 'halfCeil',
+    minimumFractionDigits: minimumFractionDigits || this.minimumFractionDigits,
+    maximumFractionDigits: maximumFractionDigits || this.maximumFractionDigits,
+  }).format(value || 0);
+}
+
+export function numberFormat(value, language, displaySign) {
+  return new Intl.NumberFormat(language, {
+    style: 'decimal',
+    signDisplay: displaySign && 'exceptZero' || 'never',
+    roundingMode: 'halfCeil',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value || 0);
 }
 

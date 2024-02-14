@@ -28,12 +28,16 @@ import UpcominHubCard from './components/card/UpcominHubCard.vue';
 import HubDetails from './components/details/HubDetails.vue';
 import HubNotFound from './components/details/HubNotFound.vue';
 import HubReportNotFound from './components/details/HubReportNotFound.vue';
+import HubReportFormula from './components/details/HubReportFormula.vue';
 
 import HubDeedCardTopbar from './components/details/header/HubDeedCardTopbar.vue';
 
 import HubRewards from './components/details/rewards/HubRewards.vue';
 import HubRewardItem from './components/details/rewards/HubRewardItem.vue';
 import HubRewardItemMenu from './components/details/rewards/HubRewardItemMenu.vue';
+import HubRewardItemOverview from './components/details/rewards/HubRewardItemOverview.vue';
+import HubRewardItemDetails from './components/details/rewards/HubRewardItemDetails.vue';
+import HubRewardItemDetailCard from './components/details/rewards/HubRewardItemDetailCard.vue';
 
 import Address from './components/common/Address.vue';
 import AddressIcon from './components/common/AddressIcon.vue';
@@ -41,6 +45,14 @@ import BlockchainChip from './components/common/BlockchainChip.vue';
 import DeedChip from './components/common/DeedChip.vue';
 import DeedManagerSelector from './components/common/DeedManagerSelector.vue';
 import MetamaskButton from './components/common/MetamaskButton.vue';
+
+import ReportEngagementFormula from './components/details/formula/ReportEngagementFormula.vue';
+import ReportDistributionRateFormula from './components/details/formula/ReportDistributionRateFormula.vue';
+import ReportDistributionSpreadFormula from './components/details/formula/ReportDistributionSpreadFormula.vue';
+import ReportMintingPower from './components/details/formula/ReportMintingPower.vue';
+import ReportFormulaComputing from './components/details/formula/ReportFormulaComputing.vue';
+import ReportFormulaComputingResult from './components/details/formula/ReportFormulaComputingResult.vue';
+import ReportEngagementScore from './components/details/formula/ReportEngagementScore.vue';
 
 const components = {
   'deeds-hubs': DeedsHubs,
@@ -54,10 +66,22 @@ const components = {
   'deeds-hub-details': HubDetails,
   'deeds-hub-not-found': HubNotFound,
   'deeds-hub-report-not-found': HubReportNotFound,
+  'deeds-hub-report-formula': HubReportFormula,
   'deeds-hub-details-deed-card-topbar': HubDeedCardTopbar,
   'deeds-hub-details-rewards': HubRewards,
   'deeds-hub-details-reward-item': HubRewardItem,
   'deeds-hub-details-reward-item-menu': HubRewardItemMenu,
+  'deeds-hub-details-reward-item-overview': HubRewardItemOverview,
+  'deeds-hub-details-reward-item-details': HubRewardItemDetails,
+  'deeds-hub-details-reward-item-detail-card': HubRewardItemDetailCard,
+
+  'deed-hub-report-formula-computing': ReportFormulaComputing,
+  'deed-hub-report-formula-computing-result': ReportFormulaComputingResult,
+  'deed-hub-report-engagement-score': ReportEngagementScore,
+  'deed-hub-report-engagement-formula': ReportEngagementFormula,
+  'deed-hub-report-distribution-rate': ReportDistributionRateFormula,
+  'deed-hub-report-distribution-spread': ReportDistributionSpreadFormula,
+  'deed-hub-report-minting-power': ReportMintingPower,
 
   'deeds-hub-address': Address,
   'deeds-hub-address-icon': AddressIcon,

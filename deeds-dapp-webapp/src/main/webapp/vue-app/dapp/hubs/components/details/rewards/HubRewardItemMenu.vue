@@ -9,7 +9,7 @@
       class="ms-2"
       @click="expanded && $emit('collapse') || $emit('expand')">
       <v-icon size="16" class="icon-default-color">
-        {{ expanded && 'fa-compress-arrows-alt' || 'fa-expand' }}
+        {{ expanded && 'fa-compress-alt' || 'fa-expand' }}
       </v-icon>
     </v-btn>
   </div>

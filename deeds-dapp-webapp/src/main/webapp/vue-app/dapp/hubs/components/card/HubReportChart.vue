@@ -21,13 +21,13 @@
 -->
 <template>
   <v-card
-    v-if="reports.length > 1"
+    v-if="hasReports"
     class="d-flex flex-column rounded-lg reportChartParent"
     height="270"
     max-height="270"
     outlined>
     <div class="absolute-horizontal-center z-index-two mt-4">
-      {{ $t('uem.hubEngagementScore') }}
+      {{ $t('uem.engagementScore') }}
     </div>
     <v-card
       id="reportChart"
@@ -45,20 +45,26 @@ export default {
       type: Object,
       default: null,
     },
+    reports: {
+      type: Array,
+      default: () => [],
+    },
   },
   data: () => ({
     chart: null,
-    reports: [],
     htmlMounted: false,
   }),
   computed: Vuex.mapState({
     language: state => state.language,
     echartsLoaded: state => state.echartsLoaded,
+    hasReports() {
+      return this.reports && this.reports.length > 1;
+    },
     chartData() {
-      return this.reports.reverse().map(r => [
+      return this.hasReports && this.reports.slice().reverse().map(r => [
         this.getStartOfTheWeek(r.sentDate),
         r.engagementScore,
-      ]);
+      ]) || [];
     },
     chartOptions() {
       return {
@@ -142,7 +148,6 @@ export default {
     },
   },
   created() {
-    this.getReports();
     if (!document.querySelector('#echarts-script')) {
       const script = document.createElement('script');
       script.id = 'echarts-script';
@@ -159,21 +164,12 @@ export default {
   },
   methods: {
     initChart() {
-      if (this.htmlMounted && this.echartsLoaded && this.reports.length > 1) {
+      if (this.htmlMounted && this.echartsLoaded && this.hasReports) {
         this.chart = echarts.init(this.$refs.reportChart.$el);
         if (this.chartOptions) {
           this.chart.setOption(this.chartOptions);
         }
       }
-    },
-    getReports() {
-      return this.$hubReportService.getReports({
-        hubAddress: this.hub?.address,
-        page: 0,
-        size: 100,
-      })
-        .then(data => this.reports = data._embedded.reports || [])
-        .finally(() => this.loading = false);
     },
     dateFormatI18N(value) {
       return this.$ethUtils.formatDate(new Date(value?.value || value), this.language);
@@ -186,11 +182,7 @@ export default {
     formatNumber(num) {
       const useKilo = num >= 1000;
       const value = useKilo ? num / 1000 : num;
-      const formatted = new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(value);
+      const formatted = this.$utils.numberFormatWithDigits(value, this.language, 0, useKilo && 1 || (value < 1 && 2 || 0));
       return useKilo ? this.$t('kilo', {0: formatted}) : formatted;
     },
     getStartOfTheWeek(value) {
