@@ -3,9 +3,7 @@
     <v-row
       class="mx-4 mb-4 border-box-sizing"
       dense>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <div class="d-flex align-center fill-height flex-grow-1 mb-4">
           <v-icon size="45" class="secondary--text me-3">fa-rocket</v-icon>
           <div class="d-flex justify-center text-start flex-grow-1">
@@ -45,9 +43,7 @@
           </div>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <div class="d-flex align-center me-auto fill-height mb-4">
           <v-icon size="45" class="secondary--text me-3">fa-coins</v-icon>
           <v-tooltip bottom>
@@ -63,9 +59,7 @@
           </v-tooltip>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <div class="d-flex align-center mb-2">
           <v-card
             width="28"
@@ -74,14 +68,12 @@
             flat>
             <v-icon size="22" class="primary--text">fa-user-check</v-icon>
           </v-card>
-          <div class="text-truncate">
-            {{ recipientsCount }} {{ $t('wom.recipientsCount') }}
+          <div class="text-truncate d-flex">
+            {{ recipientsCount }} <span class="hidden-xs-only ms-1">{{ $t('wom.recipientsCount') }}</span>
           </div>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <div class="d-flex align-center mb-2">
           <v-card
             width="28"
@@ -90,14 +82,12 @@
             flat>
             <v-icon size="22" class="primary--text">fa-users</v-icon>
           </v-card>
-          <div class="text-truncate">
-            {{ usersCount }} {{ $t('wom.usersCount') }}
+          <div class="text-truncate d-flex">
+            {{ usersCount }} <span class="hidden-xs-only ms-1">{{ $t('wom.usersCount') }}</span>
           </div>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <div class="d-flex align-center">
           <v-card
             width="28"
@@ -106,14 +96,12 @@
             flat>
             <v-icon size="22" class="primary--text">fa-trophy</v-icon>
           </v-card>
-          <div class="text-truncate">
-            {{ achievementsCount }} {{ $t('wom.achievementsCount') }}
+          <div class="text-truncate d-flex">
+            {{ achievementsCount }} <span class="hidden-xs-only ms-1">{{ $t('wom.achievementsCount') }}</span>
           </div>
         </div>
       </v-col>
-      <v-col
-        cols="12"
-        sm="6">
+      <v-col cols="6">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
             <div
@@ -131,8 +119,8 @@
                   width="25"
                   height="25">
               </v-card>
-              <div class="text-truncate">
-                {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }} / {{ hubRewardsPeriod }}
+              <div class="text-truncate d-flex">
+                {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }}<span class="hidden-xs-only ms-1"> / {{ hubRewardsPeriod }}</span>
               </div>
             </div>
           </template>

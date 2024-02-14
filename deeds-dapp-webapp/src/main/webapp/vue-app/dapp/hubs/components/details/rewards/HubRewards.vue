@@ -1,6 +1,6 @@
 <template>
   <v-card :loading="loading" flat>
-    <v-list-item two-line>
+    <v-list-item two-line class="px-0">
       <v-list-item-content>
         <v-list-item-title class="text-subtitle-1 font-weight-bold">{{ $t('wom.hubRewardSelfReports') }}</v-list-item-title>
         <v-list-item-subtitle>{{ $t('wom.hubRewardSelfReportsSummary') }}</v-list-item-subtitle>
@@ -25,7 +25,7 @@
         </div>
       </template>
       <template #default="props">
-        <v-row class="mx-0 border-box-sizing">
+        <v-row class="mx-n3 border-box-sizing">
           <template v-for="report in props.items">
             <v-col
               v-if="report.reportId && (!report.hidden || report.reportId === expandedReportId)"
