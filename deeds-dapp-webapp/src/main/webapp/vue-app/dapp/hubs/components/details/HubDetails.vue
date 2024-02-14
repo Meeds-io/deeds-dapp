@@ -36,11 +36,14 @@
           standalone />
         <deeds-hub-card-chart
           :hub="hub"
+          :reports="reports"
           class="col-12 col-md-4 pa-0 ma-2" />
       </div>
       <deeds-hub-details-rewards
         :hub="hub"
+        :reports="reports"
         :selected-report="selectedReport"
+        :loading="loading"
         class="mt-4"
         @report-expanded="selectReport" />
     </template>
@@ -56,7 +59,9 @@ export default {
   },
   data: () => ({
     isManager: false,
+    loading: false,
     initialized: false,
+    reports: [],
     selectedReport: null,
   }),
   computed: Vuex.mapState({
@@ -68,6 +73,9 @@ export default {
   watch: {
     hub() {
       if (this.initialized) {
+        document.body.parentElement.scrollTo({
+          top: 0
+        });
         this.refreshUrl();      
       }
     },
@@ -76,7 +84,8 @@ export default {
     if (!this.hub) {
       Promise.resolve(this.init())
         .then(() => this.$nextTick())
-        .finally(() => this.initialized = true);
+        .finally(() => this.initialized = true)
+        .then(() => this.retrieveReports());
     }
   },
   methods: {
@@ -95,13 +104,21 @@ export default {
           })
           .catch(() => this.$root.$emit('report-not-found', hubReportId))
           .finally(() => this.loading = false);
+      } else if (hubAddress) {
+        return this.refresh(hubAddress);
       } else {
-        if (hubAddress) {
-          return this.refresh(hubAddress);
-        } else {
-          this.$root.$emit('close-hub-details');
-        }
+        this.$root.$emit('close-hub-details');
       }
+    },
+    retrieveReports() {
+      this.loading = true;
+      return this.$hubReportService.getReports({
+        hubAddress: this.hub?.address,
+        page: 0,
+        size: 100,
+      })
+        .then(data => this.reports = data?._embedded?.reports || [])
+        .finally(() => this.loading = false);
     },
     refresh(hubAddress, hubReportId) {
       this.loading = true;
@@ -130,7 +147,7 @@ export default {
       }
     },
     refreshUrl() {
-      if (!this.hub || (!this.hub.notFound && !this.hub.reportNotFound)) {
+      if (!this.hub || (!this.hub.upcomingDeedId && !this.hub.notFound && !this.hub.reportNotFound)) {
         this.$utils.refreshHubUrl(this.hub?.address);
       }
     },

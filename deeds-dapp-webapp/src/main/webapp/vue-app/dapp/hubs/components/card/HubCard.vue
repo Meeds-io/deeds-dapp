@@ -239,11 +239,7 @@ export default {
       return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsAmount() {
-      return new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.hub?.rewardsPerPeriod || 0);
+      return this.$utils.numberFormat(this.hub?.rewardsPerPeriod, this.language);
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
@@ -261,21 +257,13 @@ export default {
       return this.hub?.actionsCount || 0;
     },
     hubActionsCountFormatted() {
-      return this.hubActionsCount && new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(this.hubActionsCount);
+      return this.$utils.numberFormat(this.hubActionsCount, this.language);
     },
     engagementScore() {
       return this.hub?.engagementScore || 0;
     },
     engagementScoreFormatted() {
-      return this.engagementScore && new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(this.engagementScore);
+      return this.$utils.numberFormatWithDigits(this.engagementScore, this.language, 0, 1);
     },
     engagementScoreClass() {
       if (!this.engagementScore) {
@@ -292,11 +280,7 @@ export default {
       return this.hub?.topHubReceiverAmount || 0;
     },
     topHubReceiverAmountFormatted() {
-      return this.topHubReceiverAmount && new Intl.NumberFormat(this.language, {
-        style: 'decimal',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }).format(this.topHubReceiverAmount);
+      return this.$utils.numberFormatWithDigits(this.topHubReceiverAmount, this.language, 0, 2);
     },
     formLinkWithCommunityName() {
       return this.formLink.concat('#communityName=', this.hubName);
