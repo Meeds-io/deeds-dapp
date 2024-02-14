@@ -17,32 +17,32 @@
         :value="report.usersCount"
         :previous-value="previousReport.usersCount"
         label="uem.members"
-        class="me-4" />
+        class="me-4 mb-4" />
       <deeds-hub-details-reward-item-detail-card
         :value="report.participantsCount"
         :previous-value="previousReport.participantsCount"
         label="wom.participantsCount"
-        class="me-4" />
+        class="me-4 mb-4" />
       <deeds-hub-details-reward-item-detail-card
         :value="report.actionsCount"
         :previous-value="previousReport.actionsCount"
         label="wom.actionsCount"
-        class="me-4" />
+        class="me-4 mb-4" />
       <deeds-hub-details-reward-item-detail-card
         :value="report.achievementsCount"
         :previous-value="previousReport.achievementsCount"
         label="wom.achievementsCount"
-        class="me-4" />
+        class="me-4 mb-4" />
       <deeds-hub-details-reward-item-detail-card
         :value="report.recipientsCount"
         :previous-value="previousReport.recipientsCount"
         label="wom.recipientsCount"
-        class="me-4" />
+        class="me-4 mb-4" />
       <deeds-hub-details-reward-item-detail-card
         :value="report.hubRewardAmount"
         :previous-value="previousReport.hubRewardAmount"
         :label="hubRewardsPerPeriod"
-        class="me-4" />
+        class="me-4 mb-4" />
     </div>
   </div>
 </template>
