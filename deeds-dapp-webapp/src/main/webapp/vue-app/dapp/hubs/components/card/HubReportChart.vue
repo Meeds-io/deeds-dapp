@@ -19,16 +19,17 @@
 <template>
   <v-card
     v-if="reports.length > 1"
-    class="d-flex flex-column reportChartParent"
+    class="d-flex flex-column rounded-lg reportChartParent"
     height="270"
     max-height="270"
     outlined>
-    <div class="absolute-horizontal-center z-index-two mt-2">
+    <div class="absolute-horizontal-center z-index-two mt-4">
       {{ $t('uem.hubEngagementScore') }}
     </div>
     <v-card
       id="reportChart"
       ref="reportChart"
+      class="rounded-lg"
       height="100%"
       width="100%"
       flat />
