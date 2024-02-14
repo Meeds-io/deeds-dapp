@@ -19,7 +19,9 @@
 package io.meeds.deeds.common.blockchain;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,13 +60,16 @@ public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider
   @Override
   @SneakyThrows
   public BigInteger getGasPrice() {
-    return web3j.ethGasPrice().send().getGasPrice();
+    BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
+    return new BigDecimal(gasPrice).multiply(BigDecimal.valueOf(1.2))
+                                   .setScale(0, RoundingMode.HALF_EVEN)
+                                   .toBigInteger();
   }
 
   @Override
   @SneakyThrows
   public BigInteger getMaxFeePerGas(String contractFunc) {
-    return getMaxPriorityFeePerGas(contractFunc);
+    return getGasPrice().add(getMaxPriorityFeePerGas(contractFunc));
   }
 
   @Override
