@@ -98,7 +98,7 @@ public class EntityBuilder {
 
   public static HubWithReward decorateHubWithReward(Hub hub, HubReportService hubReportService) {
     Page<HubReport> reports = hubReportService.getReportsByHub(hub.getAddress(),
-                                                               PageRequest.of(0, 2, Sort.by(Direction.DESC, "sentDate")));
+                                                               PageRequest.of(0, 3, Sort.by(Direction.DESC, "sentDate")));
     HubReport lastSentReport = reports.stream()
                                       .findFirst()
                                       .orElse(null);
@@ -109,7 +109,8 @@ public class EntityBuilder {
     return new HubWithReward(hub,
                              lastSentReport == null ? 0l : lastSentReport.getActionsCount(),
                              lastSentReport == null ? 0d : lastSentReport.getHubTopRewardedAmount(),
-                             lastRewardedReport == null ? 0d : lastRewardedReport.getEngagementScore());
+                             lastRewardedReport == null ? 0d : lastRewardedReport.getEngagementScore(),
+                             lastRewardedReport != null);
   }
 
   private static void applyCache(BodyBuilder response) {

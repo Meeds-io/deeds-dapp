@@ -79,18 +79,8 @@ export function numberFormatWithDigits(value, language, minimumFractionDigits, m
   return new Intl.NumberFormat(language, {
     style: 'decimal',
     roundingMode: 'halfCeil',
-    minimumFractionDigits: minimumFractionDigits || this.minimumFractionDigits,
-    maximumFractionDigits: maximumFractionDigits || this.maximumFractionDigits,
-  }).format(value || 0);
-}
-
-export function numberFormat(value, language, displaySign) {
-  return new Intl.NumberFormat(language, {
-    style: 'decimal',
-    signDisplay: displaySign && 'exceptZero' || 'never',
-    roundingMode: 'halfCeil',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: minimumFractionDigits || 0,
+    maximumFractionDigits: maximumFractionDigits || (value < 10 ? 2 :0),
   }).format(value || 0);
 }
 

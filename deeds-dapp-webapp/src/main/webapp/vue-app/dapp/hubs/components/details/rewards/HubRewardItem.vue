@@ -12,27 +12,36 @@
         <v-card-title class="title d-flex flex-sm-nowrap">
           <v-icon
             color="secondary"
-            class="d-none d-sm-block mt-n1 me-2">
+            class="mt-n1 me-2">
             fa-calendar
           </v-icon>
-          <div class="d-flex flex-grow-1 flex-shrink-1 text-subtitle-1 font-weight-bold ms-0 ms-sm-2 justify-start align-center">
-            <deeds-date-format
-              :value="fromDate"
-              :format="dateFormat"
-              class="text-break" />
-            <span class="mx-2 text-no-wrap">{{ $t('wom.toDate') }}</span>
-            <deeds-date-format
-              :value="toDate"
-              :format="dateFormat"
-              class="text-break" />
+          <div class="d-flex flex-column flex-grow-1 flex-shrink-1 ms-0 ms-sm-2 align-start justify-center">
+            <div class="d-flex flex-grow-1 flex-shrink-1 text-subtitle-1 font-weight-bold justify-start align-center">
+              <deeds-date-format
+                :value="fromDate"
+                :format="dateFormat"
+                class="text-break" />
+              <span class="mx-2 text-no-wrap">{{ $t('wom.toDate') }}</span>
+              <deeds-date-format
+                :value="toDate"
+                :format="dateFormat"
+                class="text-break" />
+            </div>
+            <div class="text-light-color caption d-flex mt-n2">
+              {{ $t('uem.sentOn') }}
+              <deeds-date-format
+                :value="report.sentDate"
+                :format="dateFormat"
+                class="text-break ms-1" />
+            </div>
           </div>
           <v-spacer />
           <deeds-hub-deed-chip
             :deed="report"
             :height="expand && 36 || 24"
             :small="!expand"
+            :font-color="dark && 'white--text' || 'text-color'"
             color="grey lighten-2"
-            font-color="text-color"
             class="ms-2 hidden-xs-only" />
           <deeds-hub-details-reward-item-menu
             :report="report"
@@ -41,13 +50,16 @@
             @expand="$emit('expand')"
             @collapse="$emit('collapse')" />
         </v-card-title>
-        <template v-if="reward">
+        <v-card
+          v-if="reward"
+          class="mainPageLayout mx-auto"
+          flat>
           <template v-if="expand">
             <deeds-hub-details-reward-item-details
               :report="report"
               :reports="reports"
               :reward="reward"
-              class="mx-6 mb-8" />
+              class="mx-6 my-8" />
             <deeds-hub-report-formula
               :report="report"
               :reward="reward"
@@ -57,7 +69,7 @@
             v-else
             :report="report"
             :reward="reward" />
-        </template>
+        </v-card>
       </v-card>
     </v-scale-transition>
   </component>
@@ -90,6 +102,7 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     parentLocation: state => state.parentLocation,
+    dark: state => state.dark,
     componentProps() {
       return this.expand && {
         value: true,

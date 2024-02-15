@@ -36,16 +36,19 @@ import lombok.ToString;
 @Relation(collectionRelation = "hubs", itemRelation = "hub")
 public class HubWithReward extends Hub {
 
-  private long   actionsCount;
+  private long    actionsCount;
 
-  private double topHubReceiverAmount;
+  private double  topHubReceiverAmount;
 
-  private double engagementScore;
+  private double  engagementScore;
+
+  private boolean hasReports;
 
   public HubWithReward(Hub hub,
                        long actionsCount,
                        double topHubReceiverAmount,
-                       double engagementScore) {
+                       double engagementScore,
+                       boolean hasReports) {
     super(hub.getDeedId(),
           hub.getCity(),
           hub.getType(),
@@ -70,6 +73,7 @@ public class HubWithReward extends Hub {
     this.actionsCount = actionsCount;
     this.topHubReceiverAmount = topHubReceiverAmount;
     this.engagementScore = engagementScore;
+    this.hasReports = hasReports;
   }
 
 }
