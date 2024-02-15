@@ -29,7 +29,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.tx.RawTransactionManager;
 import org.web3j.tx.TransactionManager;
 import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 
@@ -55,9 +54,9 @@ public class PolygonTransactionManagerProxy extends TransactionManager {
 
   @SneakyThrows
   public static void initTransactionManager(ECKeyPair ecKeyPair) {
-    transactionManager = new RawTransactionManager(web3j,
-                                                   Credentials.create(ecKeyPair),
-                                                   getPolygonNetworkId());
+    transactionManager = new PolygonWomRawTransactionManager(web3j,
+                                                             Credentials.create(ecKeyPair),
+                                                             getPolygonNetworkId());
   }
 
   @Override
