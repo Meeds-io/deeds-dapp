@@ -43,7 +43,7 @@ public class TenantPlaceholderRequestDispatcherFilter extends HttpFilter {
   private static final long    serialVersionUID    = 8971410534107824567L;
 
   private static final Pattern SERVER_HOST_PATTERN =
-                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.wom\\.meeds\\.io");
+                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.meeds\\.io");
 
   @Autowired
   protected TenantService      tenantService;                                                                                                          // NOSONAR

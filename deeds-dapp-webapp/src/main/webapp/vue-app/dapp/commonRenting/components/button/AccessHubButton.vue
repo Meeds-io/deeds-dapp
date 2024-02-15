@@ -90,7 +90,7 @@ export default {
         || (!this.hasPaidCurrentPeriod && !this.owner);
     },
     deedTenantLink() {
-      return `https://${this.city}-${this.nftId}.wom.meeds.io`;
+      return `https://${this.city}-${this.nftId}.meeds.io`;
     },
   }),
 };

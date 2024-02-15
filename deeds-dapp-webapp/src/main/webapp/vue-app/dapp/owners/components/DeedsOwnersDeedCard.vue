@@ -131,11 +131,7 @@
                       :offers="lease.rentedOffers"
                       :started="started"
                       :is-provisioning-manager="isProvisioningManager" />
-      
-                    <deeds-lease-card-claim-reward-button
-                      v-if="isLeased"
-                      :disabled="disabledClaimRewards" />
-      
+
                     <deeds-lease-card-evict-tenant-button
                       v-if="isLeased"
                       :lease="lease"
@@ -237,9 +233,6 @@ export default {
     lastPaidDate() {
       return this.noticeDate && new Date(this.noticeDate)
         || (this.paidRentsDate && new Date(this.paidRentsDate));
-    },
-    disabledClaimRewards() {
-      return !this.lease?.pendingRewardsAmount;
     },
     disabledEvictTenant() {
       return this.paidRentsDate && new Date(this.paidRentsDate).getTime() > Date.now();
