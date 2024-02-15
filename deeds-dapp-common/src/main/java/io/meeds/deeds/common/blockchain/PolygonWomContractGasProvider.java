@@ -18,7 +18,6 @@
  */
 package io.meeds.deeds.common.blockchain;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -26,12 +25,11 @@ import java.math.RoundingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.tx.gas.ContractEIP1559GasProvider;
+import org.web3j.tx.gas.ContractGasProvider;
 
 import lombok.SneakyThrows;
 
-public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider {
+public class PolygonWomContractGasProvider implements ContractGasProvider {
 
   private static final Logger     LOG       = LoggerFactory.getLogger(PolygonWomContractGasProvider.class);
 
@@ -39,47 +37,17 @@ public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider
 
   private Web3j                   web3j;
 
-  private long                    chainId;
-
   public PolygonWomContractGasProvider(Web3j web3j) {
     this.web3j = web3j;
   }
 
   @Override
-  public long getChainId() {
-    if (chainId == 0) {
-      try {
-        chainId = web3j.ethChainId().send().getChainId().longValue();
-      } catch (IOException e) {
-        LOG.warn("Error retrieving Network Identifier", e);
-        return 137l; // Polygon Mainnet in case it fails on production
-      }
-    }
-    return chainId;
-  }
-
-  @Override
   @SneakyThrows
   public BigInteger getGasPrice() {
-    BigInteger baseFeePerGas = web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
-                                    .send()
-                                    .getBlock()
-                                    .getBaseFeePerGas();
-    return new BigDecimal(baseFeePerGas).multiply(BigDecimal.valueOf(1.2))
-                                        .setScale(0, RoundingMode.HALF_EVEN)
-                                        .toBigInteger();
-  }
-
-  @Override
-  @SneakyThrows
-  public BigInteger getMaxFeePerGas(String contractFunc) {
-    return getGasPrice().add(getMaxPriorityFeePerGas(contractFunc));
-  }
-
-  @Override
-  @SneakyThrows
-  public BigInteger getMaxPriorityFeePerGas(String contractFunc) {
-    return web3j.ethMaxPriorityFeePerGas().send().getMaxPriorityFeePerGas();
+    BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
+    return new BigDecimal(gasPrice).multiply(BigDecimal.valueOf(1.2))
+                                   .setScale(0, RoundingMode.HALF_EVEN)
+                                   .toBigInteger();
   }
 
   @Override
@@ -95,11 +63,6 @@ public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider
   @Override
   public BigInteger getGasLimit() {
     return GAS_LIMIT;
-  }
-
-  @Override
-  public boolean isEIP1559Enabled() {
-    return true;
   }
 
 }

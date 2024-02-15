@@ -98,7 +98,7 @@
               <packageName>io.meeds.deeds.contract</packageName>
               <sourceDestination>${project.basedir}/target/generated-sources</sourceDestination>
               <nativeJavaType>true</nativeJavaType>
-              <outputFormat>java</outputFormat>
+              <outputFormat>java,abi</outputFormat>
               <soliditySourceFiles>
                 <directory>${project.basedir}/src/main/resources</directory>
                 <includes>

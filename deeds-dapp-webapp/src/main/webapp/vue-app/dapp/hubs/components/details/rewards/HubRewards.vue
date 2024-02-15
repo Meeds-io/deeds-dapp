@@ -32,7 +32,7 @@
               :key="report.reportId"
               cols="auto"
               class="flex-grow-1">
-              <v-card max-width="356" flat>
+              <v-card max-width="370" flat>
                 <deeds-hub-details-reward-item
                   :key="`report-${report.reportId}`"
                   :report="report"
