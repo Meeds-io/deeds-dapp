@@ -24,6 +24,8 @@
       <v-col cols="12" class="ps-4 ps-sm-5">
         <div class="d-flex flex-row flex-grow-1">
           <div class="headline font-weight-bold ps-0 py-0">{{ $t('yourDeeds') }}</div>
+          <v-spacer />
+          <deeds-lease-card-claim-reward-button v-if="deedsToDisplay.length" />
         </div>
       </v-col>
       <v-col

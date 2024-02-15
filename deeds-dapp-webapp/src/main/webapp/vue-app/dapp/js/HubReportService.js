@@ -63,3 +63,15 @@ export function getReward(id) {
     }
   });
 }
+
+export function getClaimableRewards(address) {
+  return fetch(`${window.parentAppLocation}/api/uem/rewards/claimable/${address}`, {
+    method: 'GET',
+  }).then((resp) => {
+    if (resp?.ok) {
+      return resp.text();
+    } else {
+      throw new Error(`Error getting UEM claimable rewards for address ${address}`);
+    }
+  });
+}
