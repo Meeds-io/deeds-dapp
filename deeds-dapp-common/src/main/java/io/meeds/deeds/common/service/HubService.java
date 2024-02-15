@@ -382,11 +382,16 @@ public class HubService {
   }
 
   public boolean updateDeedOnWom(long deedId) throws ObjectNotFoundException, WomException {
+    return updateDeedOnWom(deedId, false);
+  }
+
+  public boolean updateDeedOnWom(long deedId, boolean forceRefresh) throws ObjectNotFoundException, WomException {
     DeedTenant deedTenant = tenantService.getDeedTenantOrImport(deedId);
     return updateDeedOnWom(deedId,
                            null,
                            deedTenant.getOwnerAddress(),
-                           deedTenant.getManagerAddress());
+                           deedTenant.getManagerAddress(),
+                           forceRefresh);
   }
 
   public void autoConnectHubToWom(String hubAddress, long deedId) throws ObjectNotFoundException, WomException {
@@ -602,6 +607,15 @@ public class HubService {
                                   String hubAddress,
                                   String potentialOwnerAddress,
                                   String potentialManagerAddress) throws WomException {
+    return updateDeedOnWom(deedId, hubAddress, potentialOwnerAddress, potentialManagerAddress, false);
+  }
+
+  @SneakyThrows
+  private boolean updateDeedOnWom(long deedId, // NOSONAR
+                                  String hubAddress,
+                                  String potentialOwnerAddress,
+                                  String potentialManagerAddress,
+                                  boolean forceRefresh) throws WomException {
     DeedTenantLeaseDTO lease = leaseService.getCurrentLease(deedId);
     short ownerMintingPercentage = lease == null ? 100 : (short) lease.getOwnerMintingPercentage();
     String ownerAddress = getDeedOwnerAddress(deedId, potentialOwnerAddress);
@@ -611,7 +625,8 @@ public class HubService {
     validateDeedCharacteristics(deedId, ownerAddress, managerAddress);
     if (StringUtils.isBlank(hubAddress) || StringUtils.equals(hubAddress, EnsUtils.EMPTY_ADDRESS)) {
       WomDeed woMDeed = blockchainService.getWomDeed(deedId);
-      if (woMDeed == null
+      if (forceRefresh
+          || woMDeed == null
           || !StringUtils.equalsIgnoreCase(woMDeed.getOwnerAddress(), ownerAddress)
           || !StringUtils.equalsIgnoreCase(woMDeed.getManagerAddress(), managerAddress)
           || woMDeed.getOwnerPercentage() != ownerMintingPercentage
