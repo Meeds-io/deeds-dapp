@@ -87,7 +87,7 @@
         color="secondary"
         large
         dark>
-        {{ $utils.numberFormat(report.uemRewardAmount, language, 0, 2) }}<span class="ms-2">Ɱ</span>
+        {{ $utils.numberFormatWithDigits(report.uemRewardAmount, language, 0, 2) }}<span class="ms-2">Ɱ</span>
       </v-chip>
     </div>
   </div>

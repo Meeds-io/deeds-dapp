@@ -19,15 +19,15 @@
             v-on="on"
             v-bind="attrs"
             :color="percentageColor"
-            class="px-1 mt-n1"
+            class="px-1"
             small
             dark>
-            <span class="font-weight-bold text-subtitle-2 pt-1">
+            <span class="font-weight-bold caption pt-2px">
               {{ percentageFormat }}
             </span>
           </v-chip>
         </template>
-        <span>{{ $t('uem.comparingToPreviousPeriod') }}</span>
+        <span>{{ $t('uem.comparingToPreviousPeriod', {0: previousValueFormat}) }}</span>
       </v-tooltip>
     </div>
   </v-card>
@@ -52,7 +52,10 @@ export default {
     language: state => state.language,
     parentLocation: state => state.parentLocation,
     valueFormat() {
-      return this.$utils.numberFormat(this.value, this.language);
+      return this.$utils.numberFormatWithDigits(this.value, this.language);
+    },
+    previousValueFormat() {
+      return this.previousValue && this.$utils.numberFormatWithDigits(this.previousValue, this.language);
     },
     percentage() {
       return this.previousValue && (this.value / this.previousValue - 1) || 0;

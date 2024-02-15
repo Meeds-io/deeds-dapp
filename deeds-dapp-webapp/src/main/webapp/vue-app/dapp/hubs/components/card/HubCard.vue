@@ -124,7 +124,7 @@
             </template>
           </div>
           <div v-else class="d-flex my-auto">
-            <div v-if="engagementScore" class="d-flex align-center me-auto pa-0">
+            <div v-if="hasReports" class="d-flex align-center me-auto pa-0">
               <v-icon size="45" class="secondary--text me-3">fa-rocket</v-icon>
               <div class="d-flex flex-column justify-center text-start">
                 <div :class="engagementScoreClass" class="title font-weight-bold my-auto"> {{ engagementScoreFormatted }} </div>
@@ -240,7 +240,7 @@ export default {
       return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsAmount() {
-      return this.$utils.numberFormat(this.hub?.rewardsPerPeriod, this.language);
+      return this.$utils.numberFormatWithDigits(this.hub?.rewardsPerPeriod, this.language);
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
@@ -258,7 +258,10 @@ export default {
       return this.hub?.actionsCount || 0;
     },
     hubActionsCountFormatted() {
-      return this.$utils.numberFormat(this.hubActionsCount, this.language);
+      return this.$utils.numberFormatWithDigits(this.hubActionsCount, this.language);
+    },
+    hasReports() {
+      return this.hub?.hasReports;
     },
     engagementScore() {
       return this.hub?.engagementScore || 0;
