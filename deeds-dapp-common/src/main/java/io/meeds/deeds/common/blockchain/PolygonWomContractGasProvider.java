@@ -26,6 +26,7 @@ import java.math.RoundingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.tx.gas.ContractEIP1559GasProvider;
 
 import lombok.SneakyThrows;
@@ -60,10 +61,13 @@ public class PolygonWomContractGasProvider implements ContractEIP1559GasProvider
   @Override
   @SneakyThrows
   public BigInteger getGasPrice() {
-    BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
-    return new BigDecimal(gasPrice).multiply(BigDecimal.valueOf(1.2))
-                                   .setScale(0, RoundingMode.HALF_EVEN)
-                                   .toBigInteger();
+    BigInteger baseFeePerGas = web3j.ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
+                                    .send()
+                                    .getBlock()
+                                    .getBaseFeePerGas();
+    return new BigDecimal(baseFeePerGas).multiply(BigDecimal.valueOf(1.2))
+                                        .setScale(0, RoundingMode.HALF_EVEN)
+                                        .toBigInteger();
   }
 
   @Override

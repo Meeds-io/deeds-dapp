@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.StampedLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.EventEncoder;
 import org.web3j.abi.datatypes.Address;
@@ -107,57 +110,62 @@ import lombok.SneakyThrows;
 @Component
 public class BlockchainService {
 
-  private static final Logger    LOG = LoggerFactory.getLogger(BlockchainService.class);
+  private static final Logger      LOG  = LoggerFactory.getLogger(BlockchainService.class);
+
+  private static final StampedLock LOCK = new StampedLock();
 
   @Autowired
   @Qualifier("ethereumNetwork")
-  private Web3j                  web3j;
+  private Web3j                    web3j;
 
   @Autowired
   @Qualifier("polygonNetwork")
-  private Web3j                  polygonWeb3j;
+  private Web3j                    polygonWeb3j;
 
   @Autowired(required = false)
-  private DeedTenantProvisioning deedTenantProvisioning;
+  private DeedTenantProvisioning   deedTenantProvisioning;
 
   @Autowired(required = false)
-  private DeedRenting            deedRenting;
+  private DeedRenting              deedRenting;
 
   @Autowired
-  private Deed                   deed;
+  private Deed                     deed;
 
   @Autowired
-  private TokenFactory           tokenFactory;
+  private TokenFactory             tokenFactory;
 
   @Autowired
-  private XMeedsNFTRewarding     xMeedsToken;
+  private XMeedsNFTRewarding       xMeedsToken;
 
   @Autowired(required = false)
-  private UserEngagementMinting  uemContract;
+  private UserEngagementMinting    uemContract;
 
   @Autowired(required = false)
   @Qualifier("womContractReadOnly")
-  private WoM                    womContract;
+  private WoM                      womContract;
 
   @Autowired(required = false)
   @Qualifier("womContractReadWrite")
-  private WoM                    womContractWithManager;
+  private WoM                      womContractWithManager;
 
   @Autowired
   @Qualifier("ethereumMeedToken")
-  private MeedsToken             ethereumToken;
+  private MeedsToken               ethereumToken;
 
   @Autowired
   @Qualifier("polygonMeedToken")
-  private MeedsToken             polygonToken;
+  private MeedsToken               polygonToken;
 
   @Autowired
   @Qualifier("sushiPairToken")
-  private ERC20                  sushiPairToken;
+  private ERC20                    sushiPairToken;
 
-  private long                   ethereumNetworkId;
+  @Value("${io.meeds.maxWaitTransactionSending:3}")
+  private int                      maxWaitTransactionSending;
 
-  private long                   polygonNetworkId;
+  private long                     ethereumNetworkId;
+
+  private long                     polygonNetworkId;
 
   /**
    * Return DEED Tenant Status from Blockchain Contract
@@ -1263,6 +1271,12 @@ public class BlockchainService {
                                      String managerAddress,
                                      String hubAddress,
                                      short ownerMintingPercentage) throws WomException {
+    long stamp;
+    try {
+      stamp = LOCK.tryWriteLock(maxWaitTransactionSending * 3l, TimeUnit.MINUTES);
+    } catch (InterruptedException e) { // NOSONAR
+      throw new WomException("wom.updateDeedTransactionTimedOut");
+    }
     try {
       TransactionReceipt transactionReceipt = womContractWithManager.updateDeed(BigInteger.valueOf(deedId),
                                                                                 new io.meeds.deeds.contract.WoM.Deed(BigInteger.valueOf(city),
@@ -1273,9 +1287,10 @@ public class BlockchainService {
                                                                                                                      managerAddress,
                                                                                                                      hubAddress,
                                                                                                                      BigInteger.valueOf(ownerMintingPercentage),
-                                                                                                                     BigInteger.valueOf(100l -
-                                                                                                                         ownerMintingPercentage)))
-                                                                    .send();
+                                                                                                                     BigInteger.valueOf(100l - ownerMintingPercentage)))
+                                                                    .sendAsync()
+                                                                    .orTimeout(maxWaitTransactionSending, TimeUnit.MINUTES)
+                                                                    .get();
       if (transactionReceipt == null) {
         throw new WomException("wom.updateDeedTransactionFailedWithoutReceipt");
       } else if (!transactionReceipt.isStatusOK()) {
@@ -1291,13 +1306,15 @@ public class BlockchainService {
           }
         }
       }
-    } catch (Exception e) {
+    } catch (Exception e) { // NOSONAR
       String message = getWomContractExceptionMessage(e);
       if (StringUtils.isNotBlank(message)) {
         throw new WomException(message);
       } else {
         throw new IllegalStateException("Error While processing Deed Update transaction", e);
       }
+    } finally {
+      LOCK.unlock(stamp);
     }
   }
 
