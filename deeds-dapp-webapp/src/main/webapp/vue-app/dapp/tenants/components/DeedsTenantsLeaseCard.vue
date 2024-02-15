@@ -118,9 +118,6 @@
                         :has-payment-in-progress="hasPaymentInProgress"
                         :is-lease-not-fully-paid="isLeaseNotFullyPaid" />
 
-                      <deeds-lease-card-claim-reward-button
-                        :disabled="disabledClaimRewards" />
-
                       <deeds-lease-card-end-rent-button
                         :lease="lease"
                         :disabled="disabledEndRent" />
@@ -199,9 +196,6 @@ export default {
     },
     disabledEndRent() {
       return this.hasPaymentInProgress || !this.isLeaseOngoing  || !this.isLeaseNotFullyPaid;
-    },
-    disabledClaimRewards() {
-      return !this.lease?.pendingRewardsAmount;
     },
     hasPaymentInProgress() {
       return !this.rentalConfirmed || (this.lease?.monthPaymentInProgress && this.lease?.monthPaymentInProgress > 0);

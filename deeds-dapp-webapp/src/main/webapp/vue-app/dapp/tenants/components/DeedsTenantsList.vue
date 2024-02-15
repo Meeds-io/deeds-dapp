@@ -27,6 +27,8 @@
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
           <div class="headline font-weight-bold ps-0 py-0">{{ $t('dapp.tenants.yourTenants') }}</div>
+          <v-spacer />
+          <deeds-lease-card-claim-reward-button v-if="deedsToDisplay.length" />
         </div>
       </v-col>
       <v-col
