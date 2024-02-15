@@ -30,17 +30,17 @@
             <v-col
               v-if="report.reportId && (!report.hidden || report.reportId === expandedReportId)"
               :key="report.reportId"
-              cols="12"
-              sm="12"
-              md="6"
-              lg="4">
-              <deeds-hub-details-reward-item
-                :key="`report-${report.reportId}`"
-                :report="report"
-                :reports="reports"
-                :expand="expandedReportId === report.reportId"
-                @expand="expandedReportId = report.reportId"
-                @collapse="expandedReportId = null" />
+              cols="auto"
+              class="flex-grow-1">
+              <v-card max-width="400" flat>
+                <deeds-hub-details-reward-item
+                  :key="`report-${report.reportId}`"
+                  :report="report"
+                  :reports="reports"
+                  :expand="expandedReportId === report.reportId"
+                  @expand="expandedReportId = report.reportId"
+                  @collapse="expandedReportId = null" />
+              </v-card>
             </v-col>
           </template>
         </v-row>

@@ -1,49 +1,35 @@
 <template>
-  <div>
-    <div class="d-flex flex-column mb-8">
-      <div class="text-subtitle-1 font-weight-bold">
-        {{ $t('uem.reportDetails') }}
-      </div>
-      <div class="text-light-color d-flex">
-        {{ $t('uem.sentOn') }}
-        <deeds-date-format
-          :value="report.sentDate"
-          :format="dateFormat"
-          class="text-break ms-1" />
-      </div>
-    </div>
-    <div class="d-flex flex-wrap me-n4">
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.usersCount"
-        :previous-value="previousReport.usersCount"
-        label="uem.members"
-        class="me-4 mb-4" />
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.participantsCount"
-        :previous-value="previousReport.participantsCount"
-        label="wom.participantsCount"
-        class="me-4 mb-4" />
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.actionsCount"
-        :previous-value="previousReport.actionsCount"
-        label="wom.actionsCount"
-        class="me-4 mb-4" />
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.achievementsCount"
-        :previous-value="previousReport.achievementsCount"
-        label="wom.achievementsCount"
-        class="me-4 mb-4" />
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.recipientsCount"
-        :previous-value="previousReport.recipientsCount"
-        label="wom.recipientsCount"
-        class="me-4 mb-4" />
-      <deeds-hub-details-reward-item-detail-card
-        :value="report.hubRewardAmount"
-        :previous-value="previousReport.hubRewardAmount"
-        :label="hubRewardsPerPeriod"
-        class="me-4 mb-4" />
-    </div>
+  <div class="d-flex flex-wrap me-n4">
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.usersCount"
+      :previous-value="previousReport.usersCount"
+      label="uem.members"
+      class="mx-auto mb-4" />
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.participantsCount"
+      :previous-value="previousReport.participantsCount"
+      label="wom.participantsCount"
+      class="mx-auto mb-4" />
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.actionsCount"
+      :previous-value="previousReport.actionsCount"
+      label="wom.actionsCount"
+      class="mx-auto mb-4" />
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.achievementsCount"
+      :previous-value="previousReport.achievementsCount"
+      label="wom.achievementsCount"
+      class="mx-auto mb-4" />
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.recipientsCount"
+      :previous-value="previousReport.recipientsCount"
+      label="wom.recipientsCount"
+      class="mx-auto mb-4" />
+    <deeds-hub-details-reward-item-detail-card
+      :value="report.hubRewardAmount"
+      :previous-value="previousReport.hubRewardAmount"
+      :label="hubRewardsPerPeriod"
+      class="mx-auto mb-4" />
   </div>
 </template>
 <script>

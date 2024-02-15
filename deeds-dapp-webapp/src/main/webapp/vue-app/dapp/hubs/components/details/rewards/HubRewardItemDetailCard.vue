@@ -19,10 +19,10 @@
             v-on="on"
             v-bind="attrs"
             :color="percentageColor"
-            class="px-1 mt-n1"
+            class="px-1"
             small
             dark>
-            <span class="font-weight-bold text-subtitle-2 pt-1">
+            <span class="font-weight-bold caption pt-2px">
               {{ percentageFormat }}
             </span>
           </v-chip>
