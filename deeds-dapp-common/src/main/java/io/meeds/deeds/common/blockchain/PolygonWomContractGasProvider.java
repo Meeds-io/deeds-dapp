@@ -22,16 +22,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.web3j.protocol.Web3j;
 import org.web3j.tx.gas.ContractGasProvider;
 
 import lombok.SneakyThrows;
 
 public class PolygonWomContractGasProvider implements ContractGasProvider {
-
-  private static final Logger     LOG       = LoggerFactory.getLogger(PolygonWomContractGasProvider.class);
 
   private static final BigInteger GAS_LIMIT = BigInteger.valueOf(300000);
 

@@ -64,4 +64,11 @@ public class UemRewardController {
                          .body(reward);
   }
 
+  @GetMapping("claimable/{address}")
+  public ResponseEntity<String> getClaimableRewards(
+                                                    @PathVariable(name = "address")
+                                                    String address) {
+    return ResponseEntity.ok(String.valueOf(rewardService.getClaimableRewards(address)));
+  }
+
 }

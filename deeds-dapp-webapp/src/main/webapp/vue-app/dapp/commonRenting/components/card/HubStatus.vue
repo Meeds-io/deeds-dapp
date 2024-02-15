@@ -90,10 +90,10 @@ export default {
       return this.nft?.isProvisioningManager;
     },
     deedTenantLink() {
-      return this.cityName && `https://${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
+      return this.cityName && `https://${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
     },
     deedTenantLinkLabel() {
-      return this.cityName && `${this.cityName.toLowerCase()}-${this.nftId}.wom.meeds.io`;
+      return this.cityName && `${this.cityName.toLowerCase()}-${this.nftId}.meeds.io`;
     },
   }),
 };
