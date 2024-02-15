@@ -86,8 +86,9 @@ export function sendTransaction(provider, contract, method, options, params) {
         options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
       }
     }).catch(e => {
-      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e.message}));
-      throw new Error(e.message);
+      console.error(e);
+      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
+      throw e?.message ? new Error(e?.message) : e;
     })
       .then(() => 
         signer[method](

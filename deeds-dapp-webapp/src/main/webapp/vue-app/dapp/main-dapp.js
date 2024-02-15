@@ -154,6 +154,7 @@ const i18n = new VueI18n({
 const networkSettings = {
   1: {
     // Contracts addresses
+    chainId: '0x1',
     sushiswapRouterAddress: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
     sushiswapPairAddress: '0x960bd61d0b960b107ff5309a2dcced4705567070',
     wethAddress: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -161,6 +162,15 @@ const networkSettings = {
     tokenFactoryAddress: '0x1B37D04759aD542640Cc44Ff849a373040386050',
     xMeedAddress: '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4',
     deedAddress: '0x0143b71443650aa8efa76bd82f35c22ebd558090',
+    womAddress: '0x8028aB8508bA5060B8119444b53f4321D0ff00ee',
+    uemAddress: '0xC56167cB7AC4D0C514D29390432BFC057f0c99a8',
+    polygonNetwork: {
+      chainName: 'Polygon Mainnet',
+      chainId: '0x89',
+      nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+      rpcUrls: ['https://polygon-rpc.com/'],
+      blockExplorerUrls: ['https://polygonscan.com']
+    },
     polygonMeedAddress: '0x6aca77cf3bab0c4e8210a09b57b07854a995289a',
     polygonWethAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
     comethPairAddress: '0xb82F8457fcf644803f4D74F677905F1d410Cd395',
@@ -186,6 +196,7 @@ const networkSettings = {
 
 // Goerli
 networkSettings[5] = {
+  chainId: '0x5',
   sushiswapRouterAddress: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
   sushiswapPairAddress: '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD',
   wethAddress: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
@@ -195,6 +206,15 @@ networkSettings[5] = {
   deedAddress: '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
   tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
   tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
+  womAddress: '0x530417D6909834f9Ebfe5d98b649433B616Efb38',
+  uemAddress: '0x39126e13432883708429F0918A55e9212E6eb7F7',
+  polygonNetwork: {
+    chainName: 'Mumbai',
+    chainId: '0x13881',
+    nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+    rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+    blockExplorerUrls: ['https://mumbai.polygonscan.com']
+  },
   etherscanBaseLink: 'https://goerli.etherscan.io/',
   // Opensea links
   openSeaBaseLink: 'https://testnets.opensea.io/assets/goerli/0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
@@ -331,6 +351,7 @@ const store = new Vuex.Store({
     address: null,
     networkId: null,
     validNetwork: false,
+    networkChangeListeningPaused: false,
     yearInMinutes: 365 * 24 * 60,
     scrollbarWidth: utils.getScrollbarWidth(),
     cities: ['TANIT', 'RESHEF', 'ASHTARTE', 'MELQART', 'ESHMUN', 'KUSHOR', 'HAMMON'],
@@ -519,6 +540,9 @@ const store = new Vuex.Store({
   mutations: {
     echartsLoaded(state) {
       state.echartsLoaded = true;
+    },
+    pauseNetworkChangeListening(state, pauseListening) {
+      state.networkChangeListeningPaused = pauseListening;
     },
     incrementOpenedDrawer(state) {
       state.openedDrawersCount++;
@@ -1426,6 +1450,9 @@ const store = new Vuex.Store({
 });
 
 function initialize() {
+  if (store.networkChangeListeningPaused) {
+    return;
+  }
   if (ethUtils.isMetamaskInstalled()) {
     store.commit('refreshMetamaskState');
     if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
