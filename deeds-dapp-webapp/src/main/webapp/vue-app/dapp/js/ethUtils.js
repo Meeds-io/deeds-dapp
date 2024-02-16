@@ -71,6 +71,10 @@ export function retrieveAddress() {
 }
 
 export function sendTransaction(provider, contract, method, options, params) {
+  return sentTransactionWithNotification(provider, contract, method, options, params, true);
+}
+
+export function sentTransactionWithNotification(provider, contract, method, options, params, notifyUser) {
   const signer = provider && contract && contract.connect(provider.getSigner());
   if (signer) {
     if (options?.to) {
@@ -81,26 +85,26 @@ export function sendTransaction(provider, contract, method, options, params) {
     return signer.estimateGas[method](
       ...params,
       estimationOptions
-    ).then(estimatedGasLimit => {
-      if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
-        options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
-      }
-    }).catch(e => {
-      console.error(e);
-      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
-      throw e?.message ? new Error(e?.message) : e;
-    })
-      .then(() => 
+    )
+      .then(estimatedGasLimit => {
+        if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
+          options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
+        }
+      }).catch(e => {
+        console.error(e);
+        document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
+        throw e?.message ? new Error(e?.message) : e;
+      }).then(() => 
         signer[method](
           ...params,
           options
         )
       ).catch(e => {
-        if (e?.code !== 4001) { // User denied transaction signature
+        if (!notifyUser || e?.code !== 4001) { // User denied transaction signature
           throw e;
         }
       }).then((receipt) => {
-        if (receipt?.hash) {
+        if (receipt?.hash && notifyUser) {
           document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
         }
         return receipt;

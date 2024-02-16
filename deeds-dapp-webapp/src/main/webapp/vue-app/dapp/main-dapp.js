@@ -207,7 +207,7 @@ networkSettings[5] = {
   tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
   tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
   womAddress: '0x530417D6909834f9Ebfe5d98b649433B616Efb38',
-  uemAddress: '0x39126e13432883708429F0918A55e9212E6eb7F7',
+  uemAddress: window.location.origin.includes('localhost') && '0x290b11b1ab6a31fF95490e4e0EeffEC6402cce99' || '0x39126e13432883708429F0918A55e9212E6eb7F7',
   polygonNetwork: {
     chainName: 'Mumbai',
     chainId: '0x13881',
