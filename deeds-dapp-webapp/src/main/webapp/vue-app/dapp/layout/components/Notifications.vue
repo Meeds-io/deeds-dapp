@@ -109,10 +109,11 @@ export default {
     },
   }),
   created() {
-    this.$root.$on('alert-message', (message, type, linkCallback, linkIcon, linkTooltip) => {
+    this.$root.$on('alert-message', (message, type, linkCallback, linkIcon, linkTooltip, link) => {
       this.openAlert({
         alertType: type,
         alertMessage: message,
+        alertLink: link,
         alertLinkCallback: linkCallback,
         alertLinkIcon: linkIcon,
         alertLinkTooltip: linkTooltip,

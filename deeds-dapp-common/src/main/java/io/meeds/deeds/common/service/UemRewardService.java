@@ -78,6 +78,10 @@ public class UemRewardService {
     return blockchainService.getPendingRewards(address);
   }
 
+  public String getUemAddress() {
+    return blockchainService.getUemAddress();
+  }
+
   public UemReward refreshRewardProperties(long rewardId) {
     UemReward reward = new UemReward();
     reward.setRewardId(rewardId);
