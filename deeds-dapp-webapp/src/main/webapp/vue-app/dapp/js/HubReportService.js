@@ -69,7 +69,7 @@ export function getClaimableRewards(address) {
     method: 'GET',
   }).then((resp) => {
     if (resp?.ok) {
-      return resp.text();
+      return resp.json();
     } else {
       throw new Error(`Error getting UEM claimable rewards for address ${address}`);
     }

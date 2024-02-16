@@ -17,6 +17,9 @@
  */
 package io.meeds.dapp.web.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,10 +68,14 @@ public class UemRewardController {
   }
 
   @GetMapping("claimable/{address}")
-  public ResponseEntity<String> getClaimableRewards(
+  public ResponseEntity<Object> getClaimableRewards(
                                                     @PathVariable(name = "address")
                                                     String address) {
-    return ResponseEntity.ok(String.valueOf(rewardService.getClaimableRewards(address)));
+    Map<String, String> properties = new HashMap<>();
+    properties.put("address", address);
+    properties.put("claimable", String.valueOf(rewardService.getClaimableRewards(address)));
+    properties.put("contract", rewardService.getUemAddress());
+    return ResponseEntity.ok(properties);
   }
 
 }

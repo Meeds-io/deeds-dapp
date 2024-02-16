@@ -11,6 +11,7 @@
         v-bind="attrs"
         v-on="on">
         <v-btn
+          :loading="loading"
           :disabled="!claimableRewards"
           color="primary"
           elevation="0"
@@ -21,13 +22,17 @@
         </v-btn>
       </v-card>
     </template>
-    <span>{{ claimableRewards && $t('claimYourRewards') || $t('noRewardsToClaim') }}</span>
+    <span>{{ claimableRewards && $t('claimYourRewards', {0: claimableRewardsFormatted}) || $t('noRewardsToClaim') }}</span>
   </v-tooltip>
 </template>
 <script>
 export default {
   data: () => ({
     loading: false,
+    ethereumChainId: null,
+    polygonChainId: null,
+    polygonBlockExplorer: null,
+    uemAddress: null,
     claimableRewards: 0,
     claimAbi: [
       'function claim(address _receiver, uint256 _amount)',
@@ -35,22 +40,17 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
+    language: state => state.language,
     polygonNetwork: state => state.polygonNetwork,
     networkId: state => state.networkId,
-    uemAddress: state => state.uemAddress,
-    ethereumChainId: state => state.chainId,
-    polygonChainId() {
-      return this.polygonNetwork?.chainId;
+    chainId: state => state.chainId,
+    claimableRewardsFormatted() {
+      return this.$utils.numberFormatWithDigits(this.claimableRewards, this.language);
     },
   }),
   watch: {
     loading() {
-      if (this.loading) {
-        this.$store.commit('pauseNetworkChangeListening', true);
-      } else {
-        this.$ethUtils.switchMetamaskNetwork(this.ethereumChainId)
-          .finally(() => this.$store.commit('pauseNetworkChangeListening', false));
-      }
+      this.$store.commit('pauseNetworkChangeListening', this.loading);
     },
   },
   created() {
@@ -59,35 +59,70 @@ export default {
   methods: {
     retrieveClaimableAmount() {
       this.$hubReportService.getClaimableRewards(this.address)
-        .then(claimableRewards => this.claimableRewards = Number(claimableRewards));
+        .then(data => {
+          this.uemAddress = data?.contract;
+          this.claimableRewards = Number(data?.claimable || 0);
+        });
     },
     async claim() {
       this.loading = true;
       try {
+        this.ethereumChainId = this.ethereumChainId || this.chainId;
+        this.polygonChainId = this.polygonChainId || this.polygonNetwork?.chainId;
+        this.polygonBlockExplorer = this.polygonBlockExplorer || this.polygonNetwork?.blockExplorerUrls?.[0];
+
         await this.switchToPolygonNetwork();
+        // Start: Ensure Metamask changed the network
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await this.$ethUtils.getSelectedChainId();
+        // End: Ensure Metamask changed the network
         await this.sendTransaction();
         await this.retrieveClaimableAmount();
+        this.$root.$emit('alert-message', this.$t('uem.claimedRewardsSuccessfully'), 'success');
+        this.$root.$emit('uem-claim-success');
+      } catch (e) {
+        if (e?.code === 4001) {
+          this.$root.$emit('close-alert-message');
+        } else if (e?.message) {
+          this.$root.$emit('alert-message-html', this.$t('uem.errorClaimingRewardsWithMetamask', {
+            0: '<span class="error--text font-italic">',
+            1: this.$utils.htmlToText(e.message),
+            2: '</span>',
+          }), 'error');
+        } else {
+          this.$root.$emit('alert-message', this.$t('uem.errorClaimingRewards'), 'error');
+        }
       } finally {
         this.loading = false;
       }
     },
     async switchToPolygonNetwork() {
       try {
+        this.$root.$emit('alert-message', this.$t('uem.swtichToPolygon'), 'info');
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: this.polygonChainId }],
         });
-      } catch (error) {
-        console.error(error);
-        await window.ethereum?.request({
-          method: 'wallet_addEthereumChain',
-          params: [this.polygonNetwork],
-        });
+      } catch (e) {
+        if (e?.code === 4902) {
+          this.$root.$emit('alert-message', this.$t('uem.addPolygonNetwork'), 'info');
+          await window.ethereum?.request({
+            method: 'wallet_addEthereumChain',
+            params: [this.polygonNetwork],
+          });
+        } else {
+          throw e;
+        }
       }
     },
     sendTransaction() {
+      this.$root.$emit('alert-message-html', this.$t('uem.confirmClaimTransaction', {
+        0: this.claimableRewardsFormatted,
+        1: '<span class="secondary--text">',
+        2: '</span>',
+      }));
       const provider = new window.ethers.providers.Web3Provider(window.ethereum);
-      return this.$ethUtils.sendTransaction(
+      return this.$ethUtils.sentTransactionWithNotification(
         provider,
         new window.ethers.Contract(
           this.uemAddress,
@@ -96,33 +131,23 @@ export default {
         ),
         'claim(address,uint256)',
         {gasLimit: '300000'},
-        [this.address, 0]
+        [this.address, 0],
+        false
       )
         .then(receipt => {
+          if (receipt?.hash) {
+            this.$root.$emit('alert-message', this.$t('transactionSent'), 'success', null, 'fas fa-up-right-from-square', this.$t('viewOnEtherscan'), `${this.polygonBlockExplorer}/tx/${receipt.hash}`);
+          }
           if (receipt?.wait) {
-            return receipt.wait(1);
+            return receipt.wait(2);
           } else {
             throw new Error('uem.errorClaimingRewards');
           }
         })
         .then(receipt => {
-          if (receipt?.status) {
-            this.$root.$emit('alert-message', this.$t('uem.claimedRewardsSuccessfully'), 'success');
-            this.$root.$emit('uem-claim-success');
-            this.loading = false;
-          } else {
+          if (!receipt?.status) {
             throw new Error('uem.errorClaimingRewards');
           }
-        })
-        .catch(e => {
-          console.error(e);
-          const error = (e?.data?.message || e?.message || e?.cause || String(e));
-          let errorMessageKey = error.includes('wom.') && `wom.${error.split('wom.')[1].split(/[^A-Za-z0-9]/g)[0]}` || error;
-          if (!this.$te(errorMessageKey)) {
-            errorMessageKey = 'wom.errorConnectingToWom';
-          }
-          this.$root.$emit('alert-message', this.$t(errorMessageKey), 'error');
-          throw e;
         });
     },
   }
