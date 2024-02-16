@@ -71,6 +71,10 @@ export function retrieveAddress() {
 }
 
 export function sendTransaction(provider, contract, method, options, params) {
+  return sentTransactionWithNotification(provider, contract, method, options, params, true);
+}
+
+export function sentTransactionWithNotification(provider, contract, method, options, params, notifyUser) {
   const signer = provider && contract && contract.connect(provider.getSigner());
   if (signer) {
     if (options?.to) {
@@ -78,29 +82,32 @@ export function sendTransaction(provider, contract, method, options, params) {
     }
     const estimationOptions = JSON.parse(JSON.stringify(options));
     delete estimationOptions.gasLimit;
-    return signer.estimateGas[method](
+    return reAttempt(signer.estimateGas[method](
       ...params,
       estimationOptions
-    ).then(estimatedGasLimit => {
-      if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
-        options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
-      }
-    }).catch(e => {
-      console.error(e);
-      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
-      throw e?.message ? new Error(e?.message) : e;
-    })
-      .then(() => 
+    ), 3)
+      .then(estimatedGasLimit => {
+        if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
+          options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
+        }
+      }).catch(e => {
+        if (notifyUser) {
+          document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
+        }
+        if (!e?.message?.includes?.('429')) { //  Bypass error of type Too Many Requests 
+          throw e;
+        }
+      }).then(() => 
         signer[method](
           ...params,
           options
         )
       ).catch(e => {
-        if (e?.code !== 4001) { // User denied transaction signature
+        if (!notifyUser || e?.code !== 4001) { // User denied transaction signature
           throw e;
         }
       }).then((receipt) => {
-        if (receipt?.hash) {
+        if (receipt?.hash && notifyUser) {
           document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
         }
         return receipt;
@@ -187,4 +194,19 @@ export function toFixedDisplay(value, fractions, lang) {
   } else {
     return value;
   }
+}
+
+export function reAttempt(fetchCall, times) {
+  return fetchCall
+    .catch(e => {
+      if (times) {
+        return new Promise((resolve, reject) => window.setTimeout(() => {
+          return reAttempt(fetchCall, times - 1)
+            .catch(reject)
+            .then(resolve);
+        }, 1000));
+      } else {
+        throw e;
+      }
+    });
 }

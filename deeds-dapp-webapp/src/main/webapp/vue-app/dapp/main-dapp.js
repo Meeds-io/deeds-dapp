@@ -162,8 +162,6 @@ const networkSettings = {
     tokenFactoryAddress: '0x1B37D04759aD542640Cc44Ff849a373040386050',
     xMeedAddress: '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4',
     deedAddress: '0x0143b71443650aa8efa76bd82f35c22ebd558090',
-    womAddress: '0x8028aB8508bA5060B8119444b53f4321D0ff00ee',
-    uemAddress: '0xC56167cB7AC4D0C514D29390432BFC057f0c99a8',
     polygonNetwork: {
       chainName: 'Polygon Mainnet',
       chainId: '0x89',
@@ -206,8 +204,6 @@ networkSettings[5] = {
   deedAddress: '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
   tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
   tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
-  womAddress: '0x530417D6909834f9Ebfe5d98b649433B616Efb38',
-  uemAddress: '0x39126e13432883708429F0918A55e9212E6eb7F7',
   polygonNetwork: {
     chainName: 'Mumbai',
     chainId: '0x13881',
