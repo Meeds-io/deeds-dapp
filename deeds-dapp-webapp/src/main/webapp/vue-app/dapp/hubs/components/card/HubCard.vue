@@ -150,7 +150,7 @@
                 </template>
                 <span>{{ $t('wom.availableActionsForContributors', {0: hubActionsCountFormatted}) }}</span>
               </v-tooltip>
-              <v-tooltip v-if="topHubReceiverAmount" bottom>
+              <v-tooltip v-if="hubRewardsAmount" bottom>
                 <template #activator="{ on, attrs }">
                   <div
                     v-on="on"
@@ -163,12 +163,12 @@
                       height="25"
                       class="me-2">
                     <div class="text-light-color d-flex font-weight-normal">
-                      {{ topHubReceiverAmountFormatted }}
+                      {{ hubRewardsAmount }}
                       <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
                     </div>
                   </div>
                 </template>
-                <span>{{ $t('wom.maxRewardAmountEarned') }}</span>
+                <span>{{ $t('wom.rewardsSentToRecipients') }}</span>
               </v-tooltip>
             </div>
           </div>
@@ -279,12 +279,6 @@ export default {
       } else {
         return 'text-light-color';
       }
-    },
-    topHubReceiverAmount() {
-      return this.hub?.topHubReceiverAmount || 0;
-    },
-    topHubReceiverAmountFormatted() {
-      return this.$utils.numberFormatWithDigits(this.topHubReceiverAmount, this.language, 0, 2);
     },
     formLinkWithCommunityName() {
       return this.formLink.concat('#communityName=', this.hubName);
