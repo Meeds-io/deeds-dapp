@@ -58,14 +58,23 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     echartsLoaded: state => state.echartsLoaded,
+    rewardedReports() {
+      return this.reports && this.reports.slice().reverse()
+        .filter(r => this.getStartOfTheWeek(r.sentDate) < this.startOfTheWeek)
+        || [];
+    },
     hasReports() {
-      return this.reports && this.reports.length > 1;
+      return this.rewardedReports.length > 1;
+    },
+    startOfTheWeek() {
+      return this.getStartOfTheWeek(Date.now());
     },
     chartData() {
-      return this.hasReports && this.reports.slice().reverse().map(r => [
-        this.getStartOfTheWeek(r.sentDate),
-        r.engagementScore,
-      ]) || [];
+      return this.hasReports && this.rewardedReports.slice().reverse()
+        .map(r => [
+          this.getStartOfTheWeek(r.sentDate),
+          r.engagementScore,
+        ]) || [];
     },
     chartOptions() {
       return {
@@ -187,7 +196,7 @@ export default {
       return useKilo ? this.$t('kilo', {0: formatted}) : formatted;
     },
     getStartOfTheWeek(value) {
-      const date = new Date(value);
+      const date = new Date(`${new Date(value).toISOString().substring(0, 10)}T00:00:00`);
       const day = date.getDay();
       const diff = date.getDate() - day + (day === 0 ? -6 : 1);
       return new Date(date.setDate(diff)).getTime();
