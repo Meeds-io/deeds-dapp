@@ -117,11 +117,11 @@
                   height="25">
               </v-card>
               <div class="d-flex">
-                {{ hubTopRewardedAmountFormatted }} {{ $t('meedsSymbol') }}<span v-if="hubRewardsPeriodType" class="hidden-xs-only ms-1"> / {{ hubRewardsPeriod }}</span>
+                {{ hubRewardsAmount }} {{ $t('meedsSymbol') }}<span v-if="hubRewardsPeriodType" class="hidden-xs-only ms-1"> / {{ hubRewardsPeriod }}</span>
               </div>
             </div>
           </template>
-          <span>{{ $t('wom.maxRewardAmountEarned') }}</span>
+          <span>{{ $t('wom.rewardsSentToRecipients') }}</span>
         </v-tooltip>
       </div>
     </div>
@@ -198,17 +198,14 @@ export default {
     engagementRatePercentage() {
       return this.$utils.percentage(this.engagementRate - 1, this.language, true, '0');
     },
+    hubRewardsAmount() {
+      return this.formatNumber(this.report?.hubRewardAmount);
+    },
     hubRewardsPeriodType() {
       return this.report?.periodType?.toLowerCase();
     },
     hubRewardsPeriod() {
       return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`) || '';
-    },
-    hubTopRewardedAmount() {
-      return this.report?.hubTopRewardedAmount || 0;
-    },
-    hubTopRewardedAmountFormatted() {
-      return this.formatNumber(this.hubTopRewardedAmount);
     },
     currentPeriod() {
       return this.getStartOfTheWeek(Date.now()) === this.getStartOfTheWeek(this.report.sentDate);
