@@ -117,7 +117,7 @@
                   height="25"
                   class="me-2">
                 <div class="text-light-color d-flex font-weight-normal">
-                  {{ hubRewardsAmount }}
+                  {{ hubRewardsAmountFormatted }}
                   <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
                 </div>
               </div>
@@ -163,7 +163,7 @@
                       height="25"
                       class="me-2">
                     <div class="text-light-color d-flex font-weight-normal">
-                      {{ hubRewardsAmount }}
+                      {{ hubRewardsAmountFormatted }}
                       <span class="ms-2 text-no-wrap">Ɱ / {{ hubRewardsPeriod }}</span>
                     </div>
                   </div>
@@ -240,7 +240,10 @@ export default {
       return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsAmount() {
-      return this.formatNumber(this.hub?.rewardsPerPeriod);
+      return this.hub?.rewardsPerPeriod || 0;
+    },
+    hubRewardsAmountFormatted() {
+      return this.formatNumber(this.hubRewardsAmount);
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
