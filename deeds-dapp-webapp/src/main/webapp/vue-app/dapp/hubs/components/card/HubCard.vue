@@ -240,7 +240,7 @@ export default {
       return this.hubRewardsPeriodType && this.$t(`wom.${this.hubRewardsPeriodType}`);
     },
     hubRewardsAmount() {
-      return this.$utils.numberFormatWithDigits(this.hub?.rewardsPerPeriod, this.language);
+      return this.formatNumber(this.hub?.rewardsPerPeriod);
     },
     hubWebsiteUrl() {
       return this.hub?.websiteUrl;
@@ -307,6 +307,12 @@ export default {
       if (event) {
         event.stopPropagation();
       }
+    },
+    formatNumber(num) {
+      const useKilo = num >= 1000;
+      const value = useKilo ? num / 1000 : num;
+      const formatted = this.$utils.numberFormatWithDigits(value, this.language, 0, useKilo && 1 || (value < 1 && 2 || 0));
+      return useKilo ? this.$t('kilo', {0: formatted}) : formatted;
     },
   },
 };

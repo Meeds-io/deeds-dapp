@@ -56,7 +56,9 @@ import io.meeds.deeds.common.constant.DeedCity;
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
+import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
+import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
@@ -71,7 +73,6 @@ import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
-import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.HubUpdateRequest;
 import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomConnectionResponse;
@@ -126,6 +127,9 @@ public class HubService {
 
   @Autowired
   private HubRepository       hubRepository;
+
+  @Autowired
+  private HubReportRepository reportRepository;
 
   @Autowired
   private UemRewardRepository rewardRepository;
@@ -363,15 +367,23 @@ public class HubService {
     }
   }
 
-  public void saveHubUEMProperties(HubReport report) {
-    hubRepository.findById(StringUtils.lowerCase(report.getHubAddress()))
-                 .ifPresent(hubEntity -> {
-                   hubEntity.setUsersCount(report.getUsersCount());
-                   hubEntity.setRewardsPeriodType(report.getPeriodType());
-                   hubEntity.setRewardsPerPeriod(report.getHubRewardAmount());
-                   hubEntity = hubRepository.save(hubEntity);
-                   listenerService.publishEvent(HUB_STATUS_CHANGED, StringUtils.lowerCase(report.getHubAddress()));
-                 });
+  public void refreshHubUemProperties(String hubAddress) {
+    hubAddress = StringUtils.lowerCase(hubAddress);
+    Page<HubReportEntity> page = reportRepository.findByHubAddress(hubAddress,
+                                                                   PageRequest.of(0, 1, Sort.by(Direction.DESC, "sentDate")));
+    HubReportEntity reportEntity = page.stream()
+                                       .findFirst()
+                                       .orElse(null);
+    if (reportEntity != null) {
+      hubRepository.findById(hubAddress)
+                   .ifPresent(hubEntity -> {
+                     hubEntity.setUsersCount(reportEntity.getUsersCount());
+                     hubEntity.setRewardsPeriodType(reportEntity.getPeriodType());
+                     hubEntity.setRewardsPerPeriod(reportEntity.getHubRewardAmount());
+                     hubEntity = hubRepository.save(hubEntity);
+                     listenerService.publishEvent(HUB_STATUS_CHANGED, StringUtils.lowerCase(reportEntity.getHubAddress()));
+                   });
+    }
   }
 
   public List<ManagedDeed> getManagedDeeds(String address) {
