@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,11 +24,11 @@ import java.security.SignatureException;
 import java.util.Arrays;
 import java.util.Collections;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,6 +41,9 @@ import org.web3j.crypto.Sign.SignatureData;
 import org.web3j.utils.Numeric;
 
 import io.meeds.dapp.web.utils.Utils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Component
 public class DeedAuthenticationProvider implements AuthenticationProvider {

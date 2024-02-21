@@ -67,6 +67,11 @@
       <!-- Current project artifacts -->
       <dependency>
         <groupId>${project.groupId}</groupId>
+        <artifactId>deeds-dapp-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
         <artifactId>deeds-dapp-contract</artifactId>
         <version>${project.version}</version>
       </dependency>

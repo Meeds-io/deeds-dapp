@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.service.MeedAssetsMetricsService;
-import io.meeds.deeds.model.MeedAssetsMetrics;
+import io.meeds.deeds.common.model.MeedAssetsMetrics;
 
 @RestController
 @RequestMapping("/api/token/assets")

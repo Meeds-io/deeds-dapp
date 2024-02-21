@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUIRED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUIRED_EVENT;
 
 import java.time.Period;
 import java.time.ZoneId;
@@ -30,12 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.dapp.model.DeedTenantLease;
-import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.constant.ObjectAlreadyExistsException;
-import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantLease;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.OfferService;
+import io.meeds.deeds.common.service.UserProfileService;
+import io.meeds.wom.api.constant.ObjectAlreadyExistsException;
 
 @Service
 public class OfferAcquisitionInProgressListener implements EventListener<DeedTenantLease> {

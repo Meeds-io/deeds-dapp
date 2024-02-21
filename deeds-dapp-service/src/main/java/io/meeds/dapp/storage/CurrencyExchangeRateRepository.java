@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.CurrencyExchangeRate;
+import io.meeds.dapp.elasticsearch.model.CurrencyExchangeRate;
 
 public interface CurrencyExchangeRateRepository extends ElasticsearchRepository<CurrencyExchangeRate, LocalDate> {
 

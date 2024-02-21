@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,11 +30,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.service.BlockchainService;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
 public class MeedTokenMetricService {

@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,6 +15,8 @@
  */
 package io.meeds.dapp.service;
 
+import static io.meeds.wom.api.utils.JsonUtils.OBJECT_MAPPER;
+
 import java.net.URL;
 import java.util.Map;
 
@@ -25,15 +27,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.DeedCity;
-import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.service.BlockchainService;
-import io.meeds.deeds.storage.DeedMetadataRepository;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.storage.DeedMetadataRepository;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 import jakarta.annotation.PostConstruct;
 
@@ -41,14 +40,6 @@ import jakarta.annotation.PostConstruct;
 public class DeedMetadataService {
 
   private static final String       DAPP_IMAGE_SERVER_BASE = "${DAPP_SERVER_BASE}";
-
-  private static final ObjectMapper OBJECT_MAPPER          = new ObjectMapper();
-
-  static {
-    // Workaround when Jackson is defined in shared library with different
-    // version and without artifact jackson-datatype-jsr310
-    OBJECT_MAPPER.registerModule(new JavaTimeModule());
-  }
 
   private static final Logger       LOG = LoggerFactory.getLogger(DeedMetadataService.class);
 

@@ -2,7 +2,7 @@
 <!--
 
 	This file is part of the Meeds project (https://meeds.io/).
-	Copyright (C) 2022 Meeds Association contact@meeds.io
+	Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
 	License as published by the Free Software Foundation; either
@@ -30,9 +30,40 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.exoplatform.gatein.portal</groupId>
+      <artifactId>exo.portal.component.api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.web3j</groupId>
       <artifactId>core</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.web3j</groupId>
+      <artifactId>web3j-unit</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>tech.pegasys.discovery</groupId>
+          <artifactId>discovery</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.beust</groupId>
+          <artifactId>klaxon</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.consensys.services</groupId>
+          <artifactId>quorum-mainnet-launcher</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.splunk.logging</groupId>
+          <artifactId>splunk-library-javalogging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.consensys.services</groupId>
+          <artifactId>quorum-mainnet-launcher</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
@@ -45,11 +76,18 @@
           <exclude>**/*</exclude>
         </excludes>
       </resource>
+      <resource>
+        <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>**/*</exclude>
+        </excludes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
         <groupId>org.web3j</groupId>
         <artifactId>web3j-maven-plugin</artifactId>
+        <version>4.10.3</version>
         <executions>
           <execution>
             <id>generate-sources</id>
@@ -59,17 +97,39 @@
             </goals>
             <configuration>
               <packageName>io.meeds.deeds.contract</packageName>
-              <sourceDestination>deeds-dapp-contract/target/generated-sources</sourceDestination>
+              <sourceDestination>${project.basedir}/target/generated-sources</sourceDestination>
               <nativeJavaType>true</nativeJavaType>
-              <outputFormat>java</outputFormat>
+              <outputFormat>java,abi</outputFormat>
               <soliditySourceFiles>
-                <directory>deeds-dapp-contract/src/main/resources</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
                 <includes>
                   <include>**/*.sol</include>
                 </includes>
               </soliditySourceFiles>
               <outputDirectory>
-                <java>deeds-dapp-contract/target/generated-sources</java>
+                <java>${project.basedir}/target/generated-sources</java>
+              </outputDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-test-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>generate-sources</goal>
+            </goals>
+            <configuration>
+              <packageName>io.meeds.deeds.contract</packageName>
+              <sourceDestination>${project.basedir}/target/generated-sources</sourceDestination>
+              <nativeJavaType>true</nativeJavaType>
+              <outputFormat>java</outputFormat>
+              <soliditySourceFiles>
+                <directory>${project.basedir}/src/test/resources</directory>
+                <includes>
+                  <include>**/*.sol</include>
+                </includes>
+              </soliditySourceFiles>
+              <outputDirectory>
+                <java>${project.basedir}/target/generated-sources</java>
               </outputDirectory>
             </configuration>
           </execution>
@@ -94,4 +154,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

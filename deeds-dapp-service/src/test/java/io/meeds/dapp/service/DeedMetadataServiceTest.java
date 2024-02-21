@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,25 +30,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
-import io.meeds.deeds.constant.DisplayType;
-import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
-import io.meeds.deeds.elasticsearch.model.DeedMetadataAttribute;
-import io.meeds.deeds.service.BlockchainService;
-import io.meeds.deeds.storage.DeedMetadataRepository;
+import io.meeds.deeds.common.constant.DisplayType;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.storage.DeedMetadataRepository;
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
+import io.meeds.deeds.common.service.BlockchainService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @SpringBootTest(
-    classes = {
-        DeedMetadataService.class,
-    }
-)
+                classes = {
+                            DeedMetadataService.class,
+                })
 @TestPropertySource(
-    properties = {
-        "meeds.deed.metadatas.path=metadatas-test.json",
-        "meeds.deed.contract.metadatas.path=deedCollection-test.json",
-        "meeds.deed.metadata.serverBase=https://wom.meeds.io/dapp",
-    }
-)
+                    properties = {
+                                   "meeds.deed.metadatas.path=metadatas-test.json",
+                                   "meeds.deed.contract.metadatas.path=deedCollection-test.json",
+                                   "meeds.deed.metadata.serverBase=https://wom.meeds.io/dapp",
+                    })
 class DeedMetadataServiceTest {
 
   @MockBean

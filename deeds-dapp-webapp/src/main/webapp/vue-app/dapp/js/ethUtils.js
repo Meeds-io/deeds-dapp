@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,41 @@ export function connectToMetamask() {
   });
 }
 
+export async function signInWithMetamask(rawMessage) {
+  try {
+    const accounts = await window.ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{
+        eth_accounts: {},
+      }]
+    });
+    const account = accounts?.length && accounts[0];
+    if (!account) {
+      throw new Error('No selected account');
+    }
+  } catch (e) {
+    if (!String(e).includes('32601')) {
+      throw e;
+    }
+  }
+  const address = await retrieveAddress();
+  const signedMessage = await window.ethereum.request({
+    method: 'personal_sign',
+    params: [rawMessage, address],
+  });
+  return `SIGNED_MESSAGE@${signedMessage}`;
+}
+
+export function retrieveAddress() {
+  return window.ethereum.request({ method: 'eth_accounts' })
+    .then(address => address?.length && address[0] || null);
+}
+
 export function sendTransaction(provider, contract, method, options, params) {
+  return sentTransactionWithNotification(provider, contract, method, options, params, true);
+}
+
+export function sentTransactionWithNotification(provider, contract, method, options, params, notifyUser) {
   const signer = provider && contract && contract.connect(provider.getSigner());
   if (signer) {
     if (options?.to) {
@@ -48,28 +82,32 @@ export function sendTransaction(provider, contract, method, options, params) {
     }
     const estimationOptions = JSON.parse(JSON.stringify(options));
     delete estimationOptions.gasLimit;
-    return signer.estimateGas[method](
+    return reAttempt(signer.estimateGas[method](
       ...params,
       estimationOptions
-    ).then(estimatedGasLimit => {
-      if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
-        options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
-      }
-    }).catch(e => {
-      document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e.message}));
-      throw new Error(e.message);
-    })
-      .then(() => 
+    ), 3)
+      .then(estimatedGasLimit => {
+        if (estimatedGasLimit && estimatedGasLimit.toNumber && estimatedGasLimit.toNumber() > 0) {
+          options.gasLimit = parseInt(estimatedGasLimit.toNumber() * 1.2);
+        }
+      }).catch(e => {
+        if (notifyUser) {
+          document.dispatchEvent(new CustomEvent('transaction-sending-error', {detail: e?.message}));
+        }
+        if (!e?.message?.includes?.('429')) { //  Bypass error of type Too Many Requests 
+          throw e;
+        }
+      }).then(() => 
         signer[method](
           ...params,
           options
         )
       ).catch(e => {
-        if (e?.code !== 4001) { // User denied transaction signature
+        if (!notifyUser || e?.code !== 4001) { // User denied transaction signature
           throw e;
         }
       }).then((receipt) => {
-        if (receipt?.hash) {
+        if (receipt?.hash && notifyUser) {
           document.dispatchEvent(new CustomEvent('transaction-sent', {detail: receipt?.hash}));
         }
         return receipt;
@@ -156,4 +194,19 @@ export function toFixedDisplay(value, fractions, lang) {
   } else {
     return value;
   }
+}
+
+export function reAttempt(fetchCall, times) {
+  return fetchCall
+    .catch(e => {
+      if (times) {
+        return new Promise((resolve, reject) => window.setTimeout(() => {
+          return reAttempt(fetchCall, times - 1)
+            .catch(reject)
+            .then(resolve);
+        }, 1000));
+      } else {
+        throw e;
+      }
+    });
 }

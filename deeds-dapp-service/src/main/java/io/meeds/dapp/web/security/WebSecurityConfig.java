@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -29,10 +29,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.ContentTypeOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.XXssConfig;
+import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -121,7 +121,9 @@ public class WebSecurityConfig implements ServletContextAware {
 
   private RequestMatcher staticResourcesRequestMatcher() {
     return request -> !StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/")
-                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/");
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/deeds/")
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hubs/")
+                      || StringUtils.startsWith(request.getRequestURI(), servletContext.getContextPath() + "/api/hub/");
   }
 
   private void handleLogout(HttpServletRequest request, HttpServletResponse response) {

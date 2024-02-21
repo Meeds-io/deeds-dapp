@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,13 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.meeds.dapp.web.utils.Utils;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
@@ -39,13 +46,6 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.meeds.dapp.web.utils.Utils;
 
 public class RequestDispatcherFilter extends HttpFilter {
 
@@ -126,7 +126,7 @@ public class RequestDispatcherFilter extends HttpFilter {
     HttpServletResponse response = (HttpServletResponse) res;
     String servletPath = request.getServletPath();
     if (StringUtils.contains(servletPath, "api")) { // REST API
-      doFilter(chain, request, response);
+      chain.doFilter(request, response);
     } else if (StringUtils.contains(servletPath, "/static/") && !StringUtils.startsWith(servletPath, "/static/")) { // STATIC
                                                                                                                     // URI
       response.setHeader("Location", servletPath.substring(servletPath.indexOf("/static/")));
@@ -198,7 +198,6 @@ public class RequestDispatcherFilter extends HttpFilter {
       chain.doFilter(request, response);
     } catch (Exception e) {
       if (LOG.isDebugEnabled()) {
-        LOG.warn("Error while requesting resource", e);
       } else {
         LOG.warn(e.getMessage());
       }

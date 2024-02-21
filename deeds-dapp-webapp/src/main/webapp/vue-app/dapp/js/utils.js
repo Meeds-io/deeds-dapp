@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+
 export function getScrollbarWidth() {
   const outer = document.createElement('div');
   outer.style.visibility = 'hidden';
@@ -52,4 +53,45 @@ export function sortByName(tab, lang) {
   } else {
     return tab.sort((obj1,obj2) => ((obj1?.name?.en.toLowerCase() > obj2?.name?.en.toLowerCase()) ? 1 : ((obj2?.name?.en.toLowerCase() > obj1?.name?.en.toLowerCase() ? -1 : 0))));
   }
+}
+
+export function refreshHubUrl(hubAddress, reportId) {
+  const link = hubAddress && reportId && `${window.location.pathname}?address=${hubAddress}&report=${reportId}`
+      || (hubAddress && `${window.location.pathname}?address=${hubAddress}`)
+      || window.location.pathname;
+  if (!window.location.href !== link) {
+    const fullLink = `${origin}${link}`;
+    window.setTimeout(() => window.history.pushState({}, '', fullLink), 50);
+  }
+}
+
+export function percentage(value, language, displaySign, fractions) {
+  return new Intl.NumberFormat(language, {
+    style: 'percent',
+    signDisplay: displaySign && 'always' || 'never',
+    roundingMode: 'halfCeil',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: fractions === 0 ? 0 : (!fractions && 2 || Number(fractions)),
+  }).format(value || 0);
+}
+
+export function numberFormatWithDigits(value, language, minimumFractionDigits, maximumFractionDigits) {
+  return new Intl.NumberFormat(language, {
+    style: 'decimal',
+    roundingMode: 'halfCeil',
+    minimumFractionDigits: minimumFractionDigits || 0,
+    maximumFractionDigits: maximumFractionDigits || (value < 10 ? 2 :0),
+  }).format(value || 0);
+}
+
+const TEXTAREA = document.createElement('textarea');
+
+export function htmlToText(htmlContent) {
+  if (!htmlContent) {
+    return '';
+  }
+  let content = htmlContent.replace(/<[^>]+>/g, ' ').trim();
+  TEXTAREA.innerHTML = content;
+  content = TEXTAREA.value;
+  return content.replace(/[\r|\n|\t]/g, ' ').replace(/ +(?= )/g,' ').trim();
 }

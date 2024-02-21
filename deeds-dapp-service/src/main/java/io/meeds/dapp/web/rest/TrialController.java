@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.deeds.elasticsearch.model.TrialContactInformation;
-import io.meeds.deeds.service.AuthorizationCodeService;
-import io.meeds.deeds.service.TrialService;
+import io.meeds.deeds.common.elasticsearch.model.TrialContactInformation;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.TrialService;
 
 @RestController
 @RequestMapping("/api/trials")

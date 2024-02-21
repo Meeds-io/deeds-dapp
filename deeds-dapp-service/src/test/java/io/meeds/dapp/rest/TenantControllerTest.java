@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -43,20 +43,20 @@ import io.meeds.dapp.web.rest.TenantController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.constant.TenantProvisioningStatus;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.TenantProvisioningStatus;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 
 @SpringBootTest(classes = {
-    TenantController.class,
-    DeedAuthenticationProvider.class,
-    DeedAccessDeniedHandler.class,
+                            TenantController.class,
+                            DeedAuthenticationProvider.class,
+                            DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {
-    WebSecurityConfig.class
+                                  WebSecurityConfig.class
 })
 class TenantControllerTest {
 
@@ -79,8 +79,8 @@ class TenantControllerTest {
 
   @Test
   @WithAnonymousUser
-  void whenAnonymousGetDeedTenant_thenNOk() throws Exception {
-    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().is3xxRedirection());
+  void whenAnonymousGetDeedTenant_thenOk() throws Exception {
+    mockMvc.perform(get("/api/tenants/" + NFT_ID)).andExpect(status().isBadRequest());
   }
 
   @Test

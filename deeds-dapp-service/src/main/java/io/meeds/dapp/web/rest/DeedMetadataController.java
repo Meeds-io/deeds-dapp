@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.dapp.web.rest.utils.EntityMapper.getDeedMetadataResponse;
+import static io.meeds.dapp.web.rest.utils.EntityBuilder.getDeedMetadataResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.service.DeedMetadataService;
 import io.meeds.dapp.web.rest.model.DeedMetadataPresentation;
-import io.meeds.deeds.elasticsearch.model.DeedMetadata;
+import io.meeds.deeds.common.elasticsearch.model.DeedMetadata;
 
 @RestController
 @RequestMapping("/api/deeds")

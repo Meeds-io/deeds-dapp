@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import io.meeds.deeds.constant.DeedCity;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.DeedCity;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -45,15 +43,10 @@ public class TenantPlaceholderRequestDispatcherFilter extends HttpFilter {
   private static final long    serialVersionUID    = 8971410534107824567L;
 
   private static final Pattern SERVER_HOST_PATTERN =
-                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.wom\\.meeds\\.io");
+                                                   Pattern.compile("(tanit|reshef|ashtarte|melqart|eshmun|kushor|hammon)-([\\d]+)\\.meeds\\.io");
 
+  @Autowired
   protected TenantService      tenantService;                                                                                                          // NOSONAR
-
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(filterConfig.getServletContext());
-    this.tenantService = ctx.getBean(TenantService.class);
-  }
 
   @Override
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

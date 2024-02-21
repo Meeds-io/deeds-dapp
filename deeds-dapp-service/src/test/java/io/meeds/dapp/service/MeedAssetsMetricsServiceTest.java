@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,12 +34,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.util.CollectionUtils;
 
-import io.meeds.deeds.elasticsearch.model.DeedCity;
-import io.meeds.deeds.model.FundInfo;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.model.DeedCity;
+import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @SpringBootTest(classes = {
-    MeedAssetsMetricsService.class
+                            MeedAssetsMetricsService.class
 })
 class MeedAssetsMetricsServiceTest {
 

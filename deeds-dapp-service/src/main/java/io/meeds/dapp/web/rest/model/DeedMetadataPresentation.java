@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -20,10 +20,9 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
-import io.meeds.deeds.elasticsearch.model.DeedMetadataAttribute;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.meeds.deeds.common.model.DeedMetadataAttribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

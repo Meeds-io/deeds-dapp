@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import './initComponents-dapp';
+import './js/purifyVue';
+
 import * as utils from './js/utils.js';
 import * as ethUtils from './js/ethUtils.js';
 import * as tokenUtils from './js/tokenUtils.js';
@@ -25,6 +27,8 @@ import * as authentication from './js/authentication.js';
 import * as authorizationCodeService from './js/authorizationCodeService.js';
 import * as userProfileService from './js/userProfileService.js';
 import * as tenantManagement from './js/tenantManagement.js';
+import * as hubService from './js/HubService.js';
+import * as hubReportService from './js/HubReportService.js';
 import * as deedMetadata from './js/deedMetadata.js';
 import * as tokenMetricService from './js/tokenMetricService.js';
 import * as assetMetricService from './js/assetMetricService.js';
@@ -78,6 +82,14 @@ window.Object.defineProperty(Vue.prototype, '$deedTenantLeaseService', {
 
 window.Object.defineProperty(Vue.prototype, '$trialService', {
   value: trialService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$hubService', {
+  value: hubService,
+});
+
+window.Object.defineProperty(Vue.prototype, '$hubReportService', {
+  value: hubReportService,
 });
 
 Vue.use(Vuex);
@@ -142,6 +154,7 @@ const i18n = new VueI18n({
 const networkSettings = {
   1: {
     // Contracts addresses
+    chainId: '0x1',
     sushiswapRouterAddress: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F',
     sushiswapPairAddress: '0x960bd61d0b960b107ff5309a2dcced4705567070',
     wethAddress: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -149,6 +162,13 @@ const networkSettings = {
     tokenFactoryAddress: '0x1B37D04759aD542640Cc44Ff849a373040386050',
     xMeedAddress: '0x44d6d6ab50401dd846336e9c706a492f06e1bcd4',
     deedAddress: '0x0143b71443650aa8efa76bd82f35c22ebd558090',
+    polygonNetwork: {
+      chainName: 'Polygon Mainnet',
+      chainId: '0x89',
+      nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+      rpcUrls: ['https://polygon-rpc.com/'],
+      blockExplorerUrls: ['https://polygonscan.com']
+    },
     polygonMeedAddress: '0x6aca77cf3bab0c4e8210a09b57b07854a995289a',
     polygonWethAddress: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
     comethPairAddress: '0xb82F8457fcf644803f4D74F677905F1d410Cd395',
@@ -174,6 +194,7 @@ const networkSettings = {
 
 // Goerli
 networkSettings[5] = {
+  chainId: '0x5',
   sushiswapRouterAddress: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
   sushiswapPairAddress: '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD',
   wethAddress: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
@@ -183,6 +204,13 @@ networkSettings[5] = {
   deedAddress: '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
   tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
   tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
+  polygonNetwork: {
+    chainName: 'Mumbai',
+    chainId: '0x13881',
+    nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
+    rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+    blockExplorerUrls: ['https://mumbai.polygonscan.com']
+  },
   etherscanBaseLink: 'https://goerli.etherscan.io/',
   // Opensea links
   openSeaBaseLink: 'https://testnets.opensea.io/assets/goerli/0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
@@ -319,6 +347,7 @@ const store = new Vuex.Store({
     address: null,
     networkId: null,
     validNetwork: false,
+    networkChangeListeningPaused: false,
     yearInMinutes: 365 * 24 * 60,
     scrollbarWidth: utils.getScrollbarWidth(),
     cities: ['TANIT', 'RESHEF', 'ASHTARTE', 'MELQART', 'ESHMUN', 'KUSHOR', 'HAMMON'],
@@ -507,6 +536,9 @@ const store = new Vuex.Store({
   mutations: {
     echartsLoaded(state) {
       state.echartsLoaded = true;
+    },
+    pauseNetworkChangeListening(state, pauseListening) {
+      state.networkChangeListeningPaused = pauseListening;
     },
     incrementOpenedDrawer(state) {
       state.openedDrawersCount++;
@@ -1414,6 +1446,9 @@ const store = new Vuex.Store({
 });
 
 function initialize() {
+  if (store.networkChangeListeningPaused) {
+    return;
+  }
   if (ethUtils.isMetamaskInstalled()) {
     store.commit('refreshMetamaskState');
     if (window.ethereum._metamask && window.ethereum._metamask.isUnlocked) {
@@ -1482,11 +1517,42 @@ function initializeVueApp(language) {
       i18n.mergeLocaleMessage(language, data);
       if (!app) {
         app = new Vue({
-          el: '#deedsApp',
+          computed: {
+            blockchains() {
+              return {
+                0: {
+                  name: this.$t('wom.unkownBlockchain'),
+                  blockexplorer: '',
+                  testnet: true,
+                },
+                1: {
+                  name: 'Mainnet',
+                  blockexplorer: 'https://etherscan.io',
+                  testnet: false,
+                },
+                5: {
+                  name: 'Goerli',
+                  blockexplorer: 'https://goerli.etherscan.io',
+                  testnet: true,
+                },
+                137: {
+                  name: 'Polygon',
+                  blockexplorer: 'https://polygonscan.com',
+                  testnet: false,
+                },
+                80001: {
+                  name: 'Mumbai',
+                  blockexplorer: 'https://mumbai.polygonscan.com',
+                  testnet: true,
+                },
+              };
+            },
+          },
           template: '<deeds-site id="deedsApp" />',
           store,
           i18n,
           vuetify,
+          el: '#deedsApp',
         });
       }
 

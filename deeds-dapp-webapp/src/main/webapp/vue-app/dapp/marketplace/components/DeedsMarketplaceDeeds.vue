@@ -2,7 +2,7 @@
 
  This file is part of the Meeds project (https://meeds.io/).
 
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -79,7 +79,6 @@ export default {
   computed: Vuex.mapState({
     availableCardTypes: state => state.cardTypes,
     availableOfferTypes: state => state.offerTypes,
-    networkId: state => state.networkId,
     address: state => state.address,
     parentLocation: state => state.parentLocation,
     loadedOffersLength() {
@@ -242,7 +241,7 @@ export default {
       if (this.address) {
         params.address = this.address;
       }
-      return this.$deedTenantOfferService.getOffers(params, this.networkId || 0)
+      return this.$deedTenantOfferService.getOffers(params)
         .then(offers => {
           this.offers = offers?._embedded?.offers || [];
           this.totalSize = offers?.page?.totalElements || 0;

@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,8 +15,8 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
-import static io.meeds.deeds.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_VERIFICATION_HTTP_HEADER;
 
 import java.security.Principal;
 import java.util.List;
@@ -44,14 +44,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.model.LeaseFilter;
-import io.meeds.dapp.service.LeaseService;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
-import io.meeds.deeds.constant.DeedCard;
-import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.service.AuthorizationCodeService;
+import io.meeds.deeds.common.constant.DeedCard;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.model.LeaseFilter;
+import io.meeds.deeds.common.service.AuthorizationCodeService;
+import io.meeds.deeds.common.service.LeaseService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("/api/leases")
@@ -77,16 +77,13 @@ public class LeaseController {
                                                                @RequestParam(name = "address", required = true)
                                                                String address,
                                                                @RequestParam(name = "owner", required = true)
-                                                               boolean owner,
-                                                               @RequestParam(name = "networkId", required = true)
-                                                               long networkId) {
+                                                               boolean owner) {
     LeaseFilter leaseFilter = new LeaseFilter();
     if (nftId != null && nftId > 0) {
       leaseFilter.setNftId(nftId);
     }
     leaseFilter.setExcludeNotConfirmed(onlyConfirmed);
     leaseFilter.setCardTypes(cardTypes);
-    leaseFilter.setNetworkId(networkId);
     leaseFilter.setCurrentAddress(StringUtils.lowerCase(address));
     leaseFilter.setOwner(owner);
     Page<DeedTenantLeaseDTO> leases = leaseService.getLeases(leaseFilter, pageable);
@@ -109,6 +106,8 @@ public class LeaseController {
       return lease;
     } catch (ObjectNotFoundException | UnauthorizedOperationException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    } catch (ResponseStatusException e) {
+      throw e;
     } catch (Exception e) {
       LOG.warn("Error retrieving lease by id {} and blockchainStateRefresh = {}",
                leaseId,
@@ -162,12 +161,6 @@ public class LeaseController {
     }
     if (leaseId <= 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lease id is mandatory");
-    }
-    if (StringUtils.isBlank(ownerAddress)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Owner Address is mandatory");
-    }
-    if (StringUtils.isBlank(transactionHash)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transaction hash is mandatory");
     }
     if (paidMonths == 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paid months is mandatory");

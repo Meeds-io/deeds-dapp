@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.dapp.model.MeedExchangeRate;
+import io.meeds.dapp.elasticsearch.model.MeedExchangeRate;
 
 public interface MeedExchangeRateRepository extends ElasticsearchRepository<MeedExchangeRate, LocalDate> {
 

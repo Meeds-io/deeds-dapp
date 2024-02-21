@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
 
 @RestController
 @RequestMapping("/api/profile")

@@ -2,7 +2,7 @@
 <!--
 
 	This file is part of the Meeds project (https://meeds.io/).
-	Copyright (C) 2022 Meeds Association contact@meeds.io
+	Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
 	License as published by the Free Software Foundation; either
@@ -32,12 +32,24 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-service</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.exoplatform.addons.wallet</groupId>
+          <artifactId>wallet-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>deeds-dapp-webapp</artifactId>
       <scope>runtime</scope>
       <type>war</type>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
@@ -56,7 +68,7 @@
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
-                <descriptor>src/main/assemblies/assembly.xml</descriptor>
+                <descriptor>src/main/assemblies/meeds-addon.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

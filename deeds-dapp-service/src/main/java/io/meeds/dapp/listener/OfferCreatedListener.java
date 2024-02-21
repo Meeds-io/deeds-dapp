@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -22,11 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.model.DeedTenantOffer;
-import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenantOffer;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.OfferService;
+import io.meeds.deeds.common.service.UserProfileService;
 
 @Service
 public class OfferCreatedListener implements EventListener<DeedTenantOffer> {

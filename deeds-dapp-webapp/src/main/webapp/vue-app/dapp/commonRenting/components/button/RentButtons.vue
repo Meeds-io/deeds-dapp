@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -145,7 +145,6 @@ export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
     address: state => state.address,
-    networkId: state => state.networkId,
     language: state => state.language,
     authenticated: state => state.authenticated,
     tenantProvisioningContract: state => state.tenantProvisioningContract,
@@ -282,7 +281,7 @@ export default {
         onlyOwned: true,
         excludeExpired: true,
         excludeNotStarted: false,
-      }, this.networkId)
+      })
         .then(offers => {
           const rentalOffers = offers?._embedded?.offers && [offers?._embedded?.offers[0]] || [];
           if (broadcast) {

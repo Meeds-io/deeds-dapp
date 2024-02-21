@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,12 +15,13 @@
  */
 package io.meeds.dapp.rest;
 
+import static org.hamcrest.Matchers.aMapWithSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.service.MeedTokenMetricService;
 import io.meeds.dapp.web.rest.MeedTokenMetricController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
@@ -47,13 +48,12 @@ import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
 
 @SpringBootTest(
-    classes = {
-        MeedTokenMetricController.class,
-        DeedAuthenticationProvider.class,
-        WebSecurityConfig.class,
-        DeedAccessDeniedHandler.class,
-    }
-)
+                classes = {
+                            MeedTokenMetricController.class,
+                            DeedAuthenticationProvider.class,
+                            WebSecurityConfig.class,
+                            DeedAccessDeniedHandler.class,
+                })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 class MeedTokenMetricControllerTest {
@@ -62,15 +62,15 @@ class MeedTokenMetricControllerTest {
   private MeedTokenMetricService meedTokenMetricService;
 
   @Autowired
-  private WebApplicationContext context;
+  private WebApplicationContext  context;
 
   private MockMvc                mockMvc;
 
   @BeforeEach
   public void setup() {
     mockMvc = MockMvcBuilders.webAppContextSetup(context)
-        .apply(springSecurity())
-        .build();
+                             .apply(springSecurity())
+                             .build();
   }
 
   @Test
@@ -92,14 +92,14 @@ class MeedTokenMetricControllerTest {
 
     ResultActions response = mockMvc.perform(get("/api/token/meed/"));
     response.andExpect(status().isOk())
-            .andExpect(jsonPath("$.date",is(today.toString())))
-            .andExpect(jsonPath("$.totalSupply",is(1)))
-            .andExpect(jsonPath("$.lockedBalances",aMapWithSize(1)))
-            .andExpect(jsonPath("$.reserveBalances",aMapWithSize(1)))
-            .andExpect(jsonPath("$.circulatingSupply",is(4)))
-            .andExpect(jsonPath("$.marketCapitalization",is(5)))
-            .andExpect(jsonPath("$.totalValuelocked",is(6)))
-            .andExpect(jsonPath("$.meedUsdPrice",is(7)));
+            .andExpect(jsonPath("$.date", is(today.toString())))
+            .andExpect(jsonPath("$.totalSupply", is(1)))
+            .andExpect(jsonPath("$.lockedBalances", aMapWithSize(1)))
+            .andExpect(jsonPath("$.reserveBalances", aMapWithSize(1)))
+            .andExpect(jsonPath("$.circulatingSupply", is(4)))
+            .andExpect(jsonPath("$.marketCapitalization", is(5)))
+            .andExpect(jsonPath("$.totalValuelocked", is(6)))
+            .andExpect(jsonPath("$.meedUsdPrice", is(7)));
   }
 
   @Test

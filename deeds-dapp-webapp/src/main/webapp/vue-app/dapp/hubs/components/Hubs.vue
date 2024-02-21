@@ -1,7 +1,7 @@
 <!--
  This file is part of the Meeds project (https://meeds.io/).
  
- Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,49 @@
 <template>
   <div>
     <deeds-hubs-introduction
+      :reduced="selectedHub"
       @keyword-changed="keyword = $event" />
-    <deeds-hubs-list 
+    <v-scale-transition>
+      <div v-show="selectedHub">
+        <deeds-hub-details :hub="selectedHub" />
+      </div>
+    </v-scale-transition>
+    <deeds-hubs-list
+      v-if="!selectedHub"
       :keyword="keyword" />
   </div>
 </template>
 <script>
 export default {
   data: () => ({
-    keyword: null
+    keyword: null,
+    selectedHub: null,
   }),
+  created() {
+    this.$root.$on('open-hub-details', this.openHubDetails);
+    this.$root.$on('hub-not-found', this.openHubNotFound);
+    this.$root.$on('report-not-found', this.openHubReportNotFound);
+    this.$root.$on('close-hub-details', this.closeHubDetails);
+  },
+  methods: {
+    openHubNotFound(hubAddress) {
+      this.selectedHub = {
+        address: hubAddress,
+        notFound: true,
+      };
+    },
+    openHubReportNotFound(reportId) {
+      this.selectedHub = {
+        reportId: reportId,
+        reportNotFound: true,
+      };
+    },
+    openHubDetails(hub) {
+      this.selectedHub = hub;
+    },
+    closeHubDetails() {
+      this.selectedHub = null;
+    },
+  },
 };
 </script>

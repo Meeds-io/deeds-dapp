@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,8 +15,8 @@
  */
 package io.meeds.dapp.web.rest;
 
-import static io.meeds.dapp.web.rest.utils.EntityMapper.getDeedTenantResponse;
-import static io.meeds.deeds.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
+import static io.meeds.dapp.web.rest.utils.EntityBuilder.getDeedTenantResponse;
+import static io.meeds.deeds.common.constant.CommonConstants.CODE_REFRESH_HTTP_HEADER;
 
 import java.security.Principal;
 import java.time.ZoneOffset;
@@ -42,13 +42,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import io.meeds.dapp.web.rest.model.DeedTenantPresentation;
-import io.meeds.dapp.web.rest.utils.EntityMapper;
+import io.meeds.dapp.web.rest.utils.EntityBuilder;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
-import io.meeds.deeds.constant.ObjectNotFoundException;
-import io.meeds.deeds.constant.TenantStatus;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.TenantStatus;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
+import io.meeds.wom.api.constant.ObjectNotFoundException;
 
 @RestController
 @RequestMapping("/api/tenants")
@@ -60,32 +60,40 @@ public class TenantController {
   private TenantService       tenantService;
 
   @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public List<DeedTenantPresentation> getTenants(Principal principal) {
-    if (principal == null || StringUtils.isBlank(principal.getName())) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+  public List<DeedTenantPresentation> getTenants(
+                                                 Principal principal,
+                                                 @RequestParam(name = "address", required = false)
+                                                 String walletAddress) {
+    if (StringUtils.isBlank(walletAddress)) {
+      if (principal == null || StringUtils.isBlank(principal.getName())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      } else {
+        walletAddress = principal.getName();
+      }
     }
-    String walletAddress = principal.getName();
     List<DeedTenant> deedTenants = tenantService.getDeedTenants(walletAddress);
-    return deedTenants.stream().map(EntityMapper::build).toList();
+    return deedTenants.stream().map(EntityBuilder::build).toList();
   }
 
   @GetMapping("/{nftId}")
-  @Secured(DeedAuthenticationProvider.USER_ROLE_NAME)
   public ResponseEntity<DeedTenantPresentation> getDeedTenant(
                                                               Principal principal,
                                                               @RequestHeader(name = CODE_REFRESH_HTTP_HEADER, required = false)
                                                               boolean refreshFromBlockchain,
                                                               @PathVariable(name = "nftId")
-                                                              Long nftId) {
-    if (principal == null) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                                                              Long nftId,
+                                                              @RequestParam(name = "address", required = false)
+                                                              String walletAddress) {
+    if (StringUtils.isBlank(walletAddress)) {
+      if (principal == null || StringUtils.isBlank(principal.getName())) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+      } else {
+        walletAddress = principal.getName();
+      }
     }
-    String walletAddress = principal.getName();
     try {
       DeedTenant deedTenant = tenantService.getDeedTenantOrImport(walletAddress, nftId, refreshFromBlockchain);
       return getDeedTenantResponse(deedTenant);
-    } catch (UnauthorizedOperationException e) {
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     } catch (ObjectNotFoundException e) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }

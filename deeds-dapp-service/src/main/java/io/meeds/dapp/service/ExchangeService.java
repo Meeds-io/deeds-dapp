@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -45,8 +45,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.CurrencyExchangeRate;
-import io.meeds.dapp.model.MeedExchangeRate;
+import io.meeds.dapp.elasticsearch.model.CurrencyExchangeRate;
+import io.meeds.dapp.elasticsearch.model.MeedExchangeRate;
 import io.meeds.dapp.model.MeedPrice;
 import io.meeds.dapp.storage.CurrencyExchangeRateRepository;
 import io.meeds.dapp.storage.MeedExchangeRateRepository;

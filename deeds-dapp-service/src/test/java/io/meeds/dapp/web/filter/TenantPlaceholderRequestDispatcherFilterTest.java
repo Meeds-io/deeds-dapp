@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -30,8 +30,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import io.meeds.deeds.elasticsearch.model.DeedTenant;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
+import io.meeds.deeds.common.service.TenantService;
 
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.RequestDispatcher;
@@ -78,14 +78,14 @@ class TenantPlaceholderRequestDispatcherFilterTest {
 
   @Test
   void testReturnNotFoundResponseWhenNoDeedIdIdentifiedWithSimilarURL() throws Exception {
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-test.wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-test.meeds.io/test"));
     verifyNotFound();
   }
 
   @Test
   void testReturnNotFoundResponseWhenDeedIdInHostNameNotStopped() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     when(tenantServiceMock.isTenantCommandStop(nftId)).thenReturn(true);
     verifyNotFound();
   }
@@ -101,7 +101,7 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   @Test
   void testForwardResponseWhenDeedIdInHostNameNotStopped() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     verifyForwarded();
   }
 
@@ -116,7 +116,7 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   @Test
   void testNotFoundResponseWhenDeedCityInHostNameNotMatching() throws Exception {
     long nftId = 1;
-    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".wom.meeds.io/test"));
+    when(request.getRequestURL()).thenReturn(new StringBuffer("http://tanit-").append(nftId).append(".meeds.io/test"));
     DeedTenant deedTenant = new DeedTenant();
     deedTenant.setCityIndex((short) 1);
     when(tenantServiceMock.getDeedTenant(nftId)).thenReturn(deedTenant);
@@ -124,7 +124,7 @@ class TenantPlaceholderRequestDispatcherFilterTest {
   }
 
   @Test
-  void testNotFoundResponseWhenDeedCityInParameterNameNotMatching() throws Exception {
+  void testNotFoundResponseWhenDeedCityInParameterNameNotMatching() throws IOException, ServletException  {
     long nftId = 1;
     when(request.getRequestURL()).thenReturn(new StringBuffer("http://test/test"));
     when(request.getParameter("nftId")).thenReturn(String.valueOf(nftId));

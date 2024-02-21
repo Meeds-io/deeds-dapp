@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 
 public interface MeedTokenMetricsRepository extends ElasticsearchRepository<MeedTokenMetric, LocalDate> {
 

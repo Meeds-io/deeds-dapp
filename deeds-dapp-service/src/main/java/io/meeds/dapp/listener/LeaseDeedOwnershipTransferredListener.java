@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.deeds.constant.CommonConstants.DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT;
+import static io.meeds.deeds.common.constant.CommonConstants.DEED_TENANT_OWNERSHIP_TRANSFERRED_EVENT;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.service.LeaseService;
-import io.meeds.deeds.constant.CommonConstants.DeedOwnershipTransferEvent;
-import io.meeds.deeds.listener.EventListener;
+import io.meeds.deeds.common.constant.CommonConstants.DeedOwnershipTransferEvent;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.service.LeaseService;
 
 @Service
 public class LeaseDeedOwnershipTransferredListener implements EventListener<DeedOwnershipTransferEvent> {

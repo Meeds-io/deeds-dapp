@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
  */
 import {getCookie} from './authentication';
 
-export function getOffers(paramsObj, networkId) {
+export function getOffers(paramsObj) {
   const formData = new FormData();
   if (paramsObj) {
     Object.keys(paramsObj).forEach(key => {
@@ -30,7 +30,6 @@ export function getOffers(paramsObj, networkId) {
       }
     });
   }
-  formData.append('networkId', networkId || 0);
   const params = new URLSearchParams(formData).toString();
   return fetch(`${window.parentAppLocation}/api/offers?${params}`, {
     method: 'GET',
@@ -40,7 +39,7 @@ export function getOffers(paramsObj, networkId) {
     credentials: 'include',
   }).then(resp => {
     if (!resp || !resp.ok) {
-      throw new Error(`Error getting offers for nft with params ${paramsObj}`);
+      throw new Error(`Error getting offers for nft with params ${JSON.stringify(paramsObj)}`);
     } else {
       return resp.json();
     }

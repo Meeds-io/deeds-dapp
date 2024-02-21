@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.service.MeedTokenMetricService;
 
 @RestController

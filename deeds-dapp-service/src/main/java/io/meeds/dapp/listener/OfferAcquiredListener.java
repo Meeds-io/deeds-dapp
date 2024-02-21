@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -15,7 +15,7 @@
  */
 package io.meeds.dapp.listener;
 
-import static io.meeds.dapp.service.LeaseService.LEASE_ACQUISITION_CONFIRMED_EVENT;
+import static io.meeds.deeds.common.service.LeaseService.LEASE_ACQUISITION_CONFIRMED_EVENT;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -27,11 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.meeds.dapp.model.DeedTenantLeaseDTO;
-import io.meeds.dapp.service.OfferService;
-import io.meeds.deeds.constant.UnauthorizedOperationException;
-import io.meeds.deeds.listener.EventListener;
-import io.meeds.deeds.service.TenantService;
+import io.meeds.deeds.common.constant.UnauthorizedOperationException;
+import io.meeds.deeds.common.listener.EventListener;
+import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
+import io.meeds.deeds.common.service.OfferService;
+import io.meeds.deeds.common.service.TenantService;
 
 @Service
 public class OfferAcquiredListener implements EventListener<DeedTenantLeaseDTO> {

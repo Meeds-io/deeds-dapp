@@ -2,7 +2,7 @@
 
  This file is part of the Meeds project (https://meeds.io/).
 
- Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,8 @@
       <v-col cols="12">
         <div class="d-flex flex-row flex-grow-1">
           <div class="headline font-weight-bold ps-0 py-0">{{ $t('dapp.tenants.yourTenants') }}</div>
+          <v-spacer />
+          <deeds-lease-card-claim-reward-button />
         </div>
       </v-col>
       <v-col
@@ -64,7 +66,6 @@ export default {
   }),
   computed: Vuex.mapState({
     address: state => state.address,
-    networkId: state => state.networkId,
     loadedLeasesLength() {
       return this.leases?.length || 0;
     },
@@ -141,7 +142,7 @@ export default {
         address: this.address,
         onlyConfirmed: false,
         owner: false,
-      }, this.networkId)
+      })
         .then(leases => {
           this.leases = leases?._embedded?.leases || [];
           this.totalSize = leases?.page?.totalElements || this.leases.length;

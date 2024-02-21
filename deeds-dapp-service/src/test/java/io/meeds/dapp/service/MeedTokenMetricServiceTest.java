@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -34,24 +34,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.dapp.constant.Currency;
-import io.meeds.dapp.model.MeedTokenMetric;
+import io.meeds.dapp.elasticsearch.model.MeedTokenMetric;
 import io.meeds.dapp.storage.MeedTokenMetricsRepository;
+import io.meeds.deeds.common.service.BlockchainService;
 import io.meeds.deeds.contract.MeedsToken;
-import io.meeds.deeds.service.BlockchainService;
 
 @SpringBootTest(
-    classes = {
-        MeedTokenMetricService.class,
-    }
-)
+                classes = {
+                            MeedTokenMetricService.class,
+                })
 @TestPropertySource(
-    properties = {
-        "meeds.blockchain.reserveValueEthereumAddresses=0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853",
-        "meeds.blockchain.reserveValuePolygonAddresses=0x44D6d6aB50401Dd846336e9C706A492f06E1Bee4",
-        "meeds.blockchain.lockedValueEthereumAddresses=0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070",
-        "meeds.blockchain.lockedValuePolygonAddresses=0x6acA77CF3BaB0C4E8210A09B57B07854a995289a"
-    }
-)
+                    properties = {
+                                   "meeds.blockchain.reserveValueEthereumAddresses=0xBa5e4D55CA96bf25c35Fc65D9251355Dcd120655,0x8f4660498E79c771f93316f09da98E1eBF94c576,0x70CAd5d439591Ea7f496B69DcB22521685015853",
+                                   "meeds.blockchain.reserveValuePolygonAddresses=0x44D6d6aB50401Dd846336e9C706A492f06E1Bee4",
+                                   "meeds.blockchain.lockedValueEthereumAddresses=0x44D6d6aB50401Dd846336e9C706A492f06E1Bcd4,0x960Bd61D0b960B107fF5309A2DCceD4705567070",
+                                   "meeds.blockchain.lockedValuePolygonAddresses=0x6acA77CF3BaB0C4E8210A09B57B07854a995289a"
+                    })
 class MeedTokenMetricServiceTest {
 
   private static final BigDecimal    MEED_USD_EXCHANGE_RATE = BigDecimal.valueOf(2.5d);

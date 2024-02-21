@@ -1,7 +1,7 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
  * 
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.meeds.deeds.model.FundInfo;
-import io.meeds.deeds.model.MeedAssetsMetrics;
-import io.meeds.deeds.service.BlockchainService;
+import io.meeds.deeds.common.model.FundInfo;
+import io.meeds.deeds.common.model.MeedAssetsMetrics;
+import io.meeds.deeds.common.service.BlockchainService;
 
 @Component
 public class MeedAssetsMetricsService {

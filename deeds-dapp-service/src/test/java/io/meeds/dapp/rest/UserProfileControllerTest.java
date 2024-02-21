@@ -1,6 +1,6 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- * Copyright (C) 2020 - 2022 Meeds Association contact@meeds.io
+ * Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -22,8 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import jakarta.servlet.Filter;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,18 +42,20 @@ import io.meeds.dapp.web.rest.UserProfileController;
 import io.meeds.dapp.web.security.DeedAccessDeniedHandler;
 import io.meeds.dapp.web.security.DeedAuthenticationProvider;
 import io.meeds.dapp.web.security.WebSecurityConfig;
-import io.meeds.deeds.model.UserProfileDTO;
-import io.meeds.deeds.service.UserProfileService;
+import io.meeds.deeds.common.model.UserProfileDTO;
+import io.meeds.deeds.common.service.UserProfileService;
+
+import jakarta.servlet.Filter;
 
 @SpringBootTest(classes = {
-    UserProfileController.class,
-    DeedAuthenticationProvider.class,
-    DeedAccessDeniedHandler.class,
+                            UserProfileController.class,
+                            DeedAuthenticationProvider.class,
+                            DeedAccessDeniedHandler.class,
 })
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = {
-    WebSecurityConfig.class
+                                  WebSecurityConfig.class
 })
 class UserProfileControllerTest {
 
@@ -99,7 +99,8 @@ class UserProfileControllerTest {
   }
 
   private RequestPostProcessor testUser() {
-    return user(TEST_USER).password(TEST_PASSWORD).authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
+    return user(TEST_USER).password(TEST_PASSWORD)
+                          .authorities(new SimpleGrantedAuthority(DeedAuthenticationProvider.USER_ROLE_NAME));
   }
 
 }

@@ -1,20 +1,23 @@
 <!--
+
  This file is part of the Meeds project (https://meeds.io/).
- 
- Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
- 
+
+ Copyright (C) 2020 - 2024 Meeds Association contact@meeds.io
+
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
  version 3 of the License, or (at your option) any later version.
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public License
  along with this program; if not, write to the Free Software Foundation,
  Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
 -->
 <template>
   <v-row class="mb-15 mt-7">
@@ -32,7 +35,7 @@
       lg="4"
       md="12">
       <v-slide-x-transition>
-        <deeds-hub-card :hub="hub" />
+        <deeds-hub-card :hub="hub" class="full-width" />
       </v-slide-x-transition>
     </v-col>
     <v-col cols="12">
@@ -48,9 +51,8 @@
       lg="4"
       md="12">
       <v-slide-x-transition>
-        <deeds-hub-card 
-          :hub="hub"
-          upcoming-hub />
+        <deeds-hub-upcoming-card 
+          :hub="hub" />
       </v-slide-x-transition>
     </v-col>
     <v-col cols="12">
@@ -90,6 +92,10 @@ export default {
     },
   },
   data: () => ({
+    loading: false,
+    pageSize: 100,
+    page: 0,
+    hasMore: false,
     hubs: [
       {
         address: '0xfefefefefefefefefefef1',
@@ -105,7 +111,9 @@ export default {
         backgroundColor: '#3F8487',
         usersCount: 248,
         hubUrl: 'https://builders.meeds.io',
-        rewardsPerWeek: 1000,
+        rewardsPerPeriod: 1000,
+        rewardsPeriodType: 'week',
+        upcomingDeedId: 50,
       },
       {
         address: '0xfefefefefefefefefefef2',
@@ -121,7 +129,9 @@ export default {
         backgroundColor: '#6083B6',
         usersCount: 10000,
         hubUrl: 'https://community.exoplatform.com',
-        rewardsPerMonth: 3000,
+        rewardsPerPeriod: 3000,
+        rewardsPeriodType: 'month',
+        upcomingDeedId: 99,
       },
       {
         address: '0xfefefefefefefefefefef10',
@@ -137,7 +147,9 @@ export default {
         backgroundColor: '#2c3163',
         usersCount: 78,
         hubUrl: 'https://rainbowpartners.meeds.io/',
-        rewardsPerWeek: 800,
+        rewardsPerPeriod: 800,
+        rewardsPeriodType: 'week',
+        upcomingDeedId: 38,
       },
       {
         address: '0xfefefefefefefefefefef13',
@@ -151,7 +163,8 @@ export default {
         },
         logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1701768967/meedsdao-site/assets/images/Featured%20hubs/TheGallery_swwey3.png',
         backgroundColor: '#00263a',
-        hubUrl: 'https://thegallery.meeds.io/'
+        hubUrl: 'https://thegallery.meeds.io/',
+        upcomingDeedId: 3,
       }
     ],
     upcomingHubs: [
@@ -260,14 +273,15 @@ export default {
       return this.filteredHubs.length + this.filteredUpcomingHubs.length;
     },
     filteredHubs() {
-      if (this.keyword) {
+      if (this.loading) {
+        return [];
+      } else if (this.keyword) {
         if (this.language === 'fr') {
           return this.hubs.filter(hub => hub?.name?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.fr?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         } else {
           return this.hubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
-      } 
-      else {
+      } else {
         return this.hubs; 
       }
     },
@@ -278,8 +292,7 @@ export default {
         } else {
           return this.upcomingHubs.filter(hub => hub?.name?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0 || hub?.description?.en?.toLowerCase().indexOf(this.keyword.toLowerCase()) >= 0);
         }
-      } 
-      else {
+      } else {
         return this.upcomingHubs; 
       }
     },
@@ -287,6 +300,28 @@ export default {
   created() {
     this.hubs = this.$utils.sortByName(this.hubs, this.language);
     this.upcomingHubs = this.$utils.sortByName(this.upcomingHubs, this.language);
-  }
+    this.retrieveHubs();
+  },
+  methods: {
+    retrieveHubs() {
+      this.loading = true;
+      this.$hubService.getHubs({
+        page: this.page,
+        size: this.pageSize,
+      })
+        .then(data => {
+          const hubs = data?._embedded?.hubs || [];
+          if (hubs?.length) {
+            this.hubs = this.hubs.filter(h => !hubs.find(hub => hub.deedId === h.upcomingDeedId));
+            this.hubs.unshift(...hubs.filter(h => h.connected));
+            this.hubs = this.$utils.sortByName(this.hubs, this.language);
+            this.hasMore = data.page.totalPages > (this.page + 1);
+          } else {
+            this.hasMore = false;
+          }
+        })
+        .finally(() => this.loading = false);
+    },
+  },
 };
 </script>
