@@ -68,6 +68,17 @@
                   :format="fullDateFormat"
                   class="text-break ms-1" />
               </v-tooltip>
+              <v-tooltip bottom>
+                <template #activator="{on, attrs}">
+                  <div
+                    v-bind="attrs"
+                    v-on="on"
+                    class="ms-1">
+                    ({{ $t('wom.week') }} {{ uemRewardPeriodWeek }})
+                  </div>
+                </template>
+                {{ $t('uem.mintiumRewardPeriod', {0: uemRewardPeriodWeek}) }}
+              </v-tooltip>
             </div>
           </div>
           <v-spacer />
@@ -168,6 +179,14 @@ export default {
           this.$emit('expand');
         }
       };
+    },
+    uemRewardPeriodWeek() {
+      const startOfYear = new Date(`${this.report?.sentDate.substring(0, 4)}-01-01T00:00:00Z`);
+      const sentDate = new Date(this.report?.sentDate);
+      return Math.ceil((sentDate.getTime()  - startOfYear.getTime()) / 7 / 24 / 3600 / 1000).toLocaleString('en-US', {
+        minimumIntegerDigits: 2,
+        useGrouping: false
+      });
     },
     fromDate() {
       return new Date(this.report?.fromDate).getTime();
