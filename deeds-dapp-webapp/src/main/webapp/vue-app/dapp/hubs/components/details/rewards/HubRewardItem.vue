@@ -131,7 +131,7 @@ export default {
       return this.report?.fromDate;
     },
     toDate() {
-      return this.report?.toDate;
+      return new Date(this.report?.toDate).getTime() - 1;
     },
     rewardId() {
       return this.report?.rewardId;
