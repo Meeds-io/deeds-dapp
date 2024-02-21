@@ -79,7 +79,9 @@ import io.meeds.deeds.common.constant.TenantStatus;
 import io.meeds.deeds.common.elasticsearch.model.DeedFileBinary;
 import io.meeds.deeds.common.elasticsearch.model.DeedTenant;
 import io.meeds.deeds.common.elasticsearch.model.HubEntity;
+import io.meeds.deeds.common.elasticsearch.model.HubReportEntity;
 import io.meeds.deeds.common.elasticsearch.model.UemRewardEntity;
+import io.meeds.deeds.common.elasticsearch.storage.HubReportRepository;
 import io.meeds.deeds.common.elasticsearch.storage.HubRepository;
 import io.meeds.deeds.common.elasticsearch.storage.UemRewardRepository;
 import io.meeds.deeds.common.model.DeedTenantLeaseDTO;
@@ -93,13 +95,12 @@ import io.meeds.wom.api.constant.WomAuthorizationException;
 import io.meeds.wom.api.constant.WomException;
 import io.meeds.wom.api.constant.WomRequestException;
 import io.meeds.wom.api.model.Hub;
-import io.meeds.wom.api.model.HubReport;
 import io.meeds.wom.api.model.HubUpdateRequest;
 import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @SpringBootTest(classes = {
-  HubService.class,
+                            HubService.class,
 })
 @ExtendWith(MockitoExtension.class)
 class HubServiceTest {
@@ -123,6 +124,9 @@ class HubServiceTest {
 
   @MockBean
   private HubRepository       hubRepository;
+
+  @MockBean
+  private HubReportRepository reportRepository;
 
   @MockBean
   private UemRewardRepository rewardRepository;
@@ -1036,23 +1040,26 @@ class HubServiceTest {
   }
 
   @Test
-  void saveHubUEMProperties() {
+  void refreshHubUemProperties() {
     HubEntity hubEntity = newHubEntity();
     when(hubRepository.findById(StringUtils.lowerCase(hubAddress))).thenReturn(Optional.of(hubEntity));
-    HubReport report = new HubReport();
-    report.setHubAddress(hubAddress);
-    report.setUsersCount(usersCount);
-    report.setPeriodType("WEEK");
-    report.setHubRewardAmount(2d);
 
-    hubService.saveHubUEMProperties(report);
+    HubReportEntity reportEntity = new HubReportEntity();
+    reportEntity.setHubAddress(hubAddress);
+    reportEntity.setUsersCount(usersCount);
+    reportEntity.setPeriodType("WEEK");
+    reportEntity.setHubRewardAmount(2d);
+    when(reportRepository.findByHubAddress(eq(StringUtils.lowerCase(hubAddress)),
+                                           any())).thenReturn(new PageImpl<>(Collections.singletonList(reportEntity)));
+
+    hubService.refreshHubUemProperties(hubAddress);
 
     verify(hubRepository).save(hubEntity);
-    verify(listenerService).publishEvent(HUB_STATUS_CHANGED, StringUtils.lowerCase(report.getHubAddress()));
+    verify(listenerService).publishEvent(HUB_STATUS_CHANGED, StringUtils.lowerCase(reportEntity.getHubAddress()));
 
-    assertEquals(report.getUsersCount(), hubEntity.getUsersCount());
-    assertEquals(report.getPeriodType(), hubEntity.getRewardsPeriodType());
-    assertEquals(report.getHubRewardAmount(), hubEntity.getRewardsPerPeriod());
+    assertEquals(reportEntity.getUsersCount(), hubEntity.getUsersCount());
+    assertEquals(reportEntity.getPeriodType(), hubEntity.getRewardsPeriodType());
+    assertEquals(reportEntity.getHubRewardAmount(), hubEntity.getRewardsPerPeriod());
   }
 
   @Test
