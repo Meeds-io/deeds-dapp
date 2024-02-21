@@ -17,22 +17,57 @@
           </v-icon>
           <div class="d-flex flex-column flex-grow-1 flex-shrink-1 ms-0 ms-sm-2 align-start justify-center">
             <div class="d-flex flex-grow-1 flex-shrink-1 text-subtitle-1 font-weight-bold justify-start align-center">
-              <deeds-date-format
-                :value="fromDate"
-                :format="dateFormat"
-                class="text-break" />
+              <v-tooltip bottom>
+                <template #activator="{on, attrs}">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-date-format
+                      :value="fromDate"
+                      :format="dateFormat"
+                      class="text-break" />
+                  </div>
+                </template>
+                <deeds-date-format
+                  :value="fromDate"
+                  :format="fullDateFormat" />
+              </v-tooltip>
               <span class="mx-2 text-no-wrap">{{ $t('wom.toDate') }}</span>
-              <deeds-date-format
-                :value="toDate"
-                :format="dateFormat"
-                class="text-break" />
+              <v-tooltip bottom>
+                <template #activator="{on, attrs}">
+                  <div
+                    v-bind="attrs"
+                    v-on="on">
+                    <deeds-date-format
+                      :value="toDate"
+                      :format="dateFormat"
+                      class="text-break" />
+                  </div>
+                </template>
+                <deeds-date-format
+                  :value="toDate"
+                  :format="fullDateFormat" />
+              </v-tooltip>
             </div>
             <div class="text-light-color caption d-flex mt-n2">
               {{ $t('uem.sentOn') }}
-              <deeds-date-format
-                :value="report.sentDate"
-                :format="dateFormat"
-                class="text-break ms-1" />
+              <v-tooltip bottom>
+                <template #activator="{on, attrs}">
+                  <div
+                    v-bind="attrs"
+                    v-on="on"
+                    class="ms-1">
+                    <deeds-date-format
+                      :value="report.sentDate"
+                      :format="dateFormat"
+                      class="text-break" />
+                  </div>
+                </template>
+                <deeds-date-format
+                  :value="report.sentDate"
+                  :format="fullDateFormat"
+                  class="text-break ms-1" />
+              </v-tooltip>
             </div>
           </div>
           <v-spacer />
@@ -98,6 +133,13 @@ export default {
       month: 'short',
       day: 'numeric',
     },
+    fullDateFormat: {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    },
   }),
   computed: Vuex.mapState({
     language: state => state.language,
@@ -128,10 +170,10 @@ export default {
       };
     },
     fromDate() {
-      return this.report?.fromDate;
+      return new Date(this.report?.fromDate).getTime();
     },
     toDate() {
-      return this.report?.toDate;
+      return new Date(this.report?.toDate).getTime() - 1;
     },
     rewardId() {
       return this.report?.rewardId;
