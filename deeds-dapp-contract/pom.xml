@@ -38,8 +38,7 @@
       <artifactId>core</artifactId>
       <scope>compile</scope>
     </dependency>
-    <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus -->
-    <!-- dependency>
+    <dependency>
       <groupId>org.web3j</groupId>
       <artifactId>web3j-unit</artifactId>
       <scope>test</scope>
@@ -47,6 +46,10 @@
         <exclusion>
           <groupId>tech.pegasys.discovery</groupId>
           <artifactId>discovery</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.beust</groupId>
+          <artifactId>klaxon</artifactId>
         </exclusion>
         <exclusion>
           <groupId>net.consensys.services</groupId>
@@ -61,13 +64,11 @@
           <artifactId>quorum-mainnet-launcher</artifactId>
         </exclusion>
       </exclusions>
-    </dependency -->
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}</finalName>
     <sourceDirectory>target/generated-sources</sourceDirectory>
-    <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus -->
-    <testSourceDirectory>disabled</testSourceDirectory>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -153,20 +154,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <!-- Disable Unit Tests for now until Nexus Mirror is updated With reference to hyperledger Nexus
-  <repositories>
-    <repository>
-      <id>hyperledger</id>
-      <url>https://hyperledger.jfrog.io/artifactory/besu-maven/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-  -->
 
 </project>
