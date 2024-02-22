@@ -96,77 +96,7 @@ export default {
     pageSize: 100,
     page: 0,
     hasMore: false,
-    hubs: [
-      {
-        address: '0xfefefefefefefefefefef1',
-        name: {
-          fr: 'Builders Hub',
-          en: 'Builders Hub'
-        },
-        description: {
-          fr: 'Hub officiel de la DAO Meeds',
-          en: 'Official Hub of the Meeds DAO'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1685699618/meedsdao-site/assets/images/MeedsDAO%20Logo.png',
-        backgroundColor: '#3F8487',
-        usersCount: 248,
-        hubUrl: 'https://builders.meeds.io',
-        rewardsPerPeriod: 1000,
-        rewardsPeriodType: 'week',
-        upcomingDeedId: 50,
-      },
-      {
-        address: '0xfefefefefefefefefefef2',
-        name: {
-          fr: 'Communauté eXo',
-          en: 'eXo Community'
-        },
-        description: {
-          fr: 'Communauté officielle d\'eXo',
-          en: 'Official community of eXo'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1688983553/meedsdao-site/assets/images/exo-logo.webp',
-        backgroundColor: '#6083B6',
-        usersCount: 10000,
-        hubUrl: 'https://community.exoplatform.com',
-        rewardsPerPeriod: 3000,
-        rewardsPeriodType: 'month',
-        upcomingDeedId: 99,
-      },
-      {
-        address: '0xfefefefefefefefefefef10',
-        name: {
-          fr: 'Rainbow Partners',
-          en: 'Rainbow Partners'
-        },
-        description: {
-          fr: 'Hub d\'engagement pour les collaborateurs du groupe Rainbow Partners',
-          en: 'Engagement Hub for Rainbow Partners employees'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1696606342/meedsdao-site/assets/images/Rainbow_q9vimd.png',
-        backgroundColor: '#2c3163',
-        usersCount: 78,
-        hubUrl: 'https://rainbowpartners.meeds.io/',
-        rewardsPerPeriod: 800,
-        rewardsPeriodType: 'week',
-        upcomingDeedId: 38,
-      },
-      {
-        address: '0xfefefefefefefefefefef13',
-        name: {
-          fr: 'TheGallery Ambassadors',
-          en: 'TheGallery Ambassadors'
-        },
-        description: {
-          fr: 'TheGallery Ambassadors est un club privé dédié à la promotion des artistes et des activités de TheGallery. Cette communauté exclusive est accessible uniquement par invitation et récompense ses membres en fonction de leurs performances et de leur soutien au projet et à ses artistes.',
-          en: 'TheGallery Ambassadors is a private club dedicated to promoting the artists and activity of TheGallery. This exclusive community is only accessible through invitation and will reward its members depending on their performance and support to the project and its artists.'
-        },
-        logoUrl: 'https://res.cloudinary.com/dcooc6vig/image/upload/v1701768967/meedsdao-site/assets/images/Featured%20hubs/TheGallery_swwey3.png',
-        backgroundColor: '#00263a',
-        hubUrl: 'https://thegallery.meeds.io/',
-        upcomingDeedId: 3,
-      }
-    ],
+    hubs: [],
     upcomingHubs: [
       {
         address: '0xfefefefefefefefefefef4',
@@ -298,7 +228,6 @@ export default {
     },
   }),
   created() {
-    this.hubs = this.$utils.sortByName(this.hubs, this.language);
     this.upcomingHubs = this.$utils.sortByName(this.upcomingHubs, this.language);
     this.retrieveHubs();
   },
@@ -310,11 +239,9 @@ export default {
         size: this.pageSize,
       })
         .then(data => {
-          const hubs = data?._embedded?.hubs || [];
+          const hubs = data?._embedded?.hubs?.filter?.(h => h.connected);
           if (hubs?.length) {
-            this.hubs = this.hubs.filter(h => !hubs.find(hub => hub.deedId === h.upcomingDeedId));
-            this.hubs.unshift(...hubs.filter(h => h.connected));
-            this.hubs = this.$utils.sortByName(this.hubs, this.language);
+            this.hubs = this.$utils.sortByName(hubs, this.language);
             this.hasMore = data.page.totalPages > (this.page + 1);
           } else {
             this.hasMore = false;
