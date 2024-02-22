@@ -59,6 +59,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -68,6 +69,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.multipart.MultipartFile;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
@@ -100,10 +102,15 @@ import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 @SpringBootTest(classes = {
-                            HubService.class,
+  HubService.class,
+})
+@TestPropertySource(properties = {
+  "meeds.hub.maxTokensPerClientIp=2",
 })
 @ExtendWith(MockitoExtension.class)
 class HubServiceTest {
+
+  private static final String CLIENT_IP              = "clientIp";
 
   private static final String RAW_MESSAGE            = "rawMessage";
 
@@ -224,6 +231,11 @@ class HubServiceTest {
   private Instant             joinDate               = Instant.now().minusSeconds(10);
 
   private Instant             updatedDate            = Instant.now();
+
+  @BeforeEach
+  void setup() {
+    hubService.cleanTokens();
+  }
 
   @Test
   void getHubs() {
@@ -559,11 +571,16 @@ class HubServiceTest {
 
   @Test
   void generateToken() {
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     assertNotNull(token);
-    String token2 = hubService.generateToken();
+    String token2 = hubService.generateToken(CLIENT_IP);
     assertNotNull(token);
     assertNotEquals(token, token2);
+    assertThrows(IllegalStateException.class, () -> hubService.generateToken(CLIENT_IP));
+    String token3 = hubService.generateToken(CLIENT_IP + "2");
+    assertNotNull(token3);
+    assertNotEquals(token3, token);
+    assertNotEquals(token3, token2);
   }
 
   @Test
@@ -591,7 +608,7 @@ class HubServiceTest {
                              });
     assertEquals("wom.invalidTokenForSignedMessage", exception.getMessage());
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     exception = assertThrows(WomException.class,
                              () -> hubService.connectToWom(new WomConnectionRequest(fakeDeedManagerSignedMessage,
                                                                                     fakeHubSignedMessage,
@@ -691,7 +708,7 @@ class HubServiceTest {
     when(leaseService.getCurrentLease(deedId)).thenReturn(lease);
     when(lease.getOwnerMintingPercentage()).thenReturn((int) ownerPercentage);
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     String rawMessage = RAW_MESSAGE + token;
 
     WomConnectionRequest hubConnectionRequest =
@@ -746,7 +763,7 @@ class HubServiceTest {
                              });
     assertEquals("wom.invalidTokenForSignedMessage", exception.getMessage());
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     exception = assertThrows(WomException.class,
                              () -> hubService.disconnectFromWom(new WomDisconnectionRequest(hubAddress,
                                                                                             fakeHubSignedMessage,
@@ -834,7 +851,7 @@ class HubServiceTest {
     when(leaseService.getCurrentLease(deedId)).thenReturn(lease);
     when(lease.getOwnerMintingPercentage()).thenReturn((int) ownerPercentage);
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     String rawMessage = RAW_MESSAGE + token;
 
     hubService.disconnectFromWom(new WomDisconnectionRequest(hubAddress,
@@ -852,7 +869,7 @@ class HubServiceTest {
   void updateHubWhenNotFound() {
     assertThrows(IllegalArgumentException.class,
                  () -> {
-                   String token = hubService.generateToken();
+                   String token = hubService.generateToken(CLIENT_IP);
                    hubService.updateHub(new HubUpdateRequest(hubAddress,
                                                              name,
                                                              description,
@@ -870,7 +887,7 @@ class HubServiceTest {
     when(hubRepository.findById(StringUtils.lowerCase(hubAddress))).thenReturn(Optional.of(hubEntity));
     when(hubRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     assertThrows(WomException.class,
                  () -> hubService.updateHub(new HubUpdateRequest(hubAddress,
                                                                  name,
@@ -929,7 +946,7 @@ class HubServiceTest {
                                                                            invocation.getArgument(0, HubEntity.class)
                                                                                      .getUpdatedDate()));
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     hubService.updateHub(new HubUpdateRequest(hubAddress,
                                               name,
                                               description,
@@ -945,7 +962,7 @@ class HubServiceTest {
 
   @Test
   void saveHubAvatarWhenInvalidSignature() {
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     MultipartFile file = mock(MultipartFile.class);
     assertThrows(Exception.class,
                  () -> hubService.saveHubAvatar(hubAddress, token, "signature", token, file));
@@ -953,7 +970,7 @@ class HubServiceTest {
 
   @Test
   void saveHubAvatarWhenNotFound() {
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     MultipartFile file = mock(MultipartFile.class);
     assertThrows(Exception.class,
                  () -> hubService.saveHubAvatar(hubAddress,
@@ -968,7 +985,7 @@ class HubServiceTest {
     when(hubRepository.findById(StringUtils.lowerCase(hubAddress))).thenReturn(Optional.of(newHubEntity()));
     when(hubRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     assertThrows(IllegalArgumentException.class, () -> hubService.saveHubAvatar(hubAddress,
                              signHubMessage(token, hubCredentials.getEcKeyPair()),
                              token,
@@ -983,7 +1000,7 @@ class HubServiceTest {
     when(hubRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(file.getSize()).thenReturn(DeedFileBinary.MAX_FILE_LENGTH + 1l);
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     assertThrows(WomRequestException.class,
                  () -> hubService.saveHubAvatar(hubAddress,
                                                 signHubMessage(token, hubCredentials.getEcKeyPair()),
@@ -999,7 +1016,7 @@ class HubServiceTest {
     when(hubRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
     when(fileService.saveFile(any())).thenReturn(avatarId);
 
-    String token = hubService.generateToken();
+    String token = hubService.generateToken(CLIENT_IP);
     hubService.saveHubAvatar(hubAddress,
                              signHubMessage(token, hubCredentials.getEcKeyPair()),
                              token,

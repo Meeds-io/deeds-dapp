@@ -63,6 +63,8 @@ import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/hubs")
 public class HubController {
@@ -235,8 +237,12 @@ public class HubController {
   }
 
   @GetMapping("/token")
-  public String generateToken() {
-    return hubService.generateToken();
+  public String generateToken(HttpServletRequest request) {
+    String clientIp = request.getHeader("X-FORWARDED-FOR");
+    if (clientIp == null) {
+      clientIp = request.getRemoteAddr();
+    }
+    return hubService.generateToken(clientIp);
   }
 
   private ResponseEntity<InputStreamResource> getFileResponse(FileBinary file, String lastUpdated) {

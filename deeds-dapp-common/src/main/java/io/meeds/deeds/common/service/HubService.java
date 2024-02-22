@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -79,6 +80,7 @@ import io.meeds.wom.api.model.WomConnectionResponse;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
 @Component
@@ -97,11 +99,6 @@ public class HubService {
   public static final String  WOM_INVALID_SIGNED_MESSAGE = "wom.invalidSignedMessage";
 
   private SecureRandom        secureRandomCodeGenerator;
-
-  /**
-   * Maximum Tokens to generate to avoid having an out of memory
-   */
-  private static final int    MAX_GENERATED_TOKENS_SIZE  = Integer.parseInt(System.getProperty("meeds.hub.maxTokens", "1000"));
 
   /**
    * 10 minutes by default for Token validity
@@ -134,7 +131,13 @@ public class HubService {
   @Autowired
   private UemRewardRepository rewardRepository;
 
-  private Map<String, Long>   tokens                     = new ConcurrentHashMap<>();
+  /**
+   * Maximum Tokens to generate to avoid having an out of memory
+   */
+  @Value("${meeds.hub.maxTokensPerClientIp:100}")
+  private int                      maxTokensPerClientIp;
+
+  private Map<String, TokenDetail> tokens                     = new ConcurrentHashMap<>();
 
   @PostConstruct
   @SneakyThrows
@@ -276,16 +279,16 @@ public class HubService {
           .forEach(this::refreshHubClaimableAmount);
   }
 
-  public String generateToken() {
+  public String generateToken(String clientIp) {
     cleanInvalidTokens();
-    if (tokens.size() >= MAX_GENERATED_TOKENS_SIZE) {
-      throw new IllegalStateException("Too much Tokens generated in a small time");
+    if (countTokens(clientIp) >= maxTokensPerClientIp) {
+      throw new IllegalStateException("Too much Tokens generated in a small time by Client IP:" + clientIp);
     }
     String token = String.format("%s-%s-%s",
                                  secureRandomCodeGenerator.nextLong(),
                                  secureRandomCodeGenerator.nextLong(),
                                  secureRandomCodeGenerator.nextLong());
-    tokens.put(token, System.currentTimeMillis());
+    tokens.put(token, new TokenDetail(System.currentTimeMillis(), clientIp));
     return token;
   }
 
@@ -442,6 +445,10 @@ public class HubService {
         refreshHubClaimableAmount(hub.getAddress());
       }
     }
+  }
+
+  protected void cleanTokens() {
+    tokens.clear();
   }
 
   private void saveHubAttachment(String hubAddress, MultipartFile file, AttachmentType attachmentType) throws IOException,
@@ -784,7 +791,11 @@ public class HubService {
   }
 
   private void cleanInvalidTokens() {
-    tokens.entrySet().removeIf(entry -> (entry.getValue() - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
+    tokens.entrySet().removeIf(entry -> (entry.getValue().createdTime - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
+  }
+
+  private long countTokens(String clientIp) {
+    return tokens.values().stream().filter(t -> StringUtils.equals(clientIp, t.clientIp)).count();
   }
 
   private void addOwnedDeeds(String address, List<ManagedDeed> result) { // NOSONAR
@@ -844,6 +855,15 @@ public class HubService {
     return hubRepository.findByNftId(deedId)
                         .map(HubMapper::isConnected)
                         .orElse(false);
+  }
+
+  @AllArgsConstructor
+  private static class TokenDetail {
+
+    long   createdTime;
+
+    String clientIp;
+
   }
 
 }
