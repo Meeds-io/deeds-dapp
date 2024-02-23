@@ -100,13 +100,6 @@ public class HubService {
 
   private SecureRandom        secureRandomCodeGenerator;
 
-  /**
-   * 10 minutes by default for Token validity
-   */
-  private static final long   MAX_GENERATED_TOKENS_LT    = 1000l *
-      Integer.parseInt(System.getProperty("meeds.hub.maxTokenLiveTimeSeconds",
-                                          "600"));
-
   @Autowired
   private TenantService       tenantService;
 
@@ -136,6 +129,9 @@ public class HubService {
    */
   @Value("${meeds.hub.maxTokensPerClientIp:100}")
   private int                      maxTokensPerClientIp;
+
+  @Value("${meeds.hub.maxTokenLiveTimeSeconds:600}")
+  private int                      maxTokenLiveTime;
 
   private Map<String, TokenDetail> tokens                     = new ConcurrentHashMap<>();
 
@@ -791,7 +787,7 @@ public class HubService {
   }
 
   private void cleanInvalidTokens() {
-    tokens.entrySet().removeIf(entry -> (entry.getValue().createdTime - System.currentTimeMillis()) > MAX_GENERATED_TOKENS_LT);
+    tokens.entrySet().removeIf(entry -> (System.currentTimeMillis() - entry.getValue().createdTime) / 1000l >= maxTokenLiveTime);
   }
 
   private long countTokens(String clientIp) {
