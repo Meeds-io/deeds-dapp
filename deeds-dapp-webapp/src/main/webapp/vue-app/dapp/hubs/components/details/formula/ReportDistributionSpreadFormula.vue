@@ -46,9 +46,8 @@
         <mo stretchy="true" class="font-weight-bold">
           =
         </mo>
-        <ms
-          v-sanitized-html="$t('uem.formulaDistributionSpread', {0: `<span class='font-weight-bold me-1 ${distributionSpreadColor}--text'>${distributionSpreadPercentage}</span>`})"
-          class="d-flex font-weight-bold">
+        <ms class="d-flex font-weight-bold">
+          <div v-sanitized-html="$t('uem.formulaDistributionSpread', {0: `<span class='font-weight-bold me-1 ${distributionSpreadColor}--text'>${distributionSpreadPercentage}</span>`})"></div>
         </ms>
       </mrow>
     </math>
