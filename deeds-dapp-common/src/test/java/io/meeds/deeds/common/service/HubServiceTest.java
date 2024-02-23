@@ -41,7 +41,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -101,11 +101,14 @@ import io.meeds.wom.api.model.HubUpdateRequest;
 import io.meeds.wom.api.model.WomConnectionRequest;
 import io.meeds.wom.api.model.WomDisconnectionRequest;
 
+import lombok.SneakyThrows;
+
 @SpringBootTest(classes = {
   HubService.class,
 })
 @TestPropertySource(properties = {
   "meeds.hub.maxTokensPerClientIp=2",
+  "meeds.hub.maxTokenLiveTimeSeconds=1",
 })
 @ExtendWith(MockitoExtension.class)
 class HubServiceTest {
@@ -570,6 +573,7 @@ class HubServiceTest {
   }
 
   @Test
+  @SneakyThrows
   void generateToken() {
     String token = hubService.generateToken(CLIENT_IP);
     assertNotNull(token);
@@ -581,6 +585,10 @@ class HubServiceTest {
     assertNotNull(token3);
     assertNotEquals(token3, token);
     assertNotEquals(token3, token2);
+
+    Thread.sleep(1000);
+    String token4 = hubService.generateToken(CLIENT_IP);
+    assertNotNull(token4);
   }
 
   @Test
