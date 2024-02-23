@@ -47,8 +47,8 @@
           =
         </mo>
         <ms
-          v-sanitized-html="$t('uem.formulaDistributionRate', {0: `<span class='font-weight-bold me-1 ${distributionRateColor}--text'>${distributionRatePercentage}</span>`})"
           class="d-flex font-weight-bold">
+          <div v-sanitized-html="$t('uem.formulaDistributionRate', {0: `<span class='font-weight-bold me-1 ${distributionRateColor}--text'>${distributionRatePercentage}</span>`})"></div>
         </ms>
       </mrow>
     </math>

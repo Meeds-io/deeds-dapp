@@ -43,11 +43,11 @@
         <mo stretchy="true" class="font-weight-bold">
           =
         </mo>
-        <ms
-          v-sanitized-html="$t('uem.formulaEngagementAverage', {
-            0: `<span class='font-weight-bold me-1 ${engagementScoreColor}--text'>${engagementScorePercentage}</span>`
-          })"
-          class="d-flex font-weight-bold">
+        <ms class="d-flex font-weight-bold">
+          <div
+            v-sanitized-html="$t('uem.formulaEngagementAverage', {
+              0: `<span class='font-weight-bold me-1 ${engagementScoreColor}--text'>${engagementScorePercentage}</span>`
+            })"></div>
         </ms>
       </mrow>
     </math>

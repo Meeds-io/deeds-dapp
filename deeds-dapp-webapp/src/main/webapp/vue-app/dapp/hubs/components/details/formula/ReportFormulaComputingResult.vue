@@ -21,7 +21,7 @@
 <template>
   <div class="d-flex flex-column">
     <div class="d-flex flex-column fa-lg">
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <msub>
             <mi>{{ $t('uem.hub') }}</mi>
@@ -40,14 +40,14 @@
           <mi>{{ $t('uem.rewardAmount') }}</mi>
         </mrow>
       </math>
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <mo stretchy="true" class="font-weight-bold">
             =
           </mo>
         </mrow>
       </math>
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <mfrac linethickness="2">
             <mn>{{ report.fixedRewardIndex }}</mn>
@@ -58,14 +58,14 @@
           <mn class="secondary--text ms-1">Ɱ</mn>
         </mrow>
       </math>
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <mo stretchy="true" class="font-weight-bold">
             =
           </mo>
         </mrow>
       </math>
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <mn class="info--text">{{ uemRewardPercentage }}</mn>
           <mo stretchy="true" class="font-weight-bold mx-2">*</mo>
@@ -73,7 +73,7 @@
           <mn class="secondary--text ms-1">Ɱ</mn>
         </mrow>
       </math>
-      <math class="my-1">
+      <math display="block" class="my-1">
         <mrow>
           <mo stretchy="true" class="font-weight-bold">
             =
