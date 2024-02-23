@@ -19,15 +19,20 @@
 
 -->
 <template>
-  <li>
-    <math class="my-1">
+  <li class="my-1">
+    <math>
       <mrow>
         <mi>M</mi>
         <mo stretchy="true" class="font-weight-bold">
           =
         </mo>
-        <mn class="font-weight-bold">
-          <v-chip class="px-2 py-0 rounded-circle">{{ mintingPower }}</v-chip>
+        <mn stretchy="true" class="font-weight-bold">
+          <v-card
+            width="38"
+            class="position-relative"
+            flat>
+            <v-chip class="px-2 py-0 full-width rounded-circle d-flex align-center justify-center">{{ mintingPower }}</v-chip>
+          </v-card>
         </mn>
         <mo stretchy="true" class="font-weight-bold">
           =

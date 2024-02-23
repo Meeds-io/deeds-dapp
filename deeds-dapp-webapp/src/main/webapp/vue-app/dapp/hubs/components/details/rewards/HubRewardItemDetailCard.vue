@@ -5,7 +5,9 @@
     height="80"
     outlined
     hover>
-    <div class="my-auto d-flex align-center flex-grow-1 text-light-color">
+    <div
+      :class="dark && 'white--text' || 'text-light-color'"
+      class="my-auto d-flex align-center flex-grow-1">
       {{ $t(label) }}
     </div>
     <div class="my-auto d-flex align-center flex-grow-1">
@@ -51,6 +53,7 @@ export default {
   computed: Vuex.mapState({
     language: state => state.language,
     parentLocation: state => state.parentLocation,
+    dark: state => state.dark,
     valueFormat() {
       return this.$utils.numberFormatWithDigits(this.value, this.language);
     },
