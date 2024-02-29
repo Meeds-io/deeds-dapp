@@ -37,7 +37,9 @@
     </div>
     <div class="reset-style-box">
       <ul>
-        <deed-hub-report-engagement-score :report="report" />
+        <deed-hub-report-engagement-score
+          :reward="reward"
+          :report="report" />
         <deed-hub-report-engagement-formula
           :reward="reward"
           :report="report" />

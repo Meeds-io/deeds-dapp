@@ -26,7 +26,7 @@
         <mo stretchy="true" class="font-weight-bold">
           =
         </mo>
-        <mn class="font-weight-bold">{{ report.fixedRewardIndex }}</mn>
+        <mn class="font-weight-bold">{{ report.fixedRewardIndex / reward.ew }}</mn>
         <mo stretchy="true" class="font-weight-bold">
           =
         </mo>
@@ -41,6 +41,10 @@
 export default {
   props: {
     report: {
+      type: Object,
+      default: null,
+    },
+    reward: {
       type: Object,
       default: null,
     },
