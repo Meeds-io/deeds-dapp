@@ -94,7 +94,7 @@
         color="primary"
         large
         dark>
-        {{ $utils.numberFormatWithDigits(report.fixedRewardIndex, language, 2, 5) }}
+        {{ $utils.numberFormatWithDigits(report.fixedRewardIndex / reward.ew, language, 2, 5) }}
       </v-chip>
     </div>
   </div>
