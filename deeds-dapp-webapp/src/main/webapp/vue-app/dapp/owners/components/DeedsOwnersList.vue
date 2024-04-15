@@ -188,7 +188,7 @@ export default {
         const lease = this.refreshedLeases[deed.id] || {
           nftId: deed.id,
           city: this.cities[deed.cityIndex],
-          cardType: this.cardTypes[deed.cardType],
+          cardType: this.cardTypes[parseInt(deed.cardType % 4)],
           ownerAddress: this.address,
           managerAddress: this.address,
           rentedOffers: this.rentedOffers[deed.id]?.slice() || [],
