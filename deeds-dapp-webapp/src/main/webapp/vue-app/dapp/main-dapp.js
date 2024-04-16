@@ -192,28 +192,18 @@ const networkSettings = {
   },
 };
 
-// Goerli
-networkSettings[5] = {
-  chainId: '0x5',
-  sushiswapRouterAddress: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506',
-  sushiswapPairAddress: '0x131Bd5b643Bc12EFb9A4F23512BbA5e1ef3F33bD',
-  wethAddress: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
-  meedAddress: '0x4998a63C7494afc4Ea96E7Ea86E88c59271914c1',
-  tokenFactoryAddress: '0x13142F102152aBa8AD81281E7eC1374577D662EC',
-  xMeedAddress: '0xee5BBf589577266e5ddee2CfB4acFB945e844079',
-  deedAddress: '0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
-  tenantProvisioningAddress: '0x238758516d1521a4aE108966104Aa1C5cC088220',
-  tenantRentingAddress: '0x1d26cB4Cae533a721c4dA576C9Bd7b702c5e2fd8',
-  polygonNetwork: {
-    chainName: 'Mumbai',
-    chainId: '0x13881',
-    nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
-    rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
-    blockExplorerUrls: ['https://mumbai.polygonscan.com']
-  },
-  etherscanBaseLink: 'https://goerli.etherscan.io/',
+// Sepolia
+networkSettings[11155111] = {
+  chainId: '0xaa36a7',
+  meedAddress: '0x42adb84ed2136a0b8877fee8c8b1ba0c28a77681',
+  xMeedAddress: '0x7e17f6d34bA8b29f9CAa9571F2479D0fD57f264e',
+  tokenFactoryAddress: '0x0CbbD90fa2C7ebFE9B53D4CC14F5DBA20D2ba81b',
+  deedAddress: '0xcC7aC4913725DcE0f7B4780511317f8a42A3F461',
+  tenantProvisioningAddress: '0x65Cc99ea6F3BF1fc8acB9a746D64dff745Bf8A5d',
+  tenantRentingAddress: '0x979b9ad927438b836aCB325eD43cfB9A07913C81',
+  etherscanBaseLink: 'https://sepolia.etherscan.io/',
   // Opensea links
-  openSeaBaseLink: 'https://testnets.opensea.io/assets/goerli/0x01ab6ab1621b5853Ad6F959f6b7df6A369fbd346',
+  openSeaBaseLink: 'https://testnets.opensea.io/assets/sepolia/0xcC7aC4913725DcE0f7B4780511317f8a42A3F461',
   openSeaCollectionLink: 'https://testnets.opensea.io/collection/meeds-dao-testnet',
   // TestNet Date Format
   defaultDateFormat: {
@@ -1024,7 +1014,8 @@ const store = new Vuex.Store({
         provider.pollingInterval = state.pollingInterval;
 
         provider.lookupAddress(state.address)
-          .then(name => state.ens = name);
+          .then(name => state.ens = name)
+          .catch(() => {}); // eslint-disable-line no-empty-function
 
         if (state.sushiswapRouterContract) {
           state.sushiswapRouterContract.removeAllListeners();
@@ -1114,7 +1105,7 @@ const store = new Vuex.Store({
             state.tenantRentingABI,
             provider
           );
-          if (state.networkId === 5) {
+          if (state.networkId === 11155111) {
             // eslint-disable-next-line new-cap
             state.tenantRentingContract.MONTH_IN_SECONDS()
               .then(data => state.MONTH_IN_SECONDS = data && data.toNumber());
@@ -1522,9 +1513,9 @@ function initializeVueApp(language) {
                   blockexplorer: 'https://etherscan.io',
                   testnet: false,
                 },
-                5: {
-                  name: 'Goerli',
-                  blockexplorer: 'https://goerli.etherscan.io',
+                11155111: {
+                  name: 'Sepolia',
+                  blockexplorer: 'https://sepolia.etherscan.io',
                   testnet: true,
                 },
                 137: {
