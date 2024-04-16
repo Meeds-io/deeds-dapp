@@ -56,8 +56,8 @@ export default {
       switch (this.networkId) {
       case 4:
         return 'Rinkeby';
-      case 5:
-        return 'Goerli';
+      case 11155111:
+        return 'Sepolia';
       default:
         return '';
       }
