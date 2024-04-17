@@ -47,7 +47,7 @@
     <org.web3j.version>4.9.4</org.web3j.version>
 
     <!-- Meeds Server Libraries -->
-    <io.meeds.distribution.version>1.6.x-meed-SNAPSHOT</io.meeds.distribution.version>
+    <io.meeds.distribution.version>1.6.0-meed-20240417</io.meeds.distribution.version>
 
     <!-- Sonar properties -->
     <sonar.organization>meeds-io</sonar.organization>
