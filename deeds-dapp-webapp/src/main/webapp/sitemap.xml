@@ -55,11 +55,6 @@
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/farm</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
     <loc>https://www.meeds.io/about-us</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.70</priority>
@@ -138,11 +133,6 @@
     <loc>https://www.meeds.io/fr/proprietaires</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/farm</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/fr/locataires</loc>

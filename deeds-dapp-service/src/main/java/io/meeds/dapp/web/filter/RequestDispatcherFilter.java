@@ -139,6 +139,10 @@ public class RequestDispatcherFilter extends HttpFilter {
           response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
           return;
         }
+      } else if (servletPath.equals("/farm")) {
+        response.setHeader("Location", "/");
+        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        return;
       } else if (servletPath.equals("/home") || servletPath.equals("/hubs")) {
         response.setHeader("Location", "/");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
