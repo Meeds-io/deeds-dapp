@@ -89,7 +89,6 @@ const pageUriPerLanguages = {
       'legals',
       'stake',
       'owners',
-      'farm',
       'tenants',
       'why-meeds',
       'buy'
@@ -109,7 +108,6 @@ const pageUriPerLanguages = {
       'mentions-legales',
       'rejoindre-dao',
       'proprietaires',
-      'farm',
       'locataires',
       'pourquoi-meeds',
       'acheter'

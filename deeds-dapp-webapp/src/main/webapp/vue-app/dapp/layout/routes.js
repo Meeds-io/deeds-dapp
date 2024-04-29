@@ -21,7 +21,6 @@ const Tenants = { template: '<deeds-tenants />' };
 const Owners = { template: '<deeds-owners />' };
 const Stake = { template: '<deeds-stake />' };
 const Mint = { template: '<deeds-deeds />' };
-const Farm = { template: '<deeds-farm />' };
 const Overview = { template: '<deeds-overview />' };
 const Tokenomics = { template: '<deeds-tokenomics />' };
 const Hubs = { template: '<deeds-hubs />' };
@@ -48,7 +47,6 @@ export default {
   '/tokenomics': Tokenomics,
   '/rejoindre-dao': Stake,
   '/mint': Mint,
-  '/farm': Farm,
   '/marketplace': Marketplace,
   '/tenants': Tenants,
   '/owners': Owners,

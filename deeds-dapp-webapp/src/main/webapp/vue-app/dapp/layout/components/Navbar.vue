@@ -143,30 +143,6 @@
             </v-list-item-content>
           </v-list-item>
           <v-list-item
-            ref="farm"
-            id="farm"
-            :href="farmURL"
-            :active-class="activeMenuColor"
-            class="py-2"
-            key="farm"
-            value="farm"
-            dense
-            @click="openPage">
-            <v-list-item-icon>
-              <v-img
-                :src="`${parentLocation}/static/images/farmMenu.webp`"
-                position="right"
-                height="23px"
-                width="24px"
-                min-width="24px"
-                class="my-1" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.farm') }}</v-list-item-title>
-              <v-list-item-subtitle class="caption">{{ $t('page.farm.menu.description') }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
             ref="tokens"
             id="tokens"
             :href="tokenomicsURL"
@@ -353,37 +329,6 @@
                     :class="hover && 'black--text text--color'"
                     class="text-body-2"> 
                     {{ $t('page.stake.menu.description') }} 
-                  </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-hover>
-          </v-list-item>
-          <v-list-item :href="farmURL">
-            <v-list-item-avatar
-              height="25px"
-              width="27px"
-              min-width="27px"
-              tile>
-              <v-img 
-                :src="`${parentLocation}/static/images/farmMenu.webp`"
-                position="left" />
-            </v-list-item-avatar>
-            <v-hover v-slot="{hover}">
-              <v-list-item-content>
-                <v-list-item-title class="d-flex">
-                  <span class="font-weight-black"> {{ $t('page.farm') }} </span>
-                  <v-icon
-                    v-if="hover"
-                    class="ms-2 black--text text--color "
-                    size="10">
-                    fa fa-chevron-right
-                  </v-icon>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span  
-                    :class="hover && 'black--text text--color'"
-                    class="text-body-2"> 
-                    {{ $t('page.farm.menu.description') }}
                   </span>
                 </v-list-item-subtitle>
               </v-list-item-content>
