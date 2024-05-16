@@ -29,6 +29,7 @@
     </template>
     <template #col1>
       <deeds-tab-link
+        v-if="farmURL"
         :tab-link="farmURL"
         label="Meeds"
         class="ms-n4" />
