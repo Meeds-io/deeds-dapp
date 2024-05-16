@@ -545,7 +545,6 @@ export default {
     mintUrl: state => state.mintUrl,
     stakeURL: state => state.stakeURL,
     ownersURL: state => state.ownersURL,
-    farmURL: state => state.farmURL,
     tenantsURL: state => state.tenantsURL,
     tokenomicsURL: state => state.tokenomicsURL,
     language: state => state.language,

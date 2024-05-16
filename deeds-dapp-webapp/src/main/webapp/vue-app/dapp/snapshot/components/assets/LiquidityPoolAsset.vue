@@ -29,6 +29,7 @@
     </template>
     <template #col1>
       <deeds-tab-link
+        v-if="farmURL"
         :label="poolName"
         :tab-link="farmURL"
         class="ms-n4" />

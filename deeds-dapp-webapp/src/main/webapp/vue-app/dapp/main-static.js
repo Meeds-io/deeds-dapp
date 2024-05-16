@@ -149,10 +149,10 @@ const store = new Vuex.Store({
     legalsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[8]}`,
     stakeURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[9]}`,
     ownersURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[10]}`,
-    farmURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
-    tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
-    whyMeedsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
-    buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[14]}`,
+    tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
+    whyMeedsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[12]}`,
+    buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[13]}`,
+    farmURL: null,
   },
   mutations: {
     setPageState(state, value) {
