@@ -20,7 +20,7 @@
   <parent>
     <groupId>io.meeds.deeds-dapp</groupId>
     <artifactId>deeds-dapp-parent</artifactId>
-    <version>7.0.x-meed-SNAPSHOT</version>
+    <version>7.0.0-meed-20240521</version>
   </parent>
   <artifactId>deeds-dapp-webapp</artifactId>
   <packaging>war</packaging>
