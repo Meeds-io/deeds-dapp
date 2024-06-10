@@ -638,8 +638,8 @@ public class BlockchainService {
 
   public double getPendingRewards(String address) {
     return WalletUtils.isValidAddress(address) ?
-                                               org.exoplatform.wallet.utils.WalletUtils.convertFromDecimals(blockchainCall(uemContract.pendingRewardBalanceOf(address)),
-                                                                                                            18) :
+                                               convertFromDecimals(blockchainCall(uemContract.pendingRewardBalanceOf(address)),
+                                                                   18) :
                                                0d;
   }
 
@@ -1287,7 +1287,8 @@ public class BlockchainService {
                                                                                                                      managerAddress,
                                                                                                                      hubAddress,
                                                                                                                      BigInteger.valueOf(ownerMintingPercentage),
-                                                                                                                     BigInteger.valueOf(100l - ownerMintingPercentage)))
+                                                                                                                     BigInteger.valueOf(100l -
+                                                                                                                         ownerMintingPercentage)))
                                                                     .sendAsync()
                                                                     .orTimeout(maxWaitTransactionSending, TimeUnit.MINUTES)
                                                                     .get();
@@ -1325,6 +1326,13 @@ public class BlockchainService {
                  .flatMap(List::stream)
                  .filter(Objects::nonNull)
                  .toList();
+  }
+
+  private double convertFromDecimals(BigInteger amount, int decimals) {
+    return amount == null ? 0 :
+                          BigDecimal.valueOf(amount.doubleValue())
+                                    .divide(BigDecimal.valueOf(10).pow(decimals), MathContext.DECIMAL128)
+                                    .doubleValue();
   }
 
 }
