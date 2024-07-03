@@ -34,7 +34,7 @@
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
-          <groupId>org.exoplatform.addons.wallet</groupId>
+          <groupId>io.meeds.wallet</groupId>
           <artifactId>wallet-api</artifactId>
         </exclusion>
       </exclusions>
