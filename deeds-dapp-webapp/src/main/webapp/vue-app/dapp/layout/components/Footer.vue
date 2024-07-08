@@ -105,12 +105,6 @@
               {{ $t('joinHubs') }}
             </a>
             <a
-              :href="tokenomicsURL"
-              :class="textColor"
-              class="no-decoration">
-              {{ $t('meedsToken') }}
-            </a>
-            <a
               :href="mintUrl"
               :class="textColor"
               class="text-capitalize no-decoration my-2">
@@ -205,7 +199,6 @@ export default {
     legalsURL: state => state.legalsURL,
     stakeURL: state => state.stakeURL,
     aboutUsURL: state => state.aboutUsURL,
-    tokenomicsURL: state => state.tokenomicsURL,
     tenantsURL: state => state.tenantsURL,
     mintUrl: state => state.mintUrl,
     whitepaperURL: state => state.whitepaperURL,

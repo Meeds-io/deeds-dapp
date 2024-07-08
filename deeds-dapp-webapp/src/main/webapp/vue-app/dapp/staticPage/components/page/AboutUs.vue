@@ -103,7 +103,7 @@
             <v-list-item-action>
               <v-btn
                 id="aToken-button"
-                :href="portfolioURL"
+                :href="whitepaperURL"
                 height="54px"
                 class="px-7"
                 color="primary"
@@ -415,7 +415,6 @@
 export default {
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    portfolioURL: state => state.portfolioURL,
     whitepaperURL: state => state.whitepaperURL,
     tourURL: state => state.tourURL,
     dark: state => state.dark,

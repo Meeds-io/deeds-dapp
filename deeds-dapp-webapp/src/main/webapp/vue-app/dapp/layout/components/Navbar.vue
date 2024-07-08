@@ -85,26 +85,6 @@
               :class="positionNftIconTab">
           </v-btn>
         </v-col>
-        <v-col cols="auto" class="my-0 pa-0 flex-grow-1">
-          <v-btn
-            ref="portfolio"
-            id="portfolio"
-            :href="portfolioURL"
-            value="portfolio"
-            class="px-0 full-height"
-            link
-            @click="openPage">
-            <h3 class="mx-2 font-size-normal" :class="textPortfolioColor">{{ $t('page.overview') }}</h3>
-            <img
-              :src="`${parentLocation}/static/images/portfolioMenu.webp`"
-              alt=""
-              height="27px"
-              width="24px"
-              min-width="24px"
-              class="my-1 object-fit-cover"
-              :class="positionPortfolioIconTab">
-          </v-btn>
-        </v-col>
       </v-row>
     </v-bottom-navigation>
     <v-bottom-sheet
@@ -140,30 +120,6 @@
             <v-list-item-content>
               <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('page.stake') }}</v-list-item-title>
               <v-list-item-subtitle class="caption">{{ $t('page.stake.menu.description') }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            ref="tokens"
-            id="tokens"
-            :href="tokenomicsURL"
-            :active-class="activeMenuColor"
-            class="py-2"
-            key="tokens"
-            value="tokens"
-            dense
-            @click="openPage">
-            <v-list-item-icon>
-              <v-img
-                :src="`${parentLocation}/static/images/tokenMenu.webp`"
-                position="right"
-                height="24px"
-                width="24px"
-                min-width="24px"
-                class="my-1" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title class="text-sub-title font-weight-bold font-size-normal">{{ $t('tokens.title') }}</v-list-item-title>
-              <v-list-item-subtitle class="caption">{{ $t('page.token.menu.description') }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -329,37 +285,6 @@
                     :class="hover && 'black--text text--color'"
                     class="text-body-2"> 
                     {{ $t('page.stake.menu.description') }} 
-                  </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-hover>
-          </v-list-item>
-          <v-list-item :href="tokenomicsURL">
-            <v-list-item-avatar
-              height="25px"
-              width="25px"
-              min-width="25px"
-              tile>
-              <v-img 
-                :src="`${parentLocation}/static/images/tokenMenu.webp`"
-                position="left" />
-            </v-list-item-avatar>
-            <v-hover v-slot="{hover}">
-              <v-list-item-content>
-                <v-list-item-title class="d-flex">
-                  <span class="font-weight-black"> {{ $t('page.token') }} </span>
-                  <v-icon
-                    v-if="hover"
-                    class="ms-2 black--text text--color"
-                    size="10">
-                    fa fa-chevron-right
-                  </v-icon>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <span  
-                    :class="hover && 'black--text text--color'"
-                    class="text-body-2"> 
-                    {{ $t('page.token.menu.description') }} 
                   </span>
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -535,18 +460,15 @@ export default {
       'stake',
       'mint',
       'farm',
-      'portfolio',
     ],
   }),
   computed: Vuex.mapState({
     parentLocation: state => state.parentLocation,
-    portfolioURL: state => state.portfolioURL,
     marketplaceURL: state => state.marketplaceURL,
     mintUrl: state => state.mintUrl,
     stakeURL: state => state.stakeURL,
     ownersURL: state => state.ownersURL,
     tenantsURL: state => state.tenantsURL,
-    tokenomicsURL: state => state.tokenomicsURL,
     language: state => state.language,
     isMobile: state => state.isMobile,
     dark: state => state.dark,
@@ -574,9 +496,6 @@ export default {
     selectedNftTab() {
       return this.selectedTab && this.selectedTab === 'nft';
     },
-    selectedPortfolioTab() {
-      return this.selectedTab && this.selectedTab === 'portfolio';
-    },
     positionWhyMeedsIconTab() {
       return this.selectedWhyMeedsTab && this.selectedWhyMeedsTab ? 'object-position-left' : 'object-position-right';
     },
@@ -586,9 +505,6 @@ export default {
     positionNftIconTab() {
       return this.selectedNftTab && this.selectedNftTab ? 'object-position-left' : 'object-position-right';
     },
-    positionPortfolioIconTab() {
-      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'object-position-left' : 'object-position-right';
-    },
     whyMeedsTextColor() {
       return this.selectedWhyMeedsTab && this.selectedWhyMeedsTab ? 'secondary--text' : 'text-sub-title';
     },
@@ -597,9 +513,6 @@ export default {
     },
     textNftColor() {
       return this.selectedNftTab && this.selectedNftTab ? 'secondary--text' : 'text-sub-title';
-    },
-    textPortfolioColor() {
-      return this.selectedPortfolioTab && this.selectedPortfolioTab ? 'secondary--text' : 'text-sub-title';
     },
   }),
   watch: {
@@ -660,7 +573,7 @@ export default {
           this.switchPage(this.page);
         } else {
           this.selectedTab = (this.navTabs.indexOf(this.page) >= 0) && tabToSelect || `${this.parentLocation}/static`;
-          if (this.isMobile && this.selectedTab !== 'why-meeds' && this.selectedTab !== 'portfolio') {
+          if (this.isMobile && this.selectedTab !== 'why-meeds') {
             if (this.selectedTab === 'stake' || this.selectedTab === 'farm' || this.selectedTab === 'tokens') {
               this.selectedTokensId = this.page;
               this.selectedTab = 'tokens';

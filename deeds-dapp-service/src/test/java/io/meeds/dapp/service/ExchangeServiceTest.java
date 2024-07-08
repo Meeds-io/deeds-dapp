@@ -34,14 +34,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -100,12 +98,7 @@ class ExchangeServiceTest {
     exchangeService.computeCurrencyExchangeRate();
     Duration between = Duration.between(exchangeService.firstMeedTokenDate().atStartOfDay(), LocalDate.now().atStartOfDay());
     verify(currencyExchangeRateRepository,
-           times((int) between.toDays() + 2)).save(argThat(new ArgumentMatcher<CurrencyExchangeRate>() {
-             @Override
-             public boolean matches(CurrencyExchangeRate argument) {
-               return BigDecimal.valueOf(1.8d).equals(argument.getRate()) && argument.getCurrency() == Currency.EUR;
-             }
-           }));
+           times((int) between.toDays() + 2)).save(argThat(rate -> BigDecimal.valueOf(1.8d).equals(rate.getRate()) && rate.getCurrency() == Currency.EUR));
 
     verify(currencyExchangeRateRepository,
            times(1)).save(new CurrencyExchangeRate(exchangeService.firstMeedTokenDate(), Currency.EUR, BigDecimal.valueOf(1.8d)));
@@ -117,16 +110,13 @@ class ExchangeServiceTest {
 
     exchangeService.computeMeedExchangeRate();
     Duration between = Duration.between(exchangeService.firstMeedTokenDate().atStartOfDay(), LocalDate.now().atStartOfDay());
-    verify(meedExchangeRateRepository, times((int) between.toDays() + 1)).save(argThat(new ArgumentMatcher<MeedExchangeRate>() {
-      @Override
-      public boolean matches(MeedExchangeRate argument) {
-        return argument != null && argument.getDate() != null
-               && BigDecimal.valueOf(300).equals(argument.getEthReserve())
-               && BigDecimal.valueOf(200).equals(argument.getMeedReserve())
-               && BigDecimal.valueOf(2).equals(argument.getMeedEthPrice())
-               && BigDecimal.valueOf(3).equals(argument.getEthUsdPrice());
-      }
-    }));
+    verify(meedExchangeRateRepository,
+           times((int) between.toDays() + 1)).save(
+                                                   argThat(rate -> rate != null && rate.getDate() != null
+                                                                   && BigDecimal.valueOf(300).equals(rate.getEthReserve())
+                                                                   && BigDecimal.valueOf(200).equals(rate.getMeedReserve())
+                                                                   && BigDecimal.valueOf(2).equals(rate.getMeedEthPrice())
+                                                                   && BigDecimal.valueOf(3).equals(rate.getEthUsdPrice())));
 
     verify(meedExchangeRateRepository, times(1)).save(new MeedExchangeRate(exchangeService.firstMeedTokenDate(),
                                                                            BigDecimal.valueOf(3),
@@ -195,7 +185,7 @@ class ExchangeServiceTest {
   void testGetMeedUsdPrice() {
     assertNotNull(exchangeService);
 
-    List<MeedExchangeRate> meedExchangeRates = new ArrayList<MeedExchangeRate>();
+    List<MeedExchangeRate> meedExchangeRates = new ArrayList<>();
 
     when(meedExchangeRateRepository.save(any())).thenAnswer(invocation -> {
       MeedExchangeRate exchangeRate = invocation.getArgument(0, MeedExchangeRate.class);
@@ -213,7 +203,7 @@ class ExchangeServiceTest {
                                                            || meedExchangeRate.getDate().isEqual(fromDate))
                                                           && (meedExchangeRate.getDate().isBefore(toDate)
                                                               || meedExchangeRate.getDate().isEqual(toDate)))
-                              .collect(Collectors.toList());
+                              .toList();
     });
 
     BigDecimal price = exchangeService.getMeedUsdPrice();
@@ -221,8 +211,8 @@ class ExchangeServiceTest {
   }
 
   private void mockExchangeRates() {
-    List<CurrencyExchangeRate> currencyExchangeRates = new ArrayList<CurrencyExchangeRate>();
-    List<MeedExchangeRate> meedExchangeRates = new ArrayList<MeedExchangeRate>();
+    List<CurrencyExchangeRate> currencyExchangeRates = new ArrayList<>();
+    List<MeedExchangeRate> meedExchangeRates = new ArrayList<>();
 
     when(meedExchangeRateRepository.save(any())).thenAnswer(invocation -> {
       MeedExchangeRate exchangeRate = invocation.getArgument(0, MeedExchangeRate.class);
@@ -246,7 +236,7 @@ class ExchangeServiceTest {
                                                                    || currencyExchangeRate.getDate().isEqual(fromDate))
                                                                   && (currencyExchangeRate.getDate().isBefore(toDate)
                                                                       || currencyExchangeRate.getDate().isEqual(toDate)))
-                                  .collect(Collectors.toList());
+                                  .toList();
     });
 
     when(meedExchangeRateRepository.findByDateBetween(any(), any())).thenAnswer(invocation -> {
@@ -257,20 +247,17 @@ class ExchangeServiceTest {
                                                            || meedExchangeRate.getDate().isEqual(fromDate))
                                                           && (meedExchangeRate.getDate().isBefore(toDate)
                                                               || meedExchangeRate.getDate().isEqual(toDate)))
-                              .collect(Collectors.toList());
+                              .toList();
     });
   }
 
   @Component
   public static class ExchangeServiceNoInit extends ExchangeService {
+    private static final String LP_TOKEN_API_URL = "LpTokenApiUrl";
+
     private AtomicBoolean ethPriceRequest      = new AtomicBoolean(false);
 
     private AtomicBoolean simulateErrorRequest = new AtomicBoolean(false);
-
-    @Override
-    public void computeRates() {
-      // Delete @PostConstruct
-    }
 
     @Override
     protected String executeQuery(String url, String body) {
@@ -294,19 +281,19 @@ class ExchangeServiceTest {
         when(connection.getOutputStream()).thenReturn(mock(OutputStream.class));
         when(connection.getInputStream()).thenReturn(new ByteArrayInputStream("{\"data\": {\"blocks\": [{\"number\": \"1111\"}]}}".getBytes()));
         return connection;
-      } else if (StringUtils.contains(apiUrl, "LpTokenApiUrl") && simulateErrorRequest.get()) {
+      } else if (StringUtils.contains(apiUrl, LP_TOKEN_API_URL) && simulateErrorRequest.get()) {
         HttpsURLConnection connection = mock(HttpsURLConnection.class);
         when(connection.getResponseCode()).thenReturn(200);
         when(connection.getOutputStream()).thenReturn(mock(OutputStream.class));
         when(connection.getInputStream()).thenReturn(new ByteArrayInputStream("{\"errors\": [{\"message\": \"Error: up to block number 1000 .\"}]}".getBytes()));
         return connection;
-      } else if (StringUtils.contains(apiUrl, "LpTokenApiUrl") && ethPriceRequest.get()) {
+      } else if (StringUtils.contains(apiUrl, LP_TOKEN_API_URL) && ethPriceRequest.get()) {
         HttpsURLConnection connection = mock(HttpsURLConnection.class);
         when(connection.getResponseCode()).thenReturn(200);
         when(connection.getOutputStream()).thenReturn(mock(OutputStream.class));
         when(connection.getInputStream()).thenReturn(new ByteArrayInputStream("{\"data\": {\"bundle\": {\"ethPrice\": \"3\"}}}".getBytes()));
         return connection;
-      } else if (StringUtils.contains(apiUrl, "LpTokenApiUrl")) {
+      } else if (StringUtils.contains(apiUrl, LP_TOKEN_API_URL)) {
         HttpsURLConnection connection = mock(HttpsURLConnection.class);
         when(connection.getResponseCode()).thenReturn(200);
         when(connection.getOutputStream()).thenReturn(mock(OutputStream.class));

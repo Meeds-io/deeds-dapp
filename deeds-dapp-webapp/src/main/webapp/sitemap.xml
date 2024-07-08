@@ -40,19 +40,9 @@
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/portfolio</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
     <loc>https://www.meeds.io/tenants</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/tokenomics</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/about-us</loc>
@@ -80,11 +70,6 @@
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/fr/portefeuille</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
     <loc>https://www.meeds.io/fr/visite-guidee</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
@@ -98,11 +83,6 @@
     <loc>https://www.meeds.io/fr/place-de-marche</loc>
     <lastmod>2023-04-17</lastmod>
     <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/tokenomics</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/fr/mint</loc>
