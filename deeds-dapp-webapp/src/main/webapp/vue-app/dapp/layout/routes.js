@@ -21,8 +21,6 @@ const Tenants = { template: '<deeds-tenants />' };
 const Owners = { template: '<deeds-owners />' };
 const Stake = { template: '<deeds-stake />' };
 const Mint = { template: '<deeds-deeds />' };
-const Overview = { template: '<deeds-overview />' };
-const Tokenomics = { template: '<deeds-tokenomics />' };
 const Hubs = { template: '<deeds-hubs />' };
 const Buy = { template: '<deeds-buy-hubs />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
@@ -43,14 +41,11 @@ export default {
   '/acheter': Buy,
   '/locataires': Tenants,
   '/proprietaires': Owners,
-  '/portefeuille': Overview,
-  '/tokenomics': Tokenomics,
   '/rejoindre-dao': Stake,
   '/mint': Mint,
   '/marketplace': Marketplace,
   '/tenants': Tenants,
   '/owners': Owners,
-  '/portfolio': Overview,
   '/stake': Stake,
   '/buy': Buy };
 

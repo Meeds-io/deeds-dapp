@@ -51,7 +51,6 @@ import io.meeds.dapp.model.MeedPrice;
 import io.meeds.dapp.storage.CurrencyExchangeRateRepository;
 import io.meeds.dapp.storage.MeedExchangeRateRepository;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
@@ -144,6 +143,7 @@ public class ExchangeService {
       } else {
         return meedExchangeRates.stream()
                                 .max(Comparator.comparing(MeedExchangeRate::getDate))
+                                .filter(rate -> rate.getEthUsdPrice() != null && !BigDecimal.ZERO.equals(rate.getEthUsdPrice()))
                                 .map(rate -> BigDecimal.ONE.divide(rate.getEthUsdPrice(), 18, RoundingMode.HALF_UP))
                                 .orElse(BigDecimal.ZERO);
       }
@@ -166,16 +166,6 @@ public class ExchangeService {
 
   public void computeTodayCurrencyExchangeRate() {
     computeCurrencyExchangeRateOfDay(LocalDate.now(ZoneOffset.UTC));
-  }
-
-  /**
-   * Compute and store EURO Currency Exchange rate from first date when MEED
-   * Contract has been created until today
-   */
-  @PostConstruct
-  public void computeRates() {
-    new Thread(this::computeCurrencyExchangeRate).start();
-    new Thread(this::computeMeedExchangeRate).start();
   }
 
   /**
@@ -444,6 +434,9 @@ public class ExchangeService {
                                             Currency currency,
                                             List<CurrencyExchangeRate> currencyExchangeRates,
                                             LocalDate date) {
+    if (meedEthPrice == null) {
+      return BigDecimal.ZERO;
+    }
     BigDecimal currencyPrice = meedEthPrice;
     if (currency == Currency.USD) {
       currencyPrice = currencyPrice.multiply(ethUsdPrice);
