@@ -48,11 +48,11 @@ export function copyToClipboard(text) {
 }
 
 export function sortByName(tab, lang) {
-  if (lang === 'fr') {
-    return tab.sort((obj1,obj2) => ((obj1?.name?.fr.toLowerCase() > obj2?.name?.fr.toLowerCase()) ? 1 : ((obj2?.name?.fr.toLowerCase() > obj1?.name?.fr.toLowerCase() ? -1 : 0))));
-  } else {
-    return tab.sort((obj1,obj2) => ((obj1?.name?.en.toLowerCase() > obj2?.name?.en.toLowerCase()) ? 1 : ((obj2?.name?.en.toLowerCase() > obj1?.name?.en.toLowerCase() ? -1 : 0))));
-  }
+  return tab.sort((obj1, obj2) => getHubName(obj1?.name, lang).localeCompare(getHubName(obj2?.name, lang)));
+}
+
+export function getHubName(namesByLang, lang) {
+  return namesByLang?.[lang]?.toLowerCase?.() || namesByLang?.['en']?.toLowerCase?.() || '';
 }
 
 export function refreshHubUrl(hubAddress, reportId) {
