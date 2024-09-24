@@ -52,7 +52,7 @@
         </v-btn>
         <v-btn
           id="tExplore-button"
-          :href="homeUrl"
+          :href="hubsUrl"
           height="60px"
           class="px-8 mx-5 mt-7"
           color="primary"
@@ -285,7 +285,7 @@ export default {
     perksVideoLink: state => state.perksVideoLink,
     teamworkVideoLink: state => state.teamworkVideoLink,
     buyUrl: state => state.buyUrl,
-    homeUrl: state => state.homeUrl,
+    hubsUrl: state => state.hubsUrl,
     dark: state => state.dark,
     isSmallScreen() {
       return this.$vuetify.breakpoint.mdAndDown;
