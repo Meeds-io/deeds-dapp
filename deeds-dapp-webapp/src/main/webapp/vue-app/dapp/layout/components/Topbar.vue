@@ -31,7 +31,7 @@
       <div v-if="staticPage || buypage">
         <v-btn
           id="tbHubs-button"
-          :href="homeUrl"
+          :href="hubsUrl"
           class="px-4 font-weight-black letter-spacing-normal"
           color="primary"
           outlined>
@@ -84,7 +84,7 @@ export default {
     whiteThemeColor: state => state.whiteThemeColor,
     parentLocation: state => state.parentLocation,
     staticPage: state => state.staticPage,
-    homeUrl: state => state.homeUrl,
+    hubsUrl: state => state.hubsUrl,
     isMobile: state => state.isMobile,
     buyMeedsLink: state => state.buyMeedsLink,
     page: state => state.page,

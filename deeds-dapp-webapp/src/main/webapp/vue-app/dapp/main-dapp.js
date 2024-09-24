@@ -290,7 +290,8 @@ const pageUriPerLanguages = {
       'owners',
       'tenants',
       'why-meeds',
-      'buy'
+      'buy',
+      'hubs'
     ],
     uriPrefix: '',
   },
@@ -307,7 +308,8 @@ const pageUriPerLanguages = {
       'proprietaires',
       'locataires',
       'pourquoi-meeds',
-      'acheter'
+      'acheter',
+      'rejoindre-hubs'
     ],
     uriPrefix: 'fr/',
   },
@@ -511,6 +513,7 @@ const store = new Vuex.Store({
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[9]}`,
     whyMeedsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[10]}`,
     buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
+    hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].pages[12]}`,
     farmURL: null,
     formLink: 'https://s7afi1uwdjh.typeform.com/to/FkNcXC0p',
     buyMeedsLink: 'https://app.paraswap.io/#/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE-0x8503a7b00b4b52692cc6c14e5b96f142e30547b7/0/SELL?network=ethereum',

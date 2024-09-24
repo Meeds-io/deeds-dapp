@@ -64,13 +64,15 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/whitepaper",
                                                                                             "/about-us",
                                                                                             "/legals",
-                                                                                            "/tour");
+                                                                                            "/tour",
+                                                                                            "/hubs");
 
   protected static final List<String>        STATIC_PATHS_FR                = Arrays.asList("/pourquoi-meeds",
                                                                                             "/livre-blanc",
                                                                                             "/qui-sommes-nous",
                                                                                             "/mentions-legales",
-                                                                                            "/visite-guidee");
+                                                                                            "/visite-guidee",
+                                                                                            "/rejoindre-hubs");
 
   protected static final List<String>        STATIC_PATHS                   =
                                                           Stream.concat(STATIC_PATHS_EN.stream(), STATIC_PATHS_FR.stream())
@@ -85,6 +87,7 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/buy",
                                                                                             "/mint",
                                                                                             "/farm",
+                                                                                            "/hubs",
                                                                                             "/tokenomics");
 
   protected static final List<String>        DAPP_PATHS_FR_UNCOM            = Arrays.asList("/place-de-marche",
@@ -93,7 +96,8 @@ public class RequestDispatcherFilter extends HttpFilter {
                                                                                             "/portefeuille",
                                                                                             "/rejoindre-dao",
                                                                                             "/accueil",
-                                                                                            "/acheter");
+                                                                                            "/acheter",
+                                                                                            "/rejoindre-hubs");
 
   protected static final List<String>        DAPP_PATHS_FR_COMM             = Arrays.asList("/mint",
                                                                                             "/farm",
@@ -147,11 +151,11 @@ public class RequestDispatcherFilter extends HttpFilter {
         response.setHeader("Location", "/");
         response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         return;
-      } else if (servletPath.equals("/home") || servletPath.equals("/hubs")) {
+      } else if (servletPath.equals("/home")) {
         response.setHeader("Location", "/");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
-      } else if (servletPath.equals("/fr/accueil") || servletPath.equals("/fr/rejoindre-hubs")) {
+      } else if (servletPath.equals("/fr/accueil")) {
         response.setHeader("Location", "/fr");
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         return;
