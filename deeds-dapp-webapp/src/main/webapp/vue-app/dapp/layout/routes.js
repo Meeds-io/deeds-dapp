@@ -26,7 +26,8 @@ const Buy = { template: '<deeds-buy-hubs />' };
 const StaticPageContent = { template: '<deeds-static-page-content />' };
 
 export default {
-  '/': Hubs,
+  '/hubs': Hubs,
+  '/rejoindre-hubs': Hubs,
   '/about-us': StaticPageContent,
   '/why-meeds': StaticPageContent,
   '/legals': StaticPageContent,

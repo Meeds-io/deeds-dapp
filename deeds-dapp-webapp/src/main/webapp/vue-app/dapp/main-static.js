@@ -146,6 +146,7 @@ const store = new Vuex.Store({
     tenantsURL: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[9]}`,
     whyMeedsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[10]}`,
     buyUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].uriPrefix}${pageUriPerLanguages[language].pages[11]}`,
+    hubsUrl: `${window.parentAppLocation}/${pageUriPerLanguages[language].pages[12]}`,
     farmURL: null,
   },
   mutations: {
