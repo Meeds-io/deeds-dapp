@@ -218,8 +218,8 @@ public class RequestDispatcherFilter extends HttpFilter {
   }
 
   private void buildPageMetadata(HttpServletRequest request, String servletPath, String defaultPageName, String lang) throws IOException {
+    String pageContent = getPageHeaderMetadataContent(request, servletPath, defaultPageName, lang);
     if (Utils.isProductionEnvironment()) {
-      String pageContent = getPageHeaderMetadataContent(request, servletPath, defaultPageName, lang);
       request.setAttribute("pageHeaderMetadatas", pageContent);
     } else {
       request.setAttribute("pageHeaderMetadatas", "");
