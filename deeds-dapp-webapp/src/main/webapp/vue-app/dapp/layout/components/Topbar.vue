@@ -27,7 +27,7 @@
     <div class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <deeds-topbar-logo />
       <v-spacer />
-      <div v-else class="d-flex">
+      <div class="d-flex">
         <template v-if="validNetwork && address">
           <div class="ms-4 d-none d-md-inline-block">
             <deeds-topbar-address-selector v-if="address" />
