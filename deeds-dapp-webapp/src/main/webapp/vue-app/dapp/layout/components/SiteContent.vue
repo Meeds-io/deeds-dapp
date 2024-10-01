@@ -64,7 +64,7 @@ export default {
     staticPage: state => state.staticPage,
     isMobile: state => state.isMobile,
     mobileNavigationBar() {
-      return !this.staticPage && this.isMobile;
+      return false;//!this.staticPage && this.isMobile;
     },
   }),
   created() {
