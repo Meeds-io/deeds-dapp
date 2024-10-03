@@ -26,28 +26,8 @@
     <v-spacer />
     <div class="d-flex headerLayout px-0 px-sm-7 mx-1">
       <deeds-topbar-logo />
-      <deeds-navbar v-if="defaultNavigationBar" />
       <v-spacer />
-      <div v-if="staticPage || buypage">
-        <v-btn
-          id="tbHubs-button"
-          :href="hubsUrl"
-          class="px-4 font-weight-black letter-spacing-normal"
-          color="primary"
-          outlined>
-          <h4>{{ $t('explore') }}</h4>
-        </v-btn>
-      </div>
-      <div v-else-if="homepage">
-        <v-btn
-          :href="buyUrl"
-          class="primary-border-color px-4 letter-spacing-normal"
-          color="primary"
-          outlined>
-          {{ $t('create') }}
-        </v-btn>
-      </div>
-      <div v-else class="d-flex">
+      <div class="d-flex">
         <template v-if="validNetwork && address">
           <div class="ms-4 d-none d-md-inline-block">
             <deeds-topbar-address-selector v-if="address" />
