@@ -193,17 +193,17 @@ const networkSettings = {
 };
 
 // Sepolia
-networkSettings[11155111] = {
-  chainId: '0xaa36a7',
+networkSettings[80002] = {
+  chainId: '0x13882',
   meedAddress: '0x42adb84ed2136a0b8877fee8c8b1ba0c28a77681',
-  xMeedAddress: '0x7e17f6d34bA8b29f9CAa9571F2479D0fD57f264e',
-  tokenFactoryAddress: '0x0CbbD90fa2C7ebFE9B53D4CC14F5DBA20D2ba81b',
-  deedAddress: '0xcC7aC4913725DcE0f7B4780511317f8a42A3F461',
-  tenantProvisioningAddress: '0x65Cc99ea6F3BF1fc8acB9a746D64dff745Bf8A5d',
-  tenantRentingAddress: '0x979b9ad927438b836aCB325eD43cfB9A07913C81',
-  etherscanBaseLink: 'https://sepolia.etherscan.io/',
+  xMeedAddress: '0x1Bc819Ddc62803199fe4dAe48Af0045577D50fBd',
+  tokenFactoryAddress: '0x79df69ca2A53360C408e203fE15ff23ED98D7Af7',
+  deedAddress: '0xa132b10444Ff8e95a91743edbe6f7ff9823dc306',
+  tenantProvisioningAddress: '0xD178Bd47c0ac57123bb56A0de9Fd3957880A5a0a',
+  tenantRentingAddress: '0x1E1502ade9Eca6Fc1D81CA73e5071a3c53b001D8',
+  etherscanBaseLink: 'https://amoy.polygonscan.com/',
   // Opensea links
-  openSeaBaseLink: 'https://testnets.opensea.io/assets/sepolia/0xcC7aC4913725DcE0f7B4780511317f8a42A3F461',
+  openSeaBaseLink: 'https://testnets.opensea.io/assets/amoy/0xa132b10444Ff8e95a91743edbe6f7ff9823dc306',
   openSeaCollectionLink: 'https://testnets.opensea.io/collection/meeds-dao-testnet',
   // TestNet Date Format
   defaultDateFormat: {
@@ -1108,7 +1108,7 @@ const store = new Vuex.Store({
             state.tenantRentingABI,
             provider
           );
-          if (state.networkId === 11155111) {
+          if (state.networkId === 80002) {
             // eslint-disable-next-line new-cap
             state.tenantRentingContract.MONTH_IN_SECONDS()
               .then(data => state.MONTH_IN_SECONDS = data && data.toNumber());
@@ -1516,9 +1516,9 @@ function initializeVueApp(language) {
                   blockexplorer: 'https://etherscan.io',
                   testnet: false,
                 },
-                11155111: {
-                  name: 'Sepolia',
-                  blockexplorer: 'https://sepolia.etherscan.io',
+                80002: {
+                  name: 'Polygon Amoy',
+                  blockexplorer: 'https://amoy.polygonscan.com',
                   testnet: true,
                 },
                 137: {
