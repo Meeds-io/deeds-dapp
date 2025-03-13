@@ -1,127 +1,73 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<?xml version="1.0" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.meeds.io/</loc>
-    <lastmod>2023-11-08</lastmod>
+    <lastmod>2025-01-31</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/hubs</loc>
-    <lastmod>2024-09-24</lastmod>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/tour</loc>
-    <lastmod>2023-04-17</lastmod>
+    <loc>https://www.meeds.io/product</loc>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/whitepaper</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
+  </url>  
   <url>
     <loc>https://www.meeds.io/marketplace</loc>
-    <lastmod>2023-04-17</lastmod>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/mint</loc>
-    <lastmod>2023-04-17</lastmod>
+    <lastmod>2025-01-31</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/legals</loc>
+    <lastmod>2025-01-31</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/whitepaper</loc>
+    <lastmod>2025-01-31</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/staking</loc>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/stake</loc>
-    <lastmod>2023-04-17</lastmod>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/buy</loc>
-    <lastmod>2023-11-06</lastmod>
-    <priority>0.90</priority>
+    <loc>https://www.meeds.io/pricing</loc>
+    <lastmod>2025-01-31</lastmod>
+    <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/why-meeds</loc>
-    <lastmod>2023-11-08</lastmod>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/tenants</loc>
-    <lastmod>2023-04-17</lastmod>
+    <loc>https://www.meeds.io/token</loc>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/about-us</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/legals</loc>
-    <lastmod>2023-04-17</lastmod>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/owners</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr</loc>
-    <lastmod>2023-11-08</lastmod>
-    <priority>1.00</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/acheter</loc>
-    <lastmod>2023-11-06</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/visite-guidee</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/livre-blanc</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/place-de-marche</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/mint</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/pourquoi-meeds</loc>
-    <lastmod>2023-11-08</lastmod>
+    <loc>https://www.meeds.io/deeds</loc>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/fr/qui-somme-nous</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.70</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/mentions-legales</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/rejoindre-dao</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/proprietaires</loc>
-    <lastmod>2023-04-17</lastmod>
-    <priority>0.60</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/fr/locataires</loc>
-    <lastmod>2023-04-17</lastmod>
+    <loc>https://www.meeds.io/try</loc>
+    <lastmod>2025-01-31</lastmod>
     <priority>0.80</priority>
   </url>
 </urlset>

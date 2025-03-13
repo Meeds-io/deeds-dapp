@@ -1,6 +1,9 @@
 # robots.txt
 User-agent: *
 Allow:  /*
+Disallow: /dapp/tenants
+Disallow: /dapp/owners
+Disallow: /dapp/stake
 
 # Sitemaps
 
