@@ -18,17 +18,17 @@
   <url>
     <loc>https://www.meeds.io/marketplace</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/mint</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/legals</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.60</priority>
+    <priority>0.50</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/whitepaper</loc>
@@ -38,22 +38,22 @@
   <url>
     <loc>https://www.meeds.io/staking</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/stake</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/pricing</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.60</priority>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/token</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.80</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/about-us</loc>
@@ -63,11 +63,16 @@
   <url>
     <loc>https://www.meeds.io/deeds</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.80</priority>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/try</loc>
     <lastmod>2025-01-31</lastmod>
-    <priority>0.80</priority>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/web3-community-engagement-guide</loc>
+    <lastmod>2025-03-18</lastmod>
+    <priority>0.95</priority>
   </url>
 </urlset>
