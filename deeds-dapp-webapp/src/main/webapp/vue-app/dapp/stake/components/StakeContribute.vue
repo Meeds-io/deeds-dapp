@@ -28,7 +28,7 @@
       <v-btn
         id="sBuilders-button"
         name="getInvolvedLink"
-        href="https://meeds.io/builders"
+        href="https://builders.meeds.io"
         target="_blank"
         rel="nofollow noreferrer noopener"
         height="40px"
