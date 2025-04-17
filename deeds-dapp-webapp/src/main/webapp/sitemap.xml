@@ -2,13 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.meeds.io/</loc>
-    <lastmod>2025-01-31</lastmod>
+    <lastmod>2025-04-17</lastmod>
     <priority>1.00</priority>
-  </url>
-  <url>
-    <loc>https://www.meeds.io/hubs</loc>
-    <lastmod>2025-01-31</lastmod>
-    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.meeds.io/product</loc>
@@ -47,7 +42,7 @@
   </url>
   <url>
     <loc>https://www.meeds.io/pricing</loc>
-    <lastmod>2025-01-31</lastmod>
+    <lastmod>2025-04-17</lastmod>
     <priority>0.95</priority>
   </url>
   <url>
@@ -61,23 +56,33 @@
     <priority>0.60</priority>
   </url>
   <url>
+    <loc>https://www.meeds.io/portal/public/overview/builders</loc>
+    <lastmod>2025-04-17</lastmod>
+    <priority>0.90</priority>
+  </url>  
+  <url>
     <loc>https://www.meeds.io/deeds</loc>
-    <lastmod>2025-01-31</lastmod>
+    <lastmod>2025-04-17</lastmod>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.meeds.io/try</loc>
-    <lastmod>2025-01-31</lastmod>
+    <loc>https://www.meeds.io/start-free-trial</loc>
+    <lastmod>2025-04-17</lastmod>
     <priority>0.95</priority>
   </url>
+    <url>
+    <loc>https://www.meeds.io/contact</loc>
+    <lastmod>2025-04-17</lastmod>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://www.meeds.io/hubs</loc>
+    <lastmod>2025-04-17</lastmod>
+    <priority>0.50</priority>
+  </url>    
   <url>
     <loc>https://www.meeds.io/portal/blog/</loc>
     <lastmod>2025-03-24</lastmod>
     <priority>0.90</priority>
   </url>  
-  <url>
-    <loc>https://www.meeds.io/portal/blog/guides/web3-community-engagement-guide</loc>
-    <lastmod>2025-03-24</lastmod>
-    <priority>0.95</priority>
-  </url>
 </urlset>
