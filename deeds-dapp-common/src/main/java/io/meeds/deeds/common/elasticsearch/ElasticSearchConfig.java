@@ -29,10 +29,10 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.RefreshPolicy;
-import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.cluster.HealthResponse;
 
 @Configuration
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
@@ -78,28 +78,36 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
                                                          ElasticsearchClient elasticsearchClient) {
     ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
     elasticsearchTemplate.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
-    tryConnection(elasticsearchTemplate);
+    tryConnection(elasticsearchTemplate, elasticsearchClient);
     return elasticsearchTemplate;
   }
 
-  private void tryConnection(ElasticsearchOperations elasticsearchOperations) {
+  private void tryConnection(ElasticsearchOperations elasticsearchOperations, ElasticsearchClient elasticsearchClient) {
     int i = connectionRetry;
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
-        ClusterHealth elasticHealth = elasticsearchOperations.cluster().health();
-        if (elasticHealth.isTimedOut()
-            || elasticHealth.getActiveShardsPercent() < 1
-            || elasticHealth.getActiveShards() == 0
-            || !StringUtils.equalsIgnoreCase(elasticHealth.getStatus(), "green")) {
-          throw new IllegalStateException(String.format("Elasticsearch Cluster Health Check TimedOut. Active shard = '%s', Percentage = '%s', Status = '%s'",
-                                                        elasticHealth.getActiveShards(),
-                                                        elasticHealth.getActiveShardsPercent(),
-                                                        elasticHealth.getStatus()));
-        } else {
-          LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
-          i = 0;
+        HealthResponse healthResponse = elasticsearchClient.cluster().health();
+
+        boolean timedOut = healthResponse.timedOut();
+        double activeShardsPercent = Double.parseDouble(healthResponse.activeShardsPercentAsNumber());
+        int activeShards = healthResponse.activeShards();
+        String status = healthResponse.status().jsonValue();
+
+        if (timedOut
+            || activeShardsPercent < 1
+            || activeShards == 0
+            || !StringUtils.equalsIgnoreCase(status, "green")) {
+          throw new IllegalStateException(String.format(
+            "Elasticsearch Cluster Health Check Failed. Active shards = '%s', Percentage = '%.2f', Status = '%s'",
+            activeShards,
+            activeShardsPercent,
+            status));
         }
+
+        LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
+        i = 0;
+
       } catch (Exception e) {
         if (i == 0) {
           LOG.warn("Connection failure to ES. tentative {}/{}.", tentative, connectionRetry);
