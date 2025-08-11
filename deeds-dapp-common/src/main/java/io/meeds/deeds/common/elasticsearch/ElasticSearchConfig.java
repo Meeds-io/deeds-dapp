@@ -16,6 +16,7 @@
 package io.meeds.deeds.common.elasticsearch;
 
 import java.time.Duration;
+import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,10 +30,15 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.RefreshPolicy;
-import org.springframework.data.elasticsearch.core.cluster.ClusterHealth;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
@@ -78,28 +84,49 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
                                                          ElasticsearchClient elasticsearchClient) {
     ElasticsearchTemplate elasticsearchTemplate = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
     elasticsearchTemplate.setRefreshPolicy(RefreshPolicy.IMMEDIATE);
-    tryConnection(elasticsearchTemplate);
+    tryConnection(elasticsearchTemplate, elasticsearchClient);
     return elasticsearchTemplate;
   }
 
-  private void tryConnection(ElasticsearchOperations elasticsearchOperations) {
+  private void tryConnection(ElasticsearchOperations elasticsearchOperations, ElasticsearchClient elasticsearchClient) {
     int i = connectionRetry;
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
-        ClusterHealth elasticHealth = elasticsearchOperations.cluster().health();
-        if (elasticHealth.isTimedOut()
-            || elasticHealth.getActiveShardsPercent() < 1
-            || elasticHealth.getActiveShards() == 0
-            || !StringUtils.equalsIgnoreCase(elasticHealth.getStatus(), "green")) {
-          throw new IllegalStateException(String.format("Elasticsearch Cluster Health Check TimedOut. Active shard = '%s', Percentage = '%s', Status = '%s'",
-                                                        elasticHealth.getActiveShards(),
-                                                        elasticHealth.getActiveShardsPercent(),
-                                                        elasticHealth.getStatus()));
-        } else {
-          LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
-          i = 0;
+        // Create a temporary low-level client directly from your ES URL
+        RestClient restClient = RestClient.builder(
+            new org.apache.http.HttpHost(
+                esUrl.split("//")[1].split(":")[0],
+                Integer.parseInt(esUrl.split(":")[2])
+            )
+        ).build();
+
+        Request request = new Request("GET", "/_cluster/health");
+        Response response = restClient.performRequest(request);
+
+        try (InputStream is = response.getEntity().getContent()) {
+          JsonNode node = new ObjectMapper().readTree(is);
+
+          boolean timedOut = node.get("timed_out").asBoolean();
+          double activeShardsPercent = node.get("active_shards_percent_as_number").asDouble();
+          int activeShards = node.get("active_shards").asInt();
+          String status = node.get("status").asText();
+
+          if (timedOut
+              || activeShardsPercent < 1
+              || activeShards == 0
+              || !StringUtils.equalsIgnoreCase(status, "green")) {
+            throw new IllegalStateException(String.format(
+                "Elasticsearch Cluster Health Check Failed. Active shards = '%s', Percentage = '%.2f', Status = '%s'",
+                activeShards,
+                activeShardsPercent,
+                status));
+          }
         }
+
+        LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
+        i = 0;
+
       } catch (Exception e) {
         if (i == 0) {
           LOG.warn("Connection failure to ES. tentative {}/{}.", tentative, connectionRetry);
