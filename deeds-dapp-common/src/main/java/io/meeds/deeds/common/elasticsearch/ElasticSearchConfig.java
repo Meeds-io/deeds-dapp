@@ -16,6 +16,7 @@
 package io.meeds.deeds.common.elasticsearch;
 
 import java.time.Duration;
+import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,12 @@ import org.springframework.data.elasticsearch.core.RefreshPolicy;
 import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverter;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.cluster.HealthResponse;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
@@ -87,22 +93,35 @@ public class ElasticSearchConfig extends ElasticsearchConfiguration {
     while (i-- > 0) {
       int tentative = connectionRetry - i;
       try {
-        HealthResponse healthResponse = elasticsearchClient.cluster().health();
+        // Create a temporary low-level client directly from your ES URL
+        RestClient restClient = RestClient.builder(
+            new org.apache.http.HttpHost(
+                esUrl.split("//")[1].split(":")[0],
+                Integer.parseInt(esUrl.split(":")[2])
+            )
+        ).build();
 
-        boolean timedOut = healthResponse.timedOut();
-        double activeShardsPercent = Double.parseDouble(healthResponse.activeShardsPercentAsNumber());
-        int activeShards = healthResponse.activeShards();
-        String status = healthResponse.status().jsonValue();
+        Request request = new Request("GET", "/_cluster/health");
+        Response response = restClient.performRequest(request);
 
-        if (timedOut
-            || activeShardsPercent < 1
-            || activeShards == 0
-            || !StringUtils.equalsIgnoreCase(status, "green")) {
-          throw new IllegalStateException(String.format(
-            "Elasticsearch Cluster Health Check Failed. Active shards = '%s', Percentage = '%.2f', Status = '%s'",
-            activeShards,
-            activeShardsPercent,
-            status));
+        try (InputStream is = response.getEntity().getContent()) {
+          JsonNode node = new ObjectMapper().readTree(is);
+
+          boolean timedOut = node.get("timed_out").asBoolean();
+          double activeShardsPercent = node.get("active_shards_percent_as_number").asDouble();
+          int activeShards = node.get("active_shards").asInt();
+          String status = node.get("status").asText();
+
+          if (timedOut
+              || activeShardsPercent < 1
+              || activeShards == 0
+              || !StringUtils.equalsIgnoreCase(status, "green")) {
+            throw new IllegalStateException(String.format(
+                "Elasticsearch Cluster Health Check Failed. Active shards = '%s', Percentage = '%.2f', Status = '%s'",
+                activeShards,
+                activeShardsPercent,
+                status));
+          }
         }
 
         LOG.info("Connection established to ES after {}/{} tentatives", tentative, connectionRetry);
