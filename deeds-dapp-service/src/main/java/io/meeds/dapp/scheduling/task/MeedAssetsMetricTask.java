@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.web3j.protocol.exceptions.ClientConnectionException;
 
 import io.meeds.dapp.service.MeedAssetsMetricsService;
 
@@ -39,7 +40,12 @@ public class MeedAssetsMetricTask {
       meedAssetsMetricsService.computeMeedAssetsMetrics();
       LOG.info("End Computing Meed Assets Metrics in {}ms", System.currentTimeMillis() - start);
     } catch (Exception e) {
-      LOG.warn("An error occurred while computing Meed Assets Metrics", e);
+      if (!LOG.isDebugEnabled()
+          && (e instanceof ClientConnectionException || e.getCause() instanceof ClientConnectionException)) {
+        LOG.warn("An error occurred while computing Meed Assets Metrics: {}", e.getMessage());
+      } else {
+        LOG.warn("An error occurred while computing Meed Assets Metrics", e);
+      }
     }
   }
 
