@@ -198,7 +198,11 @@ public class HubController {
       LOG.info(WOM_CONNECTION_LOG_MESSAGE, e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getErrorCode());
     } catch (Exception e) {
-      LOG.warn("An unkown error happened when trying to process the refresh Hub request", e);
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("An unkown error happened when trying to process the refresh Hub request", e);
+      } else {
+        LOG.warn("An unkown error happened when trying to process the refresh Hub request: {}", e.getMessage());
+      }
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(WOM_UNKNOWN_ERROR_MESSAGE + e.getMessage());
     }
   }
