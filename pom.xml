@@ -22,7 +22,7 @@
   <parent>
     <artifactId>addons-parent-pom</artifactId>
     <groupId>io.meeds.addons</groupId>
-    <version>19-RC01</version>
+    <version>20-M02</version>
   </parent>
   <groupId>io.meeds.deeds-dapp</groupId>
   <artifactId>deeds-dapp-parent</artifactId>
