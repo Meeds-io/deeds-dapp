@@ -29,8 +29,6 @@
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>*:spring-boot-starter-logging:jar</include>
-        <include>*:spring-context-support:jar</include>
         <include>${project.groupId}:*:jar</include>
       </includes>
       <scope>runtime</scope>
