@@ -44,10 +44,10 @@ import org.apache.tomcat.util.buf.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -96,10 +96,10 @@ class OfferControllerTest {
 
   private static final String      TEST_USER     = "testUser";
 
-  @MockBean
+  @MockitoBean
   private OfferService             deedTenantOfferService;
 
-  @MockBean
+  @MockitoBean
   private AuthorizationCodeService authorizationCodeService;
 
   @Autowired

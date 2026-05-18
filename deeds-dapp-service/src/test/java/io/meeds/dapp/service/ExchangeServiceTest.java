@@ -42,7 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.TestPropertySource;
 
@@ -68,10 +68,10 @@ import io.meeds.dapp.storage.MeedExchangeRateRepository;
                     })
 class ExchangeServiceTest {
 
-  @MockBean
+  @MockitoBean
   private CurrencyExchangeRateRepository currencyExchangeRateRepository;
 
-  @MockBean
+  @MockitoBean
   private MeedExchangeRateRepository     meedExchangeRateRepository;
 
   @Autowired

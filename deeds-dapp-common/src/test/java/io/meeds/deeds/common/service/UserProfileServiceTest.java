@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.meeds.deeds.common.elasticsearch.model.UserProfile;
 import io.meeds.deeds.common.elasticsearch.storage.UserProfileRepository;
@@ -42,10 +42,10 @@ class UserProfileServiceTest {
 
   private static final String   ID      = "@id";
 
-  @MockBean
+  @MockitoBean
   private UserProfileRepository userProfileRepository;
 
-  @MockBean
+  @MockitoBean
   private ListenerService       listenerService;
 
   @Autowired

@@ -65,7 +65,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -117,28 +117,28 @@ class HubServiceTest {
 
   private static final String RAW_MESSAGE            = "rawMessage";
 
-  @MockBean
+  @MockitoBean
   private TenantService       tenantService;
 
-  @MockBean
+  @MockitoBean
   private ListenerService     listenerService;
 
-  @MockBean
+  @MockitoBean
   private FileService         fileService;
 
-  @MockBean
+  @MockitoBean
   private BlockchainService   blockchainService;
 
-  @MockBean
+  @MockitoBean
   private LeaseService        leaseService;
 
-  @MockBean
+  @MockitoBean
   private HubRepository       hubRepository;
 
-  @MockBean
+  @MockitoBean
   private HubReportRepository reportRepository;
 
-  @MockBean
+  @MockitoBean
   private UemRewardRepository rewardRepository;
 
   @Autowired

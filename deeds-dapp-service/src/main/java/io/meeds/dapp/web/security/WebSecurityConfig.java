@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,7 +33,7 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.ContentTypeOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.XXssConfig;
-import org.springframework.security.config.annotation.web.configurers.JeeConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -61,7 +62,7 @@ public class WebSecurityConfig implements ServletContextAware {
   @Bean
   public static GrantedAuthorityDefaults grantedAuthorityDefaults() {
     // Reset prefix to be empty. By default it adds "ROLE_" prefix
-    return new GrantedAuthorityDefaults();
+    return new GrantedAuthorityDefaults("");
   }
 
   @SuppressWarnings("removal")
@@ -71,7 +72,7 @@ public class WebSecurityConfig implements ServletContextAware {
                                          DeedAccessDeniedHandler deedAccessDeniedHandler) throws Exception {
     http
         .authenticationProvider(authProvider)
-        .jee(JeeConfigurer::and) // NOSONAR no method replacement
+        .jee(Customizer.withDefaults())
         .csrf(CsrfConfigurer::disable)
         .headers(headers -> {
           headers.frameOptions(FrameOptionsConfig::disable);
@@ -106,7 +107,7 @@ public class WebSecurityConfig implements ServletContextAware {
   }
 
   private AuthorizationManager<RequestAuthorizationContext> requestAuthorizationManager() {
-    return (Supplier<Authentication> authentication, RequestAuthorizationContext context) -> {
+    return (Supplier<? extends Authentication> authentication, RequestAuthorizationContext context) -> {
       Authentication userAuthentication = authentication.get();
       // Permit anonymous and authentication users to access
       // the REST endpoints and rely on jee & secured permission

@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.Request;
@@ -79,37 +79,37 @@ import io.meeds.wom.api.model.HubReport;
 })
 class BlockchainServiceTest {
 
-  @MockBean(name = "ethereumNetwork")
+  @MockitoBean(name = "ethereumNetwork")
   private Web3j                            web3j;
 
-  @MockBean(name = "polygonNetwork")
+  @MockitoBean(name = "polygonNetwork")
   private Web3j                            polygonWeb3j;
 
-  @MockBean
+  @MockitoBean
   private DeedTenantProvisioning           deedTenantProvisioning;
 
-  @MockBean
+  @MockitoBean
   private DeedRenting                      deedRenting;
 
-  @MockBean
+  @MockitoBean
   private Deed                             deed;
 
-  @MockBean(name = "ethereumMeedToken")
+  @MockitoBean(name = "ethereumMeedToken")
   private MeedsToken                       ethereumToken;
 
-  @MockBean(name = "polygonMeedToken")
+  @MockitoBean(name = "polygonMeedToken")
   private MeedsToken                       polygonToken;
 
-  @MockBean
+  @MockitoBean
   private XMeedsNFTRewarding               xMeedsToken;
 
-  @MockBean
+  @MockitoBean
   private TokenFactory                     tokenFactory;
 
-  @MockBean
+  @MockitoBean
   private UserEngagementMinting            uemContract;
 
-  @MockBean(name = "sushiPairToken")
+  @MockitoBean(name = "sushiPairToken")
   private ERC20                            sushiPairToken;
 
   @Autowired

@@ -87,7 +87,13 @@
       <plugin>
         <groupId>org.web3j</groupId>
         <artifactId>web3j-maven-plugin</artifactId>
-        <version>4.10.3</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>web3j-sokt</artifactId>
+            <version>0.7.0</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <id>generate-sources</id>

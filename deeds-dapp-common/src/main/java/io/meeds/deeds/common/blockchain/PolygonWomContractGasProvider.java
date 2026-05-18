@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.tx.gas.ContractGasProvider;
 
 import lombok.SneakyThrows;
@@ -47,12 +48,7 @@ public class PolygonWomContractGasProvider implements ContractGasProvider {
   }
 
   @Override
-  public BigInteger getGasPrice(String contractFunc) {
-    return getGasPrice();
-  }
-
-  @Override
-  public BigInteger getGasLimit(String contractFunc) {
+  public BigInteger getGasLimit(Transaction transaction) {
     return getGasLimit();
   }
 

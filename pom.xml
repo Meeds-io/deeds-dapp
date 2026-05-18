@@ -44,7 +44,7 @@
     <tag>HEAD</tag>
   </scm>
   <properties>
-    <org.web3j.version>4.9.4</org.web3j.version>
+    <org.web3j.version>5.0.2</org.web3j.version>
 
     <!-- Meeds Server Libraries -->
     <io.meeds.distribution.version>7.3.x-SNAPSHOT</io.meeds.distribution.version>
@@ -62,6 +62,43 @@
         <version>${io.meeds.distribution.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <!-- Web3j (overrides io.meeds.distribution BOM to align with web3j-maven-plugin codegen) -->
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>core</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>abi</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>crypto</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>rlp</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>tuples</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>utils</artifactId>
+        <version>${org.web3j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>web3j-unit</artifactId>
+        <version>${org.web3j.version}</version>
       </dependency>
 
       <!-- Current project artifacts -->

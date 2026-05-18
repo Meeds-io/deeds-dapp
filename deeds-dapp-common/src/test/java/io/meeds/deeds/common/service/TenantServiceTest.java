@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.meeds.deeds.common.constant.TenantProvisioningStatus;
 import io.meeds.deeds.common.constant.UnauthorizedOperationException;
@@ -54,13 +54,13 @@ import io.meeds.deeds.common.elasticsearch.storage.DeedTenantManagerRepository;
 })
 class TenantServiceTest {
 
-  @MockBean
+  @MockitoBean
   private BlockchainService           blockchainService;
 
-  @MockBean
+  @MockitoBean
   private DeedTenantManagerRepository deedTenantManagerRepository;
 
-  @MockBean
+  @MockitoBean
   private ListenerService             listenerService;
 
   @Autowired

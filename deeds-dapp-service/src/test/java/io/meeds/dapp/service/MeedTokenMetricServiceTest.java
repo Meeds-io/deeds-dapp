@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.dapp.constant.Currency;
@@ -56,19 +56,19 @@ class MeedTokenMetricServiceTest {
 
   private static final BigDecimal    USD_EUR_EXCHANGE_RATE  = BigDecimal.valueOf(0.5d);
 
-  @MockBean
+  @MockitoBean
   private BlockchainService          blockchainService;
 
-  @MockBean
+  @MockitoBean
   private ExchangeService            exchangeService;
 
-  @MockBean
+  @MockitoBean
   private MeedTokenMetricsRepository meedTokenMetricsRepository;
 
-  @MockBean(name = "ethereumMeedToken")
+  @MockitoBean(name = "ethereumMeedToken")
   private MeedsToken                 ethereumToken;
 
-  @MockBean(name = "polygonMeedToken")
+  @MockitoBean(name = "polygonMeedToken")
   private MeedsToken                 polygonToken;
 
   @Autowired

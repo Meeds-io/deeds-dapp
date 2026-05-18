@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.TestPropertySource;
 
 import io.meeds.deeds.common.constant.DisplayType;
@@ -49,10 +49,10 @@ import io.meeds.wom.api.constant.ObjectNotFoundException;
                     })
 class DeedMetadataServiceTest {
 
-  @MockBean
+  @MockitoBean
   private BlockchainService      blockchainService;
 
-  @MockBean
+  @MockitoBean
   private DeedMetadataRepository deedMetadataRepository;
 
   @Autowired
