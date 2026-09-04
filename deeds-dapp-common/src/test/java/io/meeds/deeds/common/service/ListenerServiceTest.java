@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.meeds.deeds.common.elasticsearch.model.DeedTenantEvent;
 import io.meeds.deeds.common.elasticsearch.storage.DeedTenantEventRepository;
@@ -66,10 +66,10 @@ class ListenerServiceTest {
 
   private static final String       LISENER_NAME              = "listener.event";
 
-  @MockBean
+  @MockitoBean
   private SettingService            settingService;
 
-  @MockBean
+  @MockitoBean
   private DeedTenantEventRepository deedTenantEventRepository;
 
   @Autowired

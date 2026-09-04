@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.meeds.deeds.common.elasticsearch.model.TrialContactInformation;
 import io.meeds.deeds.common.elasticsearch.storage.TrialRepository;
@@ -53,10 +53,10 @@ class TrialServiceTest {
   @Autowired
   private TrialService        trialService;
 
-  @MockBean
+  @MockitoBean
   private TrialRepository     trialRepository;
 
-  @MockBean
+  @MockitoBean
   private ListenerService     listenerService;
 
   @Test

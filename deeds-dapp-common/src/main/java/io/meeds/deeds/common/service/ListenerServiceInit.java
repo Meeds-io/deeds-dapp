@@ -22,7 +22,7 @@ import static io.meeds.deeds.common.service.ListenerService.LISTENERS;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
